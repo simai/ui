@@ -3951,6 +3951,10 @@ SF.RuleLoader['cl-dropdown'] = {
     name: 'cl-input'
   }, {
     name: 'cl-button-icon'
+  }, // The picture of a single choice in the field and an icon tag's icon are sf-icon elements,
+  // so their names reach the first icon font request (2026-11-09, as sf-tag 1.3.2).
+  {
+    name: 'cl-icon'
   }]
 };
 
@@ -4477,6 +4481,10 @@ SF.RuleLoader['cl-input'] = {
   }, // The reset back to an inherited value is an icon button (simai/ui-source#28).
   {
     name: 'icon-buttons'
+  }, // The keys of a shortcut are the kbd component's (soft caps inside a field):
+  // fetched with the field, so the first paint draws them as they stay.
+  {
+    name: 'kbd'
   }]
 }; // The bundle's former name cl-inputs (the folder was `inputs` until standard
 // 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
@@ -4724,6 +4732,9 @@ SF.RuleLoader['cl-menu'] = {
   // sheet without an element per row.
   {
     name: 'dot'
+  }, // The search field over a column (search, C30 amended R071 a) is sf-input; the page that loads the menu on demand fetches it.
+  {
+    name: 'cl-input'
   }]
 };
 
@@ -5211,6 +5222,10 @@ SF.RuleLoader['cl-tag'] = {
     name: 'dot'
   }, {
     name: 'cl-button-icon'
+  }, // The icon of an icon tag and an avatar's placeholder are sf-icon elements,
+  // so their names reach the icon font request (buttons review 2026-11-09).
+  {
+    name: 'cl-icon'
   }]
 }; // The bundle's former name cl-tags (the folder was `tags` until standard
 // 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type

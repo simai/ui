@@ -4398,29 +4398,29 @@
         {
           "name": "--sf-kbd-size",
           "role": "size",
-          "summary": "A cap's and a key's height and least width, relative to its own letters.",
-          "default": "1.6em",
+          "summary": "A cap's and a key's height and least width: the line height of the text step one below the place's (C38). Read from the place: a button's or a field's size, a text class, else body text (component.kbd).",
+          "default": "var(--sf-text-height-1\\/2) (body text)",
           "since": "2026-11-08"
         },
         {
           "name": "--sf-kbd-padding-inline",
           "role": "padding-inline",
           "summary": "The room on each side of a cap's or a key's letters.",
-          "default": "0.4em",
+          "default": "var(--sf-space-1\\/4)",
           "since": "2026-11-08"
         },
         {
           "name": "--sf-kbd-gap",
           "role": "gap",
           "summary": "The space between the keys of a combination drawn as caps or keys.",
-          "default": "0.25em",
+          "default": "var(--sf-space-1\\/4)",
           "since": "2026-11-08"
         },
         {
           "name": "--sf-kbd-font-size",
           "role": "font-size",
-          "summary": "A cap's and a key's letters against the text around them.",
-          "default": "0.8125em",
+          "summary": "A cap's and a key's letters: the size of the text step one below the place's (C38). Read from the place: a button's or a field's size, a text class, else body text (component.kbd).",
+          "default": "var(--sf-text-size-1\\/2) (body text)",
           "since": "2026-11-08"
         },
         {
@@ -4441,14 +4441,14 @@
           "name": "--sf-kbd-background-color",
           "role": "background",
           "summary": "A cap's fill (in a button or a field): the ink it sits in, mixed. The former name --sf-kbd-background is still read, under this one, until 2027-01-01 (C16 naming, src/core/contracts/token-aliases.v1.json).",
-          "default": "color-mix(in srgb, currentColor 12%, transparent)",
+          "default": "color-mix(in srgb, currentColor 8%, transparent)",
           "since": "2026-11-08"
         },
         {
           "name": "--sf-kbd-color",
           "role": "color",
-          "summary": "A cap's letters (in a button or a field): the ink it sits in, mixed.",
-          "default": "color-mix(in srgb, currentColor 80%, transparent)",
+          "summary": "A cap's letters (in a button or a field): the ink it sits in, whole -- at least 4.5:1 against the cap's fill on every look of sf-button.",
+          "default": "currentColor",
           "since": "2026-11-08"
         },
         {

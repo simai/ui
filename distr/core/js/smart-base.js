@@ -897,38 +897,90 @@ function installAction(state, element, row, refuse) {
   });
   return true;
 } // --- install ----------------------------------------------------------------
+// Takes the installed table's wrappers and accessors away, and nothing else.
 
 
-function uninstallAliases(element) {
+function detach(element) {
   const store = shared();
   const state = element && store.elements.get(element);
-  if (!state) return false;
+  if (!state) return null;
   store.elements.delete(element);
   state.observer?.disconnect();
   state.controller.abort();
 
   for (const restore of state.restore.reverse()) restore();
 
+  return state;
+} // An install over another one -- a page's table over the one the component
+// installed from its aliases.json -- replaces it while it stands, and its
+// uninstall puts the one under it back, so the element is again as the
+// component made it. Before core.runtime 1.49.0 the component's own old
+// names were gone for good after a page's install and uninstall (lab
+// aliases, uninstall-restores). Installing the same table again replaces it in place.
+// A table under another one whose signal ended, or whose own handle was
+// uninstalled, is not put back.
+
+
+function restoreUnder(element, layer) {
+  for (let under = layer; under; under = under.under) {
+    if (under.removed || under.options.signal?.aborted) continue;
+    install(element, under.table, under.options, under);
+    return;
+  }
+}
+
+function uninstallAliases(element) {
+  const state = detach(element);
+  if (!state) return false;
+  restoreUnder(element, state.layer.under);
   return true;
 }
-function installAliases(element, table, {
-  signal,
-  adapters = {},
-  tag
-} = {}) {
+function installAliases(element, table, options = {}) {
   if (!element || typeof element.dispatchEvent !== 'function') throw new TypeError('[SIMAI Framework] SF.aliases.install needs an element');
-  uninstallAliases(element);
+  return install(element, table, options, null);
+}
+
+function install(element, table, options, layer) {
+  const {
+    signal,
+    adapters = {},
+    tag
+  } = options;
   const read = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable)(table, {
     tag: tag || element.localName || ''
   });
   const refused = [...read.refused];
-  const handle = {
-    installed: 0,
-    refused,
-    uninstall: () => uninstallAliases(element)
-  };
+
+  if (!layer) {
+    const previous = shared().elements.get(element)?.layer ?? null;
+    const under = previous && previous.table !== table ? previous : previous?.under ?? null;
+    layer = {
+      table,
+      options: {
+        signal,
+        adapters,
+        tag
+      },
+      under,
+      removed: false,
+      handle: null
+    };
+    layer.handle = {
+      installed: 0,
+      refused,
+      uninstall: () => uninstallLayer(element, layer)
+    };
+  } else {
+    layer.handle.installed = 0;
+    layer.handle.refused = refused;
+  }
+
+  const handle = layer.handle; // An install that never starts leaves what the element has.
+
   if (signal?.aborted) return handle;
+  detach(element);
   const state = {
+    layer,
     rows: read.rows,
     adapters,
     byNew: new Map(),
@@ -1026,13 +1078,31 @@ function installAliases(element, table, {
   }
 
   shared().elements.set(element, state);
-  signal?.addEventListener?.('abort', () => uninstallAliases(element), {
+  signal?.addEventListener?.('abort', () => uninstallLayer(element, layer), {
     once: true,
     signal: state.controller.signal
   });
   return handle;
+} // A handle's uninstall takes away its own table: the one standing, which puts
+// the one under it back, or one under another, which is then not put back.
+
+
+function uninstallLayer(element, layer) {
+  const top = shared().elements.get(element)?.layer;
+  if (top === layer) return uninstallAliases(element);
+
+  for (let above = top; above; above = above.under) {
+    if (above.under === layer) {
+      layer.removed = true;
+      above.under = layer.under;
+      return true;
+    }
+  }
+
+  return false;
 } // For code that sends an event by name: through the element's aliases when
 // it has them, a plain dispatch when it has none. Answers false when cancelled.
+
 
 function dispatchAliased(element, name, {
   detail = null,
@@ -3197,7 +3267,19 @@ function returnLayerFocus(wasTop, target, ancestors = []) {
   }
 
   const doc = globalThis.document;
-  if (!doc) return;
+  if (!doc) return; // Nothing had focus when the layer opened (the body was active): that is
+  // the element to give it back to, and it is still there (§19.2). The body
+  // takes no focus() call, so the focus left inside the closed layer is let
+  // go and the body is active again. A landmark here took a focus the page
+  // never gave and wrote a temporary tabindex on the page's own <main> -- in
+  // an editor that <main> is the canvas being edited (lab composition-overlay).
+
+  if (target && (target === doc.body || target === doc.documentElement)) {
+    const active = doc.activeElement;
+    if (active && active !== doc.body && active !== doc.documentElement) active.blur?.();
+    return;
+  }
+
   const candidates = new Set([...ancestors, ...doc.querySelectorAll('main, [role="main"]'), doc.body]);
 
   for (const candidate of candidates) {
@@ -4516,6 +4598,9 @@ function anchorReference(element) {
  * Keeps `floating` anchored to `reference`.
  * options: {side, align, offset, alignmentOffset, padding, flip, shift,
  *           matchWidth, fitHeight, autoUpdate, topLayer, onPosition({side, placement, x, y})}
+ * matchWidth: true makes the panel exactly as wide as the reference; "min"
+ * makes it at least as wide (a list at a field, decision C32: it may grow with
+ * its longest option up to its own cap, never narrower than the field).
  * topLayer (default true) lifts the floating element into the top layer while
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
@@ -4545,7 +4630,7 @@ function anchor(reference, floating, options = {}) {
   }; // Inline styles this helper writes are restored on stop(); the author's caps
   // are kept, so viewport fitting may only tighten them.
 
-  const written = ['position', 'left', 'top', 'right', 'bottom', 'margin', 'max-height', 'max-width', ...(settings.matchWidth ? ['width'] : [])];
+  const written = ['position', 'left', 'top', 'right', 'bottom', 'margin', 'max-height', 'max-width', ...(settings.matchWidth === 'min' ? ['min-width'] : settings.matchWidth ? ['width'] : [])];
   const saved = written.map(name => [name, floating.style.getPropertyValue(name), floating.style.getPropertyPriority(name)]);
   const authored = {
     maxHeight: floating.style.getPropertyValue('max-height')
@@ -4627,7 +4712,8 @@ function anchor(reference, floating, options = {}) {
       }) {
         if (controller.stopped) return;
         const viewportWidth = clientWidth - edges.left - edges.right;
-        if (settings.matchWidth) elements.floating.style.width = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
+        const fieldWidth = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
+        if (settings.matchWidth === 'min') elements.floating.style.minWidth = fieldWidth;else if (settings.matchWidth) elements.floating.style.width = fieldWidth;
         elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
 
         if (settings.fitHeight) {

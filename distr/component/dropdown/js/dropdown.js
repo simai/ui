@@ -724,6 +724,7 @@ function openDropdown(root) {
   syncToggleIcon(root, true);
   applyDropdownViewport(root, 4);
   positionPortalList(root);
+  if (!isPortalDropdown(root)) (0,_portal__WEBPACK_IMPORTED_MODULE_2__.alignDropdownInPlace)(list);
   root.__sfDropdownInteraction?.refresh();
 }
 
@@ -1207,6 +1208,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   alignDropdownInPlace: () => (/* binding */ alignDropdownInPlace),
 /* harmony export */   closeDropdownPortal: () => (/* binding */ closeDropdownPortal),
 /* harmony export */   openDropdownPortal: () => (/* binding */ openDropdownPortal),
 /* harmony export */   positionDropdownPortal: () => (/* binding */ positionDropdownPortal),
@@ -1251,6 +1253,28 @@ function syncFallbackContext(root, state) {
 
 function triggerOf(root) {
   return root?.querySelector('.sf-dropdown-field, .sf-dropdown-trigger') ?? null;
+} // A list that stays in place (portal="false") cannot move to stay inside the
+// screen, but it can grow the other way: when the width C32 gives it would
+// cross the screen's inline end, it hangs from the field's end instead of its
+// start (data-sf-align="end"). Measured with the attribute off, each opening.
+
+function alignDropdownInPlace(list) {
+  if (!list || list.hidden || list.hasAttribute('data-sf-portal')) {
+    list?.removeAttribute('data-sf-align');
+    return;
+  }
+
+  list.removeAttribute('data-sf-align');
+  const rect = list.getBoundingClientRect();
+  const field = (list.offsetParent ?? list.parentElement)?.getBoundingClientRect();
+  if (!field || !rect.width) return;
+  const rtl = getComputedStyle(list).direction === 'rtl';
+  const screen = document.documentElement.clientWidth;
+  const over = rtl ? rect.left < 0 : rect.right > screen; // Hung from the end it must fit better: the room on the other side of the
+  // field is larger than the room it had.
+
+  const room = rtl ? screen - field.left : field.right;
+  if (over && room > (rtl ? field.right : screen - field.left)) list.setAttribute('data-sf-align', 'end');
 }
 function positionDropdownPortal(root, list) {
   const state = portals.get(list);
@@ -1277,10 +1301,12 @@ function positionDropdownPortal(root, list) {
     state.anchor = position().anchor(field, list, {
       side: 'block-end',
       align: 'start',
-      // A list matches the width of a field, because a field is as wide as the
-      // list it opens. A trigger of the consumer's own is not: an icon button
+      // A list at a field is at least the field (decision C32): it grows with
+      // its longest option up to the list's step (--sf-popup-list-max-width)
+      // or the field, whichever is wider, and never stands narrower than the
+      // field. A trigger of the consumer's own is not a field: an icon button
       // would make the list the width of a glyph.
-      matchWidth: field.classList.contains('sf-dropdown-field'),
+      matchWidth: field.classList.contains('sf-dropdown-field') ? 'min' : false,
       fitHeight: true,
       autoUpdate: false,
       onPosition: ({
@@ -1323,7 +1349,10 @@ function openDropdownPortal(root, list, onUnavailable) {
     };
 
     portals.set(list, state);
-    root.__sfDropdownPortalList = list;
+    root.__sfDropdownPortalList = list; // Marked before it is placed: the list's cap (C32) is read as it is
+    // anchored, and a list in place keeps the field's box for its own.
+
+    list.setAttribute('data-sf-portal', '');
     if (state.native) list.setAttribute('popover', 'manual');else {
       state.parent = list.parentNode;
       state.next = list.nextSibling;
@@ -1406,6 +1435,7 @@ function closeDropdownPortal(list) {
 
   delete list.dataset.placement;
   delete state.root.dataset.placement;
+  list.removeAttribute('data-sf-portal');
   state.root.classList.remove('sf-dropdown--drop-up', 'sf-dropdown--drop-down');
   if (state.root.__sfDropdownPortalList === list) delete state.root.__sfDropdownPortalList;
   portals.delete(list); // A mode change leaves the list open. Closing/disabled/disconnect paths do
@@ -2277,7 +2307,19 @@ function returnLayerFocus(wasTop, target, ancestors = []) {
   }
 
   const doc = globalThis.document;
-  if (!doc) return;
+  if (!doc) return; // Nothing had focus when the layer opened (the body was active): that is
+  // the element to give it back to, and it is still there (§19.2). The body
+  // takes no focus() call, so the focus left inside the closed layer is let
+  // go and the body is active again. A landmark here took a focus the page
+  // never gave and wrote a temporary tabindex on the page's own <main> -- in
+  // an editor that <main> is the canvas being edited (lab composition-overlay).
+
+  if (target && (target === doc.body || target === doc.documentElement)) {
+    const active = doc.activeElement;
+    if (active && active !== doc.body && active !== doc.documentElement) active.blur?.();
+    return;
+  }
+
   const candidates = new Set([...ancestors, ...doc.querySelectorAll('main, [role="main"]'), doc.body]);
 
   for (const candidate of candidates) {
@@ -2835,6 +2877,9 @@ function anchorReference(element) {
  * Keeps `floating` anchored to `reference`.
  * options: {side, align, offset, alignmentOffset, padding, flip, shift,
  *           matchWidth, fitHeight, autoUpdate, topLayer, onPosition({side, placement, x, y})}
+ * matchWidth: true makes the panel exactly as wide as the reference; "min"
+ * makes it at least as wide (a list at a field, decision C32: it may grow with
+ * its longest option up to its own cap, never narrower than the field).
  * topLayer (default true) lifts the floating element into the top layer while
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
@@ -2864,7 +2909,7 @@ function anchor(reference, floating, options = {}) {
   }; // Inline styles this helper writes are restored on stop(); the author's caps
   // are kept, so viewport fitting may only tighten them.
 
-  const written = ['position', 'left', 'top', 'right', 'bottom', 'margin', 'max-height', 'max-width', ...(settings.matchWidth ? ['width'] : [])];
+  const written = ['position', 'left', 'top', 'right', 'bottom', 'margin', 'max-height', 'max-width', ...(settings.matchWidth === 'min' ? ['min-width'] : settings.matchWidth ? ['width'] : [])];
   const saved = written.map(name => [name, floating.style.getPropertyValue(name), floating.style.getPropertyPriority(name)]);
   const authored = {
     maxHeight: floating.style.getPropertyValue('max-height')
@@ -2946,7 +2991,8 @@ function anchor(reference, floating, options = {}) {
       }) {
         if (controller.stopped) return;
         const viewportWidth = clientWidth - edges.left - edges.right;
-        if (settings.matchWidth) elements.floating.style.width = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
+        const fieldWidth = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
+        if (settings.matchWidth === 'min') elements.floating.style.minWidth = fieldWidth;else if (settings.matchWidth) elements.floating.style.width = fieldWidth;
         elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
 
         if (settings.fitHeight) {

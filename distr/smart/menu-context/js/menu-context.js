@@ -959,11 +959,29 @@ const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default());
 
-const TYPEAHEAD_MS = 500; // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
+const TYPEAHEAD_MS = 500; // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
+// class sheet sizes each from core's --sf-popup-*-width steps, which follow
+// the density. "content" (the default) is the menu's rule.
+
+const WIDTH_KINDS = new Set(["list", "panel", "form", "form-wide"]);
+const FORM_KINDS = new Set(["form", "form-wide"]); // On a phone -- below the md breakpoint, where core declares
+// --sf-breakpoint-md -- a form is a sheet at the bottom of the screen. A
+// tablet (md up to lg) has room for the form's step beside its control, so it
+// keeps the anchored form; a sheet there was a full-width strip for a field
+// (C32 acceptance, 2026-11-09).
+
+const onPhone = () => !getComputedStyle(document.documentElement).getPropertyValue("--sf-breakpoint-md").trim(); // What a form, a panel or a slot's own markup holds instead of rows: the
+// first of these takes the focus when the menu has no row and no search.
+
+
+const TABBABLE = 'input:not([type="hidden"]), select, textarea, button, a[href], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable="true"]';
+
+const editable = element => Boolean(element?.matches?.('input, select, textarea, [contenteditable=""], [contenteditable="true"]')); // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
 // A row's path in the tree, the way the template writes it into the markup:
 // "2" is a row of the level and "2/1" a row inside that row -- its submenu, or
 // the items of a group. The step says it went one list in, so the depth and the
 // place are read from the path alone.
+
 
 const inside = entry => Array.isArray(entry?.submenu) ? entry.submenu : Array.isArray(entry?.items) ? entry.items : null;
 
@@ -1767,6 +1785,12 @@ class SfContextMenu extends ContextMenuElement {
 
   searchField() {
     return this.querySelector(".sf-context-menu-search-input");
+  } // The controls of the open surface that Tab reaches, in order.
+
+
+  tabbables() {
+    const surface = this.surface() ?? this;
+    return Array.from(surface.querySelectorAll(TABBABLE)).filter(element => !element.matches(":disabled") && !element.closest('[hidden], [inert]') && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden");
   } // One option of a choice row: the menu marks it at once, so the row shows
   // the choice while the host applies it, and stays open -- a theme is tried,
   // not committed. The row is found by its path, so a choice row inside a
@@ -1949,9 +1973,14 @@ class SfContextMenu extends ContextMenuElement {
   surface() {
     return this.querySelector(":scope > .sf-context-menu");
   } // width: "content" (the default) lets the menu be as wide as its longest
-  // line; "trigger" makes it exactly as wide as the control that opened it --
-  // a site switcher, a profile button (owner, 2026-10-14) -- a long line ending
-  // in an ellipsis; a CSS length fixes it. The attribute gives the default.
+  // line, between the menu's clamps; "trigger" makes it exactly as wide as the
+  // control that opened it -- a site switcher, a profile button (owner,
+  // 2026-10-14) -- a long line ending in an ellipsis; a CSS length fixes it.
+  // The kinds of decision C32 size it by what it holds: "list" (at least the
+  // trigger, up to the list's step or the trigger), "panel" (the panel's step
+  // or the trigger, whichever is wider), "form" and "form-wide" (the form's
+  // steps; on a phone a sheet at the bottom, the screen's width). The
+  // attribute gives the default.
 
 
   async openFor(anchor, {
@@ -2023,7 +2052,21 @@ class SfContextMenu extends ContextMenuElement {
     }
 
     const content = this.querySelector(".sf-context-menu-content");
-    const sized = width && width !== "content";
+    const kind = WIDTH_KINDS.has(width) ? width : ""; // The control's width, for the kinds that read it (C32), public while
+    // the menu is open: a page may size a part of the panel by it.
+
+    const triggerWidth = () => `${(position().referenceRect?.(anchor) ?? anchor.getBoundingClientRect()).width}px`;
+
+    surface.style.setProperty("--sf-context-menu-trigger-inline-size", triggerWidth());
+    this._owned.trigger = triggerWidth;
+
+    if (content) {
+      if (kind) content.setAttribute("data-sf-width", kind);else content.removeAttribute("data-sf-width");
+      this._owned.kindContent = content;
+    }
+
+    const sheet = FORM_KINDS.has(kind) && onPhone();
+    const sized = width && width !== "content" && !kind;
 
     if (sized && content) {
       // A display: contents trigger (sf-button-icon, sf-button) is as wide as
@@ -2036,23 +2079,56 @@ class SfContextMenu extends ContextMenuElement {
       this._owned.sizedContent = content;
     } // offset: the gap between the trigger and the menu, a token or a length
     // (simai/ui-source#69); left out, the positioning's own --sf-space-1/4.
+    // A form on a phone is not anchored: it is a sheet at the bottom of the
+    // screen (the sheet's rules are the class sheet's).
 
 
-    this._owned.position = position().anchor(anchor, surface, {
-      side,
-      align,
-      alignmentOffset,
-      flip: true,
-      shift: true,
-      fitHeight: true,
-      matchWidth: width === "trigger",
-      ...(offset === undefined || offset === null || offset === "" ? {} : {
-        offset
-      })
-    }); // A menu it opens owns Escape, so the root says a surface is open: a record
+    const owned = this._owned;
+
+    const place = asSheet => {
+      owned.position?.stop();
+      owned.position = null;
+      owned.sheet = asSheet;
+
+      if (asSheet) {
+        surface.setAttribute("data-sf-sheet", "");
+        return;
+      }
+
+      surface.removeAttribute("data-sf-sheet");
+      owned.position = position().anchor(anchor, surface, {
+        side,
+        align,
+        alignmentOffset,
+        flip: true,
+        shift: true,
+        fitHeight: true,
+        matchWidth: width === "trigger",
+        ...(offset === undefined || offset === null || offset === "" ? {} : {
+          offset
+        }),
+        // The trigger may change its width while the menu is open (a field
+        // that grows): the width the kinds read follows it.
+        onPosition: () => {
+          if (this._owned?.anchor === anchor) surface.style.setProperty("--sf-context-menu-trigger-inline-size", triggerWidth());
+        }
+      });
+    };
+
+    place(sheet); // A form stays what the screen makes it: opened wide and the window
+    // narrowed to a phone, it becomes the sheet; widened, it is anchored again.
+
+    if (FORM_KINDS.has(kind)) {
+      owned.onResize = () => {
+        if (this._owned === owned && onPhone() !== owned.sheet) place(onPhone());
+      };
+
+      window.addEventListener("resize", owned.onResize);
+    } // A menu it opens owns Escape, so the root says a surface is open: a record
     // panel listening on the document in capture runs before the menu's own
     // listener and would otherwise close with it. The outside press comes from
     // the stack.
+
 
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__.holdOpenSurfaceMark)(this, true, {
       onOutsidePress: this._onOutsidePress
@@ -2063,9 +2139,15 @@ class SfContextMenu extends ContextMenuElement {
       this.syncMenuItems();
       const items = this.availableMenuItems();
       const field = this.searchField();
+      const row = focus === "last" ? items[items.length - 1] : items[0];
       if (field && focus !== "last") field.focus({
         preventScroll: true
-      });else (focus === "last" ? items[items.length - 1] : items[0])?.focus({
+      });else if (row) row.focus({
+        preventScroll: true
+      }); // A form or a slot's own markup has no row: its first control takes
+      // the focus, so the keys -- Escape among them -- reach the menu (C32
+      // acceptance, 2026-11-09: the focus stayed on the trigger).
+      else this.tabbables()[focus === "last" ? this.tabbables().length - 1 : 0]?.focus({
         preventScroll: true
       });
     }
@@ -2114,11 +2196,13 @@ class SfContextMenu extends ContextMenuElement {
 
     clearTimeout(this._hoverTimer);
     owned.position?.stop();
+    if (owned.onResize) window.removeEventListener("resize", owned.onResize);
 
     for (const name of ["--sf-context-menu--min-inline-size", "--sf-context-menu--max-inline-size", "inline-size"]) {
       owned.sizedContent?.style.removeProperty(name);
     }
 
+    owned.kindContent?.removeAttribute("data-sf-width");
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__.holdOpenSurfaceMark)(this, false);
     const surface = this.surface();
 
@@ -2127,6 +2211,8 @@ class SfContextMenu extends ContextMenuElement {
       surface.removeAttribute("popover");
       surface.classList.remove("sf-context-menu--open");
       surface.style.removeProperty("z-index");
+      surface.style.removeProperty("--sf-context-menu-trigger-inline-size");
+      surface.removeAttribute("data-sf-sheet");
 
       if (owned.density !== undefined) {
         if (owned.density === null) surface.removeAttribute("data-sf-density");else surface.setAttribute("data-sf-density", owned.density);
@@ -2300,13 +2386,29 @@ class SfContextMenu extends ContextMenuElement {
       return;
     }
 
-    if (event.key === "Escape" || event.key === outward && this._owned.parentMenu) {
+    if (event.key === "Escape" || event.key === outward && this._owned.parentMenu && !editable(event.target)) {
       event.preventDefault();
       event.stopPropagation();
       this.close({
         reason: event.key === "Escape" ? "escape" : "api"
       });
       return;
+    } // In a form or a panel Tab walks its controls. Past the last (or before
+    // the first) it leaves a popup for the page; a sheet, which covers the
+    // page, takes it round to the other end.
+
+
+    if (event.key === "Tab" && !this.menuItems().includes(event.target) && this.tabbables().length > 1) {
+      const controls = this.tabbables();
+      const at = controls.indexOf(event.target);
+      const edge = event.shiftKey ? 0 : controls.length - 1;
+      if (at !== edge && at >= 0) return;
+
+      if (this._owned.sheet) {
+        event.preventDefault();
+        controls[event.shiftKey ? controls.length - 1 : 0].focus();
+        return;
+      }
     }
 
     if (event.key === "Tab") {
@@ -2326,9 +2428,10 @@ class SfContextMenu extends ContextMenuElement {
         focus: "first"
       });
       return;
-    }
+    } // Letters typed into a form's field are the field's.
 
-    if (event.key.length === 1 && event.key !== " ") this.typeahead(event);
+
+    if (event.key.length === 1 && event.key !== " " && !editable(event.target)) this.typeahead(event);
   } // Enter in the search field: the first row the query left is chosen, as a
   // press on it would choose it -- a command row selects and closes, a
   // submenu row opens, a drilling row goes a level in. A word still being
@@ -2439,7 +2542,8 @@ class SfContextMenu extends ContextMenuElement {
         default: "1/2"
       },
       // How wide the menu opens: "content" (its longest line, the default),
-      // "trigger" (exactly the control that opened it) or a CSS length.
+      // "trigger" (exactly the control that opened it), a kind of decision
+      // C32 ("list", "panel", "form", "form-wide") or a CSS length.
       width: {
         default: "content"
       },
@@ -3224,7 +3328,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.13.6","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.14.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

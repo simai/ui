@@ -2413,7 +2413,9 @@
      gap of the tag's own (the step was larger than a button's). Measured before: an icon
      was a size larger at 1/3, which made the tag taller than its neighbours, and
      a size smaller at 2 and 3. Inline tags in a field set --sf-tag--label-* and keep
-     their own insets. */
+     their own insets. The icon is the glyph a class tag holds, or the glyph of the
+     sf-icon a Smart tag draws (sf-tag 1.3.2: a bare glyph never reached the icon
+     font request). */
   .sf-tag.sf-tag--size-1\/3 {
     --sf-tag--gap: var(--sf-tag-gap, 0);
   }
@@ -2426,7 +2428,8 @@
     --sf-tag-count--line-height: var(--sf-text-height-1\/3);
     --sf-tag-count--padding-inline-end: var(--sf-ui-1\/3--text-space-x);
   }
-  .sf-tag.sf-tag--size-1\/3 > .sf-icon {
+  .sf-tag.sf-tag--size-1\/3 > .sf-icon,
+  .sf-tag.sf-tag--size-1\/3 > sf-icon > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-1\/3);
     --sf-icon--height: var(--sf-text-height-1\/3);
     --sf-icon--width: var(--sf-text-height-1\/3);
@@ -2453,7 +2456,8 @@
     --sf-tag-count--line-height: var(--sf-text-height-1\/2);
     --sf-tag-count--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
   }
-  .sf-tag.sf-tag--size-1\/2 > .sf-icon {
+  .sf-tag.sf-tag--size-1\/2 > .sf-icon,
+  .sf-tag.sf-tag--size-1\/2 > sf-icon > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
@@ -2480,7 +2484,8 @@
     --sf-tag-count--line-height: var(--sf-text-height-1);
     --sf-tag-count--padding-inline-end: var(--sf-ui-1--text-space-x);
   }
-  .sf-tag.sf-tag--size-1 > .sf-icon {
+  .sf-tag.sf-tag--size-1 > .sf-icon,
+  .sf-tag.sf-tag--size-1 > sf-icon > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-1);
     --sf-icon--height: var(--sf-text-height-1);
     --sf-icon--width: var(--sf-text-height-1);
@@ -2507,7 +2512,8 @@
     --sf-tag-count--line-height: var(--sf-text-height-2);
     --sf-tag-count--padding-inline-end: var(--sf-ui-2--text-space-x);
   }
-  .sf-tag.sf-tag--size-2 > .sf-icon {
+  .sf-tag.sf-tag--size-2 > .sf-icon,
+  .sf-tag.sf-tag--size-2 > sf-icon > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-2);
     --sf-icon--height: var(--sf-text-height-2);
     --sf-icon--width: var(--sf-text-height-2);
@@ -2534,7 +2540,8 @@
     --sf-tag-count--line-height: var(--sf-text-height-3);
     --sf-tag-count--padding-inline-end: var(--sf-ui-3--text-space-x);
   }
-  .sf-tag.sf-tag--size-3 > .sf-icon {
+  .sf-tag.sf-tag--size-3 > .sf-icon,
+  .sf-tag.sf-tag--size-3 > sf-icon > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-3);
     --sf-icon--height: var(--sf-text-height-3);
     --sf-icon--width: var(--sf-text-height-3);

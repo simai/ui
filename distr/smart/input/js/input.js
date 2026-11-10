@@ -704,6 +704,264 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "151a293c8c90"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ariaKeyShortcuts: () => (/* binding */ ariaKeyShortcuts),
+/* harmony export */   isApplePlatform: () => (/* binding */ isApplePlatform),
+/* harmony export */   isCommandShortcut: () => (/* binding */ isCommandShortcut),
+/* harmony export */   isEditableTarget: () => (/* binding */ isEditableTarget),
+/* harmony export */   matchesShortcut: () => (/* binding */ matchesShortcut),
+/* harmony export */   parseShortcut: () => (/* binding */ parseShortcut),
+/* harmony export */   shortcutCaps: () => (/* binding */ shortcutCaps),
+/* harmony export */   shortcutView: () => (/* binding */ shortcutView)
+/* harmony export */ });
+// A key combination as a `shortcut` setting writes it (sf-button, an entry
+// of sf-menu-context, a row of sf-search): words joined by +, the modifiers
+// first and the key last -- mod+k, shift+/, /, escape. `mod` is the
+// platform's command modifier: Cmd on Apple platforms, Ctrl elsewhere. Read
+// once per render; nothing here holds state.
+//
+// The kbd component owns how a combination reads (owner decision 2026-11-07,
+// docs review R030, rule C04): on an Apple platform the modifiers are glyphs
+// in the platform's order, side by side (⇧⌘P); elsewhere they are words in
+// Ctrl+Shift+P order, and shortcutView() says to join them with + -- the kbd
+// sheet shows the joins where keys are plain glyphs (a menu row, a tooltip)
+// and hides them between caps, which stand apart. A host renders the view
+// and never styles the keys.
+const MODIFIERS = ['mod', 'ctrl', 'alt', 'shift', 'meta']; // What a person reads on a key cap, per platform.
+
+const MAC_CAPS = {
+  mod: '⌘',
+  meta: '⌘',
+  ctrl: '⌃',
+  alt: '⌥',
+  shift: '⇧'
+};
+const OTHER_CAPS = {
+  mod: 'Ctrl',
+  meta: 'Win',
+  ctrl: 'Ctrl',
+  alt: 'Alt',
+  shift: 'Shift'
+}; // A cap of one character -- a letter, ⌘, ⇧, ↵ -- is a square key; a cap of
+// several letters (Esc, Ctrl, Shift) hugs its word (sheet:
+// .sf-button-shortcut-key--square). A modifier's cap is the platform's own
+// word, so a page printed on a Mac and drawn on Windows widens by the
+// difference: the keys are true to their caps, not to the widest platform
+// (docs review R010, 2026-11-06).
+
+const KEY_CAPS = {
+  enter: '↵',
+  return: '↵',
+  escape: 'Esc',
+  esc: 'Esc',
+  tab: 'Tab',
+  space: 'Space',
+  backspace: '⌫',
+  delete: 'Del',
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
+  arrowup: '↑',
+  arrowdown: '↓',
+  arrowleft: '←',
+  arrowright: '→',
+  home: 'Home',
+  end: 'End',
+  pageup: 'PgUp',
+  pagedown: 'PgDn'
+}; // The names of KeyboardEvent.key for the words above.
+
+const KEY_NAMES = {
+  enter: 'Enter',
+  return: 'Enter',
+  escape: 'Escape',
+  esc: 'Escape',
+  tab: 'Tab',
+  space: ' ',
+  backspace: 'Backspace',
+  delete: 'Delete',
+  up: 'ArrowUp',
+  down: 'ArrowDown',
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  arrowup: 'ArrowUp',
+  arrowdown: 'ArrowDown',
+  arrowleft: 'ArrowLeft',
+  arrowright: 'ArrowRight',
+  home: 'Home',
+  end: 'End',
+  pageup: 'PageUp',
+  pagedown: 'PageDown'
+}; // KeyboardEvent.code of the punctuation a shortcut is usually written with,
+// so the combination is heard on any keyboard layout.
+
+const PUNCTUATION_CODES = {
+  '/': 'Slash',
+  '.': 'Period',
+  ',': 'Comma',
+  ';': 'Semicolon',
+  "'": 'Quote',
+  '[': 'BracketLeft',
+  ']': 'BracketRight',
+  '-': 'Minus',
+  '=': 'Equal',
+  '`': 'Backquote',
+  '\\': 'Backslash'
+};
+function isApplePlatform() {
+  const platform = globalThis.navigator?.userAgentData?.platform || globalThis.navigator?.platform || '';
+  return /mac|iphone|ipad|ipod/iu.test(platform);
+}
+/**
+ * The combination as parts: `{modifiers: Set, key}`, or null when there is
+ * none. `+` as the key itself is written `mod+plus`.
+ */
+
+function parseShortcut(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text) return null;
+  const words = text === '+' ? ['+'] : text.split('+').map(word => word.trim()).filter(Boolean);
+  if (!words.length) return null;
+  const key = words.at(-1) === 'plus' ? '+' : words.at(-1);
+  const modifiers = new Set(words.slice(0, -1).filter(word => MODIFIERS.includes(word)));
+  return {
+    modifiers,
+    key
+  };
+}
+/**
+ * What the keys read, one cap per key in the platform's words: {text, square},
+ * square when the cap is one character.
+ */
+
+function shortcutCaps(parsed, apple = isApplePlatform()) {
+  if (!parsed) return [];
+  const caps = apple ? MAC_CAPS : OTHER_CAPS;
+  const order = apple ? ['ctrl', 'alt', 'shift', 'mod', 'meta'] : ['mod', 'ctrl', 'meta', 'alt', 'shift'];
+  const modifiers = [];
+
+  for (const name of order.filter(one => parsed.modifiers.has(one))) {
+    // On a Mac mod and meta are one key.
+    if (modifiers.includes(caps[name])) continue;
+    modifiers.push(caps[name]);
+  }
+
+  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  return [...modifiers, key].map(text => ({
+    text,
+    square: [...text].length === 1
+  }));
+} // A function key (F1-F24) reads as its name.
+
+const FUNCTION_KEY = /^f(?:[1-9]|1[0-9]|2[0-4])$/u; // Whether a written value is the notation above rather than text a page
+// already wrote for people (⇧⌘L, «Ctrl K»): every word but the last a
+// modifier, the last one character, a named key or a function key.
+
+function isNotation(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text || /\s/u.test(text.replace(/\s*\+\s*/gu, '+'))) return false;
+  if (text === '+') return true;
+  const words = text.split('+').map(word => word.trim());
+  if (words.some(word => !word)) return false;
+  const key = words.at(-1) === 'plus' ? '+' : words.at(-1);
+  return words.slice(0, -1).every(word => MODIFIERS.includes(word)) && ([...key].length === 1 || key in KEY_CAPS || FUNCTION_KEY.test(key));
+}
+/**
+ * What a host draws for a `shortcut` value: {keys: [{text, square}], join},
+ * the keys in this platform's words and whether they are joined with + (not
+ * on an Apple platform, and only between keys). A value that is not the
+ * notation -- text a page wrote for people, such as ⇧⌘L -- is one key of
+ * that text. Empty: no keys.
+ */
+
+
+function shortcutView(value, apple = isApplePlatform()) {
+  const text = String(value ?? '').trim();
+  if (!text) return {
+    keys: [],
+    join: false
+  };
+  if (!isNotation(text)) return {
+    keys: [{
+      text,
+      square: [...text].length === 1
+    }],
+    join: false
+  };
+  const keys = shortcutCaps(parseShortcut(text), apple);
+  return {
+    keys,
+    join: !apple && keys.length > 1
+  };
+}
+/** The value of aria-keyshortcuts (WAI-ARIA 1.2): Meta+K, Control+K, /. */
+
+function ariaKeyShortcuts(parsed, apple = isApplePlatform()) {
+  if (!parsed) return '';
+  const names = [];
+  if (parsed.modifiers.has('ctrl') || parsed.modifiers.has('mod') && !apple) names.push('Control');
+  if (parsed.modifiers.has('alt')) names.push('Alt');
+  if (parsed.modifiers.has('shift')) names.push('Shift');
+  if (parsed.modifiers.has('meta') || parsed.modifiers.has('mod') && apple) names.push('Meta');
+  const key = KEY_NAMES[parsed.key] ?? (parsed.key === ' ' ? 'Space' : parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key);
+  return [...names, key === ' ' ? 'Space' : key].join('+');
+} // Whether the event's key is the combination's key: by the character it
+// typed, or by the physical key for a letter, a digit or the punctuation
+// above, so mod+k is heard on a Russian layout too.
+
+function sameKey(event, key) {
+  const name = KEY_NAMES[key];
+  if (name) return event.key === name;
+  if (String(event.key).toLowerCase() === key) return true;
+  if (/^[a-z]$/u.test(key)) return event.code === `Key${key.toUpperCase()}`;
+  if (/^[0-9]$/u.test(key)) return event.code === `Digit${key}`;
+  return PUNCTUATION_CODES[key] !== undefined && event.code === PUNCTUATION_CODES[key];
+}
+/** Whether a keydown is the combination. */
+
+
+function matchesShortcut(event, parsed, apple = isApplePlatform()) {
+  if (!parsed || !event) return false;
+  const wants = {
+    ctrl: parsed.modifiers.has('ctrl') || parsed.modifiers.has('mod') && !apple,
+    meta: parsed.modifiers.has('meta') || parsed.modifiers.has('mod') && apple,
+    alt: parsed.modifiers.has('alt'),
+    shift: parsed.modifiers.has('shift')
+  };
+  if (Boolean(event.ctrlKey) !== wants.ctrl || Boolean(event.metaKey) !== wants.meta || Boolean(event.altKey) !== wants.alt) return false; // Shift is part of typing a punctuation mark on many layouts (? is shift+/):
+  // a combination that does not name it does not mind it for punctuation, and
+  // minds it for a letter, a digit or a named key.
+
+  const punctuation = parsed.key.length === 1 && !/^[a-z0-9]$/u.test(parsed.key);
+  if (!punctuation && Boolean(event.shiftKey) !== wants.shift) return false;
+  if (punctuation && wants.shift && !event.shiftKey) return false;
+  return sameKey(event, parsed.key);
+}
+/** A combination with mod, ctrl, alt or meta is a command even in a field. */
+
+function isCommandShortcut(parsed) {
+  return Boolean(parsed) && ['mod', 'ctrl', 'alt', 'meta'].some(name => parsed.modifiers.has(name));
+}
+/** Whether focus is where a person types: a field, a select or editable text. */
+
+function isEditableTarget(target) {
+  const element = target instanceof Element ? target : null;
+  if (!element) return false;
+  if (element.isContentEditable) return true;
+  const tag = element.localName;
+  if (tag === 'textarea' || tag === 'select') return true;
+  if (tag !== 'input') return false;
+  const type = (element.getAttribute('type') || 'text').toLowerCase();
+  return !['button', 'submit', 'reset', 'checkbox', 'radio', 'range', 'color', 'file', 'image', 'hidden'].includes(type);
+}
+
+/***/ },
+
 /***/ "0ab12d47912a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1737,10 +1995,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("38b38b744888");
+/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("151a293c8c90");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38b38b744888");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -1783,8 +2043,17 @@ function renderInputTemplate(context) {
     maskLazy,
     maskPlaceholderChar,
     maskOptions,
-    ariaLabel
-  } = context;
+    ariaLabel,
+    shortcut
+  } = context; // The shortcut's keys (C04, C38): the kbd component's, read in this
+  // platform's words; the field draws them at its end and never styles them.
+  // The native input says the combination in aria-keyshortcuts.
+
+  const {
+    keys: shortcutKeys,
+    join: shortcutJoin
+  } = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.shortcutView)(shortcut);
+  const keyShortcuts = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.parseShortcut)(shortcut));
   const maskLazyValue = maskLazy === '' ? '' : String(maskLazy); // A number field (1.5.0) takes the native range and step; other types do
   // not carry them.
 
@@ -1837,6 +2106,7 @@ function renderInputTemplate(context) {
   const leftContent = context.component?.hasSlotContent?.('start') ? context.component.getSlotContent('start') : context.component?.hasSlotContent?.('left') ? context.component.getSlotContent('left') : leftIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-left flex"><sf-icon icon="${leftIcon}"></sf-icon></span>` : '';
   const rightContent = context.component?.hasSlotContent?.('end') ? context.component.getSlotContent('end') : context.component?.hasSlotContent?.('right') ? context.component.getSlotContent('right') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           ${rightText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-right"><span class="sf-input-text">${rightText}</span></span>` : ''}
+          ${shortcutKeys.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-right sf-input-shortcut" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutKeys.map((key, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${key.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${key.text}</kbd>`)}</kbd></span>` : ''}
           ${hintIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-hint flex"><sf-icon icon="${hintIcon}"></sf-icon></span>` : ''}
         `;
   const hintContent = context.component?.hasSlotContent?.('hint') ? context.component.getSlotContent('hint') : hint;
@@ -1885,6 +2155,7 @@ function renderInputTemplate(context) {
                 ?readonly=${readonly}
                 ?required=${field.required}
                 aria-label=${accessibleName}
+                aria-keyshortcuts=${keyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1914,6 +2185,7 @@ function renderInputTemplate(context) {
                 ?readonly=${readonly}
                 ?required=${field.required}
                 aria-label=${accessibleName}
+                aria-keyshortcuts=${keyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2018,7 +2290,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.6.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.7.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

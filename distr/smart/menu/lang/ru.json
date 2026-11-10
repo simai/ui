@@ -2,10 +2,16 @@
   "title": "Меню",
   "runtime": {
     "toggle-label": "Меню",
+    "more-label": "Ещё",
     "status-success": "в порядке",
     "status-warning": "внимание",
     "status-error": "ошибка",
     "status-info": "есть новое",
-    "status-neutral": "нет данных"
+    "status-neutral": "нет данных",
+    "subsections": "подразделы",
+    "search-placeholder": "Поиск",
+    "search-found": "Найдено: {n}",
+    "search-empty": "Ничего не найдено",
+    "new-tab": "откроется в новой вкладке"
   }
 }

@@ -301,6 +301,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   alignDropdownInPlace: () => (/* binding */ alignDropdownInPlace),
 /* harmony export */   closeDropdownPortal: () => (/* binding */ closeDropdownPortal),
 /* harmony export */   openDropdownPortal: () => (/* binding */ openDropdownPortal),
 /* harmony export */   positionDropdownPortal: () => (/* binding */ positionDropdownPortal),
@@ -349,6 +350,28 @@ function syncFallbackContext(root, state) {
 
 function triggerOf(root) {
   return root?.querySelector('.sf-dropdown-field, .sf-dropdown-trigger') ?? null;
+} // A list that stays in place (portal="false") cannot move to stay inside the
+// screen, but it can grow the other way: when the width C32 gives it would
+// cross the screen's inline end, it hangs from the field's end instead of its
+// start (data-sf-align="end"). Measured with the attribute off, each opening.
+
+function alignDropdownInPlace(list) {
+  if (!list || list.hidden || list.hasAttribute('data-sf-portal')) {
+    list?.removeAttribute('data-sf-align');
+    return;
+  }
+
+  list.removeAttribute('data-sf-align');
+  const rect = list.getBoundingClientRect();
+  const field = (list.offsetParent ?? list.parentElement)?.getBoundingClientRect();
+  if (!field || !rect.width) return;
+  const rtl = getComputedStyle(list).direction === 'rtl';
+  const screen = document.documentElement.clientWidth;
+  const over = rtl ? rect.left < 0 : rect.right > screen; // Hung from the end it must fit better: the room on the other side of the
+  // field is larger than the room it had.
+
+  const room = rtl ? screen - field.left : field.right;
+  if (over && room > (rtl ? field.right : screen - field.left)) list.setAttribute('data-sf-align', 'end');
 }
 function positionDropdownPortal(root, list) {
   const state = portals.get(list);
@@ -375,10 +398,12 @@ function positionDropdownPortal(root, list) {
     state.anchor = position().anchor(field, list, {
       side: 'block-end',
       align: 'start',
-      // A list matches the width of a field, because a field is as wide as the
-      // list it opens. A trigger of the consumer's own is not: an icon button
+      // A list at a field is at least the field (decision C32): it grows with
+      // its longest option up to the list's step (--sf-popup-list-max-width)
+      // or the field, whichever is wider, and never stands narrower than the
+      // field. A trigger of the consumer's own is not a field: an icon button
       // would make the list the width of a glyph.
-      matchWidth: field.classList.contains('sf-dropdown-field'),
+      matchWidth: field.classList.contains('sf-dropdown-field') ? 'min' : false,
       fitHeight: true,
       autoUpdate: false,
       onPosition: ({
@@ -421,7 +446,10 @@ function openDropdownPortal(root, list, onUnavailable) {
     };
 
     portals.set(list, state);
-    root.__sfDropdownPortalList = list;
+    root.__sfDropdownPortalList = list; // Marked before it is placed: the list's cap (C32) is read as it is
+    // anchored, and a list in place keeps the field's box for its own.
+
+    list.setAttribute('data-sf-portal', '');
     if (state.native) list.setAttribute('popover', 'manual');else {
       state.parent = list.parentNode;
       state.next = list.nextSibling;
@@ -504,6 +532,7 @@ function closeDropdownPortal(list) {
 
   delete list.dataset.placement;
   delete state.root.dataset.placement;
+  list.removeAttribute('data-sf-portal');
   state.root.classList.remove('sf-dropdown--drop-up', 'sf-dropdown--drop-down');
   if (state.root.__sfDropdownPortalList === list) delete state.root.__sfDropdownPortalList;
   portals.delete(list); // A mode change leaves the list open. Closing/disabled/disconnect paths do
@@ -1484,7 +1513,9 @@ class SfDropdown extends DropdownElement {
 
   positionPortalList() {
     if (!this._list || !this._dropdownRoot || !this.portal || !this._open) {
-      (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list);
+      (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list); // In place: the list grows toward the side the screen has room on.
+
+      if (this._open) (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.alignDropdownInPlace)(this._list);
       return;
     }
 
@@ -1588,14 +1619,19 @@ const FIELD_TAG = Object.freeze({
     size: "2",
     spacing: "compact"
   }
-}); // A single choice shows its picture in the field as well as its label.
+}); // A single choice shows its picture in the field as well as its label. The
+// pictures of a choice -- this one and an icon tag's -- are sf-icon elements,
+// as in every other component: the element tells the Loader its name, so the
+// name joins the first icon font request. A bare <i class="sf-icon"> drawn
+// here after the page's scan was found only later and its glyph came late
+// (the defect sf-tag 1.3.2 fixed, 2026-11-09).
 
 function renderFieldVisual(context) {
   if (context.multiple || context.selectedOptions?.length !== 1) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const option = context.selectedOptions[0];
 
   if (option.type === "icon" && option.icon) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-dropdown-field-visual" aria-hidden="true">${option.icon}</i>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${option.icon} root-class="sf-dropdown-field-visual" aria-hidden="true"></sf-icon>`;
   }
 
   if (option.type === "color" && option.colorClass) {
@@ -1621,7 +1657,7 @@ function renderTag(context, option) {
       data-value=${option.value}
     >
       ${option.type === "color" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-color-icon ${option.colorClass}" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ${option.type === "icon" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-tag-icon" aria-hidden="true">${option.icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${option.type === "icon" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${option.icon} root-class="sf-tag-icon" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${option.type === "avatar" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <span
               class="sf-avatar sf-avatar--size-${tagSize} bg-cover"
@@ -2420,7 +2456,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.7.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.8.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

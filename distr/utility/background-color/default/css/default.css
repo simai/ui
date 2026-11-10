@@ -629,99 +629,6 @@
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
   }
-  .active\:bg-surface-container:active {
-    background-color: var(--sf-surface-container-active);
-  }
-  .active\:bg-on-surface:active {
-    background-color: var(--sf-on-surface-active);
-  }
-  .active\:bg-surface-transparent:active {
-    background-color: var(--sf-surface-transparent-active);
-  }
-  .active\:bg-primary:active {
-    background-color: var(--sf-primary-active);
-  }
-  .active\:bg-primary-container:active {
-    background-color: var(--sf-primary-container-active);
-  }
-  .active\:bg-primary-transparent:active {
-    background-color: var(--sf-primary-transparent-active);
-  }
-  .active\:bg-secondary:active {
-    background-color: var(--sf-secondary-active);
-  }
-  .active\:bg-secondary-container:active {
-    background-color: var(--sf-secondary-container-active);
-  }
-  .active\:bg-secondary-transparent:active {
-    background-color: var(--sf-secondary-transparent-active);
-  }
-  .active\:bg-tertiary:active {
-    background-color: var(--sf-tertiary-active);
-  }
-  .active\:bg-tertiary-container:active {
-    background-color: var(--sf-tertiary-container-active);
-  }
-  .active\:bg-tertiary-transparent:active {
-    background-color: var(--sf-tertiary-transparent-active);
-  }
-  .active\:bg-error:active {
-    background-color: var(--sf-error-active);
-  }
-  .active\:bg-error-container:active {
-    background-color: var(--sf-error-container-active);
-  }
-  .active\:bg-error-transparent:active {
-    background-color: var(--sf-error-transparent-active);
-  }
-  .active\:bg-warning:active {
-    background-color: var(--sf-warning-active);
-  }
-  .active\:bg-warning-container:active {
-    background-color: var(--sf-warning-container-active);
-  }
-  .active\:bg-warning-transparent:active {
-    background-color: var(--sf-warning-transparent-active);
-  }
-  .active\:bg-success:active {
-    background-color: var(--sf-success-active);
-  }
-  .active\:bg-success-container:active {
-    background-color: var(--sf-success-container-active);
-  }
-  .active\:bg-success-transparent:active {
-    background-color: var(--sf-success-transparent-active);
-  }
-  .active\:bg-info:active {
-    background-color: var(--sf-info-active);
-  }
-  .active\:bg-info-container:active {
-    background-color: var(--sf-info-container-active);
-  }
-  .active\:bg-info-state:active {
-    background-color: var(--sf-info-state-active);
-  }
-  .active\:bg-surface-state:active {
-    background-color: var(--sf-surface-state-active);
-  }
-  .active\:bg-primary-state:active {
-    background-color: var(--sf-primary-state-active);
-  }
-  .active\:bg-secondary-state:active {
-    background-color: var(--sf-secondary-state-active);
-  }
-  .active\:bg-tertiary-state:active {
-    background-color: var(--sf-tertiary-state-active);
-  }
-  .active\:bg-error-state:active {
-    background-color: var(--sf-error-state-active);
-  }
-  .active\:bg-warning-state:active {
-    background-color: var(--sf-warning-state-active);
-  }
-  .active\:bg-success-state:active {
-    background-color: var(--sf-success-state-active);
-  }
   .hover\:bg-surface-container:hover {
     background-color: var(--sf-surface-container-hover);
   }
@@ -814,6 +721,99 @@
   }
   .hover\:bg-success-state:hover {
     background-color: var(--sf-success-state-hover);
+  }
+  .active\:bg-surface-container:active {
+    background-color: var(--sf-surface-container-active);
+  }
+  .active\:bg-on-surface:active {
+    background-color: var(--sf-on-surface-active);
+  }
+  .active\:bg-surface-transparent:active {
+    background-color: var(--sf-surface-transparent-active);
+  }
+  .active\:bg-primary:active {
+    background-color: var(--sf-primary-active);
+  }
+  .active\:bg-primary-container:active {
+    background-color: var(--sf-primary-container-active);
+  }
+  .active\:bg-primary-transparent:active {
+    background-color: var(--sf-primary-transparent-active);
+  }
+  .active\:bg-secondary:active {
+    background-color: var(--sf-secondary-active);
+  }
+  .active\:bg-secondary-container:active {
+    background-color: var(--sf-secondary-container-active);
+  }
+  .active\:bg-secondary-transparent:active {
+    background-color: var(--sf-secondary-transparent-active);
+  }
+  .active\:bg-tertiary:active {
+    background-color: var(--sf-tertiary-active);
+  }
+  .active\:bg-tertiary-container:active {
+    background-color: var(--sf-tertiary-container-active);
+  }
+  .active\:bg-tertiary-transparent:active {
+    background-color: var(--sf-tertiary-transparent-active);
+  }
+  .active\:bg-error:active {
+    background-color: var(--sf-error-active);
+  }
+  .active\:bg-error-container:active {
+    background-color: var(--sf-error-container-active);
+  }
+  .active\:bg-error-transparent:active {
+    background-color: var(--sf-error-transparent-active);
+  }
+  .active\:bg-warning:active {
+    background-color: var(--sf-warning-active);
+  }
+  .active\:bg-warning-container:active {
+    background-color: var(--sf-warning-container-active);
+  }
+  .active\:bg-warning-transparent:active {
+    background-color: var(--sf-warning-transparent-active);
+  }
+  .active\:bg-success:active {
+    background-color: var(--sf-success-active);
+  }
+  .active\:bg-success-container:active {
+    background-color: var(--sf-success-container-active);
+  }
+  .active\:bg-success-transparent:active {
+    background-color: var(--sf-success-transparent-active);
+  }
+  .active\:bg-info:active {
+    background-color: var(--sf-info-active);
+  }
+  .active\:bg-info-container:active {
+    background-color: var(--sf-info-container-active);
+  }
+  .active\:bg-info-state:active {
+    background-color: var(--sf-info-state-active);
+  }
+  .active\:bg-surface-state:active {
+    background-color: var(--sf-surface-state-active);
+  }
+  .active\:bg-primary-state:active {
+    background-color: var(--sf-primary-state-active);
+  }
+  .active\:bg-secondary-state:active {
+    background-color: var(--sf-secondary-state-active);
+  }
+  .active\:bg-tertiary-state:active {
+    background-color: var(--sf-tertiary-state-active);
+  }
+  .active\:bg-error-state:active {
+    background-color: var(--sf-error-state-active);
+  }
+  .active\:bg-warning-state:active {
+    background-color: var(--sf-warning-state-active);
+  }
+  .active\:bg-success-state:active {
+    background-color: var(--sf-success-state-active);
   }
   .bg-white {
     background-color: var(--sf-white);

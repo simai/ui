@@ -124,9 +124,15 @@
   /* The menu button's host is sf-button-icon, display: contents written on the
      element itself: a display on the host is overruled, so the native button
      inside is what is shown and hidden. */
+  /* The nav takes the row's whole height (its content stays on the centre
+     line) and publishes the bar's edge: how far below its own end the bar's
+     bottom border ends -- the row's padding and the border. A navigation row
+     lays its current section's line on that border, as the tabs do (C30). */
   .sf-site-header-nav {
+    --sf-site-header--edge: calc(var(--sf-space-1) + var(--sf-px));
     display: flex;
     flex: 1 1 auto;
+    align-self: stretch;
     align-items: center;
     min-width: 0;
     min-inline-size: 0;
@@ -186,6 +192,8 @@
        page's own ellipsis) instead of scrolling the page sideways. */
     /* The panel's head is as tall as the bar, its close button on the axis of
        the menu button. */
+    /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
+       control height of the ladder (44 on a phone), the words still size 1. */
     /* A plain list of links in the nav stands as a column in the panel; an
        sf-menu turns vertical through its own setting (index.js). */
   }
@@ -385,6 +393,9 @@
     -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
             border-block-start: var(--sf-px) solid var(--sf-outline-variant);
   }
+  .sf-site-header--collapse-always .sf-site-header-nav .sf-menu .sf-menu-element {
+    --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
+  }
   .sf-site-header--collapse-always .sf-site-header-nav :where(nav, ul) {
     display: flex;
     flex-direction: column;
@@ -399,6 +410,8 @@
          page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
+      /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
+         control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
          sf-menu turns vertical through its own setting (index.js). */
     }
@@ -598,6 +611,9 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-sm .sf-site-header-nav .sf-menu .sf-menu-element {
+      --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
+    }
     .sf-site-header--collapse-sm .sf-site-header-nav :where(nav, ul) {
       display: flex;
       flex-direction: column;
@@ -613,6 +629,8 @@
          page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
+      /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
+         control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
          sf-menu turns vertical through its own setting (index.js). */
     }
@@ -812,6 +830,9 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-md .sf-site-header-nav .sf-menu .sf-menu-element {
+      --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
+    }
     .sf-site-header--collapse-md .sf-site-header-nav :where(nav, ul) {
       display: flex;
       flex-direction: column;
@@ -827,6 +848,8 @@
          page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
+      /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
+         control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
          sf-menu turns vertical through its own setting (index.js). */
     }
@@ -1026,6 +1049,9 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-lg .sf-site-header-nav .sf-menu .sf-menu-element {
+      --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
+    }
     .sf-site-header--collapse-lg .sf-site-header-nav :where(nav, ul) {
       display: flex;
       flex-direction: column;
@@ -1041,6 +1067,8 @@
          page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
+      /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
+         control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
          sf-menu turns vertical through its own setting (index.js). */
     }
@@ -1239,6 +1267,9 @@
       border-top: var(--sf-px) solid var(--sf-outline-variant);
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-xl .sf-site-header-nav .sf-menu .sf-menu-element {
+      --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
     }
     .sf-site-header--collapse-xl .sf-site-header-nav :where(nav, ul) {
       display: flex;
