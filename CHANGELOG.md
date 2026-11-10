@@ -8,6 +8,17 @@
 
 ### Добавлено
 
+- Buttons review: `sf-button` 1.11.1, `component.buttons` 1.8.2, `sf-tag` 1.3.2, `component.tags` 1.2.1.
+- C38 keyboard keys on the height ladder: `component.kbd` 1.3.0; `sf-input` 1.7.0 shows a shortcut (`component.inputs` 1.3.0).
+- C32 popup widths: `sf-menu-context` 1.14.0, `sf-dropdown` 1.8.0, `sf-input-lookup` 1.5.0, `component.context-menu` 1.7.0, `component.dropdown` 1.5.0, `core.styles` 1.10.0, `tokens.size` 1.2.0.
+- C30 simple menu with its amendments: `sf-menu` 1.6.0, `component.menu` 1.6.0, `sf-header-site` 1.8.0.
+- C16 S4d coloured places: `utility.background-color` 1.2.2.
+- Lab layer stack: aliases restore the layer stack, `sf-editor-overlay` 1.7.2.
+- `simai.dataview-port` 1.15.0: list roles.
+- Loader: the first icon request waits for the Smart tags it asked for, so a late component's icons go in the first request.
+- Five components follow the sf-input first-paint change, one patch each (`sf-input-date` 1.4.5, `sf-pagination` 1.3.12, `sf-theme-generator` 1.1.12, `sf-wizard` 1.2.3, `sf-wizard-step` 1.0.3).
+- `core.runtime` 1.49.0; 26 units changed against ui-b4a77681f0a7.
+
 - C16 S3/S4 places: background values, places and coloured `bg-*` utilities (`bg-scrim` in the background loader rule); components stand on places and a selected pill's own colour is its ink (`component.card` 1.4.0, `component.tabs` 1.1.0, `core.styles` 1.9.3).
 - C17 static palette: hues with `hue=` and `.sf-hue-<name>` (former `tone=` and rose kept as aliases), warm/cool/diverging chart roles, tone-20 steps; a theme is 288 variables, and a strong place's ink reads the tone-20 steps (`tokens.colour` 1.7.0, `sf-avatar` 1.3.0, `sf-list` 1.3.2, `sf-toast` 1.1.11, `sf-theme-generator` 1.1.11).
 - C23 navigation current page: the current page of a navigation menu is a primary plate, a bar only where there is none (`sf-menu` 1.4.1, `component.menu` 1.4.1).
