@@ -8,6 +8,14 @@
 
 ### Добавлено
 
+- Menus no longer wait for late utility links, and dropdown glyphs draw on sf-icon. The dropdown field takes its frame from its own sheet, so it no longer draws 80 px tall before the utility sheets arrive (component.dropdown 1.5.2).
+- C20: the sf-system plate and elevation former names. C18a: sf-kbd glyphs.
+- R074: icon deadlines, hidden-copy recheck, warm-profile splash and the held first icon request (R078, R-1, F3); the first request's hold no longer leaks a timer.
+- C33: record card. C35: notice actions, alert, one notice ink and action icons (F1, A-F1); the dark neutral toast icon is back to the quiet tone (toast 1.2.3).
+- C34: progress run, with the compact summary in regular weight and the ring in the icon field (R086). C36: buttons and follow-up. C37: attention list (sf-list-attention 1.2.2).
+- C43: badges over translucent places, dark tones, muted as disabled ink, avatar offline layers.
+- Pro reference for cl-view-table. Fixes from the acceptance of pair ui-a0370c0c99fb (D1, G1, F2, F3). core.runtime 1.51.0.
+
 - Buttons review: `sf-button` 1.11.1, `component.buttons` 1.8.2, `sf-tag` 1.3.2, `component.tags` 1.2.1.
 - C38 keyboard keys on the height ladder: `component.kbd` 1.3.0; `sf-input` 1.7.0 shows a shortcut (`component.inputs` 1.3.0).
 - C32 popup widths: `sf-menu-context` 1.14.0, `sf-dropdown` 1.8.0, `sf-input-lookup` 1.5.0, `component.context-menu` 1.7.0, `component.dropdown` 1.5.0, `core.styles` 1.10.0, `tokens.size` 1.2.0.
