@@ -441,6 +441,8 @@
      the arrows can tell the two apart. */
   .sf-admin-menu-search-row.selected {
     background-color: var(--sf-primary-container);
+    /* A translucent fill: a tonal badge on it keeps its own tone (C43). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
   }
   .sf-admin-menu-search-mark {
     background-color: var(--sf-warning-container);

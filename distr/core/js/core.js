@@ -5283,9 +5283,9 @@ __webpack_require__.r(__webpack_exports__);
 // load, a warm HTTP cache included (pair ui-2d39b617a719, language switch
 // en -> ru). The answer the last page got is kept in localStorage (the
 // manifest the service sends with its stylesheet); the core runtime reads it at
-// boot, before any component renders, writes its face and a font preload into
-// the head, and the font comes out of the HTTP cache by the time the first
-// button draws. The Loader then asks the service as before, and a grown subset
+// boot, before any component renders, writes its stylesheet into the head and
+// fetches its font off the document's load (R078), and the font comes out of
+// the HTTP cache by the time the first button draws. The Loader then asks the service as before, and a grown subset
 // replaces the remembered one only once its own face is loaded.
 //
 // What is reused is checked first: a remembered subset is only used when every
@@ -5441,11 +5441,23 @@ function readRememberedIconSubset(storage, {
     return null;
   }
 } // At boot, before any component renders: the remembered subset's stylesheet
-// and a preload for each of its font files, and the pending mark lifted as
-// soon as its face is loaded. The style is the one the Loader would write for
-// the same manifest (same attributes), marked data-sf-icons-remembered; the
-// Loader adopts it when it restores that manifest, and keeps it as the face
-// the page draws with until a grown subset's own face is loaded.
+// and its faces, and the pending mark lifted as soon as they are loaded. The
+// style is the one the Loader would write for the same manifest (same
+// attributes), marked data-sf-icons-remembered; the Loader adopts it when it
+// restores that manifest, and keeps it as the face the page draws with until a
+// grown subset's own face is loaded.
+//
+// R078: the font files are fetched with fetch() and the faces built from their
+// bytes (FontFace from an ArrayBuffer), not asked for by a <link rel=preload>
+// or an @font-face url during parse. Either of those is a request of the
+// document, and the window's load waited for it: with the icon host held 25 s
+// on a warm profile, load came at 25.9 s, and everything waiting for it waited
+// too (the splash stayed up). A fetch() does not hold load, and it reads the
+// same HTTP cache, so a remembered face still comes from the cache by the time
+// the first button draws. The faces join document.fonts once loaded, ride on
+// the style (sfIconFontFaces, retired with it), and the promise of them on
+// sfIconFacesReady, which the Loader awaits before it adopts the style. A
+// browser without FontFace or fetch keeps the stylesheet's own @font-face.
 
 function applyRememberedIconSubset({
   win = globalThis.window,
@@ -5468,33 +5480,62 @@ function applyRememberedIconSubset({
     family
   } = iconSubsetCssFromManifest(manifest);
   if (!cssText) return null;
-
-  for (const font of manifest.fonts) {
-    const href = new URL(font.url).href;
-    if ([...doc.querySelectorAll('link[rel="preload"][as="font"]')].some(link => link.href === href)) continue;
-    const link = doc.createElement('link');
-    link.rel = 'preload';
-    link.as = 'font';
-    link.type = 'font/woff2';
-    link.crossOrigin = 'anonymous';
-    link.href = href;
-    link.setAttribute('data-sf-icons-remembered', '');
-    doc.head.appendChild(link);
-  }
-
   const style = doc.createElement('style');
   style.setAttribute('data-sf-icons-subset', manifest.icons.join(','));
   style.setAttribute('data-sf-icons-subset-family', type);
   if (manifest.hash) style.setAttribute('data-sf-icons-subset-hash', String(manifest.hash));
   style.setAttribute('data-sf-icons-remembered', '');
-  style.textContent = cssText;
-  doc.head.appendChild(style);
   const root = doc.documentElement;
-  const weight = normalizeIconFontLoadWeight(String(manifest.fonts[0]?.weight || manifest.axes?.wght?.value || 400));
-  doc.fonts?.load?.(`${weight} 24px "${family}"`, manifest.icons.join(' ')).then(faces => {
-    if (faces?.length && root?.getAttribute('data-sf-icons') === 'subset-pending' && style.isConnected) {
+
+  const lift = () => {
+    if (root?.getAttribute('data-sf-icons') === 'subset-pending' && style.isConnected) {
       root.removeAttribute('data-sf-icons');
     }
+  };
+
+  const FontFaceApi = win.FontFace;
+  const fetchApi = win.fetch;
+
+  if (typeof FontFaceApi === 'function' && typeof fetchApi === 'function' && typeof doc.fonts?.add === 'function') {
+    const faces = [];
+    style.sfIconFontFaces = faces;
+    style.textContent = cssText.replace(/@font-face\s*\{[^}]*\}\s*/gu, '').trim();
+    style.sfIconFacesReady = Promise.all(manifest.fonts.map(font => {
+      const weight = String(font.weight || manifest.axes?.wght?.value || 400);
+      return Promise.resolve(fetchApi.call(win, new URL(font.url).href, {
+        mode: 'cors',
+        credentials: 'omit'
+      })).then(response => {
+        if (!response?.ok) throw new Error(`HTTP ${response?.status}`);
+        return response.arrayBuffer();
+      }).then(bytes => new FontFaceApi(family, bytes, {
+        style: 'normal',
+        weight,
+        display: 'block'
+      }).load()).then(face => {
+        // Retired meanwhile (a grown subset or the fallback took over).
+        if (style.sfIconFontFaces !== faces) return face;
+        faces.push(face);
+        doc.fonts.add(face);
+        return face;
+      });
+    }));
+    style.sfIconFacesReady.then(lift).catch(() => {
+      /* The Loader's own request and fallback take over. */
+    });
+    doc.head.appendChild(style);
+    return {
+      manifest,
+      style,
+      type
+    };
+  }
+
+  style.textContent = cssText;
+  doc.head.appendChild(style);
+  const weight = normalizeIconFontLoadWeight(String(manifest.fonts[0]?.weight || manifest.axes?.wght?.value || 400));
+  doc.fonts?.load?.(`${weight} 24px "${family}"`, manifest.icons.join(' ')).then(faces => {
+    if (faces?.length) lift();
   }).catch(() => {
     /* The Loader's own request and fallback take over. */
   });
@@ -8534,8 +8575,29 @@ function installPendingTags(win = typeof window !== 'undefined' ? window : undef
   const doc = win.document;
   const registry = win.customElements; // tag -> {timer, asked}
 
-  const held = new Map();
+  const held = new Map(); // Tags whose module failed to load: not held again.
+
+  const failed = new Set(); // tag -> {promise, resolve}: settled when the tag is defined or its module
+  // failed to load (settled()).
+
+  const settles = new Map();
   let sheet = null;
+
+  const settleEntry = tag => {
+    if (!settles.has(tag)) {
+      let resolve;
+      const promise = new Promise(done => {
+        resolve = done;
+      });
+      settles.set(tag, {
+        promise,
+        resolve
+      });
+      registry?.whenDefined?.(tag).then(() => resolve('defined'));
+    }
+
+    return settles.get(tag);
+  };
 
   const write = () => {
     if (!doc) return;
@@ -8583,7 +8645,7 @@ function installPendingTags(win = typeof window !== 'undefined' ? window : undef
     timeout = PENDING_TAG_TIMEOUT_MS
   } = {}) => {
     const tag = String(name || '').trim().toLowerCase();
-    if (!TAG_NAME.test(tag) || registry?.get(tag)) return false;
+    if (!TAG_NAME.test(tag) || registry?.get(tag) || failed.has(tag)) return false;
     const entry = held.get(tag);
     if (entry && (!asked || entry.asked)) return true;
     if (entry) clearTimeout(entry.timer);
@@ -8605,12 +8667,30 @@ function installPendingTags(win = typeof window !== 'undefined' ? window : undef
 
   const releaseUnasked = () => {
     [...held].filter(([, entry]) => !entry.asked).forEach(([tag]) => release(tag));
+  }; // The Loader could not load the tag's module (the script failed, its other
+  // form too). Its elements are shown as they are at once, not at the
+  // timeout, and whoever waits for the tag stops waiting: the first icon
+  // request waited for the 8 s cap for a tag that was never coming (D2,
+  // acceptance of ui-a0370c0c99fb).
+
+
+  const fail = name => {
+    const tag = String(name || '').trim().toLowerCase();
+    if (!TAG_NAME.test(tag) || registry?.get(tag)) return false;
+    failed.add(tag);
+    release(tag);
+    settleEntry(tag).resolve('failed');
+    return true;
   };
 
   const api = {
     hold,
     release,
     releaseUnasked,
+    fail,
+    // Resolves when the tag is defined or its module failed to load.
+    settled: name => settleEntry(String(name || '').trim().toLowerCase()).promise,
+    failed: () => [...failed],
     isHeld: tag => held.has(String(tag || '').toLowerCase()),
     held: () => [...held.keys()],
     // The tags whose module the Loader asked for and that are not defined yet
@@ -10580,7 +10660,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.49.0';
+const CORE_RUNTIME = '1.51.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20500,7 +20580,9 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "waiting",
             "done",
             "stopped",
-            "failed"
+            "failed",
+            "paused",
+            "queued"
           ],
           "type": "string"
         },
@@ -20595,7 +20677,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.3.1"
+    "version": "1.4.0"
   },
   "sf-button": {
     "inputs": {
@@ -20627,6 +20709,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "form": {
           "default": "",
           "type": "string"
+        },
+        "full-width": {
+          "default": false,
+          "type": "boolean"
         },
         "height": {
           "default": "default",
@@ -20789,7 +20875,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.11.1"
+    "version": "1.12.1"
   },
   "sf-button-icon": {
     "inputs": {
@@ -20833,6 +20919,16 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "filled": {
           "default": false,
           "type": "boolean"
+        },
+        "height": {
+          "default": "default",
+          "enum": [
+            "low",
+            "default",
+            "high",
+            "highest"
+          ],
+          "type": "string"
         },
         "icon": {
           "default": "add",
@@ -20938,7 +21034,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.7.1"
+    "version": "1.8.2"
   },
   "sf-checkbox": {
     "inputs": {
@@ -21129,7 +21225,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.8.0"
+    "version": "1.8.1"
   },
   "sf-icon": {
     "inputs": {
@@ -21214,7 +21310,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.1.6"
+    "version": "1.1.7"
   },
   "sf-input": {
     "inputs": {

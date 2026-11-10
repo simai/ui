@@ -34,6 +34,7 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       spacing,
       height,
       radius,
+      fullWidth = false,
       loading = false,
       disabled = false,
       utilities = {}
@@ -66,6 +67,11 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
 
     if (radius) {
       this.button.classList.add(`radius-${radius}`);
+    } // full-width (owner decision C36): the control fills its container.
+
+
+    if (fullWidth) {
+      this.button.classList.add('sf-button--full-width');
     }
 
     if (loading) {
@@ -75,7 +81,10 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
     }
 
     if (disabled) {
-      this.button.disabled = true;
+      this.button.disabled = true; // Loading keeps the scheme colour (owner decision C36); disabled and
+      // loading wears the disabled look.
+
+      if (loading) this.button.classList.add('disabled');
     }
 
     if (className) {

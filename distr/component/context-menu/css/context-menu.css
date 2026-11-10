@@ -1,5 +1,24 @@
 @charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+/* The box of the Smart menu, which used to be four utilities in its template:
+   the root a row of one (flex), the content a column that takes the rest
+   (flex flex-col flex-1). On a Docara page the Loader linked the utility
+   sheets they need after the first frame -- utility/position for the frame's
+   relative -- so the box is this sheet's now (component.context-menu 1.8.0).
+   In sf.base, below the utilities as the utilities were below the
+   components: a utility a page adds to the root (hidden) and every
+   component rule still win over it, as they did. Class markup keeps writing
+   the utilities; the rules read the Smart frame only. */
+@layer sf.base {
+  .sf-context-menu:has(> .sf-context-menu-frame) {
+    display: flex;
+  }
+  .sf-context-menu-frame > .sf-context-menu-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+  }
+}
 @layer sf.components {
   .sf-context-menu {
     --sf-context-menu-viewport-space: var(--sf-space-1\/2);
@@ -8,7 +27,28 @@
     --sf-context-menu-tail-half: 0px;
     --sf-context-menu-tail-corner-offset: 0px;
   }
+  /* The frame: .relative in class markup, .sf-context-menu-frame in the Smart
+     menu's (sf-menu-context 1.14.1), which writes no utility for its box. */
   .sf-context-menu > .relative {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-inline-size: 0;
+    min-height: 0;
+    min-block-size: 0;
+    max-width: none;
+    max-inline-size: none;
+    max-width: none;
+    max-width: var(--sf-context-menu-available-inline-size, none);
+    max-inline-size: var(--sf-context-menu-available-inline-size, none);
+    max-height: none;
+    max-block-size: none;
+    max-height: none;
+    max-height: var(--sf-context-menu-available-block-size, none);
+    max-block-size: var(--sf-context-menu-available-block-size, none);
+  }
+  .sf-context-menu > .sf-context-menu-frame {
+    position: relative;
     display: flex;
     min-width: 0;
     min-inline-size: 0;
@@ -316,9 +356,10 @@
        that keeps its edge where the shadow does not show. */
     --sf-context-menu-content--background-color: var(--sf-context-menu-background-color, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-context-menu-content--background-color);
+    --sf-surface-place-solid: var(--sf-context-menu-content--background-color);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
@@ -329,6 +370,8 @@
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -532,6 +575,8 @@
     background-color: var(--sf-primary-container);
     color: var(--sf-on-primary-container);
     --sf-icon--color: var(--sf-on-primary-container);
+    /* A translucent fill: a tonal badge on it keeps its own tone (C43). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
   }
   /* The chosen row of a pick-one list -- a language, a drilled choice's option:
      the soft fill of the chosen, the fill family's first step (12 light, 24
@@ -543,6 +588,7 @@
     background-color: var(--sf-primary-container);
     color: var(--sf-on-primary-container);
     --sf-icon--color: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
   }
   .sf-context-menu-item--chosen:not(:disabled):hover {
     background-color: var(--sf-primary-container-hover);
@@ -761,13 +807,15 @@
   .sf-context-menu-item:disabled .sf-context-menu-item-under {
     color: inherit;
   }
-  /* A drilling panel's width is fixed and public: 280px by default (the
-     ladder's f7 + a8), the width the owner reviewed in the prototype
-     (2026-10-30). A fixed width is the point of drilling -- the panel grows
-     neither with a level's longest word nor with a value -- and openFor(anchor,
-     {width}) still overrides it, as it does for a panel with tabs. */
+  /* A drilling panel's width is fixed and public. By default it is the menu's
+     ceiling of the popup widths, 18rem, 16rem in compact density (owner
+     decision C32, addendum 2026-11-09: it follows density); it was 280px at
+     every density (f7 + a8, reviewed in the prototype 2026-10-30). A fixed
+     width is the point of drilling -- the panel grows neither with a level's
+     longest word nor with a value -- and openFor(anchor, {width}) still
+     overrides it, as it does for a panel with tabs. */
   .sf-context-menu.sf-context-menu--drill .sf-context-menu-content {
-    --sf-context-menu-drill--inline-size: var(--sf-context-menu-inline-size, calc(var(--sf-f7) + var(--sf-a8)));
+    --sf-context-menu-drill--inline-size: var(--sf-context-menu-inline-size, var(--sf-popup-menu-max-width));
     width: var(--sf-context-menu-drill--inline-size);
     inline-size: var(--sf-context-menu-drill--inline-size);
     width: var(--sf-context-menu-drill--inline-size);
@@ -975,6 +1023,7 @@
   }
   .sf-context-menu-choice-option[aria-checked=true] {
     background-color: var(--sf-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
     color: var(--sf-on-primary-container);
     font-weight: var(--sf-font-weight-medium);
     --sf-icon--color: var(--sf-on-primary-container);
@@ -1265,6 +1314,7 @@
   }
   .sf-context-menu-tile--on.sf-context-menu-item {
     background-color: var(--sf-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
     color: var(--sf-on-primary-container);
   }
   .sf-context-menu-tile--on.sf-context-menu-item:not(:disabled):hover {
@@ -1722,6 +1772,25 @@
     max-width: min(max(var(--sf-context-menu-trigger-inline-size, var(--sf-a0)), var(--sf-popup-list-max-width)), var(--sf-context-menu--screen-inline-size));
     max-inline-size: min(max(var(--sf-context-menu-trigger-inline-size, var(--sf-a0)), var(--sf-popup-list-max-width)), var(--sf-context-menu--screen-inline-size));
   }
+  /* A long choice in a list at a field wraps, as sf-dropdown's options do; a
+     command in a menu keeps its one line and ends in an ellipsis (owner
+     decision C32, addendum 2026-11-09). A choice is read whole before it is
+     taken; a command is known by its start. */
+  .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item {
+    white-space: normal;
+  }
+  .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-label {
+    word-wrap: anywhere;
+  }
+  .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-caption {
+    word-wrap: anywhere;
+  }
+  .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-lead {
+    align-self: center;
+  }
+  .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-check {
+    align-self: center;
+  }
   /* panel: a panel with a search and actions (a views picker, a profile
      picker) -- the panel's step, or its trigger when that is wider. Fixed, never
      its content's: a search that filtered the rows made it jump. */
@@ -1760,7 +1829,8 @@
     inline-size: var(--sf-popup-form-wide-width);
   }
   /* A form on a phone (below the md breakpoint, 44rem): a sheet docked to the
-     bottom edge, the screen's whole width, over the scrim -- the sheet's place
+     bottom edge, the screen's whole width up to 44rem (--sf-h1, owner decision
+     C32, addendum 2026-11-09), centred, over the scrim -- the sheet's place
      of the shadow system (C20: --sf-shadow-modal, the scrim at black 64).
      sf-menu-context marks the surface data-sf-sheet and does not anchor it.
      The content keeps clear of a phone's home indicator (safe area). */
@@ -1818,8 +1888,11 @@
     inset: auto 0 0;
     width: 100%;
     inline-size: 100%;
-    max-width: none;
-    max-inline-size: none;
+    max-width: var(--sf-h1);
+    max-inline-size: var(--sf-h1);
+    margin-left: auto;
+    margin-right: auto;
+    margin-inline: auto;
     max-height: calc(100dvh - var(--sf-space-4));
     max-block-size: calc(100dvh - var(--sf-space-4));
     border-end-end-radius: 0;
@@ -1836,6 +1909,11 @@
     opacity: var(--sf-scrim-opacity, 1);
   }
   .sf-context-menu[data-sf-sheet] > .relative {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-context-menu[data-sf-sheet] > .sf-context-menu-frame {
     flex: 1 1 auto;
     min-width: 0;
     min-inline-size: 0;

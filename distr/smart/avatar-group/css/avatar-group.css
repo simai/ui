@@ -281,7 +281,12 @@
     --sf-online-indicator--width: var(--sf-b0);
   }
   .sf-online-indicator--offline {
-    --sf-online-indicator--background-color: var(--sf-on-surface-muted);
+    --sf-online-indicator--background-color: var(--sf-avatar-offline-background-color, var(--sf-surface-place));
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0);
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0 0);
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0);
+    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0));
+    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0 0));
   }
   .sf-online-indicator--online {
     --sf-online-indicator--background-color: var(--sf-success);

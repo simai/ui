@@ -319,7 +319,40 @@ function clampAxis(value, fallback, minimum, maximum) {
 // family's old name `shape` is a dated value alias of `sharp` (aliases.json).
 // What stays here is behaviour: the exact subset the glyph waits for, the
 // axes' bounds and the badge.
+// One IntersectionObserver for every icon that cannot draw yet: an icon in a
+// copy that is not rendered (a closed panel, a display: none menu or header
+// copy) checks again, and asks the Loader for its glyph, when the copy is
+// shown. Whether it can draw is the font's readiness for its family and style
+// (the Loader's sets), never whether it is rendered; this is the second
+// chance for an icon that missed the ready event while it was hidden. A
+// zero-size target in the viewport intersects, so the glyph held at
+// font-size 0 is seen too. Only the change from not rendered to rendered
+// counts: the first answer for an icon already in view says nothing new, and
+// acting on it asked the Loader again while the page's first request was
+// being put together. Larena read menu and star loaded: false 4 s after
+// load in such a copy (pair ui-b4a77681f0a7, R074).
 
+
+let renderedSight = null;
+
+function sightForRendered() {
+  const Sight = globalThis.IntersectionObserver;
+
+  if (!renderedSight && typeof Sight === "function") {
+    renderedSight = new Sight(entries => {
+      for (const entry of entries) {
+        const {
+          target
+        } = entry;
+        const was = target._renderedSeen;
+        target._renderedSeen = entry.isIntersecting;
+        if (entry.isIntersecting && was === false) target.onRendered?.();
+      }
+    });
+  }
+
+  return renderedSight;
+}
 
 const IconElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
@@ -335,16 +368,39 @@ class SfIcon extends IconElement {
   static clearLightDomBeforeFirstRender = true;
 
   constructor() {
-    super();
+    super(); // Every subset answer, not only one that names this icon: an icon can
+    // become drawable under an answer that does not name it -- a manifest
+    // that already held it, its filled or weighted form loaded in a batch
+    // named before the form was added, the full font taking over -- and it
+    // then stayed at font-size 0 until something touched it (R074). The
+    // check is a lookup in the Loader's sets.
 
-    this.onIconSubsetReady = event => {
-      const icon = this.getProp("icon");
-      const icons = event.detail?.icons || [];
-      const hasIcon = icons instanceof Set ? icons.has(icon) : Array.isArray(icons) && icons.includes(icon); // The local full font (icons.enabled = false) draws every icon at once.
+    this.onIconSubsetReady = () => this.syncLoadedState(); // An icon connected before the Loader existed asked it for nothing; it
+    // asks, and checks again, once the Loader is ready.
 
-      if (icon && !hasIcon && !event.detail?.all) return;
+
+    this.onLoaderReady = () => {
+      this.requestIconLoad();
       this.syncLoadedState();
     };
+
+    this.onRendered = () => {
+      this.requestIconLoad();
+      this.syncLoadedState();
+    };
+  }
+
+  watchRendered(watch) {
+    if (watch === Boolean(this._watchingRendered)) return;
+    const sight = sightForRendered();
+    if (!sight) return;
+
+    if (watch) {
+      this._renderedSeen = undefined;
+      sight.observe(this);
+    } else sight.unobserve(this);
+
+    this._watchingRendered = watch;
   }
 
   connectedCallback() {
@@ -360,12 +416,15 @@ class SfIcon extends IconElement {
 
     super.connectedCallback();
     window.addEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
+    window.addEventListener("sf-loader-ready", this.onLoaderReady);
     this.requestIconLoad();
     this.syncLoadedState();
   }
 
   disconnectedCallback() {
     window.removeEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
+    window.removeEventListener("sf-loader-ready", this.onLoaderReady);
+    this.watchRendered(false);
     super.disconnectedCallback();
   }
 
@@ -399,6 +458,7 @@ class SfIcon extends IconElement {
       window.addEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
     }
 
+    this.watchRendered(!loaded && this.isConnected);
     if (this.getProp("loaded") === loaded) return;
     this.setState({
       loaded
@@ -608,7 +668,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.1.6","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined","rounded","sharp"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.1.7","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined","rounded","sharp"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

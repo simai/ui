@@ -1583,10 +1583,17 @@
         "name": "cl-button"
       },
       {
+        "name": "cl-button-icon"
+      },
+      {
         "name": "cl-badge"
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
       },
       {
         "name": "sr-only/default"
@@ -1604,7 +1611,16 @@
     "mode": "smart",
     "relation": [
       {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
         "name": "cl-button-copy"
+      },
+      {
+        "name": "cl-help-mark"
       },
       {
         "name": "cl-icon"
@@ -1658,6 +1674,9 @@
       },
       {
         "name": "tags"
+      },
+      {
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1893,6 +1912,15 @@
       },
       {
         "name": "cl-button-copy"
+      },
+      {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "cl-progress-ring"
       },
       {
         "name": "cl-icon"

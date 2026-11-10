@@ -4521,9 +4521,14 @@ SF.RuleLoader['cl-list-attention'] = {
   relation: [{
     name: 'cl-button'
   }, {
+    name: 'cl-button-icon'
+  }, {
     name: 'cl-badge'
   }, {
     name: 'cl-icon'
+  }, {
+    name: 'cl-menu-context',
+    lazy: true
   }, {
     name: 'sr-only/default'
   }]
@@ -4542,7 +4547,13 @@ SF.RuleLoader['cl-list-description'] = {
   js: true,
   css: true,
   relation: [{
+    name: 'cl-badge'
+  }, {
+    name: 'cl-button'
+  }, {
     name: 'cl-button-copy'
+  }, {
+    name: 'cl-help-mark'
   }, {
     name: 'cl-icon'
   }, {
@@ -4598,6 +4609,9 @@ SF.RuleLoader['cl-list-item'] = {
     name: 'avatars'
   }, {
     name: 'tags'
+  }, // An icon row's picture is an sf-icon element, so its name reaches the first icon font request (1.2.7, as sf-dropdown 1.8.0).
+  {
+    name: 'cl-icon'
   }]
 };
 
@@ -4889,6 +4903,12 @@ SF.RuleLoader['cl-progress-run'] = {
     name: 'cl-button-icon'
   }, {
     name: 'cl-button-copy'
+  }, {
+    name: 'cl-badge'
+  }, {
+    name: 'cl-progress-bar'
+  }, {
+    name: 'cl-progress-ring'
   }, {
     name: 'cl-icon'
   }, {

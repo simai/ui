@@ -462,7 +462,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'pressed', 'label-pressed', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
+const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'pressed', 'label-pressed', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -607,7 +607,12 @@ class SfIconButton extends IconButtonElement {
     const cycle = this.cycleState();
     if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.warnCycleToggle)(this, ['pressed', 'label-pressed']);
     const announce = Boolean(cycle && this.__sfCycleAnnounce);
-    this.__sfCycleAnnounce = false;
+    this.__sfCycleAnnounce = false; // The icons a press can show, asked for before the press (R074).
+
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.preloadSwitchIcons)(this, {
+      icons: [this.getAttribute('icon')],
+      filled: Boolean(this.filled)
+    });
     return this.createTemplateContext({ ...props,
       // Resolved names the template reads (contracts/template-context.json):
       // the canonical axes under their legacy names too, never the dated
@@ -638,6 +643,9 @@ class SfIconButton extends IconButtonElement {
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing')
       }),
+      // The control height (1.8.0, decisions C27 and C35): the size's
+      // tightness step; a value outside the list reads as default.
+      height: this.height,
       badge: this.badgeState?.(),
       component: this
     });
@@ -671,7 +679,10 @@ class SfIconButton extends IconButtonElement {
     if (!button) return false;
 
     if (changedAttributes.includes('disabled')) {
-      button.disabled = this.disabled || this.loading;
+      button.disabled = this.disabled || this.loading; // A loading one that is disabled as well wears the disabled look (C36
+      // follow-up); the template writes the same class.
+
+      if (this.loading) button.classList.toggle('disabled', Boolean(this.disabled));
     }
 
     if (changedAttributes.includes('aria-label')) {
@@ -748,6 +759,7 @@ class SfIconButton extends IconButtonElement {
         spacing: this.getAttribute('spacing')
       }).tightness,
       spacing: this.spacing,
+      height: this.height,
       radius: this.radius,
       rootClass: this.rootClass,
       loading: this.loading,
@@ -941,7 +953,11 @@ function renderIconButtonTemplate(context) {
   // takes; they cannot both paint it.
   // danger is a control's status (C13), drawn with the error roles: the
   // class is the danger one and the error one the sheets also select.
-  ...statusClasses(status, scheme), tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : '', // A toggle that is on wears the pressed look (component.icon-buttons
+  ...statusClasses(status, scheme), tightness ? `tightness-${tightness}` : '', // The height (decisions C27, C35): the class of the size's tightness
+  // step, declared after the density classes; default draws none.
+  ['low', 'high', 'highest'].includes(context.height) ? `sf-icon-button--height-${context.height}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : '', // A loading icon button keeps its scheme colour (C36 follow-up); one
+  // that is disabled as well wears the disabled look, so it says so.
+  loading && disabled ? 'disabled' : '', // A toggle that is on wears the pressed look (component.icon-buttons
   // 1.3.0, rule C12): the class carries it whether or not aria-pressed is said.
   context.pressed || context.cycleView?.pressedLook ? 'sf-icon-button--pressed' : ''].filter(Boolean); // A toggle whose name changes (label-pressed, 1.5.0): «Добавить в избранное»
   // at rest, «Убрать из избранного» while on. The name then says the state,
@@ -1056,7 +1072,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   hasCycle: () => (/* binding */ hasCycle),
 /* harmony export */   nextTheme: () => (/* binding */ nextTheme),
 /* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
+/* harmony export */   preloadSwitchIcons: () => (/* binding */ preloadSwitchIcons),
 /* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   switchIconEntries: () => (/* binding */ switchIconEntries),
 /* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
 /* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
 /* harmony export */   themePreference: () => (/* binding */ themePreference),
@@ -1334,6 +1353,72 @@ function themeCycleFollow(host) {
   if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
   host.__sfCycleExpect = undefined;
   host.requestComponentUpdate?.('theme-cycle');
+} // The icons a control can switch to, asked for before it switches (R074).
+// Only the icon on screen was tracked, so the first press that showed another
+// one asked the subset service for a grown font on the click, and the new
+// icon stayed blank while the service built it (up to ~30 s when it was busy).
+// Asked for when the control is drawn, the names join the page's first icon
+// request (held until the Loader is ready); a control added later costs one
+// grown font off the click.
+
+/**
+ * The icon entries ({icon, filled}) a cycle, a theme cycle or a toggle can
+ * show. `icons` are a toggle's own icon names: with `pressed` present they
+ * are drawn filled while on, so both forms are asked for. `filled` is the
+ * control's own filled setting (every form filled).
+ */
+
+function switchIconEntries(host, {
+  icons = [],
+  filled = false
+} = {}) {
+  const entries = [];
+
+  const add = (icon, fill) => {
+    const name = String(icon || '').trim();
+    if (name) entries.push({
+      icon: name,
+      filled: Boolean(fill || filled)
+    });
+  };
+
+  if (host.hasAttribute('theme-cycle')) {
+    themeCycleValues(host.getAttribute('theme-cycle')).forEach(value => add(THEME_ICONS[value], false));
+  } else if (hasCycle(host)) {
+    cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle')).forEach(item => add(item.icon, item.pressed));
+  } else if (host.hasAttribute('pressed')) {
+    icons.forEach(icon => {
+      add(icon, false);
+      add(icon, true);
+    });
+  }
+
+  const seen = new Set();
+  return entries.filter(entry => {
+    const key = `${entry.icon}|${entry.filled}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+/**
+ * Asks the Loader for these icon entries once per distinct list (a render
+ * that draws the same items asks nothing). Answers the number of new names.
+ */
+
+function preloadControlIcons(host, entries) {
+  if (!Array.isArray(entries) || !entries.length) return 0;
+  const key = JSON.stringify(entries);
+  if (host.__sfPreloadedIcons === key) return 0;
+  const preload = loader()?.preloadIcons;
+  if (typeof preload !== 'function') return 0;
+  host.__sfPreloadedIcons = key;
+  return preload.call(loader(), entries) || 0;
+}
+/** switchIconEntries, asked for. */
+
+function preloadSwitchIcons(host, options = {}) {
+  return preloadControlIcons(host, switchIconEntries(host, options));
 }
 
 /***/ },
@@ -1399,7 +1484,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.7.1","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.8.2","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

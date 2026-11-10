@@ -1695,7 +1695,12 @@ const CELL = {
 function renderDropdownTemplate(context) {
   const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", "flex", "flex-col"].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean);
-  const iconButtonSize = context.size === "1" || context.size === "1/2" ? "1/2" : context.size;
+  const iconButtonSize = context.size === "1" || context.size === "1/2" ? "1/2" : context.size; // The chevron and the search glyph are sf-icon elements, as the pictures
+  // of a choice are (1.8.0): the element tells the Loader its name, so it
+  // joins the first icon font request instead of a later round (1.8.1).
+  // Their size and colour stay the field's and the list's, which reach the
+  // glyph inside the sf-icon (display: contents).
+
   const dropdownIcon = context.open ? "keyboard_arrow_up" : "keyboard_arrow_down";
 
   const renderTrigger = () => {
@@ -1750,7 +1755,7 @@ function renderDropdownTemplate(context) {
             class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${iconButtonSize}"
             ?disabled=${context.disabled}
           >
-            <i class="sf-icon" aria-hidden="true">${dropdownIcon}</i>
+            <sf-icon icon=${dropdownIcon} aria-hidden="true"></sf-icon>
           </button>
         </div>
       `;
@@ -1781,7 +1786,7 @@ function renderDropdownTemplate(context) {
           class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${iconButtonSize} absolute"
           ?disabled=${context.disabled}
         >
-          <i class="sf-icon" aria-hidden="true">${dropdownIcon}</i>
+          <sf-icon icon=${dropdownIcon} aria-hidden="true"></sf-icon>
         </button>
       </label>
     `;
@@ -1813,7 +1818,7 @@ function renderDropdownTemplate(context) {
   // its icon over the rows' icons, its text over their text, no frame.
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
               <label class="sf-list-search">
-                <i class="sf-icon sf-list-search-icon" aria-hidden="true">search</i>
+                <sf-icon icon="search" root-class="sf-list-search-icon" aria-hidden="true"></sf-icon>
                 <input
                   class="sf-list-search-input"
                   placeholder=${context.searchPlaceholder}
@@ -2192,10 +2197,14 @@ function renderListItemTemplate(context) {
   }
 
   const renderLeading = () => {
-    if (leadingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return leadingContent;
+    if (leadingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return leadingContent; // An icon row's picture is an sf-icon element (1.2.7): its name joins the
+    // first icon font request. A bare <i class="sf-icon"> printed after the
+    // page's icon scan -- every option of an opened sf-dropdown -- was found a
+    // round later and its glyph came late. The row's size and colour reach
+    // the glyph inside it (display: contents).
 
     if (context.type === "icon") {
-      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`;
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon} aria-hidden="true"></sf-icon>`;
     }
 
     if (context.type === "checkbox") {
@@ -2456,7 +2465,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.8.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.8.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

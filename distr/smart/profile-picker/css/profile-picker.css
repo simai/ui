@@ -111,8 +111,16 @@
     display: flex;
     flex-direction: column;
     gap: var(--sf-px);
-    max-width: min(var(--sf-g2), 100vw);
-    max-inline-size: min(var(--sf-g2), 100vw);
+    /* A panel of the popup widths (owner decision C32, addendum 2026-11-09):
+       the panel's step, 20rem, 18rem in compact density (core's
+       --sf-popup-panel-width, which data-sf-density moves with the text), or
+       the trigger when that is wider (open() sets min-inline-size to it).
+       Fixed, never its content's: it was as wide as the longest name, 238 /
+       214 px, up to 24rem. A long name ends in an ellipsis. Inside the screen. */
+    width: var(--sf-popup-panel-width);
+    inline-size: var(--sf-popup-panel-width);
+    max-width: calc(100vi - var(--sf-space-1));
+    max-inline-size: calc(100vi - var(--sf-space-1));
     /* The inset (C05, R029; R017's 1/3 before). */
     padding: var(--sf-profile-picker--inset);
     border: var(--sf-px) solid var(--sf-outline-variant);
@@ -120,9 +128,10 @@
     background-color: var(--sf-surface-popup);
     background-color: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
+    --sf-surface-place-solid: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
@@ -133,6 +142,8 @@
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);

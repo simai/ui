@@ -11,6 +11,15 @@
      the rung below's type and line, inset by the rung below's space-x; the
      buttons are sf-button of the rung below.
 
+     1.3.0 (owner decision C34, R073): the full look is groups by meaning --
+     head, progress, results, errors, steps, output, actions -- spaced by the
+     system: between groups --sf-space-1 (16 desktop, 12 phone and compact,
+     public --sf-progress-run-gap), inside the progress group the bar and its
+     figures --sf-space-1/3 (public --sf-progress-run-gap-tight), inside the
+     results the result and its counts --sf-space-1/4; the head's title and
+     caption touch (their lines carry the air), the badge stands on the first
+     title line, a divider opens the steps when a group stands above them.
+
      The public variables are read with the role token as their fallback and
      never set here. */
   sf-progress-run {
@@ -31,9 +40,11 @@
     --sf-progress-run--padding-block: calc((var(--sf-progress-run--control) - var(--sf-progress-run--line)) / 2);
     --sf-progress-run--padding-inline: var(--sf-progress-run-padding-inline, calc(var(--sf-px) * 0));
     --sf-progress-run--divider: var(--sf-progress-run-divider-color, var(--sf-outline-variant));
+    --sf-progress-run--gap: var(--sf-progress-run-gap, var(--sf-space-1));
+    --sf-progress-run--gap-tight: var(--sf-progress-run-gap-tight, var(--sf-space-1\/3));
     display: flex;
     flex-direction: column;
-    gap: var(--sf-progress-run--text-space-x);
+    gap: var(--sf-progress-run--gap);
     box-sizing: border-box;
     min-width: 0;
     min-inline-size: 0;
@@ -54,13 +65,179 @@
     --sf-progress-run--below-space-x: var(--sf-ui-1\/3--space-x);
     --sf-progress-run--below-text-space-x: var(--sf-ui-1\/3--text-space-x);
   }
-  .sf-progress-run-heading {
+  /* The head: the title at the rung's text line, semibold, whatever its
+     heading level (R082: a component title, not a page heading), the badge on
+     its first line, the caption under it touching. Words wrap at spaces only,
+     so a file name moves to the next line whole. */
+  .sf-progress-run-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    grid-column-gap: var(--sf-space-1\/2);
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
     padding-left: var(--sf-progress-run--padding-inline);
     padding-right: var(--sf-progress-run--padding-inline);
     padding-inline: var(--sf-progress-run--padding-inline);
+  }
+  .sf-progress-run .sf-progress-run-heading {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    font-size: var(--sf-progress-run--font-size);
+    line-height: var(--sf-progress-run--line);
     font-weight: 600;
     font-weight: var(--sf-text--font-weight-6, 600);
-    word-wrap: anywhere;
+    word-wrap: break-word;
+  }
+  .sf-progress-run-state {
+    display: flex;
+    grid-column: 2;
+    grid-row: 1;
+    align-items: center;
+    min-height: var(--sf-progress-run--line);
+    min-block-size: var(--sf-progress-run--line);
+    white-space: nowrap;
+  }
+  .sf-progress-run-caption {
+    grid-column: 1/-1;
+    margin: 0;
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    word-wrap: break-word;
+  }
+  /* Progress: the bar, then its figures in the rung below, tabular. */
+  .sf-progress-run-progress,
+  .sf-progress-run-results {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-inline-size: 0;
+    padding-left: var(--sf-progress-run--padding-inline);
+    padding-right: var(--sf-progress-run--padding-inline);
+    padding-inline: var(--sf-progress-run--padding-inline);
+  }
+  .sf-progress-run-progress {
+    gap: var(--sf-progress-run--gap-tight);
+  }
+  .sf-progress-run-results {
+    gap: var(--sf-space-1\/4);
+  }
+  .sf-progress-run-figures {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--sf-space-1\/2);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .sf-progress-run-eta {
+    color: var(--sf-on-surface-variant);
+  }
+  /* The counts: one quiet line of text, tabular figures, «·» between them; only
+     a non-zero error count is coloured, and it is a link. */
+  .sf-progress-run-counts {
+    margin: 0;
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .sf-progress-run-count {
+    white-space: nowrap;
+  }
+  .sf-progress-run-count + .sf-progress-run-count::before {
+    content: "·";
+    margin-left: var(--sf-space-1\/3);
+    margin-right: var(--sf-space-1\/3);
+    margin-inline: var(--sf-space-1\/3);
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-progress-run-count-link {
+    border-radius: var(--sf-radius--ui);
+    color: var(--sf-error);
+    font-weight: var(--sf-font-weight-medium);
+    text-decoration: underline;
+    text-decoration-thickness: var(--sf-px);
+    text-underline-offset: var(--sf-a3);
+  }
+  .sf-progress-run-count-link.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+  }
+  .sf-progress-run-count-link:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+  }
+  /* The first errors: where, what and why in three columns shared by the rows. */
+  .sf-progress-run-errors {
+    display: grid;
+    grid-template-columns: -webkit-max-content -webkit-max-content minmax(0, 1fr);
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    grid-column-gap: var(--sf-space-1\/3);
+    -webkit-column-gap: var(--sf-space-1\/3);
+       -moz-column-gap: var(--sf-space-1\/3);
+            column-gap: var(--sf-space-1\/3);
+    margin: 0;
+    padding: 0;
+    padding-left: var(--sf-progress-run--padding-inline);
+    padding-right: var(--sf-progress-run--padding-inline);
+    padding-inline: var(--sf-progress-run--padding-inline);
+    list-style: none;
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+  }
+  .sf-progress-run-errors.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+    border-radius: var(--sf-radius--ui);
+  }
+  .sf-progress-run-errors:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+    border-radius: var(--sf-radius--ui);
+  }
+  .sf-progress-run-error {
+    display: grid;
+    grid-column: 1/-1;
+    grid-template-columns: subgrid;
+    padding-top: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-bottom: var(--sf-space-1\/4);
+    padding-block: calc(var(--sf-space-1\/4) - var(--sf-px)) var(--sf-space-1\/4);
+    border-top: var(--sf-px) solid var(--sf-progress-run--divider);
+    -webkit-border-before: var(--sf-px) solid var(--sf-progress-run--divider);
+            border-block-start: var(--sf-px) solid var(--sf-progress-run--divider);
+  }
+  .sf-progress-run-error-where {
+    color: var(--sf-on-surface-variant);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .sf-progress-run-error-text {
+    min-width: 0;
+    min-inline-size: 0;
+    word-wrap: break-word;
+  }
+  /* Below the sm breakpoint (32rem) the error key moves under the row number. */
+  @media not all and (min-width: 32rem) {
+    .sf-progress-run-errors {
+      grid-template-columns: -webkit-max-content minmax(0, 1fr);
+      grid-template-columns: max-content minmax(0, 1fr);
+    }
+    .sf-progress-run-error-text {
+      grid-column: 1/-1;
+    }
   }
   .sf-progress-run-steps {
     display: block;
@@ -68,9 +245,22 @@
     padding: 0;
     list-style: none;
   }
+  /* A divider opens the steps when a group stands above them; the first step
+     gives the hairline up from its inset. */
+  .sf-progress-run-steps:not(:first-child) {
+    border-top: var(--sf-px) solid var(--sf-progress-run--divider);
+    -webkit-border-before: var(--sf-px) solid var(--sf-progress-run--divider);
+            border-block-start: var(--sf-px) solid var(--sf-progress-run--divider);
+  }
+  .sf-progress-run-steps:not(:first-child) > .sf-progress-run-step:first-child {
+    padding-top: calc(var(--sf-progress-run--padding-block) - var(--sf-px));
+    -webkit-padding-before: calc(var(--sf-progress-run--padding-block) - var(--sf-px));
+            padding-block-start: calc(var(--sf-progress-run--padding-block) - var(--sf-px));
+  }
   /* A step: icon, title with its text, the time at the end. */
   .sf-progress-run-step {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     gap: var(--sf-progress-run--text-space-x);
     box-sizing: border-box;
@@ -106,6 +296,11 @@
   }
   .sf-progress-run .sf-progress-run-icon--failed {
     --sf-icon--color: var(--sf-error);
+  }
+  /* Finished with errors and paused are warnings (C34): never the success mark. */
+  .sf-progress-run .sf-progress-run-icon--partial,
+  .sf-progress-run .sf-progress-run-icon--paused {
+    --sf-icon--color: var(--sf-warning);
   }
   .sf-progress-run-step--waiting .sf-progress-run-step-title,
   .sf-progress-run-step--skipped .sf-progress-run-step-title {
@@ -144,7 +339,121 @@
     min-inline-size: 0;
   }
   .sf-progress-run-step-title {
+    word-wrap: break-word;
+  }
+  /* A step with a log: the row is its toggle, the chevron at the text's end,
+     the log under the text. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-step-toggle{
+    text-align: left;
+  }
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .sf-progress-run-step-toggle{
+    text-align: left;
+    }
+  }
+  .sf-progress-run-step-toggle:where(:dir(ltr)){
+    text-align: left;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-step-toggle{
+    text-align: right;
+  }
+  @supports not (text-align: start){
+  [dir="rtl"] .sf-progress-run-step-toggle{
+    text-align: right;
+    }
+  }
+  .sf-progress-run-step-toggle:where(:dir(rtl)){
+    text-align: right;
+  }
+  .sf-progress-run-step-toggle {
+    display: flex;
+    flex: 1 1 0;
+    align-items: flex-start;
+    gap: var(--sf-progress-run--text-space-x);
+    min-width: 0;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sf-radius--ui);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .sf-progress-run-step-toggle.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+  }
+  .sf-progress-run-step-toggle:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-step-log{
+    margin-left: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-progress-run-step-log{
+    margin-left: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+    }
+  }
+  .sf-progress-run-step-log:where(:dir(ltr)){
+    margin-left: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-step-log{
+    margin-right: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-progress-run-step-log{
+    margin-right: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+    }
+  }
+  .sf-progress-run-step-log:where(:dir(rtl)){
+    margin-right: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+  }
+  .sf-progress-run-step-log {
+    box-sizing: border-box;
+    /* A row of its own under the step, inset by the icon field: the basis
+       leaves room for the inset, so the log never runs past the card. */
+    flex: 0 0 calc(100% - var(--sf-progress-run--line) - var(--sf-progress-run--text-space-x));
+    min-width: 0;
+    min-inline-size: 0;
+    max-height: calc(var(--sf-progress-run--below-line) * 16 + var(--sf-progress-run--below-space-x) * 2);
+    max-block-size: calc(var(--sf-progress-run--below-line) * 16 + var(--sf-progress-run--below-space-x) * 2);
+    max-height: calc(var(--sf-progress-run--below-line) * 16 + var(--sf-progress-run--below-space-x) * 2);
+    max-height: var(--sf-progress-run-output-max-height, calc(var(--sf-progress-run--below-line) * 16 + var(--sf-progress-run--below-space-x) * 2));
+    max-block-size: var(--sf-progress-run-output-max-height, calc(var(--sf-progress-run--below-line) * 16 + var(--sf-progress-run--below-space-x) * 2));
+    margin: var(--sf-space-1\/4) 0 0;
+    -webkit-margin-start: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+            margin-inline-start: calc(var(--sf-progress-run--line) + var(--sf-progress-run--text-space-x));
+    overflow: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+    scroll-behavior: auto;
+    padding: calc(var(--sf-progress-run--below-space-x) - var(--sf-px));
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    border-radius: var(--sf-radius--ui);
+    background: var(--sf-surface-1);
+    background: var(--sf-progress-run-output-background-color, var(--sf-progress-run-output-background, var(--sf-surface-1)));
+    color: var(--sf-on-surface);
+    color: var(--sf-progress-run-output-color, var(--sf-on-surface));
+    font-family: var(--sf-mono);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    white-space: pre-wrap;
     word-wrap: anywhere;
+    -moz-tab-size: 4;
+      -o-tab-size: 4;
+         tab-size: 4;
+  }
+  .sf-progress-run-step-log.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+  }
+  .sf-progress-run-step-log:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-progress-run-step-supporting,
   .sf-progress-run-time,
@@ -154,7 +463,12 @@
     line-height: var(--sf-progress-run--below-line);
   }
   .sf-progress-run-step-supporting {
-    word-wrap: anywhere;
+    word-wrap: break-word;
+  }
+  .sf-progress-run-step-figures {
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
   }
   /* The time stands on the title's line, on the title's baseline box. */
   .sf-progress-run-time {
@@ -177,13 +491,26 @@
     font-weight: 500;
     font-weight: var(--sf-text--font-weight-5, 500);
   }
+  /* Compact density (owner's C34 amendment, R082): the title and the result
+     stand at the same text size, so the result line («Загружено N из M…») is
+     regular and only the title is bold. Density is desktop-only (C22); a normal
+     region inside a compact one keeps the medium line. */
+  @media (min-width: 60rem) {
+    [data-sf-density=compact] .sf-progress-run-result {
+      font-weight: var(--sf-font-weight-regular);
+    }
+    [data-sf-density=compact] [data-sf-density=normal] .sf-progress-run-result {
+      font-weight: 500;
+      font-weight: var(--sf-text--font-weight-5, 500);
+    }
+  }
   .sf-progress-run .sf-progress-run-icon--cancelled {
     --sf-icon--color: var(--sf-on-surface-variant);
   }
   .sf-progress-run-result-text {
     min-width: 0;
     min-inline-size: 0;
-    word-wrap: anywhere;
+    word-wrap: break-word;
   }
   /* The output: its toggle and tools, then the pane. */
   .sf-progress-run-output-block {
@@ -321,6 +648,198 @@
     padding-left: var(--sf-progress-run--padding-inline);
     padding-right: var(--sf-progress-run--padding-inline);
     padding-inline: var(--sf-progress-run--padding-inline);
+  }
+  /* «Ещё N ошибок» starts the row on the text edge (the toggle's pull-back);
+     sf-button's host draws no box, its button is the flex item. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-left: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-left: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(ltr)){
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-left: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-right: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-right: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(rtl)){
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    margin-right: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-right: auto;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-right: auto;
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(ltr)){
+    margin-right: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-left: auto;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-left: auto;
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(rtl)){
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-progress-run-more > .sf-button{
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(ltr)){
+    margin-left: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-progress-run-more > .sf-button{
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    }
+  }
+  .sf-progress-run-more > .sf-button:where(:dir(rtl)){
+    margin-right: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+  }
+  .sf-progress-run-more > .sf-button {
+    -webkit-margin-start: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+            margin-inline-start: calc(-1 * (0px + var(--sf-progress-run--below-text-space-x)));
+    -webkit-margin-start: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+            margin-inline-start: calc(-1 * (var(--sf-button--padding-inline-start, 0px) + var(--sf-progress-run--below-text-space-x)));
+    -webkit-margin-end: auto;
+            margin-inline-end: auto;
+  }
+  /* compact: one line for a table row -- the bar and its short figures, or the
+     badge -- and the icon actions at the end. notice: one row for a corner
+     panel -- the mark in the icon field, the name and its figures, Expand. */
+  .sf-progress-run.sf-progress-run--view-compact,
+  .sf-progress-run.sf-progress-run--view-notice {
+    display: block;
+  }
+  .sf-progress-run-line {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-progress-run--text-space-x);
+    min-width: 0;
+    min-inline-size: 0;
+    min-height: var(--sf-ui-1\/2--control-height);
+    min-block-size: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-progress-run-inline {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--sf-space-1\/3);
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-progress-run-inline > .sf-progress-run-bar {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-progress-run-figures-short {
+    flex: none;
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .sf-progress-run--view-compact .sf-progress-run-line > .sf-progress-run-badge {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-run-icon-actions{
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-progress-run-icon-actions{
+    margin-left: auto;
+    }
+  }
+  .sf-progress-run-icon-actions:where(:dir(ltr)){
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-run-icon-actions{
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-progress-run-icon-actions{
+    margin-right: auto;
+    }
+  }
+  .sf-progress-run-icon-actions:where(:dir(rtl)){
+    margin-right: auto;
+  }
+  .sf-progress-run-icon-actions {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
+  }
+  /* The notice's mark: one icon field, the rung's line (24 desktop, 20 phone);
+     the ring stands in it with 2 px of air (20, 16; R086), never bigger than
+     an icon beside it. sf-progress-ring has no icon-field step yet: its step
+     size is taken here from the line. */
+  .sf-progress-run-mark {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--sf-progress-run--line);
+    inline-size: var(--sf-progress-run--line);
+    height: var(--sf-progress-run--line);
+    block-size: var(--sf-progress-run--line);
+  }
+  .sf-progress-run-mark .sf-progress-ring {
+    --sf-progress-ring--step-size: calc(var(--sf-progress-run--line) - var(--sf-px) * 4);
+  }
+  .sf-progress-run-notice-text {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-progress-run-notice-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sf-progress-run-notice-figures {
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-progress-run--below-font-size);
+    line-height: var(--sf-progress-run--below-line);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
   }
   @media (forced-colors: active) {
     .sf-progress-run-output {

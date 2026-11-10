@@ -232,6 +232,8 @@
     background: var(--sf-tree-selected-background-color, var(--sf-primary-container));
     color: var(--sf-on-primary-container);
     --sf-icon--color: var(--sf-on-primary-container);
+    /* A translucent fill: a tonal badge on it keeps its own tone (C43). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
   }
   .sf-tree .sf-tree-item.focus-visible > .sf-tree-item-container {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -252,7 +254,7 @@
     }
   }
   .sf-tree .sf-tree-item[aria-disabled=true] {
-    color: var(--sf-on-surface-muted);
+    color: var(--sf-on-surface-disabled);
     cursor: not-allowed;
   }
   .sf-tree .sf-tree-chevron {

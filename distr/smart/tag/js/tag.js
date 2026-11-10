@@ -89,6 +89,368 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "64feefebb417"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   THEME_ICONS: () => (/* binding */ THEME_ICONS),
+/* harmony export */   cycleItems: () => (/* binding */ cycleItems),
+/* harmony export */   cycleState: () => (/* binding */ cycleState),
+/* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   nextTheme: () => (/* binding */ nextTheme),
+/* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
+/* harmony export */   preloadSwitchIcons: () => (/* binding */ preloadSwitchIcons),
+/* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   switchIconEntries: () => (/* binding */ switchIconEntries),
+/* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
+/* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
+/* harmony export */   themePreference: () => (/* binding */ themePreference),
+/* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */ });
+// One button, several values (docs review R039, owner decision D11d;
+// research ui-control control/research/2026-11-08-cycle-button.md).
+//
+// sf-button and sf-button-icon share this: the `cycle` setting is a list of
+// items shaped like sf-segmented's items ({value, label, icon} and an
+// optional `pressed`, which draws the item with the pressed look), `value`
+// is the current item, and a press moves to the next item and wraps. The
+// `theme-cycle` setting draws a ready theme switch over SF.Loader's theme
+// (the same contract as sf-segmented's theme-switch: themePreference,
+// setTheme, sf-theme-change).
+//
+// The name and the icon say the current value («Тема: тёмная»), the tooltip
+// says the current and the next («Тема: тёмная. Нажмите — как в системе»),
+// and a polite live region says the new value after a press. A cycle is a
+// plain button: it carries no aria-pressed, so pressed, label-pressed and
+// text-pressed are ignored beside it (with one console warning).
+const THEME_VALUES = ['system', 'light', 'dark']; // «Как в системе» in a cycle is the half-dark, half-light circle (D11d): a
+// monitor alone does not say a theme.
+
+const THEME_ICONS = Object.freeze({
+  system: 'contrast',
+  light: 'light_mode',
+  dark: 'dark_mode'
+});
+
+function parseList(source) {
+  if (Array.isArray(source)) return source;
+  const text = String(source ?? '').trim();
+  if (!text) return [];
+
+  if (text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  } // value::label::flags|… as sf-segmented's items take it; a flag icon=<name>
+  // names the icon, pressed draws the pressed look.
+
+
+  return text.split('|').map(entry => {
+    const [value, label = value, flags = ''] = entry.split('::');
+    const list = flags.split(',').map(flag => flag.trim()).filter(Boolean);
+    const icon = list.find(flag => flag.startsWith('icon='));
+    return {
+      value: value.trim(),
+      label: label.trim(),
+      icon: icon ? icon.slice(5) : '',
+      pressed: list.includes('pressed')
+    };
+  });
+}
+/** The cycle's items, normalised: a value each, once, in the given order. */
+
+/** Reads the attribute's JSON or value::label::flags form; a list stays a list. */
+
+
+function parseCycle(value) {
+  return parseList(value);
+}
+function cycleItems(source) {
+  const seen = new Set();
+  return parseList(source).map((item, index) => {
+    const one = typeof item === 'string' ? {
+      value: item,
+      label: item
+    } : item;
+    if (!one || typeof one !== 'object') return null;
+    const value = String(one.value ?? one.id ?? index).trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return {
+      value,
+      label: String(one.label ?? one.text ?? value),
+      icon: String(one.icon || ''),
+      lang: String(one.lang || '').trim(),
+      pressed: Boolean(one.pressed)
+    };
+  }).filter(Boolean);
+}
+/** The themes a theme-cycle offers: all three, or the two it names. */
+
+function themeCycleValues(attribute) {
+  const named = String(attribute ?? '').trim().toLowerCase().split(/[\s,]+/u).map(word => word === 'auto' ? 'system' : word).filter(word => THEME_VALUES.includes(word));
+  const unique = [...new Set(named)]; // Two themes without «as the system» flip the visible theme; anything else
+  // (empty, one word, all three) is the full cycle.
+
+  if (unique.length === 2 && !unique.includes('system')) return ['light', 'dark'];
+  return THEME_VALUES;
+}
+
+const opposite = theme => theme === 'dark' ? 'light' : 'dark';
+
+function loader() {
+  return globalThis.SF?.Loader;
+}
+/** The theme drawn now (light or dark), whatever the preference. */
+
+
+function visibleTheme() {
+  const theme = loader()?.theme;
+  if (theme === 'dark' || theme === 'light') return theme;
+  const root = globalThis.document?.documentElement;
+  if (root?.classList?.contains('theme-dark')) return 'dark';
+  if (root?.classList?.contains('theme-light')) return 'light';
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+}
+/** What the person chose: system, light or dark. */
+
+function themePreference() {
+  const preference = loader()?.themePreference;
+  return THEME_VALUES.includes(preference) ? preference : 'system';
+}
+/**
+ * The owner's order (D11d): first the theme opposite to the visible one,
+ * then the other, then «as the system». It needs the value before the
+ * current one: from an explicit theme reached from the other explicit theme
+ * the next is system; from system, or from a theme the page loaded with, the
+ * opposite theme. Two themes: always the opposite of the visible theme.
+ */
+
+function nextTheme({
+  values,
+  current,
+  previous
+}) {
+  if (!values.includes('system')) return opposite(visibleTheme());
+  if (current === 'system') return opposite(visibleTheme());
+  if (previous && previous !== 'system' && previous === opposite(current)) return 'system';
+  return opposite(current);
+}
+/**
+ * The cycle state the template reads: {items, item, next, index, name,
+ * tooltip}. `words(key, vars)` gives the element's words; `base` is the
+ * button's own name (aria-label, or the text of an sf-button).
+ */
+
+function hasCycle(host) {
+  if (host.hasAttribute('theme-cycle')) return true;
+  const own = host.getProp?.('cycle');
+  return Boolean(host.hasAttribute('cycle') || Array.isArray(own) && own.length);
+}
+function cycleState(host, {
+  base = '',
+  words
+}) {
+  if (host.hasAttribute('theme-cycle')) {
+    const values = themeCycleValues(host.getAttribute('theme-cycle'));
+    const two = !values.includes('system');
+    const current = two ? visibleTheme() : themePreference();
+
+    const label = value => words(`theme-${value}`);
+
+    const items = values.map(value => ({
+      value,
+      label: label(value),
+      icon: THEME_ICONS[value],
+      lang: '',
+      pressed: false
+    }));
+    const item = items.find(one => one.value === current) ?? items[0];
+    const nextValue = nextTheme({
+      values,
+      current: item.value,
+      previous: host.__sfCyclePrevious
+    });
+    const next = items.find(one => one.value === nextValue) ?? items[0];
+    const title = base || words('theme');
+    const now = item.value === 'system' ? words('theme-system-now', {
+      vars: {
+        theme: label(visibleTheme())
+      }
+    }) : item.label;
+    const name = `${title}: ${now}`;
+    return {
+      theme: true,
+      items,
+      item,
+      next,
+      name,
+      tooltip: words('cycle-next', {
+        vars: {
+          name,
+          next: next.label
+        }
+      })
+    };
+  }
+
+  const items = cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle'));
+  if (!items.length) return null;
+  const at = Math.max(0, items.findIndex(one => one.value === (host.getAttribute('value') ?? '')));
+  const item = items[at];
+  const next = items[(at + 1) % items.length];
+  const name = base ? `${base}: ${item.label}` : item.label;
+  return {
+    theme: false,
+    items,
+    item,
+    next,
+    name,
+    tooltip: words('cycle-next', {
+      vars: {
+        name,
+        next: next.label
+      }
+    })
+  };
+}
+/** A cycle beside a toggle's settings: the toggle's are ignored, said once. */
+
+function warnCycleToggle(host, names) {
+  const given = names.filter(name => host.hasAttribute(name));
+  if (!given.length || host.__sfCycleWarned) return;
+  host.__sfCycleWarned = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
+}
+/**
+ * A person's press of a cycle: the next value, the change event and the
+ * announcement. Answers true when it moved.
+ */
+
+function pressCycle(host, state) {
+  if (!state) return false;
+  const previous = state.item.value;
+  const value = state.next.value; // Said after the drawing that follows: the flag first, as the drawing may
+  // come at once.
+
+  const before = host.__sfCyclePrevious;
+  host.__sfCycleAnnounce = true;
+  host.__sfCyclePrevious = previous;
+
+  if (state.theme) {
+    // The Loader moves the page first, so a listener of change finds the
+    // page in the theme it chose; a Loader that cannot (absent, or the
+    // theme switched off) leaves the cycle where it is.
+    host.__sfCycleExpect = value;
+
+    if (loader()?.setTheme?.(value) !== true) {
+      host.__sfCycleAnnounce = false;
+      host.__sfCyclePrevious = before;
+      host.__sfCycleExpect = undefined;
+      return false;
+    }
+  } else {
+    host.setAttribute('value', value);
+  }
+
+  host.requestComponentUpdate?.('value');
+  const item = state.items.find(one => one.value === value) ?? null;
+  host.sfEmit('change', {
+    previous,
+    value,
+    item: item ? { ...item
+    } : null
+  });
+  return true;
+}
+/**
+ * sf-theme-change for a theme cycle: a theme set elsewhere (another switch,
+ * SF.Loader.setTheme) starts the order afresh from what is shown.
+ */
+
+function themeCycleFollow(host) {
+  if (!host.hasAttribute('theme-cycle')) return;
+  const values = themeCycleValues(host.getAttribute('theme-cycle'));
+  const now = values.includes('system') ? themePreference() : visibleTheme();
+  if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
+  host.__sfCycleExpect = undefined;
+  host.requestComponentUpdate?.('theme-cycle');
+} // The icons a control can switch to, asked for before it switches (R074).
+// Only the icon on screen was tracked, so the first press that showed another
+// one asked the subset service for a grown font on the click, and the new
+// icon stayed blank while the service built it (up to ~30 s when it was busy).
+// Asked for when the control is drawn, the names join the page's first icon
+// request (held until the Loader is ready); a control added later costs one
+// grown font off the click.
+
+/**
+ * The icon entries ({icon, filled}) a cycle, a theme cycle or a toggle can
+ * show. `icons` are a toggle's own icon names: with `pressed` present they
+ * are drawn filled while on, so both forms are asked for. `filled` is the
+ * control's own filled setting (every form filled).
+ */
+
+function switchIconEntries(host, {
+  icons = [],
+  filled = false
+} = {}) {
+  const entries = [];
+
+  const add = (icon, fill) => {
+    const name = String(icon || '').trim();
+    if (name) entries.push({
+      icon: name,
+      filled: Boolean(fill || filled)
+    });
+  };
+
+  if (host.hasAttribute('theme-cycle')) {
+    themeCycleValues(host.getAttribute('theme-cycle')).forEach(value => add(THEME_ICONS[value], false));
+  } else if (hasCycle(host)) {
+    cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle')).forEach(item => add(item.icon, item.pressed));
+  } else if (host.hasAttribute('pressed')) {
+    icons.forEach(icon => {
+      add(icon, false);
+      add(icon, true);
+    });
+  }
+
+  const seen = new Set();
+  return entries.filter(entry => {
+    const key = `${entry.icon}|${entry.filled}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+/**
+ * Asks the Loader for these icon entries once per distinct list (a render
+ * that draws the same items asks nothing). Answers the number of new names.
+ */
+
+function preloadControlIcons(host, entries) {
+  if (!Array.isArray(entries) || !entries.length) return 0;
+  const key = JSON.stringify(entries);
+  if (host.__sfPreloadedIcons === key) return 0;
+  const preload = loader()?.preloadIcons;
+  if (typeof preload !== 'function') return 0;
+  host.__sfPreloadedIcons = key;
+  return preload.call(loader(), entries) || 0;
+}
+/** switchIconEntries, asked for. */
+
+function preloadSwitchIcons(host, options = {}) {
+  return preloadControlIcons(host, switchIconEntries(host, options));
+}
+
+/***/ },
+
 /***/ "fed59e5c8a07"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -99,10 +461,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a038e9885b82");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7eee137ec5ff");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e01b02206b25");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d65b1989605d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("277f66a1ef9b");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("7eee137ec5ff");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e01b02206b25");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d65b1989605d");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("277f66a1ef9b");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -117,7 +480,31 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const TAG_KINDS = ['checkbox', 'icon', 'default', 'color', 'avatar'];
+
+const TAG_KINDS = ['checkbox', 'icon', 'default', 'color', 'avatar']; // The glyphs the template draws in sf-icon: an icon tag's icon (sell when
+// none is named) and an avatar tag's placeholder; a slot drawn instead asks
+// for nothing. Read from the element, so it can be asked before it draws.
+
+function drawnIcons(host) {
+  const slotted = name => host.hasSlotContent?.(name);
+
+  if (host.type === 'icon' && !slotted('leading')) return [host.icon || 'sell'];
+  if (host.type === 'avatar' && !slotted('avatar') && !host.avatarImageUrl && !host.avatarText) return ['person'];
+  return [];
+} // Asked for when the tag connects, before it draws (R074 F3, the remedy
+// sf-segmented got in 2f588136): the inner sf-icon told the Loader its name
+// only once the tag had drawn, a task or more after the tag was defined, and
+// the page's first icon request, which waits a frame after the definitions,
+// went without it; a second request followed 50-140 ms later, and on a slow
+// service the tag's icon was blank until the full font arrived. Asked again
+// when it draws (a name set later); one request per distinct list.
+
+
+const preloadTagIcons = host => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.preloadControlIcons)(host, drawnIcons(host).map(icon => ({
+  icon,
+  filled: false
+})));
+
 const TAG_STATUSES = ['', 'info', 'success', 'warning', 'error'];
 
 const normalize = value => String(value ?? '').trim().toLowerCase(); // `type` answered two questions from one list: what the tag carries (kind)
@@ -175,14 +562,14 @@ function resolveTagStatus(element, raw, fallback) {
 // {active}; close is sf-tag-close, the old name close its dated alias.
 
 
-const TagElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const TagElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
 
 class SfTag extends TagElement {
@@ -343,7 +730,15 @@ class SfTag extends TagElement {
     this.sfEmit('close', {});
   }
 
+  connectedCallback() {
+    super.connectedCallback(); // After the base has read the slots and the settings, before the update
+    // it requested draws the tag.
+
+    if (this.isConnected) preloadTagIcons(this);
+  }
+
   template() {
+    preloadTagIcons(this);
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderTagTemplate)(this.templateContext());
   }
 
@@ -517,7 +912,10 @@ function renderCount(context) {
   return context.component?.hasSlotContent?.('count') ? context.component.getSlotContent('count') // No count, no element: an empty one kept its padding and the gap
   // before it, an empty band at the end of every tag (owner, 2026-10-14).
   : context.count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-count pointer-events-none flex">${context.count}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-}
+} // The close button is ghost, not link, its former name: the dated alias
+// counted every closable tag as the page's own use of link in
+// SF.deprecations (pair ui-a0370c0c99fb acceptance, F3).
+
 
 function renderClose(context) {
   if (!context.closable) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -525,7 +923,7 @@ function renderClose(context) {
                 <sf-button-icon
                         kind="close"
                         size="${(0,_close_size_js__WEBPACK_IMPORTED_MODULE_2__.closeSize)(context.size)}"
-                        appearance="link"
+                        appearance="ghost"
                         scheme="on-surface"
                         ?disabled=${context.disabled}
                         aria-label=${context.closeLabel}
@@ -669,7 +1067,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.3.2","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.3.4","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

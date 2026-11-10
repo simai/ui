@@ -95,13 +95,25 @@ function syncRootLayout(root, textPosition = 'none') {
   if (textPosition === 'right' || textPosition === 'inline-end') {
     root.classList.add('flex-row', 'items-cross-center');
   }
+} // Indeterminate (C34): the size of the work is not known, so the bar has no
+// value to say: aria-valuenow is left out (WAI-ARIA progressbar), and the
+// value text, when the page gives one, says what is going on.
+
+
+function isIndeterminate(root) {
+  return root.classList.contains('sf-progress-bar--indeterminate') || root.dataset.indeterminate === 'true';
+} // Paused (C34): the work stands still, so an indeterminate segment stops.
+
+
+function isPaused(root) {
+  return root.classList.contains('sf-progress-bar--paused') || root.dataset.paused === 'true';
 }
 
 function syncProgressAccessibility(root, value) {
   root.setAttribute('role', 'progressbar');
   root.setAttribute('aria-valuemin', '0');
   root.setAttribute('aria-valuemax', '100');
-  root.setAttribute('aria-valuenow', String(value));
+  if (isIndeterminate(root)) root.removeAttribute('aria-valuenow');else root.setAttribute('aria-valuenow', String(value));
   const label = root.dataset.label;
 
   if (label) {
@@ -115,12 +127,16 @@ function syncProgressAccessibility(root, value) {
   } else {
     root.removeAttribute('aria-valuetext');
   }
-}
+} // The template writes sf-progress-bar--neutral for no status (it draws
+// nothing of its own); a status it changes to takes it away, so no
+// --neutral stays beside the new status class.
+
 
 function syncTone(root, tone) {
   ['primary', ...TONES].forEach(name => {
     root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
   });
+  if (tone) root.classList.remove('sf-progress-bar--neutral');
   if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
 
@@ -134,12 +150,15 @@ function renderProgressBar(root) {
   const tone = normalizeTone(root.dataset.tone);
   syncRootLayout(root, textPosition);
   syncTone(root, tone);
+  const indeterminate = isIndeterminate(root);
+  root.classList.toggle('sf-progress-bar--indeterminate', indeterminate);
+  root.classList.toggle('sf-progress-bar--paused', isPaused(root));
   syncProgressAccessibility(root, value);
-  progress.style.width = `${value}%`;
+  if (indeterminate) progress.style.removeProperty('width');else progress.style.width = `${value}%`;
   root.dataset.value = String(value);
   root.dataset.position = textPosition;
 
-  if (textPosition === 'none') {
+  if (textPosition === 'none' || indeterminate) {
     const textNode = getTextNode(root);
 
     if (textNode) {
@@ -209,6 +228,16 @@ function setProgressBarState(target, state = {}) {
     if (valueText) root.dataset.valueText = valueText;else delete root.dataset.valueText;
   }
 
+  if (Object.prototype.hasOwnProperty.call(state, 'indeterminate')) {
+    if (state.indeterminate) root.dataset.indeterminate = 'true';else delete root.dataset.indeterminate;
+    root.classList.toggle('sf-progress-bar--indeterminate', Boolean(state.indeterminate));
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'paused')) {
+    if (state.paused) root.dataset.paused = 'true';else delete root.dataset.paused;
+    root.classList.toggle('sf-progress-bar--paused', Boolean(state.paused));
+  }
+
   if (Object.prototype.hasOwnProperty.call(state, 'size')) {
     const currentSizeClass = Array.from(root.classList).find(cls => cls.startsWith('sf-progress-bar--size-'));
 
@@ -231,7 +260,9 @@ function getProgressBarState(target) {
     status: normalizeTone(root.dataset.tone),
     tone: normalizeTone(root.dataset.tone),
     label: root.getAttribute('aria-label') || '',
-    valueText: root.getAttribute('aria-valuetext') || ''
+    valueText: root.getAttribute('aria-valuetext') || '',
+    indeterminate: isIndeterminate(root),
+    paused: isPaused(root)
   };
 }
 
@@ -248,7 +279,9 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       status,
       tone = 'primary',
       label = '',
-      valueText = ''
+      valueText = '',
+      indeterminate = false,
+      paused = false
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const root = document.createElement('div');
@@ -268,6 +301,8 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     root.dataset.tone = normalizeTone(status ?? tone);
     if (String(label).trim()) root.dataset.label = String(label).trim();
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
+    if (indeterminate) root.dataset.indeterminate = 'true';
+    if (paused) root.dataset.paused = 'true';
     const main = document.createElement('div');
     main.className = 'sf-progress-bar-main';
     const progress = document.createElement('div');
@@ -482,6 +517,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   effectiveStatus: () => (/* binding */ effectiveStatus),
+/* harmony export */   pausedStatus: () => (/* binding */ pausedStatus),
 /* harmony export */   showChunk: () => (/* binding */ showChunk),
 /* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus)
 /* harmony export */ });
@@ -512,7 +548,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js; a job's part arrives as the stream fact chunk
 // {done, total} (vocabulary 1.1.5 §5.2), which a rule hands to the action
 // chunk; tone and setProgress are dated aliases (aliases.json). warning-at and
-// error-at (1.2.0) turn the bar a warning or an error by itself.
+// error-at (1.2.0) turn the bar a warning or an error by itself. indeterminate
+// (1.3.0) runs a segment for work of unknown size; paused (1.3.0) is at least
+// a warning and is said in the value text (C34).
 
 const ProgressBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
@@ -569,6 +607,10 @@ function thresholdStatus(value, warningAt, errorAt) {
 function effectiveStatus(status, value, warningAt, errorAt) {
   const reached = thresholdStatus(value, warningAt, errorAt);
   return (RANK[reached] ?? 0) > (RANK[status] ?? 0) ? reached : status;
+} // Paused (1.3.0, C34): at least a warning; an error stays an error.
+
+function pausedStatus(status, paused) {
+  return paused && (RANK[status] ?? 0) < RANK.warning ? 'warning' : status;
 } // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each call is noted with it.
 
@@ -614,11 +656,22 @@ class SfProgressBar extends ProgressBarElement {
     if (!this.hasAttribute(attribute)) return null;
     const number = Number(this.getAttribute(attribute));
     return Number.isFinite(number) ? number : null;
-  } // The status drawn: the page's, or the threshold the value reached.
+  } // The status drawn: the page's, or the threshold the value reached; a
+  // paused bar is at least a warning (C34).
 
 
   get drawnStatus() {
-    return effectiveStatus(this.status, this.value, this.threshold('warning-at'), this.threshold('error-at'));
+    return pausedStatus(effectiveStatus(this.status, this.value, this.threshold('warning-at'), this.threshold('error-at')), this.paused);
+  } // What a screen reader hears beside the value: the page's value text, else
+  // for a paused bar the value with the word paused (C34).
+
+
+  get spokenValueText() {
+    if (this.valueText) return this.valueText;
+    if (!this.paused) return '';
+    if (this.indeterminate) return this.sfWord('paused');
+    const value = Math.max(0, Math.min(100, Number(this.value) || 0));
+    return this.sfWord('paused-value').replace('{value}', String(Math.round(value * 100) / 100));
   } // The accessible name: label, else the host's aria-label (§3.1, §4.8).
 
 
@@ -629,10 +682,16 @@ class SfProgressBar extends ProgressBarElement {
   templateContext() {
     const props = this.getPropsContext();
     const status = this.drawnStatus;
-    this.sfHostState('data-status', status);
+    this.sfHostState('data-status', status); // The drawn status and the spoken value text go under their own names:
+    // status and valueText are the page's settings as given (their getters),
+    // and the template reads what the bar resolved (template-context rule).
+
     return this.createTemplateContext({ ...props,
-      status,
+      drawnStatus: status,
       label: this.accessibleLabel,
+      spokenValueText: this.spokenValueText,
+      indeterminate: Boolean(this.indeterminate),
+      paused: Boolean(this.paused),
       component: this
     });
   }
@@ -649,7 +708,9 @@ class SfProgressBar extends ProgressBarElement {
       status: this.status,
       drawnStatus: this.drawnStatus,
       label: this.label,
-      valueText: this.valueText
+      valueText: this.valueText,
+      indeterminate: Boolean(this.indeterminate),
+      paused: Boolean(this.paused)
     };
   } // §4.4: a reader retires; read value.
 
@@ -667,7 +728,7 @@ class SfProgressBar extends ProgressBarElement {
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'warning-at', 'error-at', 'label', 'value-text', 'aria-label'];
+    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'warning-at', 'error-at', 'label', 'value-text', 'aria-label', 'indeterminate', 'paused'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -686,7 +747,9 @@ class SfProgressBar extends ProgressBarElement {
       textPosition: this.textPosition,
       tone: status,
       label: this.accessibleLabel,
-      valueText: this.valueText
+      valueText: this.spokenValueText,
+      indeterminate: Boolean(this.indeterminate),
+      paused: Boolean(this.paused)
     });
   }
 
@@ -761,10 +824,12 @@ function renderProgressBarTemplate(context) {
     textPosition
   } = context;
   const size = normalizeSize(context.size);
-  const tone = normalizeStatus(context.status ?? context.tone);
+  const tone = normalizeStatus(context.drawnStatus ?? context.status ?? context.tone);
   const normalizedValue = normalizeValue(value);
   const normalizedPosition = ['none', 'right', 'inline-end', 'bottom'].includes(textPosition) ? textPosition : 'none';
-  const rootClasses = ['sf-progress-bar', `sf-progress-bar--size-${size}`, `sf-progress-bar--${tone}`, 'flex', context.rootClass].filter(Boolean);
+  const indeterminate = Boolean(context.indeterminate);
+  const paused = Boolean(context.paused);
+  const rootClasses = ['sf-progress-bar', `sf-progress-bar--size-${size}`, `sf-progress-bar--${tone}`, indeterminate ? 'sf-progress-bar--indeterminate' : '', paused ? 'sf-progress-bar--paused' : '', 'flex', context.rootClass].filter(Boolean);
 
   if (normalizedPosition === 'right' || normalizedPosition === 'inline-end') {
     rootClasses.push('flex-row', 'items-cross-center');
@@ -780,18 +845,20 @@ function renderProgressBarTemplate(context) {
       data-position=${normalizedPosition}
       data-tone=${tone}
       data-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      data-value-text=${context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-value-text=${(context.spokenValueText ?? context.valueText) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-indeterminate=${indeterminate ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-paused=${paused ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       role="progressbar"
       aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-valuemin="0"
       aria-valuemax="100"
-      aria-valuenow=${String(normalizedValue)}
-      aria-valuetext=${context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-valuenow=${indeterminate ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(normalizedValue)}
+      aria-valuetext=${(context.spokenValueText ?? context.valueText) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
       <div class="sf-progress-bar-main">
         <div class="sf-progress-bar-progress transition"></div>
       </div>
-      ${normalizedPosition !== 'none' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-bar-text">${normalizedValue}%</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${normalizedPosition !== 'none' && !indeterminate ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-bar-text">${normalizedValue}%</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -838,21 +905,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "e023bc52f90d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","inline-end","bottom","right"],"default":"none"},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","inline-end","bottom","right"],"default":"none"},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 
 /***/ "8c9a03a2745a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Bar"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Bar","runtime":{"paused-value":"{value}%, paused","paused":"paused"}}');
 
 /***/ },
 
 /***/ "2cbf36776b51"
 (module) {
 
-module.exports = {"title":"Прогресс"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Прогресс","runtime":{"paused-value":"{value} %, на паузе","paused":"на паузе"}}');
 
 /***/ }
 

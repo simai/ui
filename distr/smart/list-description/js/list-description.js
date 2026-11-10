@@ -8,9 +8,13 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   COLUMNS: () => (/* binding */ COLUMNS),
 /* harmony export */   ICONS: () => (/* binding */ ICONS),
 /* harmony export */   STATUSES: () => (/* binding */ STATUSES),
 /* harmony export */   SfListDescription: () => (/* binding */ SfListDescription),
+/* harmony export */   normalizeAction: () => (/* binding */ normalizeAction),
+/* harmony export */   normalizeBadge: () => (/* binding */ normalizeBadge),
 /* harmony export */   normalizeItems: () => (/* binding */ normalizeItems),
 /* harmony export */   valueText: () => (/* binding */ valueText)
 /* harmony export */ });
@@ -36,8 +40,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // A native dl: the labels in a column of their own as wide as the longest
 // one, the values beside them; on a phone (a column narrower than 24rem) each
 // label over its value. A value is text: monospace, a link (navigate), copied
-// with an sf-button-copy, with a status icon and a hint; an empty one shows
-// «—». The list is read-only and stores and loads nothing.
+// with an sf-button-copy, with a status icon and a hint, or a badge; an empty
+// one says so in words («Не указан»). A label can carry a help mark, a value
+// one action. Section items ({type: "section", label, action?}) split a record
+// into sections inside one grid, so every label of the record shares one
+// column (owner decision C33, the record card); layout grid is the summary
+// under a record's heading, label over value in up to four columns. The list
+// is read-only and stores and loads nothing: an action asks the page (apply).
 //
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4,
 // §8): the settings are made by core/js/element-manifest.js, the words are
@@ -56,11 +65,40 @@ const ICONS = {
   warning: 'warning',
   error: 'error',
   info: 'info'
-};
+}; // sf-badge's colour families, for a badge value without a status.
+
+const BADGE_SCHEMES = ['neutral', 'primary', 'secondary', 'tertiary', 'on-surface'];
+const COLUMNS = ['1', '2', '3', '4'];
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
-/** A value as the list writes it: text; a list joined with commas; nothing is ''. */
+/** An action: {label, event?, href?}; none without a label. */
 
+
+function normalizeAction(value) {
+  if (!value || typeof value !== 'object') return null;
+  const label = text(value.label);
+  return label ? {
+    label,
+    event: text(value.event),
+    href: text(value.href)
+  } : null;
+}
+/** A badge value: {text, status?, scheme?, icon?}; none without a text. */
+
+function normalizeBadge(value) {
+  if (!value || typeof value !== 'object') return null;
+  const words = text(value.text);
+  if (!words) return null;
+  const status = text(value.status).toLowerCase();
+  const scheme = text(value.scheme).toLowerCase();
+  return {
+    text: words,
+    status: STATUSES.includes(status) ? status : '',
+    scheme: BADGE_SCHEMES.includes(scheme) ? scheme : 'neutral',
+    icon: text(value.icon)
+  };
+}
+/** A value as the list writes it: text; a list joined with commas; nothing is ''. */
 
 function valueText(value) {
   if (value === undefined || value === null) return '';
@@ -69,8 +107,11 @@ function valueText(value) {
   return String(value).trim();
 }
 /**
- * The items as given, made safe: an item without a label is left out; the
- * id is the item's, else its place. A status outside the four words is none.
+ * The items as given, made safe: an item without a label is left out (a
+ * section's label is its title); the id is the item's, else its place. A
+ * status outside the four words is none. An empty value (no text and no
+ * badge) has no link, no copy button and no status: it says empty-text. A
+ * value with a badge draws no status icon: the badge is its one mark.
  */
 
 function normalizeItems(value) {
@@ -78,20 +119,41 @@ function normalizeItems(value) {
   const items = [];
   list.forEach((item, at) => {
     if (!item || typeof item !== 'object') return;
+
+    if (item.type === 'section') {
+      const title = text(item.label);
+      if (title) items.push({
+        kind: 'section',
+        id: text(item.id) || String(at),
+        title,
+        action: normalizeAction(item.action)
+      });
+      return;
+    }
+
     const label = text(item.label);
     if (!label) return;
     const shown = valueText(item.value);
     const status = text(item.status).toLowerCase();
+    const badge = normalizeBadge(item.badge);
+    const empty = shown === '' && !badge;
     items.push({
+      kind: 'item',
       id: text(item.id) || String(at),
       label,
       value: shown,
-      empty: shown === '',
+      empty,
+      emptyText: typeof item.empty === 'string' ? text(item.empty) : '',
       hint: text(item.hint),
+      help: text(item.help),
       mono: item.mono === true,
+      numeric: item.numeric === true || typeof item.value === 'number',
       copy: item.copy === true && shown !== '',
       href: shown === '' ? '' : text(item.href),
-      status: STATUSES.includes(status) ? status : ''
+      // One mark per value: a badge is the mark, so its row draws no status icon.
+      status: !empty && !badge && STATUSES.includes(status) ? status : '',
+      badge,
+      action: normalizeAction(item.action)
     });
   });
   return items;
@@ -109,17 +171,31 @@ class SfListDescription extends ListDescriptionElement {
   get list() {
     return normalizeItems(this.items);
   } // A value link: the request first; not cancelled, the browser follows it.
+  // An action link (an item's or a section's action with href) asks the same.
 
 
-  onNavigate(event, item) {
+  onNavigate(event, item, href = item.href) {
     if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const allowed = this.sfEmit('navigate', {
       id: item.id,
-      href: item.href
+      href
     }, {
       cancelable: true
     });
     if (!allowed) event.preventDefault();
+  } // An action button (an item's or a section's, without href): the page does
+  // it (opens a form, a dialog) and sets the list again (vocabulary §5 apply,
+  // scope entry). action is the action's event, «edit» when it names none.
+
+
+  onApply(item) {
+    this.sfEmit('apply', {
+      action: item.action?.event || 'edit',
+      scope: 'entry',
+      ids: [item.id],
+      id: item.id,
+      kind: item.kind
+    });
   }
 
   templateContext() {
@@ -128,18 +204,38 @@ class SfListDescription extends ListDescriptionElement {
     return this.createTemplateContext({ ...this.getPropsContext(),
       component: this,
       size: ['1/2', '1', '2'].includes(this.size) ? this.size : '1',
-      layout: ['columns', 'stacked'].includes(this.layout) ? this.layout : 'auto',
+      layout: ['columns', 'stacked', 'grid'].includes(this.layout) ? this.layout : 'auto',
+      columns: COLUMNS.includes(String(this.columns)) ? String(this.columns) : '4',
+      level: Math.min(6, Math.max(2, Math.trunc(Number(this.headingLevel)) || 3)),
       overflow: this.overflow === 'truncate' ? 'truncate' : 'wrap',
       dividers: Boolean(this.dividers),
       label: this.label,
-      list: list.map(item => ({ ...item,
+      list: list.map(item => item.kind === 'section' ? { ...item,
+        actionLabel: item.action ? this.sfWord('action', {
+          vars: {
+            action: item.action.label,
+            label: item.title
+          }
+        }) : ''
+      } : { ...item,
         statusWord: item.status ? this.sfWord(`status-${item.status}`) : '',
         copyLabel: item.copy ? this.sfWord('copy', {
           vars: {
             label: item.label
           }
+        }) : '',
+        actionLabel: item.action ? this.sfWord('action', {
+          vars: {
+            action: item.action.label,
+            label: item.label
+          }
+        }) : '',
+        helpLabel: item.help ? this.sfWord('help', {
+          vars: {
+            label: item.label
+          }
         }) : ''
-      })),
+      }),
       emptyText: this.emptyText,
       icons: ICONS,
       rootClass: this.getRootClass()
@@ -177,17 +273,31 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // - The root holds a native dl; each row is a div with one dt (the label)
 //   and one dd (the value), so the rows can carry dividers and share one
 //   grid.
-// - A value is text: a link (href), monospace (mono), cut to one line
-//   (overflow truncate, then focusable with its whole text as title), or
-//   empty-text when there is none. A status icon stands before it, its word
-//   visually hidden; a copy button after it; a hint under it.
+// - With section items the root's grid holds, per section, a head (its
+//   title, role heading, and its one action) and a dl of its rows; each dl
+//   and each row are subgrids of that one grid, so every label of the record
+//   shares one column and every value starts on one axis (decision C33).
+// - A label can carry a help mark (sf-help-mark) after it.
+// - A value is text: a link (href), monospace (mono), tabular figures
+//   (numeric), cut to one line (overflow truncate, then focusable with its
+//   whole text as title), a badge (sf-badge on the value's line), or
+//   empty-text when there is none. A status icon stands before a value, its
+//   word visually hidden (never on an empty value); a copy button and the
+//   item's action after it; a hint under it.
 // - With no items: nothing at all.
-// The rung below the list's: the hint, a stacked label, the copy button.
+// The rung below the list's: the hint, a stacked label, the copy button,
+// the actions, the help mark.
 
 const BELOW = {
   '1/2': '1/3',
   1: '1/2',
   2: '1'
+}; // A badge value: sf-badge of this size, on the list's line (line="<size>").
+
+const BADGE = {
+  '1/2': '1/3',
+  1: '1/3',
+  2: '1/2'
 };
 const SIZE_CLASS = {
   '1/2': 'half',
@@ -195,21 +305,42 @@ const SIZE_CLASS = {
   2: '2'
 };
 
-function shown(context, item) {
+function action(context, item) {
+  if (!item.action) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const {
     component,
-    overflow
+    size
   } = context;
-  const classes = ['sf-list-description-text', item.mono ? 'sf-list-description-text--mono' : ''].filter(Boolean).join(' ');
-  const cut = overflow === 'truncate';
-  if (item.empty) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-description-text sf-list-description-empty">${context.emptyText}</span>`;
+  const look = {
+    size: BELOW[size],
+    appearance: 'ghost',
+    scheme: 'primary'
+  };
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-description-action">${item.action.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${look.size} appearance=${look.appearance} scheme=${look.scheme} text=${item.action.label}
+        aria-label=${item.actionLabel} href=${item.action.href}
+        @click=${event => component.onNavigate(event, item, item.action.href)}></sf-button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${look.size} appearance=${look.appearance} scheme=${look.scheme} text=${item.action.label}
+        aria-label=${item.actionLabel} @click=${() => component.onApply(item)}></sf-button>`}</span>`;
+}
+
+function shown(context, item) {
+  const {
+    component
+  } = context;
+  const classes = ['sf-list-description-text', item.mono ? 'sf-list-description-text--mono' : '', item.numeric ? 'sf-list-description-text--numeric' : ''].filter(Boolean).join(' ');
+  const cut = context.overflow === 'truncate';
+  const titled = cut || context.layout === 'grid';
+  if (item.empty) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-description-text sf-list-description-empty">${item.emptyText || context.emptyText}</span>`;
+  const badge = item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list-description-badge" size=${BADGE[context.size]} line=${context.size} appearance="tonal"
+        status=${item.badge.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} scheme=${item.badge.status ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : item.badge.scheme}
+        icon=${item.badge.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${item.badge.text}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!item.value) return badge;
 
   if (item.href) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${`${classes} sf-list-description-link`} href=${item.href} title=${cut ? item.value : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${badge}<a class=${`${classes} sf-list-description-link`} href=${item.href} title=${titled ? item.value : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       @click=${event => component.onNavigate(event, item)}>${item.value}</a>`;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} tabindex=${cut ? '0' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${cut ? item.value : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${item.value}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${badge}<span class=${classes} tabindex=${cut ? '0' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${titled ? item.value : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${item.value}</span>`;
 }
 
 function row(context, item) {
@@ -217,18 +348,43 @@ function row(context, item) {
     size,
     icons
   } = context;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-description-row" data-id=${item.id} data-status=${item.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-    <dt class="sf-list-description-label">${item.label}</dt>
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-description-row" data-id=${item.id} data-status=${item.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-empty=${item.empty ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <dt class="sf-list-description-label">${item.label}${item.help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-list-description-help" size=${BELOW[size]} text=${item.help} label=${item.helpLabel}></sf-help-mark>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</dt>
     <dd class="sf-list-description-value">
       <span class="sf-list-description-line">
         ${item.status ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${`sf-icon sf-list-description-icon sf-list-description-icon--${item.status}`} aria-hidden="true">${icons[item.status]}</i><span class="sr-only">${item.statusWord}: </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${shown(context, item)}
         ${item.copy ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-copy class="sf-list-description-copy" size=${BELOW[size]} appearance="ghost"
           value=${item.value} label=${item.copyLabel}></sf-button-copy>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${action(context, item)}
       </span>
       ${item.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-description-hint">${item.hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </dd>
   </div>`;
+} // The sections: a head per section, then a dl of its rows; rows before the
+// first section stand in a dl of their own, without a head.
+
+
+function sections(context) {
+  const parts = [];
+
+  for (const item of context.list) {
+    if (item.kind === 'section') parts.push({
+      section: item,
+      rows: []
+    });else if (parts.length) parts[parts.length - 1].rows.push(item);else parts.push({
+      section: null,
+      rows: [item]
+    });
+  }
+
+  return parts.map(({
+    section,
+    rows
+  }) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${section ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-description-head" data-id=${section.id}>
+      <div class="sf-list-description-title" role="heading" aria-level=${String(context.level)}>${section.title}</div>
+      ${action(context, section)}
+    </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${rows.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<dl class="sf-list-description-part" aria-label=${section ? section.title : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${rows.map(item => row(context, item))}</dl>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`);
 }
 
 function renderListDescriptionTemplate(context) {
@@ -240,10 +396,11 @@ function renderListDescriptionTemplate(context) {
     list
   } = context;
   if (!list.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const classes = ['sf-list-description', `sf-list-description--size-${SIZE_CLASS[size] ?? '1'}`, `sf-list-description--layout-${layout}`, overflow === 'truncate' ? 'sf-list-description--truncate' : '', dividers ? 'sf-list-description--dividers' : '', context.rootClass].filter(Boolean).join(' '); // Named (label) it is a group of that name; the dl inside keeps its own role.
+  const sectioned = list.some(item => item.kind === 'section');
+  const classes = ['sf-list-description', `sf-list-description--size-${SIZE_CLASS[size] ?? '1'}`, `sf-list-description--layout-${layout}`, layout === 'grid' ? `sf-list-description--columns-${context.columns}` : '', overflow === 'truncate' ? 'sf-list-description--truncate' : '', dividers ? 'sf-list-description--dividers' : '', sectioned ? 'sf-list-description--sections' : '', context.rootClass].filter(Boolean).join(' '); // Named (label) it is a group of that name; the dl inside keeps its own role.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role=${context.label ? 'group' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-    <dl class="sf-list-description-list">${list.map(item => row(context, item))}</dl>
+    ${sectioned ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-description-list">${sections(context)}</div>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<dl class="sf-list-description-list">${list.map(item => row(context, item))}</dl>`}
   </div>`;
 }
 __webpack_async_result__();
@@ -284,21 +441,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "7c0ab7bd0a28"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.0.3","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked"],"default":"auto"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true}},"actions":{},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.1.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "7e7624758b3e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Description list","runtime":{"empty-text":"—","copy":"Copy: {label}","status-success":"OK","status-warning":"Warning","status-error":"Error","status-info":"Info"},"events":{"navigate":{"label":"Go"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Description list","runtime":{"empty-text":"Not set","copy":"Copy: {label}","action":"{action}: {label}","help":"More about: {label}","status-success":"OK","status-warning":"Warning","status-error":"Error","status-info":"Info"},"events":{"navigate":{"label":"Go"},"apply":{"label":"Apply"}}}');
 
 /***/ },
 
 /***/ "4d554d0fe209"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Список сведений","runtime":{"empty-text":"—","copy":"Скопировать: {label}","status-success":"В порядке","status-warning":"Предупреждение","status-error":"Ошибка","status-info":"Сведения"},"events":{"navigate":{"label":"Перейти"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Список сведений","runtime":{"empty-text":"Не указан","copy":"Скопировать: {label}","action":"{action}: {label}","help":"Подробнее: {label}","status-success":"В порядке","status-warning":"Предупреждение","status-error":"Ошибка","status-info":"Сведения"},"events":{"navigate":{"label":"Перейти"},"apply":{"label":"Применить"}}}');
 
 /***/ }
 

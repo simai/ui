@@ -326,8 +326,10 @@ function createToastElement(options = {}) {
     const bottom = document.createElement('div');
     bottom.className = 'sf-toast-bottom flex items-center';
     const actionButton = document.createElement('button');
-    actionButton.type = 'button';
-    actionButton.className = 'sf-button sf-button--primary sf-button--link sf-button--size-1';
+    actionButton.type = 'button'; // The notice's action (owner decision C35): an unsized low button, tonal
+    // primary, its label the notice's text size (as the Smart sf-toast).
+
+    actionButton.className = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
     actionButton.setAttribute('data-action', action || 'action');
     actionButton.setAttribute('data-toast-action', action || 'action');
     const actionTextNode = document.createElement('span');
@@ -342,13 +344,15 @@ function createToastElement(options = {}) {
 
   if (closable) {
     const closeButton = document.createElement('button');
-    closeButton.type = 'button';
-    closeButton.className = joinClasses('sf-icon-button', 'sf-icon-button--variant-close', 'sf-icon-button--on-surface', 'sf-icon-button--link', 'sf-icon-button--size-1/3');
+    closeButton.type = 'button'; // A size-1 low icon button (C35): 32, compact and phone 28, centred on
+    // the first line, its plate hanging out over the inline padding.
+
+    closeButton.className = joinClasses('sf-icon-button', 'sf-icon-button--close', 'sf-icon-button--variant-close', 'sf-icon-button--on-surface', 'sf-icon-button--link', 'sf-icon-button--size-1', 'sf-icon-button--height-low', 'flex', 'items-cross-center');
     closeButton.setAttribute('aria-label', closeLabel);
     closeButton.setAttribute('data-close', '');
     closeButton.setAttribute('data-toast-close', '');
     const close = document.createElement('span');
-    close.className = 'sf-close sf-close--size-1/3 flex justify-center items-center';
+    close.className = 'sf-close sf-close--size-1 flex justify-center items-center';
     close.setAttribute('aria-hidden', 'true');
     const closeIcon = document.createElement('span');
     closeIcon.className = 'sf-close-icon';
@@ -859,16 +863,15 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 
 function joinClasses(...tokens) {
   return tokens.flat().filter(Boolean).join(' ');
-}
+} // The notice's action and close (owner decision C35): the action is an
+// unsized (size 1) low button -- 32, compact and phone 28 -- whose label is
+// the notice's text size, tonal primary, its plate starting at the text edge;
+// the close a size-1 low icon button, 32 / 28 / 28, centred on the first line.
+// The same classes as the class toast (component/toast/js/_toast.js).
 
-function buttonClasses(type) {
-  if (type === 'primary') {
-    return 'sf-button sf-button--default sf-button--primary sf-button--size-1/2';
-  }
 
-  return 'sf-button sf-button--default sf-button--on-surface sf-button--size-1/2';
-}
-
+const TOAST_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
+const TOAST_CLOSE_CLASSES = 'sf-icon-button sf-icon-button--close sf-icon-button--variant-close sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-1 sf-icon-button--height-low flex items-cross-center';
 function renderToastTemplate(context) {
   const rootClasses = joinClasses('sf-toast', // The component normalises the legacy words, so the template sees only the
   // shared vocabulary.
@@ -892,7 +895,7 @@ function renderToastTemplate(context) {
               <div class="sf-toast-bottom flex items-center">
                 <button
                   type="button"
-                  class=${buttonClasses(context.type)}
+                  class=${TOAST_ACTION_CLASSES}
                   data-action=${context.action || 'action'}
                   data-toast-action=${context.action || 'action'}
                 >
@@ -905,13 +908,13 @@ function renderToastTemplate(context) {
       ${context.closable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <button
               type="button"
-              class="sf-icon-button sf-icon-button--variant-close sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-1/3"
+              class=${TOAST_CLOSE_CLASSES}
               aria-label=${context.closeLabel || 'Close message'}
               data-close
               data-toast-close
             >
               <span
-                class="sf-close sf-close--size-1/3 flex justify-center items-center"
+                class="sf-close sf-close--size-1 flex justify-center items-center"
                 aria-hidden="true"
               >
                 <span class="sf-close-icon"></span>
@@ -964,7 +967,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.1.11","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.2.0","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

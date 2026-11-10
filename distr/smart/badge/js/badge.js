@@ -435,6 +435,18 @@ const BADGE_ACTIVITIES = {
     role: 'error',
     icon: 'error',
     word: 'activity-failed'
+  },
+  // 1.4.0 (C34): a run that stopped and will go on is a warning, a run in a
+  // queue is neutral with a clock (waiting stays "needs your input").
+  paused: {
+    role: 'warning',
+    icon: 'pause_circle',
+    word: 'activity-paused'
+  },
+  queued: {
+    role: 'neutral',
+    icon: 'schedule',
+    word: 'activity-queued'
   }
 };
 
@@ -752,21 +764,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed"],"default":""},"compact":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"compact":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "f6a7c3a64b57"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed","activity-paused":"Paused","activity-queued":"Queued"}}');
 
 /***/ },
 
 /***/ "94f01354b3f6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Бейджи","runtime":{"activity-running":"Выполняется","activity-waiting":"Нужен ваш ответ","activity-done":"Готово","activity-stopped":"Остановлено","activity-failed":"Не удалось"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Бейджи","runtime":{"activity-running":"Выполняется","activity-waiting":"Нужен ваш ответ","activity-done":"Готово","activity-stopped":"Остановлено","activity-failed":"Не удалось","activity-paused":"Пауза","activity-queued":"В очереди"}}');
 
 /***/ }
 

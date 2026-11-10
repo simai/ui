@@ -56,6 +56,18 @@ class SfClose extends CloseElement {
   // changed after the first drawing reaches the button.
   static get observedAttributes() {
     return [...new Set([...super.observedAttributes, 'aria-label'])];
+  } // The size the box is drawn at (1.3.0, DEV D1 on C35). A page's size wins.
+  // Without one, a close asked for a height is a control of its place, as an
+  // unsized sf-button is: the place's step, size 1, which a compact region
+  // moves down because no size attribute holds it (C22) -- so
+  // <sf-button-close height="low"> is 32, compact and phone 28, the notice's
+  // close. Without a size or a height it stays the default 1/3.
+
+
+  get placeSize() {
+    if (this.hasAttribute('size')) return this.size;
+    const height = this.height;
+    return height && height !== 'default' ? '1' : this.size;
   }
 
   get isGlyph() {
@@ -67,7 +79,12 @@ class SfClose extends CloseElement {
     return this.createTemplateContext({ ...props,
       component: this,
       glyph: this.isGlyph,
+      // The declared size, as the template-context contract asks (1.3.1); the
+      // box is drawn at placeSize, which a height without a size moves to 1.
       size: this.size,
+      placeSize: this.placeSize,
+      // The box's height (1.3.0, decisions C27 and C35).
+      height: this.height,
       appearance: this.appearance,
       scheme: this.scheme,
       radius: this.radius,
@@ -127,12 +144,17 @@ function renderCross(size, rootClass, rootStyle) {
 } // The close button (owner decision C14): a native button in the icon button's
 // box, the cross inside it. Inside a containing button (context.glyph) the
 // element draws only the decorative cross, as it did before 1.2.0.
+// The box and the cross are drawn at context.placeSize, the size the place
+// resolves (1.3.0, DEV D1 on C35); context.size is the declared size.
 
 
 function renderCloseTemplate(context) {
-  if (context.glyph) return renderCross(context.size, context.rootClass, context.rootStyle);
-  const size = buttonSize(context.size || '1/3');
-  const classes = ['sf-icon-button', `sf-icon-button--size-${size}`, 'sf-icon-button--close', 'sf-button-close', `sf-button-close--${context.appearance || 'ghost'}`, `sf-button-close--${context.scheme || 'on-surface'}`, context.backdrop === 'color' ? 'sf-button-close--backdrop-color' : '', context.radius === 'rounded' ? 'sf-button-close--radius-rounded' : '', 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ');
+  const drawn = context.placeSize || context.size;
+  if (context.glyph) return renderCross(drawn, context.rootClass, context.rootStyle);
+  const size = buttonSize(drawn || '1/3');
+  const classes = ['sf-icon-button', `sf-icon-button--size-${size}`, // The height (decisions C27, C35): the icon button's class of the size's
+  // tightness step; default draws none.
+  ['low', 'high', 'highest'].includes(context.height) ? `sf-icon-button--height-${context.height}` : '', 'sf-icon-button--close', 'sf-button-close', `sf-button-close--${context.appearance || 'ghost'}`, `sf-button-close--${context.scheme || 'on-surface'}`, context.backdrop === 'color' ? 'sf-button-close--backdrop-color' : '', context.radius === 'rounded' ? 'sf-button-close--radius-rounded' : '', 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
     type="button"
     class=${classes}
@@ -186,7 +208,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "02dfc60c5026"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

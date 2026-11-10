@@ -289,8 +289,16 @@ function resolveIcon(context) {
     success: 'check_circle'
   };
   return byStatus[context.status ?? context.type] || 'info';
-}
+} // The notice's actions (owner decision C35, as the toast; DEV acceptance D3):
+// unsized (size 1) low buttons -- 32, compact and phone 28 -- whose label is
+// the notice's text size; the first tonal primary, its plate starting at the
+// text edge, the second ghost on-surface after it (the research's pair,
+// control/research/2026-11-09-notice-actions.md). The class toast writes the
+// same classes (component/toast/js/_toast.js).
 
+
+const ALERT_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
+const ALERT_SECONDARY_ACTION_CLASSES = 'sf-button sf-button--link sf-button--on-surface sf-button--size-1 sf-button--height-low flex items-cross-center';
 function renderAlertTemplate(context) {
   const rootClasses = joinClasses('sf-alert', `sf-alert--${context.status ?? context.type}`, `sf-alert--${context.appearance ?? context.variant}`, 'flex', 'items-start', context.rootClass);
   const iconName = resolveIcon(context);
@@ -316,7 +324,7 @@ function renderAlertTemplate(context) {
                 ${context.actionText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                       <button
                         type="button"
-                        class="sf-button sf-button--default sf-button--on-surface sf-button--size-1/2"
+                        class=${ALERT_ACTION_CLASSES}
                         data-action=${context.action || 'action'}
                         data-alert-action=${context.action || 'action'}
                       >
@@ -326,7 +334,7 @@ function renderAlertTemplate(context) {
                 ${context.secondaryActionText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                       <button
                         type="button"
-                        class="sf-button sf-button--on-surface sf-button--outline sf-button--size-1/2"
+                        class=${ALERT_SECONDARY_ACTION_CLASSES}
                         data-action=${context.secondaryAction || 'secondary'}
                         data-alert-action=${context.secondaryAction || 'secondary'}
                       >
@@ -341,6 +349,7 @@ function renderAlertTemplate(context) {
                   <sf-button-icon
                           kind="close"
                           size="1"
+                          height="low"
                           appearance="ghost"
                           scheme="on-surface"
                           data-close
@@ -387,7 +396,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.1.11","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.2.0","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

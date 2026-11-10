@@ -393,6 +393,7 @@ function renderChangeConfirmTemplate(context) {
                 aria-labelledby=${context.heading ? context.headingId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${context.heading ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.changesLabel}
                 data-state=${context.state}
+                ?hidden=${context.collapsed}
         >
             ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-change-confirm__heading" id=${context.headingId} role="heading"
                             aria-level=${context.headingLevel}>${context.heading}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -494,7 +495,14 @@ function confirmSurface(Base, {
       this._pressed = null;
       this._timer = null;
       this._expiredSaid = false;
-      this._asks = [];
+      this._asks = []; // Declined here, by this person's answer (DEV D2 on C35): the
+      // question folds away. A host that draws a decision taken
+      // elsewhere (a declined change in a history) keeps it on screen.
+
+      this._declinedHere = false; // The control focused when the question was put, for the focus to
+      // go back to once the question folds away.
+
+      this._opener = null;
     }
 
     get state() {
@@ -551,8 +559,11 @@ function confirmSurface(Base, {
 
     statusText(shown) {
       if (shown === "pending") return this.sfWord(this._pressed === false ? "declining-text" : "accepting-text");
-      if (shown === "accepted") return this.sfWord("accepted-text");
-      if (shown === "declined") return this.sfWord("declined-text");
+      if (shown === "accepted") return this.sfWord("accepted-text"); // Declined says nothing (owner decision C35, remark R067): the
+      // answer changed nothing -- no «Отменено», no «Отклонено»; the host
+      // puts the row back and the focus on what was pressed.
+
+      if (shown === "declined") return "";
       if (shown === "expired") return this.sfWord("expired-text");
       const until = this.getAttribute("expires-at");
       const time = until ? this.formatTime(until) : "";
@@ -588,13 +599,61 @@ function confirmSurface(Base, {
         // the setting, or any state but open.
         answersLocked: this.getProp("disabled") || shown !== "open",
         // The step the answers stand on: a page's size, else 1 (C22).
-        size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1"
+        size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1",
+        // Declined by the person here: the surface is hidden, and its
+        // empty status line no longer holds the focus (DEV D2 on C35).
+        collapsed: shown === "declined" && this._declinedHere
       };
     }
 
     onConnected() {
       super.onConnected?.();
+      this.rememberOpener();
       this.schedule();
+    } // The control the person was on when the question appeared: the
+    // button that asked it, as a rule. Kept only while it is outside the
+    // question and is not the page itself.
+
+
+    rememberOpener() {
+      const active = this.ownerDocument?.activeElement;
+      if (active && active !== this.ownerDocument.body && !this.contains(active)) this._opener = active;
+    } // Where the focus goes when a declined question folds away: back to
+    // the control that put it, else the nearest focusable place around
+    // it, else the next (or previous) control in the page -- as when a
+    // row is removed. The ring is shown: the person came by keyboard.
+
+
+    returnFocus() {
+      const doc = this.ownerDocument;
+      const active = doc.activeElement;
+      if (active && active !== doc.body && !this.contains(active)) return;
+      const selector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+      const usable = node => node?.isConnected && !this.contains(node) && node.getClientRects().length > 0;
+
+      let target = usable(this._opener) ? this._opener : null;
+
+      if (!target) {
+        let around = this.parentElement?.closest?.(`${selector}, [tabindex]`);
+
+        while (around && !usable(around)) around = around.parentElement?.closest?.(`${selector}, [tabindex]`);
+
+        target = around ?? null;
+      }
+
+      if (!target) {
+        const all = [...doc.querySelectorAll(selector)].filter(usable);
+
+        const position = node => this.compareDocumentPosition(node);
+
+        target = all.find(node => position(node) & Node.DOCUMENT_POSITION_FOLLOWING) ?? all.reverse().find(node => position(node) & Node.DOCUMENT_POSITION_PRECEDING) ?? null;
+      }
+
+      target?.focus({
+        preventScroll: true,
+        focusVisible: true
+      });
     }
 
     onDisconnected() {
@@ -606,6 +665,14 @@ function confirmSurface(Base, {
     attributeChangedCallback(name, oldValue, newValue) {
       super.attributeChangedCallback?.(name, oldValue, newValue);
       if (name === "state" && newValue !== "pending") this._pressed = null;
+      if (name === "state" && newValue !== "declined" && newValue !== "pending") this._declinedHere = false; // The person's own decline, now set by the host: the question
+      // folds away and the focus goes back (DEV D2 on C35).
+
+      if (name === "state" && newValue === "declined" && oldValue !== "declined" && this._declinedHere) {
+        this.whenRendered(() => this.returnFocus(), {
+          next: true
+        });
+      }
 
       if (name === "state" || name === "expires-at") {
         // A new time, or the host reopening the offer, is a new chance
@@ -662,6 +729,7 @@ function confirmSurface(Base, {
         signal
       } = args[1] ?? {};
       const reopened = this.state !== "open";
+      this.rememberOpener();
       if (reopened) this.state = "open"; // The question is put to the person now: focus waits on the safe
       // answer (decision C25), so a stray Enter or Space only takes the
       // question back.
@@ -680,7 +748,9 @@ function confirmSurface(Base, {
       if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed");
       if (this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
       const focusWasInside = this.contains(this.ownerDocument.activeElement);
-      this._pressed = accepted;
+      this._pressed = accepted; // Before the event: a host may set the outcome inside its handler.
+
+      this._declinedHere = !accepted;
       this.setAttribute("state", "pending");
       const delivered = this.sfEmit("answer", {
         id: this.questionKey,
@@ -690,6 +760,7 @@ function confirmSurface(Base, {
 
       if (!delivered) {
         this._pressed = null;
+        this._declinedHere = false;
         this.setAttribute("state", "open");
       } else {
         this.settleAsks({
@@ -766,7 +837,9 @@ function confirmSurface(Base, {
     focusStatus() {
       const target = this.querySelector(`.${block}__status`);
       if (!target) return;
-      if (this.state === "open" && this.focusSafeAnswer()) return;
+      if (this.state === "open" && this.focusSafeAnswer()) return; // Folded away: returnFocus() has the focus (DEV D2 on C35).
+
+      if (this.shownState === "declined" && this._declinedHere) return;
       target.focus({
         preventScroll: true
       });
@@ -925,21 +998,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.5.1","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.6.0","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "ded7e3ee1d62"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Change confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Applied","accepting-text":"Applying…","after-text":"Will be","before-text":"Was","changes-label":"What will change","decline-text":"Decline","declined-text":"Declined","declining-text":"Declining…","empty-value-text":"empty","expired-text":"The time to confirm has passed","until-text":"Confirm by {time}"},"events":{"expired":{"label":"Expired"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Change confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Applied","accepting-text":"Applying…","after-text":"Will be","before-text":"Was","changes-label":"What will change","decline-text":"Decline","declining-text":"Declining…","empty-value-text":"empty","expired-text":"The time to confirm has passed","until-text":"Confirm by {time}"},"events":{"expired":{"label":"Expired"}}}');
 
 /***/ },
 
 /***/ "6361d98e96ea"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение изменения","runtime":{"accept-text":"Подтвердить","accepted-text":"Применено","accepting-text":"Применяется…","after-text":"Станет","before-text":"Было","changes-label":"Что изменится","decline-text":"Отклонить","declined-text":"Отклонено","declining-text":"Отклоняется…","empty-value-text":"пусто","expired-text":"Время подтверждения истекло","until-text":"Подтвердить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение изменения","runtime":{"accept-text":"Подтвердить","accepted-text":"Применено","accepting-text":"Применяется…","after-text":"Станет","before-text":"Было","changes-label":"Что изменится","decline-text":"Отклонить","declining-text":"Отклоняется…","empty-value-text":"пусто","expired-text":"Время подтверждения истекло","until-text":"Подтвердить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
 
 /***/ }
 
