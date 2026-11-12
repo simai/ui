@@ -471,6 +471,20 @@ const markElement = (doc, tag, on) => {
   const element = doc.createElement(on ? tag : 'span');
   if (!on) element.style[MARKS[tag].off[0]] = MARKS[tag].off[1];
   return element;
+}; // Content inside the pending marks ({strong?, em?}), strong outside em.
+
+
+const wrapMarks = (doc, marks, content) => {
+  let wrap = content;
+
+  for (const tag of Object.keys(MARKS)) {
+    if (marks[tag] === undefined) continue;
+    const element = markElement(doc, tag, marks[tag]);
+    element.append(wrap);
+    wrap = element;
+  }
+
+  return wrap;
 }; // On a phone -- below the md breakpoint, where core declares
 // --sf-breakpoint-md -- a form in a popup is a sheet at the bottom of the
 // screen (decision C32), as sf-menu-context reads it.
@@ -897,7 +911,8 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
 
     on('beforeinput', event => this._onBeforeInput(event));
     on('input', event => this._onInput(event));
-    on('compositionend', () => this._afterTyping('insertCompositionText'));
+    on('compositionstart', () => this._onCompositionStart());
+    on('compositionend', event => this._onCompositionEnd(event));
     on('keydown', event => this._onKeydown(event));
     on('paste', event => this._onPaste(event));
     on('dragstart', () => {
@@ -982,10 +997,42 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   }
 
   _onSelectionChange() {
-    if (!this._range()) return;
+    const range = this._range();
+
+    if (!range) return;
+    if (!this._inComposition) this._caretIntoMark(range);
     this._lastSelection = this._saveSelection();
 
     this._updateState();
+  } // A caret on a mark's end edge -- at the block's level right after a bold
+  // run, or at the start of the text after it -- is a place the browser types
+  // into the mark, while the state read there said plain (E1; C12: the state
+  // is the one aria-pressed says). It is put at the end of the mark's text,
+  // the same character, so Bold reads the place the text goes.
+
+
+  _caretIntoMark(range) {
+    if (!range.collapsed) return;
+    const {
+      startContainer: node,
+      startOffset: offset
+    } = range;
+    let before = null;
+    if (node.nodeType === 1) before = node.childNodes[offset - 1] ?? null;else if (node.nodeType === 3 && offset === 0) before = node.previousSibling;
+    if (!before || before.nodeType !== 1 || !before.matches?.('strong, b, em, i, span')) return;
+    const doc = this.ownerDocument;
+    const walker = doc.createTreeWalker(before, 4);
+    let last = null;
+
+    for (let text = walker.nextNode(); text; text = walker.nextNode()) last = text;
+
+    if (!last?.data.length) return;
+    const caret = doc.createRange();
+    caret.setStart(last, last.data.length);
+    caret.collapse(true);
+    const selection = doc.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(caret);
   }
 
   _within(node, selector) {
@@ -1053,7 +1100,10 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
 
 
   _pendingMarks(range = this._range()) {
-    if (!this._pending) return null;
+    if (!this._pending) return null; // A composition moves the caret with its text: the marks stand until it
+    // ends, and Bold and Italic stay pressed meanwhile (M1, M2).
+
+    if (this._inComposition) return this._pending;
 
     if (!range?.collapsed || this._saveSelection()?.start !== this._pending.at) {
       this._pending = null;
@@ -1243,16 +1293,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     event.preventDefault();
     const doc = this.ownerDocument;
     const text = doc.createTextNode(event.data);
-    let wrap = text;
-
-    for (const tag of Object.keys(MARKS)) {
-      if (pending[tag] === undefined) continue;
-      const element = markElement(doc, tag, pending[tag]);
-      element.append(wrap);
-      wrap = element;
-    }
-
-    range.insertNode(wrap);
+    range.insertNode(wrapMarks(doc, pending, text));
     const caret = doc.createRange();
     caret.setStart(text, text.data.length);
     caret.collapse(true);
@@ -1265,6 +1306,86 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     this._say('insertText');
   }
 
+  _onCompositionStart() {
+    this._composing = this._pendingMarks();
+    this._inComposition = true;
+    this._composedFrom = this.editor?.innerHTML ?? '';
+  } // Composed text (an IME) cannot be inserted by hand: the browser writes
+  // it. The marks pending when the composition started go round it once it
+  // ends, as typed text takes them; a composition that did not end at the
+  // pending caret plus its text keeps the text plain. A cancelled one (no
+  // text, the caret back where it began) keeps the marks pending (M1).
+
+
+  _onCompositionEnd(event) {
+    const pending = this._composing;
+    const before = this._composedFrom;
+    this._composing = null;
+    this._inComposition = false;
+    this._composedFrom = null;
+    this._pending = null;
+    const text = String(event.data ?? '');
+    const editor = this.editor;
+
+    const end = this._saveSelection();
+
+    const collapsed = Boolean(end && end.start === end.end);
+    if (pending && !text && collapsed && end.start === pending.at) this._pending = pending;
+
+    if (!pending || !text || !editor || !collapsed || end.start - text.length !== pending.at) {
+      this._afterTyping('insertCompositionText');
+
+      this._sayComposed(before);
+
+      return;
+    }
+
+    const doc = this.ownerDocument;
+    const range = doc.createRange();
+    const [startNode, startOffset] = pointAt(editor, pending.at);
+    const [endNode, endOffset] = pointAt(editor, end.start);
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+
+    if (range.toString() !== text) {
+      this._afterTyping('insertCompositionText');
+
+      this._sayComposed(before);
+
+      return;
+    }
+
+    range.insertNode(wrapMarks(doc, pending, range.extractContents()));
+
+    this._clean(end);
+
+    this._restoreSelection(end);
+
+    this._afterTyping('insertCompositionText');
+
+    this._sayComposed(before);
+  } // One input that is not composing after every composition that changed
+  // the text, marks or none (M3): a listener that skips composing inputs, as
+  // many do, still hears an IME's edit. It waits one task: a browser that
+  // says the commit itself after compositionend (WebKit) is that input, and
+  // the component's is not sent. A cancel that left the text as it was says
+  // nothing, as nothing changed.
+
+
+  _sayComposed(before) {
+    const editor = this.editor;
+    if (!editor || editor.innerHTML === before) return;
+    const turn = {
+      said: false
+    };
+    this._composedSay = turn;
+    setTimeout(() => {
+      if (this._composedSay !== turn) return;
+      this._composedSay = null;
+      if (!turn.said) this._say('insertCompositionText');
+    }, 0);
+  }
+
   _onInput(event) {
     // The browser's own input while a command runs: the command says input
     // once, after cleaning.
@@ -1275,6 +1396,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
 
     if (this._dispatching) return;
     if (event.isComposing) return;
+    if (this._composedSay) this._composedSay.said = true;
 
     this._afterTyping(event.inputType);
   }
@@ -1317,7 +1439,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   // paragraph around them, so the text after the caret follows the last).
 
 
-  _insertClean(clean, inputType) {
+  _insertClean(clean, inputType, marks = null) {
     if (!clean) return;
 
     this._edit(() => {
@@ -1337,7 +1459,18 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
 
       const template = doc.createElement('template'); // The string is the subset's own output: nothing in it runs or loads.
 
-      template.innerHTML = clean;
+      template.innerHTML = clean; // Plain text pasted at a caret with pending marks takes them, as typed
+      // text does (M4): each paragraph's text inside the marks.
+
+      if (marks) {
+        for (const block of [...template.content.children]) {
+          if (block.localName !== 'p' || !block.firstChild) continue;
+          const content = doc.createDocumentFragment();
+          content.append(...block.childNodes);
+          block.append(wrapMarks(doc, marks, content));
+        }
+      }
+
       const nodes = [...template.content.childNodes];
       const fragment = doc.createDocumentFragment();
       nodes.forEach((node, index) => {
@@ -1360,8 +1493,11 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   _onPaste(event) {
     event.preventDefault();
     if (this.effectiveDisabled || this.readonly) return;
+    const data = event.clipboardData; // Rich paste keeps its own marks; plain text takes the pending ones.
 
-    this._insertClean(this._cleanTransfer(event.clipboardData), 'insertFromPaste');
+    const marks = data?.getData?.('text/html') ? null : this._pendingMarks();
+
+    this._insertClean(this._cleanTransfer(data), 'insertFromPaste', marks);
   }
 
   _onDrop(event) {
@@ -2086,11 +2222,12 @@ function renderRichTextTemplate(context) {
   const toolbarId = `${field.base}--toolbar`;
   const linkId = `${field.base}--link`;
   const message = field.invalid && errorMessage ? errorMessage : hint;
-  const buttonSize = BUTTON_SIZE[size] || '1/2'; // The link editor is one small form on one rung (R121): its address field,
-  // the field's own label and hint, and Apply / Remove are all the field's
-  // size, capped at 1 because a popup form is at most the form step.
+  const buttonSize = BUTTON_SIZE[size] || '1/2'; // The link editor is one small form on one rung (R121, owner review
+  // 2026-11-11): its address field, the field's own label and hint, and
+  // Apply / Remove stand on the toolbar's rung -- the rung of the link button
+  // that opens it -- so the form is the toolbar's scale, not the field's.
 
-  const linkSize = size === '2' ? '1' : size;
+  const linkSize = buttonSize;
   const rootClasses = ['sf-rich-text', `sf-rich-text--size-${size}`, `sf-rich-text--${appearance}`, field.invalid ? 'error' : '', disabled ? 'sf-rich-text--disabled' : '', readonly ? 'sf-rich-text--readonly' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
   const toolContext = { ...context,
     buttonSize
@@ -2857,7 +2994,24 @@ const sameFormat = (a, b) => a.strong === b.strong && a.em === b.em && a.href ==
 // Inline leaves made canonical: adjacent text of one format joined, runs of
 // spaces made one, spaces at the edges and around a line break removed, a link
 // with nothing but spaces made text.
+//
+// The steps run again until a pass changes nothing (2026-11-11 acceptance,
+// M2): dropping a space or an empty run makes new neighbours, so one pass left
+// "<p>a <em><br>n</em></p>" for the next load-and-save to make
+// "<p>a<em><br>n</em></p>". The stored value is the fixed point at once.
 function tidyLeaves(leaves, mode) {
+  let current = leaves;
+  let key = null;
+  for (let pass = 0; pass < 64; pass += 1) {
+    current = tidyLeavesOnce(current, mode);
+    const next = JSON.stringify(current);
+    if (next === key) break;
+    key = next;
+  }
+  return current;
+}
+
+function tidyLeavesOnce(leaves, mode) {
   const out = [];
   for (const item of leaves) {
     if (item.kind === 'text' && !item.value) continue;
@@ -2882,12 +3036,21 @@ function tidyLeaves(leaves, mode) {
   }
   let kept = out.filter((item) => item.kind === 'br' || item.value);
   if (mode === 'value') {
-    while (kept[0]?.kind === 'br') kept.shift();
-    while (kept.at(-1)?.kind === 'br') kept.pop();
-    if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
-    const end = kept.at(-1);
-    if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
-    kept = kept.filter((item) => item.kind === 'br' || item.value);
+    // Edge breaks and edge white space go together, until neither is left: a
+    // run of only white space (&nbsp;) at an edge hid the break behind it, so
+    // the first pass kept "<p>&nbsp;<br>a</p>" as "<p><br>a</p>" and only the
+    // next load-and-save gave "<p>a</p>" (2026-11-10 review, Q6). The value is
+    // now what that second pass gave, at once, and cleaning it again keeps it.
+    let length = -1;
+    while (length !== kept.length) {
+      length = kept.length;
+      while (kept[0]?.kind === 'br') kept.shift();
+      while (kept.at(-1)?.kind === 'br') kept.pop();
+      if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
+      const end = kept.at(-1);
+      if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
+      kept = kept.filter((item) => item.kind === 'br' || item.value);
+    }
   }
   // A link of nothing but spaces is not a link.
   const groups = new Map();
@@ -3135,7 +3298,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

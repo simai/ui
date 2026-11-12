@@ -923,6 +923,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -2009,6 +2012,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -2226,6 +2232,9 @@
       },
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [

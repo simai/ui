@@ -3879,6 +3879,8 @@ SF.RuleLoader['cl-checkbox'] = {
     name: 'checkbox'
   }, {
     name: 'cl-icon'
+  }, {
+    name: 'cl-help-mark'
   }]
 };
 
@@ -5013,6 +5015,8 @@ SF.RuleLoader['cl-radio'] = {
     name: 'radio'
   }, {
     name: 'icons'
+  }, {
+    name: 'cl-help-mark'
   }]
 };
 
@@ -5247,6 +5251,8 @@ SF.RuleLoader['cl-switch'] = {
     name: 'icons'
   }, {
     name: 'icon-buttons'
+  }, {
+    name: 'cl-help-mark'
   }]
 };
 

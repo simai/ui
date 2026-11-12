@@ -216,11 +216,6 @@
     position: absolute;
     white-space: nowrap;
   }
-  .sf-clipboard-status:empty {
-    margin-top: 0;
-    -webkit-margin-before: 0;
-            margin-block-start: 0;
-  }
   /* The name and the result: the Framework tooltip, placed over the page by
      SF.Position (fixed), outside an .sf-tooltip-anchor. */
   .sf-clipboard-name,

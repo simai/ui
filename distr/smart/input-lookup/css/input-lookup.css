@@ -108,6 +108,11 @@
     border: var(--sf-px) solid;
     border-color: transparent;
     border-color: var(--sf-lookup--border-color, transparent);
+    border-bottom-color: transparent;
+    border-block-end-color: transparent;
+    border-bottom-color: transparent;
+    border-bottom-color: var(--sf-lookup--line-color, var(--sf-lookup--border-color, transparent));
+    border-block-end-color: var(--sf-lookup--line-color, var(--sf-lookup--border-color, transparent));
     border-radius: var(--sf-lookup--radius);
     background-color: var(--sf-lookup--background-color);
     color: var(--sf-on-surface);
@@ -124,13 +129,21 @@
   .sf-lookup.sf-lookup--filled .sf-lookup-frame {
     --sf-lookup--background-color: var(--sf-lookup-background-color, var(--sf-surface-container));
     --sf-lookup--border-color: var(--sf-lookup-border-color, var(--sf-transparent-for-focus));
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
   .sf-lookup:not(.error):not(.sf-lookup--disabled):not(.sf-lookup--readonly) .sf-lookup-frame:hover {
     --sf-lookup--border-color: var(--sf-primary-hover);
   }
+  /* The filled field's bottom line (C52, owner 2026-11-10; as sf-input): at rest
+     the field draws its bottom edge in --sf-outline, the fill at 8 % (C41)
+     being 1.10 to 1.23 from its place. A state that colours the border takes
+     the line with it. */
+  .sf-lookup:not(.error).sf-lookup--filled:not(.sf-lookup--disabled) .sf-lookup-frame {
+    --sf-lookup--line-color: var(--sf-lookup-border-color, var(--sf-outline));
+  }
   .sf-lookup:not(.error).sf-lookup--filled:not(.sf-lookup--disabled):not(.sf-lookup--readonly) .sf-lookup-frame:hover {
     --sf-lookup--background-color: var(--sf-surface-container-hover);
+    --sf-lookup--line-color: var(--sf-lookup--border-color);
   }
   /* Typing in it: sf-input's focus surface. */
   .sf-lookup.sf-lookup--bordered:not(.error):not(.sf-lookup--readonly):has(.sf-lookup-input:focus) .sf-lookup-frame {
@@ -176,15 +189,15 @@
     --sf-lookup--border-color: var(--sf-outline-variant);
   }
   .sf-lookup.sf-lookup--disabled .sf-lookup-frame {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
     cursor: default;
-    --sf-on-surface-variant: var(--sf-on-disable);
+    --sf-on-surface-variant: var(--sf-on-surface-disabled);
   }
   .sf-lookup.sf-lookup--disabled.sf-lookup--bordered .sf-lookup-frame {
-    --sf-lookup--border-color: var(--sf-outline-disable);
+    --sf-lookup--border-color: var(--sf-outline-disabled);
   }
   .sf-lookup.sf-lookup--disabled.sf-lookup--filled .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-disable);
+    --sf-lookup--background-color: var(--sf-surface-disabled);
   }
   /* The search box: the field's text, inset as sf-input's value is. */
   .sf-lookup .sf-lookup-input {
@@ -275,6 +288,8 @@
     --sf-surface-place-solid: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-ground: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
@@ -283,7 +298,7 @@
     --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -294,6 +309,7 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);
     overflow: auto;
@@ -301,10 +317,10 @@
         overscroll-behavior: contain;
     --sf-lookup--track: calc(2 * var(--sf-lookup--panel-padding) + var(--sf-space-1\/4));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-lookup .sf-lookup-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-lookup .sf-lookup-panel {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-lookup .sf-lookup-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-lookup .sf-lookup-panel {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -317,10 +333,19 @@
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
   }
+  :where(.bg-surface-4) .sf-lookup .sf-lookup-panel {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
   .sf-lookup .sf-lookup-panel > * {
     --sf-surface-popup: var(--sf-surface-popup-nested);
     --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
     --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
@@ -428,7 +453,7 @@
     --sf-avatar--line-height: var(--sf-lookup--line-height);
   }
   .sf-lookup .sf-lookup-option:hover {
-    background-color: var(--sf-surface-transparent-hover);
+    background-color: var(--sf-surface-state-hover);
   }
   .sf-lookup .sf-lookup-option.sf-lookup-option--chosen {
     background-color: var(--sf-primary-container);

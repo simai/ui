@@ -171,7 +171,7 @@
   }
   .sf-reference-link:not(.sf-reference-link--plain):has(:where(.sf-reference-link__link, .sf-reference-link-left > a):hover) {
     --sf-reference-link--background-color: var(--sf-surface-container-hover);
-    --sf-reference-link--border-color: var(--sf-outline-primary);
+    --sf-reference-link--border-color: var(--sf-primary-outline);
   }
   .sf-reference-link:not(.sf-reference-link--plain):has(:where(.sf-reference-link__link, .sf-reference-link-left > a):active) {
     --sf-reference-link--background-color: var(--sf-surface-container-active);
@@ -192,18 +192,18 @@
     outline-width: var(--sf-focus--width);
   }
   .sf-reference-link.disabled {
-    --sf-reference-link--border-color: var(--sf-outline-disable);
-    color: var(--sf-on-disable);
+    --sf-reference-link--border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-reference-link[aria-disabled=true] {
-    --sf-reference-link--border-color: var(--sf-outline-disable);
-    color: var(--sf-on-disable);
+    --sf-reference-link--border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-reference-link.disabled :where(.sf-reference-link__main, .sf-reference-link-left, .sf-reference-link__meta, .sf-reference-link-text, .sf-icon) {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-reference-link[aria-disabled=true] :where(.sf-reference-link__main, .sf-reference-link-left, .sf-reference-link__meta, .sf-reference-link-text, .sf-icon) {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   @media (max-width: 31.999rem) {
     /* The card stacks on a narrow screen; a sized reference is a control in a

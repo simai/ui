@@ -88,10 +88,17 @@ function normalizeDuration(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return _core_js_copy_feedback_js__WEBPACK_IMPORTED_MODULE_7__.DURATION;
   return Math.min(10000, Math.max(1000, parsed));
-}
+} // One code for a refusal, sf-button-copy's (acceptance L5, 2026-11-11):
+// the browser refused, or had no clipboard, and the source was selected for
+// the keys -- denied, whatever the browser's own error. The class route's
+// three codes, which the documentation of the released pair lists --
+// copy_denied, copy_unsupported, copy_failed -- stay on that route's buttons
+// (sf-clipboard, btn-clipboard) until 2027-01-01, with the route itself.
 
-function normalizeCopyError(error) {
+
+function normalizeCopyError(error, legacy = false) {
   if (SOURCE_ERROR_CODES.has(error?.message)) return error.message;
+  if (!legacy) return 'denied';
   if (error?.message === 'copy_unsupported') return 'copy_unsupported';
 
   if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') {
@@ -414,7 +421,7 @@ async function activateCopy(button, controller) {
       }
     }));
   } else if (result.reason !== 'busy') {
-    const code = normalizeCopyError(result.error);
+    const code = normalizeCopyError(result.error, isLegacy(button));
     button.dispatchEvent(new CustomEvent('sf:copy-error', {
       bubbles: true,
       detail: {
@@ -1151,7 +1158,58 @@ const DURATION = 2000;
 
 const SOURCE_ERRORS = new Set(['ambiguous_source', 'empty_source', 'missing_source', 'missing_target']);
 const HOLDER_STYLE = 'position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
+
+const isField = (element, View) => Boolean(element) && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement); // The keys copy what the button would have copied (acceptance L3,
+// 2026-11-11): a selected element gives the browser its drawn text, and a
+// numbered code block draws an empty line as a space, so the keys copied a
+// space where the button copies an empty line. While the selection is the
+// one made here, the copy event is given the text instead. One listener per
+// document, on the document itself, so every bundle's copy of this module
+// shares it.
+
+
+function keepCopyText(doc, range, text) {
+  doc.__sfCopySelection = {
+    range,
+    text
+  };
+  if (doc.__sfCopyListener) return;
+
+  doc.__sfCopyListener = event => {
+    const held = doc.__sfCopySelection;
+    const selection = doc.defaultView?.getSelection?.();
+    if (!held || !selection?.rangeCount) return;
+    const now = selection.getRangeAt(0);
+    const same = now.startContainer === held.range.startContainer && now.startOffset === held.range.startOffset && now.endContainer === held.range.endContainer && now.endOffset === held.range.endOffset;
+
+    if (!same) {
+      doc.__sfCopySelection = null;
+      return;
+    }
+
+    event.clipboardData?.setData('text/plain', held.text);
+    event.preventDefault();
+  };
+
+  doc.addEventListener('copy', doc.__sfCopyListener, true);
+} // One result at a time on the page (acceptance L4): two neighbouring controls
+// that fail within the result's two seconds drew their words on top of each
+// other, both held to the window's edge. A control that shows a result tells
+// the one before it to stop. On the page's SF, so every bundle shares it.
+
+
+function takeResult(owner) {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const before = SF.__copyResult;
+  SF.__copyResult = owner;
+  if (before && before !== owner) before.reset();
+}
+
+function leaveResult(owner) {
+  if (globalThis.SF?.__copyResult === owner) globalThis.SF.__copyResult = null;
+}
 /** The keys that copy a selection on this platform. */
+
 
 function copyKeys() {
   return /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '') ? '⌘C' : 'Ctrl+C';
@@ -1194,7 +1252,7 @@ function selectCopySource(element, {
 } = {}) {
   const View = doc?.defaultView ?? globalThis;
 
-  if (element && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement)) {
+  if (isField(element, View)) {
     element.focus();
     element.select();
     return element;
@@ -1222,6 +1280,7 @@ function selectCopySource(element, {
   const range = doc.createRange();
   range.selectNodeContents(node);
   selection.addRange(range);
+  keepCopyText(doc, range, element ? readCopyText(element) : text);
   return node;
 }
 /**
@@ -1238,6 +1297,7 @@ function createCopyFeedback({
 } = {}) {
   let timer = null;
   let pending = false;
+  let api = null;
 
   const lasting = () => {
     const value = Number(typeof duration === 'function' ? duration() : duration);
@@ -1247,17 +1307,19 @@ function createCopyFeedback({
   const set = (phase, message = '') => {
     clearTimeout(timer);
     timer = null;
+    if (phase === 'success' || phase === 'error') takeResult(api);else if (phase === 'idle') leaveResult(api);
     onPhase(phase, message);
 
     if (phase === 'success' || phase === 'error') {
       timer = setTimeout(() => {
         timer = null;
+        leaveResult(api);
         onPhase('idle', '');
       }, lasting());
     }
   };
 
-  return {
+  api = {
     get pending() {
       return pending;
     },
@@ -1285,8 +1347,13 @@ function createCopyFeedback({
       };
       pending = true;
 
-      const say = words || ((key, vars) => copyWord(key, node, vars));
+      const say = words || ((key, vars) => copyWord(key, node, vars)); // The control the press came from: a refusal selects the source, and a
+      // selection outside the focused control took the focus to the page, so
+      // the next Tab started again at the top (acceptance M2).
 
+
+      const page = doc ?? node?.ownerDocument ?? host?.ownerDocument ?? globalThis.document;
+      const pressed = page?.activeElement && page.activeElement !== page.body ? page.activeElement : null;
       set('pending', '');
       let text = '';
 
@@ -1313,11 +1380,17 @@ function createCopyFeedback({
         } // Refused by the browser: the source is selected, so the keys copy it.
 
 
-        selectCopySource(element?.() ?? null, {
+        const selected = selectCopySource(element?.() ?? null, {
           text,
           host,
           holderClass,
           document: doc
+        }); // A field takes the focus to be copied from; anything else gives it
+        // back to the control, the selection staying (the keys still copy it).
+
+        const View = page?.defaultView ?? globalThis;
+        if (pressed?.isConnected && !isField(selected, View) && page.activeElement !== pressed) pressed.focus({
+          preventScroll: true
         });
         set('error', say('selected', {
           keys: copyKeys()
@@ -1341,9 +1414,11 @@ function createCopyFeedback({
     cancel() {
       clearTimeout(timer);
       timer = null;
+      leaveResult(api);
     }
 
   };
+  return api;
 }
 const copyFeedback = {
   create: createCopyFeedback,
@@ -2105,13 +2180,21 @@ __webpack_require__.r(__webpack_exports__);
 
 function isRtl(element) {
   return getComputedStyle(element).direction === 'rtl';
-}
-/** Resolves a number or CSS length (tokens included) to pixels in context. */
+} // A plain pixel length needs no probe.
 
+
+const PIXELS = /^\s*(-?(?:\d+\.?\d*|\.\d+))(?:px)?\s*$/u;
+/**
+ * Resolves a number or CSS length (tokens included) to pixels in context.
+ * Anything but a number or a plain pixel length is measured by a probe span,
+ * which restyles the document: call it once per anchor, never per frame.
+ */
 
 function resolveLength(value, context = document.body) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
   if (typeof value !== 'string' || value.trim() === '') return 0;
+  const plain = PIXELS.exec(value);
+  if (plain && (value.includes('px') || Number(plain[1]) === 0)) return parseFloat(plain[1]) || 0;
   const probe = document.createElement('span');
   probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;block-size:0;padding:0;border:0';
   probe.style.inlineSize = value;
@@ -2366,19 +2449,83 @@ function anchor(reference, floating, options = {}) {
   };
   let running = null;
   let pending = false;
+  let pendingFull = false; // The cost of a position (datepicker audit P1/P2, 2026-11-11). Each
+  // resolveLength of a token inserts a probe span and restyles the whole
+  // document (about 9 ms on a docs page), and resetting max-height to read
+  // the natural height forces another; per scroll event that made 800 px of
+  // scrolling with a panel open cost 1.8-2.3 s of style recalculation. So:
+  // - the lengths (offset, padding, alignmentOffset) are resolved once per
+  //   anchor, and again only when the window's size changed;
+  // - a full fit -- the first, a resize, the panel or its reference changing
+  //   size, or update() from the component -- measures as before: direction,
+  //   viewport width, containing block, natural height;
+  // - a scroll or a layout shift asks for a light fit, at most once per
+  //   frame: it reuses those measurements and only places the panel again.
+  //   Flip, shift and the size caps run exactly as in a full fit; flipping
+  //   compares the natural height measured by the last full fit (the panel's
+  //   content does not change by scrolling; when it does, its size changes
+  //   and that is a full fit), and max-height is not reset to read it.
+  // - Inline styles and data-sf-side are written only when they change.
 
-  const run = async () => {
+  let lengths = null;
+
+  const lengthsNow = () => {
+    const key = `${window.innerWidth}x${window.innerHeight}`;
+
+    if (!lengths || lengths.key !== key) {
+      const context = reference.parentElement;
+      lengths = {
+        key,
+        gap: resolveLength(settings.offset, context),
+        padding: resolveLength(settings.padding, context),
+        alignment: resolveLength(settings.alignmentOffset, context)
+      };
+    }
+
+    return lengths;
+  };
+
+  let measures = null;
+
+  const put = (style, name, value) => {
+    if (style[name] !== value) style[name] = value;
+  };
+
+  const run = async full => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
     // the viewport's.
     if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
-    const rtl = isRtl(reference);
-    const gap = resolveLength(settings.offset, reference.parentElement);
-    const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
 
-    if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || '';
-    const natural = settings.fitHeight ? floating.getBoundingClientRect().height : 0; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
+    if (full || !measures) {
+      measures = {
+        rtl: isRtl(reference),
+        clientWidth: document.documentElement.clientWidth,
+        container: null,
+        natural: 0
+      }; // Measure the natural size so flipping compares the real panel height.
+
+      if (settings.fitHeight) {
+        put(floating.style, 'maxHeight', authored.maxHeight || '');
+        measures.natural = floating.getBoundingClientRect().height;
+      }
+    }
+
+    const {
+      rtl,
+      clientWidth,
+      natural
+    } = measures;
+    const {
+      gap,
+      padding,
+      alignment
+    } = lengthsNow(); // A light fit starts from the natural height, as a full fit does after
+    // its reset; once the size middleware has written the cap, the panel is
+    // measured as it is (Floating UI's own second pass).
+
+    let naturalPass = !full && settings.fitHeight; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
     // for end), e.g. so a tail points at the middle of a small trigger.
     // The panel keeps its distance from the viewport's inline edges, but never
     // more than its field keeps. With a flat padding a field closer to the edge
@@ -2388,7 +2535,6 @@ function anchor(reference, floating, options = {}) {
     // edge its own panel may reach too.
 
     const box = referenceRect(reference);
-    const clientWidth = document.documentElement.clientWidth;
     const edges = {
       top: padding,
       bottom: padding,
@@ -2397,7 +2543,7 @@ function anchor(reference, floating, options = {}) {
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
-      alignmentAxis: resolveLength(settings.alignmentOffset, reference.parentElement)
+      alignmentAxis: alignment
     })];
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
@@ -2418,11 +2564,12 @@ function anchor(reference, floating, options = {}) {
         rects,
         elements
       }) {
+        naturalPass = false;
         if (controller.stopped) return;
         const viewportWidth = clientWidth - edges.left - edges.right;
         const fieldWidth = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
-        if (settings.matchWidth === 'min') elements.floating.style.minWidth = fieldWidth;else if (settings.matchWidth) elements.floating.style.width = fieldWidth;
-        elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
+        if (settings.matchWidth === 'min') put(elements.floating.style, 'minWidth', fieldWidth);else if (settings.matchWidth) put(elements.floating.style, 'width', fieldWidth);
+        put(elements.floating.style, 'maxWidth', `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`);
 
         if (settings.fitHeight) {
           // A panel that misses its room by less than the edge's padding takes
@@ -2433,7 +2580,7 @@ function anchor(reference, floating, options = {}) {
           const room = Math.min(availableHeight, heightCap);
           const whole = Math.ceil(natural);
           const fits = whole > room && whole <= availableHeight + padding && whole <= heightCap;
-          elements.floating.style.maxHeight = `${Math.max(0, fits ? whole : room)}px`;
+          put(elements.floating.style, 'maxHeight', `${Math.max(0, fits ? whole : room)}px`);
         }
       }
 
@@ -2442,7 +2589,13 @@ function anchor(reference, floating, options = {}) {
       strategy: 'fixed',
       // The panel is fixed: its offset parent is the box it is placed in.
       platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
-        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+        getOffsetParent: (element, polyfill) => element === floating ? measures.container ??= fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill),
+        getDimensions: element => {
+          const dimensions = _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getDimensions(element);
+          return element === floating && naturalPass ? { ...dimensions,
+            height: natural
+          } : dimensions;
+        }
       },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
@@ -2450,16 +2603,19 @@ function anchor(reference, floating, options = {}) {
     if (controller.stopped) return result; // right/bottom are cleared so logical insets from the component stylesheet
     // (for example inset-inline-start in RTL) cannot over-constrain the box.
 
-    Object.assign(floating.style, {
+    const placed = {
       position: 'fixed',
       left: `${result.x}px`,
       top: `${result.y}px`,
       right: 'auto',
       bottom: 'auto',
-      margin: '0'
-    });
+      margin: '0px'
+    };
+
+    for (const [name, value] of Object.entries(placed)) put(floating.style, name, value);
+
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
-    floating.dataset.sfSide = controller.side;
+    if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -2467,33 +2623,67 @@ function anchor(reference, floating, options = {}) {
       y: result.y
     });
     return result;
-  }; // Coalesce bursts (scroll, resize, observers) into one computation at a time.
+  }; // Coalesce bursts (scroll, resize, observers) into one computation at a
+  // time; a full fit asked for while one runs is not lost to a light one.
 
 
-  controller.update = () => {
+  const request = full => {
     if (controller.stopped) return Promise.resolve(null);
 
     if (running) {
       pending = true;
+      pendingFull ||= full;
       return running;
     }
 
-    running = run().finally(() => {
+    running = run(full).finally(() => {
       running = null;
 
       if (pending && !controller.stopped) {
+        const again = pendingFull;
         pending = false;
-        controller.update();
+        pendingFull = false;
+        request(again);
       }
     });
     return running;
   };
+  /** A full fit: measures again (the component calls it after it changed the panel). */
 
-  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update) : null;
+
+  controller.update = () => request(true); // Scroll and layout shift: a light fit, at most once per frame.
+
+
+  let frame = 0;
+  let armed = false;
+
+  const follow = () => {
+    if (!armed || frame || controller.stopped) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      request(false);
+    });
+  };
+
+  const cleanups = settings.autoUpdate ? [// Resize of the window or an overflow ancestor, and of the panel or its
+  // reference: a full fit (also the first one).
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update, {
+    ancestorScroll: false,
+    layoutShift: false
+  }), // Scroll of any overflow ancestor and a moved reference: a light fit.
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
+    ancestorResize: false,
+    elementResize: false
+  })] : [];
+  armed = true;
 
   controller.stop = () => {
     controller.stopped = true;
-    cleanup?.();
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+
+    for (const cleanup of cleanups) cleanup();
+
     delete floating.dataset.sfSide;
     lower?.();
 

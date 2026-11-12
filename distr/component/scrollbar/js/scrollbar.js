@@ -126,10 +126,36 @@ class ScrollbarController {
     if (this.axis === 'vertical') return this.viewport.scrollTop;
     const position = this.isHorizontalRtl() ? -this.viewport.scrollLeft : this.viewport.scrollLeft;
     return Math.min(maxScroll, Math.max(0, position));
+  } // A step the reader asks for (a key, a page click on the track, Home and
+  // End) glides, unless the reader prefers reduced motion. Core sets smooth
+  // scrolling on the page only (html), so a viewport asks for it here; a
+  // thumb drag follows the pointer and stays instant.
+
+
+  stepBehavior() {
+    return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   }
 
-  setLogicalScrollPosition(position, maxScroll) {
+  scrollStep(delta) {
+    this.viewport.scrollBy({ ...delta,
+      behavior: this.stepBehavior()
+    });
+  }
+
+  setLogicalScrollPosition(position, maxScroll, glide = false) {
     const boundedPosition = Math.min(maxScroll, Math.max(0, position));
+
+    if (glide) {
+      const target = this.axis === 'vertical' ? {
+        top: boundedPosition
+      } : {
+        left: this.isHorizontalRtl() ? -boundedPosition : boundedPosition
+      };
+      this.viewport.scrollTo({ ...target,
+        behavior: this.stepBehavior()
+      });
+      return;
+    }
 
     if (this.axis === 'vertical') {
       this.viewport.scrollTop = boundedPosition;
@@ -168,7 +194,7 @@ class ScrollbarController {
       const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
       const step = this.getKeyboardStep();
       const page = Math.max(step, viewportSize - step);
-      this.viewport.scrollBy(this.axis === 'horizontal' ? {
+      this.scrollStep(this.axis === 'horizontal' ? {
         left: direction * page
       } : {
         top: direction * page
@@ -225,42 +251,42 @@ class ScrollbarController {
       const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
       const page = Math.max(line, viewportSize - line);
       const verticalCommands = {
-        ArrowUp: () => this.viewport.scrollBy({
+        ArrowUp: () => this.scrollStep({
           top: -line
         }),
-        ArrowDown: () => this.viewport.scrollBy({
+        ArrowDown: () => this.scrollStep({
           top: line
         }),
-        PageUp: () => this.viewport.scrollBy({
+        PageUp: () => this.scrollStep({
           top: -page
         }),
-        PageDown: () => this.viewport.scrollBy({
+        PageDown: () => this.scrollStep({
           top: page
         })
       };
       const horizontalCommands = {
-        ArrowLeft: () => this.viewport.scrollBy({
+        ArrowLeft: () => this.scrollStep({
           left: -line
         }),
-        ArrowRight: () => this.viewport.scrollBy({
+        ArrowRight: () => this.scrollStep({
           left: line
         }),
-        PageUp: () => this.viewport.scrollBy({
+        PageUp: () => this.scrollStep({
           left: -page
         }),
-        PageDown: () => this.viewport.scrollBy({
+        PageDown: () => this.scrollStep({
           left: page
         })
       };
       const commands = { ...(this.axis === 'horizontal' ? horizontalCommands : verticalCommands),
         Home: () => {
           const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-          this.setLogicalScrollPosition(0, Math.max(0, contentSize - viewportSize));
+          this.setLogicalScrollPosition(0, Math.max(0, contentSize - viewportSize), true);
         },
         End: () => {
           const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
           const maxScroll = Math.max(0, contentSize - viewportSize);
-          this.setLogicalScrollPosition(maxScroll, maxScroll);
+          this.setLogicalScrollPosition(maxScroll, maxScroll, true);
         }
       };
       if (!commands[event.key]) return;

@@ -658,11 +658,48 @@ function capitalizeFirstLetter(value = '') {
   }
 
   return `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}`;
+} // One formatter per locale and options: a render names 42 days, 12 months,
+// 7 weekdays and the month, and made 63 new Intl.DateTimeFormat for it every
+// time (datepicker audit 2026-11-11, §4). A locale Intl refuses throws here as
+// it threw before, and the callers keep their fall-backs.
+
+
+const dateFormats = new Map();
+
+function dateFormat(locale, options) {
+  const key = `${locale}|${JSON.stringify(options)}`;
+  let format = dateFormats.get(key);
+
+  if (!format) {
+    format = new Intl.DateTimeFormat(locale, options);
+    dateFormats.set(key, format);
+  }
+
+  return format;
+} // The first day of the locale's week, read once per locale: the grid asks it
+// several times a render.
+
+
+const weekStarts = new Map();
+
+function localeWeekStart(code) {
+  if (weekStarts.has(code)) return weekStarts.get(code);
+  let first = 1;
+
+  try {
+    const locale = new Intl.Locale(code);
+    const info = typeof locale.getWeekInfo === 'function' ? locale.getWeekInfo() : locale.weekInfo;
+    if (info?.firstDay) first = info.firstDay % 7;
+  } catch {// An unknown locale keeps the Monday the grid always had.
+  }
+
+  weekStarts.set(code, first);
+  return first;
 }
 
 function getMonthLabel(month, locale) {
   try {
-    return capitalizeFirstLetter(new Intl.DateTimeFormat(locale, {
+    return capitalizeFirstLetter(dateFormat(locale, {
       month: 'long'
     }).format(new Date(2026, month, 1)));
   } catch {
@@ -672,7 +709,7 @@ function getMonthLabel(month, locale) {
 
 function getDateLabel(date, locale) {
   try {
-    return new Intl.DateTimeFormat(locale, {
+    return dateFormat(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -683,7 +720,7 @@ function getDateLabel(date, locale) {
   }
 }
 
-function getWeekdays(locale, weekStart = 1) {
+function getWeekdays(locale, weekStart = 1, weekday = 'short') {
   const sunday = new Date(2026, 0, 4);
   return Array.from({
     length: 7
@@ -692,8 +729,8 @@ function getWeekdays(locale, weekStart = 1) {
     day.setDate(sunday.getDate() + (weekStart + index) % 7);
 
     try {
-      return new Intl.DateTimeFormat(locale, {
-        weekday: 'short'
+      return dateFormat(locale, {
+        weekday
       }).format(day);
     } catch {
       return String((weekStart + index) % 7);
@@ -830,6 +867,8 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     this._input = null;
     this._documentClickHandler = this.handleDocumentClick.bind(this);
     this._documentKeydownHandler = this.handleDocumentKeydown.bind(this);
+    this._focusoutHandler = this.handleFocusout.bind(this);
+    this.addEventListener('focusout', this._focusoutHandler);
     this._viewportHandler = this.positionPanel.bind(this);
     this._focusCalendarOnOpen = false;
     this._focusDateAfterRender = false;
@@ -1659,14 +1698,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       return Number.isInteger(day) && day >= 0 && day <= 7 ? day % 7 : 1;
     }
 
-    try {
-      const locale = new Intl.Locale(this.locale);
-      const info = typeof locale.getWeekInfo === 'function' ? locale.getWeekInfo() : locale.weekInfo;
-      if (info?.firstDay) return info.firstDay % 7;
-    } catch {// An unknown locale keeps the Monday the grid always had.
-    }
-
-    return 1;
+    return localeWeekStart(this.locale);
   }
 
   get locale() {
@@ -1753,7 +1785,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get calendarLabel() {
     try {
-      return new Intl.DateTimeFormat(this.locale, {
+      return dateFormat(this.locale, {
         month: 'long',
         year: 'numeric'
       }).format(this.displayDate);
@@ -1914,10 +1946,60 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
     if (nextMode === 'year') {
       nextState.yearPageStart = this.getYearPageStart(this.year);
-    }
+    } // The list that opens takes the focus on its chosen month or year; the
+    // one that closes gives it back to its toggle (audit S11b: the lists
+    // could not be reached by keyboard, and the focus fell to the page).
 
+
+    if (nextMode) this._focusContextAfterRender = true;else this._focusToggleAfterRender = nextContext;
     this.setState(nextState);
     return this;
+  } // The month or year list is one tab stop (the chosen item, or the first
+  // that can be chosen); the arrows move in its three columns, Home and End
+  // go to its ends, Enter and Space choose (they are buttons).
+
+
+  focusContextItem() {
+    this._focusContextAfterRender = false;
+    const items = [...this.querySelectorAll('.sf-datepicker-context .sf-datepicker-text')];
+    (items.find(item => item.tabIndex === 0) || items.find(item => !item.disabled))?.focus?.();
+  }
+
+  handleContextKeydown(event) {
+    const items = [...this.querySelectorAll('.sf-datepicker-context .sf-datepicker-text')];
+    const index = items.indexOf(event.target.closest?.('.sf-datepicker-text'));
+    if (index < 0) return;
+    const horizontal = this.isRtl ? -1 : 1;
+    const steps = {
+      ArrowLeft: -horizontal,
+      ArrowRight: horizontal,
+      ArrowUp: -3,
+      ArrowDown: 3
+    };
+    let next = -1;
+
+    if (event.key in steps) {
+      const step = steps[event.key];
+
+      for (let at = index + step; at >= 0 && at < items.length; at += step) {
+        if (!items[at].disabled) {
+          next = at;
+          break;
+        }
+      }
+    } else if (event.key === 'Home') {
+      next = items.findIndex(item => !item.disabled);
+    } else if (event.key === 'End') {
+      next = items.findLastIndex(item => !item.disabled);
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    if (next < 0 || next === index) return;
+    items[index].tabIndex = -1;
+    items[next].tabIndex = 0;
+    items[next].focus();
   }
 
   shiftYearPage(direction = 1) {
@@ -2171,19 +2253,30 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       event.preventDefault();
       this.moveActiveDate(keySteps[event.key]);
       return;
-    }
+    } // Home and End take the first and last day of the week, held to the
+    // bounds: a week that starts before min-date stops at min-date instead
+    // of doing nothing (datepicker audit S05e).
+
 
     if (event.key === 'Home' || event.key === 'End') {
       event.preventDefault();
       const date = day?.date || this.activeDate;
       const offset = (date.getDay() - this.weekStart + 7) % 7;
-      this.moveActiveDate(event.key === 'Home' ? -offset : 6 - offset);
+      const next = new Date(date);
+      next.setDate(next.getDate() + (event.key === 'Home' ? -offset : 6 - offset));
+      const minDate = this.setMinDate();
+      const maxDate = this.setMaxDate();
+      if (minDate && compareDates(next, minDate) < 0) next.setTime(minDate.getTime());
+      if (maxDate && compareDates(next, maxDate) > 0) next.setTime(maxDate.getTime());
+      this.moveActiveDate(Math.round((new Date(next.getFullYear(), next.getMonth(), next.getDate()) - new Date(date.getFullYear(), date.getMonth(), date.getDate())) / 86400000));
       return;
-    }
+    } // PageUp and PageDown turn a month, with Shift a year (APG date picker
+    // dialog; audit S05d).
+
 
     if (event.key === 'PageUp' || event.key === 'PageDown') {
       event.preventDefault();
-      const direction = event.key === 'PageUp' ? -1 : 1;
+      const direction = (event.key === 'PageUp' ? -1 : 1) * (event.shiftKey ? 12 : 1);
       let next = shiftDateByMonth(this.activeDate, direction);
       const minDate = this.setMinDate();
       const maxDate = this.setMaxDate();
@@ -2198,6 +2291,20 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
         activeDate: formatIsoDate(next)
       });
     }
+  } // The calendar is a non-modal dialog under its field: Tab moves through the
+  // field and the panel, and the focus going anywhere else closes the panel,
+  // as a click outside does. It stayed open behind the next field (audit
+  // S08). The focus is not taken back: the person went where Tab took them.
+  // A focus that goes nowhere (a removed button, the window losing focus)
+  // keeps the panel.
+
+
+  handleFocusout(event) {
+    if (!this.open || !this.input) return;
+    const next = event.relatedTarget;
+    if (!next || this.contains(next) || this.refs.datePickerPanel.value?.contains?.(next)) return;
+
+    this._closePanel();
   }
 
   handlePanelClick(event) {
@@ -2240,6 +2347,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     event.stopPropagation();
 
     if (this.contextMode) {
+      this._focusToggleAfterRender = this.contextMode;
       this.setContext('');
       return;
     }
@@ -2476,6 +2584,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       return this;
     }
 
+    this._focusToggleAfterRender = 'month';
     this.setState({
       month: month.index,
       context: ''
@@ -2501,6 +2610,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       nextState.month = nextMonth;
     }
 
+    this._focusToggleAfterRender = 'year';
     this.setState(nextState);
     this.set({
       activeDate: formatIsoDate(new Date(year.year, nextMonth, 1))
@@ -2766,6 +2876,8 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       calendarLabel: this.calendarLabel,
       labels: this.labels,
       weekdays: this.weekdays,
+      // The column headers a screen reader reads: the full names.
+      weekdayNames: getWeekdays(this.locale, this.weekStart, 'long'),
       panelId: this._panelId,
       previousIcon: this.isRtl ? 'chevron_right' : 'chevron_left',
       nextIcon: this.isRtl ? 'chevron_left' : 'chevron_right',
@@ -2839,9 +2951,22 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     monthToggle?.setAttribute('aria-expanded', this.contextMode === 'month' ? 'true' : 'false');
     yearToggle?.setAttribute('aria-expanded', this.contextMode === 'year' ? 'true' : 'false');
     this.syncOverlayListeners();
-    this.sfSyncFormState();
+    this.sfSyncFormState(); // The panel is placed when it opens, not after every render: SF.Position
+    // follows scroll, resize and the panel's own size from then on (Floating
+    // UI autoUpdate, its element resize included). A full update after each
+    // arrow key, month or render cost 50-180 ms (datepicker audit
+    // 2026-11-11, P1).
+
+    const placed = this._panelAnchor && this._panelAnchorPanel === this.refs.datePickerPanel.value;
     requestAnimationFrame(() => {
-      this.positionPanel();
+      if (!placed || !this.open) this.positionPanel();
+
+      if (this._focusContextAfterRender) {
+        this.focusContextItem();
+      } else if (this._focusToggleAfterRender) {
+        this.querySelector(`.sf-datepicker-${this._focusToggleAfterRender}-toggle button`)?.focus?.();
+        this._focusToggleAfterRender = '';
+      }
 
       if (this._focusTimeAfterRender || this._focusCalendarOnOpen && this.mode === 'time') {
         this.focusTimePart(this._focusTimeAfterRender || 'hours');
@@ -2936,13 +3061,13 @@ function joinClasses(...tokens) {
 function renderYearTop(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top flex content-main-between items-cross-center">
-            <sf-button-icon appearance="ghost" scheme="on-surface" size="1" ?disabled=${context.disabled}
+            <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousYears}
                 @click=${() => context.component.shiftYearPage(-1)}></sf-button-icon>
             <div class="sf-datepicker-range-title" aria-live="polite">
                 ${context.yearPageStart}–${context.yearPageEnd}
             </div>
-            <sf-button-icon appearance="ghost" scheme="on-surface" size="1" ?disabled=${context.disabled}
+            <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.nextIcon} aria-label=${context.labels.nextYears}
                 @click=${() => context.component.shiftYearPage(1)}></sf-button-icon>
         </div>`;
@@ -2952,12 +3077,14 @@ function renderTop(context) {
   if (context.context === 'year') return renderYearTop(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top grid items-cross-center">
-            <sf-button-icon appearance="ghost" scheme="on-surface" size="1" ?disabled=${context.disabled}
+            <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-button-icon>
             <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
                 <!-- The toggles are size 1/2, as tall as the compact size 1 they were:
-                     density no longer changes a button's height (C01). -->
+                     density no longer changes a button's height (C01). The arrows
+                     beside them are the same size: one band of buttons, one height
+                     (audit G4: 40 and 32 in one row). -->
                 <sf-button class="sf-datepicker-month-toggle" size="1/2" appearance="ghost" scheme="on-surface"
                     ?disabled=${context.disabled}
                     text=${context.monthLabel}
@@ -2969,19 +3096,28 @@ function renderTop(context) {
                     aria-expanded="false"
                     @click=${() => context.component.toggleContext('year')}></sf-button>
             </div>
-            <sf-button-icon appearance="ghost" scheme="on-surface" size="1" ?disabled=${context.disabled}
+            <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.nextIcon} aria-label=${context.labels.nextMonth}
                 @click=${() => context.component.shiftMonth(1)}></sf-button-icon>
         </div>`;
+} // The month or year list is one tab stop: the chosen item, or the first one
+// that can be chosen; the arrows move in it (handleContextKeydown).
+
+
+function focusItem(items) {
+  return items.find(item => item.selected && !item.disabled) ?? items.find(item => !item.disabled);
 }
 
 function renderMonthContext(context) {
+  const focusable = focusItem(context.months);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 content-cross-start items-cross-start overflow-auto gap-1/4"
-             aria-label=${context.labels.chooseMonth}>
+        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 overflow-auto gap-1/4"
+             role="group" aria-label=${context.labels.chooseMonth}
+             @keydown=${event => context.component.handleContextKeydown(event)}>
             ${context.months.map(month => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <button class=${joinClasses('sf-datepicker-text flex content-main-center items-cross-center', month.selected ? 'active' : '', month.disabled ? 'disabled' : '')}
                     ?disabled=${month.disabled} aria-pressed=${month.selected ? 'true' : 'false'}
+                    tabindex=${month === focusable ? '0' : '-1'}
                     type="button" @click=${() => context.component.selectMonth(month)}>
                     <span class="sf-datepicker-text-date">${month.label}</span>
                 </button>`)}
@@ -2989,12 +3125,15 @@ function renderMonthContext(context) {
 }
 
 function renderYearContext(context) {
+  const focusable = focusItem(context.years);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 content-cross-start items-cross-start overflow-auto gap-1/4"
-             aria-label=${context.labels.chooseYear}>
+        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 overflow-auto gap-1/4"
+             role="group" aria-label=${context.labels.chooseYear}
+             @keydown=${event => context.component.handleContextKeydown(event)}>
             ${context.years.map(year => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <button class=${joinClasses('sf-datepicker-text flex content-main-center items-cross-center', year.selected ? 'active' : '', year.disabled ? 'disabled' : '')}
                     type="button" ?disabled=${year.disabled} aria-pressed=${year.selected ? 'true' : 'false'}
+                    tabindex=${year === focusable ? '0' : '-1'}
                     @click=${() => context.component.selectYear(year)}>
                     <span class="sf-datepicker-text-date">${year.year}</span>
                 </button>`)}
@@ -3031,15 +3170,34 @@ function renderDatepickerInput(context) {
 function renderDay(day, context) {
   const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.currentMonth ? '' : 'sf-datepicker-another-month', day.disabled ? 'disabled' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <button class=${classes} type="button" ?disabled=${day.disabled}
+        <button class=${classes} type="button" role="gridcell" ?disabled=${day.disabled}
             data-date=${day.value} aria-label=${day.label}
             aria-current=${day.today ? 'date' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            aria-pressed=${day.selected ? 'true' : 'false'} tabindex=${day.tabIndex}
+            aria-selected=${day.selected || day.rangeSelected ? 'true' : 'false'} tabindex=${day.tabIndex}
             @click=${() => context.component.selectDate(day)}
             @focus=${() => context.component.setActiveDate(day.value)}
             @keydown=${event => context.component.handleDayKeydown(event, day)}>
             <span class="sf-datepicker-day-date">${day.day}</span>
         </button>`;
+} // The days are an ARIA grid (APG date picker dialog; audit S18a): a row of
+// column headers with the weekdays' full names for a screen reader (the
+// drawn short names above stay out of the accessibility tree), then a row per
+// week. The rows are display: contents, so the days stay the CSS grid's own
+// cells; the headers are visually hidden, out of the flow.
+
+
+function renderGrid(context) {
+  const weeks = [];
+
+  for (let at = 0; at < context.days.length; at += 7) weeks.push(context.days.slice(at, at + 7));
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}>
+            <div class="sf-datepicker-week" role="row">
+                ${context.weekdayNames.map(name => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only" role="columnheader">${name}</span>`)}
+            </div>
+            ${weeks.map(week => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-datepicker-week" role="row">${week.map(day => renderDay(day, context))}</div>`)}
+        </div>`;
 }
 
 function renderPresets(context) {
@@ -3139,15 +3297,16 @@ function renderDatepickerPanel(context) {
             @click=${event => context.component.handlePanelClick(event)}>
             ${renderPresets(context)}
             <div class="sf-datepicker-container flex flex-col">
+                <!-- The shown month, said when it changes (audit S18c); the year
+                     page says its own range in its title. -->
+                <div class="sr-only" aria-live="polite" aria-atomic="true">${context.context === 'year' ? '' : context.calendarLabel}</div>
                 ${renderTop(context)}
                 <div class="sf-datepicker-main relative">
                     ${renderContext(context)}
                     <div class="sf-datepicker-weekdays grid grid-col-7" aria-hidden="true">
                         ${context.weekdays.map(weekday => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-datepicker-weekday">${weekday}</span>`)}
                     </div>
-                    <div class="sf-datepicker-grid grid grid-col-7">
-                        ${context.days.map(day => renderDay(day, context))}
-                    </div>
+                    ${renderGrid(context)}
                 </div>
                 ${renderTime(context)}
             </div>
@@ -3241,7 +3400,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.4.6","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.5.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

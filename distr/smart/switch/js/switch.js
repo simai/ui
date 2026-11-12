@@ -2,6 +2,153 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "61d50f69160a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
+/* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
+/* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
+/* harmony export */ });
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e92fd2d1a38c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__);
+ // A checkable control's name is its label alone; its description is the
+// description (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44).
+// The box, the label and the description sit inside one <label> so a press
+// anywhere toggles the control, and a <label> names its control by all of its
+// text: «Приглашения на мероприятия Не чаще раза в месяц» was read as one name.
+// The input is named by the label row (aria-labelledby) and described by the
+// rest of the text column (aria-describedby). An author's aria-label or
+// aria-labelledby wins; ids the author put on aria-describedby are kept. Ids
+// come from the instance path, never a counter (#41).
+//
+// sf-switch was fixed this way first (1.3.1, its own copy in _switch.js);
+// sf-checkbox and sf-radio share the anatomy and read this helper.
+//
+// parts:
+//   kind         the Smart tag (`sf-checkbox`)
+//   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   text         selector of the label text inside the label row: the name;
+//                the help mark beside it is a button with a name of its own
+//                and is left out (the row is the name when there is no text
+//                part, as in class markup without one)
+//   label        selector of the label row inside the root
+//   column       selector of the text column that holds the label row and the description
+//   description  selector of the description when there is no column
+
+function splitIds(value) {
+  return String(value || '').split(/\s+/).filter(Boolean);
+}
+
+function descriptionParts(root, parts) {
+  const column = parts.column ? root.querySelector(parts.column) : null;
+  if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
+  const label = root.querySelector(parts.label) || parts.text && root.querySelector(parts.text);
+  return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
+}
+
+function linkCheckableText(root, parts) {
+  if (!root) return;
+  const input = root.querySelector('input[type="checkbox"], input[type="radio"]');
+  if (!input) return;
+  const smart = root.closest(parts.kind);
+  const owner = smart || root;
+  const kind = smart ? parts.kind : parts.classKind; // A control built before it is placed has no path yet: link it once it is.
+
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) {
+    if (!root.__sfCheckableLinkPending && typeof requestAnimationFrame === 'function') {
+      root.__sfCheckableLinkPending = true;
+      requestAnimationFrame(() => {
+        root.__sfCheckableLinkPending = false;
+        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) linkCheckableText(root, parts);
+      });
+    }
+
+    return;
+  }
+
+  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind
+  });
+  const linked = root.__sfCheckableLinked || {
+    label: '',
+    described: []
+  };
+  const label = parts.text && root.querySelector(parts.text) || root.querySelector(parts.label);
+  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
+
+  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
+    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'label');
+    input.setAttribute('aria-labelledby', label.id);
+    linked.label = label.id;
+  } else if (ownLabel) {
+    input.removeAttribute('aria-labelledby');
+    linked.label = '';
+  }
+
+  const ids = descriptionParts(root, parts).map((node, index) => {
+    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, index ? `description-${index + 1}` : 'description');
+    return node.id;
+  });
+  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
+  const describedBy = [...new Set([...authored, ...ids])];
+  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
+  linked.described = ids; // The <label> names its control by `for`, not by the first control inside
+  // it: the help mark is a button, and with the box at the end
+  // (position="end") the button came first and a press on the text pressed
+  // the help.
+
+  if (root instanceof HTMLLabelElement && !root.htmlFor) {
+    if (!input.id) input.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'input');
+    root.htmlFor = input.id;
+  }
+
+  root.__sfCheckableLinked = linked;
+} // A press that comes from the help (the sf-help-mark of the help setting, or
+// what the help slot holds) is the help's, never the control's: the <label>
+// around both must not toggle. The press cancels the label's activation (the
+// «?» button has no default of its own, its listener still opens the help);
+// a link or a field in the explanation keeps its own default, which the label
+// leaves alone as interactive content. Read on the <label> as its click
+// listener.
+
+function keepHelpOutOfLabel(event) {
+  const label = event.currentTarget;
+  const target = event.target;
+  if (!(target instanceof Element) || !(label instanceof Element)) return;
+  const help = target.closest('sf-help-mark, [slot="help"]');
+  if (!help || !label.contains(help)) return;
+  const own = target.closest('a[href], input, select, textarea, summary');
+  if (own && help.contains(own)) return;
+  event.preventDefault();
+}
+const CHECKBOX_TEXT_PARTS = Object.freeze({
+  kind: 'sf-checkbox',
+  classKind: 'sf-checkbox',
+  text: '.sf-checkbox-label, [data-sf-checkbox-label]',
+  label: '.sf-checkbox-top',
+  column: '.sf-checkbox-container',
+  description: '.sf-checkbox-description'
+});
+const RADIO_TEXT_PARTS = Object.freeze({
+  kind: 'sf-radio',
+  classKind: 'sf-radio-button',
+  text: '.sf-radio-button-text, [data-sf-radio-label]',
+  label: '.sf-radio-button-top',
+  column: '.sf-radio-button-container',
+  description: '.sf-radio-button-description'
+});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "67eed2647f47"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1078,6 +1225,12 @@ class SfSwitch extends SwitchElement {
       // 6); elsewhere the checkbox is named, and not while inherited.
       checked: inherited ? this.inheritedOn : props.checked,
       checkboxName: this.sfInternals || inherited ? '' : props.name,
+      // The help button is named by its subject («Подробнее: Синхронизация»).
+      helpLabel: props.help && props.label ? this.sfWord('help', {
+        vars: {
+          label: props.label
+        }
+      }) : '',
       component: this
     });
   }
@@ -1244,11 +1397,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("778671c79fa6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("61d50f69160a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
+// 1, 1/2 beside size 2 (the mark adds no height of its own).
+
+const HELP_SIZE = {
+  '1/2': '1/3',
+  1: '1/3',
+  2: '1/2'
+};
 function renderSwitchTemplate(context) {
   const {
     size,
@@ -1267,10 +1429,12 @@ function renderSwitchTemplate(context) {
   // text node has no id. The span draws nothing of its own.
 
   const descriptionContent = context.component?.hasSlotContent?.('description') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-switch-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-switch-description">${description}</span>` : '';
-  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${help}</i>` : '';
+  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') // help is the explanation: a «?» button after the label text that opens
+  // it (sf-help-mark), outside the switch's activation.
+  : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-switch-help" size=${HELP_SIZE[size] || '1/3'} text=${help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>` : '';
   const showContainer = !!(labelContent || descriptionContent || helpContent);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__.keepHelpOutOfLabel}>
       <span class="sf-switch-toggler transition flex items-cross-center content-main-start">
         <input
           type="checkbox"
@@ -1366,21 +1530,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.4.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.5.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 
 /***/ "f326160c9b8b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Switch","runtime":{"off":"off","on":"on"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Switch","runtime":{"off":"off","on":"on","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "9dc0b9bd4ec5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Переключатель","runtime":{"off":"выключено","on":"включено"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Переключатель","runtime":{"off":"выключено","on":"включено","help":"Подробнее: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

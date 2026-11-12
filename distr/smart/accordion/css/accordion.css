@@ -8,8 +8,8 @@
 }
 
 .sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled {
-  --sf-icon--color: var(--sf-on-disable);
-  color: var(--sf-on-disable);
+  --sf-icon--color: var(--sf-on-surface-disabled);
+  color: var(--sf-on-surface-disabled);
   cursor: not-allowed;
 }
 

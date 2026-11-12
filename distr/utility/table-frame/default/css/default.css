@@ -91,6 +91,34 @@
     text-align: start;
     vertical-align: top;
   }
+  .table-frame > .table > :not(caption) > * > .text-center {
+    text-align: center;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > .text-end {
+    text-align: right;
+  }
+  @supports not (text-align: end) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > .text-end {
+    text-align: right;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > .text-end:where(:dir(ltr)) {
+    text-align: right;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > .text-end {
+    text-align: left;
+  }
+  @supports not (text-align: end) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > .text-end {
+    text-align: left;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > .text-end:where(:dir(rtl)) {
+    text-align: left;
+  }
+  .table-frame > .table > :not(caption) > * > .text-end {
+    text-align: end;
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > *:last-child {
     border-right-width: var(--sf-0);
   }

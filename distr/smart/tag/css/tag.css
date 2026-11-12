@@ -51,52 +51,52 @@
 }
 @layer sf.states {
   .sf-tag.sf-tag--color.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--color.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--color.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--color.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--icon.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--icon.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--icon.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--icon.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--default.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--default.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--default.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--default.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--avatar.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--avatar.disabled > sf-button-icon > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--avatar.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-button-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
   .sf-tag.sf-tag--avatar.disabled > sf-icon-button > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-disable);
+    --sf-close-icon--background-color: var(--sf-surface-disabled);
   }
 }
 @layer sf.overrides {

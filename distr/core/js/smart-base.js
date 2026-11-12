@@ -1442,11 +1442,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   settingSetters: () => (/* binding */ settingSetters),
 /* harmony export */   toOutcome: () => (/* binding */ toOutcome)
 /* harmony export */ });
-/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
-/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("06e8cd089f28");
-/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("51e3a200cf5f");
-/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f171c5ece4b4");
+/* harmony import */ var _ignored_glyphs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3620de4c6b47");
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("51e3a200cf5f");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f171c5ece4b4");
 // An element from its manifest (standard simai.smart-component 1.3.8 §3, §4,
 // §4.1, §4.4, §7.7, §8, §11, §17.1).
 //
@@ -1502,6 +1503,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Members the runtime adds start with `sf`, which no manifest name may
 // (§3.1), so a generated setting or action never collides with them.
+
 
 
 
@@ -2202,7 +2204,19 @@ function elementFromManifest(manifest, {
       this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
-      this.toggleAttribute('data-sf-started', true);
+      this.toggleAttribute('data-sf-started', true); // An element on the Smart base hands its glyphs over after each drawing;
+      // one on a plain base is watched while it sits in an ignored region.
+
+      if (typeof this.adoptIgnoredGlyphs !== 'function') {
+        this.__sfGlyphWatch?.disconnect();
+        this.__sfGlyphWatch = (0,_ignored_glyphs_js__WEBPACK_IMPORTED_MODULE_0__.watchIgnoredGlyphs)(this);
+      }
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback?.();
+      this.__sfGlyphWatch?.disconnect();
+      this.__sfGlyphWatch = null;
     }
     /**
      * The first values of the settings an attribute cannot hold, lists and
@@ -2296,7 +2310,7 @@ function elementFromManifest(manifest, {
     } = {}) {
       const event = read.events[verb];
       if (!event) globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: event ${verb} is not declared`);
-      return (0,_aliases_js__WEBPACK_IMPORTED_MODULE_0__.dispatchAliased)(this, this.sfEventName(verb), {
+      return (0,_aliases_js__WEBPACK_IMPORTED_MODULE_1__.dispatchAliased)(this, this.sfEventName(verb), {
         detail,
         bubbles: true,
         composed: true,
@@ -2311,7 +2325,7 @@ function elementFromManifest(manifest, {
       vars
     } = {}) {
       const former = Object.hasOwn(formerKeys, key) ? formerKeys[key] : undefined;
-      const onFormer = former === undefined ? undefined : old => (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      const onFormer = former === undefined ? undefined : old => (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
         component: this.localName,
         tag: this.localName,
         kind: 'word',
@@ -2320,7 +2334,7 @@ function elementFromManifest(manifest, {
         since: formerWords.since,
         remove_after: formerWords.remove_after
       });
-      return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(words, key, this, {
+      return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.pageWord)(words, key, this, {
         component: this.localName,
         source: sourceLanguage,
         count,
@@ -2428,10 +2442,10 @@ function elementFromManifest(manifest, {
 
   defineMembers(ManifestElement.prototype, read.members); // connect-port is the base's (§4.1): a base without it gets it here.
 
-  (0,_host_port_js__WEBPACK_IMPORTED_MODULE_4__.installPortAction)(ManifestElement.prototype);
+  (0,_host_port_js__WEBPACK_IMPORTED_MODULE_5__.installPortAction)(ManifestElement.prototype);
   defineActions(ManifestElement.prototype, read.actions, actions, read.events); // data-sf-action="<id>.<action>" runs a declared action (§8 one page trigger).
 
-  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_3__.bindPageActions)();
+  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_4__.bindPageActions)();
   if (aliases) ManifestElement.aliases = aliases;
   return ManifestElement;
 }
@@ -2637,6 +2651,114 @@ function readHostDataAttributes(record) {
   });
   return read;
 }
+
+/***/ },
+
+/***/ "3620de4c6b47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   watchIgnoredGlyphs: () => (/* binding */ watchIgnoredGlyphs)
+/* harmony export */ });
+// The watch of an ignored region's glyphs for an element not on the Smart
+// base (core.runtime 1.54.0, 2026-11-11), called by element-manifest.js's
+// connectedCallback. Not a shared runtime module and not a public name.
+// A region the Loader's page scan passes by (loader.js OBSERVER_IGNORE_SELECTOR).
+const IGNORED_REGION = '[data-sf-observer="ignore"]'; // Two class lists that differ in sf-icon-loaded alone, the Loader's own mark.
+
+function sameClasses(before, after) {
+  const tokens = value => String(value ?? '').split(/\s+/u).filter(token => token && token !== 'sf-icon-loaded').sort().join(' ');
+
+  return tokens(before) === tokens(after);
+}
+/**
+ * The class-markup glyphs (<i class="sf-icon">) of an element that is not on
+ * the Smart base -- sf-sortable, sf-editor-inline, sf-editor-overlay,
+ * sf-resizer -- inside a data-sf-observer="ignore" region. The Loader's page
+ * scan and mutation observer pass such a region by, and these elements have no
+ * drawing the Smart base could hand over (smart-base.js adoptIgnoredGlyphs),
+ * so they draw when they like: the sortable's inserter, a toolbar on a
+ * selection. While the element is placed in such a region, what it holds now
+ * and every glyph added or renamed under it later goes to
+ * SF.Loader.adoptStaticIcons, which asks for it and marks it loaded. A
+ * rename is any of the ways the Loader's page observer sees one: the glyph's
+ * text, its data-icon (read before the text, iconSubsetRuntime.js
+ * getTrackedStaticIconAttrs), and its class -- an element that becomes an
+ * sf-icon, or a weight or size class. sf-icon-loaded, which the Loader itself
+ * writes, is no change, so marking a glyph never asks for it again. Outside a
+ * region the page scan finds them, and nothing is watched. Answers the
+ * observer to stop, or null. Its own module, outside the shared runtime's
+ * exports, so the unit test (tests/ignored-region-glyphs.contract.test.mjs)
+ * can drive it; element-manifest.js calls it.
+ */
+
+
+function watchIgnoredGlyphs(element) {
+  if (!element.closest?.(IGNORED_REGION)) return null;
+  const Observer = globalThis.MutationObserver;
+
+  const adopt = root => {
+    const loader = globalThis.SF?.Loader;
+
+    if (typeof loader?.adoptStaticIcons === 'function') {
+      loader.adoptStaticIcons(root);
+      return;
+    } // Placed before the Loader is ready: the whole element once it is.
+
+
+    if (element.__sfGlyphsAwaitLoader) return;
+    element.__sfGlyphsAwaitLoader = true;
+    globalThis.addEventListener?.('sf-loader-ready', () => {
+      element.__sfGlyphsAwaitLoader = false;
+      if (element.isConnected && element.closest?.(IGNORED_REGION)) adopt(element);
+    }, {
+      once: true
+    });
+  };
+
+  adopt(element);
+  if (typeof Observer !== 'function') return null;
+  const observer = new Observer(records => {
+    const roots = new Set();
+
+    for (const record of records) {
+      if (record.type === 'attributes') {
+        const glyph = record.target;
+        if (!glyph.classList?.contains?.('sf-icon')) continue;
+        const now = glyph.getAttribute(record.attributeName);
+        if (record.attributeName === 'class' ? sameClasses(record.oldValue, now) : record.oldValue === now) continue;
+        roots.add(glyph);
+        continue;
+      }
+
+      if (record.type === 'characterData') {
+        const glyph = record.target.parentElement?.closest?.('.sf-icon');
+        if (glyph) roots.add(glyph);
+        continue;
+      }
+
+      for (const node of record.addedNodes) {
+        if (node.nodeType === 1) roots.add(node);else if (node.nodeType === 3 && node.parentElement?.classList?.contains('sf-icon')) roots.add(node.parentElement);
+      }
+    }
+
+    for (const root of roots) if (root.isConnected) adopt(root);
+  });
+  observer.observe(element, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['class', 'data-icon'],
+    attributeOldValue: true
+  });
+  return observer;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  watchIgnoredGlyphs
+});
 
 /***/ },
 
@@ -4575,13 +4697,21 @@ __webpack_require__.r(__webpack_exports__);
 
 function isRtl(element) {
   return getComputedStyle(element).direction === 'rtl';
-}
-/** Resolves a number or CSS length (tokens included) to pixels in context. */
+} // A plain pixel length needs no probe.
 
+
+const PIXELS = /^\s*(-?(?:\d+\.?\d*|\.\d+))(?:px)?\s*$/u;
+/**
+ * Resolves a number or CSS length (tokens included) to pixels in context.
+ * Anything but a number or a plain pixel length is measured by a probe span,
+ * which restyles the document: call it once per anchor, never per frame.
+ */
 
 function resolveLength(value, context = document.body) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
   if (typeof value !== 'string' || value.trim() === '') return 0;
+  const plain = PIXELS.exec(value);
+  if (plain && (value.includes('px') || Number(plain[1]) === 0)) return parseFloat(plain[1]) || 0;
   const probe = document.createElement('span');
   probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;block-size:0;padding:0;border:0';
   probe.style.inlineSize = value;
@@ -4836,19 +4966,83 @@ function anchor(reference, floating, options = {}) {
   };
   let running = null;
   let pending = false;
+  let pendingFull = false; // The cost of a position (datepicker audit P1/P2, 2026-11-11). Each
+  // resolveLength of a token inserts a probe span and restyles the whole
+  // document (about 9 ms on a docs page), and resetting max-height to read
+  // the natural height forces another; per scroll event that made 800 px of
+  // scrolling with a panel open cost 1.8-2.3 s of style recalculation. So:
+  // - the lengths (offset, padding, alignmentOffset) are resolved once per
+  //   anchor, and again only when the window's size changed;
+  // - a full fit -- the first, a resize, the panel or its reference changing
+  //   size, or update() from the component -- measures as before: direction,
+  //   viewport width, containing block, natural height;
+  // - a scroll or a layout shift asks for a light fit, at most once per
+  //   frame: it reuses those measurements and only places the panel again.
+  //   Flip, shift and the size caps run exactly as in a full fit; flipping
+  //   compares the natural height measured by the last full fit (the panel's
+  //   content does not change by scrolling; when it does, its size changes
+  //   and that is a full fit), and max-height is not reset to read it.
+  // - Inline styles and data-sf-side are written only when they change.
 
-  const run = async () => {
+  let lengths = null;
+
+  const lengthsNow = () => {
+    const key = `${window.innerWidth}x${window.innerHeight}`;
+
+    if (!lengths || lengths.key !== key) {
+      const context = reference.parentElement;
+      lengths = {
+        key,
+        gap: resolveLength(settings.offset, context),
+        padding: resolveLength(settings.padding, context),
+        alignment: resolveLength(settings.alignmentOffset, context)
+      };
+    }
+
+    return lengths;
+  };
+
+  let measures = null;
+
+  const put = (style, name, value) => {
+    if (style[name] !== value) style[name] = value;
+  };
+
+  const run = async full => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
     // the viewport's.
     if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
-    const rtl = isRtl(reference);
-    const gap = resolveLength(settings.offset, reference.parentElement);
-    const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
 
-    if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || '';
-    const natural = settings.fitHeight ? floating.getBoundingClientRect().height : 0; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
+    if (full || !measures) {
+      measures = {
+        rtl: isRtl(reference),
+        clientWidth: document.documentElement.clientWidth,
+        container: null,
+        natural: 0
+      }; // Measure the natural size so flipping compares the real panel height.
+
+      if (settings.fitHeight) {
+        put(floating.style, 'maxHeight', authored.maxHeight || '');
+        measures.natural = floating.getBoundingClientRect().height;
+      }
+    }
+
+    const {
+      rtl,
+      clientWidth,
+      natural
+    } = measures;
+    const {
+      gap,
+      padding,
+      alignment
+    } = lengthsNow(); // A light fit starts from the natural height, as a full fit does after
+    // its reset; once the size middleware has written the cap, the panel is
+    // measured as it is (Floating UI's own second pass).
+
+    let naturalPass = !full && settings.fitHeight; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
     // for end), e.g. so a tail points at the middle of a small trigger.
     // The panel keeps its distance from the viewport's inline edges, but never
     // more than its field keeps. With a flat padding a field closer to the edge
@@ -4858,7 +5052,6 @@ function anchor(reference, floating, options = {}) {
     // edge its own panel may reach too.
 
     const box = referenceRect(reference);
-    const clientWidth = document.documentElement.clientWidth;
     const edges = {
       top: padding,
       bottom: padding,
@@ -4867,7 +5060,7 @@ function anchor(reference, floating, options = {}) {
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
-      alignmentAxis: resolveLength(settings.alignmentOffset, reference.parentElement)
+      alignmentAxis: alignment
     })];
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
@@ -4888,11 +5081,12 @@ function anchor(reference, floating, options = {}) {
         rects,
         elements
       }) {
+        naturalPass = false;
         if (controller.stopped) return;
         const viewportWidth = clientWidth - edges.left - edges.right;
         const fieldWidth = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
-        if (settings.matchWidth === 'min') elements.floating.style.minWidth = fieldWidth;else if (settings.matchWidth) elements.floating.style.width = fieldWidth;
-        elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
+        if (settings.matchWidth === 'min') put(elements.floating.style, 'minWidth', fieldWidth);else if (settings.matchWidth) put(elements.floating.style, 'width', fieldWidth);
+        put(elements.floating.style, 'maxWidth', `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`);
 
         if (settings.fitHeight) {
           // A panel that misses its room by less than the edge's padding takes
@@ -4903,7 +5097,7 @@ function anchor(reference, floating, options = {}) {
           const room = Math.min(availableHeight, heightCap);
           const whole = Math.ceil(natural);
           const fits = whole > room && whole <= availableHeight + padding && whole <= heightCap;
-          elements.floating.style.maxHeight = `${Math.max(0, fits ? whole : room)}px`;
+          put(elements.floating.style, 'maxHeight', `${Math.max(0, fits ? whole : room)}px`);
         }
       }
 
@@ -4912,7 +5106,13 @@ function anchor(reference, floating, options = {}) {
       strategy: 'fixed',
       // The panel is fixed: its offset parent is the box it is placed in.
       platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
-        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+        getOffsetParent: (element, polyfill) => element === floating ? measures.container ??= fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill),
+        getDimensions: element => {
+          const dimensions = _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getDimensions(element);
+          return element === floating && naturalPass ? { ...dimensions,
+            height: natural
+          } : dimensions;
+        }
       },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
@@ -4920,16 +5120,19 @@ function anchor(reference, floating, options = {}) {
     if (controller.stopped) return result; // right/bottom are cleared so logical insets from the component stylesheet
     // (for example inset-inline-start in RTL) cannot over-constrain the box.
 
-    Object.assign(floating.style, {
+    const placed = {
       position: 'fixed',
       left: `${result.x}px`,
       top: `${result.y}px`,
       right: 'auto',
       bottom: 'auto',
-      margin: '0'
-    });
+      margin: '0px'
+    };
+
+    for (const [name, value] of Object.entries(placed)) put(floating.style, name, value);
+
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
-    floating.dataset.sfSide = controller.side;
+    if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -4937,33 +5140,67 @@ function anchor(reference, floating, options = {}) {
       y: result.y
     });
     return result;
-  }; // Coalesce bursts (scroll, resize, observers) into one computation at a time.
+  }; // Coalesce bursts (scroll, resize, observers) into one computation at a
+  // time; a full fit asked for while one runs is not lost to a light one.
 
 
-  controller.update = () => {
+  const request = full => {
     if (controller.stopped) return Promise.resolve(null);
 
     if (running) {
       pending = true;
+      pendingFull ||= full;
       return running;
     }
 
-    running = run().finally(() => {
+    running = run(full).finally(() => {
       running = null;
 
       if (pending && !controller.stopped) {
+        const again = pendingFull;
         pending = false;
-        controller.update();
+        pendingFull = false;
+        request(again);
       }
     });
     return running;
   };
+  /** A full fit: measures again (the component calls it after it changed the panel). */
 
-  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update) : null;
+
+  controller.update = () => request(true); // Scroll and layout shift: a light fit, at most once per frame.
+
+
+  let frame = 0;
+  let armed = false;
+
+  const follow = () => {
+    if (!armed || frame || controller.stopped) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      request(false);
+    });
+  };
+
+  const cleanups = settings.autoUpdate ? [// Resize of the window or an overflow ancestor, and of the panel or its
+  // reference: a full fit (also the first one).
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update, {
+    ancestorScroll: false,
+    layoutShift: false
+  }), // Scroll of any overflow ancestor and a moved reference: a light fit.
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
+    ancestorResize: false,
+    elementResize: false
+  })] : [];
+  armed = true;
 
   controller.stop = () => {
     controller.stopped = true;
-    cleanup?.();
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+
+    for (const cleanup of cleanups) cleanup();
+
     delete floating.dataset.sfSide;
     lower?.();
 

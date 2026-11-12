@@ -349,7 +349,7 @@
     margin: 0;
     background: var(--sf-surface-container);
     background: var(--sf-highlight-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     border: var(--sf-px) solid var(--sf-outline-variant);
     border: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
     border-radius: var(--sf-radius--surface);

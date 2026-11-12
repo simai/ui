@@ -561,10 +561,13 @@ function emitInline(element, key, id, content) {
 }
 
 const MESSAGES = {
-  ru: { toolbar: 'Форматирование', strong: 'Полужирный', em: 'Курсив', code: 'Код', link: 'Ссылка', url: 'Адрес ссылки', apply: 'Применить', unlink: 'Убрать ссылку', editing: '{label}: редактирование. Enter — сохранить, Escape — отменить.', invalid: 'Недопустимый адрес ссылки' },
-  en: { toolbar: 'Formatting', strong: 'Bold', em: 'Italic', code: 'Code', link: 'Link', url: 'Link address', apply: 'Apply', unlink: 'Remove link', editing: '{label}: editing. Enter saves, Escape cancels.', invalid: 'Invalid link address' },
+  ru: { toolbar: 'Форматирование', strong: 'Полужирный', em: 'Курсив', code: 'Код', strike: 'Зачёркнутый', link: 'Ссылка', url: 'Адрес ссылки', apply: 'Применить', unlink: 'Убрать ссылку', editing: '{label}: редактирование. Enter — сохранить, Escape — отменить.', invalid: 'Недопустимый адрес ссылки' },
+  en: { toolbar: 'Formatting', strong: 'Bold', em: 'Italic', code: 'Code', strike: 'Strikethrough', link: 'Link', url: 'Link address', apply: 'Apply', unlink: 'Remove link', editing: '{label}: editing. Enter saves, Escape cancels.', invalid: 'Invalid link address' },
 };
 const SHORTCUTS = { strong: 'b', em: 'i', code: 'e' };
+// The marks the toolbar offers when the host names none: strike (inline model
+// 1.2.0) is read, kept and drawn, and has a button only where a host asks.
+const TOOLBAR_MARKS = Object.freeze(['strong', 'em', 'code']);
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'HEAD', 'TITLE', 'META', 'LINK', 'IMG', 'SVG', 'OBJECT', 'IFRAME', 'NOSCRIPT']);
 const BLOCK = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TR', 'TABLE', 'BLOCKQUOTE', 'SECTION', 'ARTICLE']);
 // While editing, an atom or an opaque node is one element that is not
@@ -573,6 +576,40 @@ const BLOCK = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5
 const NODE_ATTRIBUTE = 'data-sf-inline-node';
 const ATOM_TAGS = new Map(Object.entries(_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_COMPONENTS).map(([name, entry]) => [entry.tag.toUpperCase(), name]));
 const isAtomElement = (node) => node?.nodeType === 1 && node.hasAttribute(NODE_ATTRIBUTE);
+// A mark the editor has no element for is drawn as a span carrying its name,
+// never as an element of that name, so it survives the DOM read-back.
+const MARK_ATTRIBUTE = 'data-sf-inline-mark';
+// Editor-copied HTML carries the page's copy token on its wrapper; pasted
+// HTML without it loses every data-sf-inline-* attribute first, so another
+// page cannot inject entries or marks (2026-11-11 acceptance, L3). The token
+// lives on the global, since every bundle carries its own module copy.
+const COPY_ATTRIBUTE = 'data-sf-inline-copy';
+const COPY_KEY = Symbol.for('simai.composition.inline-copy');
+const copyToken = () => {
+  if (!globalThis[COPY_KEY]) globalThis[COPY_KEY] = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  return globalThis[COPY_KEY];
+};
+// The extension keys of a text run, a break or a link (inline model,
+// 2026-11-11) ride on a wrapper span (or the <a>) as JSON, so the DOM
+// read-back keeps them. Foreign paste loses them with the other
+// data-sf-inline-* attributes.
+const EXTRA_ATTRIBUTE = 'data-sf-inline-extra';
+const readExtra = (node) => {
+  const json = node?.nodeType === 1 ? node.getAttribute(EXTRA_ATTRIBUTE) : null;
+  if (json === null) return null;
+  try {
+    const value = JSON.parse(json);
+    return value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length ? value : null;
+  } catch {
+    return null;
+  }
+};
+const MARK_TAGS = new Map([['strong', 'strong'], ['em', 'em'], ['code', 'code'], ['strike', 's']]);
+// A break the editor drew carries this attribute; any other <br> the browser
+// or a paste brings is read as a break too, except the placeholder a browser
+// keeps as the last child of an emptied or break-ended line.
+const BREAK_ATTRIBUTE = 'data-sf-inline-break';
+const isBreakElement = (node) => node?.nodeType === 1 && node.tagName === 'BR' && node.hasAttribute(BREAK_ATTRIBUTE);
 
 /** The entry an atom element holds: its JSON, or for a drawn atom without it, its tag and declared attributes. */
 function atomEntry(element) {
@@ -608,18 +645,20 @@ const words = (node) => Object.fromEntries(Object.keys(MESSAGES.en).map((key) =>
 /** Reads inline content from any DOM subtree; foreign markup and styles are dropped. */
 function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS, links = true, collapse = false } = {}) {
   const segments = [];
-  const visit = (node, active, href) => {
+  const carry = (extra, linkExtra, href) => ({ ...(extra ? { extra } : {}), ...(href && linkExtra ? { linkExtra } : {}) });
+  const visit = (node, active, href, extra = null, linkExtra = null) => {
     if (node.nodeType === 3) {
       let text = node.nodeValue.replace(/\u00a0/gu, ' ').replace(/[\r\n\t\f\v]/gu, ' ');
       if (collapse) text = text.replace(/ {2,}/gu, ' ');
-      if (text) segments.push({ text, marks: [...active], href });
+      if (text) segments.push({ text, marks: [...active], href, ...carry(extra, linkExtra, href) });
       return;
     }
     if (node.nodeType !== 1 && node.nodeType !== 11) return;
     if (node.nodeType === 1 && node !== root) {
       const entry = atomEntry(node);
       if (entry) {
-        segments.push({ text: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_OBJECT, marks: [], href, node: entry });
+        // An atom is never inside a link, even when pasted inside an <a>.
+        segments.push({ text: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_OBJECT, marks: [], href: entry.type === 'component' ? null : href, node: entry, ...(entry.type === 'component' ? {} : carry(null, linkExtra, href)) });
         return;
       }
     }
@@ -630,28 +669,47 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
     if (tag === 'STRONG' || tag === 'B') next.add('strong');
     if (tag === 'EM' || tag === 'I') next.add('em');
     if (tag === 'CODE' || tag === 'KBD' || tag === 'SAMP') next.add('code');
+    if (tag === 'S' || tag === 'STRIKE' || tag === 'DEL') next.add('strike');
+    // A mark this editor cannot draw rides on its wrapper (renderInlineDom).
+    const carried = node.nodeType === 1 ? node.getAttribute(MARK_ATTRIBUTE) : null;
+    // Any non-empty name, the inline model's own rule (sortMarks).
+    if (carried) next.add(carried);
     if (node.nodeType === 1 && node.style) {
       const weight = node.style.fontWeight;
       if (weight === 'bold' || weight === 'bolder' || Number(weight) >= 600) next.add('strong');
       if (node.style.fontStyle === 'italic') next.add('em');
     }
+    let nextExtra = extra;
+    let nextLinkExtra = linkExtra;
     if (tag === 'A' && !href && links) {
       const candidate = node.getAttribute('href');
-      if ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.safeHref)(candidate)) nextHref = candidate;
+      if ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.safeHref)(candidate)) {
+        nextHref = candidate;
+        nextLinkExtra = readExtra(node);
+      }
+    } else if (node.nodeType === 1 && tag !== 'A') {
+      const own = readExtra(node);
+      if (own) nextExtra = { ...(extra || {}), ...own };
     }
     if (tag === 'BR') {
-      // The placeholder <br> a browser leaves in an emptied editor is not content.
-      if (node.parentNode === root && !node.nextSibling) return;
-      segments.push({ text: ' ', marks: [...active], href });
+      // A line break is a break (inline model 1.2.0), no longer a space. The
+      // placeholder <br> a browser leaves as the last child of the edited
+      // element (an emptied editor, or the empty line after a final break)
+      // is not content; a break the editor drew says so itself.
+      if (!node.hasAttribute(BREAK_ATTRIBUTE) && isLastLeaf(node, root)) return;
+      segments.push({ ...(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.breakSegment)([...active], href, readExtra(node) || extra), ...carry(null, linkExtra, href) });
       return;
     }
-    for (const child of node.childNodes) visit(child, next, nextHref);
+    for (const child of node.childNodes) visit(child, next, nextHref, nextExtra, nextLinkExtra);
     // Nested blocks (pasted paragraphs) are separated by one space; the root is not.
     if (BLOCK.has(tag) && node !== root) segments.push({ text: ' ', marks: [], href: null });
   };
   visit(root, new Set(), null);
+  // The field's marks limit the known ones; a mark the model does not know is
+  // kept as it came, so an edit never drops it (validation still reports it).
   const allowed = new Set(marks);
-  let content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(segments.map((segment) => ({ ...segment, marks: segment.marks.filter((mark) => allowed.has(mark)), href: links ? segment.href : null })));
+  const keep = (mark) => allowed.has(mark) || !_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS.includes(mark);
+  let content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(segments.map((segment) => ({ ...segment, marks: segment.marks.filter(keep), href: links ? segment.href : null })));
   if (collapse) {
     const flat = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(content);
     if (flat.length && !flat[0].node) flat[0] = { ...flat[0], text: flat[0].text.replace(/^ +/u, '') };
@@ -680,24 +738,55 @@ function renderInlineDom(doc, content) {
     return element;
   };
   const run = (entry) => {
-    if (entry.type !== 'text') return object(entry);
-    let node = doc.createTextNode(entry.value);
+    if (entry.type !== 'text' && entry.type !== 'break') return object(entry);
+    let node;
+    if (entry.type === 'break') {
+      node = doc.createElement('br');
+      node.setAttribute(BREAK_ATTRIBUTE, '');
+    } else node = doc.createTextNode(entry.value);
     for (const mark of entry.marks || []) {
-      const wrapper = doc.createElement(mark);
+      const wrapper = doc.createElement(MARK_TAGS.get(mark) || 'span');
+      if (!MARK_TAGS.has(mark)) wrapper.setAttribute(MARK_ATTRIBUTE, mark);
+      wrapper.append(node);
+      node = wrapper;
+    }
+    const extra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineExtensions)(entry);
+    if (extra) {
+      const wrapper = doc.createElement('span');
+      wrapper.setAttribute(EXTRA_ATTRIBUTE, JSON.stringify(extra));
       wrapper.append(node);
       node = wrapper;
     }
     return node;
   };
-  for (const entry of (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(content)) {
+  const normalized = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(content);
+  for (const entry of normalized) {
     if (entry.type === 'link') {
       const anchor = doc.createElement('a');
       anchor.setAttribute('href', entry.href);
+      const linkExtra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineExtensions)(entry);
+      if (linkExtra) anchor.setAttribute(EXTRA_ATTRIBUTE, JSON.stringify(linkExtra));
       for (const child of entry.children) anchor.append(run(child));
       fragment.append(anchor);
     } else fragment.append(run(entry));
   }
+  // A line that ends on a break needs one more <br> to show its empty last
+  // line; that one is the placeholder and is not read back.
+  const last = normalized.at(-1);
+  // It goes inside the marks of that break, so text typed on the new line
+  // keeps them, as it would after a break inside a line.
+  if (last?.type === 'break' || (last?.type === 'link' && last.children.at(-1)?.type === 'break')) {
+    let host = fragment;
+    while (host.lastChild?.nodeType === 1 && host.lastChild.tagName !== 'BR') host = host.lastChild;
+    host.append(doc.createElement('br'));
+  }
   return fragment;
+}
+
+// True when node is the last thing inside root: nothing follows it at any level.
+function isLastLeaf(node, root) {
+  for (let current = node; current && current !== root; current = current.parentNode) if (current.nextSibling) return false;
+  return true;
 }
 
 // The units of offset inside root, in document order: text nodes outside
@@ -707,7 +796,7 @@ function units(root) {
   const visit = (node) => {
     for (const child of node.childNodes) {
       if (child.nodeType === 3) list.push(child);
-      else if (isAtomElement(child)) list.push(child);
+      else if (isAtomElement(child) || isBreakElement(child)) list.push(child);
       else if (child.nodeType === 1) visit(child);
     }
   };
@@ -774,7 +863,10 @@ function startInlineEdit(element, options = {}) {
   if (!INLINE_TOOLBAR_MODES.includes(toolbarMode)) throw new TypeError(`inline_toolbar_unknown: ${toolbarMode}`);
   const doc = element.ownerDocument;
   const text = { ...words(element), ...(options.messages || {}) };
+  // options.marks: the marks the field allows and offers; without it every
+  // known mark is kept and the toolbar offers TOOLBAR_MARKS.
   const marks = (options.marks || _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS).filter((mark) => _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS.includes(mark));
+  const offered = options.marks ? marks : TOOLBAR_MARKS.filter((mark) => marks.includes(mark));
   const links = options.links !== false;
   const original = { html: element.innerHTML, attributes: ['contenteditable', 'role', 'aria-multiline', 'aria-label', 'spellcheck', 'tabindex'].map((name) => [name, element.getAttribute(name)]) };
   const history = [];
@@ -828,14 +920,14 @@ function startInlineEdit(element, options = {}) {
   toolbar.dataset.sfToolbar = toolbarMode;
   if (toolbarMode === 'selection') toolbar.hidden = true;
   const buttons = new Map();
-  for (const mark of marks) {
+  for (const mark of offered) {
     const button = doc.createElement('button');
     button.type = 'button';
     button.className = `sf-inline-editor-button sf-inline-editor-button--${mark}`;
     button.dataset.mark = mark;
     button.textContent = text[mark];
     button.setAttribute('aria-pressed', 'false');
-    button.setAttribute('aria-keyshortcuts', `Control+${SHORTCUTS[mark].toUpperCase()} Meta+${SHORTCUTS[mark].toUpperCase()}`);
+    if (SHORTCUTS[mark]) button.setAttribute('aria-keyshortcuts', `Control+${SHORTCUTS[mark].toUpperCase()} Meta+${SHORTCUTS[mark].toUpperCase()}`);
     buttons.set(mark, button);
     toolbar.append(button);
   }
@@ -920,7 +1012,7 @@ function startInlineEdit(element, options = {}) {
   function updateToolbar() {
     const [start, end] = selectionOffsets();
     const state = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.marksIn)(read(), start, end === start ? Math.max(0, start - 1) : end);
-    for (const mark of marks) buttons.get(mark).setAttribute('aria-pressed', state.marks.includes(mark) ? 'true' : 'false');
+    for (const mark of offered) buttons.get(mark).setAttribute('aria-pressed', state.marks.includes(mark) ? 'true' : 'false');
     buttons.get('link')?.setAttribute('aria-pressed', state.href ? 'true' : 'false');
     // Selection mode: the bar is there while text is selected or a link is
     // being written, and nowhere while the caret only stands in the text.
@@ -932,6 +1024,13 @@ function startInlineEdit(element, options = {}) {
     const [start, end] = selectionOffsets();
     if (start === end) return;
     apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toggleMark)(read(), start, end, mark), start, end);
+  }
+
+  function insertBreak() {
+    const [start, end] = selectionOffsets();
+    const content = read();
+    const at = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.sliceInline)(content, Math.max(0, start - 1), start)).find((segment) => !segment.node);
+    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(content, start, end, [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.breakSegment)(at?.marks || [], at?.href || null)]), start + 1, start + 1);
   }
 
   function openLink() {
@@ -1038,9 +1137,14 @@ function startInlineEdit(element, options = {}) {
     const data = event.clipboardData;
     const html = data?.getData('text/html');
     const plain = data?.getData('text/plain') || '';
-    const parsed = html
-      ? readInlineDom(new globalThis.DOMParser().parseFromString(html, 'text/html').body, { marks, links, collapse: true })
-      : [{ type: 'text', value: plain.replace(/\s+/gu, ' ').trim() }];
+    let parsed = [{ type: 'text', value: plain.replace(/\s+/gu, ' ').trim() }];
+    if (html) {
+      const body = new globalThis.DOMParser().parseFromString(html, 'text/html').body;
+      if (body.querySelector(`[${COPY_ATTRIBUTE}]`)?.getAttribute(COPY_ATTRIBUTE) !== copyToken()) {
+        for (const node of body.querySelectorAll('*')) for (const name of node.getAttributeNames()) if (name.startsWith('data-sf-inline-')) node.removeAttribute(name);
+      }
+      parsed = readInlineDom(body, { marks, links, collapse: true });
+    }
     const inserted = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(parsed);
     const [start, end] = selectionOffsets();
     const length = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineLength)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(inserted));
@@ -1055,9 +1159,12 @@ function startInlineEdit(element, options = {}) {
     event.preventDefault();
     const slice = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.sliceInline)(read(), start, end);
     const holder = doc.createElement('div');
-    holder.append(renderInlineDom(doc, slice));
+    const wrapper = doc.createElement('span');
+    wrapper.setAttribute(COPY_ATTRIBUTE, copyToken());
+    wrapper.append(renderInlineDom(doc, slice));
+    holder.append(wrapper);
     event.clipboardData.setData('text/html', holder.innerHTML);
-    event.clipboardData.setData('text/plain', (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(slice).map(({ text, node }) => (node ? (typeof node.props?.text === 'string' ? node.props.text : '') : text)).join(''));
+    event.clipboardData.setData('text/plain', (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(slice).map(({ text, node, break: isBreak }) => (node ? (typeof node.props?.text === 'string' ? node.props.text : '') : isBreak ? '\n' : text)).join(''));
     if (remove) apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(read(), start, end, []), start, start);
   };
   element.addEventListener('copy', (event) => copySelection(event, false), signal);
@@ -1096,6 +1203,11 @@ function startInlineEdit(element, options = {}) {
     const modifier = event.ctrlKey || event.metaKey;
     if (['ArrowLeft', 'ArrowRight', 'Backspace', 'Delete'].includes(event.key) && stepOverAtom(event)) {
       event.preventDefault();
+    } else if (event.key === 'Enter' && event.shiftKey) {
+      // Shift+Enter: a soft line break in the same block, with the marks and
+      // link of the text before it (inline model 1.2.0).
+      event.preventDefault();
+      insertBreak();
     } else if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       commit();
@@ -1194,16 +1306,23 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   INLINE_COMPONENTS: () => (/* binding */ INLINE_COMPONENTS),
+/* harmony export */   INLINE_EXTENSION_KEY: () => (/* binding */ INLINE_EXTENSION_KEY),
+/* harmony export */   INLINE_FORBIDDEN_KEYS: () => (/* binding */ INLINE_FORBIDDEN_KEYS),
 /* harmony export */   INLINE_LIMITS: () => (/* binding */ INLINE_LIMITS),
 /* harmony export */   INLINE_MARKS: () => (/* binding */ INLINE_MARKS),
+/* harmony export */   INLINE_MODEL_VERSION: () => (/* binding */ INLINE_MODEL_VERSION),
 /* harmony export */   INLINE_OBJECT: () => (/* binding */ INLINE_OBJECT),
+/* harmony export */   INLINE_RESERVED_KEYS: () => (/* binding */ INLINE_RESERVED_KEYS),
+/* harmony export */   breakSegment: () => (/* binding */ breakSegment),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fromSegments: () => (/* binding */ fromSegments),
 /* harmony export */   inlineComponentSchemas: () => (/* binding */ inlineComponentSchemas),
 /* harmony export */   inlineComponentView: () => (/* binding */ inlineComponentView),
+/* harmony export */   inlineExtensions: () => (/* binding */ inlineExtensions),
 /* harmony export */   inlineLength: () => (/* binding */ inlineLength),
 /* harmony export */   inlineText: () => (/* binding */ inlineText),
 /* harmony export */   isInlineComponent: () => (/* binding */ isInlineComponent),
+/* harmony export */   isInlineExtensionKey: () => (/* binding */ isInlineExtensionKey),
 /* harmony export */   marksIn: () => (/* binding */ marksIn),
 /* harmony export */   normalizeInline: () => (/* binding */ normalizeInline),
 /* harmony export */   objectAt: () => (/* binding */ objectAt),
@@ -1215,18 +1334,67 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toggleMark: () => (/* binding */ toggleMark)
 /* harmony export */ });
 // Pure operations on the Composition inline content model used by
-// content.heading and content.paragraph: text runs with strong, em and code
-// marks, links whose children are text runs, and inline component atoms
+// content.heading and content.paragraph: text runs with strong, em, code and
+// strike marks, soft line breaks ({type: 'break', marks?}), links whose
+// children are text runs and breaks, and inline component atoms
 // ({type: 'component', name, props}). No DOM access here.
+//
+// Inline model 1.2.0 (2026-11-10): the break and the mark strike. A break is
+// one unit of offset, like a character: it takes marks and stands inside a
+// link, and no operation removes one except a deletion of its own range.
 //
 // Every other entry -- a node from a newer producer, or an atom this model
 // does not know -- is opaque: it holds one caret stop, takes no marks, and
 // comes back out of every operation exactly as it went in. toSegments used
 // to drop such entries, so an edit next to them lost them silently.
+//
+// Extension keys (2026-11-11, owner rule: no silent data loss): a key a
+// newer producer adds to a known entry -- a text run's `lang`, a link's
+// `title`, any other -- rides with that entry through every operation
+// (normalize, typing, marks, links, slice, split, join, copy). Runs merge
+// only when their extension keys are the same. Validation accepts a key as
+// extension data when its name matches INLINE_EXTENSION_KEY (lowercase,
+// not one of the model's own names, not on*, not a forbidden name such as
+// style or class); render never draws one.
 
-const INLINE_MARKS = Object.freeze(['strong', 'em', 'code']);
+const INLINE_MARKS = Object.freeze(['strong', 'em', 'code', 'strike']);
+const INLINE_MODEL_VERSION = '1.2.0';
 const MARK_ORDER = new Map(INLINE_MARKS.map((mark, index) => [mark, index]));
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+
+// The keys each known entry defines; any other key is extension data.
+const OWN_KEYS = Object.freeze({ text: ['type', 'value', 'marks'], break: ['type', 'marks'], link: ['type', 'href', 'children'], component: ['type', 'name', 'props'] });
+// Names an extension key may not take: the model's own (on any entry), an
+// event handler (on*), and the Document's forbidden names (validation's
+// FORBIDDEN_KEYS: executable, styling or secret data, F1.6).
+const INLINE_RESERVED_KEYS = Object.freeze(['type', 'value', 'marks', 'href', 'children', 'name', 'props']);
+const INLINE_FORBIDDEN_KEYS = Object.freeze([
+  'html', 'innerhtml', 'script', 'javascript', 'php', 'eval', 'function',
+  'expression', 'query', 'sql', 'graphql', 'class', 'classname', 'rootclass',
+  'cssclass', 'style', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
+]);
+/** The name rule of an extension key, as a JSON Schema pattern (patternProperties). */
+const INLINE_EXTENSION_KEY = `^(?!on)(?!(?:${[...INLINE_RESERVED_KEYS, ...INLINE_FORBIDDEN_KEYS].join('|')})$)[a-z][a-z0-9_.:]{0,63}$`;
+const EXTENSION_PATTERN = new RegExp(INLINE_EXTENSION_KEY, 'u');
+/** Whether a key is accepted as extension data on a known inline entry. */
+const isInlineExtensionKey = (key) => EXTENSION_PATTERN.test(key);
+
+// The extension keys of an entry: every key its type does not define, as it came.
+function extensionsOf(entry, kind) {
+  const own = OWN_KEYS[kind];
+  const out = {};
+  for (const [key, value] of Object.entries(entry)) if (!own.includes(key)) out[key] = clone(value);
+  return Object.keys(out).length ? out : null;
+}
+/** The extension keys of a known entry (text, break, link, component), or null. */
+function inlineExtensions(entry) {
+  return isPlainEntry(entry) && Object.hasOwn(OWN_KEYS, entry.type) ? extensionsOf(entry, entry.type) : null;
+}
+// Extension keys compare by value: key order does not count, at any depth
+// ({lang, title} and {title, lang} are the same keys, so their runs merge).
+const sortedKeys = (value) => (Array.isArray(value) ? value.map(sortedKeys)
+  : value !== null && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, sortedKeys(value[key])])) : value);
+const sameExtra = (left, right) => JSON.stringify(sortedKeys(left ?? null)) === JSON.stringify(sortedKeys(right ?? null));
 const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048, maxPropLength: 1000 });
 
 // The closed list of inline atoms. Each name draws one element; its props
@@ -1251,6 +1419,7 @@ function inlineComponentSchemas() {
     type: 'object',
     required: ['type', 'name', ...(entry.required.length ? ['props'] : [])],
     additionalProperties: false,
+    patternProperties: { [INLINE_EXTENSION_KEY]: {} },
     properties: {
       type: { const: 'component' },
       name: { const: name },
@@ -1268,7 +1437,7 @@ function inlineComponentSchemas() {
 function isInlineComponent(node) {
   const entry = node?.type === 'component' && Object.hasOwn(INLINE_COMPONENTS, node.name) ? INLINE_COMPONENTS[node.name] : null;
   if (!entry) return false;
-  if (Object.keys(node).some((key) => !['type', 'name', 'props'].includes(key))) return false;
+  if (Object.keys(node).some((key) => !['type', 'name', 'props'].includes(key) && !isInlineExtensionKey(key))) return false;
   const props = node.props ?? {};
   if (!props || typeof props !== 'object' || Array.isArray(props)) return false;
   if (entry.required.some((key) => !(key in props))) return false;
@@ -1292,7 +1461,16 @@ function inlineComponentView(node) {
 }
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
-const isObjectEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry) && entry.type !== 'text' && entry.type !== 'link';
+const isAtom = (entry) => entry?.type === 'component';
+const isObjectEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry) && entry.type !== 'text' && entry.type !== 'link' && !isBreak(entry);
+// A break as the model knows it: type break, marks (if any) a list; any
+// other key is its extension data.
+const isBreak = (entry) => entry?.type === 'break' && (entry.marks === undefined || Array.isArray(entry.marks));
+
+/** The segment of one soft line break: one unit, with the marks and link of its place. */
+function breakSegment(marks = [], href = null, extra = null) {
+  return { text: INLINE_OBJECT, marks: [...marks], href, break: true, ...(extra ? { extra } : {}) };
+}
 
 /** Same link rule as Document validation: relative, fragment or http(s)/mailto/tel. */
 function safeHref(value) {
@@ -1306,69 +1484,101 @@ function safeHref(value) {
   }
 }
 
+// Known marks in their canonical order, then any mark this model does not
+// know (a newer producer's), in the order it came: an edit never drops a mark
+// it cannot draw. Validation still refuses an unknown mark; render draws none.
 function sortMarks(marks) {
-  return [...new Set(marks)].filter((mark) => MARK_ORDER.has(mark)).sort((left, right) => MARK_ORDER.get(left) - MARK_ORDER.get(right));
+  const unique = [...new Set(marks)].filter((mark) => typeof mark === 'string' && mark);
+  const known = unique.filter((mark) => MARK_ORDER.has(mark)).sort((left, right) => MARK_ORDER.get(left) - MARK_ORDER.get(right));
+  return [...known, ...unique.filter((mark) => !MARK_ORDER.has(mark))];
 }
 
 /**
  * Flat segments: {text, marks: string[], href: string|null}. An atom or an
  * opaque node is one segment {text: INLINE_OBJECT, marks: [], href, node}
- * that carries the entry unchanged; inside a link it keeps the link's href.
+ * that carries the entry unchanged. An atom ({type: 'component'}) never
+ * carries a link's href: a link holds no atom, so one that held an atom is
+ * split around it. An opaque node from a newer producer keeps its link.
  */
 function toSegments(content) {
   const segments = [];
-  const push = (run, href) => {
+  const push = (run, href, linkExtra) => {
+    const link = href && linkExtra ? { linkExtra } : {};
+    if (isBreak(run)) {
+      segments.push({ ...breakSegment(sortMarks(run.marks || []), href, extensionsOf(run, 'break')), ...link });
+      return;
+    }
     if (isObjectEntry(run)) {
-      segments.push({ text: INLINE_OBJECT, marks: [], href, node: clone(run) });
+      segments.push({ text: INLINE_OBJECT, marks: [], href: isAtom(run) ? null : href, node: clone(run), ...(isAtom(run) ? {} : link) });
       return;
     }
     if (run?.type !== 'text' || typeof run.value !== 'string' || !run.value) return;
-    segments.push({ text: run.value, marks: sortMarks(Array.isArray(run.marks) ? run.marks : []), href });
+    const extra = extensionsOf(run, 'text');
+    segments.push({ text: run.value, marks: sortMarks(Array.isArray(run.marks) ? run.marks : []), href, ...(extra ? { extra } : {}), ...link });
   };
   for (const entry of Array.isArray(content) ? content : []) {
     if (entry?.type === 'link') {
+      // An unsafe link is dropped by design (its href and its extension keys); its text stays.
       const href = safeHref(entry.href) ? entry.href : null;
-      for (const child of Array.isArray(entry.children) ? entry.children : []) push(child, href);
-    } else push(entry, null);
+      const linkExtra = isPlainEntry(entry) ? extensionsOf(entry, 'link') : null;
+      for (const child of Array.isArray(entry.children) ? entry.children : []) push(child, href, linkExtra);
+    } else push(entry, null, null);
   }
   return segments;
 }
 
-const sameStyle = (left, right) => !left.node && !right.node && left.href === right.href && left.marks.join() === right.marks.join();
+const isPlainEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry);
+const sameStyle = (left, right) => !left.node && !right.node && !left.break && !right.break && left.href === right.href && left.marks.join() === right.marks.join()
+  && sameExtra(left.extra, right.extra) && sameExtra(left.linkExtra, right.linkExtra);
 
 /** Builds normalized content: merged runs, canonical marks, no empty parts. */
 function fromSegments(segments) {
   const merged = [];
   for (const segment of segments) {
+    // A link's extension keys go only where the link goes.
+    const linked = (href) => (href && segment.linkExtra ? { linkExtra: segment.linkExtra } : {});
     if (segment.node) {
-      merged.push({ text: INLINE_OBJECT, marks: [], href: segment.href && safeHref(segment.href) ? segment.href : null, node: segment.node });
+      // An atom is never inside a link: the link stops before it and starts again after.
+      const href = !isAtom(segment.node) && segment.href && safeHref(segment.href) ? segment.href : null;
+      merged.push({ text: INLINE_OBJECT, marks: [], href, node: segment.node, ...linked(href) });
+      continue;
+    }
+    if (segment.break) {
+      const href = segment.href && safeHref(segment.href) ? segment.href : null;
+      merged.push({ ...breakSegment(sortMarks(segment.marks || []), href, segment.extra || null), ...linked(href) });
       continue;
     }
     if (!segment.text) continue;
-    const clean = { text: segment.text, marks: sortMarks(segment.marks || []), href: segment.href && safeHref(segment.href) ? segment.href : null };
+    const cleanHref = segment.href && safeHref(segment.href) ? segment.href : null;
+    const clean = { text: segment.text, marks: sortMarks(segment.marks || []), href: cleanHref, ...(segment.extra ? { extra: segment.extra } : {}), ...linked(cleanHref) };
     const previous = merged.at(-1);
     if (previous && sameStyle(previous, clean)) previous.text += clean.text;
     else merged.push(clean);
   }
   const content = [];
   for (const segment of merged) {
-    const run = segment.node ? clone(segment.node) : { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}) };
+    const extra = segment.extra ? clone(segment.extra) : {};
+    const run = segment.node ? clone(segment.node)
+      : segment.break ? { type: 'break', ...(segment.marks.length ? { marks: segment.marks } : {}), ...extra }
+        : { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}), ...extra };
     const previous = content.at(-1);
     if (segment.href) {
-      if (previous?.type === 'link' && previous.href === segment.href) previous.children.push(run);
-      else content.push({ type: 'link', href: segment.href, children: [run] });
+      if (previous?.type === 'link' && previous.href === segment.href && sameExtra(linkExtraOf(previous), segment.linkExtra)) previous.children.push(run);
+      else content.push({ type: 'link', href: segment.href, ...(segment.linkExtra ? clone(segment.linkExtra) : {}), children: [run] });
     } else content.push(run);
   }
   return content;
 }
 
+const linkExtraOf = (link) => extensionsOf(link, 'link');
+
 function normalizeInline(content) {
   return fromSegments(toSegments(content));
 }
 
-/** The text of the text runs; atoms and opaque nodes add nothing. */
+/** The text of the text runs, a line feed for each break; atoms and opaque nodes add nothing. */
 function inlineText(content) {
-  return toSegments(content).filter(({ node }) => !node).map(({ text }) => text).join('');
+  return toSegments(content).filter(({ node }) => !node).map((segment) => (segment.break ? '\n' : segment.text)).join('');
 }
 
 /** Length in segment offsets: characters, plus one for each atom or opaque node. */
@@ -1460,7 +1670,7 @@ function replaceRange(content, start, end, inserted) {
   return fromSegments([...before, ...inserted, ...after]);
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_COMPONENTS, INLINE_MARKS, INLINE_OBJECT, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_EXTENSION_KEY, INLINE_FORBIDDEN_KEYS, INLINE_RESERVED_KEYS, inlineExtensions, isInlineExtensionKey, INLINE_COMPONENTS, INLINE_MARKS, INLINE_MODEL_VERSION, INLINE_OBJECT, breakSegment, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
 
 
 /***/ },
@@ -1552,7 +1762,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.6.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.7.0","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 

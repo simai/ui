@@ -10,6 +10,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
 /* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
 /* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
 /* harmony export */ });
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e92fd2d1a38c");
@@ -33,6 +34,10 @@ _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
 // parts:
 //   kind         the Smart tag (`sf-checkbox`)
 //   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   text         selector of the label text inside the label row: the name;
+//                the help mark beside it is a button with a name of its own
+//                and is left out (the row is the name when there is no text
+//                part, as in class markup without one)
 //   label        selector of the label row inside the root
 //   column       selector of the text column that holds the label row and the description
 //   description  selector of the description when there is no column
@@ -44,7 +49,7 @@ function splitIds(value) {
 function descriptionParts(root, parts) {
   const column = parts.column ? root.querySelector(parts.column) : null;
   if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
-  const label = root.querySelector(parts.label);
+  const label = root.querySelector(parts.label) || parts.text && root.querySelector(parts.text);
   return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
 }
 
@@ -75,7 +80,7 @@ function linkCheckableText(root, parts) {
     label: '',
     described: []
   };
-  const label = root.querySelector(parts.label);
+  const label = parts.text && root.querySelector(parts.text) || root.querySelector(parts.label);
   const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
 
   if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
@@ -94,12 +99,39 @@ function linkCheckableText(root, parts) {
   const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
   const describedBy = [...new Set([...authored, ...ids])];
   if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
-  linked.described = ids;
+  linked.described = ids; // The <label> names its control by `for`, not by the first control inside
+  // it: the help mark is a button, and with the box at the end
+  // (position="end") the button came first and a press on the text pressed
+  // the help.
+
+  if (root instanceof HTMLLabelElement && !root.htmlFor) {
+    if (!input.id) input.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'input');
+    root.htmlFor = input.id;
+  }
+
   root.__sfCheckableLinked = linked;
+} // A press that comes from the help (the sf-help-mark of the help setting, or
+// what the help slot holds) is the help's, never the control's: the <label>
+// around both must not toggle. The press cancels the label's activation (the
+// «?» button has no default of its own, its listener still opens the help);
+// a link or a field in the explanation keeps its own default, which the label
+// leaves alone as interactive content. Read on the <label> as its click
+// listener.
+
+function keepHelpOutOfLabel(event) {
+  const label = event.currentTarget;
+  const target = event.target;
+  if (!(target instanceof Element) || !(label instanceof Element)) return;
+  const help = target.closest('sf-help-mark, [slot="help"]');
+  if (!help || !label.contains(help)) return;
+  const own = target.closest('a[href], input, select, textarea, summary');
+  if (own && help.contains(own)) return;
+  event.preventDefault();
 }
 const CHECKBOX_TEXT_PARTS = Object.freeze({
   kind: 'sf-checkbox',
   classKind: 'sf-checkbox',
+  text: '.sf-checkbox-label, [data-sf-checkbox-label]',
   label: '.sf-checkbox-top',
   column: '.sf-checkbox-container',
   description: '.sf-checkbox-description'
@@ -107,6 +139,7 @@ const CHECKBOX_TEXT_PARTS = Object.freeze({
 const RADIO_TEXT_PARTS = Object.freeze({
   kind: 'sf-radio',
   classKind: 'sf-radio-button',
+  text: '.sf-radio-button-text, [data-sf-radio-label]',
   label: '.sf-radio-button-top',
   column: '.sf-radio-button-container',
   description: '.sf-radio-button-description'
@@ -752,7 +785,13 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
       // (§17.1 item 6).
       name: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.innerControlName)(this, context.name),
       stateIcon: this.stateIcon,
-      ariaLabel: this.ariaLabel
+      ariaLabel: this.ariaLabel,
+      // The help button is named by its subject («Подробнее: Сохранять черновики»).
+      helpLabel: context.help && context.label ? this.sfWord('help', {
+        vars: {
+          label: context.label
+        }
+      }) : ''
     });
   }
 
@@ -942,13 +981,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderCheckboxTemplate: () => (/* binding */ renderCheckboxTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fcfc3bb80ec7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("61d50f69160a");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fcfc3bb80ec7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
+// 1, 1/2 beside size 2 (the mark adds no height of its own).
+
+const HELP_SIZE = {
+  '1/2': '1/3',
+  1: '1/3',
+  2: '1/2'
+};
 function renderCheckboxTemplate(context) {
   const {
     size,
@@ -977,13 +1024,16 @@ function renderCheckboxTemplate(context) {
     rootClasses.push('cursor-pointer');
   }
 
-  const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-label">${label}</span>` : '';
+  const labelContent = context.component?.hasSlotContent?.('label') // A slotted label is held in a plain span so the input is named
+  // by the label alone (aria-labelledby), not by the help beside it.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-checkbox-label>${context.component.getSlotContent('label')}</span>` : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-label">${label}</span>` : '';
   const descriptionContent = context.component?.hasSlotContent?.('description') // A slotted description is held in a plain span so the input can
   // name it as its description (aria-describedby): a bare text node
   // has no id. The span draws nothing of its own.
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-checkbox-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description">${description}</span>` : '';
-  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-icon aria-hidden="true" icon="${help}"></sf-icon>` : '';
+  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') // help is the explanation: a «?» button after the label text that
+  // opens it (sf-help-mark), outside the control's activation.
+  : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-checkbox-help" size=${HELP_SIZE[size] || '1/3'} text=${help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>` : '';
   const showContainer = !!(labelContent || descriptionContent || helpContent);
   const isStart = position === 'start';
   const input = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1001,7 +1051,7 @@ function renderCheckboxTemplate(context) {
           <sf-icon aria-hidden="true" icon=${stateIcon || ''}></sf-icon>
       </span>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <label class=${rootClasses.filter(Boolean).join(' ')} style=${rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+        <label class=${rootClasses.filter(Boolean).join(' ')} style=${rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__.keepHelpOutOfLabel}>
             ${isStart ? input : ''}
             ${showContainer ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <span class="sf-checkbox-container flex flex-col">
@@ -1323,21 +1373,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.1.7","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "0ae1a29b7840"
 (module) {
 
-module.exports = {"title":"Checkbox"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Checkbox","runtime":{"help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "56e00394ab1f"
 (module) {
 
-module.exports = {"title":"Флажок"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Флажок","runtime":{"help":"Подробнее: {label}"}}');
 
 /***/ }
 

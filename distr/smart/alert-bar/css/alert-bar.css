@@ -86,6 +86,8 @@
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-hover: var(--sf-on-error);
+    --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
@@ -96,6 +98,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -123,6 +126,8 @@
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-hover: var(--sf-on-error);
+    --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
@@ -133,6 +138,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -160,6 +166,8 @@
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-hover: var(--sf-on-error);
+    --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
@@ -170,6 +178,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -197,6 +206,8 @@
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-hover: var(--sf-on-error);
+    --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
@@ -207,6 +218,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -227,6 +239,38 @@
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   /* The accent on the bar is the bar's ink (C42 item 4, the strong places):
      a filled button, a checkbox or a switch on it is the level's on-colour. */
@@ -288,6 +332,8 @@
     --sf-surface-place-ground: var(--sf-warning);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-warning);
+    --sf-on-surface-hover: var(--sf-on-warning);
+    --sf-on-surface-active: var(--sf-on-warning);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-4));
@@ -298,6 +344,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-warning-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -325,6 +372,8 @@
     --sf-surface-place-ground: var(--sf-warning);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-warning);
+    --sf-on-surface-hover: var(--sf-on-warning);
+    --sf-on-surface-active: var(--sf-on-warning);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-4));
@@ -335,6 +384,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-warning-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -355,6 +405,22 @@
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   /* The accent on the bar is the bar's ink (C42 item 4, the strong places):
      a filled button, a checkbox or a switch on it is the level's on-colour. */
@@ -390,6 +456,8 @@
     --sf-surface-place-ground: var(--sf-info);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-info);
+    --sf-on-surface-hover: var(--sf-on-info);
+    --sf-on-surface-active: var(--sf-on-info);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-4));
@@ -400,6 +468,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-info-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -427,6 +496,8 @@
     --sf-surface-place-ground: var(--sf-info);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-info);
+    --sf-on-surface-hover: var(--sf-on-info);
+    --sf-on-surface-active: var(--sf-on-info);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-4));
@@ -437,6 +508,7 @@
     --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-info-20--alfa-20));
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
+    --sf-place--container-outline: var(--sf-outline);
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -457,6 +529,22 @@
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   /* The accent on the bar is the bar's ink (C42 item 4, the strong places):
      a filled button, a checkbox or a switch on it is the level's on-colour. */
@@ -489,6 +577,7 @@
   .sf-alert-bar-row,
   .sf-alert-bar-strip {
     --sf-on-surface-hover: var(--sf-alert-bar--ink);
+    --sf-on-surface-active: var(--sf-alert-bar--ink);
     --sf-focus--color: var(--sf-alert-bar--ink);
     background-color: var(--sf-alert-bar--fill);
     color: var(--sf-alert-bar--ink);
@@ -714,6 +803,8 @@
     --sf-surface-place-solid: var(--sf-alert-bar--list-background);
     --sf-surface-place-ground: var(--sf-alert-bar--list-background);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
@@ -733,15 +824,16 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-place--container-outline: initial;
     color: var(--sf-on-surface);
     list-style: none;
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-alert-bar-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-alert-bar-list {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-alert-bar-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-alert-bar-list {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -753,6 +845,14 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+  }
+  :where(.bg-surface-4) .sf-alert-bar-list {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   .sf-alert-bar-item {
     display: grid;

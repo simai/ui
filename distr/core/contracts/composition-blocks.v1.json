@@ -18,6 +18,7 @@
       "content.document": null,
       "content.figure": "media",
       "content.file": "media",
+      "content.foreign": null,
       "content.grid": "layout",
       "content.heading": "text",
       "content.html": "media",
@@ -966,7 +967,7 @@
       },
       "kind": "custom-element",
       "manifest": "smart.button-icon",
-      "version": "1.8.3"
+      "version": "1.8.4"
     },
     "sf-checkbox": {
       "inputs": {
@@ -1034,7 +1035,7 @@
       },
       "kind": "custom-element",
       "manifest": "smart.checkbox",
-      "version": "1.1.7"
+      "version": "1.2.0"
     },
     "sf-divider": {
       "component": "component.content-divider",
@@ -1078,6 +1079,10 @@
             "default": false,
             "type": "boolean"
           },
+          "error-message": {
+            "default": "",
+            "type": "string"
+          },
           "inherited-text": {
             "default": "",
             "type": "string"
@@ -1085,6 +1090,10 @@
           "inherited-value": {
             "default": "",
             "type": "string"
+          },
+          "invalid": {
+            "default": false,
+            "type": "boolean"
           },
           "label": {
             "default": "",
@@ -1157,7 +1166,7 @@
       },
       "kind": "custom-element",
       "manifest": "smart.dropdown",
-      "version": "1.8.1"
+      "version": "1.9.0"
     },
     "sf-icon": {
       "inputs": {
@@ -1435,7 +1444,7 @@
       },
       "kind": "custom-element",
       "manifest": "smart.input",
-      "version": "1.7.1"
+      "version": "1.7.2"
     },
     "sf-input-textarea": {
       "inputs": {
@@ -1656,7 +1665,7 @@
       },
       "kind": "custom-element",
       "manifest": "smart.switch",
-      "version": "1.4.0"
+      "version": "1.5.0"
     }
   },
   "parameter_sets": {

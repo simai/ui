@@ -804,15 +804,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cb6d39a52a42");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b4d28078de6f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f15c795f1055");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ad680c489766");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8b3dd54aeaa8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("b4d28078de6f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("f15c795f1055");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("ad680c489766");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("8b3dd54aeaa8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__);
+
+
 
 
 
@@ -827,20 +832,59 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
  // sf-dropdown from its component.json (standard simai.smart-component 1.3.8
-// §3, §4, §8, §19): its settings are attributes and properties made by
+// §3, §4, §8, §17, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, and the old
-// names -- type, sf-dropdown:change -- are dated aliases. It still submits
-// through its hidden input (§16 item 11); the manifest keeps the form contract
-// as x-form until the field family's ElementInternals mixin takes it.
+// names -- type, sf-dropdown:change -- are dated aliases. Since 1.9.0 the
+// host is the form control through ElementInternals (FormField): it submits
+// the value, reports value-missing and the page's custom error, and the
+// hidden input it still draws for the reset binding carries no name then
+// (§17.1 item 6). Owner decision C55: it shows an error as sf-input does.
+// The last pointer press on the page, wherever it was. A focus that arrives
+// on the trigger from code right after a press elsewhere -- the browser moving
+// to the first invalid field after a click on «Отправить» -- is not the
+// keyboard's, so :focus-visible does not match and the field showed no ring
+// (sf-input's text box always matches it). A press inside the dropdown or its
+// list is the person's own focus and keeps the ring off, as before.
 
-const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+let lastPointerTarget = null;
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('pointerdown', event => {
+    lastPointerTarget = event.composedPath?.()[0] || event.target;
+  }, true);
+} // The action (§4.4) answers an outcome and is not a person's change, so it
+// sends no event. As sf-input-quantity's: the message shown under the field
+// and a custom error the form will not submit over; an empty message clears
+// both.
+
+
+const actions = {
+  'set-error'({
+    message
+  } = {}) {
+    const text = String(message ?? '');
+
+    if (text) {
+      this.setAttribute('error-message', text);
+      this.setAttribute('invalid', '');
+    } else {
+      this.removeAttribute('error-message');
+      this.removeAttribute('invalid');
+    }
+
+    this.setCustomValidity(text);
+  }
+
+};
+const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
+  actions
 });
 
 function normalizeSize(value) {
@@ -935,7 +979,7 @@ function getOptionLabel(option = {}) {
   return option.text || option.avatarTitle || option.value || '';
 }
 
-class SfDropdown extends DropdownElement {
+class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.FormField)(DropdownElement) {
   constructor() {
     super();
     this._options = [];
@@ -947,7 +991,19 @@ class SfDropdown extends DropdownElement {
     this._dropdownRoot = null;
     this._list = null;
     this._documentClickHandler = this.handleDocumentClick.bind(this);
-    this._viewportHandler = this.positionPortalList.bind(this);
+    this._viewportHandler = this.positionPortalList.bind(this); // value-missing, shown: set when the form's check fails on this field
+    // (a submit attempt, checkValidity(), reportValidity()), gone once it
+    // holds a value or the form is reset.
+
+    this._missingShown = false;
+    this._messageRef = '';
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this._missingShown) return;
+      this._missingShown = true;
+      this.requestComponentUpdate('invalid');
+    });
+    this.addEventListener('focusin', event => this.markFocusRing(event));
+    this.addEventListener('focusout', event => this.markFocusRing(event, false));
   } // The manifest's settings, and what the dropdown reads more closely (the
   // size ladder's words, columns as text, the trait's settings).
 
@@ -1187,6 +1243,84 @@ class SfDropdown extends DropdownElement {
 
   get hiddenValue() {
     return this.selectedValues.join(',');
+  } // The error the field shows: the page's (invalid, error-message, set-error)
+  // or, while it holds nothing, the required one the form's check found.
+
+
+  get shownMissing() {
+    return this._missingShown && !this.hiddenValue;
+  }
+
+  get shownInvalid() {
+    return Boolean(this.invalid) || this.shownMissing;
+  }
+
+  get shownMessage() {
+    if (this.invalid) return this.errorMessage || '';
+    return this.shownMissing ? this.sfWord('value-missing') : '';
+  } // The trigger is the control: focus(), the browser's pointer at the first
+  // invalid field and the error's aria all go to it.
+
+
+  triggerElement() {
+    return this.querySelector('.sf-dropdown-field > button');
+  }
+
+  focusDelegate() {
+    return this.triggerElement();
+  } // §17.2: value-missing while required and empty (an inherited value does
+  // not count), with the trigger as the place the browser points at.
+
+
+  fieldValidity() {
+    const required = this.hasAttribute('required') && this.getAttribute('required') !== 'false';
+    const valueMissing = required && !this.disabled && !this.hiddenValue;
+    return {
+      valueMissing,
+      message: valueMissing ? this.sfWord('value-missing') : '',
+      anchor: this.triggerElement()
+    };
+  } // The browser's restore of a form (back, reload) gives the value back.
+
+
+  fieldRestore(state) {
+    if (typeof state === 'string') this.value = state;
+  } // A person's choice that leaves a value clears the error shown, the page's
+  // as well (C55: «ошибка снимается при выборе»).
+
+
+  clearShownError() {
+    this._missingShown = false;
+
+    if (this.invalid || this.hasAttribute('error-message')) {
+      this.removeAttribute('error-message');
+      this.removeAttribute('invalid');
+      this.setCustomValidity('');
+    }
+  } // The ring on the field for a focus from code after a press elsewhere.
+
+
+  markFocusRing(event, entering = true) {
+    const trigger = this.triggerElement();
+    if (!trigger || event.target !== trigger) return;
+    const own = lastPointerTarget instanceof Node && (this.contains(lastPointerTarget) || Boolean(this._list?.contains(lastPointerTarget)));
+    trigger.toggleAttribute('data-sf-focus-ring', entering && !own);
+  } // aria-invalid and the message on the trigger. The interaction keeps its own
+  // description (the chosen labels) in aria-describedby; only this message's
+  // id is added and taken out here.
+
+
+  syncErrorState() {
+    const trigger = this.triggerElement();
+    if (!trigger) return;
+    const message = this.querySelector('.sf-dropdown-message');
+    const id = message?.id || '';
+    const refs = (trigger.getAttribute('aria-describedby') || '').split(/\s+/u).filter(ref => ref && ref !== this._messageRef && ref !== id);
+    if (id) refs.push(id);
+    this._messageRef = id;
+    if (refs.length) trigger.setAttribute('aria-describedby', refs.join(' '));else trigger.removeAttribute('aria-describedby');
+    if (this.shownInvalid) trigger.setAttribute('aria-invalid', 'true');else trigger.removeAttribute('aria-invalid');
+    if (this.shownInvalid && id) trigger.setAttribute('aria-errormessage', id);else trigger.removeAttribute('aria-errormessage');
   }
 
   captureOptions() {
@@ -1260,6 +1394,14 @@ class SfDropdown extends DropdownElement {
       open: this._open,
       multiple: this.multiple,
       value: this.hiddenValue,
+      // The host is the form control where the browser has ElementInternals:
+      // the hidden input carries no name then (§17.1 item 6).
+      controlName: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.innerControlName)(this, this.name),
+      invalid: this.shownInvalid,
+      message: this.shownMessage,
+      messageId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__.instancePath)(this, {
+        kind: 'sf-dropdown'
+      }), 'message'),
       triggerText: this.triggerText,
       searchValue: this._searchValue,
       searchPlaceholder: this.searchPlaceholder,
@@ -1348,6 +1490,8 @@ class SfDropdown extends DropdownElement {
 
     this._interaction?.refresh();
     this.syncInheritedState();
+    this.syncErrorState();
+    this.sfSyncFormState();
     const resetControl = this.querySelector('.sf-dropdown-hidden-input') || this.querySelector('.sf-dropdown-field > button');
 
     if (this._resetControl !== resetControl) {
@@ -1358,7 +1502,8 @@ class SfDropdown extends DropdownElement {
         this._selectedValues = [...this._resetValues];
         this.setAttributeValue('value', serializeValues(this._selectedValues));
         this._open = false;
-        this._searchValue = ''; // Native reset may change the display even when Lit's cached value has
+        this._searchValue = '';
+        this._missingShown = false; // Native reset may change the display even when Lit's cached value has
         // not changed. The component owns this property synchronization.
 
         const display = this.querySelector('.sf-dropdown-field input:not([type="hidden"])');
@@ -1500,6 +1645,7 @@ class SfDropdown extends DropdownElement {
 
 
   dispatchDropdownChange(option = null, values = this.selectedValues) {
+    if (values.length) this.clearShownError();
     this.sfEmit('change', {
       value: option?.value || '',
       label: option ? getOptionLabel(option) : '',
@@ -1737,7 +1883,8 @@ const CELL = {
   "2": "var(--sf-ui-2--control-height)"
 };
 function renderDropdownTemplate(context) {
-  const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", "flex", "flex-col"].filter(Boolean);
+  const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", // The error look, as sf-input's root carries it (owner C55).
+  context.invalid ? "error" : "", "flex", "flex-col"].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean);
   const iconButtonSize = context.size === "1" || context.size === "1/2" ? "1/2" : context.size; // The chevron and the search glyph are sf-icon elements, as the pictures
   // of a choice are (1.8.0): the element tells the Loader its name, so it
@@ -1764,7 +1911,7 @@ function renderDropdownTemplate(context) {
                 <input
                   class="sf-dropdown-hidden-input"
                   type="hidden"
-                  name=${context.name}
+                  name=${context.controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   value=${context.value || ""}
                   ?disabled=${context.disabled}
                 />
@@ -1778,7 +1925,7 @@ function renderDropdownTemplate(context) {
           <input
             class="sf-dropdown-hidden-input"
             type="hidden"
-            name=${context.name}
+            name=${context.controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             value=${context.value || ""}
             ?disabled=${context.disabled}
           />
@@ -1852,6 +1999,13 @@ function renderDropdownTemplate(context) {
             </span>
           ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${renderTrigger()}
+      ${context.message // Under the field, in sf-input's field-message type, at the field's
+  // own gap (owner C55). No error icon, as sf-input draws none.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+            id=${context.messageId}
+            class="sf-dropdown-message"
+            data-field-message=${context.invalid ? "error" : "hint"}
+          >${context.message}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
       <div
         class=${`sf-list sf-list--size-${context.size} flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
@@ -1892,6 +2046,226 @@ function renderDropdownTemplate(context) {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "38ea8d53f301"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */ });
+// The form-control half of a field built from its component.json (standard
+// simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
+//
+// core/js/element-manifest.js makes the host form-associated and gives it
+// ElementInternals, sfFormValue() and sfSyncForm(). What a field adds is the
+// same in every member, so it is written once here:
+//
+// - validity (§17.2): the host reports what its inner native control knows
+//   (value-missing, too-short, pattern-mismatch, ...) with the control as the
+//   anchor, so reportValidity() points at the box the person types in; a
+//   custom error set with setCustomValidity() or the action set-error wins
+//   until it is cleared;
+// - the inner controls stay out of the page's form (§17.1 item 6): they carry
+//   no name while the host is the form control;
+// - a field with no inner native control to read (a list of buttons, a
+//   picker, a file area) says what it knows itself with `fieldValidity()`:
+//   value-missing while `required` and the form value is empty by default,
+//   and where the browser points;
+// - form reset and fieldset[disabled] (§17.1 items 3, 4): `form.reset()`
+//   calls the component's `fieldReset()` when it has one (its default back,
+//   without events), and the host syncs its form value and validity after the
+//   browser has reset its parts;
+// - restore: `formStateRestoreCallback` hands the saved form value to
+//   `fieldRestore(state)` when the component has one.
+//
+// Usage, over the element core/js/element-manifest.js gives:
+//
+//   const Element = elementFromManifest(manifest, {base: SfBaseElement, ...});
+//   class SfThing extends FormField(Element) { ... }
+//
+// Without ElementInternals nothing here runs, and the named inner control
+// submits as it always did (§16 item 11).
+// ValidityState's own flags, in the order of §17.2's list.
+const VALIDITY_FLAGS = Object.freeze(['valueMissing', 'typeMismatch', 'patternMismatch', 'tooShort', 'tooLong', 'rangeUnderflow', 'rangeOverflow', 'stepMismatch', 'badInput']);
+/** The name an inner native control carries: none while the host submits (§17.1 item 6). */
+
+function innerControlName(component, name) {
+  return component?.sfInternals ? '' : String(name || '');
+}
+/**
+ * The host's validity from its inner control: the control's failed flags and
+ * message, or the custom error the page set, or valid. `own` adds flags the
+ * component reads itself, {flag: message} (a number field's range and step,
+ * which its text box cannot know).
+ */
+
+function syncFieldValidity(component, control, own = {}) {
+  const internals = component?.sfInternals;
+  if (!internals) return;
+
+  try {
+    const custom = component.sfCustomError || '';
+
+    if (custom) {
+      internals.setValidity({
+        customError: true
+      }, custom, control || undefined);
+      return;
+    }
+
+    const validity = control?.validity;
+    const flags = {};
+    let message = '';
+
+    if (validity && !validity.valid && control.willValidate !== false) {
+      for (const flag of VALIDITY_FLAGS) if (validity[flag]) flags[flag] = true;
+
+      message = control.validationMessage;
+    }
+
+    for (const [flag, text] of Object.entries(own || {})) {
+      flags[flag] = true;
+      message ||= String(text || '');
+    }
+
+    if (Object.keys(flags).length) internals.setValidity(flags, message || ' ', control || undefined);else internals.setValidity({});
+  } catch (error) {
+    component.reportComponentError?.(error, 'validity');
+  }
+}
+/**
+ * The host's validity from what the component says itself (fieldValidity()):
+ * value-missing and the custom error the page set; `anchor`, when it is a part
+ * of the host, is where the browser points.
+ */
+
+function syncOwnValidity(component, {
+  valueMissing = false,
+  message = '',
+  anchor = null
+} = {}) {
+  const internals = component?.sfInternals;
+  if (!internals) return;
+  const custom = component.sfCustomError || '';
+  const flags = {};
+  let text = '';
+
+  if (custom) {
+    flags.customError = true;
+    text = custom;
+  }
+
+  if (valueMissing) {
+    flags.valueMissing = true;
+    text ||= message || 'value-missing';
+  }
+
+  try {
+    if (Object.keys(flags).length) {
+      const target = anchor && component.contains?.(anchor) ? anchor : undefined;
+      internals.setValidity(flags, text, target);
+    } else {
+      internals.setValidity({});
+    }
+  } catch (error) {
+    component.reportComponentError?.(error, 'validity');
+  }
+}
+/**
+ * The field family's form plumbing over a manifest element. A component
+ * names the control its validity comes from with `sfValidityAnchor()`
+ * (default: getInputElement()).
+ */
+
+const FormField = Base => class extends Base {
+  constructor() {
+    super(); // A person's edit reaches the host as input/change; the form value and
+    // validity follow it without a redraw.
+
+    this.__sfFormSync = () => this.sfSyncFormState();
+
+    this.addEventListener('input', this.__sfFormSync);
+    this.addEventListener('change', this.__sfFormSync);
+  }
+
+  sfValidityAnchor() {
+    return this.getInputElement?.() || null;
+  }
+  /**
+   * What the component knows of its validity itself, {valueMissing, message,
+   * anchor}, or null when an inner native control's ValidityState is the
+   * answer (sfValidityAnchor()). With no such control: value-missing while
+   * `required` and the form value is empty. A component overrides it.
+   */
+
+
+  fieldValidity() {
+    if (this.sfValidityAnchor()) return null;
+    const required = this.hasAttribute('required') && this.getAttribute('required') !== 'false';
+    const value = this.sfFormValue?.();
+    const valueMissing = required && !this.disabled && (value === null || value === undefined || value === ''); // The word only when it is said: asked on every sync, a component without
+    // it warned «no word value-missing» on each optional field (simai.main,
+    // sf-button-group in property-view's choice field, 2026-10-28).
+
+    return {
+      valueMissing,
+      message: valueMissing ? this.sfWord?.('value-missing') || 'value-missing' : '',
+      anchor: null
+    };
+  }
+  /** The validity, now: the component's own account, or its inner control's. */
+
+
+  sfSyncValidity() {
+    const own = this.fieldValidity();
+    if (own) syncOwnValidity(this, own);else syncFieldValidity(this, this.sfValidityAnchor());
+  }
+  /** The form value and the validity, now. */
+
+
+  sfSyncFormState() {
+    this.sfSyncForm?.();
+    this.sfSyncValidity();
+  }
+  /** §17.2: a custom error keeps the form from submitting until it is cleared. */
+
+
+  setCustomValidity(message = '') {
+    this.sfCustomError = String(message ?? '');
+    this.sfSyncValidity();
+  } // fieldReset() puts the component's default back, without events. The
+  // browser resets the parts after it calls this: the sync waits for them,
+  // and once more for the parts that put their own default back a task later
+  // (component/form-reset-helper.js: masks, the checkables' attributes).
+
+
+  formResetCallback() {
+    if (typeof this.fieldReset === 'function') {
+      try {
+        this.fieldReset();
+      } catch (error) {
+        this.reportComponentError?.(error, 'form reset');
+      }
+    }
+
+    this.sfSyncFormState();
+    Promise.resolve().then(() => this.sfSyncFormState());
+    setTimeout(() => this.sfSyncFormState(), 0);
+  }
+
+  formStateRestoreCallback(state) {
+    if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
+    this.sfSyncFormState();
+  }
+
+};
 
 /***/ },
 
@@ -2509,21 +2883,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.8.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.9.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
 /***/ "ad680c489766"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Dropdown","runtime":{"search":"Search","empty":"Not selected"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Dropdown","runtime":{"search":"Search","empty":"Not selected","value-missing":"Choose an option"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "8b3dd54aeaa8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Выпадающий список","runtime":{"search":"Поиск","empty":"Не выбрано"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Выпадающий список","runtime":{"search":"Поиск","empty":"Не выбрано","value-missing":"Выберите вариант"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

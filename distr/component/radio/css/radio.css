@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
@@ -36,93 +37,112 @@
     width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
+  /* An icon beside the label (class markup, or what the help slot holds) is the
+     line of its size, as in sf-checkbox (#49): it was 24 at every size, on the
+     20 line of size 1 on a phone, and the row grew from 36 to 40. The help
+     setting draws sf-help-mark, which sizes itself. */
+  .sf-radio-button.sf-radio-button--size-1\/2 > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
+    --sf-icon--font-size: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+    --sf-icon--width: var(--sf-text-height-1\/2);
+  }
+  .sf-radio-button.sf-radio-button--size-1 > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
+    --sf-icon--font-size: var(--sf-text-height-1);
+    --sf-icon--height: var(--sf-text-height-1);
+    --sf-icon--width: var(--sf-text-height-1);
+  }
+  .sf-radio-button.sf-radio-button--size-2 > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
+    --sf-icon--font-size: var(--sf-text-height-2);
+    --sf-icon--height: var(--sf-text-height-2);
+    --sf-icon--width: var(--sf-text-height-2);
+  }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-radio-button-box--gap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-end-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-end-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-start-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radio-button-box--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-start-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radio-button-box--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-top-right-radius: var(--sf-radio-button-box--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-top-right-radius: var(--sf-radio-button-box--border-start-end-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radio-button-box--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-top-left-radius: var(--sf-radio-button-box--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-top-left-radius: var(--sf-radio-button-box--border-start-end-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radio-button-box--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-top-left-radius: var(--sf-radio-button-box--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-radio-button .sf-radio-button-box{
     border-top-left-radius: var(--sf-radio-button-box--border-start-start-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radio-button-box--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-top-right-radius: var(--sf-radio-button-box--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-radio-button .sf-radio-button-box {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-radio-button .sf-radio-button-box{
     border-top-right-radius: var(--sf-radio-button-box--border-start-start-radius);
     }
   }
-  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)) {
+  .sf-radio-button .sf-radio-button-box:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radio-button-box--border-start-start-radius);
   }
   .sf-radio-button .sf-radio-button-box {
@@ -281,7 +301,7 @@
   .sf-radio-button--size-2 {
     --sf-radio-button--gap: var(--sf-radio-button-gap, var(--sf-ui-2--text-space-x));
   }
-  .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-radio-button-box {
+  .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled):hover):not(:has(sf-help-mark:hover, [slot=help]:hover)) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary-hover);
   }
   /* Hover shows on the ring alone, as on the checkbox: a fill behind the ring
@@ -402,6 +422,13 @@
     margin: 0;
     opacity: 0;
     cursor: inherit;
+  }
+  /* The help mark («?», sf-help-mark) is the help's own button: it stands above
+     the native control's hit area, so a press on it is never a press on the
+     box. */
+  .sf-radio-button .sf-radio-button-top .sf-help-mark {
+    position: relative;
+    z-index: var(--sf-z-index-1);
   }
   .sf-radio-button .sf-radio-button-text {
     white-space: normal;

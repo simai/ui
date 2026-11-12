@@ -80,10 +80,10 @@
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-z-index-9, 90));
     box-sizing: border-box;
     border: var(--sf-px) dashed Highlight;
-    border: var(--sf-px) dashed var(--sf-outline-primary, var(--sf-primary, Highlight));
+    border: var(--sf-px) dashed var(--sf-primary-outline, var(--sf-primary, Highlight));
     border-radius: var(--sf-radius--ui);
     background-color: transparent;
-    background-color: var(--sf-primary-transparent-select, transparent);
+    background-color: var(--sf-primary-state-select, transparent);
     pointer-events: none;
   }
   [data-sf-sortable-column-source] {
@@ -93,10 +93,10 @@
     box-sizing: border-box;
     flex: none;
     border: var(--sf-px) dashed Highlight;
-    border: var(--sf-px) dashed var(--sf-sortable-placeholder-border-color, var(--sf-outline-primary, var(--sf-primary, Highlight)));
+    border: var(--sf-px) dashed var(--sf-sortable-placeholder-border-color, var(--sf-primary-outline, var(--sf-primary, Highlight)));
     border-radius: var(--sf-radius--ui);
     background-color: transparent;
-    background-color: var(--sf-primary-transparent-select, transparent);
+    background-color: var(--sf-primary-state-select, transparent);
     pointer-events: none;
   }
   .sf-sortable-live {

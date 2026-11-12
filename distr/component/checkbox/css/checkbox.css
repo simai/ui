@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
@@ -40,6 +41,19 @@
     opacity: 0;
     cursor: inherit;
   }
+  /* The help mark («?», sf-help-mark) is the help's own button: it stands
+     above the native control's hit area, which reaches past a small box, so
+     a press on it is never a press on the box. */
+  .sf-checkbox .sf-checkbox-top .sf-help-mark {
+    position: relative;
+    z-index: var(--sf-z-index-1);
+  }
+  /* With the box at the end (position="end", the box after the text column)
+     the text column takes the rest of the row, so the box stands at the end
+     of the row, not right after the text. */
+  .sf-checkbox:has(> .sf-checkbox-box:last-child) > .sf-checkbox-container {
+    flex: 1 1 auto;
+  }
 }
 @layer sf.override {
   .sf-checkbox > .sf-checkbox-box > .sf-icon, .sf-checkbox > .sf-checkbox-box > sf-icon > .sf-icon {
@@ -55,92 +69,92 @@
     gap: var(--sf-checkbox--gap);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
     border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
     }
   }
-  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
   .sf-checkbox .sf-checkbox-box {
@@ -205,7 +219,10 @@
     --sf-checkbox-label--font-family: var(--sf-text--family);
     --sf-checkbox-label--font-weight: var(--sf-font-weight-medium);
   }
-  .sf-checkbox .sf-icon {
+  /* The icons of the control and of its class markup; the help mark's «?» is
+     its own button's glyph, sized and coloured by sf-help-mark (it took the
+     size-2 line, 28 in a 32 button). :where keeps the weight of the rules. */
+  .sf-checkbox .sf-icon:where(:not(sf-help-mark *)) {
     color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
     font-size: var(--sf-icon-size-3);
@@ -231,10 +248,10 @@
     --sf-icon--height: var(--sf-text-height-1);
     --sf-icon--width: var(--sf-text-height-1);
   }
-  .sf-checkbox.sf-checkbox--size-1\/2 .sf-icon {
+  .sf-checkbox.sf-checkbox--size-1\/2 .sf-icon:where(:not(sf-help-mark *)) {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
   }
-  .sf-checkbox.sf-checkbox--size-1 .sf-icon {
+  .sf-checkbox.sf-checkbox--size-1 .sf-icon:where(:not(sf-help-mark *)) {
     --sf-icon--font-size: var(--sf-text-height-1);
   }
   .sf-checkbox.sf-checkbox--size-1\/2 .sf-checkbox-description {
@@ -277,10 +294,10 @@
   }
 }
 @layer sf.states {
-  .sf-checkbox:not(.error):has(input:not(:checked)) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):hover):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):has(input:checked) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox.error:has(input:not(:checked)) .sf-checkbox-label {
+  .sf-checkbox:not(.error):has(input:not(:checked)) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):hover):not(:has(sf-help-mark:hover, [slot=help]:hover)):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):not(:has(sf-help-mark:active, [slot=help]:active)):has(input:checked) .sf-checkbox-label, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):not(:has(sf-help-mark:active, [slot=help]:active)):has(input:indeterminate) .sf-checkbox-label, .sf-checkbox.error:has(input:not(:checked)) .sf-checkbox-label {
     --sf-checkbox-label--color: var(--sf-on-surface);
   }
-  .sf-checkbox:not(.error):has(input:indeterminate):not(:has(input:disabled)) .sf-checkbox-box, .sf-checkbox:not(.error):has(input:checked):not(:has(input:disabled)) .sf-checkbox-box, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active) .sf-checkbox-box {
+  .sf-checkbox:not(.error):has(input:indeterminate):not(:has(input:disabled)) .sf-checkbox-box, .sf-checkbox:not(.error):has(input:checked):not(:has(input:disabled)) .sf-checkbox-box, .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):not(:has(sf-help-mark:active, [slot=help]:active)) .sf-checkbox-box {
     --sf-checkbox-box--background-color: var(--sf-checkbox-checked-background-color, var(--sf-primary));
     --sf-checkbox-box--border-color: var(--sf-checkbox-checked-background-color, var(--sf-primary));
   }
@@ -300,7 +317,7 @@
     --sf-icon--height: var(--sf-text-height-2);
     --sf-icon--width: var(--sf-text-height-2);
   }
-  .sf-checkbox.sf-checkbox--size-2 .sf-icon {
+  .sf-checkbox.sf-checkbox--size-2 .sf-icon:where(:not(sf-help-mark *)) {
     --sf-icon--font-size: var(--sf-text-height-2);
   }
   .sf-checkbox.sf-checkbox--size-2 .sf-checkbox-description {
@@ -324,10 +341,10 @@
   }
   .sf-checkbox:not(.error):has(input:indeterminate):not(:has(input:disabled)) > .sf-checkbox-box .sf-icon,
   .sf-checkbox:not(.error):has(input:checked):not(:has(input:disabled)) > .sf-checkbox-box .sf-icon,
-  .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active) > .sf-checkbox-box .sf-icon {
+  .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):active):not(:has(sf-help-mark:active, [slot=help]:active)) > .sf-checkbox-box .sf-icon {
     --sf-icon--color: var(--sf-on-primary);
   }
-  .sf-checkbox:has(input:disabled) > .sf-checkbox-container > .sf-checkbox-top .sf-icon,
+  .sf-checkbox:has(input:disabled) > .sf-checkbox-container > .sf-checkbox-top .sf-icon:where(:not(sf-help-mark *)),
   .sf-checkbox:has(input:disabled):has(input:indeterminate) > .sf-checkbox-box .sf-icon,
   .sf-checkbox:has(input:disabled):has(input:checked) > .sf-checkbox-box .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
@@ -337,7 +354,7 @@
   .sf-checkbox:has(input:disabled):has(input:checked) .sf-checkbox-label {
     --sf-checkbox-label--color: var(--sf-on-surface-disabled);
   }
-  .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):hover) .sf-checkbox-box {
+  .sf-checkbox:not(.error):has(input:enabled:not(:disabled):not(.disabled):hover):not(:has(sf-help-mark:hover, [slot=help]:hover)) .sf-checkbox-box {
     --sf-checkbox-box--border-color: var(--sf-primary-hover);
   }
   .sf-checkbox:has(input:not(:disabled):not(.disabled).focus-visible) .sf-checkbox-box {

@@ -1637,7 +1637,58 @@ const DURATION = 2000;
 
 const SOURCE_ERRORS = new Set(['ambiguous_source', 'empty_source', 'missing_source', 'missing_target']);
 const HOLDER_STYLE = 'position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
+
+const isField = (element, View) => Boolean(element) && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement); // The keys copy what the button would have copied (acceptance L3,
+// 2026-11-11): a selected element gives the browser its drawn text, and a
+// numbered code block draws an empty line as a space, so the keys copied a
+// space where the button copies an empty line. While the selection is the
+// one made here, the copy event is given the text instead. One listener per
+// document, on the document itself, so every bundle's copy of this module
+// shares it.
+
+
+function keepCopyText(doc, range, text) {
+  doc.__sfCopySelection = {
+    range,
+    text
+  };
+  if (doc.__sfCopyListener) return;
+
+  doc.__sfCopyListener = event => {
+    const held = doc.__sfCopySelection;
+    const selection = doc.defaultView?.getSelection?.();
+    if (!held || !selection?.rangeCount) return;
+    const now = selection.getRangeAt(0);
+    const same = now.startContainer === held.range.startContainer && now.startOffset === held.range.startOffset && now.endContainer === held.range.endContainer && now.endOffset === held.range.endOffset;
+
+    if (!same) {
+      doc.__sfCopySelection = null;
+      return;
+    }
+
+    event.clipboardData?.setData('text/plain', held.text);
+    event.preventDefault();
+  };
+
+  doc.addEventListener('copy', doc.__sfCopyListener, true);
+} // One result at a time on the page (acceptance L4): two neighbouring controls
+// that fail within the result's two seconds drew their words on top of each
+// other, both held to the window's edge. A control that shows a result tells
+// the one before it to stop. On the page's SF, so every bundle shares it.
+
+
+function takeResult(owner) {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const before = SF.__copyResult;
+  SF.__copyResult = owner;
+  if (before && before !== owner) before.reset();
+}
+
+function leaveResult(owner) {
+  if (globalThis.SF?.__copyResult === owner) globalThis.SF.__copyResult = null;
+}
 /** The keys that copy a selection on this platform. */
+
 
 function copyKeys() {
   return /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '') ? '⌘C' : 'Ctrl+C';
@@ -1680,7 +1731,7 @@ function selectCopySource(element, {
 } = {}) {
   const View = doc?.defaultView ?? globalThis;
 
-  if (element && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement)) {
+  if (isField(element, View)) {
     element.focus();
     element.select();
     return element;
@@ -1708,6 +1759,7 @@ function selectCopySource(element, {
   const range = doc.createRange();
   range.selectNodeContents(node);
   selection.addRange(range);
+  keepCopyText(doc, range, element ? readCopyText(element) : text);
   return node;
 }
 /**
@@ -1724,6 +1776,7 @@ function createCopyFeedback({
 } = {}) {
   let timer = null;
   let pending = false;
+  let api = null;
 
   const lasting = () => {
     const value = Number(typeof duration === 'function' ? duration() : duration);
@@ -1733,17 +1786,19 @@ function createCopyFeedback({
   const set = (phase, message = '') => {
     clearTimeout(timer);
     timer = null;
+    if (phase === 'success' || phase === 'error') takeResult(api);else if (phase === 'idle') leaveResult(api);
     onPhase(phase, message);
 
     if (phase === 'success' || phase === 'error') {
       timer = setTimeout(() => {
         timer = null;
+        leaveResult(api);
         onPhase('idle', '');
       }, lasting());
     }
   };
 
-  return {
+  api = {
     get pending() {
       return pending;
     },
@@ -1771,8 +1826,13 @@ function createCopyFeedback({
       };
       pending = true;
 
-      const say = words || ((key, vars) => copyWord(key, node, vars));
+      const say = words || ((key, vars) => copyWord(key, node, vars)); // The control the press came from: a refusal selects the source, and a
+      // selection outside the focused control took the focus to the page, so
+      // the next Tab started again at the top (acceptance M2).
 
+
+      const page = doc ?? node?.ownerDocument ?? host?.ownerDocument ?? globalThis.document;
+      const pressed = page?.activeElement && page.activeElement !== page.body ? page.activeElement : null;
       set('pending', '');
       let text = '';
 
@@ -1799,11 +1859,17 @@ function createCopyFeedback({
         } // Refused by the browser: the source is selected, so the keys copy it.
 
 
-        selectCopySource(element?.() ?? null, {
+        const selected = selectCopySource(element?.() ?? null, {
           text,
           host,
           holderClass,
           document: doc
+        }); // A field takes the focus to be copied from; anything else gives it
+        // back to the control, the selection staying (the keys still copy it).
+
+        const View = page?.defaultView ?? globalThis;
+        if (pressed?.isConnected && !isField(selected, View) && page.activeElement !== pressed) pressed.focus({
+          preventScroll: true
         });
         set('error', say('selected', {
           keys: copyKeys()
@@ -1827,9 +1893,11 @@ function createCopyFeedback({
     cancel() {
       clearTimeout(timer);
       timer = null;
+      leaveResult(api);
     }
 
   };
+  return api;
 }
 const copyFeedback = {
   create: createCopyFeedback,
@@ -6013,7 +6081,28 @@ if (typeof window !== 'undefined') {
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startEarly, {
       once: true
-    });else startEarly();
+    });else startEarly(); // A Smart bundle the page included itself before core.js found no
+    // SF.runtimeModule and waits for sf-runtime-ready (ui-builder
+    // libs/sharedRuntime.js); the runtime runs when something asks for it.
+    // The Loader asks when it queues a part, and its scan passes a
+    // data-sf-observer="ignore" region by, so a page whose parts all stand in
+    // such regions -- a documentation example, a loader wrap -- had its own
+    // bundles wait for good and its elements never defined (2026-11-11,
+    // acceptance of fix/bare-glyphs-tail N4). The page asked for those
+    // elements by including their code, so once the Loader is ready (the
+    // moment it would have asked, so the first paint is the same) a bundle
+    // still waiting has the runtime started for it. A Smart part with no
+    // bundle on the page is still not loaded from an ignored region.
+
+    const handBundleWaiting = () => [...document.scripts].some(script => /\/smart\/[^/]+\/js\/[^/]+?(?:\.min)?\.js(?:[?#]|$)/u.test(script.src));
+
+    window.addEventListener('sf-loader-ready', () => {
+      if (SF.__internal.runtimeModules || SF.__internal.runtimeLoading) return;
+      if (!handBundleWaiting() || !smartPartWaiting()) return;
+      SF.loadRuntime().catch(error => console.warn('[SIMAI Framework] the shared runtime did not load', error));
+    }, {
+      once: true
+    });
   }
 } // Icons wait for the subset font. The icons stylesheet declares the full
 // Material Symbols font so a page without the runtime still draws its icons,
@@ -6171,7 +6260,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       enabled: true,
       background: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderBackground)(),
       modifier: 'loader-default',
-      tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
+      tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
       color: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderColor)(),
       width: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.width,
       height: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.height,
@@ -9245,13 +9334,21 @@ __webpack_require__.r(__webpack_exports__);
 
 function isRtl(element) {
   return getComputedStyle(element).direction === 'rtl';
-}
-/** Resolves a number or CSS length (tokens included) to pixels in context. */
+} // A plain pixel length needs no probe.
 
+
+const PIXELS = /^\s*(-?(?:\d+\.?\d*|\.\d+))(?:px)?\s*$/u;
+/**
+ * Resolves a number or CSS length (tokens included) to pixels in context.
+ * Anything but a number or a plain pixel length is measured by a probe span,
+ * which restyles the document: call it once per anchor, never per frame.
+ */
 
 function resolveLength(value, context = document.body) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
   if (typeof value !== 'string' || value.trim() === '') return 0;
+  const plain = PIXELS.exec(value);
+  if (plain && (value.includes('px') || Number(plain[1]) === 0)) return parseFloat(plain[1]) || 0;
   const probe = document.createElement('span');
   probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;block-size:0;padding:0;border:0';
   probe.style.inlineSize = value;
@@ -9506,19 +9603,83 @@ function anchor(reference, floating, options = {}) {
   };
   let running = null;
   let pending = false;
+  let pendingFull = false; // The cost of a position (datepicker audit P1/P2, 2026-11-11). Each
+  // resolveLength of a token inserts a probe span and restyles the whole
+  // document (about 9 ms on a docs page), and resetting max-height to read
+  // the natural height forces another; per scroll event that made 800 px of
+  // scrolling with a panel open cost 1.8-2.3 s of style recalculation. So:
+  // - the lengths (offset, padding, alignmentOffset) are resolved once per
+  //   anchor, and again only when the window's size changed;
+  // - a full fit -- the first, a resize, the panel or its reference changing
+  //   size, or update() from the component -- measures as before: direction,
+  //   viewport width, containing block, natural height;
+  // - a scroll or a layout shift asks for a light fit, at most once per
+  //   frame: it reuses those measurements and only places the panel again.
+  //   Flip, shift and the size caps run exactly as in a full fit; flipping
+  //   compares the natural height measured by the last full fit (the panel's
+  //   content does not change by scrolling; when it does, its size changes
+  //   and that is a full fit), and max-height is not reset to read it.
+  // - Inline styles and data-sf-side are written only when they change.
 
-  const run = async () => {
+  let lengths = null;
+
+  const lengthsNow = () => {
+    const key = `${window.innerWidth}x${window.innerHeight}`;
+
+    if (!lengths || lengths.key !== key) {
+      const context = reference.parentElement;
+      lengths = {
+        key,
+        gap: resolveLength(settings.offset, context),
+        padding: resolveLength(settings.padding, context),
+        alignment: resolveLength(settings.alignmentOffset, context)
+      };
+    }
+
+    return lengths;
+  };
+
+  let measures = null;
+
+  const put = (style, name, value) => {
+    if (style[name] !== value) style[name] = value;
+  };
+
+  const run = async full => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
     // the viewport's.
     if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
-    const rtl = isRtl(reference);
-    const gap = resolveLength(settings.offset, reference.parentElement);
-    const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
 
-    if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || '';
-    const natural = settings.fitHeight ? floating.getBoundingClientRect().height : 0; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
+    if (full || !measures) {
+      measures = {
+        rtl: isRtl(reference),
+        clientWidth: document.documentElement.clientWidth,
+        container: null,
+        natural: 0
+      }; // Measure the natural size so flipping compares the real panel height.
+
+      if (settings.fitHeight) {
+        put(floating.style, 'maxHeight', authored.maxHeight || '');
+        measures.natural = floating.getBoundingClientRect().height;
+      }
+    }
+
+    const {
+      rtl,
+      clientWidth,
+      natural
+    } = measures;
+    const {
+      gap,
+      padding,
+      alignment
+    } = lengthsNow(); // A light fit starts from the natural height, as a full fit does after
+    // its reset; once the size middleware has written the cap, the panel is
+    // measured as it is (Floating UI's own second pass).
+
+    let naturalPass = !full && settings.fitHeight; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
     // for end), e.g. so a tail points at the middle of a small trigger.
     // The panel keeps its distance from the viewport's inline edges, but never
     // more than its field keeps. With a flat padding a field closer to the edge
@@ -9528,7 +9689,6 @@ function anchor(reference, floating, options = {}) {
     // edge its own panel may reach too.
 
     const box = referenceRect(reference);
-    const clientWidth = document.documentElement.clientWidth;
     const edges = {
       top: padding,
       bottom: padding,
@@ -9537,7 +9697,7 @@ function anchor(reference, floating, options = {}) {
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
-      alignmentAxis: resolveLength(settings.alignmentOffset, reference.parentElement)
+      alignmentAxis: alignment
     })];
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
@@ -9558,11 +9718,12 @@ function anchor(reference, floating, options = {}) {
         rects,
         elements
       }) {
+        naturalPass = false;
         if (controller.stopped) return;
         const viewportWidth = clientWidth - edges.left - edges.right;
         const fieldWidth = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
-        if (settings.matchWidth === 'min') elements.floating.style.minWidth = fieldWidth;else if (settings.matchWidth) elements.floating.style.width = fieldWidth;
-        elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
+        if (settings.matchWidth === 'min') put(elements.floating.style, 'minWidth', fieldWidth);else if (settings.matchWidth) put(elements.floating.style, 'width', fieldWidth);
+        put(elements.floating.style, 'maxWidth', `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`);
 
         if (settings.fitHeight) {
           // A panel that misses its room by less than the edge's padding takes
@@ -9573,7 +9734,7 @@ function anchor(reference, floating, options = {}) {
           const room = Math.min(availableHeight, heightCap);
           const whole = Math.ceil(natural);
           const fits = whole > room && whole <= availableHeight + padding && whole <= heightCap;
-          elements.floating.style.maxHeight = `${Math.max(0, fits ? whole : room)}px`;
+          put(elements.floating.style, 'maxHeight', `${Math.max(0, fits ? whole : room)}px`);
         }
       }
 
@@ -9582,7 +9743,13 @@ function anchor(reference, floating, options = {}) {
       strategy: 'fixed',
       // The panel is fixed: its offset parent is the box it is placed in.
       platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
-        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+        getOffsetParent: (element, polyfill) => element === floating ? measures.container ??= fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill),
+        getDimensions: element => {
+          const dimensions = _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getDimensions(element);
+          return element === floating && naturalPass ? { ...dimensions,
+            height: natural
+          } : dimensions;
+        }
       },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
@@ -9590,16 +9757,19 @@ function anchor(reference, floating, options = {}) {
     if (controller.stopped) return result; // right/bottom are cleared so logical insets from the component stylesheet
     // (for example inset-inline-start in RTL) cannot over-constrain the box.
 
-    Object.assign(floating.style, {
+    const placed = {
       position: 'fixed',
       left: `${result.x}px`,
       top: `${result.y}px`,
       right: 'auto',
       bottom: 'auto',
-      margin: '0'
-    });
+      margin: '0px'
+    };
+
+    for (const [name, value] of Object.entries(placed)) put(floating.style, name, value);
+
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
-    floating.dataset.sfSide = controller.side;
+    if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -9607,33 +9777,67 @@ function anchor(reference, floating, options = {}) {
       y: result.y
     });
     return result;
-  }; // Coalesce bursts (scroll, resize, observers) into one computation at a time.
+  }; // Coalesce bursts (scroll, resize, observers) into one computation at a
+  // time; a full fit asked for while one runs is not lost to a light one.
 
 
-  controller.update = () => {
+  const request = full => {
     if (controller.stopped) return Promise.resolve(null);
 
     if (running) {
       pending = true;
+      pendingFull ||= full;
       return running;
     }
 
-    running = run().finally(() => {
+    running = run(full).finally(() => {
       running = null;
 
       if (pending && !controller.stopped) {
+        const again = pendingFull;
         pending = false;
-        controller.update();
+        pendingFull = false;
+        request(again);
       }
     });
     return running;
   };
+  /** A full fit: measures again (the component calls it after it changed the panel). */
 
-  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update) : null;
+
+  controller.update = () => request(true); // Scroll and layout shift: a light fit, at most once per frame.
+
+
+  let frame = 0;
+  let armed = false;
+
+  const follow = () => {
+    if (!armed || frame || controller.stopped) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      request(false);
+    });
+  };
+
+  const cleanups = settings.autoUpdate ? [// Resize of the window or an overflow ancestor, and of the panel or its
+  // reference: a full fit (also the first one).
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update, {
+    ancestorScroll: false,
+    layoutShift: false
+  }), // Scroll of any overflow ancestor and a moved reference: a light fit.
+  (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
+    ancestorResize: false,
+    elementResize: false
+  })] : [];
+  armed = true;
 
   controller.stop = () => {
     controller.stopped = true;
-    cleanup?.();
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+
+    for (const cleanup of cleanups) cleanup();
+
     delete floating.dataset.sfSide;
     lower?.();
 
@@ -9972,7 +10176,7 @@ function getPreloaderColor(root = document.documentElement) {
 }
 function getPreloaderBackground(root = document.documentElement) {
   const fallback = root?.classList?.contains('theme-dark') ? '#0f1115' : '#ffffff';
-  return `var(--sf-color--surface-highest, var(--sf-surface-0, ${fallback}))`;
+  return `var(--sf-color--surface-highest, var(--sf-surface-page, ${fallback}))`;
 }
 function createPreloaderContent(preloader = {}) {
   const config = { ...DEFAULT_PRELOADER,
@@ -11108,7 +11312,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.54.0';
+const CORE_RUNTIME = '1.54.2';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -17262,6 +17466,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CONTENT_ALERT_APPEARANCES: () => (/* binding */ CONTENT_ALERT_APPEARANCES),
 /* harmony export */   CONTENT_ALERT_STATUSES: () => (/* binding */ CONTENT_ALERT_STATUSES),
 /* harmony export */   CONTENT_FILE_MIME: () => (/* binding */ CONTENT_FILE_MIME),
+/* harmony export */   CONTENT_FOREIGN_SOURCES: () => (/* binding */ CONTENT_FOREIGN_SOURCES),
 /* harmony export */   CONTENT_ITEM_PARENTS: () => (/* binding */ CONTENT_ITEM_PARENTS),
 /* harmony export */   CONTENT_RATIOS: () => (/* binding */ CONTENT_RATIOS),
 /* harmony export */   CONTENT_TABLE_HEADERS: () => (/* binding */ CONTENT_TABLE_HEADERS),
@@ -17300,48 +17505,54 @@ const variantWord = (type, id) => `sf.composition.catalogue.variant.${type.repla
 // Text runs, links of text runs, and since content.heading and
 // content.paragraph 1.1.0 the inline component atoms: one shape per declared
 // name, never inside a link and without marks.
+// Inline model 1.2.0 (2026-11-10): a soft line break {type: 'break', marks?}
+// in every inline field and inside a link, and the mark strike.
+const CONTENT_FOREIGN_SOURCES = Object.freeze(['markdown', 'editorjs', 'html']);
+const inlineMarksSchema = {
+  type: 'array',
+  uniqueItems: true,
+  items: { enum: ['strong', 'em', 'code', 'strike'] },
+};
+const inlineTextSchema = {
+  type: 'object',
+  required: ['type', 'value'],
+  additionalProperties: false,
+  // Extension keys (a newer producer's lang, title, ...): kept by the inline model.
+  patternProperties: { [_inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EXTENSION_KEY]: {} },
+  properties: {
+    type: { const: 'text' },
+    value: { type: 'string', maxLength: 100000 },
+    marks: inlineMarksSchema,
+  },
+};
+const inlineBreakSchema = {
+  type: 'object',
+  required: ['type'],
+  additionalProperties: false,
+  patternProperties: { [_inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EXTENSION_KEY]: {} },
+  properties: {
+    type: { const: 'break' },
+    marks: inlineMarksSchema,
+  },
+};
 const inlineContentSchema = {
   type: 'array',
   items: {
     oneOf: [
-      {
-        type: 'object',
-        required: ['type', 'value'],
-        additionalProperties: false,
-        properties: {
-          type: { const: 'text' },
-          value: { type: 'string', maxLength: 100000 },
-          marks: {
-            type: 'array',
-            uniqueItems: true,
-            items: { enum: ['strong', 'em', 'code'] },
-          },
-        },
-      },
+      inlineTextSchema,
+      inlineBreakSchema,
       {
         type: 'object',
         required: ['type', 'href', 'children'],
         additionalProperties: false,
+        patternProperties: { [_inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EXTENSION_KEY]: {} },
         properties: {
           type: { const: 'link' },
           href: { type: 'string', minLength: 1, maxLength: 2048 },
           children: {
             type: 'array',
             minItems: 1,
-            items: {
-              type: 'object',
-              required: ['type', 'value'],
-              additionalProperties: false,
-              properties: {
-                type: { const: 'text' },
-                value: { type: 'string', maxLength: 100000 },
-                marks: {
-                  type: 'array',
-                  uniqueItems: true,
-                  items: { enum: ['strong', 'em', 'code'] },
-                },
-              },
-            },
+            items: { oneOf: [inlineTextSchema, inlineBreakSchema] },
           },
         },
       },
@@ -17550,7 +17761,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     type: 'content.heading',
     // 1.2.0 (2026-11-04, visual parity): alignment and visibility per screen,
     // the SIMAI Framework sets a section takes (text-*, hidden/block).
-    version: '1.2.0',
+    // 1.3.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
+    version: '1.3.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -17575,7 +17787,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'content.paragraph',
     // 1.3.0 (2026-11-04): alignment and visibility per screen, as the heading.
-    version: '1.3.0',
+    // 1.4.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
+    version: '1.4.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -17920,7 +18133,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     }),
     slots: { items: { min: 1, max: 500, types: ['content.list-item'] } },
   }),
+  // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.list-item', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ content: inlineContentSchema }, ['content']),
     // A nested list, or more paragraphs and code under the item's own line.
@@ -17945,7 +18160,11 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     mode: 'leaf',
     assets: ['component/contentDivider'],
   }),
+  // 1.0.1 (2026-11-10): a column's alignment is the text-align utility class on
+  // its cells, not a style attribute; it looks the same. 1.1.0: inline model
+  // 1.2.0 in its caption and cells (the break, the mark strike).
   contentManifest('content.table', {
+    version: '1.1.0',
     mode: 'leaf',
     data_schema: closed({
       caption: inlineContentSchema,
@@ -17963,7 +18182,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: ['utility/table-frame'],
     capabilities: ['html', 'rich-text'],
   }),
+  // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.figure', {
+    version: '1.1.0',
     mode: 'leaf',
     data_schema: closed({ ...imageData, caption: inlineContentSchema }, ['src', 'alt']),
     props_schema: closed({
@@ -17973,7 +18194,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: ['component/figure'],
     capabilities: ['html', 'rich-text'],
   }),
+  // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.alert', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     props_schema: closed({
@@ -17984,7 +18207,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: ['component/alerts'],
     capabilities: ['html', 'rich-text'],
   }),
+  // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.details', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ summary: inlineContentSchema }, ['summary']),
     props_schema: closed({
@@ -18015,7 +18240,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     slots: { steps: { min: 1, max: 100, types: ['content.step'] } },
     assets: ['component/procedure'],
   }),
+  // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.step', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     slots: { default: contentSlot(0, 100) },
@@ -18068,6 +18295,20 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   contentManifest('content.html', {
     mode: 'leaf',
     data_schema: closed({ markup: sourceText }, ['markup']),
+  }),
+  // A block from another source kept as it came (2026-11-10, F2.2): the source
+  // format and its text, never parsed into markup and never drawn on a public
+  // page; an editor draws an inert placeholder naming the source. hash is
+  // sha256:<hex> of raw as UTF-8: validate checks its form, normalize
+  // recomputes it, and a mismatch keeps the block and draws nothing
+  // (foreign_hash_mismatch). It goes back only to its own source format.
+  contentManifest('content.foreign', {
+    mode: 'leaf',
+    data_schema: closed({
+      source: { enum: [...CONTENT_FOREIGN_SOURCES] },
+      raw: { type: 'string', maxLength: 200000 },
+      hash: { type: 'string', pattern: '^sha256:[0-9a-f]{64}$' },
+    }, ['source', 'raw']),
   }),
   // Diagram and math draw with a runtime the SIMAI Framework does not carry
   // (a diagram engine, a TeX typesetter). They are registered types whose
@@ -18267,7 +18508,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'content.heading',
-    type_version: '1.2.0',
+    type_version: '1.3.0',
     fields: [
       {
         key: 'level',
@@ -18358,7 +18599,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
   ]),
   // The layout and element types of the one block editor (2026-11-04).
-  { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.3.0' },
+  { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.4.0' },
   contentEditor('layout.container', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })),
   { ...contentEditor('layout.grid', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })), type_version: '1.1.0' },
   contentEditor('layout.spacer', [
@@ -18452,26 +18693,26 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('content.code', 'title', 'props', 'text', { constraints: { min_length: 1, max_length: 200 } }),
     contentField('content.code', 'numbers', 'props', 'toggle', { ...advanced, default: false }),
   ]),
-  contentEditor('content.table', [
+  { ...contentEditor('content.table', [
     contentField('content.table', 'header', 'props', 'choice', { choices: ['row', 'column', 'both', 'none'], default: 'row' }),
-  ]),
+  ]), type_version: '1.1.0' },
   // src is the one field the type requires besides alt: a host draws a
   // complete form from the manifest alone (simai/ui-source#64). The address
   // is a text field; validate applies the Document's URL rule on top.
-  contentEditor('content.figure', [
+  { ...contentEditor('content.figure', [
     contentField('content.figure', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.figure', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', '1/1', '4/3', '3/2', '16/9', '21/9'], default: 'auto' }),
     contentField('content.figure', 'fit', 'props', 'choice', { choices: ['cover', 'contain'], default: 'cover' }),
-  ]),
-  contentEditor('content.alert', [
+  ]), type_version: '1.1.0' },
+  { ...contentEditor('content.alert', [
     contentField('content.alert', 'status', 'props', 'choice', { choices: ['neutral', 'info', 'success', 'warning', 'error'], default: 'neutral' }),
     contentField('content.alert', 'appearance', 'props', 'choice', { choices: ['default', 'outlined', 'flat'], default: 'default' }),
-  ]),
-  contentEditor('content.details', [
+  ]), type_version: '1.1.0' },
+  { ...contentEditor('content.details', [
     contentField('content.details', 'open', 'props', 'toggle', { default: false }),
     contentField('content.details', 'layout', 'props', 'choice', { choices: ['surface', 'lines'], default: 'surface' }),
-  ]),
+  ]), type_version: '1.1.0' },
   contentEditor('content.tabs', [
     contentField('content.tabs', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
   ]),
@@ -18649,6 +18890,8 @@ const BUILTIN_CATALOGUE = Object.freeze({
   'content.media': 'media',
   'content.file': 'media',
   'content.html': 'media',
+  // Made by converters from another source, never offered (F2.2).
+  'content.foreign': null,
   'content.diagram': 'media',
   'content.details': 'text',
   'content.tabs': 'text',
@@ -21482,7 +21725,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.8.3"
+    "version": "1.8.4"
   },
   "sf-checkbox": {
     "inputs": {
@@ -21550,7 +21793,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.1.7"
+    "version": "1.2.0"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -21594,6 +21837,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "error-message": {
+          "default": "",
+          "type": "string"
+        },
         "inherited-text": {
           "default": "",
           "type": "string"
@@ -21601,6 +21848,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "inherited-value": {
           "default": "",
           "type": "string"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
         },
         "label": {
           "default": "",
@@ -21673,7 +21924,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.8.1"
+    "version": "1.9.0"
   },
   "sf-icon": {
     "inputs": {
@@ -21951,7 +22202,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.7.1"
+    "version": "1.7.2"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -22172,7 +22423,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.4.0"
+    "version": "1.5.0"
   }
 });
 
@@ -23567,7 +23818,24 @@ const sameFormat = (a, b) => a.strong === b.strong && a.em === b.em && a.href ==
 // Inline leaves made canonical: adjacent text of one format joined, runs of
 // spaces made one, spaces at the edges and around a line break removed, a link
 // with nothing but spaces made text.
+//
+// The steps run again until a pass changes nothing (2026-11-11 acceptance,
+// M2): dropping a space or an empty run makes new neighbours, so one pass left
+// "<p>a <em><br>n</em></p>" for the next load-and-save to make
+// "<p>a<em><br>n</em></p>". The stored value is the fixed point at once.
 function tidyLeaves(leaves, mode) {
+  let current = leaves;
+  let key = null;
+  for (let pass = 0; pass < 64; pass += 1) {
+    current = tidyLeavesOnce(current, mode);
+    const next = JSON.stringify(current);
+    if (next === key) break;
+    key = next;
+  }
+  return current;
+}
+
+function tidyLeavesOnce(leaves, mode) {
   const out = [];
   for (const item of leaves) {
     if (item.kind === 'text' && !item.value) continue;
@@ -23592,12 +23860,21 @@ function tidyLeaves(leaves, mode) {
   }
   let kept = out.filter((item) => item.kind === 'br' || item.value);
   if (mode === 'value') {
-    while (kept[0]?.kind === 'br') kept.shift();
-    while (kept.at(-1)?.kind === 'br') kept.pop();
-    if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
-    const end = kept.at(-1);
-    if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
-    kept = kept.filter((item) => item.kind === 'br' || item.value);
+    // Edge breaks and edge white space go together, until neither is left: a
+    // run of only white space (&nbsp;) at an edge hid the break behind it, so
+    // the first pass kept "<p>&nbsp;<br>a</p>" as "<p><br>a</p>" and only the
+    // next load-and-save gave "<p>a</p>" (2026-11-10 review, Q6). The value is
+    // now what that second pass gave, at once, and cleaning it again keeps it.
+    let length = -1;
+    while (length !== kept.length) {
+      length = kept.length;
+      while (kept[0]?.kind === 'br') kept.shift();
+      while (kept.at(-1)?.kind === 'br') kept.pop();
+      if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
+      const end = kept.at(-1);
+      if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
+      kept = kept.filter((item) => item.kind === 'br' || item.value);
+    }
   }
   // A link of nothing but spaces is not a link.
   const groups = new Map();
@@ -23977,7 +24254,7 @@ const BINDING_FIELDS = new Set(['owner', 'ref', 'target', 'revision']);
 const FORBIDDEN_KEYS = new Set([
   'html', 'innerhtml', 'script', 'javascript', 'php', 'eval', 'function',
   'expression', 'query', 'sql', 'graphql', 'class', 'classname', 'rootclass',
-  'cssclass', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
+  'cssclass', 'style', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
 ]);
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const DEFAULT_LIMITS = Object.freeze({
@@ -24081,11 +24358,17 @@ function validateJsonSchema(value, schema, path, diagnostics) {
     for (const key of schema.required || []) {
       if (!(key in value)) diagnostics.push(diagnostic('schema_required', `${path}.${key}`, `Required field ${key} is missing`));
     }
+    // patternProperties: a key matching a pattern is declared by it (the
+    // inline model's extension keys, 2026-11-11).
+    const patterns = Object.entries(schema.patternProperties || {}).map(([pattern, childSchema]) => [new RegExp(pattern, 'u'), childSchema]);
     if (schema.additionalProperties === false) {
       const properties = schema.properties || {};
       for (const key of Object.keys(value)) {
-        if (!(key in properties)) diagnostics.push(diagnostic('schema_additional_property', `${path}.${key}`, `Field ${key} is not allowed`));
+        if (!(key in properties) && !patterns.some(([pattern]) => pattern.test(key))) diagnostics.push(diagnostic('schema_additional_property', `${path}.${key}`, `Field ${key} is not allowed`));
       }
+    }
+    for (const [pattern, childSchema] of patterns) {
+      for (const key of Object.keys(value)) if (!(key in (schema.properties || {})) && pattern.test(key)) validateJsonSchema(value[key], childSchema, `${path}.${key}`, diagnostics);
     }
     for (const [key, childSchema] of Object.entries(schema.properties || {})) {
       if (key in value) validateJsonSchema(value[key], childSchema, `${path}.${key}`, diagnostics);
@@ -24317,7 +24600,8 @@ function validate(document, registry = undefined, options = {}) {
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
   if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
-  if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
+  const knownProfile = PROFILES.has(document.profile);
+  if (!knownProfile) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
   if (document.extensions !== undefined) validateExtensions(document.extensions, '$.extensions', diagnostics, supportedExtensions);
   scanForbiddenKeys(document, '$', diagnostics);
@@ -24347,7 +24631,9 @@ function validate(document, registry = undefined, options = {}) {
       else diagnostics.push(unknown);
       return;
     }
-    if (!manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
+    // An unknown profile is one diagnostic ($.profile): no type lists it, so a
+    // per-node check would repeat it once for every node of the Document.
+    if (knownProfile && !manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
     // A layout parameter may hold a value per breakpoint (utilities.mjs): each
     // value is checked on its own, the rest of the props as before.
@@ -24365,7 +24651,8 @@ function validate(document, registry = undefined, options = {}) {
       if (depth > _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) diagnostics.push(diagnostic('composed_depth_limit', path, 'Site blocks are nested too deeply'));
       else {
         const expanded = validate({ ...document, root: (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest) }, resolvedRegistry, { ...options, composedDepth: depth });
-        diagnostics.push(...expanded.diagnostics.map((entry) => ({ ...entry, path: `${path}.composed${entry.path.replace(/^\$\.root/u, '').replace(/^\$/u, '')}` })));
+        // The Document's own profile diagnostic is already reported once.
+        diagnostics.push(...expanded.diagnostics.filter(({ code }) => code !== 'profile_unknown').map((entry) => ({ ...entry, path: `${path}.composed${entry.path.replace(/^\$\.root/u, '').replace(/^\$/u, '')}` })));
         notices.push(...(expanded.notices || []));
       }
     }
@@ -24455,8 +24742,9 @@ async function normalize(document, registry = undefined, options = {}) {
     Object.values(node.slots || {}).flat().forEach((child) => visit(child, depth));
   };
   visit(normalized.root);
+  const notices = [...(result.notices || []), ...await settleForeignHashes(normalized.root)];
   return {
-    ...(result.notices ? { notices: result.notices } : {}),
+    ...(notices.length ? { notices } : {}),
     document: normalized,
     digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(normalized)),
     dependencies: {
@@ -24467,13 +24755,54 @@ async function normalize(document, registry = undefined, options = {}) {
   };
 }
 
+// content.foreign (F2.2): the hash of raw is written where it is missing and
+// checked where it is present. A mismatch keeps the block as it is, is
+// reported, and the block is not drawn.
+async function settleForeignHashes(root) {
+  const notices = [];
+  const visit = async (node, path) => {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) return;
+    if (node.type === 'content.foreign' && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.data) && typeof node.data.raw === 'string') {
+      const hash = `sha256:${await sha256(node.data.raw)}`;
+      if (node.data.hash === undefined) node.data.hash = hash;
+      else if (node.data.hash !== hash) notices.push(diagnostic('foreign_hash_mismatch', `${path}.data.hash`, 'The hash does not match raw; the block is kept and not drawn', { id: node.id }));
+    }
+    for (const [name, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.slots) ? node.slots : {})) {
+      if (Array.isArray(children)) for (const [index, child] of children.entries()) await visit(child, `${path}.slots.${name}[${index}]`);
+    }
+  };
+  await visit(root, '$.root');
+  return notices;
+}
+
+const FOREIGN_SOURCE_NAMES = Object.freeze({ markdown: 'Markdown', editorjs: 'Editor.js', html: 'HTML' });
+// The editor's view of a foreign block: inert, its source and, for an
+// Editor.js block, the tool's name, as escaped text. raw is never markup.
+function foreignPlaceholder(node) {
+  let tool = '';
+  if (node.data.source === 'editorjs') {
+    try {
+      const parsed = JSON.parse(node.data.raw);
+      if (typeof parsed?.type === 'string' && /^[A-Za-z0-9_-]{1,64}$/u.test(parsed.type)) tool = parsed.type;
+    } catch { /* not a block: the source alone */ }
+  }
+  const label = `${FOREIGN_SOURCE_NAMES[node.data.source] || node.data.source}${tool ? ` · ${tool}` : ''}`;
+  return `<div class="sf-composition-unknown" role="note" data-sf-composition-type="content.foreign" data-sf-composition-id="${escapeHtml(node.id)}">${escapeHtml(label)}</div>`;
+}
+
 function escapeHtml(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 }
 
+const MARK_ELEMENTS = Object.freeze({ strong: 'strong', em: 'em', code: 'code', strike: 's' });
 function renderInline(content) {
   return (content || []).map((inline) => {
     if (inline.type === 'link') return `<a href="${escapeHtml(inline.href)}">${renderInline(inline.children)}</a>`;
+    // A soft line break (inline model 1.2.0) inside the marks it carries.
+    // Its extension keys (inline model) draw nothing.
+    if (inline.type === 'break' && (inline.marks === undefined || Array.isArray(inline.marks))) {
+      return (inline.marks || []).reduce((output, mark) => (MARK_ELEMENTS[mark] ? `<${MARK_ELEMENTS[mark]}>${output}</${MARK_ELEMENTS[mark]}>` : output), '<br>');
+    }
     if (inline.type !== 'text') {
       // An atom draws its own element, its props escaped as text; anything
       // else (validation refuses it) draws nothing rather than "undefined".
@@ -24483,7 +24812,8 @@ function renderInline(content) {
       return `<${view.tag}${attributes}>${escapeHtml(view.text)}</${view.tag}>`;
     }
     let output = escapeHtml(inline.value);
-    for (const mark of inline.marks || []) output = mark === 'strong' ? `<strong>${output}</strong>` : mark === 'em' ? `<em>${output}</em>` : `<code>${output}</code>`;
+    // A mark outside the closed list (validation refuses it) draws no element.
+    for (const mark of inline.marks || []) output = MARK_ELEMENTS[mark] ? `<${MARK_ELEMENTS[mark]}>${output}</${MARK_ELEMENTS[mark]}>` : output;
     return output;
   }).join('');
 }
@@ -24523,9 +24853,10 @@ function renderTable(node) {
   const headColumn = header === 'column' || header === 'both';
   const align = Array.isArray(node.props?.align) ? node.props.align : [];
   // The frame sets every cell to the start; a column set otherwise says so on
-  // its cells, with one of two fixed values.
-  const cellStyle = (index) => (align[index] === 'center' || align[index] === 'end' ? ` style="text-align: ${align[index]}"` : '');
-  const cell = (content, index, tag, scope) => `<${tag}${scope ? ` scope="${scope}"` : ''}${cellStyle(index)}>${renderInline(content)}</${tag}>`;
+  // its cells with the text-align utility class, never a style attribute, so
+  // the rendered HTML stays within a strict CSP (2026-11-10 review, P8).
+  const cellClass = (index) => (align[index] === 'center' || align[index] === 'end' ? ` class="text-${align[index]}"` : '');
+  const cell = (content, index, tag, scope) => `<${tag}${scope ? ` scope="${scope}"` : ''}${cellClass(index)}>${renderInline(content)}</${tag}>`;
   const row = (cells, inHead) => `<tr>${cells.map((content, index) => (inHead
     ? cell(content, index, 'th', 'col')
     : headColumn && index === 0 ? cell(content, index, 'th', 'row') : cell(content, index, 'td', null))).join('')}</tr>`;
@@ -24818,6 +25149,9 @@ const BUILTIN_RENDERERS = {
   // attribute but a safe href survives.
   'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__.sanitizeRichText)(node.data.markup)}</div>`,
   'content.outlet': ({ node, outlet }) => `<div data-sf-outlet=""${id(node)}>${outlet || ''}</div>`,
+  // Nothing on a public page; an editor (unknown: 'placeholder') draws the
+  // inert placeholder.
+  'content.foreign': ({ node, context }) => (context?.options?.unknown === 'placeholder' ? foreignPlaceholder(node) : ''),
 };
 
 // context.resolveSource(src, {node}) → address: a host that keeps pictures
@@ -24834,7 +25168,11 @@ async function render(document, context = {}) {
   const normalized = await normalize(document, registry, { ...(context.options || {}), ...(resolveSource ? { resolveSource } : {}) });
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
-  const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier'));
+  // A foreign block whose hash does not match is kept and not drawn: what
+  // drawing found, so a diagnostic of the render (F2.2).
+  const mismatched = new Set((normalized.notices || []).filter(({ code }) => code === 'foreign_hash_mismatch').map((entry) => entry.id));
+  diagnostics.push(...(normalized.notices || []).filter(({ code }) => code === 'foreign_hash_mismatch').map(({ id: _id, ...entry }) => entry));
+  const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier') && entry.code !== 'foreign_hash_mismatch');
   const hydration = [];
   const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   // The data of the blocks that declare it, resolved before drawing (data.mjs).
@@ -24875,6 +25213,11 @@ async function render(document, context = {}) {
     // Only reached under unknown: 'placeholder' (validate's notice says
     // which node); normalize refused the Document otherwise.
     if (!manifest) return unknownPlaceholder(node);
+    if (node.type === 'content.foreign' && mismatched.has(node.id)) return '';
+    // C75 (owner 2026-11-11): a preserved block is kept, never dropped. An
+    // editor (unknown: 'placeholder') shows its plate; a public page draws
+    // nothing and the build is told, one notice per block.
+    if (node.type === 'content.foreign' && context.options?.unknown !== 'placeholder') notices.push(diagnostic('preserved_not_shown', `node:${node.id}`, `A preserved ${node.data.source} block is kept in the Document and not drawn on the page`, { source: node.data.source }));
     // A site block draws its type's current tree with the instance's values
     // and texts (composed.mjs); the instance stays one node of the Document.
     if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
@@ -25217,16 +25560,23 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   INLINE_COMPONENTS: () => (/* binding */ INLINE_COMPONENTS),
+/* harmony export */   INLINE_EXTENSION_KEY: () => (/* binding */ INLINE_EXTENSION_KEY),
+/* harmony export */   INLINE_FORBIDDEN_KEYS: () => (/* binding */ INLINE_FORBIDDEN_KEYS),
 /* harmony export */   INLINE_LIMITS: () => (/* binding */ INLINE_LIMITS),
 /* harmony export */   INLINE_MARKS: () => (/* binding */ INLINE_MARKS),
+/* harmony export */   INLINE_MODEL_VERSION: () => (/* binding */ INLINE_MODEL_VERSION),
 /* harmony export */   INLINE_OBJECT: () => (/* binding */ INLINE_OBJECT),
+/* harmony export */   INLINE_RESERVED_KEYS: () => (/* binding */ INLINE_RESERVED_KEYS),
+/* harmony export */   breakSegment: () => (/* binding */ breakSegment),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fromSegments: () => (/* binding */ fromSegments),
 /* harmony export */   inlineComponentSchemas: () => (/* binding */ inlineComponentSchemas),
 /* harmony export */   inlineComponentView: () => (/* binding */ inlineComponentView),
+/* harmony export */   inlineExtensions: () => (/* binding */ inlineExtensions),
 /* harmony export */   inlineLength: () => (/* binding */ inlineLength),
 /* harmony export */   inlineText: () => (/* binding */ inlineText),
 /* harmony export */   isInlineComponent: () => (/* binding */ isInlineComponent),
+/* harmony export */   isInlineExtensionKey: () => (/* binding */ isInlineExtensionKey),
 /* harmony export */   marksIn: () => (/* binding */ marksIn),
 /* harmony export */   normalizeInline: () => (/* binding */ normalizeInline),
 /* harmony export */   objectAt: () => (/* binding */ objectAt),
@@ -25238,18 +25588,67 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toggleMark: () => (/* binding */ toggleMark)
 /* harmony export */ });
 // Pure operations on the Composition inline content model used by
-// content.heading and content.paragraph: text runs with strong, em and code
-// marks, links whose children are text runs, and inline component atoms
+// content.heading and content.paragraph: text runs with strong, em, code and
+// strike marks, soft line breaks ({type: 'break', marks?}), links whose
+// children are text runs and breaks, and inline component atoms
 // ({type: 'component', name, props}). No DOM access here.
+//
+// Inline model 1.2.0 (2026-11-10): the break and the mark strike. A break is
+// one unit of offset, like a character: it takes marks and stands inside a
+// link, and no operation removes one except a deletion of its own range.
 //
 // Every other entry -- a node from a newer producer, or an atom this model
 // does not know -- is opaque: it holds one caret stop, takes no marks, and
 // comes back out of every operation exactly as it went in. toSegments used
 // to drop such entries, so an edit next to them lost them silently.
+//
+// Extension keys (2026-11-11, owner rule: no silent data loss): a key a
+// newer producer adds to a known entry -- a text run's `lang`, a link's
+// `title`, any other -- rides with that entry through every operation
+// (normalize, typing, marks, links, slice, split, join, copy). Runs merge
+// only when their extension keys are the same. Validation accepts a key as
+// extension data when its name matches INLINE_EXTENSION_KEY (lowercase,
+// not one of the model's own names, not on*, not a forbidden name such as
+// style or class); render never draws one.
 
-const INLINE_MARKS = Object.freeze(['strong', 'em', 'code']);
+const INLINE_MARKS = Object.freeze(['strong', 'em', 'code', 'strike']);
+const INLINE_MODEL_VERSION = '1.2.0';
 const MARK_ORDER = new Map(INLINE_MARKS.map((mark, index) => [mark, index]));
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+
+// The keys each known entry defines; any other key is extension data.
+const OWN_KEYS = Object.freeze({ text: ['type', 'value', 'marks'], break: ['type', 'marks'], link: ['type', 'href', 'children'], component: ['type', 'name', 'props'] });
+// Names an extension key may not take: the model's own (on any entry), an
+// event handler (on*), and the Document's forbidden names (validation's
+// FORBIDDEN_KEYS: executable, styling or secret data, F1.6).
+const INLINE_RESERVED_KEYS = Object.freeze(['type', 'value', 'marks', 'href', 'children', 'name', 'props']);
+const INLINE_FORBIDDEN_KEYS = Object.freeze([
+  'html', 'innerhtml', 'script', 'javascript', 'php', 'eval', 'function',
+  'expression', 'query', 'sql', 'graphql', 'class', 'classname', 'rootclass',
+  'cssclass', 'style', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
+]);
+/** The name rule of an extension key, as a JSON Schema pattern (patternProperties). */
+const INLINE_EXTENSION_KEY = `^(?!on)(?!(?:${[...INLINE_RESERVED_KEYS, ...INLINE_FORBIDDEN_KEYS].join('|')})$)[a-z][a-z0-9_.:]{0,63}$`;
+const EXTENSION_PATTERN = new RegExp(INLINE_EXTENSION_KEY, 'u');
+/** Whether a key is accepted as extension data on a known inline entry. */
+const isInlineExtensionKey = (key) => EXTENSION_PATTERN.test(key);
+
+// The extension keys of an entry: every key its type does not define, as it came.
+function extensionsOf(entry, kind) {
+  const own = OWN_KEYS[kind];
+  const out = {};
+  for (const [key, value] of Object.entries(entry)) if (!own.includes(key)) out[key] = clone(value);
+  return Object.keys(out).length ? out : null;
+}
+/** The extension keys of a known entry (text, break, link, component), or null. */
+function inlineExtensions(entry) {
+  return isPlainEntry(entry) && Object.hasOwn(OWN_KEYS, entry.type) ? extensionsOf(entry, entry.type) : null;
+}
+// Extension keys compare by value: key order does not count, at any depth
+// ({lang, title} and {title, lang} are the same keys, so their runs merge).
+const sortedKeys = (value) => (Array.isArray(value) ? value.map(sortedKeys)
+  : value !== null && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, sortedKeys(value[key])])) : value);
+const sameExtra = (left, right) => JSON.stringify(sortedKeys(left ?? null)) === JSON.stringify(sortedKeys(right ?? null));
 const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048, maxPropLength: 1000 });
 
 // The closed list of inline atoms. Each name draws one element; its props
@@ -25274,6 +25673,7 @@ function inlineComponentSchemas() {
     type: 'object',
     required: ['type', 'name', ...(entry.required.length ? ['props'] : [])],
     additionalProperties: false,
+    patternProperties: { [INLINE_EXTENSION_KEY]: {} },
     properties: {
       type: { const: 'component' },
       name: { const: name },
@@ -25291,7 +25691,7 @@ function inlineComponentSchemas() {
 function isInlineComponent(node) {
   const entry = node?.type === 'component' && Object.hasOwn(INLINE_COMPONENTS, node.name) ? INLINE_COMPONENTS[node.name] : null;
   if (!entry) return false;
-  if (Object.keys(node).some((key) => !['type', 'name', 'props'].includes(key))) return false;
+  if (Object.keys(node).some((key) => !['type', 'name', 'props'].includes(key) && !isInlineExtensionKey(key))) return false;
   const props = node.props ?? {};
   if (!props || typeof props !== 'object' || Array.isArray(props)) return false;
   if (entry.required.some((key) => !(key in props))) return false;
@@ -25315,7 +25715,16 @@ function inlineComponentView(node) {
 }
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
-const isObjectEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry) && entry.type !== 'text' && entry.type !== 'link';
+const isAtom = (entry) => entry?.type === 'component';
+const isObjectEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry) && entry.type !== 'text' && entry.type !== 'link' && !isBreak(entry);
+// A break as the model knows it: type break, marks (if any) a list; any
+// other key is its extension data.
+const isBreak = (entry) => entry?.type === 'break' && (entry.marks === undefined || Array.isArray(entry.marks));
+
+/** The segment of one soft line break: one unit, with the marks and link of its place. */
+function breakSegment(marks = [], href = null, extra = null) {
+  return { text: INLINE_OBJECT, marks: [...marks], href, break: true, ...(extra ? { extra } : {}) };
+}
 
 /** Same link rule as Document validation: relative, fragment or http(s)/mailto/tel. */
 function safeHref(value) {
@@ -25329,69 +25738,101 @@ function safeHref(value) {
   }
 }
 
+// Known marks in their canonical order, then any mark this model does not
+// know (a newer producer's), in the order it came: an edit never drops a mark
+// it cannot draw. Validation still refuses an unknown mark; render draws none.
 function sortMarks(marks) {
-  return [...new Set(marks)].filter((mark) => MARK_ORDER.has(mark)).sort((left, right) => MARK_ORDER.get(left) - MARK_ORDER.get(right));
+  const unique = [...new Set(marks)].filter((mark) => typeof mark === 'string' && mark);
+  const known = unique.filter((mark) => MARK_ORDER.has(mark)).sort((left, right) => MARK_ORDER.get(left) - MARK_ORDER.get(right));
+  return [...known, ...unique.filter((mark) => !MARK_ORDER.has(mark))];
 }
 
 /**
  * Flat segments: {text, marks: string[], href: string|null}. An atom or an
  * opaque node is one segment {text: INLINE_OBJECT, marks: [], href, node}
- * that carries the entry unchanged; inside a link it keeps the link's href.
+ * that carries the entry unchanged. An atom ({type: 'component'}) never
+ * carries a link's href: a link holds no atom, so one that held an atom is
+ * split around it. An opaque node from a newer producer keeps its link.
  */
 function toSegments(content) {
   const segments = [];
-  const push = (run, href) => {
+  const push = (run, href, linkExtra) => {
+    const link = href && linkExtra ? { linkExtra } : {};
+    if (isBreak(run)) {
+      segments.push({ ...breakSegment(sortMarks(run.marks || []), href, extensionsOf(run, 'break')), ...link });
+      return;
+    }
     if (isObjectEntry(run)) {
-      segments.push({ text: INLINE_OBJECT, marks: [], href, node: clone(run) });
+      segments.push({ text: INLINE_OBJECT, marks: [], href: isAtom(run) ? null : href, node: clone(run), ...(isAtom(run) ? {} : link) });
       return;
     }
     if (run?.type !== 'text' || typeof run.value !== 'string' || !run.value) return;
-    segments.push({ text: run.value, marks: sortMarks(Array.isArray(run.marks) ? run.marks : []), href });
+    const extra = extensionsOf(run, 'text');
+    segments.push({ text: run.value, marks: sortMarks(Array.isArray(run.marks) ? run.marks : []), href, ...(extra ? { extra } : {}), ...link });
   };
   for (const entry of Array.isArray(content) ? content : []) {
     if (entry?.type === 'link') {
+      // An unsafe link is dropped by design (its href and its extension keys); its text stays.
       const href = safeHref(entry.href) ? entry.href : null;
-      for (const child of Array.isArray(entry.children) ? entry.children : []) push(child, href);
-    } else push(entry, null);
+      const linkExtra = isPlainEntry(entry) ? extensionsOf(entry, 'link') : null;
+      for (const child of Array.isArray(entry.children) ? entry.children : []) push(child, href, linkExtra);
+    } else push(entry, null, null);
   }
   return segments;
 }
 
-const sameStyle = (left, right) => !left.node && !right.node && left.href === right.href && left.marks.join() === right.marks.join();
+const isPlainEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry);
+const sameStyle = (left, right) => !left.node && !right.node && !left.break && !right.break && left.href === right.href && left.marks.join() === right.marks.join()
+  && sameExtra(left.extra, right.extra) && sameExtra(left.linkExtra, right.linkExtra);
 
 /** Builds normalized content: merged runs, canonical marks, no empty parts. */
 function fromSegments(segments) {
   const merged = [];
   for (const segment of segments) {
+    // A link's extension keys go only where the link goes.
+    const linked = (href) => (href && segment.linkExtra ? { linkExtra: segment.linkExtra } : {});
     if (segment.node) {
-      merged.push({ text: INLINE_OBJECT, marks: [], href: segment.href && safeHref(segment.href) ? segment.href : null, node: segment.node });
+      // An atom is never inside a link: the link stops before it and starts again after.
+      const href = !isAtom(segment.node) && segment.href && safeHref(segment.href) ? segment.href : null;
+      merged.push({ text: INLINE_OBJECT, marks: [], href, node: segment.node, ...linked(href) });
+      continue;
+    }
+    if (segment.break) {
+      const href = segment.href && safeHref(segment.href) ? segment.href : null;
+      merged.push({ ...breakSegment(sortMarks(segment.marks || []), href, segment.extra || null), ...linked(href) });
       continue;
     }
     if (!segment.text) continue;
-    const clean = { text: segment.text, marks: sortMarks(segment.marks || []), href: segment.href && safeHref(segment.href) ? segment.href : null };
+    const cleanHref = segment.href && safeHref(segment.href) ? segment.href : null;
+    const clean = { text: segment.text, marks: sortMarks(segment.marks || []), href: cleanHref, ...(segment.extra ? { extra: segment.extra } : {}), ...linked(cleanHref) };
     const previous = merged.at(-1);
     if (previous && sameStyle(previous, clean)) previous.text += clean.text;
     else merged.push(clean);
   }
   const content = [];
   for (const segment of merged) {
-    const run = segment.node ? clone(segment.node) : { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}) };
+    const extra = segment.extra ? clone(segment.extra) : {};
+    const run = segment.node ? clone(segment.node)
+      : segment.break ? { type: 'break', ...(segment.marks.length ? { marks: segment.marks } : {}), ...extra }
+        : { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}), ...extra };
     const previous = content.at(-1);
     if (segment.href) {
-      if (previous?.type === 'link' && previous.href === segment.href) previous.children.push(run);
-      else content.push({ type: 'link', href: segment.href, children: [run] });
+      if (previous?.type === 'link' && previous.href === segment.href && sameExtra(linkExtraOf(previous), segment.linkExtra)) previous.children.push(run);
+      else content.push({ type: 'link', href: segment.href, ...(segment.linkExtra ? clone(segment.linkExtra) : {}), children: [run] });
     } else content.push(run);
   }
   return content;
 }
 
+const linkExtraOf = (link) => extensionsOf(link, 'link');
+
 function normalizeInline(content) {
   return fromSegments(toSegments(content));
 }
 
-/** The text of the text runs; atoms and opaque nodes add nothing. */
+/** The text of the text runs, a line feed for each break; atoms and opaque nodes add nothing. */
 function inlineText(content) {
-  return toSegments(content).filter(({ node }) => !node).map(({ text }) => text).join('');
+  return toSegments(content).filter(({ node }) => !node).map((segment) => (segment.break ? '\n' : segment.text)).join('');
 }
 
 /** Length in segment offsets: characters, plus one for each atom or opaque node. */
@@ -25483,7 +25924,7 @@ function replaceRange(content, start, end, inserted) {
   return fromSegments([...before, ...inserted, ...after]);
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_COMPONENTS, INLINE_MARKS, INLINE_OBJECT, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_EXTENSION_KEY, INLINE_FORBIDDEN_KEYS, INLINE_RESERVED_KEYS, inlineExtensions, isInlineExtensionKey, INLINE_COMPONENTS, INLINE_MARKS, INLINE_MODEL_VERSION, INLINE_OBJECT, breakSegment, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
 
 
 /***/ },

@@ -14,7 +14,7 @@
     position: relative;
     box-sizing: border-box;
     overflow: hidden;
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     background-color: var(--sf-surface-container);
     background-color: var(--sf-figure-background-color, var(--sf-figure-background, var(--sf-surface-container)));
     border: var(--sf-0) solid var(--sf-outline-variant);

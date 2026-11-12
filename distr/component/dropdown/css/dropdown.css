@@ -1064,6 +1064,8 @@
     --sf-surface-place-solid: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-ground: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
@@ -1072,7 +1074,7 @@
     --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -1083,6 +1085,7 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-place--container-outline: initial;
     /* The inset (owner C05, docs review R029, 2026-11-07; it replaces R017's
        1/3): a row's highlight stands --sf-space-1/4 from the panel's edge on
        every side, as a context menu's does. The same inset is the scrollbar's
@@ -1103,12 +1106,12 @@
        the open modifiers altogether -- so the list never had a shadow. */
     --sf-list--box-shadow: var(--sf-shadow-overlay);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-dropdown .sf-list,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list--menu {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list--menu {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-dropdown .sf-list,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-list--menu {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-list--menu {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1121,11 +1124,21 @@
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
   }
+  :where(.bg-surface-4) .sf-dropdown .sf-list,
+  :where(.bg-surface-4) .sf-list--menu {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
   .sf-dropdown .sf-list > *,
   .sf-list--menu > * {
     --sf-surface-popup: var(--sf-surface-popup-nested);
     --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
     --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
@@ -1846,6 +1859,11 @@
     border: var(--sf-dropdown-field--border);
     border-color: transparent;
     border-color: var(--sf-dropdown-field--border-color, transparent);
+    border-bottom-color: transparent;
+    border-block-end-color: transparent;
+    border-bottom-color: transparent;
+    border-bottom-color: var(--sf-dropdown-field--line-color, var(--sf-dropdown-field--border-color, transparent));
+    border-block-end-color: var(--sf-dropdown-field--line-color, var(--sf-dropdown-field--border-color, transparent));
     border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     border-end-start-radius: var(--sf-radius--ui);
@@ -2223,6 +2241,10 @@
     --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-transparent-for-focus));
+    /* The filled field's bottom line (C52, owner 2026-11-10; as sf-input): the
+       fill at 8 % (C41) is 1.10 to 1.23 from its place. Focus and an open list
+       colour the border --sf-outline, the line's own colour; hover keeps it. */
+    --sf-dropdown-field--line-color: var(--sf-dropdown-border-color, var(--sf-outline));
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag .sf-dropdown-field .sf-dropdown-tag-container .sf-tag {
     --sf-tag--background-color: var(--sf-primary-container);
@@ -3212,5 +3234,61 @@
     display: inline-flex;
     width: auto;
     inline-size: auto;
+  }
+}
+/* The error (owner C55, prototype dropdown-error.html variant A), as
+   sf-input draws it: the message under the field in sf-input's field-message
+   type -- regular, a step below the field's text, 1/2 → 1/3, 1 → 1/2,
+   2 → 1 -- at the root's own gap (--sf-dropdown-gap, space-1/4), in the
+   error ink. No error icon. */
+@layer sf.components {
+  .sf-dropdown .sf-dropdown-message {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-dropdown-message--color, var(--sf-on-surface-variant));
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1\/2);
+    font-size: var(--sf-dropdown-message--font-size, var(--sf-text-size-1\/2));
+    font-weight: var(--sf-font-weight-regular);
+    line-height: var(--sf-text-height-1\/2);
+    line-height: var(--sf-dropdown-message--line-height, var(--sf-text-height-1\/2));
+  }
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-message {
+    --sf-dropdown-message--font-size: var(--sf-text-size-1\/3);
+    --sf-dropdown-message--line-height: var(--sf-text-height-1\/3);
+  }
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-message {
+    --sf-dropdown-message--font-size: var(--sf-text-size-1);
+    --sf-dropdown-message--line-height: var(--sf-text-height-1);
+  }
+  .sf-dropdown.error .sf-dropdown-message {
+    --sf-dropdown-message--color: var(--sf-error);
+  }
+}
+/* The error look holds over hover, focus and the open list, as sf-input's
+   :not(.error) keeps those off an invalid field: outlined takes the error
+   outline on the focus-ready surface, filled the error fill. A disabled
+   field keeps its disabled look. In sf.states, after the resting, hover and
+   open rules of sf.components. */
+@layer sf.states {
+  .sf-dropdown.error.sf-dropdown--outlined:not(:has(> .sf-dropdown-field > :disabled)) > .sf-dropdown-field {
+    --sf-dropdown-field--background-color: var(--sf-transparent-for-focus);
+    --sf-dropdown-field--border-color: var(--sf-error);
+  }
+  .sf-dropdown.error.sf-dropdown--filled:not(:has(> .sf-dropdown-field > :disabled)) > .sf-dropdown-field {
+    --sf-dropdown-field--background-color: var(--sf-error-container);
+  }
+  /* The ring for a focus from code after a pointer press elsewhere (the
+     browser at the first invalid field after a click on submit): the element
+     marks the trigger, since :focus-visible does not match it then. The same
+     ring as the keyboard's. */
+  .sf-dropdown .sf-dropdown-field:has(> [aria-haspopup][data-sf-focus-ring]:focus) {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+  @media (forced-colors: active) {
+    .sf-dropdown .sf-dropdown-field:has(> [aria-haspopup][data-sf-focus-ring]:focus) {
+      outline: var(--sf-focus-outline-width) solid Highlight;
+      outline-offset: calc(-1 * var(--sf-focus-outline-width));
+    }
   }
 }

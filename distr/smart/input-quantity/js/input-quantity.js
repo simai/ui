@@ -1284,6 +1284,50 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   get text() {
     return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.value, this.numberOptions);
+  } // The look (owner decision C53): steppers on both sides for a quantity, or
+  // none for an exact value (a year, a weight, a price), where the keys still
+  // step.
+
+
+  get steppers() {
+    return this.getAttribute('steppers') === 'none' ? 'none' : 'sides';
+  } // A unit written after the number, inside the box («кг», «%»).
+
+
+  get unit() {
+    return (this.getAttribute('unit') || '').trim();
+  } // The value as the spinbutton says it: the number and its unit.
+
+
+  get valueText() {
+    const text = this.text;
+    return text && this.unit ? `${text} ${this.unit}` : text;
+  } // The characters the number place holds (C53, F1): the attribute, else the
+  // longest of the bounds, the value and the inherited value written at the
+  // field's digits, at least 2, and 6 when the field has no upper bound. The
+  // box is as wide as that number, not as its container.
+
+
+  get digits() {
+    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('digits'));
+    return own !== null && own >= 1 ? Math.min(20, Math.floor(own)) : null;
+  }
+
+  get autoDigits() {
+    const options = this.numberOptions;
+    const lengths = [this.min, this.max, this.value, (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.inheritedValue)].filter(number => typeof number === 'number' && Number.isFinite(number)).map(number => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(number, options).length);
+    let digits = Math.max(2, ...lengths);
+    if (this.max === null) digits = Math.max(digits, 6);
+    return Math.min(20, digits);
+  } // The width is written on the box, from the own setting or the reckoned
+  // number (F6: a column of fields gives each the same digits). The
+  // quantity's public variables are at the ten the standard allows, so the
+  // width is a setting, not an eleventh variable.
+
+
+  get digitsStyle() {
+    const own = this.digits;
+    return `--sf-quantity--digits: ${own ?? this.autoDigits}`;
   }
 
   setValue(next) {
@@ -1355,6 +1399,24 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   focusDelegate() {
     return this.getInputElement();
+  } // Focus selects the whole number (C53, F4), so a new one is typed at once,
+  // without erasing the old. A pointer that focuses the box would drop the
+  // selection on its mouseup: that one mouseup is held back. A second press
+  // places the caret as usual.
+
+
+  onInputMouseDown(event) {
+    this._selectOnUp = event.currentTarget !== document.activeElement;
+  }
+
+  onInputMouseUp(event) {
+    if (this._selectOnUp) event.preventDefault();
+    this._selectOnUp = false;
+  }
+
+  onInputFocus(event) {
+    const input = event.currentTarget;
+    if (input?.value) input.select();
   }
 
   get state() {
@@ -1703,7 +1765,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
         input.removeAttribute('aria-valuetext');
       } else {
         input.setAttribute('aria-valuenow', String(value));
-        input.setAttribute('aria-valuetext', this.text);
+        input.setAttribute('aria-valuetext', this.valueText);
       }
     }
 
@@ -1712,7 +1774,11 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     if (plus) plus.disabled = !this.interactive || this.atMax(value); // At a bound, said on the host (§5.3, simai/ui-source#46 item 4).
 
     this.sfHostState('data-at-min', this.atMin(value));
-    this.sfHostState('data-at-max', this.atMax(value));
+    this.sfHostState('data-at-max', this.atMax(value)); // A value longer than the bounds foresaw (no upper bound) widens the box
+    // without a redraw.
+
+    const wrap = this.querySelector(':scope .sf-quantity-wrap');
+    if (wrap && this.digits === null) wrap.style.setProperty('--sf-quantity--digits', String(this.autoDigits));
     const hidden = this.querySelector(':scope .sf-quantity-value');
     if (hidden) hidden.value = this.formValue;
     this.sfSyncFormState();
@@ -1767,6 +1833,10 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       field,
       value,
       text: this.text,
+      valueText: this.valueText,
+      steppers: this.steppers,
+      unit: this.unit,
+      digitsStyle: this.digitsStyle,
       formValue: this.formValue,
       size: this.size,
       // The host is the form control where the browser has ElementInternals:
@@ -1880,15 +1950,20 @@ function renderQuantityTemplate(context) {
     field
   } = context;
   const labelId = `${context.id}--label`;
-  const rootClasses = ['sf-quantity', `sf-quantity--size-${context.size}`, field.invalid ? 'error' : '', context.rootClass, LAYOUT.root].filter(Boolean);
+  const steppers = context.steppers !== 'none';
+  const rootClasses = ['sf-quantity', `sf-quantity--size-${context.size}`, steppers ? '' : 'sf-quantity--steppers-none', field.invalid ? 'error' : '', context.rootClass, LAYOUT.root].filter(Boolean);
   const labelContent = component?.hasSlotContent?.('label') ? component.getSlotContent('label') : context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-text" id=${labelId}>${context.label}</span>${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}` // No label, no label row: the panel that prints the label beside the
   // field names the control through aria-label instead.
   : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const hasLabel = labelContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const named = Boolean(context.label) && !component?.hasSlotContent?.('label');
+  const named = Boolean(context.label) && !component?.hasSlotContent?.('label'); // The inherited marker and the reset stand after the box, on its row (C53,
+  // F3): a stepper box has no free end, and inside it they pushed the
+  // steppers out of the border and the number to nothing.
+
   const inheritedSlot = (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__.renderInheritedSlot)(component, {
     size: context.size,
-    disabled: !context.interactive
+    disabled: !context.interactive,
+    className: 'sf-quantity-inherited'
   });
   const value = context.value;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1896,8 +1971,9 @@ function renderQuantityTemplate(context) {
          style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       ${hasLabel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-quantity-label ${LAYOUT.label}" for=${field.controlId}>${labelContent}</label>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
-      <span class="sf-quantity-wrap ${LAYOUT.wrap}">
-        ${renderStepper(context, -1)}
+      <span class="sf-quantity-row">
+      <span class="sf-quantity-wrap ${LAYOUT.wrap}" style=${context.digitsStyle}>
+        ${steppers ? renderStepper(context, -1) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         <input type="text"
                class=${`${LAYOUT.input}${field.invalid ? ' error' : ''}`}
                id=${field.controlId}
@@ -1911,7 +1987,7 @@ function renderQuantityTemplate(context) {
                aria-valuemin=${context.min === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(context.min)}
                aria-valuemax=${context.max === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(context.max)}
                aria-valuenow=${value === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(value)}
-               aria-valuetext=${value === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.text}
+               aria-valuetext=${value === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.valueText}
                aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                aria-describedby=${context.message ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                aria-errormessage=${field.invalid && context.message && context.messageKind === 'error' ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1923,9 +1999,16 @@ function renderQuantityTemplate(context) {
                @input=${event => component.onNativeInput(event)}
                @change=${event => component.onNativeChange(event)}
                @keydown=${event => component.onKeyDown(event)}
+               @mousedown=${event => component.onInputMouseDown(event)}
+               @mouseup=${event => component.onInputMouseUp(event)}
+               @focus=${event => component.onInputFocus(event)}
                @blur=${() => component.commitDraft('commit')}>
-        ${inheritedSlot}
-        ${renderStepper(context, 1)}
+        ${context.unit // The unit after the number, in the box: part of the picture only;
+  // the spinbutton says it in its value text.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-unit" aria-hidden="true" @click=${() => component.focusDelegate?.()?.focus?.()}>${context.unit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${steppers ? renderStepper(context, 1) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      </span>
+      ${inheritedSlot}
       </span>
 
       ${context.controlName // The form gets the number with a point and no grouping, whatever the
@@ -2167,7 +2250,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.3.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.4.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
