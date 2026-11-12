@@ -8,6 +8,15 @@
 
 ### Добавлено
 
+- C40 timeline parts: `sf-time`, `sf-change`, `.sf-group-heading`; `sf-list-timeline` 1.1.1, `sf-confirm-change` 1.7.1. C45/C47 lists: `sf-list` 1.5.1 (narrow rows keep their titles, without a ResizeObserver loop), `sf-list-attention` 1.3.0; `sf-change` keeps a short value whole by its text; timeline step dots without an icon tell their state by shape (C61). C43 rows: an anchored badge rings with its row (`--sf-surface-place-fill`); the status dot is opaque on soft places (`--sf-surface-place-ground`); menu row hover and open are fills too.
+- Backgrounds C41/C42/C46: neutral fill 8/12/16, backgrounds inside components, tonal notice action, D2b tonal states on strong places; the `sf-alert-bar` sheet changed (16 declarations, look unchanged). Hue role utilities (R087). Navigation looks on the ladder; one start line in every window; closed layers start their content's code, not its data (`SF_BOOT_CONFIG.startClosedLayerContent`; `sf-include` fetches wait for the open). Buttons in accent sections invert by the place's roles only (the old Composition inversion is gone).
+- Headings keep the C21 ladder in compact density (C44): a window title is heading 3, a question window's heading 4; `core.styles` 1.11.0. Forms and feedback on the C16 role names; smart forms B (switch, slider, slider-range, input-code, input-color, input-country, file-upload, segmented by content with a dropdown fold, C47 A/C).
+- CB-01: `sf-button--ghost` with `--link` as a dated alias (`component.buttons` 1.10.0, `sf-button` 1.13.0); R076 theme cycle under a host-owned theme. Spinner track carries its alpha (`component.spinner` 1.2.0, `sf-spinner` 1.3.0).
+- C39 question window and recipes gaps; the rich-text link editor is a bottom sheet on a phone again (`sf-popover` 1.5.0). Rich text: Bold and Italic marks (`sf-input-rich` 1.3.1). Lookup, file download 1.4.1, button copy 1.4.0 with the C48 `data-sf-copy` route (`clipboard` 1.1.0).
+- Toast status glyph, menus G1-a/G1-b (C49), C33 help marks after a label's last word, dead Smart sheets removed (`sf-tabs` 1.1.17, `sf-avatar-group` 1.2.4), pagination/step/tags rules without scripts. A neighbouring month's day off is a muted red (`component.datepicker` 1.3.5); plain kbd glyphs keep their row's ink; one shared form-reset listener per page.
+- Foundations GF-12/16/17, public JS API layers (D17), `SF.whenDefine` dated alias; a Smart element's glyphs draw in ignored regions. One density ladder per width (S-03).
+- `core.runtime` 1.54.0. Held out of this pair: DP-02 weekend colour, GF-26 text-space-x.
+
 - Menus no longer wait for late utility links, and dropdown glyphs draw on sf-icon. The dropdown field takes its frame from its own sheet, so it no longer draws 80 px tall before the utility sheets arrive (component.dropdown 1.5.2).
 - C20: the sf-system plate and elevation former names. C18a: sf-kbd glyphs.
 - R074: icon deadlines, hidden-copy recheck, warm-profile splash and the held first icon request (R078, R-1, F3); the first request's hold no longer leaks a timer.
