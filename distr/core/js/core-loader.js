@@ -982,6 +982,87 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     } finally {
       this.isSyncingStaticIconState = false;
     }
+  }; // The class-markup glyphs a Smart element drew inside a
+  // data-sf-observer="ignore" region (2026-11-11). The page scan and the
+  // mutation observer pass such a region by, so a bare <i class="sf-icon">
+  // there was never asked for and never marked sf-icon-loaded: it waited at
+  // font-size 0 for good (an accordion's marker, a menu's icons, a badge's
+  // glyph in a documentation example or a loader wrap). The element hands
+  // them over after each drawing (smart-base); they are asked for like any
+  // static icon and marked when their font is in, now or on the next
+  // sf-icons-subset:ready. A glyph of an sf-icon element is its own.
+  // Answers the number of new names asked for.
+
+
+  SFLoaderPlugin.prototype.adoptStaticIcons = function (root = null) {
+    if (!root?.querySelectorAll) return 0;
+    const glyphs = [];
+
+    const take = el => {
+      if (!el || el.nodeType !== Node.ELEMENT_NODE) return;
+      if (el.tagName?.toLowerCase?.() === "sf-icon") return;
+      if (!el.classList?.contains("sf-icon")) return;
+      if (el.closest?.("sf-icon")) return;
+      glyphs.push(el);
+    };
+
+    take(root);
+    root.querySelectorAll(".sf-icon").forEach(take);
+    if (!glyphs.length) return 0;
+
+    if (!this.adoptedIconsPending) {
+      this.adoptedIconsPending = new Set();
+
+      const settle = () => {
+        this.adoptedIconsPending.forEach(el => {
+          if (!el.isConnected) {
+            this.adoptedIconsPending.delete(el);
+            return;
+          }
+
+          const tracked = this.getTrackedStaticIconAttrs(el);
+
+          if (!tracked) {
+            this.adoptedIconsPending.delete(el);
+            return;
+          }
+
+          if (this.isTrackedIconLoaded(tracked)) {
+            el.classList.add("sf-icon-loaded");
+            this.adoptedIconsPending.delete(el);
+          }
+        });
+      };
+
+      window.addEventListener("sf-icons-subset:ready", settle);
+    }
+
+    let added = 0;
+    glyphs.forEach(el => {
+      const tracked = this.getTrackedStaticIconAttrs(el);
+
+      if (!tracked) {
+        el.classList.remove("sf-icon-loaded");
+        this.adoptedIconsPending.delete(el);
+        return;
+      }
+
+      if (this.isIconSubsetEnabled()) {
+        added += this.trackIconDescriptor(tracked.icon, tracked.attrs);
+      }
+
+      if (this.isTrackedIconLoaded(tracked)) {
+        el.classList.add("sf-icon-loaded");
+        this.adoptedIconsPending.delete(el);
+      } else {
+        // A glyph whose new name the font in place does not draw waits
+        // unseen, as holdChangedStaticIcon makes a page icon wait.
+        el.classList.remove("sf-icon-loaded");
+        this.adoptedIconsPending.add(el);
+      }
+    });
+    if (added > 0) this.mutate(() => this.loadFonts());
+    return added;
   };
 
   SFLoaderPlugin.prototype.scanStaticIcons = function (root = null, autoLoad = true) {
@@ -8043,8 +8124,39 @@ SF.__internal.litHtml = (tagName, props = {}) => {
   return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__.html)`<${tag} ...=${props}></${tag}>`;
 };
 
-SF.whenDefine = whenSmartDefined;
-SF.whenDefined = whenSmartDefined;
+SF.whenDefined = whenSmartDefined; // SF.whenDefine is the older name of SF.whenDefined: a dated alias of the same
+// function until the sweep (journal global-sf-when-define). Enumerable, as it
+// was, so a page that lists window.SF still sees it; a read is noted in
+// SF.deprecations. The Framework's own code calls SF.whenDefined.
+
+const WHEN_DEFINE_ALIAS = Object.freeze({
+  since: '2026-11-11',
+  remove_after: '2027-01-01'
+});
+Object.defineProperty(SF, 'whenDefine', {
+  configurable: true,
+  enumerable: true,
+
+  get() {
+    (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_13__.noteDeprecated)({
+      kind: 'global',
+      from: 'SF.whenDefine',
+      to: 'SF.whenDefined',
+      ...WHEN_DEFINE_ALIAS
+    });
+    return whenSmartDefined;
+  },
+
+  set(value) {
+    Object.defineProperty(SF, 'whenDefine', {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value
+    });
+  }
+
+});
 
 try {
   window.dispatchEvent(new CustomEvent('sf-loader-init', {
@@ -8629,7 +8741,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-list-timeline":["position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","visibility/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

@@ -334,6 +334,39 @@ function createSlideInteractivityGuard(slider) {
       if (authored) slide.setAttribute('inert', '');else slide.removeAttribute('inert');
     });
   };
+} // An arrow with nowhere to go is disabled, not only pale. Swiper marks it with
+// swiper-button-disabled and the sheet takes pointer events away, but the
+// button kept its tab stop and a keyboard press did nothing (docs pre-check
+// 2026-11-10 SL-04). The native button is disabled with the mark; when the
+// arrow that holds the focus is the one that stops, the focus moves to the
+// other arrow, so it does not fall to the page.
+
+
+function createArrowStateGuard(slider, prevEl, nextEl) {
+  const arrows = [prevEl, nextEl].filter(arrow => arrow instanceof HTMLElement);
+  if (!arrows.length || typeof slider?.on !== 'function') return () => {};
+
+  const buttonOf = arrow => arrow.matches('button') ? arrow : arrow.querySelector('button');
+
+  const sync = () => {
+    arrows.forEach(arrow => {
+      const button = buttonOf(arrow);
+      if (!button) return;
+      const off = arrow.classList.contains('swiper-button-disabled');
+
+      if (off && !button.disabled && button === button.ownerDocument?.activeElement) {
+        const other = arrows.map(buttonOf).find(candidate => candidate && candidate !== button && !candidate.disabled);
+        other?.focus?.();
+      }
+
+      if (button.disabled !== off) button.disabled = off;
+    });
+  };
+
+  const events = ['afterInit', 'slideChange', 'reachBeginning', 'reachEnd', 'fromEdge', 'update', 'lock', 'unlock', 'navigationNext', 'navigationPrev'];
+  events.forEach(name => slider.on(name, sync));
+  sync();
+  return () => events.forEach(name => slider.off?.(name, sync));
 }
 
 function createAutoplayGuard(root, slider) {
@@ -470,7 +503,7 @@ function bindSlider(root) {
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), linkThumbnails(slider, thumbs)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(slider, thumbs)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));
@@ -1484,7 +1517,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-slide
 /***/ "85a15fb0aee7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.1.10","kind":"leaf","settings":{"button-type":{"type":"string","default":"primary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-dark"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.1.11","kind":"leaf","settings":{"button-type":{"type":"string","default":"primary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-dark"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

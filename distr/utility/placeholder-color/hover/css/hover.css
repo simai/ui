@@ -121,34 +121,49 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .hover\:placeholder-disable:hover::-webkit-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .hover\:placeholder-disable:hover::-moz-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .hover\:placeholder-disable:hover:-ms-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .hover\:placeholder-disable:hover::-ms-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .hover\:placeholder-disable:hover::placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .hover\:placeholder-on-disable:hover::-webkit-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:placeholder-on-disable:hover::-moz-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:placeholder-on-disable:hover:-ms-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:placeholder-on-disable:hover::-ms-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:placeholder-on-disable:hover::placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:placeholder-on-surface-disabled:hover::-webkit-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:placeholder-on-surface-disabled:hover::-moz-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:placeholder-on-surface-disabled:hover:-ms-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:placeholder-on-surface-disabled:hover::-ms-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:placeholder-on-surface-disabled:hover::placeholder {
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:placeholder-primary:hover::-webkit-input-placeholder {
     color: var(--sf-primary);

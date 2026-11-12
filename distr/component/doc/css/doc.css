@@ -800,22 +800,22 @@
   }
   .sf-doc-stripes,
   .bg-stripes {
-    --sf-doc-pattern-color: var(--sf-surface-1);
+    --sf-doc-pattern-color: var(--sf-surface-area);
     background-image: repeating-linear-gradient(-45deg, var(--sf-doc-pattern-color) 0,var(--sf-doc-pattern-color) 25%, var(--sf-transparent) 25%, var(--sf-transparent) 50%);
     background-image: repeating-linear-gradient(-45deg, var(--sf-doc-pattern-color) 0 25%, var(--sf-transparent) 25% 50%);
     background-size: var(--sf-space-2) var(--sf-space-2);
   }
   .bg-stripes-white {
-    --sf-doc-pattern-color: var(--sf-surface-0);
+    --sf-doc-pattern-color: var(--sf-surface-page);
   }
   .bg-stripes-blue {
     --sf-doc-pattern-color: var(--sf-info-container);
   }
   .sf-doc-checkerboard,
   .bg-checkered {
-    background-color: var(--sf-surface-0);
-    background-image: conic-gradient(var(--sf-surface-1) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-surface-1) 0,var(--sf-surface-1) 75%, var(--sf-transparent) 0);
-    background-image: conic-gradient(var(--sf-surface-1) 25%, var(--sf-transparent) 0 50%, var(--sf-surface-1) 0 75%, var(--sf-transparent) 0);
+    background-color: var(--sf-surface-page);
+    background-image: conic-gradient(var(--sf-surface-area) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-surface-area) 0,var(--sf-surface-area) 75%, var(--sf-transparent) 0);
+    background-image: conic-gradient(var(--sf-surface-area) 25%, var(--sf-transparent) 0 50%, var(--sf-surface-area) 0 75%, var(--sf-transparent) 0);
     background-size: var(--sf-space-2) var(--sf-space-2);
   }
   .hljs-emphasis {

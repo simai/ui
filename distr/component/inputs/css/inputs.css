@@ -177,6 +177,121 @@
     --sf-input--radius: var(--sf-input-radius, var(--sf-radius-rounded));
   }
 }
+/* A help mark after a field label follows the label's last word (C33,
+   the field labels of the help mark fix in sf-help-mark 1.3.2). The label
+   row was a flex row, so the label text was one item as wide as the row and
+   on a wrapped label the mark stood at the row's end, centred on the whole
+   label. With a mark the row is running text: its own white space (the
+   markup between the label and the mark) draws nothing and is no place to
+   break a line, the label and the required mark keep their own text, and
+   the mark stands --sf-input-label--gap after the last word, as tall as the
+   label's line and at its top, so it is centred on the line it stands on:
+   on a one-line label where the flex row put it. A label row without its
+   text in .sf-input-text (the label slot of sf-input with bare text) stays
+   a flex row: its text would have no size of its own. */
+@layer sf.components {
+  .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) {
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    white-space: nowrap;
+  }
+  .sf-input .sf-input-label:has(> sf-help-mark, > .sf-help-mark) > .sf-input-text {
+    white-space: normal;
+  }
+  /* The label ends in a space of no size that is no place to break a line.
+     The white space after it -- the row's, between the label and the mark,
+     and the mark's own -- collapses into it, so nothing stands between the
+     last word and the mark that a line could break at. Without it Chrome
+     broke the line there wherever the label fitted its line and the mark did
+     not: the mark went alone to a new line on 33 of 281 widths (a row
+     white-space: nowrap and word joiners did not stop it). */
+  .sf-input .sf-input-label:has(> sf-help-mark, > .sf-help-mark) > .sf-input-text::after {
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+    white-space: nowrap;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required {
+    margin-left: var(--sf-input-label--gap);
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required {
+    margin-left: var(--sf-input-label--gap);
+    }
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required:where(:dir(ltr)) {
+    margin-left: var(--sf-input-label--gap);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required {
+    margin-right: var(--sf-input-label--gap);
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required {
+    margin-right: var(--sf-input-label--gap);
+    }
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required:where(:dir(rtl)) {
+    margin-right: var(--sf-input-label--gap);
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required {
+    -webkit-margin-start: var(--sf-input-label--gap);
+            margin-inline-start: var(--sf-input-label--gap);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,html:not([dir="rtl"])
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark {
+    margin-left: var(--sf-input-label--gap);
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,html:not([dir="rtl"])
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark {
+    margin-left: var(--sf-input-label--gap);
+    }
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark:where(:dir(ltr)),
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark:where(:dir(ltr)) {
+    margin-left: var(--sf-input-label--gap);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,[dir="rtl"]
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark {
+    margin-right: var(--sf-input-label--gap);
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,[dir="rtl"]
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark {
+    margin-right: var(--sf-input-label--gap);
+    }
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark:where(:dir(rtl)),
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark:where(:dir(rtl)) {
+    margin-right: var(--sf-input-label--gap);
+  }
+  .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,
+  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark {
+    height: var(--sf-input-label--line);
+    block-size: var(--sf-input-label--line);
+    -webkit-margin-start: var(--sf-input-label--gap);
+            margin-inline-start: var(--sf-input-label--gap);
+    vertical-align: top;
+  }
+  /* The label's line at each size: the line its text sets (a step below
+     the field's). */
+  .sf-input.sf-input--size-1\/3 .sf-input-label {
+    --sf-input-label--line: var(--sf-text-height-1\/4);
+  }
+  .sf-input.sf-input--size-1\/2 .sf-input-label {
+    --sf-input-label--line: var(--sf-text-height-1\/3);
+  }
+  .sf-input.sf-input--size-1 .sf-input-label {
+    --sf-input-label--line: var(--sf-text-height-1\/2);
+  }
+  .sf-input.sf-input--size-2 .sf-input-label {
+    --sf-input-label--line: var(--sf-text-height-1);
+  }
+  .sf-input.sf-input--size-3 .sf-input-label {
+    --sf-input-label--line: var(--sf-text-height-2);
+  }
+}
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) */
   .sf-input {
@@ -470,20 +585,23 @@
     font-size: var(--sf-input-placeholder--font-size);
     line-height: var(--sf-input-placeholder--line-height);
   }
+  .sf-input.sf-input--filled {
+    --sf-input--place-variant: var(--sf-place--fill-placeholder, var(--sf-on-surface-variant));
+  }
   .sf-input.sf-input--filled .sf-input-field input::-webkit-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface);
+    --sf-input-placeholder--color: var(--sf-input--place-variant);
   }
   .sf-input.sf-input--filled .sf-input-field input::-moz-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface);
+    --sf-input-placeholder--color: var(--sf-input--place-variant);
   }
   .sf-input.sf-input--filled .sf-input-field input:-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface);
+    --sf-input-placeholder--color: var(--sf-input--place-variant);
   }
   .sf-input.sf-input--filled .sf-input-field input::-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface);
+    --sf-input-placeholder--color: var(--sf-input--place-variant);
   }
   .sf-input.sf-input--filled .sf-input-field input::placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface);
+    --sf-input-placeholder--color: var(--sf-input--place-variant);
   }
   .sf-input .sf-input-left {
     --sf-input-left--background-color: transparent;
@@ -805,17 +923,17 @@
     --sf-input-field--border-color: var(--sf-primary);
   }
   .sf-input.sf-input--bordered:has(input:disabled) .sf-input-field {
-    --sf-input-field--border-color: var(--sf-outline-disable);
+    --sf-input-field--border-color: var(--sf-outline-disabled);
   }
   .sf-input.sf-input--bordered:has(input:disabled) input, .sf-input.sf-input--filled:has(input:disabled) input {
-    --sf-input-input--color: var(--sf-on-disable);
+    --sf-input-input--color: var(--sf-on-surface-disabled);
   }
   .sf-input.sf-input--filled:has(input:disabled) .sf-input-field {
-    --sf-input-field--background-color: var(--sf-disable);
+    --sf-input-field--background-color: var(--sf-surface-disabled);
   }
   .sf-input:not(.error).sf-input--filled:not(:has(input:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-transparent-for-focus));
   }
   .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) .sf-input-field {
@@ -831,25 +949,25 @@
     --sf-input-field--border-color: var(--sf-primary-active);
   }
   .sf-input:has(input:disabled) > .sf-input-field > .sf-input-hint > .sf-icon, .sf-input:has(input:disabled) > .sf-input-field > .sf-input-left .sf-icon {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-field input::-webkit-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-disable);
+    --sf-input-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-field input::-moz-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-disable);
+    --sf-input-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-field input:-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-disable);
+    --sf-input-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-field input::-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-disable);
+    --sf-input-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-field input::placeholder {
-    --sf-input-placeholder--color: var(--sf-on-disable);
+    --sf-input-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-input:has(input:disabled) .sf-input-text {
-    --sf-input-text--color: var(--sf-on-disable);
+    --sf-input-text--color: var(--sf-on-surface-disabled);
   }
   .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary-hover);

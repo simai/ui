@@ -13,22 +13,34 @@
     border-color: var(--sf-outline-variant);
   }
   .active\:border-surface:active {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
   }
   .active\:border-surface-0:active {
-    border-color: var(--sf-surface-0);
+    border-color: var(--sf-surface-page);
+  }
+  .active\:border-surface-page:active {
+    border-color: var(--sf-surface-page);
   }
   .active\:border-surface-1:active {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
+  }
+  .active\:border-surface-area:active {
+    border-color: var(--sf-surface-area);
   }
   .active\:border-surface-container:active {
     border-color: var(--sf-surface-container);
   }
   .active\:border-surface-overlay:active {
-    border-color: var(--sf-surface-overlay);
+    border-color: var(--sf-surface-veil);
+  }
+  .active\:border-surface-veil:active {
+    border-color: var(--sf-surface-veil);
   }
   .active\:border-surface-transparent-overlay:active {
-    border-color: var(--sf-surface-transparent-overlay);
+    border-color: var(--sf-surface-container-strong);
+  }
+  .active\:border-surface-container-strong:active {
+    border-color: var(--sf-surface-container-strong);
   }
   .active\:border-surface-inverse:active {
     border-color: var(--sf-surface-inverse);
@@ -40,61 +52,79 @@
     border-color: var(--sf-on-surface-variant);
   }
   .active\:border-primary:active {
-    border-color: var(--sf-outline-primary);
+    border-color: var(--sf-primary-outline);
   }
   .active\:border-primary-container:active {
     border-color: var(--sf-primary-container);
   }
   .active\:border-primary-transparent-overlay:active {
-    border-color: var(--sf-primary-transparent-overlay);
+    border-color: var(--sf-primary-container-strong);
+  }
+  .active\:border-primary-container-strong:active {
+    border-color: var(--sf-primary-container-strong);
   }
   .active\:border-secondary:active {
-    border-color: var(--sf-outline-secondary);
+    border-color: var(--sf-secondary-outline);
   }
   .active\:border-secondary-container:active {
     border-color: var(--sf-secondary-container);
   }
   .active\:border-secondary-transparent-overlay:active {
-    border-color: var(--sf-secondary-transparent-overlay);
+    border-color: var(--sf-secondary-container-strong);
+  }
+  .active\:border-secondary-container-strong:active {
+    border-color: var(--sf-secondary-container-strong);
   }
   .active\:border-tertiary:active {
-    border-color: var(--sf-outline-tertiary);
+    border-color: var(--sf-tertiary-outline);
   }
   .active\:border-tertiary-container:active {
     border-color: var(--sf-tertiary-container);
   }
   .active\:border-tertiary-transparent-overlay:active {
-    border-color: var(--sf-tertiary-transparent-overlay);
+    border-color: var(--sf-tertiary-container-strong);
+  }
+  .active\:border-tertiary-container-strong:active {
+    border-color: var(--sf-tertiary-container-strong);
   }
   .active\:border-error:active {
-    border-color: var(--sf-outline-error);
+    border-color: var(--sf-error-outline);
   }
   .active\:border-error-container:active {
     border-color: var(--sf-error-container);
   }
   .active\:border-error-transparent-overlay:active {
-    border-color: var(--sf-error-transparent-overlay);
+    border-color: var(--sf-error-container-strong);
+  }
+  .active\:border-error-container-strong:active {
+    border-color: var(--sf-error-container-strong);
   }
   .active\:border-warning:active {
-    border-color: var(--sf-outline-warning);
+    border-color: var(--sf-warning-outline);
   }
   .active\:border-warning-container:active {
     border-color: var(--sf-warning-container);
   }
   .active\:border-warning-transparent-overlay:active {
-    border-color: var(--sf-warning-transparent-overlay);
+    border-color: var(--sf-warning-container-strong);
+  }
+  .active\:border-warning-container-strong:active {
+    border-color: var(--sf-warning-container-strong);
   }
   .active\:border-success:active {
-    border-color: var(--sf-outline-success);
+    border-color: var(--sf-success-outline);
   }
   .active\:border-success-container:active {
     border-color: var(--sf-success-container);
   }
   .active\:border-success-transparent-overlay:active {
-    border-color: var(--sf-success-transparent-overlay);
+    border-color: var(--sf-success-container-strong);
+  }
+  .active\:border-success-container-strong:active {
+    border-color: var(--sf-success-container-strong);
   }
   .active\:border-info:active {
-    border-color: var(--sf-outline-info);
+    border-color: var(--sf-info-outline);
   }
   .active\:border-info-container:active {
     border-color: var(--sf-info-container);

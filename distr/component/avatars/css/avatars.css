@@ -252,7 +252,10 @@
     border-top-width: var(--sf-px);
     width: var(--sf-online-indicator--width);
     height: var(--sf-online-indicator--height);
-    background-color: var(--sf-online-indicator--background-color);
+    background-color: transparent;
+    background-color: var(--sf-surface-place-ground, transparent);
+    background-image: linear-gradient(var(--sf-online-indicator--background-color) 0, var(--sf-online-indicator--background-color) 0);
+    background-image: linear-gradient(var(--sf-online-indicator--background-color) 0 0);
     --sf-online-indicator--height: var(--sf-b6);
     --sf-online-indicator--width: var(--sf-b6);
   }
@@ -282,11 +285,11 @@
   }
   .sf-online-indicator--offline {
     --sf-online-indicator--background-color: var(--sf-avatar-offline-background-color, var(--sf-surface-place));
-    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0);
-    background-image: linear-gradient(var(--sf-on-surface-disabled) 0 0);
-    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0);
-    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0));
-    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0 0));
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0), linear-gradient(var(--sf-online-indicator--background-color) 0, var(--sf-online-indicator--background-color) 0);
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0 0), linear-gradient(var(--sf-online-indicator--background-color) 0 0);
+    background-image: linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0), linear-gradient(var(--sf-online-indicator--background-color) 0, var(--sf-online-indicator--background-color) 0);
+    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0, var(--sf-on-surface-disabled) 0)), linear-gradient(var(--sf-online-indicator--background-color) 0, var(--sf-online-indicator--background-color) 0);
+    background-image: var(--sf-avatar-offline-overlay, linear-gradient(var(--sf-on-surface-disabled) 0 0)), linear-gradient(var(--sf-online-indicator--background-color) 0 0);
   }
   .sf-online-indicator--online {
     --sf-online-indicator--background-color: var(--sf-success);
@@ -673,9 +676,6 @@
     height: var(--sf-icon--height, var(--sf-icon-size-3));
     width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
-  }
-  .sf-avatar .sf-online-indicator {
-    background-color: var(--sf-online-indicator--background-color);
   }
   .sf-avatar .sf-avatar-badge.sf-avatar-badge--company {
     --sf-avatar-badge--border: var(--sf-px) solid;

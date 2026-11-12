@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-modal-focus-guard {
@@ -81,29 +82,39 @@
     --sf-modal-header-gap: var(--sf-space-1);
     gap: var(--sf-modal-header-gap);
   }
+  /* The title takes the third step of the heading ladder (C21), which density
+     does not move (owner decision C44, 2026-11-11): a compact region, on <html>
+     or a container, keeps the title at its size. */
+  .sf-modal-title {
+    font-size: var(--sf-heading-3--size);
+    line-height: var(--sf-heading-3--height);
+  }
   .sf-modal-surface {
     --sf-modal-surface-bg: var(--sf-modal-background-color, var(--sf-surface-area));
     --sf-modal-surface-border-color: var(--sf-modal-border-color, var(--sf-outline-variant, transparent));
     --sf-modal-surface-border-style: solid;
     --sf-modal-surface-border-width: var(--sf-modal-border-width, var(--sf-border-width, var(--sf-px)));
     --sf-modal-surface-gap: var(--sf-modal-gap, var(--sf-space-1));
-    --sf-modal-surface-padding: var(--sf-modal-padding-block, var(--sf-space-2)) var(--sf-modal-padding-inline, var(--sf-space-2));
+    /* The frame is the question window's (decision C39; dispatcher decision,
+       docs pre-check 2026-11-10): --sf-space-3, 24 on a desktop and 16 on a
+       phone; it was --sf-space-2. */
+    --sf-modal-surface-padding: var(--sf-modal-padding-block, var(--sf-space-3)) var(--sf-modal-padding-inline, var(--sf-space-3));
     --sf-modal-surface-radius: var(--sf-modal-radius, var(--sf-radius--surface));
     --sf-modal-surface-shadow: var(--sf-shadow-flat);
     background-color: var(--sf-modal-surface-bg);
     --sf-surface-place: var(--sf-modal-surface-bg);
     --sf-surface-place-solid: var(--sf-modal-surface-bg);
+    --sf-surface-place-ground: var(--sf-modal-surface-bg);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -121,23 +132,39 @@
     min-width: 0;
     padding: var(--sf-modal-surface-padding);
   }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-modal-surface {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-modal-surface {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
   .sf-modal-surface--elevated {
     /* Elevated is a place, not a shadow alone: the window stands on the popup
        surface with the modal shadow, over the scrim (C20). */
     --sf-modal-surface-bg: var(--sf-modal-background-color, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-modal-surface-bg);
     --sf-surface-place-solid: var(--sf-modal-surface-bg);
+    --sf-surface-place-ground: var(--sf-modal-surface-bg);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -149,6 +176,29 @@
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-modal-surface-shadow: var(--sf-shadow-modal);
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-modal-surface--elevated {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-modal-surface--elevated {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
+  .sf-modal-surface--elevated > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   .sf-modal [data-sf-modal-overlay] {
     background-color: var(--sf-modal-overlay-background);
@@ -170,6 +220,18 @@
   }
   .sf-modal [data-sf-modal-panel] {
     opacity: 0;
+  }
+  /* sf-focus-ring: none -- the panel takes the focus programmatically when the
+     window opens (and when a Tab finds nothing else in it), so it draws no ring
+     of its own; the ring belongs to the controls inside it, as on sf-drawer's
+     panel. Opened from the keyboard, the whole window stood in the focus ring
+     (ui-doc «Рецепты», «Удаление», 2026-11-10). The page's [autofocus] inside
+     the window still takes the focus first (decision C25, C39). */
+  .sf-modal [data-sf-modal-panel].focus-visible {
+    outline: none;
+  }
+  .sf-modal [data-sf-modal-panel]:focus-visible {
+    outline: none;
   }
   .sf-modal.animate [data-sf-modal-panel] {
     transition: opacity var(--sf-duration-normal) var(--sf-animation), -webkit-transform var(--sf-duration-normal) var(--sf-animation);
@@ -319,6 +381,168 @@
     flex: 1;
     max-height: none;
   }
+  /* A window at the bottom edge is a sheet: it rounds its top corners only and
+     draws no edge along the screen's bottom, and a frame that is the window's
+     own (no surface-padding from the page) keeps the home-indicator area clear
+     (decision C39; the frame's block-end is --sf-modal--padding-end). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]:where(:dir(ltr)){
+    border-bottom-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]:where(:dir(rtl)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface] {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    border-bottom-width: 0;
+    border-block-end-width: 0;
+  }
+  .sf-modal[data-sf-modal-position=bottom] [data-sf-modal-surface]:not([data-sf-modal-own-padding]) {
+    padding-bottom: calc(var(--sf-space-3) + env(safe-area-inset-bottom, 0px));
+    -webkit-padding-after: calc(var(--sf-space-3) + env(safe-area-inset-bottom, 0px));
+            padding-block-end: calc(var(--sf-space-3) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--sf-space-3) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--sf-modal--padding-end, var(--sf-modal-padding-block, var(--sf-space-3))) + env(safe-area-inset-bottom, 0px));
+    -webkit-padding-after: calc(var(--sf-modal--padding-end, var(--sf-modal-padding-block, var(--sf-space-3))) + env(safe-area-inset-bottom, 0px));
+            padding-block-end: calc(var(--sf-modal--padding-end, var(--sf-modal-padding-block, var(--sf-space-3))) + env(safe-area-inset-bottom, 0px));
+  }
+  /* One start line in every window (decision C39, DEV's navigation acceptance
+     D1, 2026-11-10): the body scrolls inside a 1/4 inset (p-1/4 in both
+     templates) that keeps its focus rings whole, and that inset stood the
+     content and its buttons 1/4 right of the title. The scroll box now stands
+     out into the frame by the same 1/4 on both sides, so the title, the content
+     and the answers start on the frame's line and the rings still fit. Every
+     surface states its own outset, so a window inside another never inherits
+     it. Not where the frame is not the window's own: a question window gives
+     the inset back from its frame below, and a page's surface-padding (the
+     gallery's lightbox has 0) keeps its body where it put it. */
+  [data-sf-modal-surface] {
+    --sf-modal--body-outset: 0;
+  }
+  .sf-modal:not(.sf-modal--size-question) > [data-sf-modal-panel] > [data-sf-modal-surface]:not([data-sf-modal-own-padding]) {
+    --sf-modal--body-outset: calc(var(--sf-space-1\/4) * -1);
+  }
+  [data-sf-modal-surface] [data-sf-modal-body-scroll] {
+    margin-left: var(--sf-modal--body-outset);
+    margin-right: var(--sf-modal--body-outset);
+    margin-inline: var(--sf-modal--body-outset);
+  }
+  /* A question window (sf-modal size="question", decision C39; ui-control
+     control/research/2026-11-09-modal-look.md, round 2, option 1). The steps
+     grow towards the answers: the frame --sf-space-3, the title --sf-space-1
+     above the content, the content's own steps (sf-confirm's window form:
+     --sf-space-2 to a field or a checkbox), --sf-space-3 to the answers.
+     The body scrolls inside a 1/4 inset that keeps its focus rings whole; that
+     inset is taken out of the frame and given to the header and the footer, so
+     the title, the content and the answers start on one line and the × stands
+     on the frame's corner. The width is the core's question step (C32 moves it
+     with the density); a page's width still wins. */
+  .sf-modal--size-question {
+    --sf-modal--question-block: var(--sf-modal-padding-block, var(--sf-space-3));
+    --sf-modal--question-inline: var(--sf-modal-padding-inline, var(--sf-space-3));
+  }
+  .sf-modal--size-question [data-sf-modal-panel] {
+    width: var(--sf-popup-question-width);
+    inline-size: var(--sf-popup-question-width);
+    width: var(--sf-popup-question-width);
+    width: var(--sf-modal-question-width, var(--sf-popup-question-width));
+    inline-size: var(--sf-modal-question-width, var(--sf-popup-question-width));
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
+  .sf-modal--size-question [data-sf-modal-surface] {
+    --sf-modal--padding-end: calc(var(--sf-modal--question-block) - var(--sf-space-1\/4));
+    --sf-modal-surface-padding: var(--sf-modal--question-block) calc(var(--sf-modal--question-inline) - var(--sf-space-1\/4)) var(--sf-modal--padding-end);
+    --sf-modal-surface-gap: calc(var(--sf-modal-gap, var(--sf-space-1)) - var(--sf-space-1\/4));
+  }
+  .sf-modal--size-question .sf-modal-header {
+    padding-left: var(--sf-space-1\/4);
+    padding-right: var(--sf-space-1\/4);
+    padding-inline: var(--sf-space-1\/4);
+  }
+  .sf-modal--size-question .sf-modal-header-content {
+    display: flex;
+    align-items: center;
+    min-height: var(--sf-ui-1\/3--control-height);
+    min-block-size: var(--sf-ui-1\/3--control-height);
+  }
+  .sf-modal--size-question [data-sf-modal-body] {
+    gap: calc(var(--sf-space-3) - var(--sf-space-1\/4));
+  }
+  .sf-modal--size-question .sf-modal-footer {
+    justify-content: flex-start;
+    padding-left: var(--sf-space-1\/4);
+    padding-right: var(--sf-space-1\/4);
+    padding-inline: var(--sf-space-1\/4);
+    padding-bottom: var(--sf-space-1\/4);
+    -webkit-padding-after: var(--sf-space-1\/4);
+            padding-block-end: var(--sf-space-1\/4);
+  }
+  /* A window's own title (decision C39 by dispatcher decision d, docs
+     pre-check 2026-11-10) stands on the close button's line, centred on it, as
+     a question window's does: the class window's title is the header's content,
+     sf-modal's is the one heading inside it. */
+  .sf-modal-header > .sf-modal-header-content.sf-modal-title,
+  .sf-modal-header > .sf-modal-header-content:has(> .sf-modal-title) {
+    display: flex;
+    align-items: center;
+    min-height: var(--sf-ui-1\/3--control-height);
+    min-block-size: var(--sf-ui-1\/3--control-height);
+  }
+  /* A long title breaks anywhere rather than widen the window. */
+  .sf-modal-title {
+    word-wrap: anywhere;
+  }
+  /* A question window's title (C39): C21's h4 step in bold, 20 on 28, where
+     every other window's title is the heading-3 step above (C44). Headings do
+     not follow density (dispatcher, pair next 2): the step is the heading
+     ladder's and the line the title ladder's, both the same in a compact
+     region, so a compact question keeps its title. Scoped to the question
+     size: a page-wide rule here outranked C44's and drew every window's title
+     at 20 (compact 16). */
+  .sf-modal--size-question .sf-modal-title {
+    font-size: var(--sf-heading-4--size);
+    line-height: var(--sf-title--height-6);
+    font-weight: var(--sf-font-weight-bold);
+  }
   @media (prefers-reduced-motion: reduce) {
     .sf-modal.animate [data-sf-modal-panel],
     .sf-modal [data-sf-modal-overlay] {
@@ -395,31 +619,31 @@
     left: var(--sf-modal-close-left);
     bottom: var(--sf-modal-close-bottom);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-close-button--inline-end{
     right: var(--sf-modal-close-right);
     right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-modal-close-button--inline-end{
     right: var(--sf-modal-close-right);
     right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
     }
   }
-  .sf-modal-close-button--inline-end:where(:dir(ltr)) {
+  .sf-modal-close-button--inline-end:where(:dir(ltr)){
     right: var(--sf-modal-close-right);
     right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-close-button--inline-end {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-close-button--inline-end{
     left: var(--sf-modal-close-right);
     left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-modal-close-button--inline-end {
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-modal-close-button--inline-end{
     left: var(--sf-modal-close-right);
     left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
     }
   }
-  .sf-modal-close-button--inline-end:where(:dir(rtl)) {
+  .sf-modal-close-button--inline-end:where(:dir(rtl)){
     left: var(--sf-modal-close-right);
     left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
@@ -437,31 +661,31 @@
     left: var(--sf-modal-hide-left);
     bottom: var(--sf-modal-hide-bottom);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-hide-button--inline-end{
     right: var(--sf-modal-hide-right);
     right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-modal-hide-button--inline-end{
     right: var(--sf-modal-hide-right);
     right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
     }
   }
-  .sf-modal-hide-button--inline-end:where(:dir(ltr)) {
+  .sf-modal-hide-button--inline-end:where(:dir(ltr)){
     right: var(--sf-modal-hide-right);
     right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-hide-button--inline-end {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-hide-button--inline-end{
     left: var(--sf-modal-hide-right);
     left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-modal-hide-button--inline-end {
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-modal-hide-button--inline-end{
     left: var(--sf-modal-hide-right);
     left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
     }
   }
-  .sf-modal-hide-button--inline-end:where(:dir(rtl)) {
+  .sf-modal-hide-button--inline-end:where(:dir(rtl)){
     left: var(--sf-modal-hide-right);
     left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }

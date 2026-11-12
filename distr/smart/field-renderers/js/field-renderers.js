@@ -626,6 +626,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
 /* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
+/* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
@@ -1099,7 +1100,7 @@ function renderColorCell(field, value) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-color size="1/2" appearance="plain" value=${String(hex)}
-                  label=${field.label || field.key || ''} disabled></sf-input-color>
+                  aria-label=${field.label || field.key || ''} disabled></sf-input-color>
     `;
 } // Reads what port 1.8.0 declares: `inherited` says a value comes from somewhere
 // else, `inheritedValue` says what it is. A view that drew the inherited colour as
@@ -1117,7 +1118,7 @@ function renderColorView(field, value) {
                 appearance="plain"
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                label=${field.label || field.key || ''}
+                aria-label=${field.label || field.key || ''}
                 disabled
         ></sf-input-color>
     `;
@@ -1136,7 +1137,7 @@ function renderColorEdit(field, value, host) {
                 swatches=${field.swatches ? String(field.swatches) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?clearable=${Boolean(inherited) || field.required !== true}
                 ?disabled=${field.readonly === true}
-                label=${field.label || field.key || ''}
+                aria-label=${field.label || field.key || ''}
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? '')}
         ></sf-input-color>
     `;
@@ -3014,11 +3015,26 @@ function dateText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   return defaultDateText(field, value, host) ?? viewText(field, value, null);
+} // The machine reading of a date (C40: every moment the Framework prints is a
+// time element): the record's own day and clock as written, «2026-11-15» or
+// «2026-11-15T10:30», with no zone, because the view never moves a record to
+// the reader's zone. That is also why the view is not sf-time, which reads a
+// moment in the reader's zone: a date near midnight would show another day.
+// '' when the value is no date.
+
+
+function dateTimeAttribute(field, value) {
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  if (!parts.known || !parts.date) return '';
+  const type = field?.propertyType || field?.type || field?.dataType;
+  return type === 'datetime' && parts.time ? `${parts.date}T${parts.time}` : parts.date;
 }
 
 function renderDateView(field, value, host) {
   const text = dateText(field, value, host);
-  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const datetime = dateTimeAttribute(field, value);
+  return datetime ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<time class="sf-field-view" datetime=${datetime}>${text}</time>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>`;
 }
 
 function renderBooleanView(field, value, host) {

@@ -121,34 +121,49 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .focus\:placeholder-disable:focus::-webkit-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:placeholder-disable:focus::-moz-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:placeholder-disable:focus:-ms-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:placeholder-disable:focus::-ms-input-placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:placeholder-disable:focus::placeholder {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:placeholder-on-disable:focus::-webkit-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:placeholder-on-disable:focus::-moz-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:placeholder-on-disable:focus:-ms-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:placeholder-on-disable:focus::-ms-input-placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:placeholder-on-disable:focus::placeholder {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:placeholder-on-surface-disabled:focus::-webkit-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:placeholder-on-surface-disabled:focus::-moz-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:placeholder-on-surface-disabled:focus:-ms-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:placeholder-on-surface-disabled:focus::-ms-input-placeholder {
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:placeholder-on-surface-disabled:focus::placeholder {
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:placeholder-primary:focus::-webkit-input-placeholder {
     color: var(--sf-primary);

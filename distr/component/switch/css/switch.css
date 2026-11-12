@@ -270,10 +270,10 @@
     --sf-switch-top--gap: var(--sf-space-1\/3);
   }
   .sf-switch.disabled:not(does-not-exist) .sf-switch-container {
-    --sf-switch-container--color: var(--sf-on-disable);
+    --sf-switch-container--color: var(--sf-on-surface-disabled);
   }
   .sf-switch:has(input:disabled) .sf-switch-container {
-    --sf-switch-container--color: var(--sf-on-disable);
+    --sf-switch-container--color: var(--sf-on-surface-disabled);
   }
   .sf-switch.sf-switch--size-1\/2 .sf-switch-description {
     --sf-switch-description--font-size: var(--sf-text-size-1\/3);
@@ -295,6 +295,10 @@
   }
   .sf-switch:has(input:checked):not(:has(input:disabled)) .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-switch-checked-background-color, var(--sf-primary));
+    /* The edge takes the fill: an on switch is one primary pill. The outline
+       drew a grey ring around the primary track (docs pre-check 2026-11-10
+       SW-05); a pointer over it still shows the hover edge below. */
+    --sf-switch-toggler--border-color: var(--sf-switch-checked-background-color, var(--sf-primary));
   }
   /* The track stands as tall as the line of its size, which is the rule the
      checkbox box already follows, so the mobile and the desktop ladder both come
@@ -406,29 +410,29 @@
     --sf-switch--gap: var(--sf-switch-gap, var(--sf-ui-2--text-space-x));
   }
   .sf-switch.disabled:not(does-not-exist) .sf-icon {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   .sf-switch:has(input:disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   .sf-switch.disabled:not(does-not-exist) .sf-switch-description {
-    --sf-switch-description--color: var(--sf-on-disable);
+    --sf-switch-description--color: var(--sf-on-surface-disabled);
   }
   .sf-switch:has(input:disabled) .sf-switch-description {
-    --sf-switch-description--color: var(--sf-on-disable);
+    --sf-switch-description--color: var(--sf-on-surface-disabled);
   }
   .sf-switch.disabled:not(does-not-exist) .sf-switch-inner {
-    --sf-switch-inner--background-color: var(--sf-on-disable);
+    --sf-switch-inner--background-color: var(--sf-on-surface-disabled);
   }
   .sf-switch:has(input:disabled) .sf-switch-inner {
-    --sf-switch-inner--background-color: var(--sf-on-disable);
+    --sf-switch-inner--background-color: var(--sf-on-surface-disabled);
   }
   /* utility-hint: justify-content/flex-start (.justify-start) */
   .sf-switch.disabled:not(does-not-exist) .sf-switch-toggler {
-    --sf-switch-toggler--border-color: var(--sf-outline-disable);
+    --sf-switch-toggler--border-color: var(--sf-outline-disabled);
   }
   .sf-switch:has(input:disabled) .sf-switch-toggler {
-    --sf-switch-toggler--border-color: var(--sf-outline-disable);
+    --sf-switch-toggler--border-color: var(--sf-outline-disabled);
   }
   .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);

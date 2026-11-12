@@ -52,6 +52,7 @@ function freezeModalContent(panel, focusPanel = false) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INITIAL_FOCUS: () => (/* binding */ INITIAL_FOCUS),
 /* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
@@ -158,32 +159,102 @@ function trapModalFocus(panel, event) {
     event.preventDefault();
     destination.focus();
   }
-} // The first focus of an opened window (decision C25): the element the page
-// marked with the standard `autofocus` attribute, as a native <dialog> does --
-// in a dangerous question, the safe answer («Отмена»), so a stray Enter or
-// Space only closes the window. A marked element that is not focusable itself
+} // The first focus of an opened window (decisions C25, C39), by name
+// (sf-modal initial-focus):
+//
+// - auto (the default): the element the page marked with the standard
+//   `autofocus` attribute, as a native <dialog> does; else, in a question
+//   window -- one whose answers hold a dangerous one (an sf-button with
+//   status="danger", its drawn .sf-button--danger, or an sf-confirm) -- its
+//   safe answer, «Отмена»; else the panel, as before. Only answers count: a red
+//   sf-badge or an error message in the body does not make a window a question;
+// - safe: the safe answer whenever there is one;
+// - first: the first control of the window's content (the header's buttons,
+//   the × among them, excluded);
+// - panel: the panel itself.
+//
+// The safe answer is the declining answer of an sf-confirm in the window
+// ([data-action="decline"]) or the page's own answer that closes the window
+// ([data-sf-modal-close], the header's × excluded): a stray Enter or Space then
+// only closes the question. An element that is not focusable itself
 // (sf-button, whose host is display: contents) hands the focus to its first
-// tab stop. Without a mark, or with one that cannot take the focus, the panel
-// takes it, as before. Answers the element that took it.
+// tab stop. Content drawn after the window opened -- an sf-button draws its
+// <button> on its own schedule, an sf-confirm its answers, either perhaps
+// while its script is still loading -- is waited for, frame by frame for up
+// to two seconds, while the focus is still on the panel; anything the person
+// does in between wins. Answers the element that took the focus.
 
 
-function focusModalInitial(panel) {
-  if (!panel) return null;
-  const marked = panel.querySelector('[autofocus]');
+const INITIAL_FOCUS = ['auto', 'safe', 'first', 'panel']; // status="error" on an sf-button is danger's dated alias (C13).
 
-  if (marked && !marked.closest('[inert]')) {
-    const target = marked.matches(FOCUSABLE_SELECTOR) && marked.tabIndex >= 0 && !marked.matches(':disabled') ? marked : getModalTabStops(marked)[0];
+const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm';
+const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button)';
 
-    if (target) {
-      target.focus({
-        preventScroll: true
-      });
-      if (panel.ownerDocument.activeElement === target) return target;
-    }
+function takesFocus(node) {
+  if (!node || node.closest('[inert]') || node.closest('[hidden]')) return null;
+  if (node.matches(FOCUSABLE_SELECTOR) && node.tabIndex >= 0 && !node.matches(':disabled')) return node;
+  return getModalTabStops(node)[0] || null;
+}
+
+function isDanger(node) {
+  return node.matches('sf-button[status="danger"], sf-button[status="error"], .sf-button--danger') || Boolean(node.querySelector('.sf-button--danger'));
+} // The element that takes the safe answer's focus, or null while there is none
+// (or it is not drawn yet).
+
+
+function safeAnswer(panel) {
+  for (const host of panel.querySelectorAll(SAFE_SELECTOR)) {
+    if (host.closest('[inert], [hidden]') || isDanger(host)) continue;
+    const target = takesFocus(host);
+    if (target) return target;
   }
 
-  panel.focus();
-  return panel;
+  return null;
+}
+
+function firstFocus(panel, mode) {
+  if (mode === 'panel') return panel;
+  if (mode === 'first') return getModalTabStops(panel).find(node => !node.closest('.sf-modal-header-action')) || panel;
+
+  if (mode === 'auto') {
+    const marked = panel.querySelector('[autofocus]');
+    if (marked && !marked.closest('[inert], [hidden]')) return takesFocus(marked) || panel;
+    if (!panel.querySelector(DANGER_SELECTOR)) return panel;
+  }
+
+  return safeAnswer(panel) || panel;
+}
+
+const WAIT_FOR_CONTENT_MS = 2000;
+
+function focusModalInitial(panel, mode = 'auto') {
+  if (!panel) return null;
+  const name = INITIAL_FOCUS.includes(mode) ? mode : 'auto';
+  const target = firstFocus(panel, name);
+  target.focus({
+    preventScroll: true
+  });
+  const doc = panel.ownerDocument;
+  if (doc.activeElement !== target && target !== panel) panel.focus({
+    preventScroll: true
+  });
+
+  if (target === panel && name !== 'panel') {
+    const view = doc.defaultView;
+    const until = (view?.performance?.now() ?? 0) + WAIT_FOR_CONTENT_MS;
+
+    const retry = () => {
+      if (doc.activeElement !== panel || !panel.isConnected) return;
+      const late = firstFocus(panel, name);
+      if (late !== panel) late.focus({
+        preventScroll: true
+      });else if (view.performance.now() < until) view.requestAnimationFrame(retry);
+    };
+
+    view?.requestAnimationFrame(retry);
+  }
+
+  return doc.activeElement === target ? target : panel;
 }
 
 
@@ -613,6 +684,92 @@ function createInlineSpinner({
 
 /***/ },
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "f98b7a216869"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -635,6 +792,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("be0bc1a67e65");
 /* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("93025a68d8ab");
 /* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("1373e294ec38");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -661,7 +819,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
  // A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
 // name came first and is read until the change journal retires it.
 
-const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]";
+const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]"; // Below the Framework's sm breakpoint (32rem) a question window is a bottom
+// sheet (decision C39): the answers stand under the thumb and the keyboard
+// does not cover them.
+// The step itself comes from core/js/breakpoints.js, the ladder the sheet
+// switches at.
+// The questions a window holds that a reopening puts again (sf-confirm's
+// answeredNo: it declined, or its decline is on its way and no outcome came).
+
+const QUESTIONS = "sf-confirm, sf-confirm-change";
+
 
  // sf-modal from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8, §19): the settings are attributes and properties made by
@@ -746,7 +913,14 @@ class SfModal extends ModalElement {
   static lockState = null; // Kept for code that reads it: the z-index comes from the one layer scale of
   // the core now (--sf-z-index-layer, whose default is this same 9000).
 
-  static baseZIndex = 9000;
+  static baseZIndex = 9000; // The page's children -- slotted and loose -- stay where the page wrote them
+  // until the window draws, and the drawing takes them out and places them in
+  // the same task (smart-base holdSlotNode, as sf-header-site): they were out
+  // of the document from the window's connection to its first drawing, and a
+  // page that found its sf-menu by id once sf-modal was defined got null on
+  // 20 of 20 loads (ui-control evidence 2026-11-11-modal-followups, item 3).
+
+  static holdsSlotNodesUntilDrawn = true;
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
@@ -855,9 +1029,67 @@ class SfModal extends ModalElement {
       this._modalId = this.getAttribute("modal-id") || this.id || (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this));
     }
 
+    this.watchPhone();
     super.connectedCallback();
     SfModal.registry.set(this.modalId, this);
     SfModal.bindGlobalEvents();
+  } // A question window follows the screen: a centred window on a wide one, a
+  // bottom sheet below sm. One listener per window, while it is in the page.
+
+
+  watchPhone() {
+    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_17__.breakpointMedia)("sm", {
+      below: true
+    });
+    if (!query || this._phoneQuery) return;
+    this._phoneQuery = query;
+
+    this._onPhoneChange = () => {
+      if (this.size === "question") this.requestComponentUpdate("phone");
+    };
+
+    query.addEventListener?.("change", this._onPhoneChange);
+  } // The position the window stands in: the page's, except that a question
+  // window left at the centre opens as a bottom sheet on a phone.
+
+
+  get shownPosition() {
+    const position = this.position;
+
+    if (this.size === "question" && position === "center" && this.display !== "inline" && this._phoneQuery?.matches) {
+      return "bottom";
+    }
+
+    return position;
+  } // A reopened window puts its question again: an sf-confirm in it that took
+  // the decline (Escape, «Отмена») with no outcome from the host would show
+  // its answers greyed (recipes gaps D4 follow-up, DEV 2026-11-10).
+  // A question still put starts afresh too: no name typed, nothing said
+  // (C39 acceptance D1).
+
+
+  reopenQuestions() {
+    const target = this._renderTarget;
+    if (!target?.querySelectorAll) return;
+
+    for (const question of target.querySelectorAll(QUESTIONS)) {
+      if (question.answeredNo) question.open?.();else question.clearRequire?.();
+    }
+  } // The window closes by its ×, the backdrop, Escape on the window or the
+  // host's close() while its own question (sf-confirm appearance="window")
+  // is still put: that is the decline, reported as «Отмена» is, so a host
+  // sees one outcome for every way out; and the typed name goes, so the next
+  // opening does not delete on one press (C39 acceptance D1, R069).
+
+
+  declineQuestions() {
+    const target = this._renderTarget;
+    if (!target?.querySelectorAll) return;
+
+    for (const question of target.querySelectorAll('sf-confirm[appearance="window"]')) {
+      if (question.shownState === "open" && !question.getProp?.("disabled")) question.cancel?.();
+      question.clearRequire?.();
+    }
   } // The old modal:* names keep their old detail (§16.20 split rows): the new
   // names carry data only (§8), the old ones also the element and its window.
 
@@ -881,16 +1113,23 @@ class SfModal extends ModalElement {
     super.captureSlotTemplates();
     if (!first) return;
     const loose = Array.from(this.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE // Static markup is a picture of the window, not its content (§5.4).
-    ? node.tagName.toLowerCase() !== "template" && !node.hasAttribute("data-sf-static") : node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "");
+    // A slotted child is the base's: while it is held (holdSlotNode) it
+    // is still here and is not loose content a second time.
+    ? node.tagName.toLowerCase() !== "template" && !node.hasAttribute("data-sf-static") && !node.hasAttribute("slot") : node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "");
     if (!loose.length) return;
     if (!this._liveSlotNodes.has("content")) this._liveSlotNodes.set("content", []);
 
-    this._liveSlotNodes.get("content").push(...loose);
+    this._liveSlotNodes.get("content").push(...loose); // Through the base's hold, as the slotted children go (smart-base.js
+    // holdSlotNode): left where the page wrote them until the first drawing
+    // (static holdsSlotNodesUntilDrawn).
 
-    loose.forEach(node => node.remove());
+
+    loose.forEach(node => this.holdSlotNode(node));
   }
 
   disconnectedCallback() {
+    this._phoneQuery?.removeEventListener?.("change", this._onPhoneChange);
+    this._phoneQuery = null;
     this.teardownModal();
     SfModal.registry.delete(this.modalId);
     super.disconnectedCallback();
@@ -1005,7 +1244,8 @@ class SfModal extends ModalElement {
       closeOnEsc: this.closeOnEsc,
       closeOnOverlay: this.closeOnOverlay,
       preserveScrollGap: this.preserveScrollGap,
-      position: this.position,
+      position: this.shownPosition,
+      size: this.size,
       mode: this.mode,
       display: this.display,
       src: this.src,
@@ -1146,6 +1386,9 @@ class SfModal extends ModalElement {
       rootId: this.id === this.modalId ? "" : this.modalId,
       open: this.renderOpenState,
       modalState: this.renderModalState,
+      // A question window opens as a bottom sheet on a phone (C39).
+      position: this.shownPosition,
+      size: this.size === "question" ? "question" : "auto",
       animate: this._animatePanel && this.display !== "inline",
       modalZIndex: this.modalZIndex,
       hide: this.minimizable,
@@ -1279,7 +1522,12 @@ class SfModal extends ModalElement {
       this.prepareRenderContainer(changedAttributes);
     }
 
-    this.drawInto(templateResult, this.resolveRenderTarget());
+    const target = this.resolveRenderTarget();
+    this.holdWindowUntilStyled(target); // The held children leave the host and are placed by the drawing in the
+    // same task, as the base's render does (releaseHeldSlotNodes).
+
+    this.releaseHeldSlotNodes();
+    this.drawInto(templateResult, target);
     this.afterRender(changedAttributes);
     this.runExternalHook("afterRender", {
       changedAttributes,
@@ -1287,6 +1535,24 @@ class SfModal extends ModalElement {
     });
     this.emitComponentEvent("after-render", {
       changedAttributes
+    });
+  } // The window drawn in its portal stays out of view until the sheets it
+  // draws with are applied (the base's holdPortalUntilStyled): under
+  // held-back sheets an open window painted for a moment as a card in the
+  // page flow, without its layer, scrim or x (DEV's acceptance 2026-11-11,
+  // N2). Once it shows, a window that opened in the meantime takes its first
+  // focus, which a hidden panel could not. An inline window draws in its
+  // host, where the page put it, and keeps what the base does for it.
+
+
+  holdWindowUntilStyled(target) {
+    if (this.display === "inline") return;
+    this.holdPortalUntilStyled(target, () => {
+      const root = this._root();
+
+      if (this._isOpen && this._modalState === "open" && root && !root.contains(document.activeElement)) {
+        this.focusFirst();
+      }
     });
   }
 
@@ -1322,7 +1588,30 @@ class SfModal extends ModalElement {
       except: ["--sf-modal-"]
     });
     this._renderTarget = this._portalRoot;
+    this.listenForAnswers(this._portalRoot);
     return this._portalRoot;
+  } // «Отмена» of the window's own question (sf-confirm appearance="window",
+  // decision C39) closes the window, as the window's × does: the question is
+  // the window. Read once the answer has gone through the page, so a host
+  // that refused it (cancelled the event) keeps the window and the question.
+
+
+  listenForAnswers(target) {
+    if (!target || this._answersTarget === target) return;
+    this._answersTarget?.removeEventListener("sf-confirm-answer", this._onAnswer);
+
+    this._onAnswer ??= event => {
+      const question = event.target;
+      if (event.detail?.accepted !== false || question?.getAttribute?.("appearance") !== "window") return;
+      queueMicrotask(() => {
+        if (!event.defaultPrevented && this._isOpen && this._modalState !== "closing") this.close({
+          reason: "cancelled"
+        });
+      });
+    };
+
+    target.addEventListener("sf-confirm-answer", this._onAnswer);
+    this._answersTarget = target;
   } // The box the modal is rendered into: the end of the body, above the page --
   // or, when the modal stands inside a [data-sf-overlay-container], the end of
   // that box, which then frames its backdrop and surface (contain: layout makes
@@ -1430,6 +1719,7 @@ class SfModal extends ModalElement {
     }
 
     this._isOpen = true;
+    this.reopenQuestions();
     this._closeReason = "";
     this._answer = null;
     this._inlineClosed = false;
@@ -1543,7 +1833,10 @@ class SfModal extends ModalElement {
     }
 
     this._modalState = "closing";
-    this._isOpen = false;
+    this._isOpen = false; // After the state: a host that closes the window from the answer's
+    // handler finds it closing already.
+
+    this.declineQuestions();
     this.requestComponentUpdate("close");
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
     this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(panel, SfModal.isTopModal(this));
@@ -1764,7 +2057,15 @@ class SfModal extends ModalElement {
 
     this.applyStackPosition(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
+    // the Loader leaves it until the window opens (its root is inert), and a
+    // page that waited for a tag in it before opening the window waited for
+    // ever (layer-stack.js startClosedLayerContent).
+
+    if (this.display !== "inline" && !this.openState && !this._closedContentStarted) {
+      this._closedContentStarted = true;
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.startClosedLayerContent)(() => this._root());
+    }
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
       this._hasAutoloaded = true;
@@ -1889,14 +2190,15 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       return;
-    } // The page's [autofocus] inside the window first -- the safe answer of a
-    // dangerous question (decision C25) -- else the panel, as before.
+    } // By initial-focus (decisions C25, C39): the page's [autofocus], else in
+    // a question window its safe answer («Отмена»), else the panel; or the
+    // safe answer, the first control or the panel when the page names one.
 
 
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
 
     if (panel) {
-      (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.focusModalInitial)(panel);
+      (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.focusModalInitial)(panel, this.initialFocus);
     }
   }
 
@@ -2266,7 +2568,10 @@ function overlayClasses(context) {
 }
 
 function renderModalTemplate(context) {
-  const isInline = context.display === 'inline';
+  const isInline = context.display === 'inline'; // A question window (size="question", decision C39): its own width, frame
+  // and title; see component/modal/scss/_css__modal_custom.scss.
+
+  const isQuestion = context.size === 'question';
   const hasRemoteContent = Boolean(context.src) && (context.mode === 'ajax' || context.mode === 'iframe');
   const showHeader = context.showHeader !== false;
   const hasHeaderSlot = context.hasHeaderContent; // A path id (standard 1.3.8 §7.1.1), not the modal id: two windows with
@@ -2284,7 +2589,7 @@ function renderModalTemplate(context) {
                 id=${context.rootId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 class=${joinClasses('sf-modal', `sf-modal--position-${context.position}`, // Legacy alias: the misspelt class the modal wrote before;
   // kept until contracts/changes/journal.json removes it.
-  `sf-modal--positon-${context.position}`, isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
+  `sf-modal--positon-${context.position}`, isQuestion && 'sf-modal--size-question', isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
                 style=${modalStyle}
                 role=${isInline ? 'region' : 'dialog'}
                 aria-modal=${isInline || context.minimized ? 'false' : 'true'}
@@ -2294,6 +2599,7 @@ function renderModalTemplate(context) {
                 aria-labelledby=${accessibleLabel ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : titleId}
                 data-sf-modal-id=${context.modalId}
                 data-sf-modal-position=${context.position}
+                data-sf-modal-size=${context.size || 'auto'}
                 data-sf-modal-fullscreen=${String(context.fullscreen)}
                 data-sf-modal-display=${context.display}
                 data-sf-modal-state=${isInline ? 'inline' : context.modalState}
@@ -2317,13 +2623,14 @@ function renderModalTemplate(context) {
                 <div
                         class=${joinClasses('sf-modal-surface flex flex-col', !isInline && 'sf-modal-surface--elevated', context.surfaceClass)}
                         style=${surfaceStyle}
+                        ?data-sf-modal-own-padding=${Boolean(context.surfacePadding)}
                         data-sf-modal-surface
                 >
                     ${showHeader ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                                 <header
                                         class=${joinClasses('sf-modal-header flex items-start min-w-0', context.headerClass)}
                                 >
-                                    <div class="sf-modal-header-content">${hasHeaderSlot ? context.headerContent : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h2 id=${titleId} class="title-3 m-0">${context.title}</h2>`}</div>
+                                    <div class="sf-modal-header-content">${hasHeaderSlot ? context.headerContent : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h2 id=${titleId} class="sf-modal-title m-0">${context.title}</h2>`}</div>
                                     ${context.hide && !isInline ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                                                 <button
                                                         type="button"
@@ -2460,7 +2767,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.5.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.7.0","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["auto","question"],"default":"auto","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

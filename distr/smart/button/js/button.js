@@ -1156,9 +1156,11 @@ function renderButtonTemplate(context) {
     if (leftIconContent) startContent = spinner(false);else if (rightIconContent) endContent = spinner(false);else overlayContent = spinner(true);
   }
 
-  const rootClasses = ['sf-button', `sf-button--size-${size}`, // ghost (C15) is drawn by the link class, the one the sheets and
-  // their consumers select; href, not the look, makes a link.
-  `sf-button--${(appearance || type) === 'ghost' ? 'link' : appearance || type}`, // One colour name, as the styles expect: the status when one is set, the
+  const rootClasses = ['sf-button', `sf-button--size-${size}`, // ghost (C15): the class is sf-button--ghost; sf-button--link, its
+  // former name, is written beside it until 2027-01-01 (journal
+  // class-button-link-to-ghost), so a page selector that reached it
+  // still does. href, not the look, makes a link.
+  `sf-button--${appearance || type}`, (appearance || type) === 'ghost' ? 'sf-button--link' : '', // One colour name, as the styles expect: the status when one is set, the
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
@@ -1239,6 +1241,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cycleItems: () => (/* binding */ cycleItems),
 /* harmony export */   cycleState: () => (/* binding */ cycleState),
 /* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
 /* harmony export */   nextTheme: () => (/* binding */ nextTheme),
 /* harmony export */   parseCycle: () => (/* binding */ parseCycle),
 /* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
@@ -1249,7 +1252,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
 /* harmony export */   themePreference: () => (/* binding */ themePreference),
 /* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
-/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
 /* harmony export */ });
 // One button, several values (docs review R039, owner decision D11d;
 // research ui-control control/research/2026-11-08-cycle-button.md).
@@ -1348,11 +1352,24 @@ const opposite = theme => theme === 'dark' ? 'light' : 'dark';
 function loader() {
   return globalThis.SF?.Loader;
 }
-/** The theme drawn now (light or dark), whatever the preference. */
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
 
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
 
 function visibleTheme() {
-  const theme = loader()?.theme;
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
   if (theme === 'dark' || theme === 'light') return theme;
   const root = globalThis.document?.documentElement;
   if (root?.classList?.contains('theme-dark')) return 'dark';
@@ -1470,6 +1487,19 @@ function warnCycleToggle(host, names) {
   globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
 }
 /**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
  * A person's press of a cycle: the next value, the change event and the
  * announcement. Answers true when it moved.
  */
@@ -1491,6 +1521,7 @@ function pressCycle(host, state) {
     host.__sfCycleExpect = value;
 
     if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
       host.__sfCycleAnnounce = false;
       host.__sfCyclePrevious = before;
       host.__sfCycleExpect = undefined;
@@ -1637,7 +1668,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.12.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.13.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

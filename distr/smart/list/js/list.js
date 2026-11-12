@@ -851,7 +851,15 @@ const SHAPES = new Set(["circle", "square"]); // The badge's tone is a word of t
 const TONES = new Set(["neutral", "info", "success", "warning", "error"]); // The largest count drawn as a number; a larger one reads «99+», as
 // sf-avatar's badge-cap does by default.
 
-const COUNT_CAP = 99;
+const COUNT_CAP = 99; // Below this many rem of the list's own width a row's badge and count stand
+// under its text (C47; the width the owner's prototype drew it at).
+
+const NARROW_REM = 20; // A wider list goes narrow too when a row's title would keep less than half
+// of the row's text column, or less than this many rem (C47 follow-up: a
+// long badge on a 366 px phone column left the title 55 px, «Порта…»).
+
+const TITLE_MIN_REM = 10;
+const NARROW = "data-sf-list-narrow";
 /**
  * The item's picture, or null: {image-url?, text?, shape?, icon?}. A sign
  * (icon without an image) is a glyph in the avatar's place -- a channel, an
@@ -1212,6 +1220,7 @@ class SfList extends ListElement {
     for (const item of rest) {
       let key;
       let heading;
+      let date = "";
 
       if (by === "day") {
         const moment = (0,_core_js_format_js__WEBPACK_IMPORTED_MODULE_2__.toDate)(item.date);
@@ -1223,7 +1232,9 @@ class SfList extends ListElement {
           now,
           capital: true,
           node: this
-        }) : this.sfWord("undated-text");
+        }) : this.sfWord("undated-text"); // Today and yesterday say the date beside the word (C40).
+
+        date = offset === 0 || offset === -1 ? moment.toISOString() : "";
       } else {
         key = `key:${item.group ?? ""}`;
 
@@ -1235,6 +1246,7 @@ class SfList extends ListElement {
       if (!groups.has(key)) groups.set(key, {
         key,
         heading,
+        date,
         items: []
       });
       groups.get(key).items.push(item);
@@ -1283,6 +1295,7 @@ class SfList extends ListElement {
       uid: this._uid,
       label: this.label,
       headingLevel: this.headingLevel,
+      stickyHeadings: this.stickyHeadings === true,
       size: this.size,
       noWrap: this.noWrap === true,
       sections: this.arranged(),
@@ -1322,11 +1335,21 @@ class SfList extends ListElement {
 
   template() {
     return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__.renderListTemplate)(this.templateContext());
+  } // The rows are drawn; the list's sheets may still be on their way. The
+  // width is watched from now (C47): when the sheet comes, the observer
+  // measures the frame before it is painted with it, so no frame of a
+  // squeezed title is shown first.
+
+
+  whenRenderedStylesReady(target) {
+    this.watchWidth();
+    return super.whenRenderedStylesReady(target);
   }
 
   afterRender(changed) {
     super.afterRender?.(changed);
-    this.watchEnd(); // The keys a row answers, said to assistive technology on the row itself
+    this.watchEnd();
+    this.watchWidth(); // The keys a row answers, said to assistive technology on the row itself
     // (sf-list-item draws the row; an attribute it does not bind stays).
 
     for (const row of this.rows()) {
@@ -1369,6 +1392,10 @@ class SfList extends ListElement {
 
   onDisconnected() {
     this.unwatchEnd();
+    this._widthObserver?.disconnect();
+    this._widthObserver = null;
+    this._widthFrame = null;
+    this._widthMetas = null;
     clearTimeout(this._dayTimer);
     this._dayTimer = 0;
     super.onDisconnected?.();
@@ -1384,6 +1411,121 @@ class SfList extends ListElement {
       this.watchDay();
       if (this.groupBy === "day") this.requestComponentUpdate("day");
     }, (0,_core_js_format_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)() + 1000);
+  } // A narrow list (owner decision C47, 2026-11-10): below 20rem of its own
+  // width the list marks its frame, and a row's badge and count go under
+  // its second line, at the text's start, so the title keeps the row's
+  // width and the badge stays whole. A wider list is narrow too when, laid
+  // out on one line, a row's title would keep less than half of the row's
+  // text column or less than 10rem (a long badge in a phone column). The
+  // list measures itself: no page breakpoint and no setting. A
+  // ResizeObserver, not a container query: an inline-size container takes
+  // no width from its rows, and a list in a shrink-to-fit place (a popover,
+  // an auto-width flex item) would fold to nothing. It watches the frame's
+  // width and every row's badge and count, and is started as soon as the
+  // rows are drawn, before the list's sheet is in: the observer reports
+  // before the frame is painted, so the frame painted with the sheet is
+  // already laid out narrow or wide. The mark is an attribute the template
+  // does not bind, so a redraw keeps it.
+  // 1.5.1: the frame's width is read from .sf-list__width, a box of no
+  // height across the frame, not from the frame. The narrow layout changes
+  // the frame's height; a frame observed itself then changed size inside the
+  // observer's own callback, at the shallowest depth it reports, and the
+  // browser raised «ResizeObserver loop completed with undelivered
+  // notifications» on every page with a narrow list. The width box keeps its
+  // size whatever the layout; the badges and counts sit deeper and are
+  // reported in the same frame.
+
+
+  watchWidth() {
+    const frame = this.querySelector(":scope > .sf-list__frame");
+    if (!frame) return;
+    const width = frame.querySelector(":scope > .sf-list__width") ?? frame;
+
+    if (this._widthFrame !== frame) {
+      this._widthObserver?.disconnect();
+      this._widthObserver = null;
+      this._widthFrame = frame;
+      this._widthMetas = new Set();
+      if (typeof ResizeObserver !== "function") return;
+      this._widthObserver = new ResizeObserver(() => {
+        this.watchMetas();
+        this.measureNarrow();
+      });
+
+      this._widthObserver.observe(width);
+    }
+
+    this.watchMetas();
+  } // The badges and counts drawn now are watched, the ones gone are let go:
+  // a row drawn later, or a badge whose sheet came late, measures again.
+
+
+  watchMetas() {
+    const observer = this._widthObserver;
+    const frame = this._widthFrame;
+    if (!observer || !frame) return;
+    const now = new Set(frame.querySelectorAll(".sf-list__row .sf-list__meta"));
+
+    for (const meta of this._widthMetas) {
+      if (!now.has(meta)) observer.unobserve(meta);
+    }
+
+    for (const meta of now) {
+      if (!this._widthMetas.has(meta)) observer.observe(meta);
+    }
+
+    this._widthMetas = now;
+  } // Narrow below 20rem of the frame's content width, or when a row's title
+  // would keep less than half of its text column (or 10rem) beside its
+  // badge and count. The one-line layout is measured with the mark taken
+  // off and put back in the same task, so nothing of it is painted and the
+  // answer does not depend on the layout it chooses.
+
+
+  measureNarrow() {
+    const frame = this._widthFrame;
+    if (!frame?.isConnected) return;
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const style = getComputedStyle(frame);
+    const width = frame.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+
+    if (!(width > 0)) {
+      frame.removeAttribute(NARROW);
+      return;
+    }
+
+    let narrow = width < NARROW_REM * rem;
+
+    if (!narrow) {
+      const was = frame.hasAttribute(NARROW);
+      if (was) frame.removeAttribute(NARROW);
+      narrow = [...frame.querySelectorAll(".sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty)")].some(meta => this.titleSqueezed(meta, rem));
+      if (was && !narrow) return;
+    }
+
+    frame.toggleAttribute(NARROW, narrow);
+  } // On one line: the title's room is what the badge and count leave of the
+  // text column, the row's gap before them kept (their own start padding is
+  // in their box).
+
+
+  titleSqueezed(meta, rem) {
+    const wrap = meta.parentElement;
+    const text = wrap?.querySelector(":scope > .sf-list-item-container");
+    if (!text) return false;
+    const wrapStyle = getComputedStyle(wrap);
+    const textStyle = getComputedStyle(text);
+    const rtl = wrapStyle.direction === "rtl";
+    const box = wrap.getBoundingClientRect();
+    const textBox = text.getBoundingClientRect();
+    const metaBox = meta.getBoundingClientRect();
+    const gap = parseFloat(wrapStyle.columnGap) || 0;
+    const inset = (parseFloat(textStyle.paddingLeft) || 0) + (parseFloat(textStyle.paddingRight) || 0);
+    const end = rtl ? box.left + (parseFloat(wrapStyle.borderLeftWidth) || 0) + (parseFloat(wrapStyle.paddingLeft) || 0) : box.right - (parseFloat(wrapStyle.borderRightWidth) || 0) - (parseFloat(wrapStyle.paddingRight) || 0);
+    const column = (rtl ? textBox.right - end : end - textBox.left) - inset;
+    const title = (rtl ? textBox.right - metaBox.right : metaBox.left - textBox.left) - gap - inset;
+    if (!(column > 0)) return false;
+    return title < Math.max(column / 2, TITLE_MIN_REM * rem);
   } // The end of the list asks for the next page when it comes within reach,
   // never from a scroll handler (core/js/reading-position.js watchEdge).
 
@@ -1554,6 +1696,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //
 // Grouped, the frame is a group named by the list's label and each group's
 // rows a list named by its heading; ungrouped, the one list takes the label.
+// A group's heading is block list's shared heading (.sf-group-heading, C40):
+// the words at the list's text size, medium; for today and yesterday the date
+// beside them in sf-time; sticky with sticky-headings.
 //
 // The rows are keyed by id, so a row that moves keeps its node and a redraw
 // does not take the focus from the row a person is on.
@@ -1722,6 +1867,7 @@ function renderListTemplate(context) {
              role=${context.grouped ? "group" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-label=${context.grouped ? context.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-busy=${context.loading ? "true" : "false"}>
+            <span class="sf-list__width" aria-hidden="true"></span>
             ${context.loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
                        <p class="sr-only" role="status">${context.loadingText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <div class="sf-list__body"
@@ -1731,12 +1877,17 @@ function renderListTemplate(context) {
                  @sf-list-item-open=${event => component.onRowOpen(event)}>
                 ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.sections, group => group.key, group => context.grouped ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <section class="sf-list__group" data-group=${group.key}>
-                            <div class="sf-list__heading" role="heading" aria-level=${context.headingLevel}
-                                 id=${`${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`}>${group.heading}</div>
+                            <div class=${`sf-group-heading sf-list__heading${context.size === "1" ? "" : ` sf-group-heading--size-${context.size}`}${context.stickyHeadings ? " sf-group-heading--sticky" : ""}`}
+                                 role="heading" aria-level=${context.headingLevel}
+                                 id=${`${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`}>${group.heading}${group.date ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-time class="sf-group-heading-date" format="date" tooltip="none" datetime=${group.date}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
                             ${rows(context, group.items, `${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`)}
                         </section>` : rows(context, group.items, null))}
             </div>
-            ${context.empty ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__empty">${context.emptyContent ?? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-empty-state kind="no-data" size="1/2" heading=${context.emptyHeading}></sf-empty-state>`}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.emptyContent // The page's own empty state stays in the document while the
+  // list has rows, hidden: a page that looks it up by id to give
+  // it its actions finds it whatever the list shows (ui-doc
+  // «Рецепты», 2026-11-10). The list's own is drawn only when empty.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__empty" ?hidden=${!context.empty}>${context.emptyContent}</div>` : context.empty ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__empty"><sf-empty-state kind="no-data" size="1/2" heading=${context.emptyHeading}></sf-empty-state></div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <div class="sf-list__next" ?hidden=${!context.showMore}>
                 <sf-button
                         appearance="ghost"
@@ -1815,7 +1966,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.3.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.5.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

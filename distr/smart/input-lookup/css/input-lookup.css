@@ -29,6 +29,9 @@
        control of the lookup's size, its avatar or text --sf-space-1/2 inside
        its highlight. Before R029 a row's text kept the field's axis. */
     --sf-lookup--row-height: var(--sf-ui-1--control-height);
+    /* The clear's box: the icon button's control at the step it is asked for
+       (templates/default.js CLEAR_SIZE). */
+    --sf-lookup--clear-box: var(--sf-ui-1\/3--control-height);
     --sf-lookup--row-padding-inline: var(--sf-space-1\/2);
     /* Wrapped chips: the rows stand far enough apart for sf-tag's remove targets
        (--sf-c2 square, centred on the line) to meet at most, whatever line the
@@ -51,6 +54,7 @@
     --sf-lookup--text-inset: var(--sf-ui-2--text-space-x);
     --sf-lookup--row-padding-block: var(--sf-ui-2--space-y-tightness-low);
     --sf-lookup--row-height: var(--sf-ui-2--control-height);
+    --sf-lookup--clear-box: var(--sf-ui-1\/2--control-height);
   }
   .sf-lookup.sf-lookup--size-1\/2 {
     --sf-lookup--font-size: var(--sf-text-size-1\/2);
@@ -224,21 +228,8 @@
     color: var(--sf-on-surface-variant);
     opacity: 1;
   }
-  .sf-lookup.sf-lookup--filled .sf-lookup-input::-webkit-input-placeholder {
-    color: var(--sf-on-surface);
-  }
-  .sf-lookup.sf-lookup--filled .sf-lookup-input::-moz-placeholder {
-    color: var(--sf-on-surface);
-  }
-  .sf-lookup.sf-lookup--filled .sf-lookup-input:-ms-input-placeholder {
-    color: var(--sf-on-surface);
-  }
-  .sf-lookup.sf-lookup--filled .sf-lookup-input::-ms-input-placeholder {
-    color: var(--sf-on-surface);
-  }
-  .sf-lookup.sf-lookup--filled .sf-lookup-input::placeholder {
-    color: var(--sf-on-surface);
-  }
+  /* A filled lookup keeps the placeholder on on-surface-variant, which the fill
+     remaps to on-surface-container--variant; only the value is on-surface (FA-08). */
   .sf-lookup .sf-lookup-input:disabled {
     color: inherit;
     cursor: default;
@@ -250,18 +241,21 @@
     max-width: 100%;
     max-inline-size: 100%;
   }
-  /* The clear button keeps to the text line, so a value never grows the field. */
-  .sf-lookup .sf-lookup-clear {
-    height: var(--sf-lookup--line-height);
-    block-size: var(--sf-lookup--line-height);
-    min-height: 0;
-    min-block-size: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-block: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-block: 0;
+  /* The clear is sf-button-close, plain (C14): the icon button's square box of
+     its step, the cross inside it (LK-08: it was the text line high and the
+     button's width wide, 28 by 24, 24 by 20 on a phone). A plain close draws no
+     spot, so the box is its target alone: it stands over the frame's block
+     padding by what it passes the text line, and a value never grows the field.
+     The host is display: contents; the box is the button. */
+  .sf-lookup .sf-lookup-frame > sf-button-close > .sf-lookup-clear {
+    margin-top: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+    margin-bottom: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+    margin-block: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+  }
+  .sf-lookup .sf-lookup-frame > sf-close > .sf-lookup-clear {
+    margin-top: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+    margin-bottom: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+    margin-block: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
   }
   /* The list: sf-dropdown's menu surface, in the top layer under the frame. */
   .sf-lookup .sf-lookup-panel {
@@ -279,17 +273,17 @@
     background-color: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
+    --sf-surface-place-ground: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -306,6 +300,29 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
     --sf-lookup--track: calc(2 * var(--sf-lookup--panel-padding) + var(--sf-space-1\/4));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-lookup .sf-lookup-panel {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-lookup .sf-lookup-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
+  .sf-lookup .sf-lookup-panel > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   .sf-lookup .sf-lookup-panel::-webkit-scrollbar {
     width: var(--sf-lookup--track);
@@ -389,6 +406,27 @@
     cursor: pointer;
     color: var(--sf-on-surface);
   }
+  /* A row with a caption (LK-05, owner decision C49 read literally, the
+     whole-lines rule): the one-line row plus the caption's line, its text as
+     far inside it as a one-line row's, (row - line) / 2: 60 = 8 + 24 + 20 + 8
+     at size 1 on a desktop, 48 = 6 + 20 + 16 + 6 at size 1/2, 72 at size 2, 52
+     on a phone. A one-line row keeps the row step (40 at size 1); the height is
+     the row's own, so no row changes height while the answers change. Before,
+     a caption row was 52 at size 1 (44 on a phone): 4 + 24 + 20 + 4. */
+  .sf-lookup .sf-lookup-option.sf-lookup-option--caption {
+    min-height: calc(var(--sf-lookup--row-height) + var(--sf-lookup--caption-height));
+    min-block-size: calc(var(--sf-lookup--row-height) + var(--sf-lookup--caption-height));
+  }
+  /* A row's picture is the field's text line, as the chip's on the field's line
+     is (the geometry standard: every picture of a size is its line; LK-06): 24
+     at size 1 on a desktop, 20 on a phone. It was a control a rung below, 32
+     (28), beside a chip's 20 (16). */
+  .sf-lookup .sf-lookup-option > .sf-lookup-option-avatar {
+    --sf-avatar--height: var(--sf-lookup--line-height);
+    --sf-avatar--width: var(--sf-lookup--line-height);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-lookup--line-height) / 2));
+    --sf-avatar--line-height: var(--sf-lookup--line-height);
+  }
   .sf-lookup .sf-lookup-option:hover {
     background-color: var(--sf-surface-transparent-hover);
   }
@@ -423,16 +461,6 @@
     font-size: var(--sf-lookup--caption-size);
     line-height: var(--sf-lookup--caption-height);
     color: var(--sf-on-surface-variant);
-  }
-  .sf-lookup .sf-lookup-option-check {
-    flex: none;
-    width: var(--sf-lookup--line-height);
-    inline-size: var(--sf-lookup--line-height);
-    height: var(--sf-lookup--line-height);
-    block-size: var(--sf-lookup--line-height);
-    font-size: var(--sf-lookup--line-height);
-    line-height: 1;
-    color: inherit;
   }
   /* One line under the rows: the hint, Searching..., Nothing found, the
      neutral unavailable line, the error, the refusal. */

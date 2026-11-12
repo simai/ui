@@ -25,10 +25,13 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .focus\:color-disable:focus {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .focus\:color-on-disable:focus {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .focus\:color-on-surface-disabled:focus {
+    color: var(--sf-on-surface-disabled);
   }
   .focus\:color-primary:focus {
     color: var(--sf-primary);

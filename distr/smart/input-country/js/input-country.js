@@ -64,7 +64,6 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 const COUNTRY_CODE_SELECTOR = '.sf-country-code';
 const COUNTRY_CODE_BOUND_FLAG = 'sfCountryCodeBound';
 const COUNTRY_ITEMS = Array.isArray(_data_countries_json__WEBPACK_IMPORTED_MODULE_3__?.items) ? _data_countries_json__WEBPACK_IMPORTED_MODULE_3__.items : [];
-let flagObserver = null;
 let countryId = 0;
 const countryGeneratedNames = new WeakMap();
 const countryResetDefaults = new WeakMap();
@@ -251,39 +250,19 @@ function loadFlagImage(img) {
   if (!src) return;
   img.src = src;
   img.dataset.loaded = '1';
-}
+} // A flag of the list is the browser's own lazy image: its address is set when
+// the row is built and `loading="lazy"` lets the browser fetch it when the row
+// comes near the view, a closed list (display: none) fetching nothing. The
+// field watched the rows with its own IntersectionObserver instead, and that
+// never answered inside a sandboxed frame (an opaque origin): every flag of
+// an open list stayed an empty image (docs pre-check 2026-11-10 CC-02).
+// lazy-flags off (eager-flags) asks for every flag at once.
 
-function getFlagObserver() {
-  if (flagObserver || !('IntersectionObserver' in window)) return flagObserver;
-  flagObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const img = entry.target;
-      loadFlagImage(img);
-      flagObserver?.unobserve?.(img);
-    });
-  }, {
-    rootMargin: '120px'
-  });
-  return flagObserver;
-}
 
 function observeFlagImage(img, lazy = true) {
   if (!img) return;
-
-  if (!lazy) {
-    loadFlagImage(img);
-    return;
-  }
-
-  const observer = getFlagObserver();
-
-  if (!observer) {
-    loadFlagImage(img);
-    return;
-  }
-
-  observer.observe(img);
+  img.loading = lazy ? 'lazy' : 'eager';
+  loadFlagImage(img);
 }
 
 function createFlagNode(country, config, lazy = true) {
@@ -559,7 +538,8 @@ function prefetchVisibleFlags(root) {
     list
   } = getNodes(root);
   if (!list) return;
-  list.querySelectorAll('img[data-flag-src]').forEach(img => observeFlagImage(img, true));
+  const lazy = root.__sfCountryConfig?.lazyFlags !== false;
+  list.querySelectorAll('img[data-flag-src]').forEach(img => observeFlagImage(img, lazy));
 } // Caps the scrolling rows at `visibleItems` real rows (default 8). The list is
 // a flex column while open, so when SF.Position limits the list to the free
 // viewport height the rows shrink and scroll instead of overflowing.
@@ -605,12 +585,18 @@ function bindCountryViewport(root) {
       });
       applyDropdownViewport(root); // Shared Framework geometry: below the field, flipped above when the
       // rows do not fit and there is more room, shifted inside the viewport.
+      // The height is the list's own: eight rows (the stylesheet and
+      // applyDropdownViewport), never the room left in the viewport. A frame
+      // that grows with its document is that room: a list that took it
+      // followed the frame and the frame followed the list -- 9.8k px in a
+      // documentation example, or squeezed to 16 px with no row in a frame
+      // that counts only the list's box (DEV acceptance 2026-11-11, CC-01).
 
       anchor = positioning().anchor(root, list, {
         side: 'block-end',
         align: 'start',
         matchWidth: true,
-        fitHeight: true,
+        fitHeight: false,
         onPosition: () => {
           const box = root.getBoundingClientRect();
           if (box.bottom <= 0 || box.top >= window.innerHeight) setOpenState(root, false);
@@ -1161,7 +1147,6 @@ function unbindCountryCode(root) {
   delete root.__sfCountryViewport; // Removed while open, it must not leave the mark raised for the whole page.
 
   (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__.holdOpenSurfaceMark)(root, false);
-  root.querySelectorAll('img[data-flag-src]').forEach(img => flagObserver?.unobserve(img));
 
   if (toggle && root.__sfCountryCodeToggleClick) {
     toggle.removeEventListener('click', root.__sfCountryCodeToggleClick);
@@ -1581,33 +1566,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -2423,16 +2452,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("5bb4aa3cb9d1");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1870676d0d14");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b847b178e9c4");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7aba30a6eb07");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("383ecf57640b");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5bb4aa3cb9d1");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("1870676d0d14");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b847b178e9c4");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("7aba30a6eb07");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("383ecf57640b");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -2450,14 +2482,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // host is the form control through ElementInternals. What stays here is
 // behaviour: the countries, the mask and the list, drawn by the class script.
 
-const CountryCodeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const CountryCodeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
 const COUNTRY_CODE_SELECTOR = '.sf-country-code';
 const COUNTRY_ITEMS = Array.isArray(_component_country_code_data_countries_json__WEBPACK_IMPORTED_MODULE_0__?.items) ? _component_country_code_data_countries_json__WEBPACK_IMPORTED_MODULE_0__.items : [];
@@ -2553,14 +2585,37 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
 
   get useMask() {
     return this.getBooleanAttr('use-mask', false);
+  } // Four settings are on by default. They were switched off by the string
+  // "false" (multi-country="false"), which is no HTML boolean; each has a
+  // presence form now, and the string form is read until 2027-01-01 (1.3.0,
+  // change journal attribute-input-country-presence-booleans).
+
+
+  _presenceOff(presence, former) {
+    if (this.hasAttribute(presence) && this.getBooleanAttr(presence, true)) return true;
+    if (!this.hasAttribute(former)) return false;
+    const on = this.getBooleanAttr(former, true);
+
+    if (!on) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+        component: 'sf-input-country',
+        kind: 'attribute',
+        from: `${former}="false"`,
+        to: presence,
+        since: '2026-11-11',
+        remove_after: '2027-01-01'
+      });
+    }
+
+    return !on;
   }
 
   get useCountryMasks() {
-    return this.getBooleanAttr('use-country-masks', true);
+    return !this._presenceOff('fixed-mask', 'use-country-masks');
   }
 
   get showCode() {
-    return this.getBooleanAttr('show-code', true);
+    return !this._presenceOff('hide-code', 'show-code');
   }
 
   get maskStyle() {
@@ -2568,7 +2623,7 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
   }
 
   get multiCountry() {
-    return this.getBooleanAttr('multi-country', true);
+    return !this._presenceOff('fixed-country', 'multi-country');
   }
 
   get iso2() {
@@ -2588,7 +2643,7 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
   }
 
   get lazyFlags() {
-    return this.getBooleanAttr('lazy-flags', true);
+    return !this._presenceOff('eager-flags', 'lazy-flags');
   }
 
   get showMaskPlaceholder() {
@@ -2622,6 +2677,10 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
       disabled: preserveDisabled ? !!root.querySelector('input')?.disabled || root.classList.contains('disabled') : this.disabled,
       countries: this.countries.length ? this.countries : (0,_component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__.normalizeCountriesList)(COUNTRY_ITEMS, this.locale, this.maxItems),
       locale: this.locale,
+      multiCountry: this.multiCountry,
+      useCountryMasks: this.useCountryMasks,
+      showCode: this.showCode,
+      lazyFlags: this.lazyFlags,
       maskStyle: this.maskStyle,
       iso2: this.iso2,
       flagBase: this.flagBase,
@@ -2667,7 +2726,7 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderCountryCodeTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderCountryCodeTemplate)(this.templateContext());
   }
 
   get state() {
@@ -2708,9 +2767,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // A flag of the list is the browser's own lazy image: the address is written
+// with the row, and the browser fetches it when the row comes near the view (a
+// closed list fetches nothing). The class script used to set the address only
+// when a press opened the list, so a list drawn open (open) kept empty images
+// (docs pre-check 2026-11-10 CC-02). eager-flags asks for every flag at once.
 
-
-function flagTemplate(country, flagBase = '') {
+function flagTemplate(country, flagBase = '', lazy = true) {
   const iso2 = String(country?.iso2 || '').trim().toLowerCase();
   const fallback = country?.flagEmoji || '';
   const src = iso2 && flagBase ? `${flagBase}/${iso2}.svg` : '';
@@ -2723,8 +2786,10 @@ function flagTemplate(country, flagBase = '') {
     <img
       alt=${country?.iso2 ? `${country.iso2} flag` : 'flag'}
       decoding="async"
-      loading="lazy"
+      loading=${lazy ? 'lazy' : 'eager'}
+      src=${src}
       data-flag-src=${src}
+      data-loaded="1"
       data-flag-fallback=${fallback}
     />
   `;
@@ -2818,7 +2883,7 @@ function renderCountryCodeTemplate(context) {
                       data-mask-pattern=${country.maskPattern || ''}
                     >
                       <div class="sf-country-code-flag" aria-hidden="true">
-                        ${flagTemplate(country, flagBase)}
+                        ${flagTemplate(country, flagBase, lazyFlags !== false)}
                       </div>
                       <span>
                         ${country.label || `${locale === 'en' ? country.nameEn : country.nameRu || country.nameEn} (${country.dialCode || country.code || ''})`}
@@ -2911,14 +2976,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-country-code":["display/flex (.f
 /***/ "b847b178e9c4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"form","to":null,"kind":"attribute","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§17.1","note":"stays a host attribute: the browser associates a form-associated element with the form it names; no shim"},{"from":"sf-country-code","to":"sf-input-country","kind":"tag","component":"sf-input-country","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-country; sf-country-code is a subclass defined beside it until the date"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"form","to":null,"kind":"attribute","component":"sf-input-country","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§17.1","note":"stays a host attribute: the browser associates a form-associated element with the form it names; no shim"},{"from":"sf-country-code","to":"sf-input-country","kind":"tag","component":"sf-input-country","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-country; sf-country-code is a subclass defined beside it until the date"},{"from":"multi-country=\\"false\\"","to":"fixed-country","kind":"attribute","component":"sf-input-country","since":"2026-11-11","remove_after":"2027-01-01","mode":"manifest-only","section":"§4.2, change journal attribute-input-country-presence-booleans","note":"the string form switches the default-on multi-country off; the element reads it itself until the date (no shim: the value is inverted, not renamed)","shim":"none"},{"from":"use-country-masks=\\"false\\"","to":"fixed-mask","kind":"attribute","component":"sf-input-country","since":"2026-11-11","remove_after":"2027-01-01","mode":"manifest-only","section":"§4.2, change journal attribute-input-country-presence-booleans","note":"the string form switches the default-on use-country-masks off; the element reads it itself until the date (no shim: the value is inverted, not renamed)","shim":"none"},{"from":"show-code=\\"false\\"","to":"hide-code","kind":"attribute","component":"sf-input-country","since":"2026-11-11","remove_after":"2027-01-01","mode":"manifest-only","section":"§4.2, change journal attribute-input-country-presence-booleans","note":"the string form switches the default-on show-code off; the element reads it itself until the date (no shim: the value is inverted, not renamed)","shim":"none"},{"from":"lazy-flags=\\"false\\"","to":"eager-flags","kind":"attribute","component":"sf-input-country","since":"2026-11-11","remove_after":"2027-01-01","mode":"manifest-only","section":"§4.2, change journal attribute-input-country-presence-booleans","note":"the string form switches the default-on lazy-flags off; the element reads it itself until the date (no shim: the value is inverted, not renamed)","shim":"none"}]}');
 
 /***/ },
 
 /***/ "1870676d0d14"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"show-code":{"type":"boolean","default":true},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

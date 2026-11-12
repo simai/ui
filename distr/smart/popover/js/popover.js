@@ -405,18 +405,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("18fc6da7e766");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fcb18992f3bb");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d8578a2cb338");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0f5fc1613e82");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("947fffd789ac");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("18fc6da7e766");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("fcb18992f3bb");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d8578a2cb338");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0f5fc1613e82");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("947fffd789ac");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
+
 
 
 
@@ -431,15 +434,46 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // §3, §4, §8, §19): placement, label, width, dismissible, surface-role and the
 // value open are attributes and properties made by core/js/element-manifest.js;
 // the old host attribute role is a dated alias of surface-role.
+// The one anchored-positioning contract of the Framework's floating surfaces
+// (core/js/position.js): the page's published copy when there is one.
 
-const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default()); // Where the surface hangs from, as the shared helper's side and alignment.
+
+
+const ANCHOR_PLACEMENTS = {
+  'bottom-start': {
+    side: 'block-end',
+    align: 'start'
+  },
+  'bottom-end': {
+    side: 'block-end',
+    align: 'end'
+  },
+  'top-start': {
+    side: 'block-start',
+    align: 'start'
+  },
+  'top-end': {
+    side: 'block-start',
+    align: 'end'
+  },
+  'inline-end': {
+    side: 'inline-end',
+    align: 'start'
+  },
+  'inline-start': {
+    side: 'inline-start',
+    align: 'start'
+  }
+};
+const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 }); // A surface anchored to a control the consumer supplies: a field's settings, a
 // list of things to add, a filter, a colour picker's own panel. It exists
 // because the Framework had the surface and not the behaviour -- sf-context-menu
@@ -497,8 +531,8 @@ class SfPopover extends PopoverElement {
       attribute: 'role',
       from: 'role',
       to: 'surface-role',
-      since: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.since,
-      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.remove_after
+      since: _aliases_json__WEBPACK_IMPORTED_MODULE_9__.since,
+      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_9__.remove_after
     });
   } // The host is a box rather than a passthrough: the surface is positioned
   // against it and the trigger sits inside it. The base makes every Smart
@@ -547,6 +581,10 @@ class SfPopover extends PopoverElement {
   };
 
   onDisconnected() {
+    this._watchSheet(null);
+
+    this._releaseAnchor();
+
     this.removeEventListener('click', this._onTriggerClick);
 
     this._releaseDismissal();
@@ -704,7 +742,72 @@ class SfPopover extends PopoverElement {
     surface.style.setProperty('--sf-popover--width', this.width || ''); // The gap to the trigger (#69), a margin on the trigger's side.
 
     if (this.offset) surface.style.setProperty('--sf-popover--offset', this.offset);else surface.style.removeProperty('--sf-popover--offset');
+
+    this._syncAnchor(surface);
+
     return true;
+  } // An open surface is kept on screen as every other floating surface is
+  // (core/js/position.js): it hangs from the corner its placement names and
+  // moves along the trigger's edge, or to the other side, when the window has
+  // no room for it there. Placed by the stylesheet alone, a panel wider than
+  // the room beside a trigger at the window's edge ran off it (ui-doc
+  // «Рецепты», «Уведомления», 2026-11-10: 320px from a bell 60px from the
+  // edge of a 400px window ended 260px past it). It stays where it stands in
+  // the stacking order (no top layer): a window or a drawer opened from it is
+  // still drawn over it. Closed, the stylesheet's placement is back.
+  //
+  // A surface a consumer draws as a sheet (data-sf-sheet: sf-input-rich's
+  // link editor on a phone, C32 RT-02) is placed by that consumer's sheet
+  // rule, so it is not anchored: the inline placement would hold it at the
+  // trigger (it hung at the top of a 390 screen). The attribute can arrive
+  // after the surface opened, so it is watched while the surface is open.
+
+
+  _syncAnchor(surface) {
+    this._watchSheet(this.open && surface?.isConnected ? surface : null);
+
+    const sheet = surface?.hasAttribute?.('data-sf-sheet');
+    const want = this.open && surface?.isConnected && !sheet ? `${this.placement}|${this.offset || ''}` : null;
+    if (this._anchor && (this._anchorSurface !== surface || this._anchorKey !== want)) this._releaseAnchor();
+    if (!want || this._anchor) return;
+    const {
+      side,
+      align
+    } = ANCHOR_PLACEMENTS[this.placement] || ANCHOR_PLACEMENTS['bottom-end'];
+    this._anchor = positioning().anchor(this, surface, {
+      side,
+      align,
+      offset: this.offset || 0,
+      flip: true,
+      shift: true,
+      fitHeight: false,
+      topLayer: false
+    });
+    this._anchorSurface = surface;
+    this._anchorKey = want;
+  }
+
+  _watchSheet(surface) {
+    if (this._sheetWatch?.surface === surface) return;
+    this._sheetWatch?.observer.disconnect();
+    this._sheetWatch = null;
+    if (!surface || typeof MutationObserver !== 'function') return;
+    const observer = new MutationObserver(() => this._syncAnchor(surface));
+    observer.observe(surface, {
+      attributes: true,
+      attributeFilter: ['data-sf-sheet']
+    });
+    this._sheetWatch = {
+      surface,
+      observer
+    };
+  }
+
+  _releaseAnchor() {
+    this._anchor?.stop();
+    this._anchor = null;
+    this._anchorSurface = null;
+    this._anchorKey = null;
   }
 
   templateContext() {
@@ -714,7 +817,7 @@ class SfPopover extends PopoverElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderPopoverTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderPopoverTemplate)(this.templateContext());
   }
 
 }
@@ -806,6 +909,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "116963e5e31b"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("position", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("position", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
@@ -823,7 +933,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.4.5","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.5.0","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 

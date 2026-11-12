@@ -630,9 +630,7 @@ const ICONS = {
   error: 'error',
   warning: 'warning',
   info: 'info'
-}; // Within a day a time reads «5 минут назад»; older, as a date and a time.
-
-const RELATIVE_SPAN = 86400000;
+};
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 /** An item's level: error, warning or info; the former danger is read as error (noted once), anything else as info. */
@@ -827,21 +825,6 @@ class SfAlertBar extends AlertBarElement {
 
   spoken(item) {
     return `${this.sfWord(`level-${item.level}`)}: ${item.text}`;
-  } // A time as a person reads it: «5 минут назад» within a day, else a date
-  // and a time, in the page language.
-
-
-  timeText(item) {
-    if (!item.time) return '';
-    const now = Date.now();
-    return Math.abs(now - item.at) < RELATIVE_SPAN ? (0,_core_js_format__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime)(item.time, {
-      node: this,
-      now: new Date(now)
-    }) : (0,_core_js_format__WEBPACK_IMPORTED_MODULE_2__.formatDate)(item.time, {
-      date: 'medium',
-      time: 'short',
-      node: this
-    });
   } // ---------------------------------------------------------------- presses
 
 
@@ -992,7 +975,6 @@ class SfAlertBar extends AlertBarElement {
       size: this.size === '1' ? '1' : '1/2',
       label: this.label,
       list: list.map(item => ({ ...item,
-        timeText: this.timeText(item),
         levelWord: word(`level-${item.level}`)
       })),
       count,
@@ -1078,11 +1060,14 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // the close glyph on an icon button, not kind="close": the drawn close mark
 // is 30 px at rung 1/2 on a phone where the rung's control is 28 px.
 
-const icon = (name, extra = '') => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${['sf-icon', 'sf-alert-bar-icon', extra].filter(Boolean).join(' ')} aria-hidden="true">${name}</i>`;
+const icon = (name, extra = '') => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${['sf-icon', 'sf-alert-bar-icon', extra].filter(Boolean).join(' ')} aria-hidden="true">${name}</i>`; // The time is sf-time (C40): relative within a day (threshold P1D, as 1.x
+// read it), else sf-time's auto («вчера, 19:40», «5 ноября»), the full
+// moment in its tooltip.
+
 
 function meta(item, extra = '') {
-  if (!item.source && !item.timeText) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-alert-bar-meta', extra].filter(Boolean).join(' ')}>${item.source}${item.source && item.timeText ? ' · ' : ''}${item.timeText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<time datetime=${item.time}>${item.timeText}</time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+  if (!item.source && !item.time) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-alert-bar-meta', extra].filter(Boolean).join(' ')}>${item.source}${item.source && item.time ? ' · ' : ''}${item.time ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-alert-bar-time" datetime=${item.time} threshold="P1D"></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
 }
 
 function actionLink(context, item, appearance) {
@@ -1259,7 +1244,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "677c9e2dc7c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.3.3","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["error","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-error-background-color":{"type":"color","state":"default"},"--sf-alert-bar-warning-background-color":{"type":"color","state":"default"},"--sf-alert-bar-info-background-color":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background-color":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.4.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["error","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-error-background-color":{"type":"color","state":"default"},"--sf-alert-bar-warning-background-color":{"type":"color","state":"default"},"--sf-alert-bar-info-background-color":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background-color":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

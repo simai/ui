@@ -494,12 +494,12 @@
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):hover .sf-thumb-handle {
     background-color: var(--sf-primary-hover);
     background-color: var(--sf-thumb-handle--hover-background-color, var(--sf-primary-hover));
-    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-state-select), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-state-select), var(--sf-shadow-raised);
   }
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):active .sf-thumb-handle {
-    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-state-active), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-state-active), var(--sf-shadow-raised);
   }
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):hover .sf-thumb-inner {
     height: 75%;
@@ -508,14 +508,14 @@
     width: var(--sf-thumb-inner--width, 75%);
   }
   .sf-range-slider[disabled] .sf-thumb-handle {
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-place);
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
+    background: linear-gradient(var(--sf-on-surface-disabled), var(--sf-on-surface-disabled)) var(--sf-surface-place);
+    background: linear-gradient(var(--sf-on-surface-disabled), var(--sf-on-surface-disabled)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
     box-shadow: 0 0 0 0px var(--sf-surface-place);
     box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
   }
   .sf-range-slider.disabled .sf-thumb-handle {
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-place);
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
+    background: linear-gradient(var(--sf-on-surface-disabled), var(--sf-on-surface-disabled)) var(--sf-surface-place);
+    background: linear-gradient(var(--sf-on-surface-disabled), var(--sf-on-surface-disabled)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
     box-shadow: 0 0 0 0px var(--sf-surface-place);
     box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
   }
@@ -820,9 +820,9 @@
     height: var(--sf-range-slider-track--height, var(--sf-a4));
   }
   .sf-range-slider[disabled] .sf-range-slider-progress-line {
-    background-color: var(--sf-disable);
+    background-color: var(--sf-surface-disabled);
   }
   .sf-range-slider.disabled .sf-range-slider-progress-line {
-    background-color: var(--sf-disable);
+    background-color: var(--sf-surface-disabled);
   }
 }

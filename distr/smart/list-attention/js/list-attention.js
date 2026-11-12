@@ -11,6 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cycleItems: () => (/* binding */ cycleItems),
 /* harmony export */   cycleState: () => (/* binding */ cycleState),
 /* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
 /* harmony export */   nextTheme: () => (/* binding */ nextTheme),
 /* harmony export */   parseCycle: () => (/* binding */ parseCycle),
 /* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
@@ -21,7 +22,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
 /* harmony export */   themePreference: () => (/* binding */ themePreference),
 /* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
-/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
 /* harmony export */ });
 // One button, several values (docs review R039, owner decision D11d;
 // research ui-control control/research/2026-11-08-cycle-button.md).
@@ -120,11 +122,24 @@ const opposite = theme => theme === 'dark' ? 'light' : 'dark';
 function loader() {
   return globalThis.SF?.Loader;
 }
-/** The theme drawn now (light or dark), whatever the preference. */
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
 
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
 
 function visibleTheme() {
-  const theme = loader()?.theme;
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
   if (theme === 'dark' || theme === 'light') return theme;
   const root = globalThis.document?.documentElement;
   if (root?.classList?.contains('theme-dark')) return 'dark';
@@ -242,6 +257,19 @@ function warnCycleToggle(host, names) {
   globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
 }
 /**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
  * A person's press of a cycle: the next value, the change event and the
  * announcement. Answers true when it moved.
  */
@@ -263,6 +291,7 @@ function pressCycle(host, state) {
     host.__sfCycleExpect = value;
 
     if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
       host.__sfCycleAnnounce = false;
       host.__sfCyclePrevious = before;
       host.__sfCycleExpect = undefined;
@@ -637,7 +666,10 @@ function normalizePassed(value) {
       text: text(item.text)
     };
   }).filter(item => item && item.title);
-}
+} // The narrow column's parts (C45): the summary as a line of text, the quiet
+// line's two lines and its icon recheck.
+
+const NARROW_PARTS = ['.sf-list-attention-summary-line', '.sf-list-attention-quiet-title', '.sf-list-attention-quiet-meta', '.sf-list-attention-recheck--narrow'].join(', ');
 const ListAttentionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
@@ -920,10 +952,68 @@ class SfListAttention extends ListAttentionElement {
 
   shownIds() {
     return [...this.querySelectorAll('.sf-list-attention-item[data-id]')].map(row => row.dataset.id);
+  } // Both forms of the head and of the quiet line are drawn and the sheet's
+  // container query shows one (C45). Until the sheet is in, the narrow
+  // column's parts are hidden, so a late sheet shows one form, not both. A
+  // ResizeObserver on the drawing finds the sheet: it reports before the
+  // frame is painted with it, and the parts are shown in that same frame.
+
+
+  whenRenderedStylesReady(target) {
+    this.holdNarrowParts();
+    return super.whenRenderedStylesReady(target);
+  }
+
+  sheetIn(root) {
+    return getComputedStyle(root).containerType === 'inline-size';
+  }
+
+  holdNarrowParts() {
+    const root = this.querySelector(':scope > .sf-list-attention');
+    if (!root || this._sheetSeen) return;
+
+    if (this.sheetIn(root)) {
+      this.releaseNarrowParts();
+      return;
+    }
+
+    for (const part of this.querySelectorAll(NARROW_PARTS)) part.hidden = true;
+
+    if (typeof ResizeObserver !== 'function' || this._sheetWatch?.root === root) return;
+    this._sheetWatch?.observer.disconnect();
+    const observer = new ResizeObserver(() => {
+      if (root.isConnected && this.sheetIn(root)) this.releaseNarrowParts();
+    });
+    this._sheetWatch = {
+      root,
+      observer
+    };
+    observer.observe(root);
+    if (root.firstElementChild) observer.observe(root.firstElementChild);
+  }
+
+  releaseNarrowParts() {
+    this._sheetSeen = true;
+    this._sheetWatch?.observer.disconnect();
+    this._sheetWatch = null;
+
+    for (const part of this.querySelectorAll(NARROW_PARTS)) part.hidden = false;
+  }
+
+  onDisconnected() {
+    this._sheetWatch?.observer.disconnect();
+    this._sheetWatch = null;
+    super.onDisconnected?.();
   }
 
   afterRender(changed) {
-    super.afterRender?.(changed);
+    super.afterRender?.(changed); // The sheet gate let go (in, or its time ran out): the parts are shown.
+
+    if (!this._sheetSeen) {
+      const root = this.querySelector(':scope > .sf-list-attention');
+      if (root && this.sheetIn(root)) this.releaseNarrowParts();
+    }
+
     if (this._focusAfter === null) return;
     const target = this._focusAfter;
     this._focusAfter = null; // After the menu gives the focus back to its (now gone) anchor.
@@ -1058,7 +1148,12 @@ class SfListAttention extends ListAttentionElement {
           count: counts[one]
         })
       })),
+      // The same summary as one line of text, for a narrow column (C45).
+      summaryLine: STATUSES.filter(one => counts[one]).map(one => this.sfWord(`summary-${one}`, {
+        count: counts[one]
+      })).join(' · '),
       empty: this.empty === 'none' ? 'none' : 'line',
+      quietTitle: this.emptyText,
       emptyLine: checked ? this.sfWord('empty-checked-text', {
         vars: {
           text: this.emptyText,
@@ -1135,6 +1230,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // - group="severity": disclosure groups by severity, «Пройдено» closed.
 // - With no items: nothing (empty none) or the head and one quiet line
 //   «Всё в порядке · проверено …» (empty line, the default).
+// - A narrow column (C45, below 30rem of the list): the summary is one line
+//   of text under the heading, «2 ошибки · 1 предупреждение», instead of the
+//   badges; the quiet line two lines with an icon recheck. Both forms are in
+//   the markup and the container query shows one.
 
 const icon = (name, extra = '') => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${['sf-icon', 'sf-icon--filled', 'sf-list-attention-icon', extra].filter(Boolean).join(' ')} aria-hidden="true">${name}</i>`;
 
@@ -1217,7 +1316,7 @@ function group(context, one, body) {
 
 function checked(context) {
   if (!context.checked) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-attention-checked">${context.checkedLine}<sf-button-icon class="sf-list-attention-recheck" size="1/2"
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-attention-checked"><span class="sf-list-attention-checked-text">${context.checkedLine}</span><sf-button-icon class="sf-list-attention-recheck" size="1/2"
     appearance="ghost" scheme="on-surface-variant" icon="refresh" aria-label=${context.recheckLabel}
     @click=${() => context.component.onRecheck()}></sf-button-icon></span>`;
 }
@@ -1230,7 +1329,7 @@ function head(context, withSummary) {
     ${withSummary && context.badges.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-attention-summary">${context.badges.map(one => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge
       class="sf-list-attention-badge" size="1/3" appearance="tonal" icon-start=${one.icon}
       status=${one.status === 'info' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : one.status} scheme=${one.status === 'info' ? 'neutral' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      text=${one.text}></sf-badge>`)}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      text=${one.text}></sf-badge>`)}</span><span class="sf-list-attention-summary-line">${context.summaryLine}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.grouped ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-attention-spacer"></span>${checked(context)}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
 }
@@ -1257,9 +1356,14 @@ function renderListAttentionTemplate(context) {
   const density = context.compact ? 'compact' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
   if (count === 0) {
-    if (empty !== 'line') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-    const quiet = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-attention-quiet" role="status">${icon('check_circle', 'sf-list-attention-icon--success')}<span class="sf-list-attention-quiet-text">${context.emptyLine}</span>${context.checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-list-attention-recheck-text" size="1/2" appearance="ghost" scheme="on-surface-variant" icon-start="refresh"
-        text=${context.recheckLabel} @click=${() => context.component.onRecheck()}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
+    if (empty !== 'line') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // One line «Всё в порядке · проверено …» with a text recheck; in a
+    // narrow column (C45) two lines, «Всё в порядке» over «Проверено …», and
+    // the recheck an icon. Both are drawn; the container shows one.
+
+    const quiet = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-attention-quiet" role="status">${icon('check_circle', 'sf-list-attention-icon--success')}<span class="sf-list-attention-quiet-text"><span class="sf-list-attention-quiet-line">${context.emptyLine}</span><span class="sf-list-attention-quiet-title">${context.quietTitle}</span>${context.checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-attention-quiet-meta">${context.checkedLine}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>${context.checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-list-attention-recheck-text" size="1/2" appearance="ghost" scheme="on-surface-variant" icon-start="refresh"
+        text=${context.recheckLabel} @click=${() => context.component.onRecheck()}></sf-button><sf-button-icon class="sf-list-attention-recheck sf-list-attention-recheck--narrow" size="1/2"
+        appearance="ghost" scheme="on-surface-variant" icon="refresh" aria-label=${context.recheckLabel}
+        @click=${() => context.component.onRecheck()}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
 
     if (frame === 'none') {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-sf-density=${density}>${quiet}</div>`;
@@ -1342,7 +1446,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "565cca359e31"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.2.2","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.3.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

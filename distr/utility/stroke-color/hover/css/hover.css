@@ -16,21 +16,21 @@
     stroke: var(--sf-outline-variant);
   }
   .hover\:stroke-primary:hover {
-    stroke: var(--sf-outline-primary);
+    stroke: var(--sf-primary-outline);
   }
   .hover\:stroke-secondary:hover {
-    stroke: var(--sf-outline-secondary);
+    stroke: var(--sf-secondary-outline);
   }
   .hover\:stroke-tertiary:hover {
-    stroke: var(--sf-outline-tertiary);
+    stroke: var(--sf-tertiary-outline);
   }
   .hover\:stroke-error:hover {
-    stroke: var(--sf-outline-error);
+    stroke: var(--sf-error-outline);
   }
   .hover\:stroke-warning:hover {
-    stroke: var(--sf-outline-warning);
+    stroke: var(--sf-warning-outline);
   }
   .hover\:stroke-success:hover {
-    stroke: var(--sf-outline-success);
+    stroke: var(--sf-success-outline);
   }
 }

@@ -10,7 +10,10 @@
     --sf-stripe--color: var(--sf-inherit);
   }
   .stripe-surface-transparent-overlay {
-    --sf-stripe--color: var(--sf-surface-transparent-overlay);
+    --sf-stripe--color: var(--sf-surface-container-strong);
+  }
+  .stripe-surface-container-strong {
+    --sf-stripe--color: var(--sf-surface-container-strong);
   }
   .stripe-on-surface {
     --sf-stripe--color: var(--sf-on-surface);

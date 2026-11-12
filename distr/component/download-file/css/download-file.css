@@ -32,11 +32,15 @@
     text-align: right;
   }
   .sf-download-file {
+    /* The public variables carry the element's name, sf-file-download
+       (docs pre-check 2026-11-10 DF-11); each reads its former name,
+       --sf-download-file-*, under it until 2027-01-01 (change journal
+       token-file-download-variable-names). */
     /* The card sits on whatever surface holds it; hover and press add the
        container overlay. --sf-surface is not a token, so this was transparent
        already -- now it says so. */
-    --sf-download-file--background-color: var(--sf-download-file-background-color, transparent);
-    --sf-download-file--border-color: var(--sf-download-file-border-color, var(--sf-outline-variant));
+    --sf-download-file--background-color: var(--sf-file-download-background-color, var(--sf-download-file-background-color, transparent));
+    --sf-download-file--border-color: var(--sf-file-download-border-color, var(--sf-download-file-border-color, var(--sf-outline-variant)));
     /* One height per size, the button's (rule C01): the size's control height
        is its text height and the default block step on each side, and the
        border is drawn inside it -- the padding gives the border width back.
@@ -61,12 +65,12 @@
     max-width: 100%;
     max-inline-size: 100%;
     padding: calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width));
-    padding: var(--sf-download-file-padding, calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width)));
+    padding: var(--sf-file-download-padding, var(--sf-download-file-padding, calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width))));
     color: var(--sf-primary);
     background-color: var(--sf-download-file--background-color);
     border: var(--sf-px) solid var(--sf-download-file--border-color);
     border-radius: var(--sf-radius--ui);
-    border-radius: var(--sf-download-file-radius, var(--sf-radius--ui));
+    border-radius: var(--sf-file-download-radius, var(--sf-download-file-radius, var(--sf-radius--ui)));
     font-family: var(--sf-text--family);
     font-size: var(--sf-download-file--text-size);
     font-weight: var(--sf-font-weight-regular);
@@ -79,12 +83,30 @@
        -moz-appearance: none;
             appearance: none;
   }
+  /* A file that could not be prepared and its notice under it (decision C25):
+     one column of the component's own, the width the file takes alone. The
+     element's host is display: contents, so without it the page's container
+     laid the two out -- a flex row put the notice beside the file (docs
+     pre-check 2026-11-10 DF-13). The gap is the prototype's
+     (prototypes/actions-rest.html). */
+  .sf-download-file__stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-space-1\/3);
+    box-sizing: border-box;
+    width: 100%;
+    inline-size: 100%;
+    min-width: var(--sf-0);
+    min-inline-size: var(--sf-0);
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
   .sf-download-file :where(.sf-download-file__body, .sf-download-file-wrap) {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--sf-download-file--gap);
-    gap: var(--sf-download-file-gap, var(--sf-download-file--gap));
+    gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
   }
@@ -93,7 +115,7 @@
     flex: 1 1 auto;
     align-items: center;
     gap: var(--sf-download-file--gap);
-    gap: var(--sf-download-file-gap, var(--sf-download-file--gap));
+    gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
     color: var(--sf-primary);
@@ -127,6 +149,26 @@
     gap: var(--sf-space-1\/4);
     color: var(--sf-on-surface-variant);
     white-space: nowrap;
+  }
+  /* Preparing: the status is words, not two short facts, and it never takes
+     the name's whole room (docs acceptance 2026-11-10, L3). Before, the name
+     fell to 0-6 px in a 160-200 px cell and the status stood past the box.
+     Now the status keeps its line beside the name while the name has its
+     floor (--sf-e8, 9rem) and moves under the name when it has not -- a whole
+     line of the size's text, no row gap -- as C51 puts the facts under the
+     name on a narrow screen. A wide cell is unchanged. */
+  .sf-download-file.sf-download-file--preparing :where(.sf-download-file__body, .sf-download-file-wrap) {
+    flex-wrap: wrap;
+    row-gap: var(--sf-0);
+  }
+  .sf-download-file.sf-download-file--preparing :where(.sf-download-file__main, .sf-download-file-container) {
+    flex: 1 1 var(--sf-e8);
+  }
+  .sf-download-file.sf-download-file--preparing :where(.sf-download-file__meta) {
+    flex: 0 1 auto;
+    min-width: var(--sf-0);
+    min-inline-size: var(--sf-0);
+    white-space: normal;
   }
   .sf-download-file :where(.sf-download-file__type) {
     color: var(--sf-on-surface-variant);
@@ -178,22 +220,22 @@
   /* Preparing (decision C25): the Framework's spinner stands in the sign's
      box, the size of the size's icon, so nothing moves. */
   .sf-download-file :where(.sf-download-file__spinner) {
-    --sf-loader-svg-width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    --sf-loader-svg-height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    --sf-loader-svg-width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    --sf-loader-svg-height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     display: inline-flex;
     flex: none;
     width: var(--sf-download-file--icon-size);
     inline-size: var(--sf-download-file--icon-size);
     width: var(--sf-download-file--icon-size);
-    width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    inline-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     height: var(--sf-download-file--icon-size);
     block-size: var(--sf-download-file--icon-size);
     height: var(--sf-download-file--icon-size);
-    height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    block-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     color: var(--sf-primary);
-    color: var(--sf-download-file-icon-color, var(--sf-primary));
+    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-primary)));
   }
   .sf-download-file :where(.sf-download-file__spinner) .sf-loader--loading-indicator {
     display: block;
@@ -214,22 +256,22 @@
     height: var(--sf-download-file--icon-size);
     block-size: var(--sf-download-file--icon-size);
     height: var(--sf-download-file--icon-size);
-    height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    block-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     width: var(--sf-download-file--icon-size);
     inline-size: var(--sf-download-file--icon-size);
     width: var(--sf-download-file--icon-size);
-    width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    inline-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     color: var(--sf-primary);
-    color: var(--sf-download-file-icon-color, var(--sf-primary));
+    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-primary)));
     font-size: var(--sf-download-file--icon-size);
-    font-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    font-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     /* The glyph's own sheet is unlayered and sizes .sf-icon from these, so the
        size reaches it (as in reference-link). */
-    --sf-icon--font-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    --sf-icon--height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
-    --sf-icon--width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    --sf-icon--font-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    --sf-icon--height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
+    --sf-icon--width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
   }
   .sf-download-file--size-1\/3 {
     --sf-download-file--padding-block: var(--sf-ui-1\/3--space-y-tightness-default);
@@ -267,7 +309,7 @@
 @layer sf.states {
   .sf-download-file:not(:disabled):not(.disabled):not([aria-disabled=true]):not([aria-busy=true]):hover {
     --sf-download-file--background-color: var(--sf-surface-container-hover);
-    --sf-download-file--border-color: var(--sf-outline-primary);
+    --sf-download-file--border-color: var(--sf-primary-outline);
   }
   .sf-download-file:not(:disabled):not(.disabled):not([aria-disabled=true]):not([aria-busy=true]):active {
     --sf-download-file--background-color: var(--sf-surface-container-active);
@@ -293,28 +335,28 @@
     cursor: progress;
   }
   .sf-download-file:disabled {
-    --sf-download-file--border-color: var(--sf-outline-disable);
-    color: var(--sf-on-disable);
+    --sf-download-file--border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
     cursor: default;
   }
   .sf-download-file.disabled {
-    --sf-download-file--border-color: var(--sf-outline-disable);
-    color: var(--sf-on-disable);
+    --sf-download-file--border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
     cursor: default;
   }
   .sf-download-file[aria-disabled=true] {
-    --sf-download-file--border-color: var(--sf-outline-disable);
-    color: var(--sf-on-disable);
+    --sf-download-file--border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
     cursor: default;
   }
   .sf-download-file:disabled :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-download-file.disabled :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-download-file[aria-disabled=true] :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   @media (forced-colors: active) {
     .sf-download-file.focus-visible {

@@ -2837,9 +2837,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   openLayers: () => (/* binding */ openLayers),
 /* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
 /* harmony export */   returnLayerFocus: () => (/* binding */ returnLayerFocus),
+/* harmony export */   startClosedLayerContent: () => (/* binding */ startClosedLayerContent),
 /* harmony export */   topLayer: () => (/* binding */ topLayer),
 /* harmony export */   tryFocus: () => (/* binding */ tryFocus),
-/* harmony export */   updateLayer: () => (/* binding */ updateLayer)
+/* harmony export */   updateLayer: () => (/* binding */ updateLayer),
+/* harmony export */   whenClosedLayerOpens: () => (/* binding */ whenClosedLayerOpens)
 /* harmony export */ });
 // The one document layer stack (standard simai.smart-component 1.3.8 §19).
 //
@@ -3459,6 +3461,182 @@ function carryLayerOrigin(portal, host, {
   for (const [name, value] of kept) portal.style.setProperty(name, value);
 
   if (kept.length) portal.dataset.sfLayerVariables = kept.map(([name]) => name).join(' ');else delete portal.dataset.sfLayerVariables;
+} // A closed layer's content starts while the layer is closed, after the page's
+// first paint, without being shown. The Loader leaves a Smart element inside a
+// closed container for later and fetches its code when the container opens
+// (standard 1.3.8 §7.2.1, simai/ui-source#47); a closed window's or drawer's
+// root is such a container (inert, out of view). So a page that waited for a
+// tag in a closed window before opening it -- customElements.whenDefined
+// ('sf-menu'), then fill the menu, then open() -- waited for ever (ui-control
+// evidence 2026-11-11-modal-followups). The layer asks for those tags itself,
+// as a component asks for an element it draws (SF.Loader.ensure), once the
+// page has loaded and the browser is idle: the first paint fetches nothing
+// more than before, and the content is drawn where it stands, inside the
+// closed root, which shows nothing.
+//
+// The layer's own closed root is the one container this passes over. A closed
+// container inside it (a tab panel, a closed <details>, an unstarted part)
+// keeps its own deferral, and an element inside a Smart parent that has not
+// taken its source yet waits for it (the Loader's rule), so the walk runs
+// again when what it asked for has drawn: a few rounds, each for the tags
+// the previous one uncovered.
+
+const CLOSED_INSIDE = '[hidden], [inert], details:not([open]), dialog:not([open]), [data-sf-start]:not([data-sf-started])';
+const UNSTARTED = '[data-sf-start]:not([data-sf-started])';
+const CONTENT_ROUNDS = 4;
+
+function closedInside(element, root) {
+  if (element.matches(UNSTARTED)) return true;
+
+  for (let node = element.parentElement; node && node !== root; node = node.parentElement) {
+    if (!node.matches(CLOSED_INSIDE)) continue; // A closed <details> still shows its summary.
+
+    if (node.localName === 'details' && element.closest('summary')?.parentElement === node) continue;
+    return true;
+  }
+
+  return false;
+}
+
+function contentTags(root, loader) {
+  const registry = globalThis.customElements;
+  const tags = new Set();
+
+  for (const element of root.querySelectorAll('*')) {
+    const tag = element.localName;
+    if (!tag.includes('-') || tags.has(tag) || registry?.get?.(tag)) continue;
+    if (!loader.getSmartElementRuleName(element)) continue;
+    if (closedInside(element, root) || loader.shouldDeferNestedSmartElement?.(element)) continue;
+    tags.add(tag);
+  }
+
+  return [...tags];
+}
+
+function whenPageIdle(fn) {
+  const view = globalThis.window;
+
+  const idle = () => {
+    // requestIdleCallback is throttled in a hidden tab; a timer still runs.
+    if (typeof view.requestIdleCallback === 'function' && !view.document?.hidden) view.requestIdleCallback(fn, {
+      timeout: 2000
+    });else view.setTimeout(fn, 200);
+  };
+
+  if (view.document?.readyState === 'complete') idle();else view.addEventListener('load', idle, {
+    once: true
+  });
+} //
+// A page may keep the old timing, the content fetched when the layer opens:
+// SF_BOOT_CONFIG.startClosedLayerContent = false. The first-paint snapshots do
+// (scripts/first-paint-lib.mjs): a closed layer's first paint is the layer as
+// it rests before anything in it starts, and a start at idle time made the
+// picture and its sheet list depend on how soon the browser was idle.
+//
+// Content the page puts into the closed layer later (a list filled from its
+// data, a part loaded into it) starts the same way: the layer watches its
+// closed root and walks it again, a few rounds, once the page is idle after
+// an addition (ui-control evidence 2026-11-11-modal-followups-2-accept, L2).
+// An open root is the Loader's, as any part of the page.
+
+
+function startClosedLayerContent(rootOf) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return;
+  let round = 0;
+  let walking = false;
+  let again = false;
+  let watched = null;
+  let watcher = null;
+
+  const next = () => {
+    const loader = view.SF?.Loader;
+    const root = rootOf();
+    walking = false;
+    if (!root?.isConnected || !loader?.ensure || !loader.getSmartElementRuleName) return;
+    watch(root);
+    if (!root.matches(CLOSED_LAYER)) return;
+    const tags = contentTags(root, loader);
+
+    if (!tags.length || ++round > CONTENT_ROUNDS) {
+      if (again) walk();
+      return;
+    }
+
+    walking = true;
+    loader.ensure(tags, {
+      timeout: 10000
+    }).then(() => whenPageIdle(next));
+  };
+
+  const walk = () => {
+    again = false;
+
+    if (walking) {
+      again = true;
+      return;
+    }
+
+    round = 0;
+    walking = true;
+    whenPageIdle(next);
+  };
+
+  const watch = root => {
+    if (watched === root || typeof view.MutationObserver !== 'function') return;
+    watcher?.disconnect();
+    watched = root;
+    watcher = new view.MutationObserver(records => {
+      if (!watched.isConnected) {
+        watcher.disconnect();
+        watcher = null;
+        watched = null;
+        return;
+      }
+
+      if (watched.matches(CLOSED_LAYER) && records.some(record => record.addedNodes.length)) walk();
+    });
+    watcher.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  };
+
+  walking = true;
+  whenPageIdle(next);
+} // A closed window's root or drawer's panel: inert while closed (and while a
+// window is minimised).
+
+const CLOSED_LAYER = '.sf-modal[inert], [data-sf-drawer-panel][inert]'; // A component that fetches its own data (sf-include) and stands in a closed
+// window or drawer fetches it once the layer opens, not at page load: the
+// layer starts its content early so the page can reach its code
+// (startClosedLayerContent), but a part, a list's rows or a user's data the
+// page never opens should not cost the server a request (ui-control
+// evidence 2026-11-11-modal-followups-2-accept, M2). Null when the element is
+// not in a closed layer, or when the page keeps the old timing
+// (SF_BOOT_CONFIG.startClosedLayerContent = false: then nothing in a closed
+// layer starts before it opens); otherwise a promise that settles when the
+// layer opens, or never once `signal` aborts.
+
+function whenClosedLayerOpens(element, signal) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return null;
+  const layer = element?.closest?.(CLOSED_LAYER);
+  if (!layer || typeof view.MutationObserver !== 'function') return null;
+  return new Promise(resolve => {
+    const watcher = new view.MutationObserver(() => {
+      if (layer.matches(CLOSED_LAYER) && layer.isConnected) return;
+      watcher.disconnect();
+      resolve();
+    });
+    watcher.observe(layer, {
+      attributes: true,
+      attributeFilter: ['inert']
+    });
+    signal?.addEventListener('abort', () => watcher.disconnect(), {
+      once: true
+    });
+  });
 }
 
 /***/ },
@@ -4997,7 +5175,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // The properties a child takes from its parent (CSS inheritance), which a
+ // A region the Loader's page scan passes by (loader.js OBSERVER_IGNORE_SELECTOR).
+
+const IGNORED_REGION = '[data-sf-observer="ignore"]'; // The properties a child takes from its parent (CSS inheritance), which a
 // boxless host passes on to its markup without having a box of its own. The
 // host keeps these, and every custom property, beside `display: contents`, so
 // an inline style set on the element (el.style.color, el.style.setProperty
@@ -6252,6 +6432,7 @@ class SfBaseElement extends HTMLElement {
     }
 
     this._hasRendered = true;
+    this.adoptIgnoredGlyphs();
     this.afterRender(changedAttributes);
     this._childrenDefinedPromise = null;
     this.runExternalHook("afterRender", {
@@ -6260,6 +6441,31 @@ class SfBaseElement extends HTMLElement {
     });
     this.emitComponentEvent("after-render", {
       changedAttributes
+    });
+  } // Inside a data-sf-observer="ignore" region the Loader's page scan never
+  // sees what this element drew, so its class-markup glyphs (<i
+  // class="sf-icon">) are handed to the Loader after each drawing; they are
+  // asked for and marked loaded like any page icon (2026-11-11). Outside such
+  // a region the scan finds them, and nothing is done here. An element drawn
+  // before the Loader is ready hands them over when it is.
+
+
+  adoptIgnoredGlyphs() {
+    if (!this.closest?.(IGNORED_REGION)) return;
+    const loader = window.SF?.Loader;
+
+    if (typeof loader?.adoptStaticIcons === "function") {
+      loader.adoptStaticIcons(this);
+      return;
+    }
+
+    if (this._sfGlyphsAwaitLoader) return;
+    this._sfGlyphsAwaitLoader = true;
+    window.addEventListener("sf-loader-ready", () => {
+      this._sfGlyphsAwaitLoader = false;
+      if (this.isConnected) this.adoptIgnoredGlyphs();
+    }, {
+      once: true
     });
   }
 
@@ -7419,7 +7625,38 @@ class SfBaseElement extends HTMLElement {
   } // Draws a template into a container of the element's own outside it (a
   // portal at the end of the body, a popup's body): the sizes the drawing
   // gives are relative to the element, as in its own box (density, C22).
+  // A component that draws into a box of its own outside the host -- a
+  // window's or a drawer's portal at the end of the body -- keeps that box out
+  // of view until the sheets it draws with are applied, as the base keeps the
+  // host (the style gate, data-sf-style-pending, at most styleReadyTimeout).
+  // The base's gate is on the host, which such a component leaves empty, so
+  // under held-back sheets an open window painted for a moment as a card in
+  // the page flow, and a closed drawer's panel stood in view beside the page
+  // (ui-control evidence 2026-11-11-modal-followups, N2). Call it before the
+  // drawing; `shown` runs once the box shows.
 
+
+  holdPortalUntilStyled(target, shown) {
+    if (this._styleReady || !target || target === this) return;
+    const styles = this.stylesReadiness();
+    if (!styles) return;
+    target.setAttribute("data-sf-style-pending", "");
+    (this._styleHeldTargets ??= new Set()).add(target);
+    if (shown) (this._styleHeldShown ??= new Set()).add(shown);
+    if (this._styleHeldWait) return;
+    this._styleHeldWait = styles.then(() => {
+      this._styleReady = true;
+
+      this._styleHeldTargets.forEach(one => one.removeAttribute("data-sf-style-pending"));
+
+      this._styleHeldTargets.clear();
+
+      this._styleHeldWait = null;
+      const callbacks = [...(this._styleHeldShown || [])];
+      this._styleHeldShown?.clear();
+      callbacks.forEach(callback => callback());
+    });
+  }
 
   drawInto(result, container) {
     if (!container) return;

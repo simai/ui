@@ -58,10 +58,34 @@ function buildAnchorDownload(href, filename = '') {
 } // The size in the page's language (decision C25; the core formatter, the one
 // SF.format.fileSize is): «2,4 МБ» on a Russian page, «2.4 MB» on an English
 // one. It printed «2.4MB» in English units on every page.
+// A data: or blob: address is the page's own bytes, not a file on a server:
+// there is no one to ask, and a HEAD to it is refused by the browser
+// (net::ERR_METHOD_NOT_SUPPORTED, docs pre-check 2026-11-10 DF-15). The page
+// that made the bytes knows their size and passes file-size, as it passes
+// file-name (nameFromHref skips these addresses too).
 
+
+const LOCAL_ADDRESS = /^\s*(?:data|blob):/iu; // An address that leads back to this very page -- «#», «#part» or the
+// page's own URL -- is no file either: a HEAD to it asks the page for its own
+// length (docs acceptance 2026-11-10, L2). It is compared without the
+// fragment, against the document's base, as the browser resolves the link.
+
+function isSameDocument(href) {
+  if (typeof document === 'undefined' || typeof URL !== 'function') return false;
+
+  try {
+    const target = new URL(href, document.baseURI);
+    const page = new URL(document.URL);
+    target.hash = '';
+    page.hash = '';
+    return target.href === page.href;
+  } catch {
+    return false;
+  }
+}
 
 async function resolveRemoteFileSize(href, node = null) {
-  if (!href) return '';
+  if (!href || LOCAL_ADDRESS.test(href) || isSameDocument(href)) return '';
 
   try {
     const response = await fetch(href, {
@@ -100,7 +124,7 @@ const NEW_TAB_WORDS = {
 function nameFromHref(href) {
   const path = String(href || '').split(/[?#]/u)[0];
   const last = path.slice(path.lastIndexOf('/') + 1);
-  if (!last || /^(?:data|blob):/u.test(path)) return '';
+  if (!last || LOCAL_ADDRESS.test(path)) return '';
 
   try {
     return decodeURIComponent(last);
@@ -985,7 +1009,9 @@ const DownloadFileElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODUL
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 });
-const STATES = ['ready', 'preparing', 'error'];
+const STATES = ['ready', 'preparing', 'error']; // The settings that can draw the file as another element (a button or a link).
+
+const REDRAWN_BY = new Set(['href', 'disabled', 'state', 'target']);
 
 class SfDownloadFile extends DownloadFileElement {
   constructor() {
@@ -995,6 +1021,7 @@ class SfDownloadFile extends DownloadFileElement {
     // asked (decision C25). A file prepared before anyone pressed is not.
 
     this._awaiting = false;
+    this._refocus = false;
 
     this._onAlertAction = event => this.onAlertAction(event);
   }
@@ -1072,6 +1099,15 @@ class SfDownloadFile extends DownloadFileElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
+    // The file is a button until it has an address and a link after (a host
+    // that prepares the file sets href when it is ready): the new element
+    // takes the focus the old one held, so a keyboard user is not dropped to
+    // the page's body. Only when the focus was on the file; read before the
+    // change draws anything.
+    if (oldValue !== newValue && REDRAWN_BY.has(name) && this._boundRoot && this.ownerDocument.activeElement === this._boundRoot) {
+      this._refocus = true;
+    }
+
     super.attributeChangedCallback?.(name, oldValue, newValue);
     if (name !== 'state' || oldValue === newValue) return;
     const next = STATES.includes(newValue) ? newValue : 'ready';
@@ -1106,7 +1142,11 @@ class SfDownloadFile extends DownloadFileElement {
   onAlertAction(event) {
     if (event.detail?.action !== 'retry' || !event.target?.closest?.('.sf-download-file__error')) return;
     event.stopPropagation();
-    this._awaiting = true;
+    this._awaiting = true; // The notice and its button go away when the host starts preparing the
+    // file again; focus would fall to the page's body (docs acceptance
+    // 2026-11-10, L1). It is kept on the file the person asked for.
+
+    this._refocus = true;
     this.sfEmit('retry', {
       href: this.getAttribute('href') || '',
       fileName: this.getAttribute('file-name') || ''
@@ -1133,6 +1173,21 @@ class SfDownloadFile extends DownloadFileElement {
       (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.bindDownloadFile)(this._boundRoot, {
         onActivate: this.requestDownload
       });
+    } // After «Повторить», or when the file was redrawn as another element
+    // while it held the focus (the button became the link): once the notice
+    // is gone, the file takes the focus back -- only if the focus was lost
+    // with it, never taken from where the person has moved since.
+
+
+    if (this._refocus && !this.querySelector('.sf-download-file__error')) {
+      this._refocus = false;
+      const active = document.activeElement;
+
+      if (this._boundRoot && (!active || active === document.body)) {
+        this._boundRoot.focus({
+          preventScroll: true
+        });
+      }
     }
   }
 
@@ -1218,10 +1273,15 @@ function renderDownloadFileTemplate(context) {
         supporting-text=${context.errorText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         action-text=${words.retry}
         action="retry"
-      ></sf-alert>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+      ></sf-alert>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The host is display: contents, so whatever it draws is laid out by the
+  // page's container. The file and its notice are one column of their own: as
+  // two siblings, a flex row put the notice beside the file (docs pre-check
+  // 2026-11-10 DF-13). Ready and preparing draw the file alone, as before.
+
+  const withNotice = file => notice === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? file : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-download-file__stack">${file}${notice}</div>`;
 
   if (tagName === 'a') {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    return withNotice((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <a
         class=${rootClasses.join(' ')}
         style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1234,11 +1294,10 @@ function renderDownloadFileTemplate(context) {
       >
         ${content}
       </a>
-      ${notice}
-    `;
+    `);
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  return withNotice((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
       type="button"
       class=${rootClasses.join(' ')}
@@ -1250,8 +1309,7 @@ function renderDownloadFileTemplate(context) {
     >
       ${content}
     </button>
-    ${notice}
-  `;
+  `);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1310,7 +1368,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}}},"actions":{},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

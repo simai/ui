@@ -16,21 +16,21 @@
     stroke: var(--sf-outline-variant);
   }
   .stroke-primary {
-    stroke: var(--sf-outline-primary);
+    stroke: var(--sf-primary-outline);
   }
   .stroke-secondary {
-    stroke: var(--sf-outline-secondary);
+    stroke: var(--sf-secondary-outline);
   }
   .stroke-tertiary {
-    stroke: var(--sf-outline-tertiary);
+    stroke: var(--sf-tertiary-outline);
   }
   .stroke-error {
-    stroke: var(--sf-outline-error);
+    stroke: var(--sf-error-outline);
   }
   .stroke-warning {
-    stroke: var(--sf-outline-warning);
+    stroke: var(--sf-warning-outline);
   }
   .stroke-success {
-    stroke: var(--sf-outline-success);
+    stroke: var(--sf-success-outline);
   }
 }

@@ -107,9 +107,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
-([_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__]);
+([_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -144,23 +146,6 @@ function toBoolean(value, fallback = false) {
 
 function normalizeSize(value) {
   return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
-}
-
-function formatFileSize(bytes) {
-  const size = Number(bytes);
-  if (!Number.isFinite(size) || size < 0) return '';
-  if (size < 1024) return `${size} B`;
-  const units = ['KB', 'MB', 'GB', 'TB'];
-  let value = size / 1024;
-  let index = 0;
-
-  while (value >= 1024 && index < units.length - 1) {
-    value /= 1024;
-    index += 1;
-  }
-
-  const formatted = value >= 10 ? value.toFixed(0) : value.toFixed(1);
-  return `${formatted}${units[index]}`;
 }
 
 function normalizeItemState(item) {
@@ -337,7 +322,10 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   const root = document.createElement('div');
   root.className = ['sf-upload-progress', `sf-upload-progress--size-${normalizedSize}`, `sf-upload-progress--${state}`, 'flex', 'items-main-start', 'items-cross-start'].join(' ');
   const leftIcon = document.createElement('i');
-  leftIcon.classList.add('sf-icon');
+  leftIcon.classList.add('sf-icon'); // The glyphs are pictures: their ligature names («cloud_upload», «check_circle»,
+  // «delete») were read as text (docs pre-check 2026-11-10 FU-03).
+
+  leftIcon.setAttribute('aria-hidden', 'true');
   leftIcon.textContent = iconName;
   const content = document.createElement('div');
   content.className = 'sf-upload-progress-content flex flex-col flex-1';
@@ -357,6 +345,7 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   if (state === 'done') {
     const doneIcon = document.createElement('i');
     doneIcon.className = 'sf-icon sf-icon-solid';
+    doneIcon.setAttribute('aria-hidden', 'true');
     doneIcon.textContent = 'check_circle';
     top.append(doneIcon);
   } else if (state === 'error') {
@@ -366,6 +355,7 @@ function createUploadProgressItem(item, size = '1', owner = null) {
     removeButton.dataset.action = 'remove';
     const removeIcon = document.createElement('i');
     removeIcon.className = 'sf-icon';
+    removeIcon.setAttribute('aria-hidden', 'true');
     removeIcon.textContent = 'delete';
     removeButton.append(removeIcon);
     top.append(removeButton);
@@ -384,6 +374,7 @@ function createUploadProgressItem(item, size = '1', owner = null) {
     removeButton.dataset.action = 'remove';
     const removeIcon = document.createElement('i');
     removeIcon.className = 'sf-icon';
+    removeIcon.setAttribute('aria-hidden', 'true');
     removeIcon.textContent = 'delete';
     removeButton.append(removeIcon);
     top.append(removeButton);
@@ -493,13 +484,19 @@ function syncFileUploadStateEvents(root, nextItems = [], previousItems = []) {
   if (isAllDone && !wasAllDone) {
     emitFileUploadComplete(root, nextItems);
   }
-}
+} // A chosen file's size is written by the core formatter in the page's
+// language: «342 КБ» on a Russian page, «342 KB» on an English one (C25,
+// docs pre-check 2026-11-10 FU-01). The part's own formatter wrote «342KB»
+// in English units with no space on every page.
 
-function normalizeFileItems(files = []) {
+
+function normalizeFileItems(files = [], root = null) {
   return Array.from(files).map(file => ({
     id: `${file.name}-${file.size}-${file.lastModified}`,
     name: file.name,
-    fileSize: formatFileSize(file.size),
+    fileSize: (0,_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize)(file.size, {
+      node: root
+    }),
     progress: 0,
     state: 'process',
     file
@@ -589,7 +586,7 @@ function emitSelect(root, files, source = 'input') {
 }
 
 function applySelectedFiles(root, files = [], source = 'input') {
-  const nextFiles = normalizeFileItems(files);
+  const nextFiles = normalizeFileItems(files, root);
   const previousItems = Array.from(root.__sfFileUploadItems || []);
   root.__sfFileUploadItems = nextFiles;
   renderFileUploadItems(root, nextFiles);
@@ -883,6 +880,7 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     featured.className = `sf-featured-icon sf-featured-icon--size-${step} sf-featured-icon--soft sf-featured-icon--circle sf-featured-icon--neutral`;
     const glyph = document.createElement('i');
     glyph.className = 'sf-icon';
+    glyph.setAttribute('aria-hidden', 'true');
     glyph.textContent = icon;
     featured.append(glyph);
     const bottom = document.createElement('div');
@@ -1120,6 +1118,158 @@ class ComponentObserver {
   destroyInternal() {}
 
 }
+
+/***/ },
+
+/***/ "c016c43b1452"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// File sizes in the page's language («1,4 МБ»), with no top-level side
+// effects (format-intl.js). The same functions as core/js/format.js,
+// composition/file-size.mjs and SF.format.fileSize.
+ // The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits. A component
+// with words of its own passes them as `units`.
+
+const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
+  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+});
+/** The unit words for a locale: its language's, else English. */
+
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+/**
+ * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
+ * of 1024; one digit after the point under ten of a unit, none above it or in
+ * bytes. Text a host already formatted is returned as it came; anything that
+ * is not a size is ''.
+ *
+ *   formatFileSize(size, {node, units?, locale?})
+ *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
+ *                                            and sf-image-field 1.x published
+ */
+
+function formatFileSize(size, options = {}, legacyLocale) {
+  const where = Array.isArray(options) ? {
+    units: options,
+    locale: legacyLocale ?? 'en'
+  } : options ?? {};
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const units = where.units?.length ? where.units : fileSizeUnits(locale);
+  let amount = bytes;
+  let index = 0;
+
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  return `${(0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    maximumFractionDigits: digits
+  }).format(amount)} ${units[index]}`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -1653,7 +1803,7 @@ function renderUploadItem(item, size, index, retryText) {
                 class="sf-upload-progress sf-upload-progress--size-${size} sf-upload-progress--${state} flex items-main-start items-cross-start"
                 data-index=${String(index)}
         >
-            <i class="sf-icon">${icon}</i>
+            <i class="sf-icon" aria-hidden="true">${icon}</i>
             <div class="sf-upload-progress-content flex flex-col flex-1">
                 <div class="sf-upload-progress-top flex content-main-between">
                     <div class="sf-upload-progress-left flex flex-col">
@@ -1661,13 +1811,13 @@ function renderUploadItem(item, size, index, retryText) {
                         <div class="sf-upload-progress-text">${fileSize}</div>
                     </div>
 
-                    ${state === 'done' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-icon-solid">check_circle</i>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                    ${state === 'done' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-icon-solid" aria-hidden="true">check_circle</i>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                                 <button
                                         type="button"
                                         class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${size} flex items-cross-center content-main-center self-cross-start"
                                         data-action="remove"
                                 >
-                                    <i class="sf-icon">delete</i>
+                                    <i class="sf-icon" aria-hidden="true">delete</i>
                                 </button>
                             `}
                 </div>
@@ -1708,7 +1858,7 @@ function renderFileUploadTemplate(context) {
                 aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
             <div class=${featuredIconClasses}>
-                <i class="sf-icon">${context.icon}</i>
+                <i class="sf-icon" aria-hidden="true">${context.icon}</i>
             </div>
 
             <div class="sf-file-upload-bottom flex flex-col items-cross-center">
@@ -1778,7 +1928,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "35944d444d78"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.1.8","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"file":{"type":"object","optional":true}}}},"values":{},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.1.9","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"file":{"type":"object","optional":true}}}},"values":{},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}}}');
 
 /***/ },
 

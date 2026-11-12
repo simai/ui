@@ -7,10 +7,16 @@
     fill: var(--sf-current);
   }
   .fill-surface-0 {
-    fill: var(--sf-surface-0);
+    fill: var(--sf-surface-page);
+  }
+  .fill-surface-page {
+    fill: var(--sf-surface-page);
   }
   .fill-surface-1 {
-    fill: var(--sf-surface-1);
+    fill: var(--sf-surface-area);
+  }
+  .fill-surface-area {
+    fill: var(--sf-surface-area);
   }
   .fill-surface-2 {
     fill: var(--sf-surface-2);
@@ -22,7 +28,7 @@
     fill: var(--sf-surface-4);
   }
   .fill-surface {
-    fill: var(--sf-surface-1);
+    fill: var(--sf-surface-area);
   }
   .fill-surface-inverse {
     fill: var(--sf-surface-inverse);
@@ -40,13 +46,22 @@
     fill: var(--sf-on-surface-variant);
   }
   .fill-surface-transparent-select {
-    fill: var(--sf-surface-transparent-select);
+    fill: var(--sf-surface-state-select);
+  }
+  .fill-surface-state-select {
+    fill: var(--sf-surface-state-select);
   }
   .fill-surface-transparent-overlay {
-    fill: var(--sf-surface-transparent-overlay);
+    fill: var(--sf-surface-container-strong);
+  }
+  .fill-surface-container-strong {
+    fill: var(--sf-surface-container-strong);
   }
   .fill-disable {
-    fill: var(--sf-disable);
+    fill: var(--sf-surface-disabled);
+  }
+  .fill-surface-disabled {
+    fill: var(--sf-surface-disabled);
   }
   .fill-primary {
     fill: var(--sf-primary);
@@ -55,10 +70,16 @@
     fill: var(--sf-primary-container);
   }
   .fill-primary-transparent-select {
-    fill: var(--sf-primary-transparent-select);
+    fill: var(--sf-primary-state-select);
+  }
+  .fill-primary-state-select {
+    fill: var(--sf-primary-state-select);
   }
   .fill-primary-transparent-overlay {
-    fill: var(--sf-primary-transparent-overlay);
+    fill: var(--sf-primary-container-strong);
+  }
+  .fill-primary-container-strong {
+    fill: var(--sf-primary-container-strong);
   }
   .fill-secondary {
     fill: var(--sf-secondary);
@@ -67,10 +88,16 @@
     fill: var(--sf-secondary-container);
   }
   .fill-secondary-transparent-select {
-    fill: var(--sf-secondary-transparent-select);
+    fill: var(--sf-secondary-state-select);
+  }
+  .fill-secondary-state-select {
+    fill: var(--sf-secondary-state-select);
   }
   .fill-secondary-transparent-overlay {
-    fill: var(--sf-secondary-transparent-overlay);
+    fill: var(--sf-secondary-container-strong);
+  }
+  .fill-secondary-container-strong {
+    fill: var(--sf-secondary-container-strong);
   }
   .fill-tertiary {
     fill: var(--sf-tertiary);
@@ -79,10 +106,16 @@
     fill: var(--sf-tertiary-container);
   }
   .fill-tertiary-transparent-select {
-    fill: var(--sf-tertiary-transparent-select);
+    fill: var(--sf-tertiary-state-select);
+  }
+  .fill-tertiary-state-select {
+    fill: var(--sf-tertiary-state-select);
   }
   .fill-tertiary-transparent-overlay {
-    fill: var(--sf-tertiary-transparent-overlay);
+    fill: var(--sf-tertiary-container-strong);
+  }
+  .fill-tertiary-container-strong {
+    fill: var(--sf-tertiary-container-strong);
   }
   .fill-error {
     fill: var(--sf-error);
@@ -91,10 +124,16 @@
     fill: var(--sf-error-container);
   }
   .fill-error-transparent-select {
-    fill: var(--sf-error-transparent-select);
+    fill: var(--sf-error-state-select);
+  }
+  .fill-error-state-select {
+    fill: var(--sf-error-state-select);
   }
   .fill-error-transparent-overlay {
-    fill: var(--sf-error-transparent-overlay);
+    fill: var(--sf-error-container-strong);
+  }
+  .fill-error-container-strong {
+    fill: var(--sf-error-container-strong);
   }
   .fill-warning {
     fill: var(--sf-warning);
@@ -103,10 +142,16 @@
     fill: var(--sf-warning-container);
   }
   .fill-warning-transparent-select {
-    fill: var(--sf-warning-transparent-select);
+    fill: var(--sf-warning-state-select);
+  }
+  .fill-warning-state-select {
+    fill: var(--sf-warning-state-select);
   }
   .fill-warning-transparent-overlay {
-    fill: var(--sf-warning-transparent-overlay);
+    fill: var(--sf-warning-container-strong);
+  }
+  .fill-warning-container-strong {
+    fill: var(--sf-warning-container-strong);
   }
   .fill-success {
     fill: var(--sf-success);
@@ -115,10 +160,16 @@
     fill: var(--sf-success-container);
   }
   .fill-success-transparent-select {
-    fill: var(--sf-success-transparent-select);
+    fill: var(--sf-success-state-select);
+  }
+  .fill-success-state-select {
+    fill: var(--sf-success-state-select);
   }
   .fill-success-transparent-overlay {
-    fill: var(--sf-success-transparent-overlay);
+    fill: var(--sf-success-container-strong);
+  }
+  .fill-success-container-strong {
+    fill: var(--sf-success-container-strong);
   }
   .fill-info {
     fill: var(--sf-info);
@@ -132,6 +183,9 @@
   .fill-info-container-strong {
     fill: var(--sf-info-container-strong);
   }
+  .fill-hue-container-graphic {
+    fill: var(--sf-on-hue-container-graphic);
+  }
   .hover\:fill-surface-container:hover {
     fill: var(--sf-surface-container-hover);
   }
@@ -139,7 +193,10 @@
     fill: var(--sf-on-surface-hover);
   }
   .hover\:fill-surface-transparent:hover {
-    fill: var(--sf-surface-transparent-hover);
+    fill: var(--sf-surface-state-hover);
+  }
+  .hover\:fill-surface-state:hover {
+    fill: var(--sf-surface-state-hover);
   }
   .hover\:fill-primary:hover {
     fill: var(--sf-primary-hover);
@@ -148,7 +205,10 @@
     fill: var(--sf-primary-container-hover);
   }
   .hover\:fill-primary-transparent:hover {
-    fill: var(--sf-primary-transparent-hover);
+    fill: var(--sf-primary-state-hover);
+  }
+  .hover\:fill-primary-state:hover {
+    fill: var(--sf-primary-state-hover);
   }
   .hover\:fill-secondary:hover {
     fill: var(--sf-secondary-hover);
@@ -157,7 +217,10 @@
     fill: var(--sf-secondary-container-hover);
   }
   .hover\:fill-secondary-transparent:hover {
-    fill: var(--sf-secondary-transparent-hover);
+    fill: var(--sf-secondary-state-hover);
+  }
+  .hover\:fill-secondary-state:hover {
+    fill: var(--sf-secondary-state-hover);
   }
   .hover\:fill-tertiary:hover {
     fill: var(--sf-tertiary-hover);
@@ -166,7 +229,10 @@
     fill: var(--sf-tertiary-container-hover);
   }
   .hover\:fill-tertiary-transparent:hover {
-    fill: var(--sf-tertiary-transparent-hover);
+    fill: var(--sf-tertiary-state-hover);
+  }
+  .hover\:fill-tertiary-state:hover {
+    fill: var(--sf-tertiary-state-hover);
   }
   .hover\:fill-error:hover {
     fill: var(--sf-error-hover);
@@ -175,7 +241,10 @@
     fill: var(--sf-error-container-hover);
   }
   .hover\:fill-error-transparent:hover {
-    fill: var(--sf-error-transparent-hover);
+    fill: var(--sf-error-state-hover);
+  }
+  .hover\:fill-error-state:hover {
+    fill: var(--sf-error-state-hover);
   }
   .hover\:fill-warning:hover {
     fill: var(--sf-warning-hover);
@@ -184,7 +253,10 @@
     fill: var(--sf-warning-container-hover);
   }
   .hover\:fill-warning-transparent:hover {
-    fill: var(--sf-warning-transparent-hover);
+    fill: var(--sf-warning-state-hover);
+  }
+  .hover\:fill-warning-state:hover {
+    fill: var(--sf-warning-state-hover);
   }
   .hover\:fill-success:hover {
     fill: var(--sf-success-hover);
@@ -193,7 +265,10 @@
     fill: var(--sf-success-container-hover);
   }
   .hover\:fill-success-transparent:hover {
-    fill: var(--sf-success-transparent-hover);
+    fill: var(--sf-success-state-hover);
+  }
+  .hover\:fill-success-state:hover {
+    fill: var(--sf-success-state-hover);
   }
   .hover\:fill-info:hover {
     fill: var(--sf-info-hover);

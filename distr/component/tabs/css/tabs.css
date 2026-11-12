@@ -307,6 +307,29 @@
     --sf-button--border-inline-start-width: 0;
     --sf-icon-button--border-inline-start-width: 0;
   }
+  /* The same single seam when each button sits in a wrapper: the host of
+     sf-tabs' buttons (sf-button, display: contents) or a tab drawn by a
+     component of the page's own (span[role=tab]). The sibling rule above
+     never reaches them, so every seam of sf-tabs type="full" was drawn twice,
+     2 px of primary-active where the class markup draws 1. The rule sat in
+     sf-tabs' own Smart sheet, which the Loader never asks for (its rule has
+     no css: audit of dead Smart sheets, 2026-11-11). */
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > :not(:first-child) > .sf-button {
+    --sf-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-start-width: 0;
+  }
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > :not(:first-child) > .sf-icon-button {
+    --sf-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-start-width: 0;
+  }
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > span[role=tab]:not(:first-child) .sf-button {
+    --sf-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-start-width: 0;
+  }
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > span[role=tab]:not(:first-child) .sf-icon-button {
+    --sf-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-start-width: 0;
+  }
   .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > .sf-button:first-child,
   .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > :first-child .sf-button:first-child,
   .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top > .sf-icon-button:first-child,
@@ -893,7 +916,7 @@
     padding-inline: var(--sf-a4);
     border-radius: var(--sf-radius-circle);
     background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     color: inherit;
     font-size: var(--sf-text-size-1\/3);
     line-height: var(--sf-text-height-1\/3);
@@ -1046,6 +1069,9 @@
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--outline:not(.selected):not(:disabled):not(.disabled):hover {
     color: var(--sf-primary-hover);
   }
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost:not(.selected):not(:disabled):not(.disabled):hover {
+    color: var(--sf-primary-hover);
+  }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--link:not(.selected):not(:disabled):not(.disabled):hover {
     color: var(--sf-primary-hover);
   }
@@ -1053,6 +1079,12 @@
     color: var(--sf-primary-active);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--outline.active:not(.selected):not(:disabled):not(.disabled) {
+    color: var(--sf-primary-active);
+  }
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost:not(.selected):not(:disabled):not(.disabled):active {
+    color: var(--sf-primary-active);
+  }
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost.active:not(.selected):not(:disabled):not(.disabled) {
     color: var(--sf-primary-active);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--link:not(.selected):not(:disabled):not(.disabled):active {
@@ -1120,16 +1152,16 @@
     color: var(--sf-on-primary);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button:disabled {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:disabled {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled),
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
@@ -1143,34 +1175,34 @@
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: var(--sf-surface-transparent-hover);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-hover);
+    --sf-button--background-color: var(--sf-surface-state-hover);
+    --sf-icon-button--background-color: var(--sf-surface-state-hover);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible,
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: var(--sf-surface-transparent-select);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-select);
+    --sf-button--background-color: var(--sf-surface-state-select);
+    --sf-icon-button--background-color: var(--sf-surface-state-select);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible,
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: var(--sf-surface-transparent-select);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-select);
+    --sf-button--background-color: var(--sf-surface-state-select);
+    --sf-icon-button--background-color: var(--sf-surface-state-select);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):active {
-    --sf-button--background-color: var(--sf-surface-transparent-active);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+    --sf-button--background-color: var(--sf-surface-state-active);
+    --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.active:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-surface-transparent-active);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+    --sf-button--background-color: var(--sf-surface-state-active);
+    --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):active {
-    --sf-button--background-color: var(--sf-surface-transparent-active);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+    --sf-button--background-color: var(--sf-surface-state-active);
+    --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.active:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-surface-transparent-active);
-    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+    --sf-button--background-color: var(--sf-surface-state-active);
+    --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-tabs-color, var(--sf-on-surface));

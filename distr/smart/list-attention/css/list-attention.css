@@ -7,17 +7,17 @@
   .sf-list-attention.sf-list-attention--frame-card {
     --sf-surface-place: var(--sf-list-attention-background-color, var(--sf-list-attention-background, var(--sf-surface-card)));
     --sf-surface-place-solid: var(--sf-list-attention-background-color, var(--sf-list-attention-background, var(--sf-surface-card)));
+    --sf-surface-place-ground: var(--sf-list-attention-background-color, var(--sf-list-attention-background, var(--sf-surface-card)));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-card-variant);
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -28,6 +28,22 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list-attention.sf-list-attention--frame-card {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-list-attention.sf-list-attention--frame-card {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
   }
 }
 @layer sf.components {
@@ -196,6 +212,14 @@
   }
   .sf-list-attention-spacer {
     flex: 1 1 0;
+  }
+  /* The summary as one line of text and the quiet line's two lines (C45) are
+     the narrow column's; a wide one keeps the badges and the one quiet line. */
+  .sf-list-attention-summary-line,
+  .sf-list-attention-quiet-title,
+  .sf-list-attention-quiet-meta,
+  .sf-list-attention .sf-list-attention-recheck--narrow > button {
+    display: none;
   }
   /* The rows: one grid, every list and row a subgrid of it. */
   .sf-list-attention-list,
@@ -694,7 +718,7 @@
     border-top: var(--sf-px) solid var(--sf-list-attention--divider);
     -webkit-border-before: var(--sf-px) solid var(--sf-list-attention--divider);
             border-block-start: var(--sf-px) solid var(--sf-list-attention--divider);
-    background: var(--sf-surface-1);
+    background: var(--sf-surface-area);
     color: var(--sf-on-surface);
     font: inherit;
     font-size: var(--sf-list-attention--meta-font-size);
@@ -913,6 +937,86 @@
     .sf-list-attention-foot {
       flex-direction: column;
       align-items: flex-start;
+    }
+    /* C45 (owner 2026-11-10, option a2): the head is a two-line row of H, the
+       heading over the summary as one meta line («2 ошибки · 1 предупреждение
+       · 3 рекомендации») instead of the badges: its inset is what the two
+       lines leave of H, and the bottom one gives up the divider. In group mode
+       the time of the checks is a third line under it and the recheck an icon
+       at the head's end, centred: H + one meta line. */
+    .sf-list-attention-head:has(.sf-list-attention-summary-line) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-content: center;
+      align-items: center;
+      grid-gap: 0 var(--sf-list-attention--gap);
+      gap: 0 var(--sf-list-attention--gap);
+      padding-top: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+      -webkit-padding-after: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+              padding-block-end: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+    }
+    .sf-list-attention--frame-none .sf-list-attention-head:has(.sf-list-attention-summary-line) {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-block: 0;
+    }
+    .sf-list-attention-head:has(.sf-list-attention-summary-line) > .sf-list-attention-heading,
+    .sf-list-attention-summary-line,
+    .sf-list-attention-head .sf-list-attention-checked-text {
+      grid-column: 1;
+    }
+    .sf-list-attention-head .sf-list-attention-summary,
+    .sf-list-attention-head .sf-list-attention-spacer {
+      display: none;
+    }
+    .sf-list-attention-summary-line,
+    .sf-list-attention-head .sf-list-attention-checked-text {
+      display: block;
+      min-width: 0;
+      min-inline-size: 0;
+      color: var(--sf-on-surface-variant);
+      font-size: var(--sf-list-attention--meta-font-size);
+      font-weight: var(--sf-font-weight-regular);
+      line-height: var(--sf-list-attention--meta-line);
+      word-wrap: anywhere;
+    }
+    .sf-list-attention-head:has(.sf-list-attention-summary-line) .sf-list-attention-checked {
+      display: contents;
+    }
+    .sf-list-attention-head:has(.sf-list-attention-summary-line) .sf-list-attention-recheck,
+    .sf-list-attention-head:has(.sf-list-attention-summary-line) .sf-list-attention-recheck > button {
+      grid-column: 2;
+      grid-row: 1/span 3;
+      align-self: center;
+    }
+    /* C45 (option q2): the quiet line is a two-line row of H, «Всё в порядке»
+       over «Проверено … назад», and the recheck an icon at its end. */
+    .sf-list-attention-quiet-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .sf-list-attention-quiet-line,
+    .sf-list-attention-recheck-text,
+    .sf-list-attention-recheck-text > * {
+      display: none;
+    }
+    .sf-list-attention-quiet-title {
+      display: block;
+      color: var(--sf-on-surface);
+      font-weight: var(--sf-font-weight-medium);
+    }
+    .sf-list-attention-quiet-meta {
+      display: block;
+      font-size: var(--sf-list-attention--meta-font-size);
+      line-height: var(--sf-list-attention--meta-line);
+    }
+    /* sf-button-icon's host is display: contents (an inline style): its
+       native control is the box. */
+    .sf-list-attention .sf-list-attention-recheck--narrow > button {
+      display: inline-flex;
     }
     .sf-list-attention-foot .sf-list-attention-spacer {
       display: none;

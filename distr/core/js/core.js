@@ -1321,6 +1321,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e081a020262e");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1446153b1a96");
 // Copy on click for code in running text (owner, 2026-11-07, docs review R024,
 // rule C10). Opt-in, never the default: a container that carries
 // data-sf-code-copy turns each word of code inside it into a copy control,
@@ -1347,27 +1348,19 @@ __webpack_require__.r(__webpack_exports__);
 // under that component's name, so a word a product registers for
 // sf-button-copy (SF.language.register) is said here too. Core cannot import
 // a Smart component's files (core is what the Smart units depend on), so the
-// three words it says are written here as sf-button-copy ships them;
+// words are written once in core, as sf-button-copy ships them
+// (core/js/copy-feedback.js, decision C48);
 // tests/inline-code.contract.test.mjs holds them equal to its language files.
 // A refused copy selects the code and says which keys to press, as
 // sf-button-copy does.
 
 
+
 const ATTRIBUTE = 'data-sf-code-copy';
 const TARGET = 'data-sf-code-copy-target';
-const STATUS_CLASS = 'sf-code-copy-status';
-const WORDS = {
-  en: {
-    copy: 'Copy',
-    copied: 'Copied',
-    selected: 'Selected — press {keys}'
-  },
-  ru: {
-    copy: 'Копировать',
-    copied: 'Скопировано',
-    selected: 'Выделено — нажмите {keys}'
-  }
-}; // The status stays as long as sf-button-copy's does by default.
+const STATUS_CLASS = 'sf-code-copy-status'; // sf-button-copy's words, kept once in core/js/copy-feedback.js (decision C48).
+
+const WORDS = _copy_feedback_js__WEBPACK_IMPORTED_MODULE_2__.WORDS; // The status stays as long as sf-button-copy's does by default.
 
 const SHOWN_MS = 2000; // Where a word of code is part of something else (the base sheet's list).
 
@@ -1391,8 +1384,7 @@ function isCopyable(code) {
   if (!parent || classed(code) || classed(parent)) return false;
   return !parent.closest(NOT_PROSE);
 }
-
-const keys = () => /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '') ? '⌘C' : 'Ctrl+C';
+const keys = _copy_feedback_js__WEBPACK_IMPORTED_MODULE_2__.copyKeys;
 
 function mark(code) {
   code.setAttribute(TARGET, '');
@@ -1578,6 +1570,280 @@ if (typeof globalThis !== 'undefined' && globalThis.document) {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (install);
+
+/***/ },
+
+/***/ "1446153b1a96"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DURATION: () => (/* binding */ DURATION),
+/* harmony export */   SOURCE_ERRORS: () => (/* binding */ SOURCE_ERRORS),
+/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   copyFeedback: () => (/* binding */ copyFeedback),
+/* harmony export */   copyKeys: () => (/* binding */ copyKeys),
+/* harmony export */   copyWord: () => (/* binding */ copyWord),
+/* harmony export */   createCopyFeedback: () => (/* binding */ createCopyFeedback),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   readCopyText: () => (/* binding */ readCopyText),
+/* harmony export */   selectCopySource: () => (/* binding */ selectCopySource)
+/* harmony export */ });
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+// What a copy says (owner decision C48, 2026-11-11): one feedback for every
+// control that copies -- sf-button-copy, and any <button>, sf-button or
+// sf-button-icon that carries data-sf-copy or data-sf-copy-target (the
+// clipboard component's attribute route). Beside SF.copyText, which copies,
+// this says how it went:
+//
+// - copied: the phase is success for two seconds (the icon a check), and the
+//   word "Скопировано" is said politely;
+// - refused by the browser (a policy, an embedded frame, a denied permission):
+//   the source is selected -- a field's value, an element's text, or the value
+//   itself in a hidden holder -- and the words say which keys copy it
+//   ("Выделено — нажмите Ctrl+C"), so the copy is never simply lost;
+// - nothing to copy (no source, a missing target, two sources): the phase is
+//   error and the words say it could not copy.
+//
+// The helper keeps the phase, the timer and the words; the control draws them
+// (sf-button-copy in its template, the attribute route in the page's markup).
+// Core cannot import a Smart component's files, so the words are written here
+// as sf-button-copy ships them and are read through the page's language under
+// that component's name (a product that registers words for sf-button-copy is
+// heard here too); tests/inline-code.contract.test.mjs and
+// tests/copy-feedback.contract.test.mjs hold them equal to its language files.
+
+
+const WORDS = {
+  en: {
+    copy: 'Copy',
+    copied: 'Copied',
+    failed: 'Could not copy',
+    selected: 'Selected — press {keys}'
+  },
+  ru: {
+    copy: 'Копировать',
+    copied: 'Скопировано',
+    failed: 'Не удалось скопировать',
+    selected: 'Выделено — нажмите {keys}'
+  }
+};
+/** How long a result stays, in ms, unless the control says otherwise. */
+
+const DURATION = 2000;
+/** The failures that are the source's, not the browser's: nothing is selected for them. */
+
+const SOURCE_ERRORS = new Set(['ambiguous_source', 'empty_source', 'missing_source', 'missing_target']);
+const HOLDER_STYLE = 'position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
+/** The keys that copy a selection on this platform. */
+
+function copyKeys() {
+  return /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '') ? '⌘C' : 'Ctrl+C';
+}
+/** A copy word in the language of `node` (sf-button-copy's words). */
+
+function copyWord(key, node, vars) {
+  return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, key, node, {
+    component: 'sf-button-copy',
+    source: 'ru',
+    vars
+  });
+}
+/**
+ * The text an element gives to copy, whole: a field's value; a numbered code
+ * block's code, one line per row and none of the numbers (Highlight
+ * data-lines); else the element's text.
+ */
+
+function readCopyText(element) {
+  if (!element) return '';
+  const View = element.ownerDocument?.defaultView ?? globalThis;
+  if (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement) return element.value;
+  const rows = element.querySelectorAll?.(':scope .sf-code-lines > .sf-code-line > .sf-code-line__content'); // An empty line is drawn as a space so its row keeps a height; it copies empty.
+
+  if (rows?.length) return Array.from(rows, row => row.textContent === ' ' ? '' : row.textContent).join('\n');
+  return element.textContent ?? '';
+}
+/**
+ * Selects what was to be copied, so the person can press the keys: the field
+ * (focused and selected), the element's contents, or -- for a value with no
+ * element on the page -- `text` in a hidden holder inside `host`.
+ */
+
+function selectCopySource(element, {
+  text = '',
+  host = null,
+  holderClass = 'sf-copy-holder',
+  document: doc = element?.ownerDocument ?? host?.ownerDocument ?? globalThis.document
+} = {}) {
+  const View = doc?.defaultView ?? globalThis;
+
+  if (element && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement)) {
+    element.focus();
+    element.select();
+    return element;
+  }
+
+  const selection = View.getSelection?.();
+  if (!selection || !doc) return null;
+  let node = element;
+
+  if (!node) {
+    if (!host || !text) return null;
+    node = [...host.children].find(child => child.classList?.contains(holderClass));
+
+    if (!node) {
+      node = doc.createElement('span');
+      node.className = holderClass;
+      node.style.cssText = HOLDER_STYLE;
+      host.append(node);
+    }
+
+    node.textContent = text;
+  }
+
+  selection.removeAllRanges();
+  const range = doc.createRange();
+  range.selectNodeContents(node);
+  selection.addRange(range);
+  return node;
+}
+/**
+ * One control's feedback. `onPhase(phase, message)` is told every change:
+ * pending, success, error, and idle again after `duration` ms (a number or a
+ * function answering one). `run()` copies and settles with the outcome:
+ * {outcome: 'applied', text, method} or {outcome: 'refused', reason, error},
+ * the reason one of SOURCE_ERRORS, 'denied' or 'busy'.
+ */
+
+function createCopyFeedback({
+  onPhase = () => {},
+  duration = DURATION
+} = {}) {
+  let timer = null;
+  let pending = false;
+
+  const lasting = () => {
+    const value = Number(typeof duration === 'function' ? duration() : duration);
+    return Number.isFinite(value) && value >= 0 ? value : DURATION;
+  };
+
+  const set = (phase, message = '') => {
+    clearTimeout(timer);
+    timer = null;
+    onPhase(phase, message);
+
+    if (phase === 'success' || phase === 'error') {
+      timer = setTimeout(() => {
+        timer = null;
+        onPhase('idle', '');
+      }, lasting());
+    }
+  };
+
+  return {
+    get pending() {
+      return pending;
+    },
+
+    /**
+     * `read()` answers the text (or throws a SOURCE_ERRORS code); `element()`
+     * answers the element to select on a refusal, or null; `host` holds the
+     * hidden holder for a value; `node` is where the language is read;
+     * `words(key, vars)` overrides the words, `messages` the copied and failed
+     * text a control was given.
+     */
+    async run({
+      read,
+      element = () => null,
+      host = null,
+      holderClass,
+      node = host,
+      document: doc,
+      words,
+      messages = {}
+    } = {}) {
+      if (pending) return {
+        outcome: 'refused',
+        reason: 'busy'
+      };
+      pending = true;
+
+      const say = words || ((key, vars) => copyWord(key, node, vars));
+
+      set('pending', '');
+      let text = '';
+
+      try {
+        text = String(read?.() ?? '');
+        if (!text) throw new Error('empty_source');
+        const method = await (0,_clipboard_js__WEBPACK_IMPORTED_MODULE_0__.copyText)(text, {
+          document: doc ?? node?.ownerDocument ?? globalThis.document
+        });
+        set('success', messages.copied || say('copied'));
+        return {
+          outcome: 'applied',
+          text,
+          method
+        };
+      } catch (error) {
+        if (SOURCE_ERRORS.has(error?.message)) {
+          set('error', messages.failed || say('failed'));
+          return {
+            outcome: 'refused',
+            reason: error.message,
+            error
+          };
+        } // Refused by the browser: the source is selected, so the keys copy it.
+
+
+        selectCopySource(element?.() ?? null, {
+          text,
+          host,
+          holderClass,
+          document: doc
+        });
+        set('error', say('selected', {
+          keys: copyKeys()
+        }));
+        return {
+          outcome: 'refused',
+          reason: 'denied',
+          error
+        };
+      } finally {
+        pending = false;
+      }
+    },
+
+    /** Back to idle now, without waiting for the timer. */
+    reset() {
+      set('idle', '');
+    },
+
+    /** Stops the timer (the control is going away). */
+    cancel() {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+  };
+}
+const copyFeedback = {
+  create: createCopyFeedback,
+  readText: readCopyText,
+  select: selectCopySource,
+  words: copyWord
+}; // Core publishes it; a bundle that carries its own copy reuses the published one.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.copyFeedback) globalThis.SF.copyFeedback = copyFeedback;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createCopyFeedback);
 
 /***/ },
 
@@ -5576,16 +5842,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("effedf2a2981");
-/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("1446153b1a96");
+/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("effedf2a2981");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("6c7f357fe960");
 
 
 
@@ -5615,6 +5882,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // What a copy says, one feedback for sf-button-copy and the attribute route
+// data-sf-copy (owner decision C48, 2026-11-11): SF.copyFeedback.
+
  // Copy on click for code in running text, where a container opts in with
 // data-sf-code-copy (owner, 2026-11-07, R024): SF.codeCopy.
 
@@ -5643,10 +5913,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_24__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_25__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_27__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_28__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -5710,9 +5980,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -5777,10 +6047,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_25__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_26__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_26__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_27__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -5890,8 +6160,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_29__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_29__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_30__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_30__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5899,18 +6169,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_30__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_30__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5924,7 +6194,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5933,7 +6203,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_30__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_31__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5955,7 +6225,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5992,7 +6262,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_30__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_31__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -6202,9 +6472,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   openLayers: () => (/* binding */ openLayers),
 /* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
 /* harmony export */   returnLayerFocus: () => (/* binding */ returnLayerFocus),
+/* harmony export */   startClosedLayerContent: () => (/* binding */ startClosedLayerContent),
 /* harmony export */   topLayer: () => (/* binding */ topLayer),
 /* harmony export */   tryFocus: () => (/* binding */ tryFocus),
-/* harmony export */   updateLayer: () => (/* binding */ updateLayer)
+/* harmony export */   updateLayer: () => (/* binding */ updateLayer),
+/* harmony export */   whenClosedLayerOpens: () => (/* binding */ whenClosedLayerOpens)
 /* harmony export */ });
 // The one document layer stack (standard simai.smart-component 1.3.8 §19).
 //
@@ -6824,6 +7096,182 @@ function carryLayerOrigin(portal, host, {
   for (const [name, value] of kept) portal.style.setProperty(name, value);
 
   if (kept.length) portal.dataset.sfLayerVariables = kept.map(([name]) => name).join(' ');else delete portal.dataset.sfLayerVariables;
+} // A closed layer's content starts while the layer is closed, after the page's
+// first paint, without being shown. The Loader leaves a Smart element inside a
+// closed container for later and fetches its code when the container opens
+// (standard 1.3.8 §7.2.1, simai/ui-source#47); a closed window's or drawer's
+// root is such a container (inert, out of view). So a page that waited for a
+// tag in a closed window before opening it -- customElements.whenDefined
+// ('sf-menu'), then fill the menu, then open() -- waited for ever (ui-control
+// evidence 2026-11-11-modal-followups). The layer asks for those tags itself,
+// as a component asks for an element it draws (SF.Loader.ensure), once the
+// page has loaded and the browser is idle: the first paint fetches nothing
+// more than before, and the content is drawn where it stands, inside the
+// closed root, which shows nothing.
+//
+// The layer's own closed root is the one container this passes over. A closed
+// container inside it (a tab panel, a closed <details>, an unstarted part)
+// keeps its own deferral, and an element inside a Smart parent that has not
+// taken its source yet waits for it (the Loader's rule), so the walk runs
+// again when what it asked for has drawn: a few rounds, each for the tags
+// the previous one uncovered.
+
+const CLOSED_INSIDE = '[hidden], [inert], details:not([open]), dialog:not([open]), [data-sf-start]:not([data-sf-started])';
+const UNSTARTED = '[data-sf-start]:not([data-sf-started])';
+const CONTENT_ROUNDS = 4;
+
+function closedInside(element, root) {
+  if (element.matches(UNSTARTED)) return true;
+
+  for (let node = element.parentElement; node && node !== root; node = node.parentElement) {
+    if (!node.matches(CLOSED_INSIDE)) continue; // A closed <details> still shows its summary.
+
+    if (node.localName === 'details' && element.closest('summary')?.parentElement === node) continue;
+    return true;
+  }
+
+  return false;
+}
+
+function contentTags(root, loader) {
+  const registry = globalThis.customElements;
+  const tags = new Set();
+
+  for (const element of root.querySelectorAll('*')) {
+    const tag = element.localName;
+    if (!tag.includes('-') || tags.has(tag) || registry?.get?.(tag)) continue;
+    if (!loader.getSmartElementRuleName(element)) continue;
+    if (closedInside(element, root) || loader.shouldDeferNestedSmartElement?.(element)) continue;
+    tags.add(tag);
+  }
+
+  return [...tags];
+}
+
+function whenPageIdle(fn) {
+  const view = globalThis.window;
+
+  const idle = () => {
+    // requestIdleCallback is throttled in a hidden tab; a timer still runs.
+    if (typeof view.requestIdleCallback === 'function' && !view.document?.hidden) view.requestIdleCallback(fn, {
+      timeout: 2000
+    });else view.setTimeout(fn, 200);
+  };
+
+  if (view.document?.readyState === 'complete') idle();else view.addEventListener('load', idle, {
+    once: true
+  });
+} //
+// A page may keep the old timing, the content fetched when the layer opens:
+// SF_BOOT_CONFIG.startClosedLayerContent = false. The first-paint snapshots do
+// (scripts/first-paint-lib.mjs): a closed layer's first paint is the layer as
+// it rests before anything in it starts, and a start at idle time made the
+// picture and its sheet list depend on how soon the browser was idle.
+//
+// Content the page puts into the closed layer later (a list filled from its
+// data, a part loaded into it) starts the same way: the layer watches its
+// closed root and walks it again, a few rounds, once the page is idle after
+// an addition (ui-control evidence 2026-11-11-modal-followups-2-accept, L2).
+// An open root is the Loader's, as any part of the page.
+
+
+function startClosedLayerContent(rootOf) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return;
+  let round = 0;
+  let walking = false;
+  let again = false;
+  let watched = null;
+  let watcher = null;
+
+  const next = () => {
+    const loader = view.SF?.Loader;
+    const root = rootOf();
+    walking = false;
+    if (!root?.isConnected || !loader?.ensure || !loader.getSmartElementRuleName) return;
+    watch(root);
+    if (!root.matches(CLOSED_LAYER)) return;
+    const tags = contentTags(root, loader);
+
+    if (!tags.length || ++round > CONTENT_ROUNDS) {
+      if (again) walk();
+      return;
+    }
+
+    walking = true;
+    loader.ensure(tags, {
+      timeout: 10000
+    }).then(() => whenPageIdle(next));
+  };
+
+  const walk = () => {
+    again = false;
+
+    if (walking) {
+      again = true;
+      return;
+    }
+
+    round = 0;
+    walking = true;
+    whenPageIdle(next);
+  };
+
+  const watch = root => {
+    if (watched === root || typeof view.MutationObserver !== 'function') return;
+    watcher?.disconnect();
+    watched = root;
+    watcher = new view.MutationObserver(records => {
+      if (!watched.isConnected) {
+        watcher.disconnect();
+        watcher = null;
+        watched = null;
+        return;
+      }
+
+      if (watched.matches(CLOSED_LAYER) && records.some(record => record.addedNodes.length)) walk();
+    });
+    watcher.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  };
+
+  walking = true;
+  whenPageIdle(next);
+} // A closed window's root or drawer's panel: inert while closed (and while a
+// window is minimised).
+
+const CLOSED_LAYER = '.sf-modal[inert], [data-sf-drawer-panel][inert]'; // A component that fetches its own data (sf-include) and stands in a closed
+// window or drawer fetches it once the layer opens, not at page load: the
+// layer starts its content early so the page can reach its code
+// (startClosedLayerContent), but a part, a list's rows or a user's data the
+// page never opens should not cost the server a request (ui-control
+// evidence 2026-11-11-modal-followups-2-accept, M2). Null when the element is
+// not in a closed layer, or when the page keeps the old timing
+// (SF_BOOT_CONFIG.startClosedLayerContent = false: then nothing in a closed
+// layer starts before it opens); otherwise a promise that settles when the
+// layer opens, or never once `signal` aborts.
+
+function whenClosedLayerOpens(element, signal) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return null;
+  const layer = element?.closest?.(CLOSED_LAYER);
+  if (!layer || typeof view.MutationObserver !== 'function') return null;
+  return new Promise(resolve => {
+    const watcher = new view.MutationObserver(() => {
+      if (layer.matches(CLOSED_LAYER) && layer.isConnected) return;
+      watcher.disconnect();
+      resolve();
+    });
+    watcher.observe(layer, {
+      attributes: true,
+      attributeFilter: ['inert']
+    });
+    signal?.addEventListener('abort', () => watcher.disconnect(), {
+      once: true
+    });
+  });
 }
 
 /***/ },
@@ -10660,7 +11108,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.51.0';
+const CORE_RUNTIME = '1.54.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20875,7 +21323,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.12.1"
+    "version": "1.13.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -21034,7 +21482,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.8.2"
+    "version": "1.8.3"
   },
   "sf-checkbox": {
     "inputs": {
@@ -21102,7 +21550,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.1.6"
+    "version": "1.1.7"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -21503,7 +21951,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -21656,7 +22104,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.7.4"
+    "version": "1.7.5"
   },
   "sf-switch": {
     "inputs": {
@@ -21702,6 +22150,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "short": {
+          "default": false,
+          "type": "boolean"
+        },
         "size": {
           "default": "1",
           "enum": [
@@ -21720,7 +22172,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.3.4"
+    "version": "1.4.0"
   }
 });
 

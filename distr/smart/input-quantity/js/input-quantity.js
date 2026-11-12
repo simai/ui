@@ -211,33 +211,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -1790,7 +1834,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // field: the root, the label row, the wrap with «−», the box and «+». The
 // layout utilities are the ones the class constructor puts on each part from
 // quantity.utility.json. The steppers stay size 1/3 icon buttons at every
-// field size, as the class draws them; the sheet sizes their glyph to the field.
+// field size, as the class draws them; the sheet sizes them one rung below the
+// field and their glyph to the field's own icon (QT-03).
 
 const LAYOUT = {
   root: 'flex flex-col flex-nowrap justify-start',
@@ -1798,8 +1843,11 @@ const LAYOUT = {
   wrap: 'flex flex-row flex-nowrap justify-center items-center',
   count: 'flex flex-row flex-nowrap justify-start items-center',
   input: 'flex'
-};
-const STEPPER = 'sf-quantity-count sf-icon-button sf-icon-button--secondary sf-icon-button--tonal sf-icon-button--size-1/3';
+}; // The quiet neutral ghost (C15): no plate at rest, the surface hover fill and
+// on-surface ink under a pointer, as a field's own clear button. secondary was
+// retired (QT-04).
+
+const STEPPER = 'sf-quantity-count sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--on-surface-variant sf-icon-button--size-1/3';
 
 function renderStepper(context, direction) {
   const {
@@ -2119,7 +2167,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.3.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.3.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

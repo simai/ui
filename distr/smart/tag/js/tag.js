@@ -98,6 +98,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cycleItems: () => (/* binding */ cycleItems),
 /* harmony export */   cycleState: () => (/* binding */ cycleState),
 /* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
 /* harmony export */   nextTheme: () => (/* binding */ nextTheme),
 /* harmony export */   parseCycle: () => (/* binding */ parseCycle),
 /* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
@@ -108,7 +109,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
 /* harmony export */   themePreference: () => (/* binding */ themePreference),
 /* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
-/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
 /* harmony export */ });
 // One button, several values (docs review R039, owner decision D11d;
 // research ui-control control/research/2026-11-08-cycle-button.md).
@@ -207,11 +209,24 @@ const opposite = theme => theme === 'dark' ? 'light' : 'dark';
 function loader() {
   return globalThis.SF?.Loader;
 }
-/** The theme drawn now (light or dark), whatever the preference. */
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
 
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
 
 function visibleTheme() {
-  const theme = loader()?.theme;
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
   if (theme === 'dark' || theme === 'light') return theme;
   const root = globalThis.document?.documentElement;
   if (root?.classList?.contains('theme-dark')) return 'dark';
@@ -329,6 +344,19 @@ function warnCycleToggle(host, names) {
   globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
 }
 /**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
  * A person's press of a cycle: the next value, the change event and the
  * announcement. Answers true when it moved.
  */
@@ -350,6 +378,7 @@ function pressCycle(host, state) {
     host.__sfCycleExpect = value;
 
     if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
       host.__sfCycleAnnounce = false;
       host.__sfCyclePrevious = before;
       host.__sfCycleExpect = undefined;
@@ -789,7 +818,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CLOSE_SIZE: () => (/* binding */ CLOSE_SIZE),
 /* harmony export */   closeSize: () => (/* binding */ closeSize)
 /* harmony export */ });
-// The size sf-tag asks sf-icon-button for, for its remove button. The button's
+// The size sf-tag asks sf-button-close for, for its remove button. The button's
 // sizes are 1/3, 1/2, 1, 2 and 3; the tag asks for the smallest at every tag
 // size and its stylesheet draws the box from the label (templates/default.css).
 // Before 1.1.6 sizes 1/2 and 1/3 asked for 1/4, a size the button does not
@@ -912,26 +941,25 @@ function renderCount(context) {
   return context.component?.hasSlotContent?.('count') ? context.component.getSlotContent('count') // No count, no element: an empty one kept its padding and the gap
   // before it, an empty band at the end of every tag (owner, 2026-10-14).
   : context.count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-count pointer-events-none flex">${context.count}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-} // The close button is ghost, not link, its former name: the dated alias
-// counted every closable tag as the page's own use of link in
-// SF.deprecations (pair ui-a0370c0c99fb acceptance, F3).
+} // The remove button is sf-button-close, plain (owner decision C14: a tag's
+// remove has no spot, the cross darkens and the ring stands around it). It was
+// sf-button-icon kind="close", the name C14 retired (LK-06); before that link,
+// the alias F3 of pair ui-a0370c0c99fb counted on every closable tag.
 
 
 function renderClose(context) {
   if (!context.closable) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return context.component?.hasSlotContent?.('close') ? context.component.getSlotContent('close') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <sf-button-icon
-                        kind="close"
+                <sf-button-close
                         size="${(0,_close_size_js__WEBPACK_IMPORTED_MODULE_2__.closeSize)(context.size)}"
-                        appearance="ghost"
-                        scheme="on-surface"
+                        appearance="plain"
                         ?disabled=${context.disabled}
                         aria-label=${context.closeLabel}
                         @click="${e => {
     e.stopPropagation();
     context.component.onClose();
   }}"
-                ></sf-button-icon>
+                ></sf-button-close>
         `;
 }
 
@@ -1067,7 +1095,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.3.4","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.3.5","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -273,7 +273,7 @@
   },
   {
     "name": "background-color/default",
-    "regex": "/^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:crim|econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])/"
+    "regex": "/^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|hue-container|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hue(?:-container)?|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:crim|econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|hue-container|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])/"
   },
   {
     "name": "background-gradient/default",
@@ -412,19 +412,19 @@
   },
   {
     "name": "border-color/active",
-    "regex": "/^(?:active:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:active:border-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "border-color/default",
-    "regex": "/^(?:border-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|error(?:-(?:container|transparent-overlay))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?|utline(?:-variant)?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-overlay))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|w(?:arning(?:-(?:container|transparent-overlay))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])/"
+    "regex": "/^(?:border-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hue|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?|utline(?:-variant)?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|transparent-overlay))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|transparent-overlay))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])/"
   },
   {
     "name": "border-color/focus",
-    "regex": "/^(?:focus:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:focus:border-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "border-color/hover",
-    "regex": "/^(?:hover:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:hover:border-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/default",
@@ -691,6 +691,9 @@
     "mode": "smart",
     "relation": [
       {
+        "name": "cl-time"
+      },
+      {
         "name": "cl-button"
       },
       {
@@ -848,6 +851,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "tooltip"
       }
     ],
     "tags": [
@@ -889,6 +895,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-change",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-change"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-checkbox",
     "css": true,
     "js": true,
@@ -917,6 +941,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-input"
       }
     ],
     "tags": [
@@ -935,6 +962,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-change"
       }
     ],
     "tags": [
@@ -1425,7 +1455,7 @@
         "name": "cl-button"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-button-close"
       }
     ],
     "tags": [
@@ -1536,6 +1566,12 @@
     "js": true,
     "mode": "smart",
     "relation": [
+      {
+        "name": "group-heading"
+      },
+      {
+        "name": "cl-time"
+      },
       {
         "name": "dropdown"
       },
@@ -1690,6 +1726,21 @@
     "js": true,
     "mode": "smart",
     "relation": [
+      {
+        "name": "featured-icon"
+      },
+      {
+        "name": "group-heading"
+      },
+      {
+        "name": "cl-time"
+      },
+      {
+        "name": "cl-change"
+      },
+      {
+        "name": "cl-avatar"
+      },
       {
         "name": "cl-button"
       },
@@ -2034,6 +2085,10 @@
       {
         "lazy": true,
         "name": "spinner"
+      },
+      {
+        "lazy": true,
+        "name": "cl-dropdown"
       }
     ],
     "tags": [
@@ -2229,7 +2284,7 @@
         "name": "dot"
       },
       {
-        "name": "cl-button-icon"
+        "name": "cl-button-close"
       },
       {
         "name": "cl-icon"
@@ -2288,6 +2343,21 @@
     ],
     "tags": [
       "sf-tile-metric"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-time",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "tooltip"
+      }
+    ],
+    "tags": [
+      "sf-time"
     ],
     "type": "smart"
   },
@@ -2461,7 +2531,7 @@
     "name": "clipboard",
     "css": true,
     "js": true,
-    "regex": "/(?:sf-clipboard|btn-clipboard|data-copy|data-clipboard-target)/",
+    "regex": "/(?:data-sf-copy|data-sf-copy-target|sf-clipboard|btn-clipboard|data-copy|data-clipboard-target)/",
     "relation": [
       {
         "name": "icon-buttons"
@@ -2471,6 +2541,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "tooltip"
       }
     ],
     "type": "component"
@@ -2660,11 +2733,11 @@
   },
   {
     "name": "drop-shadow-color/default",
-    "regex": "/^(?:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])/"
+    "regex": "/^(?:drop-shadow-(?:current|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|container|inverse(?:-fixed)?|page))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?))(?![\\s\\S])/"
   },
   {
     "name": "drop-shadow-color/hover",
-    "regex": "/^(?:hover:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])/"
+    "regex": "/^(?:hover:drop-shadow-(?:current|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|container|inverse(?:-fixed)?|page))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?))(?![\\s\\S])/"
   },
   {
     "name": "drop-shadow/default",
@@ -2794,7 +2867,7 @@
   },
   {
     "name": "fill/default",
-    "regex": "/^(?:(?:fill-(?:current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?)|hover:fill-(?:error(?:-(?:container|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)))(?![\\s\\S])/"
+    "regex": "/^(?:(?:fill-(?:current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hue-container-graphic|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|container(?:-strong)?|disabled|inverse(?:-fixed)?|page|state-select|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?)|hover:fill-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])/"
   },
   {
     "name": "filter-blur/default",
@@ -3173,11 +3246,11 @@
   },
   {
     "name": "gradient-color/default",
-    "regex": "/^(?:gr(?:1-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|2-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|3-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])/"
+    "regex": "/^(?:gr(?:1-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)|2-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)|3-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])/"
   },
   {
     "name": "gradient-stops/default",
-    "regex": "/^(?:(?:from-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|to-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|via-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])/"
+    "regex": "/^(?:(?:from-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)|to-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)|via-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2|area|page)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])/"
   },
   {
     "name": "gradient-type/default",
@@ -3468,6 +3541,13 @@
   {
     "name": "grid-template-rows/xxl",
     "regex": "/^(?:xxl:grid-row-(?:1|2|3|4|5|6|none|subgrid))(?![\\s\\S])/"
+  },
+  {
+    "name": "group-heading",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-group-heading\\b/i",
+    "type": "component"
   },
   {
     "name": "headers/default",
@@ -4224,7 +4304,7 @@
   {
     "name": "pagination",
     "css": true,
-    "js": true,
+    "js": false,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-pagination|sf-page-number)\\b/i",
     "type": "component"
   },
@@ -4333,15 +4413,15 @@
   },
   {
     "name": "placeholder-color/default",
-    "regex": "/^(?:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "placeholder-color/focus",
-    "regex": "/^(?:focus:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:focus:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "placeholder-color/hover",
-    "regex": "/^(?:hover:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:hover:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "placeholder-opacity/default",
@@ -4429,7 +4509,7 @@
   },
   {
     "name": "query-layout/default",
-    "regex": "/^(?:cq-(?:lg(?:\\/sidebar:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|md(?:\\/sidebar:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|sm(?:\\/sidebar:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|xl(?:\\/sidebar:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))))(?![\\s\\S])/"
+    "regex": "/^(?:cq-(?:lg(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|md(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|sm(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|xl(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))))(?![\\s\\S])/"
   },
   {
     "name": "radio",
@@ -4458,19 +4538,19 @@
   },
   {
     "name": "ring-color/default",
-    "regex": "/^(?:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:ring-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-color/focus",
-    "regex": "/^(?:focus:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:focus:ring-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-color/focus-visible",
-    "regex": "/^(?:focus-visible:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:focus-visible:ring-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-color/hover",
-    "regex": "/^(?:hover:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:hover:ring-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-inset/default",
@@ -4490,19 +4570,19 @@
   },
   {
     "name": "ring-offset-color/default",
-    "regex": "/^(?:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:ring-offset-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-offset-color/focus",
-    "regex": "/^(?:focus:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:focus:ring-offset-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-offset-color/focus-visible",
-    "regex": "/^(?:focus-visible:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:focus-visible:ring-offset-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-offset-color/hover",
-    "regex": "/^(?:hover:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+    "regex": "/^(?:hover:ring-offset-(?:current|error(?:-(?:container(?:-strong)?|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container(?:-strong)?|transparent-overlay))?|s(?:econdary(?:-(?:container(?:-strong)?|transparent-overlay))?|u(?:ccess(?:-(?:container(?:-strong)?|transparent-overlay))?|rface(?:-(?:0|1|area|container(?:-strong)?|inverse|overlay|page|transparent-overlay|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|transparent-overlay))?|ransparent)|warning(?:-(?:container(?:-strong)?|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
     "name": "ring-offset-width/default",
@@ -4688,13 +4768,13 @@
   {
     "name": "step",
     "css": true,
-    "js": true,
+    "js": false,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-step\\b/i",
     "type": "component"
   },
   {
     "name": "stripe-color/default",
-    "regex": "/^(?:stripe-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|urface-transparent-overlay)|t(?:ertiary(?:-container)?|ransparent)))(?![\\s\\S])/"
+    "regex": "/^(?:stripe-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|urface-(?:container-strong|transparent-overlay))|t(?:ertiary(?:-container)?|ransparent)))(?![\\s\\S])/"
   },
   {
     "name": "stripe-width/default",
@@ -4867,7 +4947,7 @@
   {
     "name": "tags",
     "css": true,
-    "js": true,
+    "js": false,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
     "type": "component"
   },
@@ -4897,19 +4977,19 @@
   },
   {
     "name": "text-color/active",
-    "regex": "/^(?:active:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:active:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "text-color/default",
-    "regex": "/^(?:color-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|in(?:fo|herit)|o(?:n-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary|uccess)|t(?:ertiary|ransparent)|w(?:arning|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])/"
+    "regex": "/^(?:color-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hue|in(?:fo|herit)|o(?:n-(?:disable|error(?:-container(?:-graphic)?)?|hue(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary|uccess)|t(?:ertiary|ransparent)|w(?:arning|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])/"
   },
   {
     "name": "text-color/focus",
-    "regex": "/^(?:focus:color-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:focus:color-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "text-color/hover",
-    "regex": "/^(?:hover:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+    "regex": "/^(?:hover:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:disabled|fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
     "name": "text-decoration-color/active",

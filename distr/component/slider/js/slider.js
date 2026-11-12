@@ -310,6 +310,39 @@ function createSlideInteractivityGuard(slider) {
       if (authored) slide.setAttribute('inert', '');else slide.removeAttribute('inert');
     });
   };
+} // An arrow with nowhere to go is disabled, not only pale. Swiper marks it with
+// swiper-button-disabled and the sheet takes pointer events away, but the
+// button kept its tab stop and a keyboard press did nothing (docs pre-check
+// 2026-11-10 SL-04). The native button is disabled with the mark; when the
+// arrow that holds the focus is the one that stops, the focus moves to the
+// other arrow, so it does not fall to the page.
+
+
+function createArrowStateGuard(slider, prevEl, nextEl) {
+  const arrows = [prevEl, nextEl].filter(arrow => arrow instanceof HTMLElement);
+  if (!arrows.length || typeof slider?.on !== 'function') return () => {};
+
+  const buttonOf = arrow => arrow.matches('button') ? arrow : arrow.querySelector('button');
+
+  const sync = () => {
+    arrows.forEach(arrow => {
+      const button = buttonOf(arrow);
+      if (!button) return;
+      const off = arrow.classList.contains('swiper-button-disabled');
+
+      if (off && !button.disabled && button === button.ownerDocument?.activeElement) {
+        const other = arrows.map(buttonOf).find(candidate => candidate && candidate !== button && !candidate.disabled);
+        other?.focus?.();
+      }
+
+      if (button.disabled !== off) button.disabled = off;
+    });
+  };
+
+  const events = ['afterInit', 'slideChange', 'reachBeginning', 'reachEnd', 'fromEdge', 'update', 'lock', 'unlock', 'navigationNext', 'navigationPrev'];
+  events.forEach(name => slider.on(name, sync));
+  sync();
+  return () => events.forEach(name => slider.off?.(name, sync));
 }
 
 function createAutoplayGuard(root, slider) {
@@ -446,7 +479,7 @@ function bindSlider(root) {
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), linkThumbnails(slider, thumbs)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(slider, thumbs)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));

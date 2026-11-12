@@ -19,7 +19,10 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .hover\:color-on-disable:hover {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .hover\:color-on-surface-disabled:hover {
+    color: var(--sf-on-surface-disabled);
   }
   .hover\:color-primary:hover {
     color: var(--sf-primary);

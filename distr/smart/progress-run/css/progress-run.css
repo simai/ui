@@ -434,8 +434,8 @@
     padding: calc(var(--sf-progress-run--below-space-x) - var(--sf-px));
     border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius--ui);
-    background: var(--sf-surface-1);
-    background: var(--sf-progress-run-output-background-color, var(--sf-progress-run-output-background, var(--sf-surface-1)));
+    background: var(--sf-surface-area);
+    background: var(--sf-progress-run-output-background-color, var(--sf-progress-run-output-background, var(--sf-surface-area)));
     color: var(--sf-on-surface);
     color: var(--sf-progress-run-output-color, var(--sf-on-surface));
     font-family: var(--sf-mono);
@@ -612,8 +612,8 @@
     padding: calc(var(--sf-progress-run--below-space-x) - var(--sf-px));
     border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius--ui);
-    background: var(--sf-surface-1);
-    background: var(--sf-progress-run-output-background-color, var(--sf-progress-run-output-background, var(--sf-surface-1)));
+    background: var(--sf-surface-area);
+    background: var(--sf-progress-run-output-background-color, var(--sf-progress-run-output-background, var(--sf-surface-area)));
     color: var(--sf-on-surface);
     color: var(--sf-progress-run-output-color, var(--sf-on-surface));
   }

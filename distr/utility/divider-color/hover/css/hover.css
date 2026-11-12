@@ -13,22 +13,22 @@
     border-color: var(--sf-outline-variant);
   }
   .hover\:divider-primary:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-primary);
+    border-color: var(--sf-primary-outline);
   }
   .hover\:divider-secondary:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-secondary);
+    border-color: var(--sf-secondary-outline);
   }
   .hover\:divider-tertiary:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-tertiary);
+    border-color: var(--sf-tertiary-outline);
   }
   .hover\:divider-error:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-error);
+    border-color: var(--sf-error-outline);
   }
   .hover\:divider-warning:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-warning);
+    border-color: var(--sf-warning-outline);
   }
   .hover\:divider-success:hover > :not([hidden]) ~ :not([hidden]) {
-    border-color: var(--sf-outline-success);
+    border-color: var(--sf-success-outline);
   }
   .hover\:divider-info:hover > :not([hidden]) ~ :not([hidden]) {
     border-color: var(--sf-info-outline);

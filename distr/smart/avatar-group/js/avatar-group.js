@@ -222,7 +222,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("920b6920c2b6");
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d709c9845088");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3824886fec29");
-/* harmony import */ var _component_avatars_scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c6ba1146e496");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -233,8 +232,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // sf-avatar-group from its component.json (standard simai.smart-component 1.3.8 §3,
+ // No sheet import: the rule has no css, so a sheet in this bundle never
+// reached a page; the avatars class sheet comes by the rule's relation
+// (audit 2026-11-11, dead Smart sheets).
+// sf-avatar-group from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4): the settings are the attributes and properties
 // core/js/element-manifest.js makes from the manifest. Each also falls back
 // to its field in the JSON text of fields (data until 2026-12-01: data is a
@@ -896,15 +897,6 @@ __webpack_async_result__();
 
 /***/ },
 
-/***/ "c6ba1146e496"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ },
-
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -943,7 +935,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.2.3","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.2.4","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 

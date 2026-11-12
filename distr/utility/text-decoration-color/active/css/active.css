@@ -13,28 +13,28 @@
             text-decoration-color: var(--sf-transparent);
   }
   .active\:decoration-primary:active {
-    -webkit-text-decoration-color: var(--sf-outline-primary);
-            text-decoration-color: var(--sf-outline-primary);
+    -webkit-text-decoration-color: var(--sf-primary-outline);
+            text-decoration-color: var(--sf-primary-outline);
   }
   .active\:decoration-secondary:active {
-    -webkit-text-decoration-color: var(--sf-outline-secondary);
-            text-decoration-color: var(--sf-outline-secondary);
+    -webkit-text-decoration-color: var(--sf-secondary-outline);
+            text-decoration-color: var(--sf-secondary-outline);
   }
   .active\:decoration-tertiary:active {
-    -webkit-text-decoration-color: var(--sf-outline-tertiary);
-            text-decoration-color: var(--sf-outline-tertiary);
+    -webkit-text-decoration-color: var(--sf-tertiary-outline);
+            text-decoration-color: var(--sf-tertiary-outline);
   }
   .active\:decoration-error:active {
-    -webkit-text-decoration-color: var(--sf-outline-error);
-            text-decoration-color: var(--sf-outline-error);
+    -webkit-text-decoration-color: var(--sf-error-outline);
+            text-decoration-color: var(--sf-error-outline);
   }
   .active\:decoration-warning:active {
-    -webkit-text-decoration-color: var(--sf-outline-warning);
-            text-decoration-color: var(--sf-outline-warning);
+    -webkit-text-decoration-color: var(--sf-warning-outline);
+            text-decoration-color: var(--sf-warning-outline);
   }
   .active\:decoration-success:active {
-    -webkit-text-decoration-color: var(--sf-outline-success);
-            text-decoration-color: var(--sf-outline-success);
+    -webkit-text-decoration-color: var(--sf-success-outline);
+            text-decoration-color: var(--sf-success-outline);
   }
   .active\:decoration-info:active {
     -webkit-text-decoration-color: var(--sf-info-outline);

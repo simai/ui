@@ -34,7 +34,13 @@
     /* The colour is the current ink unless --sf-loader--color is set on the
        spinner or any ancestor: inside a button it is the button's ink. The
        Framework never sets it (simai/ui-source#10; it was primary before). */
-    --sf-loader-track-color: var(--sf-spinner-track-color, var(--sf-surface-container));
+    /* The ring under the arc is the spinner's own ink at 16 % (the fill family
+       of the alpha scale), drawn whole: the variable carries the alpha, the
+       ring has no opacity of its own (DEV J1/S1, 2026-11-11). It was
+       --sf-surface-container under an opacity of 30 %, about 5 % of grey, and
+       could not be seen; a button's ring was already this. A page's
+       --sf-spinner-track-color sets colour and alpha together. */
+    --sf-loader-track-color: var(--sf-spinner-track-color, color-mix(in srgb, currentColor 16%, transparent));
     /* The size ladder (simai/ui-source#10): at each step the spinner is exactly
        the icon of a button of the same size, so it can stand in for that icon in
        a button, a field, a chip or a menu item. Step 1 when none is written. */
@@ -65,8 +71,11 @@
     font-family: var(--sf-text--family);
     font-weight: 400;
     font-size: var(--sf-loader-text-size);
-    color: var(--sf-on-surface);
-    color: var(--sf-spinner-text-color, var(--sf-on-surface));
+    /* The words take the ink of the place, the on-colour of the fill under the
+       spinner (DEV J1/S1): on-surface on a page, on-primary on a primary plate.
+       --sf-spinner-text-color still sets them apart. */
+    color: currentColor;
+    color: var(--sf-spinner-text-color, currentColor);
   }
   .sf-loader-container.sf-loader--size-1\/3 {
     --sf-loader-svg-width: var(--sf-spinner-size, var(--sf-text-height-1\/3));
@@ -275,9 +284,12 @@
     display: inline;
     display: var(--sf-loader--look-track, inline);
     fill: none;
-    opacity: var(--sf-opacity-30);
-    stroke: var(--sf-surface-container);
-    stroke: var(--sf-loader-track-color, var(--sf-surface-container));
+    /* Drawn whole: the alpha is in --sf-loader-track-color. 1, not nothing: the
+       drawing's own opacity attribute (0.3, for the paint before this sheet)
+       would hold otherwise. */
+    opacity: 1;
+    stroke: color-mix(in srgb, currentColor 16%, transparent);
+    stroke: var(--sf-loader-track-color, color-mix(in srgb, currentColor 16%, transparent));
     stroke-linecap: round;
     stroke-width: var(--sf-loader-stroke-width);
   }

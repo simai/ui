@@ -25,10 +25,13 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .color-disable {
-    color: var(--sf-disable);
+    color: var(--sf-surface-disabled);
   }
   .color-on-disable {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .color-on-surface-disabled {
+    color: var(--sf-on-surface-disabled);
   }
   .color-primary {
     color: var(--sf-primary);
@@ -113,6 +116,18 @@
   }
   .color-on-info-container-graphic {
     color: var(--sf-on-info-container-graphic);
+  }
+  .color-hue {
+    color: var(--sf-hue);
+  }
+  .color-on-hue {
+    color: var(--sf-on-hue);
+  }
+  .color-on-hue-container {
+    color: var(--sf-on-hue-container);
+  }
+  .color-on-hue-container-graphic {
+    color: var(--sf-on-hue-container-graphic);
   }
   .color-white {
     color: var(--sf-white);

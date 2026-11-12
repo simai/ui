@@ -11,33 +11,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -1217,7 +1261,7 @@ function renderSwitchTemplate(context) {
     value,
     ariaLabel
   } = context;
-  const rootClasses = ['sf-switch', `sf-switch--size-${size}`, 'flex', context.rootClass];
+  const rootClasses = ['sf-switch', `sf-switch--size-${size}`, context.short ? 'sf-switch--short' : '', 'flex', context.rootClass];
   const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-switch-text">${label}</span>` : ''; // A slotted description is held in a plain span: the binding names it as the
   // checkbox's description (aria-describedby, simai/ui-source#44), and a bare
   // text node has no id. The span draws nothing of its own.
@@ -1322,7 +1366,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.3.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.4.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 

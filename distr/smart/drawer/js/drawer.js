@@ -333,8 +333,16 @@ const drawerManager = {
 };
 
 class SfDrawer extends DrawerElement {
-  // The manifest's settings, and what the drawer reads more closely: the size
+  // A slotted child (slot="edge", or any other slot the page names) stays
+  // where the page wrote it until the drawer draws, and the drawing takes it
+  // to the panel in the same task (smart-base holdSlotNode, as sf-modal and
+  // sf-header-site). The base took it out of the document when the drawer
+  // connected, and a page that found it by id once sf-drawer was defined got
+  // null (ui-control evidence 2026-11-11-modal-followups). Unslotted content
+  // already stayed in the host until the drawing (_contentNodes).
+  static holdsSlotNodesUntilDrawn = true; // The manifest's settings, and what the drawer reads more closely: the size
   // ladder's legacy words, the base's template name.
+
   static get props() {
     return { ...super.props,
       templateName: {
@@ -779,8 +787,17 @@ class SfDrawer extends DrawerElement {
     if (!this.__sfFirstPaintEnded) {
       this.__sfFirstPaintEnded = true;
       this.prepareRenderContainer();
-    }
+    } // Out of view until the drawer's sheets are applied (the base's portal
+    // gate): under held-back sheets the closed panel stood in view beside
+    // the page and the page moved when they came. A modal drawer that opened
+    // in the meantime takes its first focus once it shows, which a hidden
+    // panel could not.
 
+
+    this.holdPortalUntilStyled(portal, () => {
+      const panel = this.getDrawerRoot()?.querySelector('[data-sf-drawer-panel]');
+      if (this.openState && this.modal && panel && !panel.contains(document.activeElement)) this.focusFirst();
+    });
     this.drawInto(result, portal);
     this.afterRender();
   } // The panel is rendered at the end of the body, above the page -- or, when the
@@ -863,8 +880,17 @@ class SfDrawer extends DrawerElement {
     handle?.removeEventListener('keydown', this.onHandleKeyDown);
     handle?.addEventListener('keydown', this.onHandleKeyDown);
     this.applyStackPosition();
-    this.observeDock(root); // Lifecycle copies retire (vocabulary §5.1, §16.13): still sent until their
+    this.observeDock(root); // A closed drawer's panel content starts after the page's first paint,
+    // out of view (its panel is inert, so the Loader leaves it until it
+    // opens): a page that waited for a tag in it before opening it waited for
+    // ever (layer-stack.js startClosedLayerContent, as sf-modal).
+
+    if (!this.openState && !this._closedContentStarted) {
+      this._closedContentStarted = true;
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.startClosedLayerContent)(() => this.getDrawerRoot()?.querySelector('[data-sf-drawer-panel]'));
+    } // Lifecycle copies retire (vocabulary §5.1, §16.13): still sent until their
     // date, and a listener that reads one is noted.
+
 
     const eventName = this._hasEmittedReady ? 'drawer:update' : 'drawer:ready';
     this.dispatchEvent(retiredEvent(eventName, {
@@ -1366,7 +1392,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.10.2","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.10.4","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

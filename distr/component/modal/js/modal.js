@@ -52,6 +52,7 @@ function freezeModalContent(panel, focusPanel = false) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INITIAL_FOCUS: () => (/* binding */ INITIAL_FOCUS),
 /* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
@@ -158,32 +159,102 @@ function trapModalFocus(panel, event) {
     event.preventDefault();
     destination.focus();
   }
-} // The first focus of an opened window (decision C25): the element the page
-// marked with the standard `autofocus` attribute, as a native <dialog> does --
-// in a dangerous question, the safe answer («Отмена»), so a stray Enter or
-// Space only closes the window. A marked element that is not focusable itself
+} // The first focus of an opened window (decisions C25, C39), by name
+// (sf-modal initial-focus):
+//
+// - auto (the default): the element the page marked with the standard
+//   `autofocus` attribute, as a native <dialog> does; else, in a question
+//   window -- one whose answers hold a dangerous one (an sf-button with
+//   status="danger", its drawn .sf-button--danger, or an sf-confirm) -- its
+//   safe answer, «Отмена»; else the panel, as before. Only answers count: a red
+//   sf-badge or an error message in the body does not make a window a question;
+// - safe: the safe answer whenever there is one;
+// - first: the first control of the window's content (the header's buttons,
+//   the × among them, excluded);
+// - panel: the panel itself.
+//
+// The safe answer is the declining answer of an sf-confirm in the window
+// ([data-action="decline"]) or the page's own answer that closes the window
+// ([data-sf-modal-close], the header's × excluded): a stray Enter or Space then
+// only closes the question. An element that is not focusable itself
 // (sf-button, whose host is display: contents) hands the focus to its first
-// tab stop. Without a mark, or with one that cannot take the focus, the panel
-// takes it, as before. Answers the element that took it.
+// tab stop. Content drawn after the window opened -- an sf-button draws its
+// <button> on its own schedule, an sf-confirm its answers, either perhaps
+// while its script is still loading -- is waited for, frame by frame for up
+// to two seconds, while the focus is still on the panel; anything the person
+// does in between wins. Answers the element that took the focus.
 
 
-function focusModalInitial(panel) {
-  if (!panel) return null;
-  const marked = panel.querySelector('[autofocus]');
+const INITIAL_FOCUS = ['auto', 'safe', 'first', 'panel']; // status="error" on an sf-button is danger's dated alias (C13).
 
-  if (marked && !marked.closest('[inert]')) {
-    const target = marked.matches(FOCUSABLE_SELECTOR) && marked.tabIndex >= 0 && !marked.matches(':disabled') ? marked : getModalTabStops(marked)[0];
+const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm';
+const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button)';
 
-    if (target) {
-      target.focus({
-        preventScroll: true
-      });
-      if (panel.ownerDocument.activeElement === target) return target;
-    }
+function takesFocus(node) {
+  if (!node || node.closest('[inert]') || node.closest('[hidden]')) return null;
+  if (node.matches(FOCUSABLE_SELECTOR) && node.tabIndex >= 0 && !node.matches(':disabled')) return node;
+  return getModalTabStops(node)[0] || null;
+}
+
+function isDanger(node) {
+  return node.matches('sf-button[status="danger"], sf-button[status="error"], .sf-button--danger') || Boolean(node.querySelector('.sf-button--danger'));
+} // The element that takes the safe answer's focus, or null while there is none
+// (or it is not drawn yet).
+
+
+function safeAnswer(panel) {
+  for (const host of panel.querySelectorAll(SAFE_SELECTOR)) {
+    if (host.closest('[inert], [hidden]') || isDanger(host)) continue;
+    const target = takesFocus(host);
+    if (target) return target;
   }
 
-  panel.focus();
-  return panel;
+  return null;
+}
+
+function firstFocus(panel, mode) {
+  if (mode === 'panel') return panel;
+  if (mode === 'first') return getModalTabStops(panel).find(node => !node.closest('.sf-modal-header-action')) || panel;
+
+  if (mode === 'auto') {
+    const marked = panel.querySelector('[autofocus]');
+    if (marked && !marked.closest('[inert], [hidden]')) return takesFocus(marked) || panel;
+    if (!panel.querySelector(DANGER_SELECTOR)) return panel;
+  }
+
+  return safeAnswer(panel) || panel;
+}
+
+const WAIT_FOR_CONTENT_MS = 2000;
+
+function focusModalInitial(panel, mode = 'auto') {
+  if (!panel) return null;
+  const name = INITIAL_FOCUS.includes(mode) ? mode : 'auto';
+  const target = firstFocus(panel, name);
+  target.focus({
+    preventScroll: true
+  });
+  const doc = panel.ownerDocument;
+  if (doc.activeElement !== target && target !== panel) panel.focus({
+    preventScroll: true
+  });
+
+  if (target === panel && name !== 'panel') {
+    const view = doc.defaultView;
+    const until = (view?.performance?.now() ?? 0) + WAIT_FOR_CONTENT_MS;
+
+    const retry = () => {
+      if (doc.activeElement !== panel || !panel.isConnected) return;
+      const late = firstFocus(panel, name);
+      if (late !== panel) late.focus({
+        preventScroll: true
+      });else if (view.performance.now() < until) view.requestAnimationFrame(retry);
+    };
+
+    view?.requestAnimationFrame(retry);
+  }
+
+  return doc.activeElement === target ? target : panel;
 }
 
 
@@ -627,13 +698,18 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     if (height) {
       panel.style.setProperty('--sf-modal-height', height);
       panel.setAttribute('data-sf-modal-has-height', '');
-    }
+    } // The window's frame is the question window's (decision C39; dispatcher
+    // decision d, docs pre-check 2026-11-10): the frame --sf-space-3, the
+    // title --sf-space-1 above the content, no line under the header, and the
+    // close button on the frame's corner, the title centred on its line. The
+    // frame was --sf-space-2 with a line under the header.
+
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-3 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal p-3 flex flex-col gap-1 min-w-0', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
-    header.className = joinClasses('sf-modal-header flex items-start min-w-0 border-b border-outline-variant gap-1', params.headerClass);
+    header.className = joinClasses('sf-modal-header flex items-start min-w-0 gap-1', params.headerClass);
 
     if (Array.isArray(params.headerNodes) && params.headerNodes.length) {
       root.setAttribute('aria-label', params.title || untitled(root));
@@ -646,7 +722,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       const title = document.createElement('h2');
       title.id = `${this.modalId}-title`;
       root.setAttribute('aria-labelledby', title.id);
-      title.className = 'sf-modal-header-content title-3 m-0';
+      title.className = 'sf-modal-header-content sf-modal-title m-0';
       title.textContent = params.title || untitled(root);
       header.append(title);
 
@@ -2422,9 +2498,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   openLayers: () => (/* binding */ openLayers),
 /* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
 /* harmony export */   returnLayerFocus: () => (/* binding */ returnLayerFocus),
+/* harmony export */   startClosedLayerContent: () => (/* binding */ startClosedLayerContent),
 /* harmony export */   topLayer: () => (/* binding */ topLayer),
 /* harmony export */   tryFocus: () => (/* binding */ tryFocus),
-/* harmony export */   updateLayer: () => (/* binding */ updateLayer)
+/* harmony export */   updateLayer: () => (/* binding */ updateLayer),
+/* harmony export */   whenClosedLayerOpens: () => (/* binding */ whenClosedLayerOpens)
 /* harmony export */ });
 // The one document layer stack (standard simai.smart-component 1.3.8 §19).
 //
@@ -3044,6 +3122,182 @@ function carryLayerOrigin(portal, host, {
   for (const [name, value] of kept) portal.style.setProperty(name, value);
 
   if (kept.length) portal.dataset.sfLayerVariables = kept.map(([name]) => name).join(' ');else delete portal.dataset.sfLayerVariables;
+} // A closed layer's content starts while the layer is closed, after the page's
+// first paint, without being shown. The Loader leaves a Smart element inside a
+// closed container for later and fetches its code when the container opens
+// (standard 1.3.8 §7.2.1, simai/ui-source#47); a closed window's or drawer's
+// root is such a container (inert, out of view). So a page that waited for a
+// tag in a closed window before opening it -- customElements.whenDefined
+// ('sf-menu'), then fill the menu, then open() -- waited for ever (ui-control
+// evidence 2026-11-11-modal-followups). The layer asks for those tags itself,
+// as a component asks for an element it draws (SF.Loader.ensure), once the
+// page has loaded and the browser is idle: the first paint fetches nothing
+// more than before, and the content is drawn where it stands, inside the
+// closed root, which shows nothing.
+//
+// The layer's own closed root is the one container this passes over. A closed
+// container inside it (a tab panel, a closed <details>, an unstarted part)
+// keeps its own deferral, and an element inside a Smart parent that has not
+// taken its source yet waits for it (the Loader's rule), so the walk runs
+// again when what it asked for has drawn: a few rounds, each for the tags
+// the previous one uncovered.
+
+const CLOSED_INSIDE = '[hidden], [inert], details:not([open]), dialog:not([open]), [data-sf-start]:not([data-sf-started])';
+const UNSTARTED = '[data-sf-start]:not([data-sf-started])';
+const CONTENT_ROUNDS = 4;
+
+function closedInside(element, root) {
+  if (element.matches(UNSTARTED)) return true;
+
+  for (let node = element.parentElement; node && node !== root; node = node.parentElement) {
+    if (!node.matches(CLOSED_INSIDE)) continue; // A closed <details> still shows its summary.
+
+    if (node.localName === 'details' && element.closest('summary')?.parentElement === node) continue;
+    return true;
+  }
+
+  return false;
+}
+
+function contentTags(root, loader) {
+  const registry = globalThis.customElements;
+  const tags = new Set();
+
+  for (const element of root.querySelectorAll('*')) {
+    const tag = element.localName;
+    if (!tag.includes('-') || tags.has(tag) || registry?.get?.(tag)) continue;
+    if (!loader.getSmartElementRuleName(element)) continue;
+    if (closedInside(element, root) || loader.shouldDeferNestedSmartElement?.(element)) continue;
+    tags.add(tag);
+  }
+
+  return [...tags];
+}
+
+function whenPageIdle(fn) {
+  const view = globalThis.window;
+
+  const idle = () => {
+    // requestIdleCallback is throttled in a hidden tab; a timer still runs.
+    if (typeof view.requestIdleCallback === 'function' && !view.document?.hidden) view.requestIdleCallback(fn, {
+      timeout: 2000
+    });else view.setTimeout(fn, 200);
+  };
+
+  if (view.document?.readyState === 'complete') idle();else view.addEventListener('load', idle, {
+    once: true
+  });
+} //
+// A page may keep the old timing, the content fetched when the layer opens:
+// SF_BOOT_CONFIG.startClosedLayerContent = false. The first-paint snapshots do
+// (scripts/first-paint-lib.mjs): a closed layer's first paint is the layer as
+// it rests before anything in it starts, and a start at idle time made the
+// picture and its sheet list depend on how soon the browser was idle.
+//
+// Content the page puts into the closed layer later (a list filled from its
+// data, a part loaded into it) starts the same way: the layer watches its
+// closed root and walks it again, a few rounds, once the page is idle after
+// an addition (ui-control evidence 2026-11-11-modal-followups-2-accept, L2).
+// An open root is the Loader's, as any part of the page.
+
+
+function startClosedLayerContent(rootOf) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return;
+  let round = 0;
+  let walking = false;
+  let again = false;
+  let watched = null;
+  let watcher = null;
+
+  const next = () => {
+    const loader = view.SF?.Loader;
+    const root = rootOf();
+    walking = false;
+    if (!root?.isConnected || !loader?.ensure || !loader.getSmartElementRuleName) return;
+    watch(root);
+    if (!root.matches(CLOSED_LAYER)) return;
+    const tags = contentTags(root, loader);
+
+    if (!tags.length || ++round > CONTENT_ROUNDS) {
+      if (again) walk();
+      return;
+    }
+
+    walking = true;
+    loader.ensure(tags, {
+      timeout: 10000
+    }).then(() => whenPageIdle(next));
+  };
+
+  const walk = () => {
+    again = false;
+
+    if (walking) {
+      again = true;
+      return;
+    }
+
+    round = 0;
+    walking = true;
+    whenPageIdle(next);
+  };
+
+  const watch = root => {
+    if (watched === root || typeof view.MutationObserver !== 'function') return;
+    watcher?.disconnect();
+    watched = root;
+    watcher = new view.MutationObserver(records => {
+      if (!watched.isConnected) {
+        watcher.disconnect();
+        watcher = null;
+        watched = null;
+        return;
+      }
+
+      if (watched.matches(CLOSED_LAYER) && records.some(record => record.addedNodes.length)) walk();
+    });
+    watcher.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  };
+
+  walking = true;
+  whenPageIdle(next);
+} // A closed window's root or drawer's panel: inert while closed (and while a
+// window is minimised).
+
+const CLOSED_LAYER = '.sf-modal[inert], [data-sf-drawer-panel][inert]'; // A component that fetches its own data (sf-include) and stands in a closed
+// window or drawer fetches it once the layer opens, not at page load: the
+// layer starts its content early so the page can reach its code
+// (startClosedLayerContent), but a part, a list's rows or a user's data the
+// page never opens should not cost the server a request (ui-control
+// evidence 2026-11-11-modal-followups-2-accept, M2). Null when the element is
+// not in a closed layer, or when the page keeps the old timing
+// (SF_BOOT_CONFIG.startClosedLayerContent = false: then nothing in a closed
+// layer starts before it opens); otherwise a promise that settles when the
+// layer opens, or never once `signal` aborts.
+
+function whenClosedLayerOpens(element, signal) {
+  const view = globalThis.window;
+  if (!view?.document || view.SF_BOOT_CONFIG?.startClosedLayerContent === false) return null;
+  const layer = element?.closest?.(CLOSED_LAYER);
+  if (!layer || typeof view.MutationObserver !== 'function') return null;
+  return new Promise(resolve => {
+    const watcher = new view.MutationObserver(() => {
+      if (layer.matches(CLOSED_LAYER) && layer.isConnected) return;
+      watcher.disconnect();
+      resolve();
+    });
+    watcher.observe(layer, {
+      attributes: true,
+      attributeFilter: ['inert']
+    });
+    signal?.addEventListener('abort', () => watcher.disconnect(), {
+      once: true
+    });
+  });
 }
 
 /***/ },

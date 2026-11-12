@@ -3,8 +3,9 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "46dcc01f14ec"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindRangeSlider: () => (/* binding */ bindRangeSlider),
@@ -14,6 +15,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   unbindRangeSlider: () => (/* binding */ unbindRangeSlider)
 /* harmony export */ });
 /* harmony import */ var _native_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("390e88cf2860");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+
 
 const RANGE_SLIDER_SELECTOR = '.sf-range-slider';
 const RANGE_SLIDER_BOUND_FLAG = 'sfRangeSliderBound'; // Instance-owned state is shared by separately bundled Component/Smart code.
@@ -134,8 +141,24 @@ function formatValue(root, value) {
     return `${prefix}${value ?? ''}${suffix}`;
   }
 
-  const baseValue = numeric.toFixed(decimals);
-  return `${prefix}${baseValue}${suffix}`;
+  return `${prefix}${formatDecimal(root, numeric, decimals)}${suffix}`;
+} // The number in the page's language, as sf-quantity writes it: a Russian page
+// reads «1,23 кг», not «1.23 кг» (docs pre-check 2026-11-10 CRS-01). The
+// `data-locale` of the slider wins over the page's `lang`. Grouping follows
+// the locale. Number.toFixed is the fallback where Intl refuses the digits.
+
+
+function formatDecimal(root, numeric, decimals) {
+  const locale = root.getAttribute('data-locale') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageLocale)(root);
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    }).format(numeric);
+  } catch {
+    return numeric.toFixed(decimals);
+  }
 }
 
 function createVisualNode(mode = 'none', position = 'top') {
@@ -416,7 +439,7 @@ function createSliderOptions(root) {
     start: handleCount > 1 ? start : [start[0]],
     direction: getComputedStyle(root).direction === 'rtl' ? 'rtl' : 'ltr',
     ariaFormat: {
-      to: value => `${root.getAttribute('data-prefix') || ''}${value}${root.getAttribute('data-suffix') || ''}`
+      to: value => formatValue(root, value)
     },
     connect: getConnect(root, multiple),
     step: root.hasAttribute('data-step') && toNumber(root.getAttribute('data-step'), 0) > 0 ? toNumber(root.getAttribute('data-step'), 1) : undefined,
@@ -653,6 +676,8 @@ rangeSliderObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -896,8 +921,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("57a7b9f33b50");
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c64f6025c3f7");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f6d198d7afd8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__);
 
@@ -1215,6 +1240,28 @@ class SfRangeSlider extends RangeSliderElement {
         this._boundRoot.noUiSlider.disable();
       }
     }
+
+    this.sfSyncForm();
+  } // A form control (1.3.1, §17.1): the value a form gets is the one the slider
+  // shows, the number or both joined by a comma; nothing while disabled or
+  // without a name's form. The value written first is the one a reset puts back.
+
+
+  connectedCallback() {
+    if (this._defaultValue === undefined) this._defaultValue = this.getAttribute('value');
+    super.connectedCallback?.();
+  }
+
+  sfFormValue() {
+    if (this.disabled || this.sfFormDisabled) return null;
+    const value = this.value;
+    return value === undefined || value === null ? null : String(value);
+  }
+
+  formResetCallback() {
+    const initial = this._defaultValue;
+    this.setValue(initial === null || initial === undefined ? this.start || this.min || '0' : initial);
+    this.sfSyncForm();
   }
 
   onDisconnected() {
@@ -1294,6 +1341,7 @@ class SfRangeSlider extends RangeSliderElement {
     this._syncingValueAttribute = true;
     this.setAttribute('value', serialized);
     this._syncingValueAttribute = false;
+    this.sfSyncForm();
   }; // The class component's change and sf-range-slider-change stop at the
   // host: a person's change leaves it once, as the host's own event, without
   // the element in its detail (§8), and the shim sends the old names after it
@@ -1383,10 +1431,12 @@ class SfRangeSlider extends RangeSliderElement {
 
       this.setAttribute('value', serializeValue((0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.getRangeSliderValue)(root)));
       this._syncingValueAttribute = false;
+      this.sfSyncForm();
       return this;
     }
 
     this.setAttribute('value', serialized);
+    this.sfSyncForm();
     return this;
   }
 
@@ -1622,6 +1672,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
@@ -1639,7 +1696,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.3.0","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"decimals":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.3.1","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"decimals":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

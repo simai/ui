@@ -1369,16 +1369,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // The search box is the combobox; the focus never leaves it while the arrows
 // move the active row (aria-activedescendant). Rows are drawn here, not as
 // elements: the class markup of an avatar (a photo or initials) beside the
-// label and the caption, and a check on a chosen row.
-// A row's picture a rung below the field; the chips stand on the field's line.
+// label and the caption. A chosen row is its fill alone, no check (owner
+// decision C08).
+// A row's picture is the field's text line, as a chip's is (the geometry
+// standard: every picture of a size is its line; LK-06). The stylesheet sizes
+// it; the class is the avatar ladder's smallest step, for its initials.
 
-const AVATAR_SIZE = {
-  '1/2': '1/3',
-  '1': '1/2',
-  '2': '1'
-};
+const AVATAR_CLASS_SIZE = '1/4'; // The clear is sf-button-close, plain (owner decision C14: a field's clear),
+// the icon button's square box a rung below the field: 28 on a desktop and 24
+// on a phone at size 1, steps of the height ladder (LK-08).
+
 const CLEAR_SIZE = {
-  '1/2': '1/4',
+  '1/2': '1/3',
   '1': '1/3',
   '2': '1/2'
 };
@@ -1432,21 +1434,20 @@ function row(context, item, index) {
   const {
     component,
     ids,
-    activeIndex,
-    size
+    activeIndex
   } = context;
   const chosen = component.isItemChosen(item);
   const active = index === activeIndex;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
-      class=${['sf-lookup-option', 'flex', 'items-cross-center', chosen ? 'sf-lookup-option--chosen' : '', active ? 'sf-lookup-option--active' : ''].filter(Boolean).join(' ')}
+      class=${['sf-lookup-option', 'flex', 'items-cross-center', item.caption ? 'sf-lookup-option--caption' : '', chosen ? 'sf-lookup-option--chosen' : '', active ? 'sf-lookup-option--active' : ''].filter(Boolean).join(' ')}
       id=${`${ids.option}-${index}`}
       role="option"
       aria-selected=${chosen ? 'true' : 'false'}
       data-sf-index=${String(index)}
-    >${avatar(item, AVATAR_SIZE[size] || '1/2', 'sf-lookup-option-avatar')}<span class="sf-lookup-option-text flex flex-col">
+    >${avatar(item, AVATAR_CLASS_SIZE, 'sf-lookup-option-avatar')}<span class="sf-lookup-option-text flex flex-col">
         <span class="sf-lookup-option-label">${item.label}</span>
         ${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-option-caption">${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      </span><i class="sf-icon sf-lookup-option-check" aria-hidden="true">${chosen ? 'check' : ''}</i></div>`;
+      </span></div>`;
 }
 
 const SPINNER_SIZE = {
@@ -1588,12 +1589,14 @@ function renderLookupTemplate(context) {
           @keydown=${event => component.onQueryKeydown(event)}
           @focus=${event => component.onQueryFocus(event)}
         >
-        ${single && editable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button"
-              class="sf-lookup-clear sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${CLEAR_SIZE[size] || '1/3'} flex items-cross-center flex-none"
+        ${single && editable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-close
+              size=${CLEAR_SIZE[size] || '1/3'}
+              appearance="plain"
+              root-class="sf-lookup-clear flex-none"
               aria-label=${component.sfWord('clear')}
               title=${component.sfWord('clear')}
               @click=${event => component.onClearClick(event)}
-            ><i class="sf-icon" aria-hidden="true">close</i></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ></sf-button-close>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
       ${message ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${field.messageId} class="sf-lookup-hint-text-wrap"
             data-field-message=${field.invalid && errorMessage ? 'error' : 'hint'}>${message}</span>` : ''}
@@ -2087,7 +2090,7 @@ function moveActive(index, count, key) {
 /***/ "8bb18691f333"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.5.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.5.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

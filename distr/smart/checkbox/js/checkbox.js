@@ -2,9 +2,124 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "9b5005c560e4"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ "61d50f69160a"
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
+/* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
+/* harmony export */ });
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e92fd2d1a38c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__);
+ // A checkable control's name is its label alone; its description is the
+// description (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44).
+// The box, the label and the description sit inside one <label> so a press
+// anywhere toggles the control, and a <label> names its control by all of its
+// text: «Приглашения на мероприятия Не чаще раза в месяц» was read as one name.
+// The input is named by the label row (aria-labelledby) and described by the
+// rest of the text column (aria-describedby). An author's aria-label or
+// aria-labelledby wins; ids the author put on aria-describedby are kept. Ids
+// come from the instance path, never a counter (#41).
+//
+// sf-switch was fixed this way first (1.3.1, its own copy in _switch.js);
+// sf-checkbox and sf-radio share the anatomy and read this helper.
+//
+// parts:
+//   kind         the Smart tag (`sf-checkbox`)
+//   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   label        selector of the label row inside the root
+//   column       selector of the text column that holds the label row and the description
+//   description  selector of the description when there is no column
+
+function splitIds(value) {
+  return String(value || '').split(/\s+/).filter(Boolean);
+}
+
+function descriptionParts(root, parts) {
+  const column = parts.column ? root.querySelector(parts.column) : null;
+  if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
+  const label = root.querySelector(parts.label);
+  return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
+}
+
+function linkCheckableText(root, parts) {
+  if (!root) return;
+  const input = root.querySelector('input[type="checkbox"], input[type="radio"]');
+  if (!input) return;
+  const smart = root.closest(parts.kind);
+  const owner = smart || root;
+  const kind = smart ? parts.kind : parts.classKind; // A control built before it is placed has no path yet: link it once it is.
+
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) {
+    if (!root.__sfCheckableLinkPending && typeof requestAnimationFrame === 'function') {
+      root.__sfCheckableLinkPending = true;
+      requestAnimationFrame(() => {
+        root.__sfCheckableLinkPending = false;
+        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) linkCheckableText(root, parts);
+      });
+    }
+
+    return;
+  }
+
+  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind
+  });
+  const linked = root.__sfCheckableLinked || {
+    label: '',
+    described: []
+  };
+  const label = root.querySelector(parts.label);
+  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
+
+  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
+    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'label');
+    input.setAttribute('aria-labelledby', label.id);
+    linked.label = label.id;
+  } else if (ownLabel) {
+    input.removeAttribute('aria-labelledby');
+    linked.label = '';
+  }
+
+  const ids = descriptionParts(root, parts).map((node, index) => {
+    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, index ? `description-${index + 1}` : 'description');
+    return node.id;
+  });
+  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
+  const describedBy = [...new Set([...authored, ...ids])];
+  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
+  linked.described = ids;
+  root.__sfCheckableLinked = linked;
+}
+const CHECKBOX_TEXT_PARTS = Object.freeze({
+  kind: 'sf-checkbox',
+  classKind: 'sf-checkbox',
+  label: '.sf-checkbox-top',
+  column: '.sf-checkbox-container',
+  description: '.sf-checkbox-description'
+});
+const RADIO_TEXT_PARTS = Object.freeze({
+  kind: 'sf-radio',
+  classKind: 'sf-radio-button',
+  label: '.sf-radio-button-top',
+  column: '.sf-radio-button-container',
+  description: '.sf-radio-button-description'
+});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "9b5005c560e4"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindCheckbox: () => (/* binding */ bindCheckbox),
@@ -16,7 +131,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2eddfed602cd");
+/* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
+/* harmony import */ var _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2eddfed602cd");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
+
 
 
 
@@ -95,6 +215,7 @@ function bindCheckbox(root) {
   root.__sfCheckboxReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[CHECKBOX_BOUND_FLAG] = '1';
   syncCheckboxState(root);
+  (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.CHECKBOX_TEXT_PARTS);
 }
 
 function unbindCheckbox(root) {
@@ -275,7 +396,7 @@ class Checkbox extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
 
 }
 
-Checkbox.utilityMap = _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__;
+Checkbox.utilityMap = _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_4__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Checkbox', Checkbox);
 
 if (typeof window !== 'undefined') {
@@ -303,6 +424,8 @@ checkboxObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -315,33 +438,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -506,15 +673,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9b5005c560e4");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fe282de00908");
 /* harmony import */ var _helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("078aa87e580e");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("47e9950fb20b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0f14f861d828");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0ae1a29b7840");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("56e00394ab1f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("61d50f69160a");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("47e9950fb20b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0f14f861d828");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0ae1a29b7840");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("56e00394ab1f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -532,17 +701,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // one, as a native checkbox does (§17.1 item 2), and the inner checkbox
 // carries no name.
 
-const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
 
-class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(CheckboxElement) {
+class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(CheckboxElement) {
   static get props() {
     return { ...super.props,
       // A host attribute, never a setting (§3.1): read for the inner input's name.
@@ -581,7 +750,7 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderCheckboxTemplate)({ ...context,
       // The host is the form control where the browser has ElementInternals
       // (§17.1 item 6).
-      name: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.innerControlName)(this, context.name),
+      name: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.innerControlName)(this, context.name),
       stateIcon: this.stateIcon,
       ariaLabel: this.ariaLabel
     });
@@ -591,7 +760,10 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     await this.whenChildrenDefined();
     const input = this.getInputElement();
     if (!input) return;
-    this.syncInputState(input);
+    this.syncInputState(input); // The class binding is skipped inside sf-checkbox; the name and the
+    // description are linked here the same way.
+
+    (0,_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__.linkCheckableText)(this.querySelector('.sf-checkbox'), _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__.CHECKBOX_TEXT_PARTS);
     this._releaseReset?.();
     this._releaseReset = (0,_helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__.bindCheckableReset)(this, input);
 
@@ -806,7 +978,10 @@ function renderCheckboxTemplate(context) {
   }
 
   const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-label">${label}</span>` : '';
-  const descriptionContent = context.component?.hasSlotContent?.('description') ? context.component.getSlotContent('description') : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description">${description}</span>` : '';
+  const descriptionContent = context.component?.hasSlotContent?.('description') // A slotted description is held in a plain span so the input can
+  // name it as its description (aria-describedby): a bare text node
+  // has no id. The span draws nothing of its own.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-checkbox-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description">${description}</span>` : '';
   const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <sf-icon aria-hidden="true" icon="${help}"></sf-icon>` : '';
   const showContainer = !!(labelContent || descriptionContent || helpContent);
@@ -1110,6 +1285,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -1141,7 +1323,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.1.6","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.1.7","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

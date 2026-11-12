@@ -10,10 +10,16 @@
     --sf-gradient--color-1: var(--sf-inherit);
   }
   .gr1-surface-0 {
-    --sf-gradient--color-1: var(--sf-surface-0);
+    --sf-gradient--color-1: var(--sf-surface-page);
+  }
+  .gr1-surface-page {
+    --sf-gradient--color-1: var(--sf-surface-page);
   }
   .gr1-surface-1 {
-    --sf-gradient--color-1: var(--sf-surface-1);
+    --sf-gradient--color-1: var(--sf-surface-area);
+  }
+  .gr1-surface-area {
+    --sf-gradient--color-1: var(--sf-surface-area);
   }
   .gr1-surface-2 {
     --sf-gradient--color-1: var(--sf-surface-2);
@@ -58,10 +64,16 @@
     --sf-gradient--color-2: var(--sf-inherit);
   }
   .gr2-surface-0 {
-    --sf-gradient--color-2: var(--sf-surface-0);
+    --sf-gradient--color-2: var(--sf-surface-page);
+  }
+  .gr2-surface-page {
+    --sf-gradient--color-2: var(--sf-surface-page);
   }
   .gr2-surface-1 {
-    --sf-gradient--color-2: var(--sf-surface-1);
+    --sf-gradient--color-2: var(--sf-surface-area);
+  }
+  .gr2-surface-area {
+    --sf-gradient--color-2: var(--sf-surface-area);
   }
   .gr2-surface-2 {
     --sf-gradient--color-2: var(--sf-surface-2);
@@ -106,10 +118,16 @@
     --sf-gradient--color-3: var(--sf-inherit);
   }
   .gr3-surface-0 {
-    --sf-gradient--color-3: var(--sf-surface-0);
+    --sf-gradient--color-3: var(--sf-surface-page);
+  }
+  .gr3-surface-page {
+    --sf-gradient--color-3: var(--sf-surface-page);
   }
   .gr3-surface-1 {
-    --sf-gradient--color-3: var(--sf-surface-1);
+    --sf-gradient--color-3: var(--sf-surface-area);
+  }
+  .gr3-surface-area {
+    --sf-gradient--color-3: var(--sf-surface-area);
   }
   .gr3-surface-2 {
     --sf-gradient--color-3: var(--sf-surface-2);

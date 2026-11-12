@@ -13,22 +13,34 @@
     border-color: var(--sf-outline-variant);
   }
   .border-surface {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
   }
   .border-surface-0 {
-    border-color: var(--sf-surface-0);
+    border-color: var(--sf-surface-page);
+  }
+  .border-surface-page {
+    border-color: var(--sf-surface-page);
   }
   .border-surface-1 {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
+  }
+  .border-surface-area {
+    border-color: var(--sf-surface-area);
   }
   .border-surface-container {
     border-color: var(--sf-surface-container);
   }
   .border-surface-overlay {
-    border-color: var(--sf-surface-overlay);
+    border-color: var(--sf-surface-veil);
+  }
+  .border-surface-veil {
+    border-color: var(--sf-surface-veil);
   }
   .border-surface-transparent-overlay {
-    border-color: var(--sf-surface-transparent-overlay);
+    border-color: var(--sf-surface-container-strong);
+  }
+  .border-surface-container-strong {
+    border-color: var(--sf-surface-container-strong);
   }
   .border-surface-inverse {
     border-color: var(--sf-surface-inverse);
@@ -40,67 +52,88 @@
     border-color: var(--sf-on-surface-variant);
   }
   .border-primary {
-    border-color: var(--sf-outline-primary);
+    border-color: var(--sf-primary-outline);
   }
   .border-primary-container {
     border-color: var(--sf-primary-container);
   }
   .border-primary-transparent-overlay {
-    border-color: var(--sf-primary-transparent-overlay);
+    border-color: var(--sf-primary-container-strong);
+  }
+  .border-primary-container-strong {
+    border-color: var(--sf-primary-container-strong);
   }
   .border-secondary {
-    border-color: var(--sf-outline-secondary);
+    border-color: var(--sf-secondary-outline);
   }
   .border-secondary-container {
     border-color: var(--sf-secondary-container);
   }
   .border-secondary-transparent-overlay {
-    border-color: var(--sf-secondary-transparent-overlay);
+    border-color: var(--sf-secondary-container-strong);
+  }
+  .border-secondary-container-strong {
+    border-color: var(--sf-secondary-container-strong);
   }
   .border-tertiary {
-    border-color: var(--sf-outline-tertiary);
+    border-color: var(--sf-tertiary-outline);
   }
   .border-tertiary-container {
     border-color: var(--sf-tertiary-container);
   }
   .border-tertiary-transparent-overlay {
-    border-color: var(--sf-tertiary-transparent-overlay);
+    border-color: var(--sf-tertiary-container-strong);
+  }
+  .border-tertiary-container-strong {
+    border-color: var(--sf-tertiary-container-strong);
   }
   .border-error {
-    border-color: var(--sf-outline-error);
+    border-color: var(--sf-error-outline);
   }
   .border-error-container {
     border-color: var(--sf-error-container);
   }
   .border-error-transparent-overlay {
-    border-color: var(--sf-error-transparent-overlay);
+    border-color: var(--sf-error-container-strong);
+  }
+  .border-error-container-strong {
+    border-color: var(--sf-error-container-strong);
   }
   .border-warning {
-    border-color: var(--sf-outline-warning);
+    border-color: var(--sf-warning-outline);
   }
   .border-warning-container {
     border-color: var(--sf-warning-container);
   }
   .border-warning-transparent-overlay {
-    border-color: var(--sf-warning-transparent-overlay);
+    border-color: var(--sf-warning-container-strong);
+  }
+  .border-warning-container-strong {
+    border-color: var(--sf-warning-container-strong);
   }
   .border-success {
-    border-color: var(--sf-outline-success);
+    border-color: var(--sf-success-outline);
   }
   .border-success-container {
     border-color: var(--sf-success-container);
   }
   .border-success-transparent-overlay {
-    border-color: var(--sf-success-transparent-overlay);
+    border-color: var(--sf-success-container-strong);
+  }
+  .border-success-container-strong {
+    border-color: var(--sf-success-container-strong);
   }
   .border-info {
-    border-color: var(--sf-outline-info);
+    border-color: var(--sf-info-outline);
   }
   .border-info-container {
     border-color: var(--sf-info-container);
   }
   .border-info-container-strong {
     border-color: var(--sf-info-container-strong);
+  }
+  .border-hue {
+    border-color: var(--sf-hue-outline);
   }
   .border-white {
     border-color: var(--sf-white);

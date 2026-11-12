@@ -25,40 +25,40 @@
     outline-color: var(--sf-outline-variant);
   }
   .focus-visible\:outline-primary.focus-visible {
-    outline-color: var(--sf-outline-primary);
+    outline-color: var(--sf-primary-outline);
   }
   .focus-visible\:outline-primary:focus-visible {
-    outline-color: var(--sf-outline-primary);
+    outline-color: var(--sf-primary-outline);
   }
   .focus-visible\:outline-secondary.focus-visible {
-    outline-color: var(--sf-outline-secondary);
+    outline-color: var(--sf-secondary-outline);
   }
   .focus-visible\:outline-secondary:focus-visible {
-    outline-color: var(--sf-outline-secondary);
+    outline-color: var(--sf-secondary-outline);
   }
   .focus-visible\:outline-tertiary.focus-visible {
-    outline-color: var(--sf-outline-tertiary);
+    outline-color: var(--sf-tertiary-outline);
   }
   .focus-visible\:outline-tertiary:focus-visible {
-    outline-color: var(--sf-outline-tertiary);
+    outline-color: var(--sf-tertiary-outline);
   }
   .focus-visible\:outline-error.focus-visible {
-    outline-color: var(--sf-outline-error);
+    outline-color: var(--sf-error-outline);
   }
   .focus-visible\:outline-error:focus-visible {
-    outline-color: var(--sf-outline-error);
+    outline-color: var(--sf-error-outline);
   }
   .focus-visible\:outline-warning.focus-visible {
-    outline-color: var(--sf-outline-warning);
+    outline-color: var(--sf-warning-outline);
   }
   .focus-visible\:outline-warning:focus-visible {
-    outline-color: var(--sf-outline-warning);
+    outline-color: var(--sf-warning-outline);
   }
   .focus-visible\:outline-success.focus-visible {
-    outline-color: var(--sf-outline-success);
+    outline-color: var(--sf-success-outline);
   }
   .focus-visible\:outline-success:focus-visible {
-    outline-color: var(--sf-outline-success);
+    outline-color: var(--sf-success-outline);
   }
   .focus-visible\:outline-info.focus-visible {
     outline-color: var(--sf-info-outline);

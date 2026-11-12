@@ -1,6 +1,23 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
-  .table-active {
+  .table-stripe > :not(caption) > tr.table-active > :nth-child(n) {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+  }
+  .table-stripe-col > :not(caption) > tr.table-active > :nth-child(n) {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+  }
+  .table-stripe > :not(caption) > tr > .table-active:nth-child(n) {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+  }
+  .table-stripe-col > :not(caption) > tr > .table-active:nth-child(n) {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+  }
+  .table-active,
+  .table-active > :nth-child(n) {
     --sf-table-accent-bg: var(--sf-table-active-bg);
     color: var(--sf-table-active-color);
   }

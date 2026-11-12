@@ -2,6 +2,120 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "61d50f69160a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
+/* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
+/* harmony export */ });
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e92fd2d1a38c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__);
+ // A checkable control's name is its label alone; its description is the
+// description (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44).
+// The box, the label and the description sit inside one <label> so a press
+// anywhere toggles the control, and a <label> names its control by all of its
+// text: «Приглашения на мероприятия Не чаще раза в месяц» was read as one name.
+// The input is named by the label row (aria-labelledby) and described by the
+// rest of the text column (aria-describedby). An author's aria-label or
+// aria-labelledby wins; ids the author put on aria-describedby are kept. Ids
+// come from the instance path, never a counter (#41).
+//
+// sf-switch was fixed this way first (1.3.1, its own copy in _switch.js);
+// sf-checkbox and sf-radio share the anatomy and read this helper.
+//
+// parts:
+//   kind         the Smart tag (`sf-checkbox`)
+//   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   label        selector of the label row inside the root
+//   column       selector of the text column that holds the label row and the description
+//   description  selector of the description when there is no column
+
+function splitIds(value) {
+  return String(value || '').split(/\s+/).filter(Boolean);
+}
+
+function descriptionParts(root, parts) {
+  const column = parts.column ? root.querySelector(parts.column) : null;
+  if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
+  const label = root.querySelector(parts.label);
+  return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
+}
+
+function linkCheckableText(root, parts) {
+  if (!root) return;
+  const input = root.querySelector('input[type="checkbox"], input[type="radio"]');
+  if (!input) return;
+  const smart = root.closest(parts.kind);
+  const owner = smart || root;
+  const kind = smart ? parts.kind : parts.classKind; // A control built before it is placed has no path yet: link it once it is.
+
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) {
+    if (!root.__sfCheckableLinkPending && typeof requestAnimationFrame === 'function') {
+      root.__sfCheckableLinkPending = true;
+      requestAnimationFrame(() => {
+        root.__sfCheckableLinkPending = false;
+        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) linkCheckableText(root, parts);
+      });
+    }
+
+    return;
+  }
+
+  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind
+  });
+  const linked = root.__sfCheckableLinked || {
+    label: '',
+    described: []
+  };
+  const label = root.querySelector(parts.label);
+  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
+
+  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
+    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'label');
+    input.setAttribute('aria-labelledby', label.id);
+    linked.label = label.id;
+  } else if (ownLabel) {
+    input.removeAttribute('aria-labelledby');
+    linked.label = '';
+  }
+
+  const ids = descriptionParts(root, parts).map((node, index) => {
+    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, index ? `description-${index + 1}` : 'description');
+    return node.id;
+  });
+  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
+  const describedBy = [...new Set([...authored, ...ids])];
+  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
+  linked.described = ids;
+  root.__sfCheckableLinked = linked;
+}
+const CHECKBOX_TEXT_PARTS = Object.freeze({
+  kind: 'sf-checkbox',
+  classKind: 'sf-checkbox',
+  label: '.sf-checkbox-top',
+  column: '.sf-checkbox-container',
+  description: '.sf-checkbox-description'
+});
+const RADIO_TEXT_PARTS = Object.freeze({
+  kind: 'sf-radio',
+  classKind: 'sf-radio-button',
+  label: '.sf-radio-button-top',
+  column: '.sf-radio-button-container',
+  description: '.sf-radio-button-description'
+});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "67eed2647f47"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -11,40 +125,85 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
 
 /***/ "c2e2433fb668"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindRadio: () => (/* binding */ bindRadio),
@@ -55,7 +214,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("48d00b6bd847");
+/* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
+/* harmony import */ var _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("48d00b6bd847");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
+
 
 
 
@@ -190,6 +354,7 @@ function bindRadio(root) {
   root.__sfRadioReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[RADIO_BOUND_FLAG] = '1';
   syncRadioState(root);
+  (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.RADIO_TEXT_PARTS);
 }
 
 function unbindRadio(root) {
@@ -518,7 +683,7 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
 }
 
-Radio.utilityMap = _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_3__;
+Radio.utilityMap = _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_4__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Radio', Radio);
 
 if (typeof window !== 'undefined') {
@@ -546,6 +711,8 @@ radioObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -960,8 +1127,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c00a7eefcca1");
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7ee257be389e");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("63dac91f9223");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_radio_js_radio__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_radio_js_radio__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -1266,7 +1433,9 @@ function renderRadioTemplate(context) {
   }
 
   const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-text">${label}</span>` : '';
-  const descriptionContent = context.component?.hasSlotContent?.('description') ? context.component.getSlotContent('description') : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description">${description}</span>` : '';
+  const descriptionContent = context.component?.hasSlotContent?.('description') // A slotted description is held in a plain span so the input can name it
+  // as its description (aria-describedby): a bare text node has no id.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-radio-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description">${description}</span>` : '';
   const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${help}</i>` : '';
   const showContainer = !!(labelContent || descriptionContent || helpContent);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1309,6 +1478,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -1340,7 +1516,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-radio
 /***/ "b9154ac40cf8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.1.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.1.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

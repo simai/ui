@@ -2,6 +2,113 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "61d50f69160a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
+/* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
+/* harmony export */ });
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("695f21e50358");
+ // A checkable control's name is its label alone; its description is the
+// description (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44).
+// The box, the label and the description sit inside one <label> so a press
+// anywhere toggles the control, and a <label> names its control by all of its
+// text: «Приглашения на мероприятия Не чаще раза в месяц» was read as one name.
+// The input is named by the label row (aria-labelledby) and described by the
+// rest of the text column (aria-describedby). An author's aria-label or
+// aria-labelledby wins; ids the author put on aria-describedby are kept. Ids
+// come from the instance path, never a counter (#41).
+//
+// sf-switch was fixed this way first (1.3.1, its own copy in _switch.js);
+// sf-checkbox and sf-radio share the anatomy and read this helper.
+//
+// parts:
+//   kind         the Smart tag (`sf-checkbox`)
+//   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   label        selector of the label row inside the root
+//   column       selector of the text column that holds the label row and the description
+//   description  selector of the description when there is no column
+
+function splitIds(value) {
+  return String(value || '').split(/\s+/).filter(Boolean);
+}
+
+function descriptionParts(root, parts) {
+  const column = parts.column ? root.querySelector(parts.column) : null;
+  if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
+  const label = root.querySelector(parts.label);
+  return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
+}
+
+function linkCheckableText(root, parts) {
+  if (!root) return;
+  const input = root.querySelector('input[type="checkbox"], input[type="radio"]');
+  if (!input) return;
+  const smart = root.closest(parts.kind);
+  const owner = smart || root;
+  const kind = smart ? parts.kind : parts.classKind; // A control built before it is placed has no path yet: link it once it is.
+
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) {
+    if (!root.__sfCheckableLinkPending && typeof requestAnimationFrame === 'function') {
+      root.__sfCheckableLinkPending = true;
+      requestAnimationFrame(() => {
+        root.__sfCheckableLinkPending = false;
+        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) linkCheckableText(root, parts);
+      });
+    }
+
+    return;
+  }
+
+  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind
+  });
+  const linked = root.__sfCheckableLinked || {
+    label: '',
+    described: []
+  };
+  const label = root.querySelector(parts.label);
+  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
+
+  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
+    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'label');
+    input.setAttribute('aria-labelledby', label.id);
+    linked.label = label.id;
+  } else if (ownLabel) {
+    input.removeAttribute('aria-labelledby');
+    linked.label = '';
+  }
+
+  const ids = descriptionParts(root, parts).map((node, index) => {
+    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, index ? `description-${index + 1}` : 'description');
+    return node.id;
+  });
+  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
+  const describedBy = [...new Set([...authored, ...ids])];
+  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
+  linked.described = ids;
+  root.__sfCheckableLinked = linked;
+}
+const CHECKBOX_TEXT_PARTS = Object.freeze({
+  kind: 'sf-checkbox',
+  classKind: 'sf-checkbox',
+  label: '.sf-checkbox-top',
+  column: '.sf-checkbox-container',
+  description: '.sf-checkbox-description'
+});
+const RADIO_TEXT_PARTS = Object.freeze({
+  kind: 'sf-radio',
+  classKind: 'sf-radio-button',
+  label: '.sf-radio-button-top',
+  column: '.sf-radio-button-container',
+  description: '.sf-radio-button-description'
+});
+
+/***/ },
+
 /***/ "9b5005c560e4"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -16,7 +123,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2eddfed602cd");
+/* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
+/* harmony import */ var _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2eddfed602cd");
+
 
 
 
@@ -95,6 +204,7 @@ function bindCheckbox(root) {
   root.__sfCheckboxReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[CHECKBOX_BOUND_FLAG] = '1';
   syncCheckboxState(root);
+  (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.CHECKBOX_TEXT_PARTS);
 }
 
 function unbindCheckbox(root) {
@@ -275,7 +385,7 @@ class Checkbox extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
 
 }
 
-Checkbox.utilityMap = _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__;
+Checkbox.utilityMap = _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_4__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Checkbox', Checkbox);
 
 if (typeof window !== 'undefined') {
@@ -330,33 +440,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -507,6 +661,103 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "695f21e50358"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   instancePath: () => (/* binding */ instancePath),
+/* harmony export */   partId: () => (/* binding */ partId),
+/* harmony export */   pathIsSettled: () => (/* binding */ pathIsSettled)
+/* harmony export */ });
+// An instance's id is its role path (standard simai.smart-component 1.3.8
+// §7.1.1; simai/ui-source#41).
+//
+//   - at the top of the page: `page/<host id or data-sf-role>`;
+//   - a part with `data-sf-role` inside another instance:
+//     `<parent path>/<role>`;
+//   - neither: `<kind>[<n>]`, n counted in document order among the
+//     instances of the same kind that have neither.
+//
+// Ids that templates write (`for`, `aria-controls`, `aria-labelledby`) are
+// `<path with every non-word run as ->--<local name>`. A counter is never an
+// id: the field ids used to come from a module-scope counter, and every
+// bundle that carries the field code (eight of them) had its own, so a class
+// sf-quantity and an <sf-input-quantity> on one page both took
+// `sf-quantity-1-control` and a label pointed at the other field. Ids that
+// follow creation order also swap when two instances swap, and server markup
+// (§5.4) cannot repeat them. A path is read from the page, so every bundle
+// gives the same answer.
+//
+// `kind` is the element's tag for a Smart element; class markup passes its
+// root class and is told apart as `class.<root class>`.
+const isElement = node => node && node.nodeType === 1 && typeof node.getAttribute === 'function';
+
+const isCustom = node => isElement(node) && String(node.localName || '').includes('-');
+
+function parentInstance(node) {
+  for (let current = node.parentNode || node.host || null; current; current = current.parentNode || current.host || null) {
+    if (isCustom(current)) return current;
+  }
+
+  return null;
+}
+
+function kindOf(owner, kind) {
+  const tag = String(owner?.localName || '').toLowerCase();
+  if (tag && tag.includes('-')) return tag;
+  return `class.${kind || tag || 'element'}`;
+}
+
+function documentIndex(owner, kind) {
+  const doc = owner?.ownerDocument;
+  if (!owner?.isConnected || typeof doc?.querySelectorAll !== 'function') return 0;
+  const selector = kind.startsWith('class.') ? `.${kind.slice('class.'.length)}` : kind;
+  let index = 0;
+
+  for (const one of doc.querySelectorAll(selector)) {
+    if (kind.startsWith('class.') && isCustom(one)) continue;
+    if (one.id || one.getAttribute('data-sf-role')) continue;
+    index += 1;
+    if (one === owner) return index;
+  }
+
+  return 0;
+}
+/** The role path of an instance (§7.1.1). */
+
+
+function instancePath(owner, {
+  kind = ''
+} = {}) {
+  const id = isElement(owner) ? String(owner.id || '').trim() : String(owner?.id || '').trim();
+  if (id) return `page/${id}`;
+  const role = isElement(owner) ? String(owner.getAttribute('data-sf-role') || '').trim() : '';
+
+  if (role) {
+    const parent = parentInstance(owner);
+    return parent ? `${instancePath(parent, {
+      kind: parent.localName
+    })}/${role}` : `page/${role}`;
+  }
+
+  const resolved = kindOf(owner, kind);
+  return `${resolved}[${documentIndex(owner, resolved)}]`;
+}
+/** An id a template writes for one of its parts: `<path as a word>--<local name>`. */
+
+function partId(path, local) {
+  const base = String(path).replace(/\W+/gu, '-').replace(/^-+|-+$/gu, '');
+  return local ? `${base}--${local}` : base;
+}
+/** Whether the path is final: an instance in the page, or one with an id. */
+
+function pathIsSettled(owner) {
+  return Boolean(owner?.isConnected || String(owner?.id || '').trim());
 }
 
 /***/ },

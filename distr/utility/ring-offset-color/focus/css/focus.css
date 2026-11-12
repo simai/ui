@@ -13,22 +13,34 @@
     --sf-ring-offset-color: var(--sf-outline-variant);
   }
   .focus\:ring-offset-surface:focus {
-    --sf-ring-offset-color: var(--sf-surface-1);
+    --sf-ring-offset-color: var(--sf-surface-area);
   }
   .focus\:ring-offset-surface-0:focus {
-    --sf-ring-offset-color: var(--sf-surface-0);
+    --sf-ring-offset-color: var(--sf-surface-page);
+  }
+  .focus\:ring-offset-surface-page:focus {
+    --sf-ring-offset-color: var(--sf-surface-page);
   }
   .focus\:ring-offset-surface-1:focus {
-    --sf-ring-offset-color: var(--sf-surface-1);
+    --sf-ring-offset-color: var(--sf-surface-area);
+  }
+  .focus\:ring-offset-surface-area:focus {
+    --sf-ring-offset-color: var(--sf-surface-area);
   }
   .focus\:ring-offset-surface-container:focus {
     --sf-ring-offset-color: var(--sf-surface-container);
   }
   .focus\:ring-offset-surface-overlay:focus {
-    --sf-ring-offset-color: var(--sf-surface-overlay);
+    --sf-ring-offset-color: var(--sf-surface-veil);
+  }
+  .focus\:ring-offset-surface-veil:focus {
+    --sf-ring-offset-color: var(--sf-surface-veil);
   }
   .focus\:ring-offset-surface-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-surface-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-surface-container-strong);
+  }
+  .focus\:ring-offset-surface-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-surface-container-strong);
   }
   .focus\:ring-offset-surface-inverse:focus {
     --sf-ring-offset-color: var(--sf-surface-inverse);
@@ -40,61 +52,79 @@
     --sf-ring-offset-color: var(--sf-on-surface-variant);
   }
   .focus\:ring-offset-primary:focus {
-    --sf-ring-offset-color: var(--sf-outline-primary);
+    --sf-ring-offset-color: var(--sf-primary-outline);
   }
   .focus\:ring-offset-primary-container:focus {
     --sf-ring-offset-color: var(--sf-primary-container);
   }
   .focus\:ring-offset-primary-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-primary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-primary-container-strong);
+  }
+  .focus\:ring-offset-primary-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-primary-container-strong);
   }
   .focus\:ring-offset-secondary:focus {
-    --sf-ring-offset-color: var(--sf-outline-secondary);
+    --sf-ring-offset-color: var(--sf-secondary-outline);
   }
   .focus\:ring-offset-secondary-container:focus {
     --sf-ring-offset-color: var(--sf-secondary-container);
   }
   .focus\:ring-offset-secondary-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-secondary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-secondary-container-strong);
+  }
+  .focus\:ring-offset-secondary-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-secondary-container-strong);
   }
   .focus\:ring-offset-tertiary:focus {
-    --sf-ring-offset-color: var(--sf-outline-tertiary);
+    --sf-ring-offset-color: var(--sf-tertiary-outline);
   }
   .focus\:ring-offset-tertiary-container:focus {
     --sf-ring-offset-color: var(--sf-tertiary-container);
   }
   .focus\:ring-offset-tertiary-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-tertiary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-tertiary-container-strong);
+  }
+  .focus\:ring-offset-tertiary-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-tertiary-container-strong);
   }
   .focus\:ring-offset-error:focus {
-    --sf-ring-offset-color: var(--sf-outline-error);
+    --sf-ring-offset-color: var(--sf-error-outline);
   }
   .focus\:ring-offset-error-container:focus {
     --sf-ring-offset-color: var(--sf-error-container);
   }
   .focus\:ring-offset-error-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-error-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-error-container-strong);
+  }
+  .focus\:ring-offset-error-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-error-container-strong);
   }
   .focus\:ring-offset-warning:focus {
-    --sf-ring-offset-color: var(--sf-outline-warning);
+    --sf-ring-offset-color: var(--sf-warning-outline);
   }
   .focus\:ring-offset-warning-container:focus {
     --sf-ring-offset-color: var(--sf-warning-container);
   }
   .focus\:ring-offset-warning-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-warning-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-warning-container-strong);
+  }
+  .focus\:ring-offset-warning-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-warning-container-strong);
   }
   .focus\:ring-offset-success:focus {
-    --sf-ring-offset-color: var(--sf-outline-success);
+    --sf-ring-offset-color: var(--sf-success-outline);
   }
   .focus\:ring-offset-success-container:focus {
     --sf-ring-offset-color: var(--sf-success-container);
   }
   .focus\:ring-offset-success-transparent-overlay:focus {
-    --sf-ring-offset-color: var(--sf-success-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-success-container-strong);
+  }
+  .focus\:ring-offset-success-container-strong:focus {
+    --sf-ring-offset-color: var(--sf-success-container-strong);
   }
   .focus\:ring-offset-info:focus {
-    --sf-ring-offset-color: var(--sf-outline-info);
+    --sf-ring-offset-color: var(--sf-info-outline);
   }
   .focus\:ring-offset-info-container:focus {
     --sf-ring-offset-color: var(--sf-info-container);

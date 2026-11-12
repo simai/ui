@@ -64,10 +64,17 @@
     "place-items/default",
     "pointer-events/default"
   ],
+  "cl-button-copy": [
+    "display/default"
+  ],
   "cl-button-icon": [
     "align-items/default",
     "display/default",
     "pointer-events/default",
+    "sr-only/default"
+  ],
+  "cl-change": [
+    "display/default",
     "sr-only/default"
   ],
   "cl-checkbox": [
@@ -277,6 +284,7 @@
     "place-items/default"
   ],
   "cl-list-timeline": [
+    "display/default",
     "position/default",
     "sr-only/default"
   ],
@@ -310,7 +318,6 @@
     "place-items/default",
     "position/default",
     "text-color/default",
-    "title/default",
     "width/default",
     "z-index/default"
   ],
@@ -422,6 +429,11 @@
   "cl-tile-metric": [
     "position/default",
     "sr-only/default"
+  ],
+  "cl-time": [
+    "display/default",
+    "position/default",
+    "visibility/default"
   ],
   "cl-toast": [
     "align-items/default",

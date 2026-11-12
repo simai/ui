@@ -13,22 +13,34 @@
     --sf-ring-offset-color: var(--sf-outline-variant);
   }
   .hover\:ring-offset-surface:hover {
-    --sf-ring-offset-color: var(--sf-surface-1);
+    --sf-ring-offset-color: var(--sf-surface-area);
   }
   .hover\:ring-offset-surface-0:hover {
-    --sf-ring-offset-color: var(--sf-surface-0);
+    --sf-ring-offset-color: var(--sf-surface-page);
+  }
+  .hover\:ring-offset-surface-page:hover {
+    --sf-ring-offset-color: var(--sf-surface-page);
   }
   .hover\:ring-offset-surface-1:hover {
-    --sf-ring-offset-color: var(--sf-surface-1);
+    --sf-ring-offset-color: var(--sf-surface-area);
+  }
+  .hover\:ring-offset-surface-area:hover {
+    --sf-ring-offset-color: var(--sf-surface-area);
   }
   .hover\:ring-offset-surface-container:hover {
     --sf-ring-offset-color: var(--sf-surface-container);
   }
   .hover\:ring-offset-surface-overlay:hover {
-    --sf-ring-offset-color: var(--sf-surface-overlay);
+    --sf-ring-offset-color: var(--sf-surface-veil);
+  }
+  .hover\:ring-offset-surface-veil:hover {
+    --sf-ring-offset-color: var(--sf-surface-veil);
   }
   .hover\:ring-offset-surface-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-surface-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-surface-container-strong);
+  }
+  .hover\:ring-offset-surface-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-surface-container-strong);
   }
   .hover\:ring-offset-surface-inverse:hover {
     --sf-ring-offset-color: var(--sf-surface-inverse);
@@ -40,61 +52,79 @@
     --sf-ring-offset-color: var(--sf-on-surface-variant);
   }
   .hover\:ring-offset-primary:hover {
-    --sf-ring-offset-color: var(--sf-outline-primary);
+    --sf-ring-offset-color: var(--sf-primary-outline);
   }
   .hover\:ring-offset-primary-container:hover {
     --sf-ring-offset-color: var(--sf-primary-container);
   }
   .hover\:ring-offset-primary-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-primary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-primary-container-strong);
+  }
+  .hover\:ring-offset-primary-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-primary-container-strong);
   }
   .hover\:ring-offset-secondary:hover {
-    --sf-ring-offset-color: var(--sf-outline-secondary);
+    --sf-ring-offset-color: var(--sf-secondary-outline);
   }
   .hover\:ring-offset-secondary-container:hover {
     --sf-ring-offset-color: var(--sf-secondary-container);
   }
   .hover\:ring-offset-secondary-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-secondary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-secondary-container-strong);
+  }
+  .hover\:ring-offset-secondary-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-secondary-container-strong);
   }
   .hover\:ring-offset-tertiary:hover {
-    --sf-ring-offset-color: var(--sf-outline-tertiary);
+    --sf-ring-offset-color: var(--sf-tertiary-outline);
   }
   .hover\:ring-offset-tertiary-container:hover {
     --sf-ring-offset-color: var(--sf-tertiary-container);
   }
   .hover\:ring-offset-tertiary-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-tertiary-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-tertiary-container-strong);
+  }
+  .hover\:ring-offset-tertiary-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-tertiary-container-strong);
   }
   .hover\:ring-offset-error:hover {
-    --sf-ring-offset-color: var(--sf-outline-error);
+    --sf-ring-offset-color: var(--sf-error-outline);
   }
   .hover\:ring-offset-error-container:hover {
     --sf-ring-offset-color: var(--sf-error-container);
   }
   .hover\:ring-offset-error-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-error-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-error-container-strong);
+  }
+  .hover\:ring-offset-error-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-error-container-strong);
   }
   .hover\:ring-offset-warning:hover {
-    --sf-ring-offset-color: var(--sf-outline-warning);
+    --sf-ring-offset-color: var(--sf-warning-outline);
   }
   .hover\:ring-offset-warning-container:hover {
     --sf-ring-offset-color: var(--sf-warning-container);
   }
   .hover\:ring-offset-warning-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-warning-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-warning-container-strong);
+  }
+  .hover\:ring-offset-warning-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-warning-container-strong);
   }
   .hover\:ring-offset-success:hover {
-    --sf-ring-offset-color: var(--sf-outline-success);
+    --sf-ring-offset-color: var(--sf-success-outline);
   }
   .hover\:ring-offset-success-container:hover {
     --sf-ring-offset-color: var(--sf-success-container);
   }
   .hover\:ring-offset-success-transparent-overlay:hover {
-    --sf-ring-offset-color: var(--sf-success-transparent-overlay);
+    --sf-ring-offset-color: var(--sf-success-container-strong);
+  }
+  .hover\:ring-offset-success-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-success-container-strong);
   }
   .hover\:ring-offset-info:hover {
-    --sf-ring-offset-color: var(--sf-outline-info);
+    --sf-ring-offset-color: var(--sf-info-outline);
   }
   .hover\:ring-offset-info-container:hover {
     --sf-ring-offset-color: var(--sf-info-container);

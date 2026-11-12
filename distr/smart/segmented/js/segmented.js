@@ -11,33 +11,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -270,6 +314,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cycleItems: () => (/* binding */ cycleItems),
 /* harmony export */   cycleState: () => (/* binding */ cycleState),
 /* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
 /* harmony export */   nextTheme: () => (/* binding */ nextTheme),
 /* harmony export */   parseCycle: () => (/* binding */ parseCycle),
 /* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
@@ -280,7 +325,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
 /* harmony export */   themePreference: () => (/* binding */ themePreference),
 /* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
-/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
 /* harmony export */ });
 // One button, several values (docs review R039, owner decision D11d;
 // research ui-control control/research/2026-11-08-cycle-button.md).
@@ -379,11 +425,24 @@ const opposite = theme => theme === 'dark' ? 'light' : 'dark';
 function loader() {
   return globalThis.SF?.Loader;
 }
-/** The theme drawn now (light or dark), whatever the preference. */
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
 
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
 
 function visibleTheme() {
-  const theme = loader()?.theme;
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
   if (theme === 'dark' || theme === 'light') return theme;
   const root = globalThis.document?.documentElement;
   if (root?.classList?.contains('theme-dark')) return 'dark';
@@ -501,6 +560,19 @@ function warnCycleToggle(host, names) {
   globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
 }
 /**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
  * A person's press of a cycle: the next value, the change event and the
  * announcement. Answers true when it moved.
  */
@@ -522,6 +594,7 @@ function pressCycle(host, state) {
     host.__sfCycleExpect = value;
 
     if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
       host.__sfCycleAnnounce = false;
       host.__sfCyclePrevious = before;
       host.__sfCycleExpect = undefined;
@@ -856,18 +929,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cd371843857e");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9abcb852f1cf");
-/* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9e8a0d4d39c8");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("58fa7b09c477");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("dd70e430dd3b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6103742da696");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9e8a0d4d39c8");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("58fa7b09c477");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dd70e430dd3b");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("6103742da696");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__);
+
 
 
 
@@ -888,13 +964,70 @@ const THEME_ICONS = {
   system: 'desktop_windows',
   light: 'light_mode',
   dark: 'dark_mode'
-}; // The Loader's theme preference: what the person chose, not the theme drawn,
+}; // A theme switch whose choice cannot move the theme says why, once per
+// element (R076, as sf-button's theme-cycle): a host that draws the theme
+// itself (the Loader started with theme: false, as a Docara page and its
+// examples are), or no Loader. Nothing is selected and no change is sent.
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = globalThis.SF?.Loader ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-switch: the choice changes nothing: ${reason}.`);
+} // The Loader's theme preference: what the person chose, not the theme drawn,
 // so system stays selected while the system is dark.
+
 
 function themePreference() {
   const preference = globalThis.SF?.Loader?.themePreference;
   return THEME_PREFERENCES.includes(preference) ? preference : 'system';
-}
+} // height (1.5.0, decision C27): the size's tightness steps, as on sf-button.
+// A value outside the list reads as default and is said once per group.
+
+
+const HEIGHTS = new Set(['low', 'default', 'high', 'highest']);
+
+function groupHeight(host) {
+  const raw = host.getAttribute('height');
+  if (raw === null || raw === '') return 'default';
+  const value = raw.trim().toLowerCase();
+  if (HEIGHTS.has(value)) return value;
+
+  if (!host.__sfHeightWarned) {
+    host.__sfHeightWarned = true;
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-segmented: height="${raw}" is not a height; write low, default, high or highest (the size's steps). Read as default.`);
+  }
+
+  return 'default';
+} // spacing is deprecated (1.5.0, decision C27; journal
+// attribute-segmented-spacing-to-height), as on sf-button: it keeps drawing
+// the side padding until 2027-01-01 and is not turned into a height. Noted in
+// SF.deprecations and said once per page in the console.
+
+
+function noteSpacing(host) {
+  if (!host.hasAttribute('spacing')) return;
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+    component: 'sf-segmented',
+    kind: 'attribute',
+    from: 'spacing',
+    to: 'height',
+    since: '2026-11-10',
+    remove_after: '2027-01-01'
+  });
+  const root = globalThis.SF = globalThis.SF || {};
+  if (root.__sfSegmentedSpacingWarned) return;
+  Object.defineProperty(root, '__sfSegmentedSpacingWarned', {
+    value: true,
+    configurable: true
+  });
+  globalThis.console?.warn?.('[SIMAI Framework] sf-segmented: spacing is deprecated until 2027-01-01 and draws the side padding only; write height="low|default|high|highest" for the control height. See contracts/changes/journal.json (attribute-segmented-spacing-to-height).');
+} // The sizes sf-dropdown has: a track of another size keeps scrolling inside
+// itself when its labels do not fit (C47 C folds only where the field can be
+// as tall as the track).
+
+
+const FOLD_SIZES = new Set(['1/2', '1', '2']);
 
 function parseItems(value = []) {
   if (Array.isArray(value)) return value;
@@ -963,14 +1096,14 @@ function normalizeItems(items = []) {
 // through ElementInternals.
 
 
-const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
     select({
       value: nextValue
@@ -985,7 +1118,11 @@ const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
       // cannot change the theme (absent, or SF_BOOT_CONFIG.theme false)
       // selects nothing.
 
-      if (this.themeSwitch && globalThis.SF?.Loader?.setTheme?.(value) !== true) return 'theme';
+      if (this.themeSwitch && globalThis.SF?.Loader?.setTheme?.(value) !== true) {
+        warnThemeNotOwned(this);
+        return 'theme';
+      }
+
       this.value = value;
       this.emitValueChange({
         previous,
@@ -1013,7 +1150,7 @@ const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
   }
 });
 
-class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(ButtonGroupElement) {
+class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(ButtonGroupElement) {
   static get props() {
     return { ...super.props,
       templateName: {
@@ -1132,6 +1269,8 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
     window.removeEventListener('sf-theme-change', this.handleThemeChange);
     this._plateObserver?.disconnect();
     this._plateObserver = null;
+    this._fitObserver?.disconnect();
+    this._fitObserver = null;
     this._plateFor = null;
     clearTimeout(this._plateTimer);
     this._releaseReset?.();
@@ -1162,6 +1301,7 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
         spacing: this.getAttribute('spacing'),
         tightness: this.getAttribute('tightness')
       }),
+      height: groupHeight(this),
       component: this,
       // The entries drawn: normalised, numbered and flagged; items stays the
       // setting as given (the template-context probe compares the two).
@@ -1170,16 +1310,119 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
       disabled: this.disabled,
       // The host is the form control where the browser has ElementInternals;
       // the hidden input is drawn only without them (§17.1 item 6).
-      hiddenName: this.sfInternals ? '' : this.name
+      hiddenName: this.sfInternals ? '' : this.name,
+      folded: this.folded,
+      foldedSize: this.size,
+      foldedOptions: this.folded ? this.foldedOptions() : []
     });
+  } // C47 (owner decision 2026-11-10): the track is as wide as its labels (A),
+  // and when they do not fit on one line in the place it has, the element
+  // draws an sf-dropdown of the same size that shows the chosen value (C).
+  // It measures itself -- no breakpoint for the author to pick: the track's
+  // one-line width against the width it is given, again whenever either
+  // changes (ResizeObserver), so a wider screen or a shorter label brings the
+  // track back.
+
+
+  get folded() {
+    return Boolean(this._folded) && this.foldable;
+  }
+
+  get foldable() {
+    return this.appearance !== 'buttons' && this.orientation !== 'vertical' && FOLD_SIZES.has(String(this.size));
+  }
+
+  foldedOptions() {
+    return this.normalizedItems.map(item => ({
+      type: 'text',
+      size: this.size,
+      text: item.count !== '' ? `${item.label} · ${item.count}` : item.label,
+      value: item.value,
+      disabled: item.disabled,
+      selected: item.value === this.value
+    }));
+  } // What the labels need on one line and what the element is given: a shown
+  // track is measured at its one-line width for a moment (data-sf-measure, in
+  // the same task, never painted); a folded one is laid out at that width all
+  // along, and the dropdown's place is what a track would get.
+
+
+  measureFit() {
+    const root = this.querySelector(':scope > .sf-button-group');
+    if (!root) return null;
+
+    if (this.folded) {
+      const narrow = this.querySelector(':scope > .sf-button-group-narrow');
+      return {
+        need: root.getBoundingClientRect().width,
+        room: narrow ? narrow.getBoundingClientRect().width : 0
+      };
+    }
+
+    const room = root.getBoundingClientRect().width;
+    root.setAttribute('data-sf-measure', '');
+    const need = root.getBoundingClientRect().width;
+    root.removeAttribute('data-sf-measure');
+    return {
+      need,
+      room
+    };
+  }
+
+  checkFit() {
+    if (!this.isConnected) return;
+
+    if (!this.foldable) {
+      if (this._folded) {
+        this._folded = false;
+        this.requestComponentUpdate?.('fit');
+      }
+
+      return;
+    }
+
+    const fit = this.measureFit();
+    if (!fit || !fit.need || !fit.room) return; // A pixel of slack: a track that fits exactly is a track.
+
+    const fold = fit.need > fit.room + 1;
+    if (fold === Boolean(this._folded)) return;
+    this._folded = fold;
+    this.toggleAttribute('data-sf-folded', fold);
+    this.requestComponentUpdate?.('fit');
+  }
+
+  observeFit() {
+    if (typeof ResizeObserver === 'undefined') return;
+
+    if (!this._fitObserver) {
+      this._fitObserver = new ResizeObserver(() => this.checkFit());
+      globalThis.document?.fonts?.ready?.then?.(() => this.checkFit());
+    }
+
+    this._fitObserver.disconnect();
+
+    const root = this.querySelector(':scope > .sf-button-group');
+    const narrow = this.querySelector(':scope > .sf-button-group-narrow');
+    if (root) this._fitObserver.observe(root);
+    if (narrow) this._fitObserver.observe(narrow);
+  } // The dropdown's change is the host's: the dropdown's own event stops here
+  // and the host sends change once, as a segment press does.
+
+
+  handleFoldedChange(event) {
+    event.stopPropagation();
+    const next = event.detail?.value ?? event.target?.value;
+    if (next === undefined || next === null) return;
+    this.select(String(next));
   }
 
   template() {
+    noteSpacing(this);
     const context = this.templateContext(); // Every item's icon, asked for when the group is drawn, as a cycle's are
     // (R074): a segment drawn later (out of loading, items set afresh) finds
     // its glyph in the page's font instead of asking for a grown one.
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.preloadControlIcons)(this, context.entries.filter(item => item.icon).map(item => ({
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.preloadControlIcons)(this, context.entries.filter(item => item.icon).map(item => ({
       icon: item.icon,
       filled: false
     })));
@@ -1199,6 +1442,8 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
     this.bindReset();
     this.sfSyncFormState();
     this.placePlate();
+    this.observeFit();
+    this.checkFit();
   } // The plate of the track (1.4.0, owner decision D11c): one element under
   // the selected option, measured after each render and moved there. A new
   // choice slides it in 0.2 s (data-plate="moving" turns the transition on;
@@ -1289,7 +1534,7 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
     if (this._resetInput === input) return;
     this._releaseReset?.();
     this._resetInput = input;
-    this._releaseReset = input ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__.bindFormReset)(input, () => {
+    this._releaseReset = input ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__.bindFormReset)(input, () => {
       if (this.themeSwitch) return;
       this.value = this._resetValue;
     }) : null;
@@ -1314,17 +1559,28 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
   }
 
   focus(options) {
+    if (this.folded) {
+      // sf-dropdown's host draws no box (display: contents); its trigger
+      // is the focus stop that owns the dropdown keyboard.
+      const trigger = this.querySelector(':scope > .sf-button-group-narrow [aria-haspopup="listbox"]');
+      trigger?.focus?.(options);
+      return this;
+    }
+
     const button = this.querySelector('button[role="radio"][tabindex="0"]:not(:disabled)');
     button?.focus?.(options);
     return this;
   }
 
   handleClick = event => {
+    if (event.target?.closest?.('.sf-button-group-narrow')) return;
     const target = event.target?.closest?.('[data-sf-button-group-value]');
     if (!target || !this.contains(target)) return;
     this.select(target.getAttribute('data-sf-button-group-value'));
   };
   handleKeyDown = event => {
+    // The dropdown keeps its own keys (sf-dropdown standard).
+    if (event.target?.closest?.('.sf-button-group-narrow')) return;
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
     const enabled = this.normalizedItems.filter(item => !item.disabled);
     if (!enabled.length || this.disabled) return;
@@ -1381,6 +1637,7 @@ function renderItem(item, index, context) {
       text=${item.label}
       icon=${item.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       size=${context.size}
+      height=${context.height && context.height !== 'default' ? context.height : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       root-class=${context.spacing && context.spacing !== 'normal' ? `spacing-${context.spacing}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       appearance=${selected ? 'default' : 'outline'}
       scheme=${selected ? context.scheme : 'on-surface'}
@@ -1403,7 +1660,10 @@ function renderItem(item, index, context) {
 function renderSegment(item, context) {
   const selected = item.value === context.value;
   const disabled = context.disabled || item.disabled;
-  const classes = ['sf-button', `sf-button--size-${context.size}`, 'sf-button--link', 'sf-button--on-surface', 'flex', 'items-cross-center', 'sf-button-group-segment', item.iconOnly ? 'sf-button-group-icon-only' : '', context.spacing && context.spacing !== 'normal' ? `spacing-${context.spacing}` : '', selected ? 'active' : '', item.loading ? 'loading sf-button-state-loading' : ''].filter(Boolean).join(' '); // The count stands next to the label with no space between the two nodes, so
+  const classes = ['sf-button', `sf-button--size-${context.size}`, // ghost (C15); sf-button--link, its former name, beside it until 2027-01-01.
+  'sf-button--ghost', 'sf-button--link', 'sf-button--on-surface', 'flex', 'items-cross-center', 'sf-button-group-segment', item.iconOnly ? 'sf-button-group-icon-only' : '', context.spacing && context.spacing !== 'normal' ? `spacing-${context.spacing}` : '', // height (decision C27): the button sheet's height class sets the block
+  // padding; the track takes its own padding off it, as at the default.
+  context.height && context.height !== 'default' ? `sf-button--height-${context.height}` : '', selected ? 'active' : '', item.loading ? 'loading sf-button-state-loading' : ''].filter(Boolean).join(' '); // The count stands next to the label with no space between the two nodes, so
   // the name is composed here: the label (or the item's aria-label), then the
   // count, as it is read on screen.
 
@@ -1432,6 +1692,29 @@ function renderSegment(item, context) {
       ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-event-none">${item.label}${count}</span>`}
     </button>
   `;
+} // The labels do not fit on one line (owner decision C47 C): the same choice as
+// an sf-dropdown of the same size, which shows the chosen value. Its keys are
+// the dropdown's (ArrowDown opens, Enter chooses); its change is taken by the
+// host, which sends its own change once, as a segment press does.
+
+
+function renderFolded(context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class="sf-button-group-narrow">
+      <sf-dropdown
+        size=${context.foldedSize}
+        appearance="outlined"
+        mode="select"
+        .search=${false}
+        value=${context.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ?disabled=${context.disabled}
+        .options=${context.foldedOptions}
+        @change=${event => context.component.handleFoldedChange(event)}
+        @input=${event => event.stopPropagation()}
+      ></sf-dropdown>
+    </div>
+  `;
 } // The track (appearance track, the default since 1.4.0) draws native buttons
 // on a translucent track and one plate element under the selected option: the
 // element measures the option after each render and the plate slides to it
@@ -1445,12 +1728,14 @@ function renderSegment(item, context) {
 function renderButtonGroupTemplate(context) {
   const segmented = context.appearance !== 'buttons';
   const backdrop = segmented && context.backdrop && context.backdrop !== 'surface' ? context.backdrop : '';
-  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate !== 'scheme' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', backdrop ? `sf-button-group--backdrop-${backdrop}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', context.radius ? `sf-button-group--radius-${context.radius}` : '', context.rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate !== 'scheme' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', backdrop ? `sf-button-group--backdrop-${backdrop}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', segmented && context.folded ? 'sf-button-group--folded' : '', context.radius ? `sf-button-group--radius-${context.radius}` : '', context.rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${classes}
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       role="radiogroup"
+      ?inert=${Boolean(segmented && context.folded)}
+      aria-hidden=${segmented && context.folded ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-orientation=${context.orientation}
       data-value=${context.value || ''}
@@ -1458,6 +1743,7 @@ function renderButtonGroupTemplate(context) {
       ${segmented ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-plate" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${context.entries.map((item, index) => segmented ? renderSegment(item, context) : renderItem(item, index, context))}
     </div>
+    ${segmented && context.folded ? renderFolded(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.hiddenName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input class="sf-button-group-input" type="hidden" name=${context.hiddenName} value=${context.value || ''} ?disabled=${context.disabled}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   `;
 }
@@ -1470,6 +1756,13 @@ __webpack_async_result__();
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("control-spacing", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("control-spacing", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1504,7 +1797,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9e8a0d4d39c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.4.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.6.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

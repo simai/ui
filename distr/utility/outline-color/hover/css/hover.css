@@ -13,22 +13,22 @@
     outline-color: var(--sf-outline-variant);
   }
   .hover\:outline-primary:hover {
-    outline-color: var(--sf-outline-primary);
+    outline-color: var(--sf-primary-outline);
   }
   .hover\:outline-secondary:hover {
-    outline-color: var(--sf-outline-secondary);
+    outline-color: var(--sf-secondary-outline);
   }
   .hover\:outline-tertiary:hover {
-    outline-color: var(--sf-outline-tertiary);
+    outline-color: var(--sf-tertiary-outline);
   }
   .hover\:outline-error:hover {
-    outline-color: var(--sf-outline-error);
+    outline-color: var(--sf-error-outline);
   }
   .hover\:outline-warning:hover {
-    outline-color: var(--sf-outline-warning);
+    outline-color: var(--sf-warning-outline);
   }
   .hover\:outline-success:hover {
-    outline-color: var(--sf-outline-success);
+    outline-color: var(--sf-success-outline);
   }
   .hover\:outline-info:hover {
     outline-color: var(--sf-info-outline);

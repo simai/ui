@@ -197,33 +197,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // Reset fires before the browser restores default values. Synchronize afterwards
 // without synthesizing input/change events or retaining detached controls.
-const subscriptions = new WeakMap();
-const listeningDocuments = new WeakSet();
-function bindFormReset(input, synchronize) {
-  const doc = input.ownerDocument;
+//
+// One capture listener per document, while a control is bound to it: the first
+// binding adds it and the last release takes it away, so a removed instance
+// leaves nothing on the document. It used to stay for the page's life, added
+// by whichever instance bound first; when that was an instance placed after
+// the page settled (a closed layer's field starting late), the instance scope
+// gate read it as that instance's leak (gate 36, 2026-11-11). Every bundle
+// carries its own copy of this module, so the listener and the subscriptions
+// live on the document, shared by the copies: one listener, not one per bundle.
+const REGISTRY = Symbol.for('sf.formReset');
 
-  if (!listeningDocuments.has(doc)) {
-    doc.addEventListener('reset', event => {
-      const form = event.target;
-      if (form?.tagName !== 'FORM') return;
-      const controls = Array.from(form.elements);
-      setTimeout(() => {
-        if (event.defaultPrevented) return;
+function registryOf(doc) {
+  let registry = doc[REGISTRY];
 
-        for (const control of controls) {
-          if (!control.isConnected || control.form !== form) continue;
-
-          for (const callback of subscriptions.get(control) || []) callback();
-        }
-      }, 0);
-    }, true);
-    listeningDocuments.add(doc);
+  if (!registry) {
+    registry = {
+      subscriptions: new WeakMap(),
+      bound: 0,
+      listener: null
+    };
+    Object.defineProperty(doc, REGISTRY, {
+      value: registry,
+      configurable: true
+    });
   }
 
-  let callbacks = subscriptions.get(input);
-  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  return registry;
+}
+
+function listen(doc, registry) {
+  registry.listener = event => {
+    const form = event.target;
+    if (form?.tagName !== 'FORM') return;
+    const controls = Array.from(form.elements);
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+
+      for (const control of controls) {
+        if (!control.isConnected || control.form !== form) continue;
+
+        for (const callback of registry.subscriptions.get(control) || []) callback();
+      }
+    }, 0);
+  };
+
+  doc.addEventListener('reset', registry.listener, true);
+}
+
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+  const registry = registryOf(doc);
+  if (!registry.listener) listen(doc, registry);
+  let callbacks = registry.subscriptions.get(input);
+  if (!callbacks) registry.subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
-  return () => callbacks.delete(synchronize);
+  registry.bound += 1;
+  let released = false;
+  return () => {
+    if (released) return false;
+    released = true;
+    callbacks.delete(synchronize);
+    registry.bound -= 1;
+
+    if (registry.bound <= 0 && registry.listener) {
+      doc.removeEventListener('reset', registry.listener, true);
+      registry.listener = null;
+      registry.bound = 0;
+    }
+
+    return true;
+  };
 }
 
 /***/ },
@@ -996,7 +1040,7 @@ class Quantity extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     wrap.classList.add('sf-quantity-wrap');
     const minus = document.createElement('button');
     minus.type = 'button';
-    minus.classList.add('sf-quantity-count', 'sf-icon-button', 'sf-icon-button--secondary', 'sf-icon-button--tonal', 'sf-icon-button--size-1/3');
+    minus.classList.add('sf-quantity-count', 'sf-icon-button', 'sf-icon-button--icon', 'sf-icon-button--ghost', 'sf-icon-button--on-surface', 'sf-icon-button--on-surface-variant', 'sf-icon-button--size-1/3');
     minus.setAttribute('aria-label', String(decrementLabel));
     minus.innerHTML = `<i class="sf-icon">${decrementIcon}</i>`;
     const input = document.createElement('input');
@@ -1035,7 +1079,7 @@ class Quantity extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
 
     const plus = document.createElement('button');
     plus.type = 'button';
-    plus.classList.add('sf-quantity-count', 'sf-icon-button', 'sf-icon-button--secondary', 'sf-icon-button--tonal', 'sf-icon-button--size-1/3');
+    plus.classList.add('sf-quantity-count', 'sf-icon-button', 'sf-icon-button--icon', 'sf-icon-button--ghost', 'sf-icon-button--on-surface', 'sf-icon-button--on-surface-variant', 'sf-icon-button--size-1/3');
     plus.setAttribute('aria-label', String(incrementLabel));
     plus.innerHTML = `<i class="sf-icon">${incrementIcon}</i>`;
     wrap.append(minus, input, plus);

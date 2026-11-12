@@ -19,7 +19,10 @@
     color: var(--sf-on-surface-inverse-fixed);
   }
   .active\:color-on-disable:active {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
+  }
+  .active\:color-on-surface-disabled:active {
+    color: var(--sf-on-surface-disabled);
   }
   .active\:color-primary:active {
     color: var(--sf-primary);

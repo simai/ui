@@ -78,12 +78,12 @@
     outline-width: var(--sf-focus--width);
   }
   .sf-link.disabled {
-    --sf-link--color: var(--sf-on-disable);
+    --sf-link--color: var(--sf-on-surface-disabled);
     --sf-link--text-decoration: none;
     cursor: default;
   }
   .sf-link[aria-disabled=true] {
-    --sf-link--color: var(--sf-on-disable);
+    --sf-link--color: var(--sf-on-surface-disabled);
     --sf-link--text-decoration: none;
     cursor: default;
   }

@@ -617,7 +617,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormFi
   }
 
   static get observedAttributes() {
-    return [...(super.observedAttributes ?? []), "value", "inherited-value", "swatches", "disabled"];
+    return [...(super.observedAttributes ?? []), "value", "inherited-value", "swatches", "disabled", "aria-label"];
   }
 
   attributeChangedCallback(name, previous, next) {
@@ -967,6 +967,8 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormFi
       // ElementInternals; the hidden input is drawn only without them.
       hiddenName: this.sfInternals ? "" : this.name,
       label: this.label,
+      // aria-label stays a host attribute read here, never a setting (§3.1).
+      ariaLabel: this.getAttribute("aria-label") || "",
       variant: this.variant,
       themeLabel: this.themeLabel,
       themeResetLabel: this.themeResetLabel,
@@ -1019,8 +1021,13 @@ function renderColorTemplate(context) {
     disabled,
     size,
     appearance
-  } = context;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  } = context; // One field label look for every field (docs pre-check 2026-11-10 FB-10,
+  // CO-04): `label` is drawn above the row as sf-input draws its label. The
+  // colour input keeps the same words as its name, so the visible copy is
+  // hidden from the accessibility tree and nothing is read twice. Without
+  // `label` the host's aria-label names the input and nothing is drawn.
+
+  const row = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-color sf-color--${appearance} sf-color--size-${size}"
              data-set=${isSet ? 'true' : 'false'}>
             <label class="sf-color-swatch" title=${context.chooseLabel}>
@@ -1033,7 +1040,7 @@ function renderColorTemplate(context) {
                         class="sf-color-input"
                         .value=${painted || '#000000'}
                         ?disabled=${disabled}
-                        aria-label=${context.label || context.chooseLabel}
+                        aria-label=${context.label || context.ariaLabel || context.chooseLabel}
                         @input=${event => context.component._pickerInput(event)}
                         @change=${event => context.component._pickerChange(event)}
                 >
@@ -1084,6 +1091,13 @@ function renderColorTemplate(context) {
                                 ?disabled=${disabled}
                                 @click=${() => context.component.clear()}
                         ></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+  if (!context.label) return row;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-color-field sf-color-field--size-${size}">
+            <span class="sf-color-label" aria-hidden="true">${context.label}</span>
+            ${row}
         </div>
     `;
 } // variant theme: one icon-only primary button that opens the same native
@@ -1205,7 +1219,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.5.5","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.6.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 

@@ -15,15 +15,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("70c2f395a2af");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a35a5057e1f9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d97de4199bbc");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c4bf739d2198");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8759b3d1f68e");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("70c2f395a2af");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a35a5057e1f9");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d97de4199bbc");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c4bf739d2198");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8759b3d1f68e");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__);
 // sf-include: a part of the page loaded from an address -- the successor of
 // the retired class units ajax, ajaxload and lazy-load (ui-control
 // control/LEGACY-UNITS-RETIREMENT-AND-NEW-PARTS-2026-11-02.md step 3). The old
@@ -42,6 +44,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4,
 // §8): the settings are made by core/js/element-manifest.js, refresh is the
 // action and answers an outcome, the words are the language files'.
+
 
 
 
@@ -107,11 +110,11 @@ function lineCount(value) {
   const number = Math.trunc(Number(value));
   return Number.isFinite(number) ? Math.min(20, Math.max(1, number)) : 3;
 }
-const IncludeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+const IncludeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
   },
   source: 'ru',
   actions: {
@@ -135,7 +138,9 @@ class SfInclude extends IncludeElement {
     // kept until then (sfAwaitingData).
 
     this._settled = false;
-    this._connected = false;
+    this._connected = false; // The opening of the closed layer the first load waits for, if any.
+
+    this._layerWait = null;
   }
 
   get address() {
@@ -180,10 +185,30 @@ class SfInclude extends IncludeElement {
     if (this._sight && !this._sightTarget?.isConnected) this.unwatch();
     this.arm();
   } // Starts the first load: now, or once the region nears the viewport.
+  // In a closed window or drawer the first load waits for the layer to
+  // open: the layer starts its content early, its code, not its data.
 
 
   arm() {
-    if (!this.isConnected || this._phase !== 'idle' || !this.address) return;
+    if (!this.isConnected || this._phase !== 'idle' || !this.address || this._layerWait) return;
+    const opens = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__.whenClosedLayerOpens)(this, this.sfScope);
+
+    if (opens) {
+      const scope = this.sfScope;
+      this._layerWait = opens;
+      opens.then(() => {
+        if (this._layerWait !== opens || scope.aborted) return;
+        this._layerWait = null;
+        this.arm();
+      });
+      scope.addEventListener('abort', () => {
+        if (this._layerWait === opens) this._layerWait = null;
+      }, {
+        once: true
+      });
+      return;
+    }
+
     const Sight = globalThis.IntersectionObserver;
 
     if (this.load !== 'view' || typeof Sight !== 'function') {
@@ -392,7 +417,7 @@ class SfInclude extends IncludeElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderIncludeTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderIncludeTemplate)(this.templateContext());
   }
 
 }
@@ -487,6 +512,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "18003344cff0"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("layer-stack", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("layer-stack", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "073f05ff1a81"
 (module) {
 
@@ -511,7 +543,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "a35a5057e1f9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.0.4","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.0.5","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

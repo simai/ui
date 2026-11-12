@@ -2,6 +2,92 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "e577837dd70a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -189,12 +275,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("adbddb2f4d35");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("386ef0670247");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f70b067ace85");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2382ba7a3e18");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f357767ed4d2");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("386ef0670247");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f70b067ace85");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2382ba7a3e18");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f357767ed4d2");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__);
@@ -225,14 +312,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const ConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+
+const ConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: "ru"
 });
+const APPEARANCES = ["inline", "card", "window"]; // Below sm the two answers share the row in halves (default.css); a label
+// that does not fit its half stacks them. The step is core/js/breakpoints.js.
+
 const ConfirmSurface = (0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.confirmSurface)(ConfirmElement, {
   kind: "sf-confirm",
   block: "sf-confirm",
@@ -253,6 +344,32 @@ class SfConfirm extends ConfirmSurface {
     super();
 
     this._onKeydown = event => this.onKeydown(event);
+
+    this._onInput = event => this.onInput(event);
+
+    this._requireShown = false;
+  }
+
+  get appearance() {
+    const value = this.getProp("appearance");
+    return APPEARANCES.includes(value) ? value : "inline";
+  } // The name the person types before the acceptance works (window form,
+  // decision C39, R069): empty is none.
+
+
+  get requiredName() {
+    return this.appearance === "window" ? String(this.getProp("require") || "").trim() : "";
+  }
+
+  get requireField() {
+    return this.querySelector(".sf-confirm__field");
+  }
+
+  get requireMet() {
+    const name = this.requiredName;
+    if (!name) return true;
+    const input = this.requireField?.querySelector("input");
+    return (input?.value ?? "").trim() === name;
   } // What the acceptance does (decision C13): status="danger" for a delete or
   // anything that cannot be undone. destructive is its former name: read as
   // danger and noted once, until 2027-01-01 (change journal
@@ -285,18 +402,125 @@ class SfConfirm extends ConfirmSurface {
     return { ...this.confirmContext(),
       question,
       questionLabel: this.sfWord("question-label"),
-      appearance: this.getProp("appearance") === "card" ? "card" : "inline",
-      danger: this.danger
+      appearance: this.appearance,
+      danger: this.danger,
+      consequence: this.appearance === "window" ? this.getProp("consequence") || "" : "",
+      hasOptions: this.appearance === "window" && this.hasSlotContent("options"),
+      optionsContent: this.appearance === "window" && this.hasSlotContent("options") ? this.getSlotContent("options") : null,
+      require: this.requiredName,
+      requireText: this.sfWord("require-text"),
+      requireError: this.sfWord("require-error", {
+        vars: {
+          name: this.requiredName
+        }
+      }),
+      requireInvalid: this._requireShown
     };
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__.renderConfirmTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__.renderConfirmTemplate)(this.templateContext());
+  } // The acceptance waits for the name (R064): an early press -- the button,
+  // Enter in the field, or the action called -- puts the focus in the field
+  // and says under it what to type; the button stays filled and pressable.
+
+
+  answer(params = {}) {
+    if (params?.accepted === true && this.shownState === "open" && !this.getProp("disabled") && !this.requireMet) {
+      this.explainRequire();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("required");
+    }
+
+    return super.answer(params);
+  }
+
+  explainRequire() {
+    this._requireShown = true;
+    this.requestComponentUpdate("require");
+    this.whenRendered(() => this.requireField?.querySelector("input")?.focus({
+      preventScroll: true
+    }), {
+      next: true
+    });
+  } // Typing the name takes the explanation away.
+
+
+  onInput(event) {
+    if (!this._requireShown || !this.requireField?.contains(event.target)) return;
+    if (!this.requireMet) return;
+    this._requireShown = false;
+    this.requestComponentUpdate("require");
+  } // Put again, the question starts afresh: no name typed, nothing said.
+
+
+  open(...args) {
+    this.clearRequire();
+    return super.open(...args);
+  } // The name typed so far and the explanation go: a window opened or
+  // closed without an answer must not keep a typed name, or the next
+  // opening would delete on one press (R069; C39 acceptance D1).
+
+
+  clearRequire() {
+    if (!this.requiredName) return;
+    const shown = this._requireShown;
+    this._requireShown = false;
+    const field = this.requireField;
+    if (field && "value" in field) field.value = "";
+    const input = field?.querySelector("input");
+    if (input) input.value = "";
+    if (shown) this.requestComponentUpdate("require");
+  }
+
+  afterRender(changed) {
+    super.afterRender?.(changed);
+    this.watchAnswers();
+  } // The window form's answers on a phone: two equal halves while each label
+  // fits its half, one under the other when one does not.
+
+
+  watchAnswers() {
+    const actions = this.appearance === "window" ? this.querySelector(".sf-confirm__actions") : null;
+    if (actions === this._watchedActions) return;
+    this._answersObserver?.disconnect();
+    this._watchedActions = actions;
+    if (!actions || typeof ResizeObserver !== "function") return;
+    this._answersObserver = new ResizeObserver(() => this.fitAnswers());
+
+    this._answersObserver.observe(actions);
+  }
+
+  fitAnswers() {
+    const actions = this._watchedActions;
+    if (!actions) return;
+    const phone = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__.matchesBreakpoint)("sm", {
+      below: true,
+      view: this.ownerDocument.defaultView
+    });
+
+    if (!phone) {
+      actions.removeAttribute("data-stacked");
+      return;
+    }
+
+    if (actions.hasAttribute("data-stacked")) return; // A label that does not fit its half either overflows or breaks onto
+    // a second line: either stands the answers one under the other.
+
+    const over = [...actions.querySelectorAll("button")].some(button => {
+      const text = button.querySelector(".sf-button-text-container") || button;
+      if (text.scrollWidth > text.clientWidth + 1) return true;
+      const range = this.ownerDocument.createRange();
+      range.selectNodeContents(text);
+      const lines = new Set([...range.getClientRects()].filter(rect => rect.width > 0).map(rect => Math.round(rect.top)));
+      return lines.size > 1;
+    });
+    if (over) actions.setAttribute("data-stacked", "");
   }
 
   onConnected() {
     super.onConnected?.();
-    this.addEventListener("keydown", this._onKeydown); // The question put in place of what was pressed (a row's delete): the
+    this.addEventListener("keydown", this._onKeydown);
+    this.addEventListener("input", this._onInput); // The question put in place of what was pressed (a row's delete): the
     // pressed control is gone, so the focus fell to the page. It goes to
     // the safe answer once the answers are drawn (decision C25). A
     // question printed with the page, before the person did anything,
@@ -311,19 +535,48 @@ class SfConfirm extends ConfirmSurface {
 
   onDisconnected() {
     this.removeEventListener("keydown", this._onKeydown);
+    this.removeEventListener("input", this._onInput);
+    this._answersObserver?.disconnect();
+    this._answersObserver = null;
+    this._watchedActions = null;
     super.onDisconnected?.();
-  } // Escape takes the question back, as the declining answer does; the key
-  // goes no further, so a drawer or a window around the row stays open.
+  } // Escape takes the question back, as the declining answer does. In a page
+  // the key goes no further, so a drawer around the row stays open. In a
+  // window (sf-modal) the question is the window's: the decline is reported
+  // and the key goes on to the window, which closes -- a host that never sets
+  // an outcome no longer leaves the window standing with its answers greyed
+  // (recipes gaps acceptance D4, 2026-11-10). A host that refuses the answer
+  // (cancels the answer event) keeps both: the question stands.
 
 
   onKeydown(event) {
+    // Enter in the name's field accepts once the name is typed, and
+    // explains when it is not.
+    if (event.key === "Enter" && !event.defaultPrevented && this.requireField?.contains(event.target)) {
+      event.preventDefault();
+      this.confirm();
+      return;
+    }
+
     if (event.key !== "Escape" || event.defaultPrevented) return;
     if (this.shownState !== "open" || this.getProp("disabled")) return;
+    const result = this.cancel();
+    if (result?.outcome === "applied" && inWindow(this)) return;
     event.preventDefault();
     event.stopPropagation();
-    this.cancel();
   }
 
+} // The nearest surface around the question is a window's panel (sf-modal draws
+// it in a portal at the end of the body; the Modal class in place), not a
+// drawer, a popover or a list inside the window, whose Escape is their own,
+// and not an inline window, which takes no Escape.
+
+
+const SURFACES = "[data-sf-modal-panel], .sf-drawer-panel, sf-drawer, sf-popover, sf-dropdown";
+
+function inWindow(node) {
+  const surface = node.parentElement?.closest(SURFACES);
+  return Boolean(surface?.matches("[data-sf-modal-panel]") && !surface.closest('[data-sf-modal-display="inline"]'));
 } // The focus is nowhere -- on the page itself -- after the person has acted on
 // it: the control they pressed left the page.
 
@@ -370,6 +623,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // declining one (decision C25); a plain question has two outlined answers.
 
 function renderConfirmTemplate(context) {
+  if (context.appearance === "window") return renderConfirmWindow(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <section
                 class="sf-confirm sf-confirm--${context.appearance} sf-confirm--${context.state}"
@@ -383,6 +637,48 @@ function renderConfirmTemplate(context) {
             ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-confirm", {
     acceptStatus: context.danger ? "danger" : ""
+  })}
+        </section>
+    `;
+} // The window form (appearance="window", decision C39): the question is the
+// window's title (sf-modal size="question"), so here it only names the group.
+// Under it the consequences on a quiet plate -- the description, then the
+// decisive sentence (consequence) on its own line in medium weight; the
+// page's options (a checkbox); the name to type (require) with its label
+// «Чтобы подтвердить, введите <code>name</code>» and a field; then the two
+// answers, the filled danger answer first, at the start. The steps grow
+// towards the answers (default.css). Declined here, it folds away as the
+// inline and card forms do (C35); its window closes on the decline anyway.
+
+function renderConfirmWindow(context) {
+  const plate = context.hasDescription || context.consequence;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <section
+                class="sf-confirm sf-confirm--window sf-confirm--${context.state}"
+                role="group"
+                aria-label=${context.question || context.questionLabel}
+                data-state=${context.state}
+                ?hidden=${context.collapsed}
+        >
+            ${plate ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__consequences">
+                    ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ${context.consequence ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-confirm__consequence">${context.consequence}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.hasOptions ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__options">${context.optionsContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.require ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__require">
+                    <p class="sf-confirm__require-label" aria-hidden="true">${context.requireText} <code class="sf-confirm__name">${context.require}</code></p>
+                    <sf-input
+                            class="sf-confirm__field"
+                            autocomplete="off"
+                            aria-label=${`${context.requireText} ${context.require}`}
+                            ?invalid=${context.requireInvalid}
+                            error-message=${context.requireInvalid ? context.requireError : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                            ?disabled=${context.answersLocked}
+                    ></sf-input>
+                </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-confirm", {
+    acceptStatus: context.danger ? "danger" : "",
+    window: true
   })}
         </section>
     `;
@@ -802,6 +1098,13 @@ function confirmSurface(Base, {
           value: null
         }
       });
+    } // The question took «no» and nothing came after: declined, or the
+    // decline on its way with no outcome from the host. A window that is
+    // opened again puts such a question again (sf-modal, decision C39).
+
+
+    get answeredNo() {
+      return this.state === "declined" || this.state === "pending" && this._pressed === false;
     }
 
     focusStatus() {
@@ -856,14 +1159,20 @@ function confirmSurface(Base, {
 // told apart by more than the red of a word. Both stand on the element's size
 // (context.size, 1 unless the page gives one); a size a template gives is
 // relative, so a compact region (data-sf-density, C22) moves them down a step.
+//
+// In a window (sf-confirm appearance="window", decision C39) the declining
+// answer of a dangerous question is tonal, the window's quiet answer beside
+// the filled one, and the answers come before the status line, at the start.
 
 function renderConfirmFooter(context, block, {
-  acceptStatus = ""
+  acceptStatus = "",
+  window = false
 } = {}) {
   const {
     component
   } = context;
   const danger = acceptStatus === "danger" || acceptStatus === "error";
+  const quiet = window ? "tonal" : "ghost";
   const size = context.size || "1";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <footer class="${block}__footer">
@@ -890,7 +1199,7 @@ function renderConfirmFooter(context, block, {
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
-                            appearance=${danger ? "ghost" : "outline"}
+                            appearance=${danger ? quiet : "outline"}
                             scheme="on-surface"
                             size=${size}
                             text=${context.declineText}
@@ -961,21 +1270,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.2.0","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card"],"default":"inline"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.3.0","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "2382ba7a3e18"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Done","accepting-text":"Working…","decline-text":"Cancel","declining-text":"Cancelling…","expired-text":"The time to answer has passed","question-label":"Confirmation","until-text":"Answer by {time}"},"events":{"expired":{"label":"Expired"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Done","accepting-text":"Working…","decline-text":"Cancel","declining-text":"Cancelling…","expired-text":"The time to answer has passed","question-label":"Confirmation","require-error":"Type “{name}” exactly as above","require-text":"To confirm, type","until-text":"Answer by {time}"},"events":{"expired":{"label":"Expired"}}}');
 
 /***/ },
 
 /***/ "f357767ed4d2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение","runtime":{"accept-text":"Подтвердить","accepted-text":"Готово","accepting-text":"Выполняется…","decline-text":"Отмена","declining-text":"Отменяется…","expired-text":"Время ответа истекло","question-label":"Подтверждение","until-text":"Ответить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение","runtime":{"accept-text":"Подтвердить","accepted-text":"Готово","accepting-text":"Выполняется…","decline-text":"Отмена","declining-text":"Отменяется…","expired-text":"Время ответа истекло","question-label":"Подтверждение","require-error":"Введите «{name}» — так же, как выше","require-text":"Чтобы подтвердить, введите","until-text":"Ответить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
 
 /***/ }
 

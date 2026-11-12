@@ -13,22 +13,34 @@
     --sf-ring-color: var(--sf-outline-variant);
   }
   .hover\:ring-surface:hover {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
   }
   .hover\:ring-surface-0:hover {
-    --sf-ring-color: var(--sf-surface-0);
+    --sf-ring-color: var(--sf-surface-page);
+  }
+  .hover\:ring-surface-page:hover {
+    --sf-ring-color: var(--sf-surface-page);
   }
   .hover\:ring-surface-1:hover {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
+  }
+  .hover\:ring-surface-area:hover {
+    --sf-ring-color: var(--sf-surface-area);
   }
   .hover\:ring-surface-container:hover {
     --sf-ring-color: var(--sf-surface-container);
   }
   .hover\:ring-surface-overlay:hover {
-    --sf-ring-color: var(--sf-surface-overlay);
+    --sf-ring-color: var(--sf-surface-veil);
+  }
+  .hover\:ring-surface-veil:hover {
+    --sf-ring-color: var(--sf-surface-veil);
   }
   .hover\:ring-surface-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-surface-transparent-overlay);
+    --sf-ring-color: var(--sf-surface-container-strong);
+  }
+  .hover\:ring-surface-container-strong:hover {
+    --sf-ring-color: var(--sf-surface-container-strong);
   }
   .hover\:ring-surface-inverse:hover {
     --sf-ring-color: var(--sf-surface-inverse);
@@ -40,61 +52,79 @@
     --sf-ring-color: var(--sf-on-surface-variant);
   }
   .hover\:ring-primary:hover {
-    --sf-ring-color: var(--sf-outline-primary);
+    --sf-ring-color: var(--sf-primary-outline);
   }
   .hover\:ring-primary-container:hover {
     --sf-ring-color: var(--sf-primary-container);
   }
   .hover\:ring-primary-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-primary-transparent-overlay);
+    --sf-ring-color: var(--sf-primary-container-strong);
+  }
+  .hover\:ring-primary-container-strong:hover {
+    --sf-ring-color: var(--sf-primary-container-strong);
   }
   .hover\:ring-secondary:hover {
-    --sf-ring-color: var(--sf-outline-secondary);
+    --sf-ring-color: var(--sf-secondary-outline);
   }
   .hover\:ring-secondary-container:hover {
     --sf-ring-color: var(--sf-secondary-container);
   }
   .hover\:ring-secondary-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-secondary-transparent-overlay);
+    --sf-ring-color: var(--sf-secondary-container-strong);
+  }
+  .hover\:ring-secondary-container-strong:hover {
+    --sf-ring-color: var(--sf-secondary-container-strong);
   }
   .hover\:ring-tertiary:hover {
-    --sf-ring-color: var(--sf-outline-tertiary);
+    --sf-ring-color: var(--sf-tertiary-outline);
   }
   .hover\:ring-tertiary-container:hover {
     --sf-ring-color: var(--sf-tertiary-container);
   }
   .hover\:ring-tertiary-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-tertiary-transparent-overlay);
+    --sf-ring-color: var(--sf-tertiary-container-strong);
+  }
+  .hover\:ring-tertiary-container-strong:hover {
+    --sf-ring-color: var(--sf-tertiary-container-strong);
   }
   .hover\:ring-error:hover {
-    --sf-ring-color: var(--sf-outline-error);
+    --sf-ring-color: var(--sf-error-outline);
   }
   .hover\:ring-error-container:hover {
     --sf-ring-color: var(--sf-error-container);
   }
   .hover\:ring-error-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-error-transparent-overlay);
+    --sf-ring-color: var(--sf-error-container-strong);
+  }
+  .hover\:ring-error-container-strong:hover {
+    --sf-ring-color: var(--sf-error-container-strong);
   }
   .hover\:ring-warning:hover {
-    --sf-ring-color: var(--sf-outline-warning);
+    --sf-ring-color: var(--sf-warning-outline);
   }
   .hover\:ring-warning-container:hover {
     --sf-ring-color: var(--sf-warning-container);
   }
   .hover\:ring-warning-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-warning-transparent-overlay);
+    --sf-ring-color: var(--sf-warning-container-strong);
+  }
+  .hover\:ring-warning-container-strong:hover {
+    --sf-ring-color: var(--sf-warning-container-strong);
   }
   .hover\:ring-success:hover {
-    --sf-ring-color: var(--sf-outline-success);
+    --sf-ring-color: var(--sf-success-outline);
   }
   .hover\:ring-success-container:hover {
     --sf-ring-color: var(--sf-success-container);
   }
   .hover\:ring-success-transparent-overlay:hover {
-    --sf-ring-color: var(--sf-success-transparent-overlay);
+    --sf-ring-color: var(--sf-success-container-strong);
+  }
+  .hover\:ring-success-container-strong:hover {
+    --sf-ring-color: var(--sf-success-container-strong);
   }
   .hover\:ring-info:hover {
-    --sf-ring-color: var(--sf-outline-info);
+    --sf-ring-color: var(--sf-info-outline);
   }
   .hover\:ring-info-container:hover {
     --sf-ring-color: var(--sf-info-container);

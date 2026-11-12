@@ -350,7 +350,7 @@ function createSortableInserter(list) {
     // surface one a row action has, so it reads the same on any canvas.
     button = document_().createElement('button');
     button.type = 'button';
-    button.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--surface sf-icon-button--on-surface sf-icon-button--size-1/3 sf-sortable-insert-button';
+    button.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--tonal sf-icon-button--on-surface sf-icon-button--size-1/3 sf-sortable-insert-button';
     button.setAttribute('aria-haspopup', 'menu');
     button.setAttribute('aria-expanded', 'false');
     const glyph = document_().createElement('i');
@@ -1621,7 +1621,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.2.1","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.2.2","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 

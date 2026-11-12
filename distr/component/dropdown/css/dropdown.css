@@ -73,8 +73,10 @@
     border-style: solid;
     border-style: var(--sf-list-item--border-style, solid);
     box-shadow: var(--sf-list-item--box-shadow);
-    --sf-list-item--background-color: var(--sf-list-item-background-color, var(--sf-elevation-1--surface));
-    --sf-on-surface-variant: var(--sf-on-elevation-1--variant);
+    /* A row stands on the place it is in (C16, DEV audit 2026-11-10 defect 2):
+       no fill of its own and the place's dim ink. It painted the card place
+       everywhere -- a band 1.36 darker in a dark popup. */
+    --sf-list-item--background-color: var(--sf-list-item-background-color, var(--sf-transparent));
     --sf-list-item--border-color: var(--sf-list-item-border-color, var(--sf-outline-variant));
     --sf-list-item--border-bottom-width: var(--sf-px);
     --sf-list-item--border-style: solid;
@@ -219,13 +221,13 @@
     --sf-icon--color: var(--sf-primary);
   }
   .sf-list-item.disabled.sf-list-item--checkbox .sf-list-item-container, .sf-list-item.disabled.sf-list-item--text .sf-list-item-container, .sf-list-item.disabled.sf-list-item--icon .sf-list-item-container {
-    --sf-list-item-container--color: var(--sf-on-disable);
+    --sf-list-item-container--color: var(--sf-on-surface-disabled);
   }
   .sf-list-item.disabled.sf-list-item--avatar .sf-avatar-label-group-title {
-    --sf-avatar-label-group-title--color: var(--sf-on-disable);
+    --sf-avatar-label-group-title--color: var(--sf-on-surface-disabled);
   }
   .sf-list-item.disabled.sf-list-item--icon > .sf-list-item-wrap > .sf-icon, .sf-list-item.disabled.sf-list-item--icon > .sf-list-item-wrap > sf-icon > .sf-icon, .sf-list-item.disabled.sf-list-item--icon > .sf-list-item-wrap > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-2 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-2 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-2 .sf-list-item-container {
@@ -249,7 +251,7 @@
     --sf-icon--width: var(--sf-text-height-2);
   }
   .sf-list-item.disabled.sf-list-item--checkbox .sf-checkbox-box {
-    --sf-checkbox-box--border-color: var(--sf-on-disable);
+    --sf-checkbox-box--border-color: var(--sf-on-surface-disabled);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-3 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-3 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-3 .sf-list-item-container {
@@ -363,13 +365,18 @@
   }
   .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):hover {
     --sf-list-item--background-color: var(--sf-primary-container-hover);
+    /* A translucent fill, as the selected row (C43 D4). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
   /* Selected or current is one role in every component (C16): primary-container
        with its ink. */
   .sf-list-item.selected {
     --sf-list-item--background-color: var(--sf-primary-container);
-    /* A translucent fill: a tonal badge on it keeps its own tone (C43). */
+    /* A translucent fill: a tonal badge on it keeps its own tone (C43), an
+       anchored badge's ring is the row's colour (C43 D3). */
     --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
   /* An option sits flush against the options above and below it. */
   .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled).focus-visible {
@@ -381,7 +388,7 @@
     outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-list-item.disabled {
-    --sf-list-item--border-color: var(--sf-outline-disable);
+    --sf-list-item--border-color: var(--sf-outline-disabled);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/space-between (.justify-between) align-items/center (.items-center) justify-content/flex-start (.justify-start) */
   .sf-list-item--checkbox .sf-list-item-wrap, .sf-list-item--text .sf-list-item-wrap, .sf-list-item--icon .sf-list-item-wrap {
@@ -560,7 +567,7 @@
     --sf-list-item-supporting--line-height: var(--sf-text-height-2);
   }
   .sf-list-item.disabled .sf-list-item-supporting {
-    color: var(--sf-on-disable);
+    color: var(--sf-on-surface-disabled);
   }
   /* The handle's slot is a line of the size square, before the row's content. */
   .sf-list-item-handle {
@@ -612,7 +619,7 @@
     cursor: pointer;
   }
   .sf-list-item.disabled .sf-list-item-handle {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   /* Where a pointer can hover, the handle shows on the row under it and on the
      row that has the focus; its slot is always kept, so nothing moves. On a
@@ -682,11 +689,18 @@
   }
 }
 @layer sf.states {
+  /* One row hover for every list and menu (C42 (5), owner 2026-11-10). */
   .sf-list-item.sf-list-item--interactive:not(.disabled):not(.selected):hover {
-    --sf-list-item--background-color: var(--sf-surface-container-hover);
+    --sf-list-item--background-color: var(--sf-surface-state-select);
+    /* A translucent fill, as the selected row (C43 D4). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
   .sf-list-item.sf-list-item--sortable:not(.disabled):not(.selected):hover {
-    --sf-list-item--background-color: var(--sf-surface-container-hover);
+    --sf-list-item--background-color: var(--sf-surface-state-select);
+    /* A translucent fill, as the selected row (C43 D4). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
   /* A row of a list draws its ring inside itself, as an option does: rows sit
      flush against each other, and a ring outside was cut by its neighbours. */
@@ -740,6 +754,9 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-end (.items-end) */
+  /* A plain list has no fill (C16, DEV audit 2026-11-10 defect 1): it stands on
+     its place. It painted the page on every place -- a hole on a dark card or
+     popup, white on white on bg-primary. A popup list sets its own. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
@@ -965,8 +982,8 @@
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
   .sf-list {
-    background-color: var(--sf-surface-0);
-    background-color: var(--sf-list--background-color, var(--sf-surface-0));
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-list--background-color, var(--sf-transparent));
     border-width: var(--sf-px);
     border-width: var(--sf-list--border-width, var(--sf-px));
     border-bottom-width: var(--sf-px);
@@ -1045,17 +1062,17 @@
        ordinary list. */
     --sf-surface-place: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
+    --sf-surface-place-ground: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -1085,6 +1102,32 @@
        on the root -- it writes sf-dropdown--open, and the portal context drops
        the open modifiers altogether -- so the list never had a shadow. */
     --sf-list--box-shadow: var(--sf-shadow-overlay);
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list--menu {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-list--menu {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
+  .sf-dropdown .sf-list > *,
+  .sf-list--menu > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   .sf-dropdown .sf-list.sf-list--size-1\/2,
   .sf-list--menu.sf-list--size-1\/2 {
@@ -1402,14 +1445,19 @@
   .sf-list--menu:has(> .sf-list-container-wrap) > .sf-input {
     margin: var(--sf-list--padding-top) var(--sf-list--padding-right) 0 var(--sf-list--padding-left);
   }
+  /* One row hover for every list and menu (C42 (5), owner 2026-11-10). */
   .sf-dropdown .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):hover,
   .sf-list--menu [role=option].sf-list-item:not(:disabled):not(.disabled):hover {
-    --sf-list-item--background-color: var(--sf-surface-transparent-hover);
+    --sf-list-item--background-color: var(--sf-surface-state-select);
+    /* A translucent fill, as the selected row (C43 D4). */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
   .sf-dropdown .sf-list .sf-list-item.selected,
   .sf-list--menu .sf-list-item.selected {
     --sf-list-item--background-color: var(--sf-primary-container);
     --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list-item--background-color);
   }
 }
 @media (forced-colors: active) {
@@ -1481,8 +1529,10 @@
     /* The surface's own colour, read from the list that sets it: `inherit`
        would take a wrapper's transparent background and the rows would scroll
        through the heading. */
-    background-color: var(--sf-surface-0);
-    background-color: var(--sf-list--background-color, var(--sf-surface-0));
+    /* Over moving rows a layer stacks over the solid place (C43 rule 3):
+       the place's colour, not the page's. */
+    background-color: var(--sf-surface-place);
+    background-color: var(--sf-list--background-color, var(--sf-surface-place));
     padding-top: var(--sf-space-1\/4);
     padding-bottom: var(--sf-space-1\/4);
     padding-block: var(--sf-space-1\/4);
@@ -2161,7 +2211,7 @@
     --sf-dropdown-text--line-height: var(--sf-text-height-1\/2);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field {
-    --sf-dropdown-field--border-color: var(--sf-outline-disable);
+    --sf-dropdown-field--border-color: var(--sf-outline-disabled);
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
     --sf-icon--color: transparent;
@@ -2171,32 +2221,32 @@
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-transparent-for-focus));
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag .sf-dropdown-field .sf-dropdown-tag-container .sf-tag {
     --sf-tag--background-color: var(--sf-primary-container);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-webkit-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-webkit-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-disable);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-moz-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-moz-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-disable);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input:-ms-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input:-ms-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-disable);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-ms-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::-ms-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-disable);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input::placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-disable);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) input, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) input {
-    --sf-dropdown-input--color: var(--sf-on-disable);
+    --sf-dropdown-input--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-disable);
+    --sf-dropdown-field--background-color: var(--sf-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-dropdown-field, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-transparent-for-focus);
@@ -2253,10 +2303,10 @@
     --sf-dropdown-text--line-height: var(--sf-text-height-1);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag .sf-dropdown-field .sf-dropdown-tag-container .sf-tag {
-    --sf-tag--background-color: var(--sf-disable);
+    --sf-tag--background-color: var(--sf-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-disable);
+    --sf-icon--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
@@ -2578,6 +2628,25 @@
      whole line, the ladder size a list item gives them too (24 at size 1 on
      desktop); the field's block padding gives up the border instead, so the
      control stays at its height: 40 = 1 + 7 + 24 + 7 + 1. */
+  /* A field of text is the control height of its size, as sf-input's field is:
+     the minimum alone let the input's own line push it. On a phone the input
+     takes 16 px type (no zoom on focus) on a 16 px line, and a text input lays
+     out its type's natural line, about 20 px, so size 1/2 stood 31-32 px beside
+     a 28 px sf-input, sf-button and segmented track (DEV acceptance 2026-11-11,
+     C47 C). The input stays centred on the line, as in sf-input. A field of tags
+     keeps the minimum: its chips may take more than one line. */
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2 > .sf-dropdown-field {
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1 > .sf-dropdown-field {
+    height: var(--sf-ui-1--control-height);
+    block-size: var(--sf-ui-1--control-height);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2 > .sf-dropdown-field {
+    height: var(--sf-ui-2--control-height);
+    block-size: var(--sf-ui-2--control-height);
+  }
   .sf-dropdown.sf-dropdown--size-1\/2 {
     --sf-dropdown-tag-line--height: var(--sf-text-height-1\/2);
   }

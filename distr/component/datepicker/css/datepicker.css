@@ -286,16 +286,16 @@
     --sf-datepicker-day--background-color: var(--sf-datepicker-selected-background-color, var(--sf-primary));
   }
   .sf-datepicker-day:disabled .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-disable);
+    --sf-datepicker-day-date--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day.disabled .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-disable);
+    --sf-datepicker-day-date--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day:disabled .sf-datepicker-day-info {
-    --sf-datepicker-day-info--color: var(--sf-on-disable);
+    --sf-datepicker-day-info--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day.disabled .sf-datepicker-day-info {
-    --sf-datepicker-day-info--color: var(--sf-on-disable);
+    --sf-datepicker-day-info--color: var(--sf-on-surface-disabled);
   }
   @media (forced-colors: active) {
     .sf-datepicker-day:not(:disabled).focus-visible {
@@ -526,7 +526,7 @@
 @layer sf.states {
   .sf-datepicker-text:not(:disabled):not(.disabled):hover {
     --sf-datepicker-text--background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
   .sf-datepicker-text:focus:not(.focus-visible) {
     outline: none;
@@ -547,12 +547,12 @@
     --sf-datepicker-text--color: var(--sf-on-primary);
   }
   .sf-datepicker-text:disabled {
-    --sf-datepicker-text--background-color: var(--sf-surface-1);
-    --sf-datepicker-text--color: var(--sf-on-disable);
+    --sf-datepicker-text--background-color: var(--sf-surface-area);
+    --sf-datepicker-text--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-text.disabled {
-    --sf-datepicker-text--background-color: var(--sf-surface-1);
-    --sf-datepicker-text--color: var(--sf-on-disable);
+    --sf-datepicker-text--background-color: var(--sf-surface-area);
+    --sf-datepicker-text--color: var(--sf-on-surface-disabled);
   }
   @media (forced-colors: active) {
     .sf-datepicker-text:not(:disabled).focus-visible {
@@ -595,18 +595,21 @@
   }
   /* On the number itself: the number declares its own colour, so a colour
      set on the day never reached it, and the neighbouring month read like
-     this one in both themes. A neighbouring weekend keeps its red at the
-     ink step 80, still 4.5:1 on the panel in both themes. */
+     this one in both themes. A neighbouring day off takes the day-off ink of
+     this month (DP-02, one name) at the ink step 80, so it stays a muted red
+     beside this month's full one, as before DP-02 (dispatcher ruling
+     2026-11-11: the shared ink and the DEV hold 7fddefd9 had made both the
+     same full error red); still 4.5:1 on the panel in both themes. */
   .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-surface-variant);
   }
   .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-error) 80%, transparent);
-    --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-error) 80%, transparent);
+    --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
+    --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
   }
   .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-info {
-    --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-error) 80%, transparent);
-    --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-error) 80%, transparent);
+    --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
+    --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
   }
   .sf-datepicker-day.sf-datepicker-day-start .sf-datepicker-day-date, .sf-datepicker-day.sf-datepicker-day-end .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-primary);
@@ -628,16 +631,16 @@
     --sf-datepicker-day-info--color: var(--sf-on-primary-container);
   }
   .sf-datepicker-day:disabled .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-disable);
+    --sf-datepicker-day-date--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day.disabled .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-disable);
+    --sf-datepicker-day-date--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day:disabled .sf-datepicker-day-info {
-    --sf-datepicker-day-info--color: var(--sf-on-disable);
+    --sf-datepicker-day-info--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-day.disabled .sf-datepicker-day-info {
-    --sf-datepicker-day-info--color: var(--sf-on-disable);
+    --sf-datepicker-day-info--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-text.sf-datepicker-text-start, .sf-datepicker-text.sf-datepicker-text-end {
     --sf-datepicker-text--background-color: var(--sf-primary);
@@ -660,10 +663,10 @@
     --sf-datepicker-text--color: var(--sf-on-primary-container);
   }
   .sf-datepicker-text:disabled {
-    --sf-datepicker-text--color: var(--sf-on-disable);
+    --sf-datepicker-text--color: var(--sf-on-surface-disabled);
   }
   .sf-datepicker-text.disabled {
-    --sf-datepicker-text--color: var(--sf-on-disable);
+    --sf-datepicker-text--color: var(--sf-on-surface-disabled);
   }
 }
 @layer sf.components {
@@ -844,17 +847,17 @@
     background-color: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-surface-popup)));
     --sf-surface-place: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-surface-popup)));
     --sf-surface-place-solid: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-surface-popup)));
+    --sf-surface-place-ground: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-surface-popup)));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -889,6 +892,46 @@
             padding-inline-start: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
     padding-top: var(--sf-space-1\/3);
     padding-top: var(--sf-datepicker--padding-top, var(--sf-space-1\/3));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-datepicker {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-datepicker {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
+  .sf-datepicker > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+  }
+  /* The field and its popup sit in an inline-flex wrapper. On the parent's
+     text baseline its height followed the first line inside: the calendar
+     icon, held at font-size 0 until the icon font arrives, so the field was
+     1 px taller held than loaded (49 -> 48 at 390, a jump on first paint; ui-view
+     view-flow ask, 2026-11-11). Top-aligned, the line box does not depend on
+     the icon. */
+  .sf-datepicker-wrap {
+    vertical-align: top;
+  }
+  /* A calendar drawn in the page (no field: sf-input-date without an input, or
+     the class markup with sf-datepicker--inline) is the flat place of C20: no
+     shadow, its edge the outline-variant hairline, drawn inside so the grid
+     keeps its width. It kept the popup's overlay shadow (docs pre-check
+     2026-11-10 DP-06). */
+  .sf-datepicker.sf-datepicker--inline {
+    box-shadow: inset 0 0 0 var(--sf-px) var(--sf-outline-variant);
   }
   /* Quick ranges beside the grid, at its inline start; where the panel has no
      room for both, a wrapping row above it. The panel is the container, so the
@@ -1118,10 +1161,17 @@
   }
 }
 @layer sf.overrides {
+  /* A day off says «выходной» in its name (DP-02 a11y). One ink for the days
+     off of this month and of the next or previous one: the colour is named
+     once, here. It stays the error red in pair next 2: the move to the
+     variant ink (DP-02 colour, acfb591e) is on hold with DEV. */
+  .sf-datepicker {
+    --sf-datepicker--day-off-color: var(--sf-error);
+  }
   .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-error);
+    --sf-datepicker-day-date--color: var(--sf-datepicker--day-off-color);
   }
   .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-info {
-    --sf-datepicker-day-info--color: var(--sf-error);
+    --sf-datepicker-day-info--color: var(--sf-datepicker--day-off-color);
   }
 }

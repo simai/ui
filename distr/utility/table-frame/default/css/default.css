@@ -121,7 +121,7 @@
     border-block-end-width: var(--sf-0);
   }
   .table-frame > .table > thead > tr > * {
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     padding-top: var(--sf-table-frame-head-padding-block);
     padding-bottom: var(--sf-table-frame-head-padding-block);
     padding-block: var(--sf-table-frame-head-padding-block);

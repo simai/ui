@@ -129,17 +129,17 @@
     background-color: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
+    --sf-surface-place-ground: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-90));
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -156,6 +156,29 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
     --sf-profile-picker--track: calc(2 * var(--sf-profile-picker--inset) + var(--sf-space-1\/4));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-profile-picker-panel {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip) .sf-profile-picker-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+  }
+  .sf-profile-picker-panel > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   .sf-profile-picker-panel::-webkit-scrollbar {
     width: var(--sf-profile-picker--track);
@@ -222,12 +245,33 @@
     cursor: pointer;
     outline: none;
   }
+  /* A profile with a caption under its name keeps a one-line row's space above
+     and below its text, (row step - line) / 2, and is taller by the caption's
+     line: 48 at 1440, 60 under a coarse pointer at 390 (owner decision C49,
+     2026-11-10; docs/foundation-composition-geometry.md §4). It was the row's
+     2px, 40 [2/2]. */
+  .sf-profile-picker-row:where(:has(.sf-profile-picker-caption)) {
+    padding-top: calc((var(--sf-profile-picker--row-height) - var(--sf-profile-picker--line)) / 2);
+    padding-bottom: calc((var(--sf-profile-picker--row-height) - var(--sf-profile-picker--line)) / 2);
+    padding-block: calc((var(--sf-profile-picker--row-height) - var(--sf-profile-picker--line)) / 2);
+    padding-top: calc((var(--sf-profile-picker--row-height) - var(--sf-profile-picker--line)) / 2);
+    padding-top: calc((var(--sf-profile-picker--row-step, var(--sf-profile-picker--row-height)) - var(--sf-profile-picker--line)) / 2);
+    padding-bottom: calc((var(--sf-profile-picker--row-height) - var(--sf-profile-picker--line)) / 2);
+    padding-bottom: calc((var(--sf-profile-picker--row-step, var(--sf-profile-picker--row-height)) - var(--sf-profile-picker--line)) / 2);
+    padding-block: calc((var(--sf-profile-picker--row-step, var(--sf-profile-picker--row-height)) - var(--sf-profile-picker--line)) / 2);
+  }
   .sf-profile-picker-row:hover {
     background-color: var(--sf-surface-container-hover);
   }
+  /* The chosen profile: the soft fill of the chosen, as a chosen row of a
+     context menu (C16: selected is primary-container everywhere; it was
+     secondary-container through 1.3.1); the check mark is the second sign. */
   .sf-profile-picker-row[aria-checked=true] {
-    background-color: var(--sf-secondary-container);
-    color: var(--sf-on-secondary-container);
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
+  }
+  .sf-profile-picker-row[aria-checked=true]:hover {
+    background-color: var(--sf-primary-container-hover);
   }
   .sf-profile-picker-check {
     display: inline-flex;
@@ -400,9 +444,10 @@
     -webkit-border-start: var(--sf-px) solid var(--sf-outline-variant);
             border-inline-start: var(--sf-px) solid var(--sf-outline-variant);
   }
+  /* The pressed segment: a pressed toggle's soft primary fill (C12, C16). */
   .sf-profile-picker-segmented > button[aria-pressed=true] {
-    background-color: var(--sf-secondary-container);
-    color: var(--sf-on-secondary-container);
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
   }
   .sf-profile-picker-segmented > button:disabled {
     color: var(--sf-on-disable);
@@ -427,6 +472,19 @@
   }
   .sf-profile-picker-footer > * {
     flex: 1 1 auto;
+  }
+}
+/* A row is a touch target under a coarse pointer, as a dropping panel's row
+   is (context menu, simai/ui-source#25; G1-a follow-up, 2026-11-10): at 390
+   it was 36px, under a finger. The row grows to the touch step and keeps its
+   one line on its centre; a mouse keeps the ladder's row. */
+@media (pointer: coarse) {
+  @layer sf.states {
+    .sf-profile-picker-row {
+      --sf-profile-picker--row-step: max(var(--sf-profile-picker--row-height), var(--sf-d1));
+      min-height: var(--sf-profile-picker--row-step);
+      min-block-size: var(--sf-profile-picker--row-step);
+    }
   }
 }
 @layer sf.states {

@@ -25,22 +25,34 @@
     --sf-ring-color: var(--sf-outline-variant);
   }
   .focus-visible\:ring-surface.focus-visible {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
   }
   .focus-visible\:ring-surface:focus-visible {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
   }
   .focus-visible\:ring-surface-0.focus-visible {
-    --sf-ring-color: var(--sf-surface-0);
+    --sf-ring-color: var(--sf-surface-page);
   }
   .focus-visible\:ring-surface-0:focus-visible {
-    --sf-ring-color: var(--sf-surface-0);
+    --sf-ring-color: var(--sf-surface-page);
+  }
+  .focus-visible\:ring-surface-page.focus-visible {
+    --sf-ring-color: var(--sf-surface-page);
+  }
+  .focus-visible\:ring-surface-page:focus-visible {
+    --sf-ring-color: var(--sf-surface-page);
   }
   .focus-visible\:ring-surface-1.focus-visible {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
   }
   .focus-visible\:ring-surface-1:focus-visible {
-    --sf-ring-color: var(--sf-surface-1);
+    --sf-ring-color: var(--sf-surface-area);
+  }
+  .focus-visible\:ring-surface-area.focus-visible {
+    --sf-ring-color: var(--sf-surface-area);
+  }
+  .focus-visible\:ring-surface-area:focus-visible {
+    --sf-ring-color: var(--sf-surface-area);
   }
   .focus-visible\:ring-surface-container.focus-visible {
     --sf-ring-color: var(--sf-surface-container);
@@ -49,16 +61,28 @@
     --sf-ring-color: var(--sf-surface-container);
   }
   .focus-visible\:ring-surface-overlay.focus-visible {
-    --sf-ring-color: var(--sf-surface-overlay);
+    --sf-ring-color: var(--sf-surface-veil);
   }
   .focus-visible\:ring-surface-overlay:focus-visible {
-    --sf-ring-color: var(--sf-surface-overlay);
+    --sf-ring-color: var(--sf-surface-veil);
+  }
+  .focus-visible\:ring-surface-veil.focus-visible {
+    --sf-ring-color: var(--sf-surface-veil);
+  }
+  .focus-visible\:ring-surface-veil:focus-visible {
+    --sf-ring-color: var(--sf-surface-veil);
   }
   .focus-visible\:ring-surface-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-surface-transparent-overlay);
+    --sf-ring-color: var(--sf-surface-container-strong);
   }
   .focus-visible\:ring-surface-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-surface-transparent-overlay);
+    --sf-ring-color: var(--sf-surface-container-strong);
+  }
+  .focus-visible\:ring-surface-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-surface-container-strong);
+  }
+  .focus-visible\:ring-surface-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-surface-container-strong);
   }
   .focus-visible\:ring-surface-inverse.focus-visible {
     --sf-ring-color: var(--sf-surface-inverse);
@@ -79,10 +103,10 @@
     --sf-ring-color: var(--sf-on-surface-variant);
   }
   .focus-visible\:ring-primary.focus-visible {
-    --sf-ring-color: var(--sf-outline-primary);
+    --sf-ring-color: var(--sf-primary-outline);
   }
   .focus-visible\:ring-primary:focus-visible {
-    --sf-ring-color: var(--sf-outline-primary);
+    --sf-ring-color: var(--sf-primary-outline);
   }
   .focus-visible\:ring-primary-container.focus-visible {
     --sf-ring-color: var(--sf-primary-container);
@@ -91,16 +115,22 @@
     --sf-ring-color: var(--sf-primary-container);
   }
   .focus-visible\:ring-primary-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-primary-transparent-overlay);
+    --sf-ring-color: var(--sf-primary-container-strong);
   }
   .focus-visible\:ring-primary-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-primary-transparent-overlay);
+    --sf-ring-color: var(--sf-primary-container-strong);
+  }
+  .focus-visible\:ring-primary-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-primary-container-strong);
+  }
+  .focus-visible\:ring-primary-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-primary-container-strong);
   }
   .focus-visible\:ring-secondary.focus-visible {
-    --sf-ring-color: var(--sf-outline-secondary);
+    --sf-ring-color: var(--sf-secondary-outline);
   }
   .focus-visible\:ring-secondary:focus-visible {
-    --sf-ring-color: var(--sf-outline-secondary);
+    --sf-ring-color: var(--sf-secondary-outline);
   }
   .focus-visible\:ring-secondary-container.focus-visible {
     --sf-ring-color: var(--sf-secondary-container);
@@ -109,16 +139,22 @@
     --sf-ring-color: var(--sf-secondary-container);
   }
   .focus-visible\:ring-secondary-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-secondary-transparent-overlay);
+    --sf-ring-color: var(--sf-secondary-container-strong);
   }
   .focus-visible\:ring-secondary-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-secondary-transparent-overlay);
+    --sf-ring-color: var(--sf-secondary-container-strong);
+  }
+  .focus-visible\:ring-secondary-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-secondary-container-strong);
+  }
+  .focus-visible\:ring-secondary-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-secondary-container-strong);
   }
   .focus-visible\:ring-tertiary.focus-visible {
-    --sf-ring-color: var(--sf-outline-tertiary);
+    --sf-ring-color: var(--sf-tertiary-outline);
   }
   .focus-visible\:ring-tertiary:focus-visible {
-    --sf-ring-color: var(--sf-outline-tertiary);
+    --sf-ring-color: var(--sf-tertiary-outline);
   }
   .focus-visible\:ring-tertiary-container.focus-visible {
     --sf-ring-color: var(--sf-tertiary-container);
@@ -127,16 +163,22 @@
     --sf-ring-color: var(--sf-tertiary-container);
   }
   .focus-visible\:ring-tertiary-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-tertiary-transparent-overlay);
+    --sf-ring-color: var(--sf-tertiary-container-strong);
   }
   .focus-visible\:ring-tertiary-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-tertiary-transparent-overlay);
+    --sf-ring-color: var(--sf-tertiary-container-strong);
+  }
+  .focus-visible\:ring-tertiary-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-tertiary-container-strong);
+  }
+  .focus-visible\:ring-tertiary-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-tertiary-container-strong);
   }
   .focus-visible\:ring-error.focus-visible {
-    --sf-ring-color: var(--sf-outline-error);
+    --sf-ring-color: var(--sf-error-outline);
   }
   .focus-visible\:ring-error:focus-visible {
-    --sf-ring-color: var(--sf-outline-error);
+    --sf-ring-color: var(--sf-error-outline);
   }
   .focus-visible\:ring-error-container.focus-visible {
     --sf-ring-color: var(--sf-error-container);
@@ -145,16 +187,22 @@
     --sf-ring-color: var(--sf-error-container);
   }
   .focus-visible\:ring-error-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-error-transparent-overlay);
+    --sf-ring-color: var(--sf-error-container-strong);
   }
   .focus-visible\:ring-error-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-error-transparent-overlay);
+    --sf-ring-color: var(--sf-error-container-strong);
+  }
+  .focus-visible\:ring-error-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-error-container-strong);
+  }
+  .focus-visible\:ring-error-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-error-container-strong);
   }
   .focus-visible\:ring-warning.focus-visible {
-    --sf-ring-color: var(--sf-outline-warning);
+    --sf-ring-color: var(--sf-warning-outline);
   }
   .focus-visible\:ring-warning:focus-visible {
-    --sf-ring-color: var(--sf-outline-warning);
+    --sf-ring-color: var(--sf-warning-outline);
   }
   .focus-visible\:ring-warning-container.focus-visible {
     --sf-ring-color: var(--sf-warning-container);
@@ -163,16 +211,22 @@
     --sf-ring-color: var(--sf-warning-container);
   }
   .focus-visible\:ring-warning-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-warning-transparent-overlay);
+    --sf-ring-color: var(--sf-warning-container-strong);
   }
   .focus-visible\:ring-warning-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-warning-transparent-overlay);
+    --sf-ring-color: var(--sf-warning-container-strong);
+  }
+  .focus-visible\:ring-warning-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-warning-container-strong);
+  }
+  .focus-visible\:ring-warning-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-warning-container-strong);
   }
   .focus-visible\:ring-success.focus-visible {
-    --sf-ring-color: var(--sf-outline-success);
+    --sf-ring-color: var(--sf-success-outline);
   }
   .focus-visible\:ring-success:focus-visible {
-    --sf-ring-color: var(--sf-outline-success);
+    --sf-ring-color: var(--sf-success-outline);
   }
   .focus-visible\:ring-success-container.focus-visible {
     --sf-ring-color: var(--sf-success-container);
@@ -181,16 +235,22 @@
     --sf-ring-color: var(--sf-success-container);
   }
   .focus-visible\:ring-success-transparent-overlay.focus-visible {
-    --sf-ring-color: var(--sf-success-transparent-overlay);
+    --sf-ring-color: var(--sf-success-container-strong);
   }
   .focus-visible\:ring-success-transparent-overlay:focus-visible {
-    --sf-ring-color: var(--sf-success-transparent-overlay);
+    --sf-ring-color: var(--sf-success-container-strong);
+  }
+  .focus-visible\:ring-success-container-strong.focus-visible {
+    --sf-ring-color: var(--sf-success-container-strong);
+  }
+  .focus-visible\:ring-success-container-strong:focus-visible {
+    --sf-ring-color: var(--sf-success-container-strong);
   }
   .focus-visible\:ring-info.focus-visible {
-    --sf-ring-color: var(--sf-outline-info);
+    --sf-ring-color: var(--sf-info-outline);
   }
   .focus-visible\:ring-info:focus-visible {
-    --sf-ring-color: var(--sf-outline-info);
+    --sf-ring-color: var(--sf-info-outline);
   }
   .focus-visible\:ring-info-container.focus-visible {
     --sf-ring-color: var(--sf-info-container);

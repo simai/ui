@@ -305,6 +305,14 @@
        the page and every opaque or strong place declare it, a translucent
        place (a soft coloured place, glass) sets it initial. */
     --sf-surface-place-solid: var(--sf-surface-page);
+    /* The nearest opaque place (status dot on soft places, 2026-11-11): the
+       colour a cut-out that must not show what is under it lays the place's
+       tone over. Always opaque: the page here, and every place that declares
+       a solid --sf-surface-place-solid declares the same colour; a soft
+       coloured place does not declare it, so it is the opaque place the soft
+       one stands on. Glass declares black, the opaque base of its own tone
+       (DEV, 2026-11-11): under glass is a picture, not a place. */
+    --sf-surface-place-ground: var(--sf-surface-page);
     /* What a translucent layer that must keep its own tone stacks over (C43,
        owner 2026-11-10). It equals the place colour, set only under a
        translucent fill: a selected, open or current row (mix sf-place-fill)
@@ -314,6 +322,13 @@
        not apply and nothing changes. On a translucent place the solid colour
        is initial too, so a row there leaves the role off (base behaviour). */
     --sf-surface-underlay: initial;
+    /* The row's own translucent fill (C43 D3, D4): declared with the underlay
+       by mix sf-place-fill on a selected, open, current or hovered row, and
+       read only with it (the anchored badge's ring). Everywhere else it is
+       initial, as the underlay is, so the page declares the role a component
+       sheet reads (pair next 2 integration: it was declared in component
+       sheets only, which the declared-tokens contract reads as undeclared). */
+    --sf-surface-place-fill: initial;
     /* Glass over a photo or a video (C16, C14): controls on media stand on
        black at 48 with a blur, ink white, the same in both themes because the
        picture does not change with the theme. Hover and press take the next
@@ -365,8 +380,9 @@
     /* A step above the strongest plate, and not because the ladder asks: a
        plate sits on the page, a veil covers it. At 24 the two were the same
        colour, and the backdrop of a modal was as strong as a pressed card
-       (owner, 2026-10-08). */
-    --sf-surface-container-strong: light-dark(var(--sf-neutral-50--alfa-32), var(--sf-neutral-90--alfa-32));
+       (owner, 2026-10-08). With the plate family at 8/12/16 (C41, owner
+       2026-11-10) the strong step is 24, still above the pressed plate. */
+    --sf-surface-container-strong: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-inverse: light-dark(var(--sf-neutral-20), var(--sf-neutral-90));
     /* The inverse surface under a pointer: the same five-tone step the other
        hover roles take. A carousel control read the primitives for it, there
@@ -406,14 +422,21 @@
        plates with a middle grey while every other translucent surface
        lightened with a near-white -- two tones doing one job.
 
-       The steps are the same in both themes now, which they could not be while
-       the tone differed: 24, 28 and 32 in the dark were that darker tone
-       catching up. And they start at 16 rather than 12, because at 12 a plate
-       was the same colour as a pressed surface and the two could not be told
-       apart (owner, 2026-10-08). */
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+       The neutral fill family is 8, 12, 16 and 24 (strong), the same in both
+       themes (C41, owner 2026-11-10; research 2026-11-10-container-weight.md).
+       At 16 the plate measured -7.6 lightness on a white page and +16 on the
+       dark one, heavier than the tinted containers beside it and than the
+       neutral fills of the systems compared; 8 is one step darker than the
+       place it stands on, on any place (light #f4f4f5, dark #202226 on the
+       page). It stays translucent for that reason.
+       8 is also the select state's step. That overlap is accepted: a state is
+       drawn over a plate, not instead of it, and a chosen menu row is not grey
+       but primary-container (C23). The former 16 (2026-10-08) kept a plate
+       apart from a press at 12; the press is still a step above the plate.
+       The tinted containers keep their steps (12-20 light, 24-32 dark). */
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-fixed: var(--sf-neutral-10);
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
@@ -612,7 +635,7 @@
     --sf-link-hover: light-dark(var(--sf-primary-35), var(--sf-primary-85));
     --sf-link-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
     --sf-link-visited: light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80));
-    --sf-code: light-dark(var(--sf-tertiary-50--alfa-24), var(--sf-tertiary-90--alfa-24));
+    --sf-code: var(--sf-surface-container);
     /* Shadows (C20, owner 2026-11-08; ui-control prototypes/shadows.html).
        Two colours, both steps of the alpha scale: the key shadow, short and
        sharp at the edge, black at 16 in the light theme and 28 in the dark (a
@@ -777,6 +800,7 @@
             backdrop-filter: blur(var(--sf-blur-large));
     --sf-surface-place: var(--sf-surface-media);
     --sf-surface-place-solid: initial;
+    --sf-surface-place-ground: var(--sf-black);
     --sf-surface-underlay: initial;
     --sf-on-surface: var(--sf-on-surface-media);
     --sf-on-surface-variant: var(--sf-white--alfa-80);
@@ -784,9 +808,9 @@
     --sf-surface-state-hover: var(--sf-white--alfa-4);
     --sf-surface-state-select: var(--sf-white--alfa-8);
     --sf-surface-state-active: var(--sf-white--alfa-12);
-    --sf-surface-container: var(--sf-white--alfa-16);
-    --sf-surface-container-hover: var(--sf-white--alfa-20);
-    --sf-surface-container-active: var(--sf-white--alfa-24);
+    --sf-surface-container: var(--sf-white--alfa-8);
+    --sf-surface-container-hover: var(--sf-white--alfa-12);
+    --sf-surface-container-active: var(--sf-white--alfa-16);
     --sf-outline: var(--sf-white--alfa-64);
     --sf-outline-variant: var(--sf-white--alfa-24);
     --sf-surface-disabled: var(--sf-white--alfa-12);
@@ -928,7 +952,7 @@
     vertical-align: middle;
   }
   input {
-    background-color: var(--sf-surface-0);
+    background-color: var(--sf-surface-page);
     color: var(--sf-on-surface);
   }
   mark {
@@ -951,7 +975,7 @@
   }
   body {
     color: var(--sf-on-surface);
-    background-color: var(--sf-surface-0);
+    background-color: var(--sf-surface-page);
   }
 }
 :root {
@@ -1074,6 +1098,7 @@
     --sf-popup-panel-width: var(--sf-g0);
     --sf-popup-form-width: var(--sf-g0);
     --sf-popup-form-wide-width: var(--sf-g2);
+    --sf-popup-question-width: var(--sf-g4);
   }
 }
 @layer sf.base {
@@ -1118,8 +1143,9 @@
     --sf-transparent-for-focus: var(--sf-transparent);
     --sf-white: #ffffff;
     /* Glass over media draws its ink from white on the alpha scale (C16,
-       .sf-surface-media): states 4/8/12, fill 16/20/24, line 24, boundary 64,
-       dim ink 80. */
+       .sf-surface-media): states 4/8/12, fill 8/12/16 (C41), line 24,
+       boundary 64, dim ink 80. White at 20 is read by nothing since C41 and
+       kept for pages that wrote it (token-aliases.v1.json primitives_kept). */
     --sf-white--alfa-4: rgba(255,255,255,0.03922);
     --sf-white--alfa-8: rgba(255,255,255,0.07843);
     --sf-white--alfa-12: rgba(255,255,255,0.12157);
@@ -1152,7 +1178,8 @@
     --sf-neutral-90--alfa-12: rgba(227,226,231,0.12157);
     /* The plate steps in the dark theme. The plate used to be mixed from
        neutral-50 there, a middle grey, while everything else translucent was
-       mixed from this near-white (owner, 2026-10-08). */
+       mixed from this near-white (owner, 2026-10-08). Since C41 the plate is
+       8/12/16 and the strong step 24; 20 and 32 are kept, read by nothing. */
     --sf-neutral-90--alfa-16: rgba(227,226,231,0.16078);
     --sf-neutral-90--alfa-20: rgba(227,226,231,0.2);
     --sf-neutral-90--alfa-24: rgba(227,226,231,0.23922);
@@ -1179,9 +1206,10 @@
     --sf-neutral-50--alfa-16: rgba(118,119,124,0.16078);
     --sf-neutral-50--alfa-20: rgba(118,119,124,0.2);
     --sf-neutral-50--alfa-24: rgba(118,119,124,0.23922);
-    /* The veil over a scene: the backdrop of a modal and the bed of a
-       scrollbar. A step above the strongest plate, because a plate sits on the
-       page and a veil covers it (owner, 2026-10-08). */
+    /* The former strong step (32) and the former plate hover (20): since C41
+       (owner 2026-11-10) the neutral fill is 8/12/16 and the strong step 24,
+       so nothing in the Framework reads 20 or 32 on neutral-50 or neutral-90.
+       Kept for pages that wrote them (token-aliases.v1.json primitives_kept). */
     --sf-neutral-50--alfa-32: rgba(118,119,124,0.32157);
     /* The ink family of the scale (48, 64, 80): marks drawn with the neutral
        rather than washes laid under something. neutral-50 over white measures
@@ -3564,7 +3592,7 @@ body {
 /*
  * Generated by scripts/generate-density.mjs from the ladder files in
  * src/core/figma_variables (desktop blocks). Do not edit by hand.
- * source-sha256: e27e8678c92834c1c6ee6ed9757c4a235f7f2600008669ffb4bc4130ac4d40a5
+ * source-sha256: f91233c3b95da9e04642c8b49dcb57ef1c9ed638e4d14d3711fc30e4a719145f
  *
  * Density (owner decision C22): data-sf-density="compact" on the root or on
  * a container moves every component one ladder step down -- height, padding,
@@ -3576,6 +3604,11 @@ body {
  *
  * The popup widths (C32) follow the text: normal x 14/16, rounded up to the
  * next step of the size scale.
+ *
+ * Headings do not follow density (C44): the compact block writes the heading
+ * sizes with their normal values, so h1-h6 and the titles drawn from the
+ * heading steps keep the C21 ladder whether compact stands on <html> or on a
+ * container.
  */
 @layer sf.base {
   @media (min-width: 60rem) {
@@ -3674,6 +3707,7 @@ body {
       --sf-popup-panel-width: var(--sf-f8);
       --sf-popup-form-width: var(--sf-f8);
       --sf-popup-form-wide-width: var(--sf-g1);
+      --sf-popup-question-width: var(--sf-g3);
       --sf-text-size-1\/3: var(--sf-text--size-1\/3);
       --sf-text-size-1\/2: var(--sf-text--size-1\/2);
       --sf-text-size-1: var(--sf-text--size-1);
@@ -3695,6 +3729,12 @@ body {
       --sf-text-medium--height: var(--sf-text--height-1);
       --sf-text-large--size: var(--sf-text--size-2);
       --sf-text-large--height: var(--sf-text--height-2);
+      --sf-heading-1--size: var(--sf-c8);
+      --sf-heading-2--size: var(--sf-c6);
+      --sf-heading-3--size: var(--sf-c2);
+      --sf-heading-4--size: var(--sf-c0);
+      --sf-heading-5--size: var(--sf-b6);
+      --sf-heading-6--size: var(--sf-b6);
       --sf-text--size: var(--sf-text--size-1);
       --sf-text--height: var(--sf-text--height-1);
     }
@@ -3794,6 +3834,7 @@ body {
       --sf-popup-panel-width: var(--sf-g0);
       --sf-popup-form-width: var(--sf-g0);
       --sf-popup-form-wide-width: var(--sf-g2);
+      --sf-popup-question-width: var(--sf-g4);
       --sf-text-size-1\/3: var(--sf-text--size-1\/3);
       --sf-text-size-1\/2: var(--sf-text--size-1\/2);
       --sf-text-size-1: var(--sf-text--size-1);
@@ -4005,7 +4046,7 @@ body {
     height: 100vh;
     opacity: 1;
     z-index: 1000;
-    background-color: var(--sf-surface-0);
+    background-color: var(--sf-surface-page);
     text-align: center;
   }
   .sf-loader.hidden {
@@ -4322,7 +4363,7 @@ body {
     inset-block-start: 0;
     z-index: 1;
     background: Canvas;
-    background: var(--sf-surface-1, Canvas);
+    background: var(--sf-surface-area, Canvas);
   }
   @container (min-width: 48rem) {
     .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) {
@@ -4423,43 +4464,6 @@ body {
   }
 }
 @layer sf.components {
-  [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--default.sf-button--primary {
-    --sf-button--background-color: var(--sf-button-background-color, var(--sf-on-primary));
-  }
-  [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--default.sf-button--primary .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-button-color, var(--sf-primary));
-  }
-  [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--default.sf-button--primary .sf-icon {
-    --sf-icon--color: var(--sf-primary);
-  }
-  [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--outline.sf-button--primary {
-    --sf-button--border-color: var(--sf-button-border-color, var(--sf-on-primary));
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--outline.sf-button--primary .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-button-color, var(--sf-on-primary));
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--link.sf-button--primary .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-button-color, var(--sf-on-primary));
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--ghost.sf-button--primary .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-button-color, var(--sf-on-primary));
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--outline.sf-button--primary .sf-icon {
-    --sf-icon--color: var(--sf-on-primary);
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--link.sf-button--primary .sf-icon {
-    --sf-icon--color: var(--sf-on-primary);
-  }
-  .bg-primary.color-on-primary[data-sf-composition-id] .sf-button.sf-button--ghost.sf-button--primary .sf-icon {
-    --sf-icon--color: var(--sf-on-primary);
-  }
-}
-@layer sf.states {
-  [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--default.sf-button--primary:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: var(--sf-primary-container);
-  }
-}
-@layer sf.components {
   sf-composition-scope {
     display: contents;
   }
@@ -4503,7 +4507,7 @@ body {
     border: 1px solid var(--sf-outline, GrayText);
     border-radius: var(--sf-radius-1);
     background: Canvas;
-    background: var(--sf-surface-1, Canvas);
+    background: var(--sf-surface-area, Canvas);
     color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
     font: inherit;
@@ -5326,12 +5330,14 @@ body {
     }
   }
 }
-@media (hover: none) and (pointer: coarse) and (max-width: 59.98rem) {
-  @layer sf.states {
-    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]):not([class*="--size-3"]):not([class*="--size-3"] *),
-    textarea:not([class*="--size-3"]):not([class*="--size-3"] *),
-    select:not([class*="--size-3"]):not([class*="--size-3"] *) {
-      font-size: 16px;
+@media (hover: none) and (pointer: coarse) {
+  @media not all and (min-width: 60rem) {
+    @layer sf.states {
+      input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]):not([class*="--size-3"]):not([class*="--size-3"] *),
+      textarea:not([class*="--size-3"]):not([class*="--size-3"] *),
+      select:not([class*="--size-3"]):not([class*="--size-3"] *) {
+        font-size: 16px;
+      }
     }
   }
 }

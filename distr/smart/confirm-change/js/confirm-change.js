@@ -368,9 +368,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // <h2>: the card is placed inside a message, a panel or a page, and the level
 // that is right in one is a skipped level in another.
 //
-// The values are a description list -- the field is the term, the two values
-// its descriptions -- so a screen reader reads «Название: Было Черновик, Станет
-// Итоги» rather than a grid of loose words. A value is text, never markup.
+// The values are sf-change's list (1.7.0, owner decision C40): a description
+// list, the field the term and «before → after» its description, the old value
+// quiet and the new one in medium weight, so a screen reader reads «Название:
+// Черновик на Итоги» rather than a grid of loose words. A value is text, never
+// markup; an empty one reads «пусто». The group around it names the changes.
 //
 // Both answers are outlined and weigh the same: a change is decided, not
 // nudged, and a filled «Confirm» beside a quiet «Decline» is a nudge.
@@ -380,11 +382,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //
 // The answers call the actions confirm and cancel, which a page reaches as
 // data-sf-action="<id>.confirm" and "<id>.cancel" (§8, §19.4).
-
-const value = (context, text) => {
-  const shown = text === null || text === undefined || text === "" ? null : String(text);
-  return shown === null ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-change-confirm__value sf-change-confirm__value--empty">${context.emptyValueText}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-change-confirm__value">${shown}</span>`;
-};
 
 function renderChangeConfirmTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -398,21 +395,9 @@ function renderChangeConfirmTemplate(context) {
             ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-change-confirm__heading" id=${context.headingId} role="heading"
                             aria-level=${context.headingLevel}>${context.heading}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-change-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            <dl class="sf-change-confirm__changes" aria-label=${context.changesLabel}>
-                ${context.changes.map(change => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <div class="sf-change-confirm__change">
-                        <dt class="sf-change-confirm__label">${String(change.label ?? "")}</dt>
-                        <dd class="sf-change-confirm__before">
-                            <span class="sf-change-confirm__tag">${context.beforeText}</span>
-                            ${value(context, change.before)}
-                        </dd>
-                        <dd class="sf-change-confirm__after">
-                            <span class="sf-change-confirm__tag">${context.afterText}</span>
-                            ${value(context, change.after)}
-                        </dd>
-                    </div>
-                `)}
-            </dl>
+            <div class="sf-change-confirm__changes" role="group" aria-label=${context.changesLabel}>
+                <sf-change class="sf-change-confirm__list" layout="list" .changes=${context.changes}></sf-change>
+            </div>
             ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-change-confirm")}
         </section>
     `;
@@ -832,6 +817,13 @@ function confirmSurface(Base, {
           value: null
         }
       });
+    } // The question took «no» and nothing came after: declined, or the
+    // decline on its way with no outcome from the host. A window that is
+    // opened again puts such a question again (sf-modal, decision C39).
+
+
+    get answeredNo() {
+      return this.state === "declined" || this.state === "pending" && this._pressed === false;
     }
 
     focusStatus() {
@@ -886,14 +878,20 @@ function confirmSurface(Base, {
 // told apart by more than the red of a word. Both stand on the element's size
 // (context.size, 1 unless the page gives one); a size a template gives is
 // relative, so a compact region (data-sf-density, C22) moves them down a step.
+//
+// In a window (sf-confirm appearance="window", decision C39) the declining
+// answer of a dangerous question is tonal, the window's quiet answer beside
+// the filled one, and the answers come before the status line, at the start.
 
 function renderConfirmFooter(context, block, {
-  acceptStatus = ""
+  acceptStatus = "",
+  window = false
 } = {}) {
   const {
     component
   } = context;
   const danger = acceptStatus === "danger" || acceptStatus === "error";
+  const quiet = window ? "tonal" : "ghost";
   const size = context.size || "1";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <footer class="${block}__footer">
@@ -920,7 +918,7 @@ function renderConfirmFooter(context, block, {
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
-                            appearance=${danger ? "ghost" : "outline"}
+                            appearance=${danger ? quiet : "outline"}
                             scheme="on-surface"
                             size=${size}
                             text=${context.declineText}
@@ -998,7 +996,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.6.0","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.7.1","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

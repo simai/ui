@@ -298,8 +298,15 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KINDS: () => (/* binding */ KINDS),
+/* harmony export */   KIND_ICONS: () => (/* binding */ KIND_ICONS),
+/* harmony export */   STATES: () => (/* binding */ STATES),
 /* harmony export */   STATUSES: () => (/* binding */ STATUSES),
 /* harmony export */   SfListTimeline: () => (/* binding */ SfListTimeline),
+/* harmony export */   TONES: () => (/* binding */ TONES),
+/* harmony export */   actorOf: () => (/* binding */ actorOf),
+/* harmony export */   changesOf: () => (/* binding */ changesOf),
+/* harmony export */   foldRuns: () => (/* reexport safe */ _js_fold_runs_mjs__WEBPACK_IMPORTED_MODULE_6__.foldRuns),
 /* harmony export */   groupByDay: () => (/* binding */ groupByDay),
 /* harmony export */   normalizeItems: () => (/* binding */ normalizeItems),
 /* harmony export */   statusOf: () => (/* binding */ statusOf)
@@ -308,34 +315,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e577837dd70a");
 /* harmony import */ var _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ee5c3aad2640");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f63c448cb532");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("39829f681e1c");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("aa092a01f635");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fce330adc7bb");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("daf6e145e31a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f63c448cb532");
+/* harmony import */ var _js_fold_runs_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("70dca54ae5b2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("39829f681e1c");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("aa092a01f635");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fce330adc7bb");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("daf6e145e31a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__);
 // sf-list-timeline: a short history read from the top -- recent server
 // actions, an audit, a record's history, a notifications page, a job's
 // history:
 //
 //   <sf-list-timeline><script type="application/json" data-sf-settings>
-//     {"items": [{"id": "e1", "time": "2026-10-27T11:50:00+03:00",
-//       "status": "success", "title": "Копия создана", "actor": "Планировщик"}]}
+//     {"items": [{"id": "e1", "time": "2026-11-09T14:30:00+03:00", "icon": "swap_horiz",
+//       "actor": {"name": "Анна Котова", "hue": "teal"}, "title": "изменила статус",
+//       "change": {"label": "Статус", "before": "Собран", "after": "Передан в доставку"}}]}
 //   </script></sf-list-timeline>
 //
-// Events on a vertical line, each with a status marker (a dot, or the item's
-// icon), its title, time, actor and text; grouped by calendar day under
-// «Сегодня», «Вчера» or the date; the time relative («5 минут назад») with
-// the exact moment under the pointer. has-more draws «Показать ещё», which
-// asks load-more; with no events one quiet line. The list keeps the host's
-// order, and stores and loads nothing.
+// 1.1 (owner decision C40, R092 option 1) builds the event from the
+// Framework's shared parts: the marker on the line is .sf-featured-icon (its
+// tone the status; a dot when the event has no icon), the actor sf-avatar
+// line and a bold name at the start of the sentence, a field change
+// sf-change, the time sf-time in one quiet line «time · text», a comment the
+// text in an outline, and the day headings block list's .sf-group-heading.
+// Runs of one actor and kind longer than collapse keep their first collapse
+// events and fold the rest into «Ещё N», revealed in place; state done|current|upcoming draws steps. The list keeps the
+// host's order, and stores and loads nothing.
 //
-// From its component.json (standard simai.smart-component 1.3.14 §3, §4,
+// From its component.json (standard simai.smart-component 1.3.15 §3, §4,
 // §8): the settings are made by core/js/element-manifest.js, the words are
 // the language files'.
+
+
 
 
 
@@ -348,7 +364,21 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 let sequence = 0;
 const STATUSES = ['neutral', 'success', 'warning', 'error', 'info'];
-const MINUTE = 60000;
+const KINDS = ['event', 'comment', 'sms'];
+const STATES = ['done', 'current', 'upcoming']; // The glyph a kind puts on the marker when the event names none.
+
+const KIND_ICONS = {
+  comment: 'chat_bubble',
+  sms: 'phone_iphone'
+}; // The marker's tone: only error, warning and success colour it (C40); info
+// is said in words and drawn neutral.
+
+const TONES = {
+  error: 'error',
+  warning: 'warning',
+  success: 'success'
+};
+const DENSITY_REMOVE_AFTER = '2027-01-01';
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 /** An event's status: the five words; danger is read as error, anything else as neutral. */
@@ -358,6 +388,38 @@ function statusOf(value) {
   const word = text(value).toLowerCase();
   if (word === 'danger') return 'error';
   return STATUSES.includes(word) ? word : 'neutral';
+}
+/** Who did it: {name, avatar, hue, system}, from a string (1.0) or an object (1.1); null when nobody. */
+
+function actorOf(value) {
+  if (value && typeof value === 'object') {
+    const name = text(value.name);
+    if (!name) return null;
+    return {
+      name,
+      avatar: text(value.avatar),
+      hue: text(value.hue),
+      system: value.system === true
+    };
+  }
+
+  const name = text(value);
+  return name ? {
+    name,
+    avatar: '',
+    hue: '',
+    system: false
+  } : null;
+}
+/** A field change: [{label, before, after}] from one object or a list; [] when none. */
+
+function changesOf(value) {
+  const list = Array.isArray(value) ? value : value && typeof value === 'object' ? [value] : [];
+  return list.filter(one => one && typeof one === 'object').map(one => ({
+    label: text(one.label),
+    before: one.before ?? null,
+    after: one.after ?? null
+  }));
 }
 /**
  * The events as given, made safe, in the host's order: an event without an
@@ -376,15 +438,20 @@ function normalizeItems(value) {
     const title = text(item.title);
     if (!id || !title || seen.has(id)) continue;
     seen.add(id);
+    const kind = KINDS.includes(text(item.kind)) ? text(item.kind) : 'event';
+    const state = STATES.includes(text(item.state)) ? text(item.state) : '';
     items.push({
       id,
       title,
+      kind,
+      state,
       at: (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.toDate)(typeof item.time === 'number' ? item.time : text(item.time)),
       text: text(item.text),
-      actor: text(item.actor),
+      actor: actorOf(item.actor),
       status: statusOf(item.status),
-      icon: text(item.icon),
-      href: text(item.href)
+      icon: text(item.icon) || KIND_ICONS[kind] || '',
+      href: text(item.href),
+      changes: changesOf(item.changes ?? item.change)
     });
   }
 
@@ -421,11 +488,11 @@ function groupByDay(items, {
 
   return runs;
 }
-const ListTimelineElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const ListTimelineElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru'
 });
@@ -435,6 +502,8 @@ class SfListTimeline extends ListTimelineElement {
     super();
     this._uid = `sf-list-timeline-${++sequence}`;
     this._timer = 0;
+    this._opened = new Set();
+    this._focusRun = null;
   }
 
   onConnected() {
@@ -445,7 +514,7 @@ class SfListTimeline extends ListTimelineElement {
   onDisconnected() {
     super.onDisconnected?.();
     this.stopTimer();
-  } // The moment the times count from: the page's now, else the clock.
+  } // The moment the day headings count from: the page's now, else the clock.
 
 
   get moment() {
@@ -454,27 +523,43 @@ class SfListTimeline extends ListTimelineElement {
 
   get list() {
     return normalizeItems(this.items);
-  } // With the reader's clock and something that moves (a relative time or a
-  // day heading), one timer: to the next minute, or to midnight when only the
-  // days move. None with a fixed now, no events, or off the page.
+  } // The days move at the reader's midnight: one timer to it, with the
+  // reader's clock and day headings. The times are sf-time's, which keeps its
+  // own clock.
 
 
   syncTimer() {
     this.stopTimer();
-    if (!this.isConnected || (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.toDate)(text(this.now)) || !this.list.some(item => item.at)) return;
-    const relative = this.timeFormat !== 'exact';
-    if (!relative && this.group !== 'day') return;
-    const now = new Date();
-    const wait = relative ? MINUTE - now.getTime() % MINUTE : (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)(now) + 1000;
+    if (!this.isConnected || (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.toDate)(text(this.now)) || this.group !== 'day' || !this.list.some(item => item.at)) return;
     this._timer = setTimeout(() => {
       this._timer = 0;
-      this.requestComponentUpdate('time');
-    }, wait);
+      this.requestComponentUpdate('day');
+    }, (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)(new Date()) + 1000);
   }
 
   stopTimer() {
     if (this._timer) clearTimeout(this._timer);
     this._timer = 0;
+  } // density is the page's since 1.1.0 (C22): compact still draws compact
+  // until 2027-01-01, noted once in SF.deprecations.
+
+
+  get compact() {
+    if (this.density !== 'compact') return false;
+
+    if (!this._densityNoted) {
+      this._densityNoted = true;
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'sf-list-timeline',
+        kind: 'attribute',
+        from: 'density',
+        to: 'data-sf-density',
+        since: '2026-11-10',
+        remove_after: DENSITY_REMOVE_AFTER
+      });
+    }
+
+    return true;
   } // A title link: the request first; not cancelled, the browser follows it.
 
 
@@ -497,38 +582,28 @@ class SfListTimeline extends ListTimelineElement {
       direction: 'after',
       after: list[list.length - 1]?.id ?? ''
     });
-  } // An event's time as the list says it, and the exact moment in words.
+  } // «Ещё N»: the folded events shown in place, the focus on the first of them;
+  // expand tells a host that loads a run lazily which run was opened.
 
 
-  timeOf(at, {
-    grouped,
-    now
-  }) {
-    if (!at) return null;
-    const node = this;
-    const exact = (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.formatDate)(at, {
-      date: 'long',
-      time: 'short',
-      node
+  expand(fold) {
+    this._opened.add(fold.key);
+
+    this._focusRun = fold.key;
+    this.sfEmit('expand', {
+      run: fold.key,
+      ids: fold.items.map(item => item.id),
+      count: fold.items.length
     });
-    let shown;
-    if (this.timeFormat === 'exact') shown = grouped ? (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.formatDate)(at, {
-      date: null,
-      time: 'short',
-      node
-    }) : (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.formatDate)(at, {
-      date: 'medium',
-      time: 'short',
-      node
-    });else shown = (0,_core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__.formatRelativeTime)(at, {
-      now,
-      node
-    });
-    return {
-      iso: at.toISOString(),
-      shown,
-      exact
-    };
+    this.requestComponentUpdate('expand');
+  } // What sf-time is asked for: the time under a day heading, auto without.
+
+
+  timeFormatFor(grouped) {
+    const asked = this.timeFormat;
+    if (asked === 'relative') return 'relative';
+    if (asked === 'exact') return grouped ? 'time' : 'datetime';
+    return grouped ? 'time' : 'auto';
   }
 
   templateContext() {
@@ -537,8 +612,16 @@ class SfListTimeline extends ListTimelineElement {
     const group = this.group === 'none' ? 'none' : 'day';
     const loading = Boolean(this.loading);
     const level = Math.min(6, Math.max(2, Math.trunc(Number(this.headingLevel)) || 3));
+    const collapse = Math.max(0, Math.trunc(Number(this.collapse)));
     this.sfHostState('data-empty', list.length === 0);
     this.sfHostState('data-loading', loading);
+
+    const decorate = item => ({ ...item,
+      iso: item.at ? item.at.toISOString() : '',
+      tone: TONES[item.status] ?? 'neutral',
+      statusWord: item.state ? this.sfWord(`state-${item.state}`) : item.status === 'neutral' ? '' : this.sfWord(`status-${item.status}`)
+    });
+
     const runs = groupByDay(list, {
       group,
       now
@@ -552,22 +635,36 @@ class SfListTimeline extends ListTimelineElement {
         yesterday: this.sfWord('yesterday'),
         tomorrow: this.sfWord('tomorrow')
       }),
-      items: run.items.map(item => ({ ...item,
-        time: this.timeOf(item.at, {
-          grouped: group === 'day',
-          now
-        }),
-        statusWord: item.status === 'neutral' ? '' : this.sfWord(`status-${item.status}`)
-      }))
+      date: run.day === 0 || run.day === -1 ? run.at.toISOString() : '',
+      entries: (0,_js_fold_runs_mjs__WEBPACK_IMPORTED_MODULE_6__.foldRuns)(run.items, {
+        collapse,
+        opened: this._opened
+      }).map(entry => entry.fold ? {
+        fold: { ...entry.fold,
+          text: this.sfWord(entry.fold.items.every(item => item.changes.length) ? 'run-changes' : 'run-events', {
+            count: entry.fold.items.length,
+            vars: {
+              n: entry.fold.items.length
+            }
+          })
+        }
+      } : {
+        item: decorate(entry.item)
+      })
     }));
     return this.createTemplateContext({ ...this.getPropsContext(),
       component: this,
       size: ['1/2', '1', '2'].includes(this.size) ? this.size : '1',
-      density: this.density === 'compact' ? 'compact' : 'normal',
+      compact: this.compact,
       group,
       level,
       label: this.label,
       runs,
+      now: text(this.now),
+      // itemFormat, not timeFormat: the time-format prop keeps its own value (auto) in the context.
+      itemFormat: this.timeFormatFor(group === 'day'),
+      sticky: Boolean(this.stickyHeadings),
+      steps: list.some(item => item.state),
       count: list.length,
       hasMore: Boolean(this.hasMore),
       loading,
@@ -578,12 +675,25 @@ class SfListTimeline extends ListTimelineElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderListTimelineTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderListTimelineTemplate)(this.templateContext());
   }
 
   afterRender() {
     super.afterRender?.();
     this.syncTimer();
+
+    if (this._focusRun) {
+      const key = this._focusRun;
+      this._focusRun = null;
+      const first = [...this.querySelectorAll('.sf-list-timeline-item')].find(li => li.dataset.id === key);
+
+      if (first) {
+        first.setAttribute('tabindex', '-1');
+        first.focus({
+          preventScroll: false
+        });
+      }
+    }
   }
 
 }
@@ -610,16 +720,26 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
  // sf-list-timeline's markup (scss/ draws it on one rung of the ladder).
 //
-// - The root holds one run per calendar day: a heading (role heading at
-//   heading-level) and an ordered list named by it; ungrouped, one list
-//   named by label.
-// - An event: the marker (a dot, or the item's icon; a picture), then its
-//   title with the status in words before it (visually hidden), the actor and
-//   the time (a time element: datetime the moment, title the exact date and
-//   time), and the text under them.
+// 1.1 (owner decision C40, R092 option 1): the event is made of the
+// Framework's shared parts.
+//
+// - The root holds one run per calendar day: block list's heading
+//   (.sf-group-heading, role heading at heading-level; the date beside today
+//   and yesterday in sf-time) and an ordered list named by it; ungrouped, one
+//   list named by label.
+// - An event: the rail with its marker (a picture) -- .sf-featured-icon
+//   (circle, soft, the rung below's size; neutral, or the tone of error,
+//   warning and success) when the event has an icon, else a dot -- on the
+//   place's solid surface, so the line does not show through; then the
+//   sentence: the status (or step) in words, visually hidden; the actor as
+//   sf-avatar line and a bold name (a system actor: the name only); the title
+//   (a link with href); a field change as sf-change inline, several as an
+//   sf-change list under it. Then one quiet line: sf-time · text. A comment's
+//   text stands in an outline under that line.
+// - A folded run: a button «Ещё N» on the rail, revealed in place.
 // - has-more: an sf-button «Показать ещё» after the last event; with no
 //   events, one quiet line.
-// The rung below the list's: the button.
+// The rung below the list's: the marker, the avatar line and the button.
 
 const BELOW = {
   '1/2': '1/3',
@@ -630,68 +750,107 @@ const SIZE_CLASS = {
   '1/2': 'half',
   1: '1',
   2: '2'
+}; // A step's marker: done is the solid primary circle, current the soft one
+// with its ring, upcoming an empty one (list-timeline.html scene B).
+
+const STEP_TONE = {
+  done: 'primary sf-featured-icon--solid',
+  current: 'primary sf-featured-icon--soft',
+  upcoming: 'neutral sf-featured-icon--soft'
 };
 
-function marker(item) {
-  if (item.icon) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--${item.status}`} aria-hidden="true"><i class="sf-icon sf-list-timeline-icon">${item.icon}</i></span>`;
+function marker(context, item) {
+  if (!item.icon) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--dot sf-list-timeline-marker--${item.status}`}><span class="sf-list-timeline-dot"></span></span>`;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--${item.status}`} aria-hidden="true"><span class="sf-list-timeline-dot"></span></span>`;
+  const tone = item.state ? STEP_TONE[item.state] : `${item.tone} sf-featured-icon--soft`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--${item.state || item.tone}`}><span
+    class=${`sf-featured-icon sf-featured-icon--circle sf-featured-icon--size-${BELOW[context.size]} sf-featured-icon--${tone}`}><i
+    class="sf-icon sf-list-timeline-icon">${item.icon}</i></span></span>`;
+}
+
+function actor(context, item) {
+  const who = item.actor;
+  if (!who) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const avatar = who.system ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-avatar"><sf-avatar inert aria-hidden="true"
+    line=${context.size} aria-label=${who.name} hue=${who.hue || 'auto'} image-url=${who.avatar || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-avatar></span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${avatar}<b class="sf-list-timeline-actor">${who.name}</b> `;
 }
 
 function title(context, item) {
-  const said = item.statusWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only">${item.statusWord}: </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-
   if (item.href) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-title">${said}<a class="sf-list-timeline-link" href=${item.href}
-      @click=${event => context.component.onNavigate(event, item)}>${item.title}</a></span>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-list-timeline-title sf-list-timeline-link" href=${item.href}
+      @click=${event => context.component.onNavigate(event, item)}>${item.title}</a>`;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-title">${said}${item.title}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-title">${item.title}</span>`;
+}
+
+function meta(context, item) {
+  const time = item.iso ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-list-timeline-time" datetime=${item.iso} format=${context.itemFormat} now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const words = item.kind === 'comment' ? '' : item.text;
+  if (!item.iso && !words) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-meta">${time}${item.iso && words ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span aria-hidden="true"> · </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${words ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-text">${words}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
 }
 
 function event(context, item) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-list-timeline-item" data-id=${item.id} data-status=${item.status}>
-    ${marker(item)}
+  const said = item.statusWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only">${item.statusWord}: </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const inline = item.changes.length === 1;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-list-timeline-item" data-id=${item.id} data-status=${item.status} data-kind=${item.kind}
+      data-state=${item.state || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-current=${item.state === 'current' ? 'step' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <span class="sf-list-timeline-rail" aria-hidden="true">${marker(context, item)}</span>
     <div class="sf-list-timeline-body">
-      <div class="sf-list-timeline-head">
-        ${title(context, item)}
-        ${item.actor || item.time ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-meta">
-          ${item.actor ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-actor">${item.actor}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-          ${item.time ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<time class="sf-list-timeline-time" datetime=${item.time.iso} title=${item.time.exact}>${item.time.shown}</time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      </div>
-      ${item.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-text">${item.text}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      <p class="sf-list-timeline-head">${said}${actor(context, item)}${title(context, item)}${inline ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-change class="sf-list-timeline-change" label=${item.changes[0].label}
+            before=${item.changes[0].before ?? ''} after=${item.changes[0].after ?? ''}></sf-change>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
+      ${item.changes.length > 1 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-change class="sf-list-timeline-changes" layout="list" .changes=${item.changes}></sf-change>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${meta(context, item)}
+      ${item.kind === 'comment' && item.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-comment">${item.text}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   </li>`;
 }
 
+function fold(context, entry) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-list-timeline-item sf-list-timeline-item--fold" data-run=${entry.key}>
+    <button type="button" class="sf-list-timeline-run" aria-expanded="false" @click=${() => context.component.expand(entry)}>
+      <span class="sf-list-timeline-rail" aria-hidden="true"><span class="sf-list-timeline-marker sf-list-timeline-marker--run"><span
+        class=${`sf-featured-icon sf-featured-icon--circle sf-featured-icon--size-${BELOW[context.size]} sf-featured-icon--neutral sf-featured-icon--soft`}><i
+        class="sf-icon sf-list-timeline-icon">unfold_more</i></span></span></span>
+      <span class="sf-list-timeline-run-text">${entry.text}</span>
+    </button>
+  </li>`;
+}
+
+const entries = (context, list) => list.map(entry => entry.fold ? fold(context, entry.fold) : event(context, entry.item));
+
 function run(context, day) {
+  const classes = `sf-list-timeline-list${context.steps ? ' sf-list-timeline-list--steps' : ''}`;
+
   if (!day.day) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ol class="sf-list-timeline-list" aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${day.items.map(item => event(context, item))}</ol>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ol class=${classes} aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${entries(context, day.entries)}</ol>`;
   }
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-timeline-group">
-    <div class="sf-list-timeline-day" role="heading" aria-level=${String(context.level)} id=${day.id}>${day.day}</div>
-    <ol class="sf-list-timeline-list" aria-labelledby=${day.id}>${day.items.map(item => event(context, item))}</ol>
+    <div class=${`sf-group-heading sf-list-timeline-day${context.size === '1' ? '' : ` sf-group-heading--size-${context.size}`}${context.sticky ? ' sf-group-heading--sticky' : ''}`}
+      role="heading" aria-level=${String(context.level)} id=${day.id}>${day.day}${day.date ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-time class="sf-group-heading-date" format="date" tooltip="none" datetime=${day.date}
+            now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
+    <ol class=${classes} aria-labelledby=${day.id}>${entries(context, day.entries)}</ol>
   </div>`;
 }
 
 function renderListTimelineTemplate(context) {
   const {
     size,
-    density,
     count,
     hasMore,
     loading,
     component
   } = context;
-  const classes = ['sf-list-timeline', `sf-list-timeline--size-${SIZE_CLASS[size] ?? '1'}`, `sf-list-timeline--density-${density}`, count === 0 ? 'sf-list-timeline--empty' : '', context.rootClass].filter(Boolean).join(' ');
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+  const classes = ['sf-list-timeline', `sf-list-timeline--size-${SIZE_CLASS[size] ?? '1'}`, count === 0 ? 'sf-list-timeline--empty' : '', context.rootClass].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-sf-density=${context.compact ? 'compact' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${count === 0 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-quiet">${context.emptyText}</p>` : context.runs.map(day => run(context, day))}
     ${hasMore ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-timeline-more">
-      <sf-button class="sf-list-timeline-more-button" size=${BELOW[size]} appearance="outline"
+      <sf-button class="sf-list-timeline-more-button" size=${BELOW[size]} appearance="outline" scheme="on-surface"
         text=${context.moreText} ?loading=${loading} @click=${() => component.onMore()}></sf-button>
     </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
@@ -707,6 +866,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -738,24 +904,70 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "70dca54ae5b2"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   foldRuns: () => (/* binding */ foldRuns)
+/* harmony export */ });
+// sf-list-timeline's collapse rule, on its own so a node test can hold it
+// (no element, no sheet).
+
+/**
+ * Runs inside one day: consecutive events of one actor and one kind. A run
+ * longer than `collapse` keeps its first `collapse` events and folds the rest
+ * into one «Ещё N» row (list-timeline.html R092), unless the run was opened;
+ * a rest of one event is drawn, since the row would only take its place.
+ * Events without an actor (a system log) and steps never make a run: each
+ * stands alone, so a list is never folded whole. [{fold: null, item}] for an
+ * event, [{fold: {key, items}}] for the folded rest, in order; the key is the
+ * first folded id. collapse 0 folds nothing.
+ */
+function foldRuns(items, {collapse = 5, opened = new Set()} = {}) {
+  const out = [];
+  const who = (item) => (item.state ? '' : item.actor?.name ?? '');
+  let at = 0;
+  while (at < items.length) {
+    const first = items[at];
+    let end = at + 1;
+    if (who(first)) {
+      while (end < items.length && who(items[end]) === who(first) && items[end].kind === first.kind) end += 1;
+    }
+    const run = items.slice(at, end);
+    const rest = collapse > 0 ? run.slice(collapse) : [];
+    if (rest.length > 1 && !opened.has(rest[0].id)) {
+      for (const item of run.slice(0, collapse)) out.push({fold: null, item});
+      out.push({fold: {key: rest[0].id, items: rest}, item: null});
+    } else {
+      for (const item of run) out.push({fold: null, item});
+    }
+    at = end;
+  }
+  return out;
+}
+
+
+/***/ },
+
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.0.2","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["relative","exact"],"default":"relative"},"now":{"type":"string","default":""},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}}},"actions":{},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.1.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "aa092a01f635"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Timeline","runtime":{"empty-text":"No events yet","more":"Show more","loading":"Loading…","today":"Today","yesterday":"Yesterday","tomorrow":"Tomorrow","status-success":"Done","status-warning":"Warning","status-error":"Error","status-info":"Info"},"events":{"navigate":{"label":"Go"},"load-more":{"label":"Show more"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Timeline","runtime":{"empty-text":"No events yet","more":"Show more","loading":"Loading…","today":"Today","yesterday":"Yesterday","tomorrow":"Tomorrow","status-success":"Done","status-warning":"Warning","status-error":"Error","status-info":"Info","state-done":"Done","state-current":"Now","state-upcoming":"Next","run-changes":{"one":"{n} more change","other":"{n} more changes"},"run-events":{"one":"{n} more event","other":"{n} more events"}},"events":{"navigate":{"label":"Go"},"load-more":{"label":"Show more"},"expand":{"label":"Show folded"}}}');
 
 /***/ },
 
 /***/ "fce330adc7bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Хронология","runtime":{"empty-text":"Событий пока нет","more":"Показать ещё","loading":"Загружаем…","today":"Сегодня","yesterday":"Вчера","tomorrow":"Завтра","status-success":"Готово","status-warning":"Предупреждение","status-error":"Ошибка","status-info":"Сведения"},"events":{"navigate":{"label":"Перейти"},"load-more":{"label":"Показать ещё"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Хронология","runtime":{"empty-text":"Событий пока нет","more":"Показать ещё","loading":"Загружаем…","today":"Сегодня","yesterday":"Вчера","tomorrow":"Завтра","status-success":"Готово","status-warning":"Предупреждение","status-error":"Ошибка","status-info":"Сведения","state-done":"Пройдено","state-current":"Сейчас","state-upcoming":"Впереди","run-changes":{"one":"Ещё {n} изменение","few":"Ещё {n} изменения","many":"Ещё {n} изменений","other":"Ещё {n} изменения"},"run-events":{"one":"Ещё {n} событие","few":"Ещё {n} события","many":"Ещё {n} событий","other":"Ещё {n} события"}},"events":{"navigate":{"label":"Перейти"},"load-more":{"label":"Показать ещё"},"expand":{"label":"Показать свёрнутые"}}}');
 
 /***/ }
 

@@ -453,7 +453,30 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-input-rich: a form field whose value is HTML of a small subset -- p, h2,
+ // The marks the toolbar sets: the elements that say them, and the style of
+// a run that says the mark is off (the cleaner splits a mark around it).
+
+const MARKS = {
+  strong: {
+    selector: 'strong, b',
+    off: ['fontWeight', 'normal']
+  },
+  em: {
+    selector: 'em, i',
+    off: ['fontStyle', 'normal']
+  }
+};
+
+const markElement = (doc, tag, on) => {
+  const element = doc.createElement(on ? tag : 'span');
+  if (!on) element.style[MARKS[tag].off[0]] = MARKS[tag].off[1];
+  return element;
+}; // On a phone -- below the md breakpoint, where core declares
+// --sf-breakpoint-md -- a form in a popup is a sheet at the bottom of the
+// screen (decision C32), as sf-menu-context reads it.
+
+
+const onPhone = doc => !doc.defaultView?.getComputedStyle(doc.documentElement).getPropertyValue('--sf-breakpoint-md').trim(); // sf-input-rich: a form field whose value is HTML of a small subset -- p, h2,
 // h3, h4, strong, em, a[href], ul, ol, li, blockquote, br -- the text type
 // html@1 of Larena's properties (js/rich-text-html.mjs is the subset's rule).
 //
@@ -466,9 +489,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //
 // The value is never trusted: what the page gives, what is pasted or dropped,
 // and the editing surface after every keystroke and command go through the
-// one cleaner. A command may use document.execCommand where the browser has
-// it, but its result is cleaned the same way, and undo and redo are the
-// component's own history of cleaned states, so neither depends on it.
+// one cleaner. Every command is the component's own DOM operation (Bold and
+// Italic too: the browser's command reads the computed style as the mark),
+// its result is cleaned the same way, and undo and redo are the component's
+// own history of cleaned states.
+
 
 const RichTextElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
@@ -712,6 +737,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
       placement: 'bottom-start'
     };
     this._dragFromSelf = false;
+    this._sheet = null;
   } // ---------------------------------------------------------- settings
 
 
@@ -835,7 +861,18 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     });
     this.addEventListener('sf-popover-closed', event => this._onLinkClosed(event), {
       signal
+    }); // A link editor open while the window crosses the breakpoint becomes
+    // what the screen makes it: the sheet on a phone, anchored again wider.
+
+    this.ownerDocument.defaultView?.addEventListener('resize', () => {
+      if (this._popover()?.open) this._placeLinkPanel();
+    }, {
+      signal
     });
+  }
+
+  onDisconnected() {
+    this._lowerLinkPanel();
   }
 
   afterRender() {
@@ -895,6 +932,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     }];
     this._historyIndex = 0;
     this._lastTyping = 0;
+    this._pending = null;
     this._committed = this.value;
 
     this._syncEmpty();
@@ -985,23 +1023,20 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
 
     const node = this._startNode(range);
 
-    const command = name => {
-      try {
-        return Boolean(range?.collapsed && this.ownerDocument.queryCommandState?.(name));
-      } catch {
-        return false;
-      }
-    };
-
     const block = node ? this._within(node, 'p, h2, h3, h4, li') : null;
-    const item = node ? this._within(node, 'li') : null;
+    const item = node ? this._within(node, 'li') : null; // Bold and Italic say the marks alone, or the marks the next typing
+    // takes at a caret: never the computed style, which in a heading (bold
+    // by its type) said bold on every word.
+
+    const mark = tag => this._pendingMark(tag, range) ?? Boolean(node && this._within(node, MARKS[tag].selector));
+
     const next = {
       p: block?.localName === 'p',
       h2: block?.localName === 'h2',
       h3: block?.localName === 'h3',
       h4: block?.localName === 'h4',
-      strong: Boolean(node && this._within(node, 'strong, b')) || command('bold'),
-      em: Boolean(node && this._within(node, 'em, i')) || command('italic'),
+      strong: mark('strong'),
+      em: mark('em'),
       link: Boolean(node && this._within(node, 'a')),
       ul: item?.parentElement?.localName === 'ul',
       ol: item?.parentElement?.localName === 'ol',
@@ -1013,6 +1048,23 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     const changed = Object.keys(next).some(key => next[key] !== this._state[key]);
     this._state = next;
     if (changed) this.requestComponentUpdate('selection');
+  } // The marks the next typing takes at a caret where Bold or Italic was
+  // pressed ({at, strong?, em?}); forgotten once the caret moves.
+
+
+  _pendingMarks(range = this._range()) {
+    if (!this._pending) return null;
+
+    if (!range?.collapsed || this._saveSelection()?.start !== this._pending.at) {
+      this._pending = null;
+      return null;
+    }
+
+    return this._pending;
+  }
+
+  _pendingMark(tag, range) {
+    return this._pendingMarks(range)?.[tag];
   } // ---------------------------------------------------------- cleaning
   // The surface through the cleaner; rewritten only when cleaning changed
   // it, with the caret kept in its place.
@@ -1162,6 +1214,10 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
         this.runCommand('bold');
         return;
 
+      case 'insertText':
+        if (this._pending && event.data) this._typePending(event);
+        return;
+
       case 'formatItalic':
         event.preventDefault();
         this.runCommand('italic');
@@ -1172,6 +1228,41 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
         // alignment and indent are refused rather than cleaned away later.
         if (String(event.inputType).startsWith('format')) event.preventDefault();
     }
+  } // Text typed at a caret where Bold or Italic was pressed: it takes the
+  // pending marks (a mark off is a run of normal style the cleaner splits
+  // the mark around).
+
+
+  _typePending(event) {
+    const range = this._range();
+
+    const pending = this._pendingMarks(range);
+
+    this._pending = null;
+    if (!pending || !range) return;
+    event.preventDefault();
+    const doc = this.ownerDocument;
+    const text = doc.createTextNode(event.data);
+    let wrap = text;
+
+    for (const tag of Object.keys(MARKS)) {
+      if (pending[tag] === undefined) continue;
+      const element = markElement(doc, tag, pending[tag]);
+      element.append(wrap);
+      wrap = element;
+    }
+
+    range.insertNode(wrap);
+    const caret = doc.createRange();
+    caret.setStart(text, text.data.length);
+    caret.collapse(true);
+    const selection = doc.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(caret);
+
+    this._afterTyping('insertText');
+
+    this._say('insertText');
   }
 
   _onInput(event) {
@@ -1314,8 +1405,8 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   runCommand(id) {
     if (this.effectiveDisabled || this.readonly) return false;
     if (BLOCK_TAGS[id]) return this._edit(() => this._setBlock(BLOCK_TAGS[id]), 'formatBlock');
-    if (id === 'bold') return this._edit(() => this._toggleMark('bold', 'strong'), 'formatBold');
-    if (id === 'italic') return this._edit(() => this._toggleMark('italic', 'em'), 'formatItalic');
+    if (id === 'bold') return this._edit(() => this._toggleMark('strong'), 'formatBold');
+    if (id === 'italic') return this._edit(() => this._toggleMark('em'), 'formatItalic');
     if (id === 'bulleted-list') return this._edit(() => this._toggleList('ul'), 'insertUnorderedList');
     if (id === 'numbered-list') return this._edit(() => this._toggleList('ol'), 'insertOrderedList');
     if (id === 'quote') return this._edit(() => this._toggleQuote(), 'formatBlock');
@@ -1344,6 +1435,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   }
 
   _applyHistory(inputType) {
+    this._pending = null;
     const editor = this.editor;
     const entry = this._history[this._historyIndex];
     if (!editor || !entry) return;
@@ -1383,38 +1475,75 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
       next.append(...block.childNodes);
       block.replaceWith(next);
     }
-  }
+  } // Bold and Italic set the mark themselves. The browser's command reads
+  // the computed style as the mark: in a heading (bold by its type) it saw
+  // bold everywhere and took no mark, and at a caret its typing style was
+  // lost when the edit put the caret back. All the selected text marked: the
+  // mark comes off; otherwise it goes on. At a caret the mark waits for the
+  // typed text.
 
-  _toggleMark(command, tag) {
-    const doc = this.ownerDocument;
-    let done = false;
 
-    try {
-      done = doc.execCommand(command, false);
-    } catch {
-      done = false;
-    }
-
-    if (done) return; // Without the command: wrap the selection, or unwrap the mark it is in.
-
+  _toggleMark(tag) {
     const range = this._range();
 
-    if (!range || range.collapsed) return;
+    if (!range) return;
+    const doc = this.ownerDocument;
+    const {
+      selector
+    } = MARKS[tag];
 
-    const startMark = this._within(range.startContainer, `${tag}, ${tag === 'strong' ? 'b' : 'i'}`);
+    if (range.collapsed) {
+      const pending = this._pendingMarks(range);
 
-    const endMark = this._within(range.endContainer, `${tag}, ${tag === 'strong' ? 'b' : 'i'}`);
-
-    if (startMark && startMark === endMark) {
-      startMark.replaceWith(...startMark.childNodes);
+      const marked = pending?.[tag] ?? Boolean(this._within(this._startNode(range), selector));
+      this._pending = { ...pending,
+        at: this._saveSelection().start,
+        [tag]: !marked
+      };
       return;
     }
 
-    const fragment = range.extractContents();
-    fragment.querySelectorAll(`${tag}, ${tag === 'strong' ? 'b' : 'i'}`).forEach(mark => mark.replaceWith(...mark.childNodes));
-    const mark = doc.createElement(tag);
-    mark.append(fragment);
-    range.insertNode(mark);
+    this._pending = null;
+    const root = range.commonAncestorContainer;
+    const texts = [];
+    if (root.nodeType === 3) texts.push(root);else {
+      const walker = doc.createTreeWalker(root, 4);
+
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) if (range.intersectsNode(node)) texts.push(node);
+    }
+    const {
+      startContainer,
+      startOffset,
+      endContainer,
+      endOffset
+    } = range;
+    const parts = [];
+
+    for (const text of texts) {
+      const from = text === startContainer ? startOffset : 0;
+      const to = text === endContainer ? endOffset : text.data.length;
+      if (to > from) parts.push({
+        text,
+        from,
+        to
+      });
+    }
+
+    if (!parts.length) return;
+    const on = !parts.every(({
+      text
+    }) => this._within(text, selector));
+
+    for (const part of parts) {
+      let {
+        text
+      } = part;
+      if (part.to < text.data.length) text.splitText(part.to);
+      if (part.from > 0) text = text.splitText(part.from);
+      const wrap = markElement(doc, tag, on);
+      text.replaceWith(wrap);
+      wrap.append(text);
+    }
   }
 
   _toggleList(type) {
@@ -1559,7 +1688,13 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     const button = popover?.querySelector('[data-sf-tool="link"]');
     const box = button?.getBoundingClientRect();
     const width = this.ownerDocument.documentElement.clientWidth;
-    const room = parseFloat(globalThis.getComputedStyle?.(this.ownerDocument.documentElement).fontSize || '16') * 20;
+    const surface = popover?.querySelector(':scope > [slot="content"]'); // The wide form's step (C32): the field, its hint and two buttons of the
+    // field's size stand in one row (R121). The token is in rem; it was read
+    // as a bare number, 24 px of room, so the editor never turned to the end.
+
+    const rem = parseFloat(globalThis.getComputedStyle?.(this.ownerDocument.documentElement).fontSize || '16') || 16;
+    const token = surface && globalThis.getComputedStyle?.(surface).getPropertyValue('--sf-popup-form-wide-width').trim() || '';
+    const room = (token.endsWith('rem') ? parseFloat(token) * rem : parseFloat(token)) || rem * 24;
     const placement = box && box.left + room > width && box.right - room >= 0 ? 'bottom-end' : 'bottom-start';
     popover?.setAttribute('placement', placement);
     this._link = {
@@ -1572,9 +1707,44 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
     };
     this.requestComponentUpdate('link');
   }
+  /**
+   * The link editor on a phone is a sheet at the bottom of the screen (C32,
+   * RT-02): the surface says data-sf-sheet, which the field's sheet draws,
+   * and goes into the top layer through core's positioning, so no box of the
+   * page clips it or becomes its containing block. Wider, it hangs from the
+   * link button again.
+   */
+
+
+  _placeLinkPanel() {
+    const surface = this._popover()?.querySelector(':scope > [slot="content"]');
+    if (!surface) return;
+    const sheet = onPhone(this.ownerDocument);
+    if (sheet === Boolean(this._sheet) && this._sheet?.surface === surface) return;
+
+    this._lowerLinkPanel();
+
+    if (!sheet) return;
+    surface.setAttribute('data-sf-sheet', '');
+    const lower = globalThis.SF?.Position?.liftToTopLayer?.(surface) ?? null;
+    this._sheet = {
+      surface,
+      lower
+    };
+  }
+
+  _lowerLinkPanel() {
+    const sheet = this._sheet;
+    if (!sheet) return;
+    this._sheet = null;
+    sheet.lower?.();
+    sheet.surface.removeAttribute('data-sf-sheet');
+  }
 
   _onLinkOpened() {
-    // After the popover shows its content and this element drew the field.
+    this._placeLinkPanel(); // After the popover shows its content and this element drew the field.
+
+
     requestAnimationFrame(() => {
       const input = this.querySelector('.sf-rich-text-link-input');
       const control = input?.querySelector('input') || input;
@@ -1653,6 +1823,9 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.For
   _onLinkClosed(event) {
     if (event.target !== this._popover()) return;
     const reason = event.detail?.reason;
+
+    this._lowerLinkPanel();
+
     const {
       pending,
       selection
@@ -1837,13 +2010,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // the four block levels -- holds its short text instead, in the same square.
 // The link editor is an sf-popover whose
 // trigger is the link button and whose content holds an sf-input and two
-// sf-button.
+// sf-button, all of one size.
 //
 // The editing surface carries no binding inside: lit draws the element and
 // never its children, which are the person's text and are written only by
 // the component, always through the subset's cleaner.
 // Icon button size one step below the field's, so the toolbar sits inside the
-// frame on the same ladder.
+// frame on the same ladder. The look is the editor toolbar's of decision C15:
+// ghost on-surface (RT-06; link is ghost's old name).
 
 const BUTTON_SIZE = {
   '1/2': '1/3',
@@ -1867,7 +2041,7 @@ function toolButton(context, tool) {
   const unavailable = Boolean(tool.unavailable?.(state));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
       type="button"
-      class="sf-rich-text-tool sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${buttonSize} flex items-cross-center"
+      class="sf-rich-text-tool sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-${buttonSize} flex items-cross-center"
       data-sf-tool=${tool.id}
       tabindex=${roving === tool.id ? '0' : '-1'}
       aria-label=${component.sfWord(tool.word)}
@@ -1912,7 +2086,11 @@ function renderRichTextTemplate(context) {
   const toolbarId = `${field.base}--toolbar`;
   const linkId = `${field.base}--link`;
   const message = field.invalid && errorMessage ? errorMessage : hint;
-  const buttonSize = BUTTON_SIZE[size] || '1/2';
+  const buttonSize = BUTTON_SIZE[size] || '1/2'; // The link editor is one small form on one rung (R121): its address field,
+  // the field's own label and hint, and Apply / Remove are all the field's
+  // size, capped at 1 because a popup form is at most the form step.
+
+  const linkSize = size === '2' ? '1' : size;
   const rootClasses = ['sf-rich-text', `sf-rich-text--size-${size}`, `sf-rich-text--${appearance}`, field.invalid ? 'error' : '', disabled ? 'sf-rich-text--disabled' : '', readonly ? 'sf-rich-text--readonly' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
   const toolContext = { ...context,
     buttonSize
@@ -1921,18 +2099,18 @@ function renderRichTextTemplate(context) {
   const group = ids => tools.filter(tool => ids.includes(tool.id)).map(tool => {
     if (tool.id !== 'link') return toolButton(toolContext, tool); // The link button opens the link editor: the popover's trigger.
 
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-popover class="sf-rich-text-link" placement=${context.linkPlacement || 'bottom-start'} width="20rem" label=${component.sfWord('link-dialog')}>
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-popover class="sf-rich-text-link" placement=${context.linkPlacement || 'bottom-start'} width="var(--sf-popup-form-wide-width, 24rem)" label=${component.sfWord('link-dialog')}>
         <span slot="trigger" class="sf-rich-text-link-trigger">${toolButton(toolContext, tool)}</span>
         <div slot="content" class="sf-rich-text-link-panel flex flex-col" id=${linkId}
           @input=${event => component.onLinkPanelEvent(event)}
           @change=${event => component.onLinkPanelEvent(event)}
           @keydown=${event => component.onLinkPanelKeydown(event)}>
-          <sf-input class="sf-rich-text-link-input" size=${size === '2' ? '1' : size} label=${component.sfWord('link-address')}
+          <sf-input class="sf-rich-text-link-input" size=${linkSize} label=${component.sfWord('link-address')}
             hint=${component.sfWord('link-hint')} .value=${linkValue} ?invalid=${Boolean(linkError)}
             error-message=${linkError || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} autocomplete="url" inputmode="url"></sf-input>
           <div class="sf-rich-text-link-actions flex flex-wrap items-cross-center">
-            <sf-button class="sf-rich-text-link-apply" size=${buttonSize} @click=${() => component.applyLinkFromPanel()}>${component.sfWord('link-apply')}</sf-button>
-            ${linkExisting ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-rich-text-link-remove" size=${buttonSize} appearance="outline" @click=${() => component.removeLinkFromPanel()}>${component.sfWord('link-remove')}</sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            <sf-button class="sf-rich-text-link-apply" size=${linkSize} @click=${() => component.applyLinkFromPanel()}>${component.sfWord('link-apply')}</sf-button>
+            ${linkExisting ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-rich-text-link-remove" size=${linkSize} appearance="outline" @click=${() => component.removeLinkFromPanel()}>${component.sfWord('link-remove')}</sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           </div>
         </div>
       </sf-popover>`;
@@ -2957,7 +3135,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

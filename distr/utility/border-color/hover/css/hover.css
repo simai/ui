@@ -13,22 +13,34 @@
     border-color: var(--sf-outline-variant);
   }
   .hover\:border-surface:hover {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
   }
   .hover\:border-surface-0:hover {
-    border-color: var(--sf-surface-0);
+    border-color: var(--sf-surface-page);
+  }
+  .hover\:border-surface-page:hover {
+    border-color: var(--sf-surface-page);
   }
   .hover\:border-surface-1:hover {
-    border-color: var(--sf-surface-1);
+    border-color: var(--sf-surface-area);
+  }
+  .hover\:border-surface-area:hover {
+    border-color: var(--sf-surface-area);
   }
   .hover\:border-surface-container:hover {
     border-color: var(--sf-surface-container);
   }
   .hover\:border-surface-overlay:hover {
-    border-color: var(--sf-surface-overlay);
+    border-color: var(--sf-surface-veil);
+  }
+  .hover\:border-surface-veil:hover {
+    border-color: var(--sf-surface-veil);
   }
   .hover\:border-surface-transparent-overlay:hover {
-    border-color: var(--sf-surface-transparent-overlay);
+    border-color: var(--sf-surface-container-strong);
+  }
+  .hover\:border-surface-container-strong:hover {
+    border-color: var(--sf-surface-container-strong);
   }
   .hover\:border-surface-inverse:hover {
     border-color: var(--sf-surface-inverse);
@@ -40,61 +52,79 @@
     border-color: var(--sf-on-surface-variant);
   }
   .hover\:border-primary:hover {
-    border-color: var(--sf-outline-primary);
+    border-color: var(--sf-primary-outline);
   }
   .hover\:border-primary-container:hover {
     border-color: var(--sf-primary-container);
   }
   .hover\:border-primary-transparent-overlay:hover {
-    border-color: var(--sf-primary-transparent-overlay);
+    border-color: var(--sf-primary-container-strong);
+  }
+  .hover\:border-primary-container-strong:hover {
+    border-color: var(--sf-primary-container-strong);
   }
   .hover\:border-secondary:hover {
-    border-color: var(--sf-outline-secondary);
+    border-color: var(--sf-secondary-outline);
   }
   .hover\:border-secondary-container:hover {
     border-color: var(--sf-secondary-container);
   }
   .hover\:border-secondary-transparent-overlay:hover {
-    border-color: var(--sf-secondary-transparent-overlay);
+    border-color: var(--sf-secondary-container-strong);
+  }
+  .hover\:border-secondary-container-strong:hover {
+    border-color: var(--sf-secondary-container-strong);
   }
   .hover\:border-tertiary:hover {
-    border-color: var(--sf-outline-tertiary);
+    border-color: var(--sf-tertiary-outline);
   }
   .hover\:border-tertiary-container:hover {
     border-color: var(--sf-tertiary-container);
   }
   .hover\:border-tertiary-transparent-overlay:hover {
-    border-color: var(--sf-tertiary-transparent-overlay);
+    border-color: var(--sf-tertiary-container-strong);
+  }
+  .hover\:border-tertiary-container-strong:hover {
+    border-color: var(--sf-tertiary-container-strong);
   }
   .hover\:border-error:hover {
-    border-color: var(--sf-outline-error);
+    border-color: var(--sf-error-outline);
   }
   .hover\:border-error-container:hover {
     border-color: var(--sf-error-container);
   }
   .hover\:border-error-transparent-overlay:hover {
-    border-color: var(--sf-error-transparent-overlay);
+    border-color: var(--sf-error-container-strong);
+  }
+  .hover\:border-error-container-strong:hover {
+    border-color: var(--sf-error-container-strong);
   }
   .hover\:border-warning:hover {
-    border-color: var(--sf-outline-warning);
+    border-color: var(--sf-warning-outline);
   }
   .hover\:border-warning-container:hover {
     border-color: var(--sf-warning-container);
   }
   .hover\:border-warning-transparent-overlay:hover {
-    border-color: var(--sf-warning-transparent-overlay);
+    border-color: var(--sf-warning-container-strong);
+  }
+  .hover\:border-warning-container-strong:hover {
+    border-color: var(--sf-warning-container-strong);
   }
   .hover\:border-success:hover {
-    border-color: var(--sf-outline-success);
+    border-color: var(--sf-success-outline);
   }
   .hover\:border-success-container:hover {
     border-color: var(--sf-success-container);
   }
   .hover\:border-success-transparent-overlay:hover {
-    border-color: var(--sf-success-transparent-overlay);
+    border-color: var(--sf-success-container-strong);
+  }
+  .hover\:border-success-container-strong:hover {
+    border-color: var(--sf-success-container-strong);
   }
   .hover\:border-info:hover {
-    border-color: var(--sf-outline-info);
+    border-color: var(--sf-info-outline);
   }
   .hover\:border-info-container:hover {
     border-color: var(--sf-info-container);

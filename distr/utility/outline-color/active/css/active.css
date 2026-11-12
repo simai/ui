@@ -13,22 +13,22 @@
     outline-color: var(--sf-outline-variant);
   }
   .active\:outline-primary:active {
-    outline-color: var(--sf-outline-primary);
+    outline-color: var(--sf-primary-outline);
   }
   .active\:outline-secondary:active {
-    outline-color: var(--sf-outline-secondary);
+    outline-color: var(--sf-secondary-outline);
   }
   .active\:outline-tertiary:active {
-    outline-color: var(--sf-outline-tertiary);
+    outline-color: var(--sf-tertiary-outline);
   }
   .active\:outline-error:active {
-    outline-color: var(--sf-outline-error);
+    outline-color: var(--sf-error-outline);
   }
   .active\:outline-warning:active {
-    outline-color: var(--sf-outline-warning);
+    outline-color: var(--sf-warning-outline);
   }
   .active\:outline-success:active {
-    outline-color: var(--sf-outline-success);
+    outline-color: var(--sf-success-outline);
   }
   .active\:outline-info:active {
     outline-color: var(--sf-info-outline);
