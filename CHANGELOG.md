@@ -8,6 +8,13 @@
 
 ### Добавлено
 
+- Pair next 6 (group builds 2, 3 and 4, ui-source 09cf1b0f): C139 `sf-input-lookup` (create row last, recent items on focus, stale rows while searching, one Tab stop, phone sheet), C140 badges (grey tonal default, 24 · 28 · 32 heights, `main` only for the attention count with a dated alias), C141 textarea and rich text (counter from 80 %, growth 3 to 10 lines, sticky toolbar), C142 `sf-language`, C143 content slider and gallery, C144 toolbar gaps and C105 spacing roles in button rows, tags, menus, accordion and pagination.
+- New utility family `gradient` (C65/C92); glass accent (C70), icon colour roles (C107), place fills, highlight place roles, tonal pressed buttons, C43 badge rings.
+- Fields: C77 field inset, C79 adaptive sizes, C123 field actions, C83 colour field, C87 country code, C94 image field, C62 datepicker, C78/C80 range slider, C82 code input, required look; choice controls and motion.
+- Navigation and overlays: menus (R179, open and API), settings panel, breadcrumbs, steps, tree, tabs overflow and spacing, dropdown panels, modal lows and title line, popover, toast stack (C50), notices C114/C115, header alert.
+- Content and lists: contents, file download and upload, file preview, reference link, table classes, context menu, list item, late lists, avatar defects, icons, progress, loader splash, first paint.
+- `core.runtime` 1.55.0.
+
 - Pair next 3: info stays blue (C100), contrast R3b and lows, retired tokens wave 2, rows and groups, R082 card title, forms feedback, button copy, bare glyphs, document port simai.document-port 1.0.0 (new; host side in Larena, Bitrix and Docara, reader sf-editor), inline code C10, datepicker defects, smooth scroll, rich toolbar, C41/C52 container and filled line, choice controls W, dropdown error C55, avatar offline dot, position cost, quantity C53, JS API members, composition operations; core.runtime 1.54.2, tokens.colour 1.12.1.
 
 - C40 timeline parts: `sf-time`, `sf-change`, `.sf-group-heading`; `sf-list-timeline` 1.1.1, `sf-confirm-change` 1.7.1. C45/C47 lists: `sf-list` 1.5.1 (narrow rows keep their titles, without a ResizeObserver loop), `sf-list-attention` 1.3.0; `sf-change` keeps a short value whole by its text; timeline step dots without an icon tell their state by shape (C61). C43 rows: an anchored badge rings with its row (`--sf-surface-place-fill`); the status dot is opaque on soft places (`--sf-surface-place-ground`); menu row hover and open are fills too.
