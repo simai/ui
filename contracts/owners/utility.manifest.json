@@ -21,8 +21,8 @@
       "rules_without_type": true
     },
     "expected": {
-      "rules": 733,
-      "entries": 228
+      "rules": 734,
+      "entries": 229
     }
   },
   "defaults": {
