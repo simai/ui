@@ -499,13 +499,15 @@ function step(value, fallback = '1') {
   const text = String(value ?? '').trim();
   const named = SIZE_NAMES[text] ?? text;
   return SIZES.includes(named) ? named : fallback;
-} // How far the avatars of a group overlap, by the size they are drawn at.
+} // How far the avatars of a group overlap, by the size they are drawn at: the
+// --sf-space step of the overlap, in the size names (1.2.4, docs precheck
+// AV-06; xs, sm and md before, journal class-avatar-group-overlap-size-names).
 
 
 function groupStep(size) {
-  if (size === '1/4' || size === '1/3') return 'xs';
-  if (size === '1/2') return 'sm';
-  return 'md';
+  if (size === '1/4' || size === '1/3') return '1/4';
+  if (size === '1/2') return '1/3';
+  return '1/2';
 }
 
 function avatar(options) {
@@ -646,6 +648,195 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "c69a3dc158df"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_PLACEHOLDER_ICON: () => (/* binding */ AVATAR_PLACEHOLDER_ICON),
+/* harmony export */   AVATAR_SIZES: () => (/* binding */ AVATAR_SIZES),
+/* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
+/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
+/* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+
+ // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
+// component that shows a person beside its own content -- sf-avatar-group,
+// sf-tag, sf-list-item, sf-dropdown, sf-input-lookup, sf-menu-context, the
+// signs of sf-list -- draw the picture with these functions and the avatars
+// sheet's classes: a photo is an <img> filling the circle, initials stand on
+// the neutral plate (or the hue the host names, C17), and with neither the
+// placeholder is a glyph on the neutral plate -- person by default, the
+// host's icon for a bot, a system or a service. Before, five copies drew it
+// five ways: the photo as a background image in the tag, the list row and the
+// dropdown, an empty transparent circle in a row with no photo, and the
+// context menu's own classes on the secondary container.
+
+/** The sizes of the avatar ladder. */
+
+const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
+/** The glyph of a placeholder: a person, unless the host names another. */
+
+const AVATAR_PLACEHOLDER_ICON = "person";
+/**
+ * The drawing context of one avatar picture, from what a host knows: the photo,
+ * the initials or the name they are taken from, the hue, the placeholder's
+ * glyph, the size (or the text line of a form size) and the shape.
+ */
+
+function avatarPictureContext(options = {}) {
+  const imageUrl = String(options.imageUrl ?? "").trim();
+  const name = String(options.name ?? "").trim();
+  const explicitText = String(options.text ?? "").trim();
+  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them.
+
+  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
+  const isImage = Boolean(imageUrl);
+  const isText = !isImage && Boolean(text);
+  const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
+  return {
+    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    line: String(options.line ?? ""),
+    shape: options.shape === "square" ? "square" : "circle",
+    imageUrl,
+    isImage,
+    isText,
+    text,
+    icon,
+    status: options.status || "none",
+    expressive: Boolean(options.expressive),
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    rootClass: options.rootClass || "",
+    rootStyle: options.rootStyle || "",
+    disabled: Boolean(options.disabled),
+    // A long list's rows load their photos as they scroll in.
+    lazy: Boolean(options.lazy),
+    component: options.component
+  };
+}
+/**
+ * The classes of the avatar picture. The avatars sheet answers every class
+ * this file writes. sf-avatar's own templates hand it their utility classes
+ * for the box (options.layout, src/smart/avatar/js/templates/shared.js), as
+ * they wrote them before; a host's picture writes none -- sf-avatar--picture
+ * gives it the same box from the avatars sheet -- so a host asks the Loader
+ * for no utility it did not ask for before (a menu, a tag, a list row).
+ */
+
+function avatarClasses(context, options = {}) {
+  const includeRootClass = options.includeRootClass !== false;
+  const layout = options.layout ?? null;
+  const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
+
+  if (context.isImage && layout) {
+    classes.push(layout.center);
+  }
+
+  if (context.isText) {
+    classes.push("sf-avatar--text");
+    if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
+
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
+    }
+  }
+
+  if (!context.isImage && !context.isText) {
+    classes.push("sf-avatar--placeholder");
+    if (layout) classes.push(layout.center);
+  } // The decorative level (C91 level 2): the sheet turns the initials'
+  // plate of the largest size into a cover of its hue.
+
+
+  if (context.expressive) {
+    classes.push("sf-avatar--expressive");
+  }
+
+  if (context.status && context.status !== "none" && layout) {
+    classes.push(layout.anchor);
+  }
+
+  if (context.shape === "square") {
+    classes.push("sf-avatar--square");
+  }
+
+  if (context.status === "online") {
+    classes.push("sf-avatar--status-icon-online-indicator");
+  }
+
+  if (options.disabled) {
+    classes.push("disabled");
+  }
+
+  if (includeRootClass && context.rootClass) {
+    classes.push(context.rootClass);
+  }
+
+  if (options.extraClass) {
+    classes.push(options.extraClass);
+  }
+
+  return classes.join(" ");
+}
+/**
+ * What the circle holds: the photo, the initials, or the placeholder glyph as
+ * an sf-icon element, so its name reaches the icon font request (a bare
+ * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
+ * review 2026-11-09).
+ */
+
+function avatarContent(context) {
+  if (context.isText) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
+  }
+
+  if (context.isImage) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+}
+/** The icon names a picture draws (for a host's icon preload). */
+
+function avatarPictureIcons(options = {}) {
+  const context = avatarPictureContext(options);
+  return context.isImage || context.isText ? [] : [context.icon];
+}
+/**
+ * One avatar picture beside a host's own content: a span hidden from
+ * assistive technology (the host's visible text names the person), drawn with
+ * the avatars sheet. extraClass adds the host's own geometry class.
+ */
+
+function avatarPicture(options = {}) {
+  const context = avatarPictureContext(options);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        class=${avatarClasses(context, {
+    extraClass: options.extraClass,
+    disabled: context.disabled
+  })}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-hidden="true"
+    >${avatarContent(context)}</span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "4f7ae7ea9e1c"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -654,17 +845,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   avatarButton: () => (/* binding */ avatarButton),
 /* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
-/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarContent: () => (/* reexport safe */ _picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent),
 /* harmony export */   onlineIndicator: () => (/* binding */ onlineIndicator),
 /* harmony export */   statusBadge: () => (/* binding */ statusBadge)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("34addf781b5b");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _picture__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c69a3dc158df");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__, _picture__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__, _picture__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // sf-avatar's box in utility classes, as its templates have always written
+// it (their words stay here, where the Loader's template-utilities table
+// reads them); a host's picture takes the same box from the avatars sheet.
+
+const AVATAR_LAYOUT = Object.freeze({
+  box: "transition flex-none",
+  inline: "inline-flex",
+  center: "items-cross-center content-main-center",
+  anchor: "relative"
+});
+/** The classes of sf-avatar's own picture: the sheet's and its utilities. */
+
+function avatarClasses(context, options = {}) {
+  return (0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarClasses)(context, { ...options,
+    layout: AVATAR_LAYOUT
+  });
+}
 
 function getCompanyBadge(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span aria-hidden="true"
@@ -714,58 +923,11 @@ function getVerifiedBadge(context) {
       </svg>
     </span>
     `;
-}
+} // The picture's classes and content are the one avatar drawing every host
+// shares (js/picture.js, avatar study AV-8).
 
-function avatarClasses(context, options = {}) {
-  const includeRootClass = options.includeRootClass !== false;
-  const classes = ["sf-avatar", "transition", 'flex-none', `sf-avatar--size-${context.size}`, context.line ? `sf-avatar--line-${context.line}` : "", "inline-flex"].filter(Boolean);
 
-  if (context.isImage) {
-    classes.push("items-cross-center", "content-main-center");
-  }
 
-  if (context.isText) {
-    classes.push("sf-avatar--text", "items-cross-center", "content-main-center"); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
-    // draws the plate and the ink from it.
-
-    if (context.resolvedHue) {
-      classes.push(`sf-hue-${context.resolvedHue}`);
-    }
-  }
-
-  if (!context.isImage && !context.isText) {
-    classes.push("sf-avatar--placeholder", "items-cross-center", "content-main-center");
-  }
-
-  if (context.status !== "none") {
-    classes.push("relative");
-  }
-
-  if (context.shape === "square") {
-    classes.push("sf-avatar--square");
-  }
-
-  if (context.status === "online") {
-    classes.push("sf-avatar--status-icon-online-indicator");
-  }
-
-  if (includeRootClass && context.rootClass) {
-    classes.push(context.rootClass);
-  }
-
-  return classes.join(" ");
-}
-function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">person</i>`;
-}
 function onlineIndicator(context) {
   if (context.component?.hasSlotContent?.("online-indicator")) {
     return context.component.getSlotContent("online-indicator");
@@ -818,7 +980,7 @@ function avatarButton(context, options = {}) {
                 ?disabled=${context.disabled}
                 type="button"
         >
-            ${avatarContent(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}
+            ${(0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent)(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}
         </button>
     `;
 }
@@ -897,6 +1059,79 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "cbce4a5232a6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getInitials: () => (/* binding */ getInitials),
+/* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
+/* harmony export */ });
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+function normalizeInitialsWords(value = "") {
+  return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
+} // The first character a reader sees: a whole grapheme, so a letter written
+// with a combining accent («E» + U+0301) or outside the basic plane keeps all
+// of its code points. Array.from alone splits surrogate pairs correctly but
+// not combining marks; Intl.Segmenter does both where the platform has it.
+
+function firstGrapheme(word) {
+  const Segmenter = globalThis.Intl?.Segmenter;
+
+  if (typeof Segmenter === "function") {
+    for (const {
+      segment
+    } of new Segmenter(undefined, {
+      granularity: "grapheme"
+    }).segment(word)) {
+      return segment;
+    }
+
+    return "";
+  }
+
+  return Array.from(word)[0] || "";
+} // The one rule for initials (reuse audit 2026-11-02, finding 10): sf-avatar,
+// the context menu, the admin menu and the chat drew them by five rules that
+// disagreed on a hyphen, an empty name and a letter outside the basic plane.
+//
+//   «Анна Смирнова»        → «АС»   the first letters of the first two words
+//   «Отдел по работе»      → «ОР»   a preposition after the first word is skipped
+//   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
+//   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
+//   «Анна»                 → «А»
+//   «»                     → ''     or `fallback`: '?' where text must stand
+//
+// `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
+// `locale` capitalises by a locale's rule.
+
+
+function getInitials(value = "", options = {}) {
+  const {
+    maxLetters = 2,
+    skipWords = INITIALS_SKIP_WORDS,
+    fallback = "",
+    locale
+  } = options;
+  const words = normalizeInitialsWords(value);
+  let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
+  // are its words. Split before the skip list, «из-за» would be two words.
+
+  if (significantWords.length === 1) {
+    const parts = significantWords[0].split(/[-\u2010-\u2015]+/u).filter(Boolean);
+    if (parts.length > 1) significantWords = parts;
+  }
+
+  if (!significantWords.length) {
+    return String(fallback);
+  }
+
+  const letters = significantWords.length > 1 ? significantWords.slice(0, Math.max(1, maxLetters)).map(firstGrapheme).join("") : firstGrapheme(significantWords[0]);
+  return (locale ? letters.toLocaleUpperCase(locale) : letters.toUpperCase()) || String(fallback);
+}
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -925,6 +1160,91 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "a6b3ed0c1589"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_HUES: () => (/* binding */ AVATAR_HUES),
+/* harmony export */   AVATAR_TONES: () => (/* binding */ AVATAR_TONES),
+/* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
+/* harmony export */   TONE_HUES: () => (/* binding */ TONE_HUES),
+/* harmony export */   avatarHue: () => (/* binding */ avatarHue),
+/* harmony export */   avatarTone: () => (/* binding */ avatarTone),
+/* harmony export */   avatarToneHash: () => (/* binding */ avatarToneHash),
+/* harmony export */   resolveAvatarHue: () => (/* binding */ resolveAvatarHue),
+/* harmony export */   resolveAvatarTone: () => (/* binding */ resolveAvatarTone)
+/* harmony export */ });
+// sf-avatar's hue from a name, without a document: a plain function of its
+// argument, so tests/avatar-tones.contract.test.mjs runs it in Node and a server
+// can print the same class in the first paint. docs/docs.md gives the algorithm
+// for a server in another language.
+//
+// Owner decision C17 (2026-11-08): avatars have no colours of their own. The
+// initials take a hue of the static palette (the hue setting, the class
+// sf-hue-<name>); the eight tones of initials are gone, and `auto` picks among
+// eight static hues in the old order, so a name keeps its slot: rose is pink,
+// the former violet (HCT hue 325) is purple, the other six keep their names.
+// A former tone moves at most 15 degrees (dispatcher, 2026-11-09).
+//
+// FNV-1a, 32 bits, over the UTF-8 bytes of the string exactly as given (no
+// trimming, no case folding, no normalisation), its high half folded onto the
+// low one, because the low bits of FNV-1a alone follow the low bits of the
+// input; the remainder by the length of the list picks the tone.
+//
+// The list and its order are part of the algorithm: a name keeps its tone only
+// while they stay. A later named tone does not join `auto`.
+const AVATAR_HUES = Object.freeze(['pink', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'purple']);
+
+// Every hue a setting may name: the static palette (theme-palette.js
+// STATIC_HUES, tests/avatar-tones.contract.test.mjs holds the two equal).
+const STATIC_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']);
+
+// The former tone setting and its names, until 2027-01-01 (journal
+// attribute-c17-avatar-tone-to-hue, value-c17-avatar-rose-to-pink, which
+// also carries violet to purple).
+const AVATAR_TONES = Object.freeze(['rose', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'violet']);
+const TONE_HUES = Object.freeze({rose: 'pink', violet: 'purple'});
+
+const FNV_OFFSET = 0x811c9dc5;
+const FNV_PRIME = 0x01000193;
+
+function avatarToneHash(name) {
+  let hash = FNV_OFFSET;
+  for (const byte of new TextEncoder().encode(String(name))) {
+    hash = Math.imul(hash ^ byte, FNV_PRIME) >>> 0;
+  }
+  return (hash ^ (hash >>> 16)) >>> 0;
+}
+
+// No name, no hue: the neutral look.
+function avatarHue(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_HUES[avatarToneHash(text) % AVATAR_HUES.length] : '';
+}
+
+// The hue a setting asks for: a named one as it is, auto the one of the name,
+// empty (or a name the palette does not have) the neutral look. The former
+// tone setting is read when hue is empty, its rose as pink and its violet as purple.
+function resolveAvatarHue(hue, name, tone = '') {
+  const setting = hue || TONE_HUES[tone] || tone || '';
+  if (setting === 'auto') return avatarHue(name);
+  return STATIC_HUES.includes(setting) ? setting : '';
+}
+
+// The former names (2027-01-01): the tone of a name in the old words.
+function avatarTone(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_TONES[avatarToneHash(text) % AVATAR_TONES.length] : '';
+}
+
+function resolveAvatarTone(setting, name) {
+  return setting === 'auto' ? avatarTone(name) : setting || '';
+}
+
+
+/***/ },
+
 /***/ "920b6920c2b6"
 (module) {
 
@@ -935,7 +1255,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.2.5","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.3.0","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 

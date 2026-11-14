@@ -7,8 +7,8 @@
     --sf-table-frame-radius: var(--sf-radius--surface);
     --sf-table-frame-background: var(--sf-surface-place);
     --sf-table-frame-head-color: var(--sf-on-surface);
-    --sf-table-frame-head-padding-block: var(--sf-space-1);
-    --sf-table-frame-cell-padding-block: var(--sf-space-1\/2);
+    --sf-table-frame-head-padding-block: calc((var(--sf-ui-3--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
+    --sf-table-frame-cell-padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
     --sf-table-frame-cell-padding-inline: var(--sf-space-1);
     --sf-table-frame-cell-min-inline-size: var(--sf-e0);
     width: 100%;
@@ -91,6 +91,58 @@
     text-align: start;
     vertical-align: top;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > :first-child {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > :first-child {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+  }
+  .table-frame > .table > :not(caption) > * > :first-child:where(:dir(ltr)) {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > :first-child {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > :first-child {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+  }
+  .table-frame > .table > :not(caption) > * > :first-child:where(:dir(rtl)) {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  .table-frame > .table > :not(caption) > * > :first-child {
+    -webkit-padding-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > :last-child {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > :last-child {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+  }
+  .table-frame > .table > :not(caption) > * > :last-child:where(:dir(ltr)) {
+    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > :last-child {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > :last-child {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+  }
+  .table-frame > .table > :not(caption) > * > :last-child:where(:dir(rtl)) {
+    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
+  .table-frame > .table > :not(caption) > * > :last-child {
+    -webkit-padding-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+  }
   .table-frame > .table > :not(caption) > * > .text-center {
     text-align: center;
   }
@@ -145,8 +197,8 @@
     border-inline-end-width: var(--sf-0);
   }
   .table-frame > .table > :last-child > tr:last-child > * {
-    border-bottom-width: var(--sf-0);
-    border-block-end-width: var(--sf-0);
+    border-bottom-color: transparent;
+    border-block-end-color: transparent;
   }
   .table-frame > .table > thead > tr > * {
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);

@@ -44,6 +44,14 @@
       "reason": "The panel offset is derived from its current rendered height."
     },
     {
+      "id": "input-date-ribbon-sheet-under-field",
+      "category": "runtime-review",
+      "filePattern": "^smart/input-date/index\\.js$",
+      "contextPattern": "max-block-size: max\\(50%, calc\\(100% - \\$\\{top\\}px - var\\(--sf-space-1\\)\\)\\)",
+      "status": "accepted-runtime-geometry",
+      "reason": "The phone ribbon's bottom sheet stops a step 1 under the field it fills (owner decision C62, prototypes/datepicker.html#lenta): the field's bottom edge is measured with getBoundingClientRect when the sheet opens, in CSS pixels, and is kept exact; the step itself is the space token."
+    },
+    {
       "id": "legacy-accessibility-font-setting",
       "category": "runtime-review",
       "filePattern": "^component/sf-system/js/04-blocks/_special\\.js$",
@@ -84,6 +92,14 @@
       "reason": "Drag placeholders and transforms preserve the exact DOMRect and pointer position."
     },
     {
+      "id": "notification-stack-measured-geometry",
+      "category": "runtime-review",
+      "filePattern": "^core/js/notify\\.js$",
+      "contextPattern": "(?:\\$\\{top \\? away : -away\\}px|\\$\\{clip\\}px|\\$\\{size\\}px)",
+      "status": "accepted-runtime-geometry",
+      "reason": "The notification stack (owner decision C50) places, clips and sizes from the toasts' rendered heights and the area's computed gap (--sf-space-1/2); the browser reports them in CSS pixels."
+    },
+    {
       "id": "policy-self",
       "category": "definition-review",
       "filePattern": "^core/contracts/dimension-policy\\.v1\\.json$",
@@ -119,6 +135,24 @@
       "textPattern": "^-?(?:0?\\.5|1|1\\.75|2)px$",
       "status": "accepted-hairline",
       "reason": "C18 lists the 1-2px line as an exception: a border, a focus offset, a visually hidden 1px box, an anti-aliasing half pixel. A hairline marks an edge and keeps its pixel width at any root size (owner, 2026-10-10)."
+    },
+    {
+      "id": "notice-frame-in-container-step",
+      "category": "condition-review",
+      "filePattern": "^component/(?:alerts/scss/_css__alerts|toast/scss/_css__toast)\\.scss$",
+      "contextPattern": "^\\s*@container sf-(?:alert|toast) \\(min-width: calc\\(",
+      "textPattern": "^(?:1rem|2px)$",
+      "status": "accepted-size-step",
+      "reason": "Owner decision C115 (layout L3a): the notice's actions go into the row from 36 / 48 rem (a toast 20 rem) of the notice's whole width. A container query reads the content box and cannot read a variable, so the step takes off the notice's frame as written lengths: its two inline paddings (1rem each, --sf-space-1) and its two borders (1px each, --sf-px)."
+    },
+    {
+      "id": "file-row-retry-under-text",
+      "category": "condition-review",
+      "filePattern": "^component/file-preview/scss/_css__file_preview\\.scss$",
+      "contextPattern": "^\\s*@container \\(max-width: 22\\.5",
+      "textPattern": "^22\\.5rem$",
+      "status": "accepted-size-step",
+      "reason": "Owner decision C88: in a column narrower than 360 px «Повторить» goes under the text of a failed file row. sf-file-download measures the same 22.5rem in script (js/error-fit.js NARROW_BELOW_REM); sf-file-preview's failed row reads it with a container query, which cannot read a variable."
     },
     {
       "id": "breakpoint-and-container-steps",
@@ -168,6 +202,15 @@
       "reason": "The unit beside a quantity's number takes the same touch-phone floor the core gives the number (touch-field-zoom-floor), so the two stay one size (C53 D2)."
     },
     {
+      "id": "touch-field-zoom-floor-rich-text",
+      "category": "style-review",
+      "filePattern": "^smart/input-rich/scss/_smart__rich_text\\.scss$",
+      "contextPattern": "font-size: max\\((?:var\\(--sf-heading-[345]--size\\), )?var\\(--sf-rich-text--(?:font|h[234])-size\\), 16px\\)",
+      "textPattern": "^16px$",
+      "status": "accepted-platform-boundary",
+      "reason": "The rich text's editing surface and its headings take the touch-phone floor the core gives input, textarea and select (touch-field-zoom-floor): the surface is none of them, and iOS zooms into it the same way (TR-3). A heading's floor also names the page heading one level down (C141 (7))."
+    },
+    {
       "id": "sass-unit-math",
       "category": "style-review",
       "filePattern": "^core/scss/mix/_mix__breakpoint\\.scss$",
@@ -213,6 +256,15 @@
       "textPattern": "^\\d*\\.?\\d+em$",
       "status": "accepted-owner-decision",
       "reason": "Sized from the text around them by decision: inline code's room (C10, R024: .2em by .4em), an underline's offset. No ladder step is a fixed share of every text size."
+    },
+    {
+      "id": "text-bar-capital-height",
+      "category": "style-review",
+      "filePattern": "^(?:core/scss/_sf_css__placeholder\\.scss|component/skeleton/scss/_skeleton\\.scss)$",
+      "contextPattern": "(?:@supports \\(block-size: round\\(nearest, 1em, 1em\\)\\)|--sf-first-paint-bar--(?:height|top):)",
+      "textPattern": "^\\d*\\.?\\d+em$",
+      "status": "accepted-owner-decision",
+      "reason": "Owner decision C136 (1): a text skeleton bar is as tall as the capitals of the text it stands for, Inter's capital height 0.727 em rounded to an even pixel with the size ladder's 2 px step, centred in the line (the glyph box's middle, 0.6055 em from its top). These are font metrics relative to the text, not sizes; the @supports test only asks whether round() parses."
     },
     {
       "id": "documentation-prose",
@@ -264,9 +316,17 @@
       "reason": "A column or panel width passed as an attribute or a documented default (a popover 20rem = g0, a modal 48rem = h2, a field grid column 14rem = f4, a resizer's 12rem and 40rem bounds = f2 and h0): steps of the size scale written in rem where an attribute value is expected."
     },
     {
+      "id": "dropdown-in-place-measured-room",
+      "category": "runtime-review",
+      "filePattern": "^component/dropdown/portal\\.js$",
+      "contextPattern": "\\$\\{Math\\.floor\\(cap\\)\\}px",
+      "status": "accepted-runtime-geometry",
+      "reason": "An in-place list (portal=\"false\") takes the anchored list's height (owner remark R171): the room above or below its field, measured with getBoundingClientRect on opening less the panel's edge padding (a space token), in CSS pixels, written as --sf-dropdown-available-block-size."
+    },
+    {
       "id": "measured-runtime-geometry",
       "category": "runtime-review",
-      "filePattern": "^(?:component/(?:country-code/js/_country_code|menu/js/_menu|range-slider/js/_range_slider|scrollbar/js/_scrollbar|textarea/js/_textarea|tooltip/js/_tooltip)\\.js|core/js/(?:code-copy|effects|layer-stack|position)\\.js|core/js/composition/(?:inline-editor|overlay|sortable-inserter|sortable)\\.mjs|smart/(?:menu|menu-context|profile-picker|resizer|segmented)/index\\.js|smart/tree/js/templates/default\\.js)$",
+      "filePattern": "^(?:component/(?:country-code/js/_country_code|menu/js/_menu|range-slider/js/_range_slider|scrollbar/js/_scrollbar|textarea/js/_textarea|tooltip/js/_tooltip)\\.js|core/js/(?:code-copy|effects|float-anchor|layer-stack|position)\\.js|core/js/composition/(?:inline-editor|overlay|sortable-inserter|sortable)\\.mjs|smart/(?:menu|menu-context|profile-picker|resizer|segmented)/index\\.js|smart/tree/js/templates/default\\.js)$",
       "contextPattern": ".*",
       "status": "accepted-runtime-geometry",
       "reason": "Coordinates and sizes measured from the rendered page or the pointer (a floating panel's place, a drag ghost, a virtual list's spacer, a tooltip tail); the browser reports them in CSS pixels."

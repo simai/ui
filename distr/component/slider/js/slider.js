@@ -13,8 +13,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   unbindSlider: () => (/* binding */ unbindSlider)
 /* harmony export */ });
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
 
-const SLIDER_SELECTOR = '.sf-slider';
+
+ // The words a slider says about itself (SL-5), for the class block; sf-slider
+// hands its own from lang/ through the root's attributes, which win. A product
+// adds a language with SF.language.register('sf-slider', code, words).
+
+const SLIDER_TEXT = {
+  en: {
+    label: 'Slides',
+    carousel: 'carousel',
+    slide: 'slide',
+    position: '{n} of {count}',
+    pause: 'Stop slides',
+    play: 'Start slides',
+    thumb: 'Go to slide {n}'
+  },
+  ru: {
+    label: 'Слайды',
+    carousel: 'карусель',
+    slide: 'слайд',
+    position: '{n} из {count}',
+    pause: 'Остановить прокрутку',
+    play: 'Запустить прокрутку',
+    thumb: 'Перейти к слайду {n}'
+  }
+};
+const SLIDER_SELECTOR = '.sf-slider'; // Up to seven slides are dots; from eight a counter «2 / 12» stands in their
+// place (C143 (4), as sf-gallery counts pictures, C97).
+
+const DOTS_LIMIT = 7; // Cards (sf-slider--content: news, reviews, products) show the next card's
+// edge (C143 (7)): 1.15 cards on a phone, 2.2 from the sm step up.
+
+const PEEK_PER_VIEW = 1.15;
+const PEEK_PER_VIEW_WIDE = 2.2;
 const SLIDER_BOUND_FLAG = 'sfSliderBound';
 const SLIDER_WAITING_FLAG = 'sfSliderWaiting';
 const SWIPER_NESTED_OPTION_PREFIXES = ['a11y', 'autoplay', 'cardsEffect', 'coverflowEffect', 'creativeEffect', 'cubeEffect', 'fadeEffect', 'flipEffect', 'freeMode', 'grid', 'keyboard', 'mousewheel', 'scrollbar', 'thumbs', 'virtual'];
@@ -141,9 +175,12 @@ function collectSwiperDataOptions(...elements) {
       if (isPlainObject(parsedOptions)) {
         options = deepMerge(options, parsedOptions);
       }
-    }
+    } // Only the data-swiper-* attributes are options; the block's own words
+    // (data-slide-label «{n} из {count}») are not JSON and stay unread here.
+
 
     Object.entries(element.dataset).forEach(([key, value]) => {
+      if (!key.startsWith('swiper') || key === 'swiperOptions') return;
       setSwiperDataOption(options, key, parseDataValue(value));
     });
     return options;
@@ -165,15 +202,42 @@ function normalizeAutoplayOptions(options = {}) {
   return options;
 }
 
-function createPaginationOptions(paginationEl) {
-  if (!paginationEl) return undefined;
+function createPaginationOptions(paginationEl, slidesCount) {
+  if (!paginationEl) return undefined; // From eight slides the dots give way to a counter; the slides' own names
+  // («2 из 12») and the live strip say it to a reader, so the counter is
+  // only drawn.
+
+  if (slidesCount > DOTS_LIMIT) {
+    paginationEl.classList.add('sf-slider-dots--count');
+    paginationEl.setAttribute('aria-hidden', 'true');
+    return {
+      el: paginationEl,
+      type: 'fraction',
+      currentClass: 'sf-slider-dots-current',
+      totalClass: 'sf-slider-dots-total'
+    };
+  }
+
+  paginationEl.classList.remove('sf-slider-dots--count');
+  paginationEl.removeAttribute('aria-hidden');
   return {
     el: paginationEl,
     bulletActiveClass: 'active',
     bulletClass: 'sf-slider-dots-dot',
     bulletElement: 'button',
-    clickable: true
+    clickable: true,
+    // One Tab stop for all the dots; the arrow keys page (C143 (5)).
+    keyboard: true
   };
+}
+
+function isContentSlider(root) {
+  return root.classList.contains('sf-slider--content');
+} // Cards peek (C143 (7)) unless the page chose how many are in view.
+
+
+function hasAuthoredPerView(root, element) {
+  return getOption(root, element, 'slidesPerView') !== undefined || [root, element].some(node => node?.dataset?.swiperSlidesPerView !== undefined || /slidesPerView|breakpoints/.test(node?.dataset?.swiperOptions || ''));
 }
 
 function createNavigationOptions(prevEl, nextEl) {
@@ -188,30 +252,91 @@ function createNavigationOptions(prevEl, nextEl) {
 } // The Framework's slider takes no `thumbs` option, so a thumbnail was a picture
 // that did nothing. A thumbnail moves the main slider to its slide, and the one
 // shown is marked.
+// A thumbnail is a button (GL-2, SL-12): named by its picture's alt, else
+// «Перейти к слайду 2»; the thumbnails are one Tab stop -- the current one --
+// and ArrowLeft / ArrowRight (mirrored right to left), Home and End move the
+// slide and the focus with it, as the dots do (C143 (5)); Enter and Space
+// press it.
 
 
-function linkThumbnails(slider, thumbs) {
+function thumbnailName(root, slide, index) {
+  const alt = slide.querySelector('img[alt], [aria-label]');
+  const own = alt?.getAttribute('alt') ?? alt?.getAttribute('aria-label');
+  return own?.trim() || sliderWord(root, 'thumb').replaceAll('{n}', String(index + 1));
+}
+
+function linkThumbnails(root, slider, thumbs) {
   if (!slider || !thumbs?.slides?.length) return () => {};
+  const slides = Array.from(thumbs.slides);
+  const authored = slides.map(slide => ({
+    role: slide.getAttribute('role'),
+    tabindex: slide.getAttribute('tabindex'),
+    label: slide.getAttribute('aria-label')
+  })); // The page's own name, as the engine kept it before writing «1 / 6».
+
+  const names = slides.map((slide, index) => (slide.__sfAuthoredLabel ?? authored[index].label)?.trim?.() || thumbnailName(root, slide, index));
+
+  const name = () => slides.forEach((slide, index) => {
+    slide.setAttribute('role', 'button');
+    slide.setAttribute('aria-label', names[index]);
+  });
 
   const mark = () => {
-    thumbs.slides.forEach((slide, index) => {
+    slides.forEach((slide, index) => {
       const active = index === slider.activeIndex;
       slide.classList.toggle('swiper-slide-thumb-active', active);
+      slide.tabIndex = active ? 0 : -1;
       if (active) slide.setAttribute('aria-current', 'true');else slide.removeAttribute('aria-current');
     });
   };
 
-  const listeners = thumbs.slides.map((slide, index) => {
+  const listeners = slides.map((slide, index) => {
     const listener = () => slider.slideTo(index);
 
     slide.addEventListener('click', listener);
     return [slide, listener];
   });
+
+  const onKey = event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const slide = event.target instanceof Element ? event.target.closest('.swiper-slide') : null;
+    const at = slides.indexOf(slide);
+    if (at < 0) return;
+    const rtl = getComputedStyle(thumbs.el).direction === 'rtl';
+    const last = slides.length - 1;
+    let next;
+    if (event.key === 'Enter' || event.key === ' ') next = at;else if (event.key === 'ArrowRight') next = at + (rtl ? -1 : 1);else if (event.key === 'ArrowLeft') next = at + (rtl ? 1 : -1);else if (event.key === 'Home') next = 0;else if (event.key === 'End') next = last;else return;
+    event.preventDefault(); // The thumbnails' own keys: the strip's keyboard option does not page twice.
+
+    event.stopPropagation();
+    if (slider.params?.loop) next = (next % (last + 1) + last + 1) % (last + 1);
+    next = Math.min(Math.max(next, 0), last);
+    slider.slideTo(next);
+    mark();
+    slides[next]?.focus?.();
+  }; // The thumbnails' engine names its slides again on every update.
+
+
+  const onUpdate = () => {
+    name();
+    mark();
+  };
+
+  thumbs.el.addEventListener('keydown', onKey);
+  thumbs.on?.('update', onUpdate);
   slider.on?.('slideChange', mark);
+  name();
   mark();
   return () => {
     listeners.forEach(([slide, listener]) => slide.removeEventListener('click', listener));
+    thumbs.el.removeEventListener('keydown', onKey);
+    thumbs.off?.('update', onUpdate);
     slider.off?.('slideChange', mark);
+    slides.forEach((slide, index) => {
+      if (!slide.isConnected) return;
+      [['role', authored[index].role], ['tabindex', authored[index].tabindex], ['aria-label', authored[index].label]].forEach(([attr, value]) => value === null ? slide.removeAttribute(attr) : slide.setAttribute(attr, value));
+      slide.removeAttribute('aria-current');
+    });
   };
 }
 
@@ -251,6 +376,7 @@ function createAutoplayOptions(root, element) {
 }
 
 function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
+  const peek = element instanceof Element && !element.classList.contains('sf-slider-thumbnails') && isContentSlider(root) && !hasAuthoredPerView(root, element);
   let options = {
     centeredSlides: toBoolean(getOption(root, element, 'centeredSlides'), false),
     loop: toBoolean(getOption(root, element, 'loop'), false),
@@ -259,6 +385,18 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
     speed: toNumber(getOption(root, element, 'speed'), resolveCssDuration(root, '--sf-slider--duration', 300)),
     watchSlidesProgress: true
   };
+
+  if (peek) {
+    options.slidesPerView = PEEK_PER_VIEW; // From the sm step of the Framework's ladder (rem, as the sheets write it).
+
+    const from = Number.parseFloat(_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__.BREAKPOINTS.sm) * 16;
+    options.breakpoints = {
+      [from]: {
+        slidesPerView: PEEK_PER_VIEW_WIDE
+      }
+    };
+  }
+
   const autoplay = createAutoplayOptions(root, element);
 
   if (autoplay) {
@@ -343,45 +481,188 @@ function createArrowStateGuard(slider, prevEl, nextEl) {
   events.forEach(name => slider.on(name, sync));
   sync();
   return () => events.forEach(name => slider.off?.(name, sync));
+} // Autoplay turns the slides only with a pause button the person can see
+// (C143 (6), WCAG 2.2.2, as sf-carousel required): .sf-slider-rotation, a
+// button or an sf-button-icon host whose button carries it. Without one the
+// slider does not turn.
+
+
+function findRotationButton(root) {
+  const marked = root.querySelector('.sf-slider-rotation');
+  if (!(marked instanceof HTMLElement)) return null;
+  const button = marked.matches('button') ? marked : marked.querySelector('button');
+  return button instanceof HTMLButtonElement ? button : null;
 }
 
-function createAutoplayGuard(root, slider) {
-  if (!slider?.autoplay || prefersReducedMotion()) return () => {};
-  const pauseReasons = new Set();
-  let resumeOwned = false;
+function isShown(element) {
+  if (typeof element.checkVisibility === 'function') {
+    return element.checkVisibility({
+      checkOpacity: true,
+      checkVisibilityCSS: true
+    });
+  }
 
-  const pause = reason => {
-    pauseReasons.add(reason);
-    if (!slider.autoplay.running) return;
-    resumeOwned = true;
-    slider.autoplay.stop();
+  return element.getClientRects().length > 0;
+} // The rotation is the person's: the pause button stops and starts it, and a
+// keyboard focus inside the slider stops it until the button starts it again
+// (APG carousel). The pointer over the slider and a hidden tab only hold it
+// while they last. The button is named by what it does next (C12: no
+// aria-pressed on a toggle whose name changes).
+
+
+function createAutoplayGuard(root, slider, rotationButton) {
+  if (!slider?.autoplay || !slider.params?.autoplay || prefersReducedMotion()) return () => {};
+  const holds = new Set();
+  let stopped = false;
+  let applying = false;
+  const host = rotationButton?.closest?.((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.tagSelector)('sf-button-icon')) || null;
+
+  const label = key => (key === 'pause' ? root.dataset.pauseLabel : root.dataset.playLabel) || sliderWord(root, key);
+
+  const paint = () => {
+    if (!rotationButton) return;
+    const key = stopped ? 'play' : 'pause';
+    rotationButton.removeAttribute('aria-pressed');
+
+    if (host) {
+      host.setAttribute('icon', stopped ? 'play_arrow' : 'pause');
+      host.setAttribute('aria-label', label(key));
+    } else {
+      rotationButton.setAttribute('aria-label', label(key));
+    }
+
+    root.dataset.rotation = stopped ? 'stopped' : 'playing';
   };
 
-  const resume = reason => {
-    pauseReasons.delete(reason);
-    if (!resumeOwned || pauseReasons.size || !root.isConnected) return;
-    resumeOwned = false;
-    slider.autoplay.start();
+  const apply = () => {
+    const run = !stopped && holds.size === 0 && root.isConnected;
+    if (run === slider.autoplay.running) return;
+    applying = true;
+    if (run) slider.autoplay.start();else slider.autoplay.stop();
+    applying = false;
   };
 
-  const onFocusIn = () => pause('focus');
-
-  const onFocusOut = event => {
-    if (!root.contains(event.relatedTarget)) resume('focus');
+  const stop = () => {
+    stopped = true;
+    paint();
+    apply();
   };
+
+  const start = () => {
+    stopped = false;
+    paint();
+    apply();
+  };
+
+  const hold = reason => {
+    holds.add(reason);
+    apply();
+  };
+
+  const release = reason => {
+    holds.delete(reason);
+    apply();
+  }; // The engine stops by itself on a swipe (disableOnInteraction): that is the
+  // person's stop too, and the button says so.
+
+
+  const onEngineStop = () => {
+    if (!applying) {
+      stopped = true;
+      paint();
+    }
+  };
+
+  const onRotation = event => {
+    event.preventDefault();
+    if (stopped) start();else stop();
+  };
+
+  const onFocusIn = event => {
+    if (event.target === rotationButton) return;
+    if (event.target instanceof Element && event.target.matches(':focus-visible')) stop();
+  };
+
+  const onPointerEnter = () => hold('pointer');
+
+  const onPointerLeave = () => release('pointer');
 
   const onVisibilityChange = () => {
-    if (document.hidden) pause('visibility');else resume('visibility');
+    if (document.hidden) hold('visibility');else release('visibility');
   };
 
+  slider.on?.('autoplayStop', onEngineStop);
+  rotationButton?.addEventListener('click', onRotation);
   root.addEventListener('focusin', onFocusIn);
-  root.addEventListener('focusout', onFocusOut);
+  root.addEventListener('pointerenter', onPointerEnter);
+  root.addEventListener('pointerleave', onPointerLeave);
   document.addEventListener('visibilitychange', onVisibilityChange);
   onVisibilityChange();
+  paint();
   return () => {
+    slider.off?.('autoplayStop', onEngineStop);
+    rotationButton?.removeEventListener('click', onRotation);
     root.removeEventListener('focusin', onFocusIn);
-    root.removeEventListener('focusout', onFocusOut);
+    root.removeEventListener('pointerenter', onPointerEnter);
+    root.removeEventListener('pointerleave', onPointerLeave);
     document.removeEventListener('visibilitychange', onVisibilityChange);
+    delete root.dataset.rotation;
+  };
+} // The block is a region the reader can find and leave, named and described as
+// a carousel, its slides «слайд, 2 из 5» (SL-5, as the APG carousel and
+// sf-carousel). A name or role the page wrote stays; unbinding puts back what
+// was there before.
+
+
+function sliderWord(root, key) {
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(SLIDER_TEXT, key, root, 'sf-slider');
+}
+
+function applyRegionSemantics(root) {
+  const authored = {
+    role: root.getAttribute('role'),
+    roleDescription: root.getAttribute('aria-roledescription'),
+    label: root.getAttribute('aria-label')
+  };
+  if (!authored.role) root.setAttribute('role', 'region');
+  if (!authored.roleDescription) root.setAttribute('aria-roledescription', sliderWord(root, 'carousel'));
+
+  if (!authored.label && !root.hasAttribute('aria-labelledby')) {
+    root.setAttribute('aria-label', root.dataset.label || sliderWord(root, 'label'));
+  }
+
+  return authored;
+}
+
+function restoreRegionSemantics(root, authored) {
+  if (!authored) return;
+  [['role', authored.role], ['aria-roledescription', authored.roleDescription], ['aria-label', authored.label]].forEach(([name, value]) => {
+    if (value === null) root.removeAttribute(name);else root.setAttribute(name, value);
+  });
+}
+
+function slideMessages(root) {
+  const position = root.dataset.slideLabel || sliderWord(root, 'position');
+  return {
+    itemRoleDescriptionMessage: root.dataset.slideRoledescription || sliderWord(root, 'slide'),
+    slideLabelMessage: position.replaceAll('{n}', '{{index}}').replaceAll('{count}', '{{slidesLength}}')
+  };
+} // While autoplay turns the slides, the change is not announced; stopped, the
+// new slide is announced politely (APG carousel).
+
+
+function createLiveRegionGuard(slider, mainEl) {
+  if (!(mainEl instanceof HTMLElement) || typeof slider?.on !== 'function') return () => {};
+  const authored = mainEl.getAttribute('aria-live');
+
+  const sync = () => mainEl.setAttribute('aria-live', slider.autoplay?.running ? 'off' : 'polite');
+
+  const events = ['init', 'autoplayStart', 'autoplayStop'];
+  events.forEach(name => slider.on(name, sync));
+  sync();
+  return () => {
+    events.forEach(name => slider.off?.(name, sync));
+    if (authored === null) mainEl.removeAttribute('aria-live');else mainEl.setAttribute('aria-live', authored);
   };
 }
 
@@ -453,14 +734,32 @@ function bindSlider(root) {
       centeredSlides: false,
       spaceBetween: toNumber(getOption(root, thumbsEl, 'spaceBetween'), resolveCssLength(root, '--sf-slider-thumbnails--space-between', 0)),
       slidesPerView: Math.min(thumbsCount, 6),
-      slideToClickedSlide: false
+      slideToClickedSlide: false,
+      // A thumbnail is pressed, not dragged: the strip is as wide as they are.
+      allowTouchMove: false,
+      // The thumbnails never turn by themselves; data-autoplay is the slides'.
+      autoplay: false
     });
   }
 
   const sliderOptions = { ...createBaseOptions(root, mainEl, 1)
   };
   const navigation = createNavigationOptions(prevEl, nextEl);
-  const pagination = createPaginationOptions(paginationEl);
+  const pagination = createPaginationOptions(paginationEl, getSlidesCount(mainEl));
+  const rotationButton = findRotationButton(root);
+
+  if (sliderOptions.autoplay && !(rotationButton && isShown(rotationButton))) {
+    delete sliderOptions.autoplay;
+  } // A pause button with nothing to pause (no autoplay, or reduced motion) is
+  // not shown.
+
+
+  const rotationHost = rotationButton?.closest?.((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.tagSelector)('sf-button-icon')) || rotationButton;
+
+  if (rotationHost && !sliderOptions.autoplay) {
+    rotationHost.hidden = true;
+    root._sfSliderRotationHidden = rotationHost;
+  }
 
   if (navigation) {
     sliderOptions.navigation = navigation;
@@ -474,12 +773,29 @@ function bindSlider(root) {
     sliderOptions.thumbs = {
       swiper: thumbs
     };
+  } // The keys listen on the whole block: the arrows and the dots, where the
+  // focus is, sit outside the strip (SL-3).
+
+
+  if (sliderOptions.keyboard === true || sliderOptions.keyboard?.enabled) {
+    sliderOptions.keyboard = { ...(isPlainObject(sliderOptions.keyboard) ? sliderOptions.keyboard : {}),
+      enabled: true,
+      el: root
+    };
   }
 
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
+
+  if (sliderOptions.a11y !== false) {
+    sliderOptions.a11y = { ...slideMessages(root),
+      ...sliderOptions.a11y
+    };
+  }
+
+  root._sfSliderRegion = applyRegionSemantics(root);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(slider, thumbs)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider, rotationButton), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(root, slider, thumbs), createLiveRegionGuard(slider, mainEl)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));
@@ -519,6 +835,10 @@ function unbindSlider(root) {
     if (element.getAttribute('aria-label') !== applied) return;
     if (authored === null) element.removeAttribute('aria-label');else element.setAttribute('aria-label', authored);
   });
+  if (root._sfSliderRotationHidden) root._sfSliderRotationHidden.hidden = false;
+  delete root._sfSliderRotationHidden;
+  restoreRegionSemantics(root, root._sfSliderRegion);
+  delete root._sfSliderRegion;
   delete root._sfSliderNavigationLabels;
   delete root._sfSliderCleanup;
   delete root._sfSlider;
@@ -854,6 +1174,92 @@ function readTagAliases(table, {
 
 /***/ },
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -969,6 +1375,478 @@ if (typeof globalThis !== 'undefined') {
   api.clear = clearDeprecations;
   api.note = noteDeprecated;
   globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
+/***/ "8489d1f5bab4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   followLanguage: () => (/* binding */ followLanguage),
+/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
+/* harmony export */   language: () => (/* binding */ language),
+/* harmony export */   localeText: () => (/* binding */ localeText),
+/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
+/* harmony export */   pageLocale: () => (/* binding */ pageLocale),
+/* harmony export */   pageText: () => (/* binding */ pageText),
+/* harmony export */   pageWord: () => (/* binding */ pageWord)
+/* harmony export */ });
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+// What language a component speaks, and how a product adds one.
+//
+// The Framework speaks English by default and whatever the page says otherwise:
+// the language is the nearest [lang] above the node, else the document's, else
+// English. One rule for every component, so a page never mixes two because two
+// components looked in different places.
+//
+// Until 2026-10-10 that was the whole of it, and every component carried a
+// dictionary of exactly two languages written into its source. Adding a third
+// meant editing sixteen files, and a product that needed one could not add it
+// at all. There will be many more than two (owner, 2026-10-11), so the
+// dictionaries a component ships are now a FLOOR rather than the whole set:
+// anything can be registered beside them, for any language, including one the
+// Framework has never heard of.
+//
+// Where a word comes from, in order:
+//
+//   1. the component's own attribute — a consumer who names a word has named
+//      it, and no language changes it;
+//   2. a word registered for the resolved language;
+//   3. the word the component ships for that language;
+//   4. the same two again for the language without its region (`pt-BR` → `pt`);
+//   5. the same two again for English;
+//   6. the key itself, which is a visible defect rather than a blank.
+//
+// Registering is additive and reversible, and it does not require the
+// Framework to know the language exists.
+// The state is shared between every copy of this module, which there are
+// several of: core, each smart component and each composite are separate
+// bundles, and each one carries its own copy of this file. With the registry
+// in module scope the page had as many registries as bundles -- `SF.language`
+// was published from core's copy, the table read its own, and registering a
+// language changed nothing on screen. Only a browser shows that, and it did
+// (2026-10-11).
+
+
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfPageLanguage';
+
+  if (!root[key]) {
+    root[key] = {
+      listeners: new Set(),
+      registered: new Map(),
+      chosen: null
+    };
+  }
+
+  return root[key];
+})();
+
+const LISTENERS = STORE.listeners;
+const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+// them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
+// while the old tag is a dated alias, whichever name the element was written
+// with (core/js/tag-aliases.js).
+
+const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
+
+const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
+/** The languages to try, most specific first, English last. */
+
+
+const chain = language => {
+  const wanted = normalise(language);
+  const base = wanted.split('-')[0];
+  const order = [];
+
+  for (const candidate of [wanted, base, 'en']) {
+    if (candidate && !order.includes(candidate)) order.push(candidate);
+  }
+
+  return order;
+};
+/** Which component a node belongs to, for words registered against one. */
+
+
+const componentOf = node => {
+  const tag = node?.tagName;
+  return typeof tag === 'string' ? tag.toLowerCase() : null;
+}; // A layer drawn in a portal carries a copy of its host's language, stamped by
+// carryLayerOrigin (§19.1). When that copy came from the page itself, it has
+// to follow the page before the listeners draw: a word read inside a drawer
+// during SF.language.use() answered the language the page had just left, and
+// the portal was carried again only later, with nothing to draw it again
+// (simai/ui-source#55, found by ui-mail). A portal whose host sits in a
+// section with a language of its own is not touched: that section means it.
+
+
+const carryPageLanguage = () => {
+  const doc = globalThis.document;
+  if (!doc?.querySelectorAll) return;
+  const lang = doc.documentElement?.getAttribute('lang') || '';
+
+  for (const portal of doc.querySelectorAll('[data-sf-layer-lang="page"]')) {
+    if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  }
+};
+
+const announce = () => {
+  carryPageLanguage();
+
+  for (const listener of [...LISTENERS]) {
+    try {
+      listener();
+    } catch {// A listener that throws is not allowed to stop the others: a page that
+      // half-changed language would be worse than one that did not change.
+    }
+  }
+}; // The nearest element that says its language, looking past shadow roots: a
+// pagination drawn inside a data view's shadow root found no [lang] there,
+// fell back to <html lang> and spoke English inside a Russian admin whose
+// language was set on the shell around it.
+
+
+function langOwner(node) {
+  let current = node;
+
+  while (current) {
+    const owner = typeof current.closest === 'function' ? current.closest('[lang]') : null;
+    if (owner) return owner;
+    const root = typeof current.getRootNode === 'function' ? current.getRootNode() : null;
+    current = root && root !== current && root.host ? root.host : null;
+  }
+
+  return null;
+} // The language of a part of the page wins over the language chosen for the
+// whole page (owner, 2026-10-26; standard simai.smart-component 1.3.8 §11.1):
+//   1. a word given on the element itself (the component's own attribute);
+//   2. the nearest [lang] below <html>;
+//   3. the page's choice, SF.language.use(), which also sets <html lang>;
+//   4. <html lang>;
+//   5. English.
+// Until 2026-10-27 the choice won over a section's [lang], so an English
+// section inside a Russian page that had called use('ru') spoke Russian.
+
+
+function languageSource(node) {
+  const owner = langOwner(node);
+  const root = globalThis.document?.documentElement ?? null;
+  if (owner && owner !== root) return owner.getAttribute('lang');
+  if (STORE.chosen) return STORE.chosen;
+  return owner?.getAttribute('lang') || root?.lang || 'en';
+}
+/**
+ * The page's language for this node: the nearest [lang] below <html>, else
+ * the language the page chose, else <html lang>, else English.
+ */
+
+
+function pageLanguage(node) {
+  // The language without its region, whichever way it was set: a page that
+  // chose 'pt-BR' is a Portuguese page, as a page whose markup says
+  // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
+  // which matched no dictionary keyed by language and made isRussianPage false
+  // on a page that chose 'ru-RU'. The region stays in pageLocale.
+  return normalise(languageSource(node)).split('-')[0] || 'en';
+}
+/** The page's language with its region kept, which is what formatting wants. */
+
+function pageLocale(node) {
+  return normalise(languageSource(node)) || 'en';
+}
+/**
+ * Follows `lang` in the document (§11.1 «changes are followed»): one observer
+ * for the page, whichever bundle starts it, and the elements under a changed
+ * [lang] draw again. `element.requestComponentUpdate('language')` is what a
+ * Smart element does; anything else passes its own `redraw`. Returns the way
+ * to stop following.
+ */
+
+function followLanguage(element, redraw = () => element.requestComponentUpdate?.('language')) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const doc = element?.ownerDocument ?? root.document;
+  const Observer = doc?.defaultView?.MutationObserver ?? root.MutationObserver;
+  if (!doc?.documentElement || typeof Observer !== 'function') return () => {};
+
+  if (!root.__sfLanguageWatch || root.__sfLanguageWatch.document !== doc) {
+    const watch = {
+      document: doc,
+      elements: new Map(),
+      observer: null
+    };
+    watch.observer = new Observer(records => {
+      const changed = [...new Set(records.map(record => record.target))];
+
+      for (const [one, again] of [...watch.elements]) {
+        if (changed.some(target => within(target, one))) {
+          try {
+            again();
+          } catch {// One element that fails to draw does not keep the others in the
+            // old language.
+          }
+        }
+      }
+    });
+    watch.observer.observe(doc.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang'],
+      subtree: true
+    });
+    root.__sfLanguageWatch = watch;
+  }
+
+  const watch = root.__sfLanguageWatch;
+  watch.elements.set(element, redraw);
+  return () => watch.elements.delete(element);
+} // Whether `node` is `target` or below it, across shadow roots.
+
+function within(target, node) {
+  for (let current = node; current;) {
+    if (current === target) return true;
+    current = current.parentNode || current.host || null;
+  }
+
+  return false;
+}
+
+function isRussianPage(node) {
+  return pageLanguage(node) === 'ru';
+}
+/**
+ * Text for `key` in the page's language.
+ *
+ * `dictionary` is what the component ships; `component` names it for the
+ * registry and defaults to the node's own tag, so a component calling with
+ * `this` identifies itself without saying so twice.
+ */
+
+function pageText(dictionary, key, node, component) {
+  return localeText(dictionary, key, pageLocale(node), component ?? componentOf(node));
+}
+/**
+ * Text for `key` in a named language, with no node to read it from: a server
+ * fallback or a form drawn before it is placed. The same order as pageText --
+ * words registered for `component`, then the shipped ones, for the language,
+ * the language without its region and English -- and the key last.
+ */
+
+function localeText(dictionary, key, locale, component) {
+  for (const candidate of chain(locale || 'en')) {
+    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined) return added;
+    const shipped = dictionary?.[candidate]?.[key];
+    if (shipped !== undefined) return shipped;
+  }
+
+  return key;
+} // Missing words are said once per component, word and language: a page that
+// draws a hundred rows must not print a hundred warnings. The marks are kept on
+// the shared global, because every bundle carries this module.
+
+function warnWord(owner, key, locale, said) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfWordWarnings instanceof Set)) root.__sfWordWarnings = new Set();
+  const mark = `${owner}|${key}|${locale}|${said}`;
+  if (root.__sfWordWarnings.has(mark)) return;
+
+  root.__sfWordWarnings.add(mark);
+
+  globalThis.console?.warn?.(`[SIMAI Framework] ${owner || 'component'}: no word "${key}" for ${locale}${said === 'key' ? '; the key is shown' : `; said in ${said}`}`);
+}
+
+function fill(text, locale, count, vars) {
+  return String(text).replace(/\{([a-z][\w-]*)\}/giu, (whole, name) => {
+    if (name === 'n' && count !== undefined) {
+      try {
+        return new Intl.NumberFormat(locale).format(count);
+      } catch {
+        return String(count);
+      }
+    }
+
+    return vars && Object.prototype.hasOwnProperty.call(vars, name) ? String(vars[name]) : whole;
+  });
+}
+/**
+ * A component's own word (standard simai.smart-component 1.3.8 §11, §11.1).
+ *
+ * `dictionary` is `{<locale>: {<key>: word}}` from the component's language
+ * files. A word given on the element itself is the caller's to prefer; this
+ * resolves the rest: words registered for the element's language, then the
+ * shipped ones, the language without its region, English, the component's
+ * source language and, last, the key. The last two warn once. A word that
+ * takes a number is an object of plural forms chosen by Intl.PluralRules of
+ * the language the word was found in; `{n}` is the number in that language's
+ * format and `{name}` takes `vars.name`.
+ *
+ * `former` names the key the same word had before a rename (one key or a
+ * list): a product that registered its words under the old key keeps them
+ * until the alias's day. For each language the word registered under the new
+ * key wins, then one registered under an old key, then the shipped one; a
+ * word taken by an old key is reported to `onFormer(oldKey)`, which notes the
+ * deprecation.
+ */
+
+
+function pageWord(dictionary, key, node, {
+  component,
+  source = '',
+  count,
+  vars,
+  former,
+  onFormer
+} = {}) {
+  const owner = component ?? componentOf(node);
+  const locale = pageLocale(node);
+  const order = chain(locale);
+  const sourceLanguage = normalise(source);
+  if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
+  const formerKeys = former === undefined || former === null ? [] : [].concat(former);
+
+  for (const candidate of order) {
+    const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
+    let added = registered?.[key];
+
+    if (added === undefined && registered) {
+      const old = formerKeys.find(name => registered[name] !== undefined && registered[name] !== null);
+
+      if (old !== undefined) {
+        added = registered[old];
+        onFormer?.(old);
+      }
+    }
+
+    const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
+    if (word === undefined || word === null) continue;
+    if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+
+    if (typeof word === 'object') {
+      let form = 'other';
+
+      if (count !== undefined) {
+        try {
+          form = new Intl.PluralRules(candidate).select(Number(count));
+        } catch {
+          form = 'other';
+        }
+      }
+
+      const picked = word[form] ?? word.other;
+      if (picked === undefined) continue;
+      return fill(picked, candidate, count, vars);
+    }
+
+    return fill(word, candidate, count, vars);
+  }
+
+  warnWord(owner, key, locale, 'key');
+  return key;
+}
+const language = {
+  /** What the page resolves to for this node, region and all. */
+  current(node = globalThis.document?.documentElement ?? null) {
+    return pageLocale(node);
+  },
+
+  /**
+   * Choose a language for the whole page, whatever its markup says. `null`
+   * returns to following the document, which is the default and what a
+   * server-rendered page wants.
+   */
+  use(value) {
+    const next = value === null || value === undefined ? null : normalise(value);
+    if (next === STORE.chosen) return STORE.chosen;
+    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    // the browser, a screen reader and CSS :lang() agree with the words.
+    // use(null) gives the markup's own language back.
+
+    const root = globalThis.document?.documentElement;
+
+    if (root) {
+      const holder = globalThis;
+
+      if (next) {
+        if (holder.__sfMarkupLanguage === undefined) holder.__sfMarkupLanguage = root.getAttribute('lang');
+        if (root.getAttribute('lang') !== next) root.setAttribute('lang', next);
+      } else if (holder.__sfMarkupLanguage !== undefined) {
+        if (holder.__sfMarkupLanguage === null) root.removeAttribute('lang');else root.setAttribute('lang', holder.__sfMarkupLanguage);
+        holder.__sfMarkupLanguage = undefined;
+      }
+    }
+
+    announce();
+    return STORE.chosen;
+  },
+
+  /**
+   * Add or replace one component's words for one language.
+   *
+   * The words are merged, so a product can correct a single label without
+   * restating the rest, and `null` removes what it added.
+   */
+  register(component, value, words) {
+    const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component ?? '');
+    const code = normalise(value);
+    if (!name || !code) throw new TypeError('a component and a language are required');
+    if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
+    const byLanguage = REGISTERED.get(name);
+    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+      ...words
+    });
+    announce();
+    return this;
+  },
+
+  /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
+  registerAll(value, byComponent = {}) {
+    for (const [component, words] of Object.entries(byComponent)) {
+      this.register(component, value, words);
+    }
+
+    return this;
+  },
+
+  /** The languages something has registered words for. */
+  known(component) {
+    return [...(wordsOf(component ?? '')?.keys() ?? [])];
+  },
+
+  /** Every component something has been registered for. */
+  components() {
+    return [...REGISTERED.keys()];
+  },
+
+  /**
+   * Called whenever the chosen language or the registered words change, so a
+   * component can draw itself again. Returns the way to stop listening.
+   */
+  onChange(listener) {
+    if (typeof listener !== 'function') return () => {};
+    LISTENERS.add(listener);
+    return () => LISTENERS.delete(listener);
+  },
+
+  /** Everything registered is forgotten. For tests, and for a product reset. */
+  forget() {
+    REGISTERED.clear();
+    STORE.chosen = null;
+    announce();
+    return this;
+  }
+
+}; // Reachable by a consumer, which it was not: `sf-admin-menu` had written its
+// own reading of the rule because the shared one was an internal module, and
+// the two then disagreed about a region that names its own language. A product
+// composing its own elements gets the same rule here.
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.language = language;
+  window.SF.pageLanguage = pageLanguage;
+  window.SF.pageText = pageText;
 }
 
 /***/ },

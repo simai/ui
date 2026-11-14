@@ -690,6 +690,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ANNOUNCE_MS: () => (/* binding */ ANNOUNCE_MS),
 /* harmony export */   ENDED: () => (/* binding */ ENDED),
 /* harmony export */   ERRORS_SHOWN: () => (/* binding */ ERRORS_SHOWN),
 /* harmony export */   FOCUS_FALLBACK: () => (/* binding */ FOCUS_FALLBACK),
@@ -726,9 +727,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3bb2b1c9d41d");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d092c5059e25");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("bb540c15b990");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7e1b23a85a40");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("533b90592c77");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5ffd5a820c01");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("bb540c15b990");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7e1b23a85a40");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("533b90592c77");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -775,14 +777,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // The ids of a run's parts, one set per run on the page (the same on every
 // render, so a first-paint snapshot is stable).
 
 let sequence = 0;
 const STEP_STATES = ['waiting', 'running', 'done', 'failed', 'skipped'];
 const RUN_STATES = ['waiting', 'running', 'paused', 'done', 'partial', 'failed', 'cancelled'];
-const ENDED = ['done', 'partial', 'failed', 'cancelled'];
-const VIEWS = ['full', 'compact', 'notice']; // sf-steps' state glyphs (sf-steps 1.2.0, sf-wizard); waiting is an empty ring.
+const ENDED = ['done', 'partial', 'failed', 'cancelled']; // row is the table row's look; compact, its former name, is a dated value
+// alias of row until 2027-01-01 (aliases.json; owner decision C134: the word
+// compact means density only).
+
+const VIEWS = ['full', 'row', 'notice']; // sf-steps' state glyphs (sf-steps 1.2.0, sf-wizard); waiting is an empty ring.
 
 const ICONS = {
   waiting: 'radio_button_unchecked',
@@ -801,17 +807,24 @@ const ERRORS_SHOWN = 5; // The time left is shown once the rate has been seen th
 // of this length (NN/g, Apple HIG: no estimate before it means something).
 
 const RATE_SETTLE_MS = 5000;
-const RATE_WINDOW_MS = 30000; // One state, one look in every look (C34, R073): the badge of sf-badge 1.4.0
-// and the status of the overall bar (sf-progress-bar 1.3.0).
+const RATE_WINDOW_MS = 30000; // The progress a screen reader hears from the run's polite live region: the
+// count in words («4 812 из 12 000 товаров, 40 %»), at most once in this
+// many ms and only when it changed, never at the first paint.
+
+const ANNOUNCE_MS = 10000; // One state, one look in every look (C34, R073): the badge of sf-badge 1.4.0
+// and the status of the overall bar (sf-progress-bar 1.3.0). A job waiting or
+// running has no status: its bar is the theme's primary, as before (since
+// sf-progress-bar 1.4.0, owner decision C131 (1), neutral is grey); a
+// cancelled job's bar is that grey.
 
 const STATE_LOOK = {
   waiting: {
     activity: 'queued',
-    bar: 'neutral'
+    bar: ''
   },
   running: {
     activity: 'running',
-    bar: 'neutral'
+    bar: ''
   },
   paused: {
     activity: 'paused',
@@ -1063,10 +1076,11 @@ function normalizeErrors(value, limit = ERRORS_SHOWN) {
 const ProgressRunElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   actions: {
     chunk(args = {}) {
       const more = typeof args === 'string' ? args : args?.text;
@@ -1143,7 +1157,14 @@ class SfProgressRun extends ProgressRunElement {
     this._seenStart = 0;
     this._seenEnd = 0;
     this._lastState = '';
-    this._resumed = false;
+    this._resumed = false; // What the polite live region says now, and when that reached the page
+    // (stamped after the render that drew it: a render overtaken by the next
+    // one never drew its text, and a stamp taken before it let two changes
+    // land 9 s apart).
+
+    this._spoken = '';
+    this._spokenAt = 0;
+    this._spokenDrawn = false;
   }
 
   onConnected() {
@@ -1196,20 +1217,29 @@ class SfProgressRun extends ProgressRunElement {
     if (total) return total;
     const counter = (Array.isArray(this.counters) ? this.counters : []).find(one => one && text(one.status) === 'error');
     return counter ? number(counter.value) ?? 0 : 0;
-  } // The job's state: the host's run-state, else worked out from the steps
-  // (finished with errors is partial).
+  } // The job's state: the host's run-state, else worked out from the steps,
+  // or, with no steps, from its numbers: running while value is below total,
+  // done once it reached it. Finished with errors (errors-total or an error
+  // counter above 0) is partial.
 
 
   get drawnState() {
     const given = this.runState;
     if (given && given !== 'auto' && RUN_STATES.includes(given)) return given;
-    const worked = runState(this.list);
+    let worked = runState(this.list);
+
+    if (worked === 'waiting' && !this.list.length && this.whole !== null) {
+      worked = (this.done ?? 0) >= this.whole ? 'done' : 'running';
+    }
+
     if (worked === 'done' && this.errorsCount > 0) return 'partial';
-    if (worked === 'waiting' && !this.list.length && this.whole !== null) return 'running';
     return worked;
   }
 
   get drawnView() {
+    // The shim rewrites look compact to row; a value set as a property after
+    // the element drew is read the same (C134).
+    if (this.look === 'compact') return 'row';
     return VIEWS.includes(this.look) ? this.look : 'full';
   } // The output: the host's setting, then what chunk appended. A new setting
   // starts it afresh.
@@ -1401,7 +1431,49 @@ class SfProgressRun extends ProgressRunElement {
     if (this._timer) clearInterval(this._timer);
     this._timer = 0;
   } // ---------------------------------------------------------------- drawing
-  // «4 812 из 12 000 товаров · 40 %», the count so far, or nothing.
+  // What the polite live region says while the job runs: the count as the
+  // figures line says it, in words («4 812 из 12 000 товаров, 40 %»; with no
+  // size «1 240 строк»). It changes at most once in ANNOUNCE_MS, never at the
+  // first paint and never in a table row (a table of runs would talk over
+  // itself); a pause or the end empties it (the status region says those).
+
+
+  spokenProgress(state, view, value, total, now) {
+    if (state !== 'running' || view === 'row') {
+      this._spoken = '';
+      this._spokenAt = 0;
+      this._spokenDrawn = false;
+      return '';
+    }
+
+    const locale = this.locale;
+    const forms = text(this.unit);
+    let next = '';
+
+    if (total !== null) {
+      next = this.sfWord('announce-progress', {
+        vars: {
+          value: formatNumber(value ?? 0, locale),
+          total: formatNumber(total, locale),
+          unit: forms ? ` ${pluralForm(forms, total, locale)}` : '',
+          percent: percentOf(value ?? 0, total)
+        }
+      });
+    } else if (value) {
+      next = this.sfWord('announce-count', {
+        vars: {
+          value: formatNumber(value, locale),
+          unit: forms ? ` ${pluralForm(forms, value, locale)}` : ''
+        }
+      });
+    }
+
+    if (!this._spokenAt) this._spokenAt = now;else if (!this._spokenDrawn && next !== this._spoken && now - this._spokenAt >= ANNOUNCE_MS) {
+      this._spoken = next;
+      this._spokenDrawn = true;
+    }
+    return this._spoken;
+  } // «4 812 из 12 000 товаров · 40 %», the count so far, or nothing.
 
 
   figures(value, total, unit, {
@@ -1463,8 +1535,11 @@ class SfProgressRun extends ProgressRunElement {
     this.sfHostState('data-state', state);
     const value = this.done;
     const total = this.whole;
-    const indeterminate = total === null && (state === 'running' || state === 'paused');
-    const showBar = total !== null || !list.length;
+    const indeterminate = total === null && (state === 'running' || state === 'paused'); // The overall bar: whenever the size is known, and while a job of unknown
+    // size runs or is paused (indeterminate), with steps or without. A run of
+    // steps alone that has not started or has ended has none: its steps say it.
+
+    const showBar = total !== null || !list.length || indeterminate;
     const percent = percentOf(value ?? 0, total);
     const barValue = total !== null ? state === 'done' ? 100 : percentOf(value ?? 0, total) : ended ? 100 : 0; // The time on the figures line: the time left while it runs, the time it
     // took once ended, the elapsed time while the size is unknown.
@@ -1556,6 +1631,7 @@ class SfProgressRun extends ProgressRunElement {
       moreErrors: errorsTotal > errors.length && ended ? errorsTotal - errors.length : 0,
       resultShown,
       announcement,
+      spoken: this.spokenProgress(state, view, value, total, now),
       outputShown: this.outputText,
       outputOpen: Boolean(this.outputOpen),
       outputLabel: this.outputLabel,
@@ -1575,7 +1651,6 @@ class SfProgressRun extends ProgressRunElement {
         hide: word('hide'),
         copy: word('copy'),
         download: word('download'),
-        emptyOutput: word('empty-output'),
         pause: word('pause'),
         resume: word('resume'),
         minimize: word('minimize'),
@@ -1649,7 +1724,14 @@ class SfProgressRun extends ProgressRunElement {
   }
 
   afterRender() {
-    super.afterRender?.();
+    super.afterRender?.(); // The count the live region now holds reached the page: the next one waits
+    // ANNOUNCE_MS from here.
+
+    if (this._spokenDrawn) {
+      this._spokenDrawn = false;
+      this._spokenAt = Date.now();
+    }
+
     this.restoreFocus();
     this.syncTimer();
     const pane = this.querySelector('.sf-progress-run-output');
@@ -1707,18 +1789,21 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   figures and text, and the time at the end; the running one is
 //   aria-current; a step with a log is a toggle (aria-expanded,
 //   aria-controls) over its log;
-// - output: a toggle (sf-button, aria-expanded, aria-controls); open, a pre in
-//   a scroller of role log (not live, focusable to scroll), with copy
-//   (sf-button-copy, the pre as its target) and download;
+// - output: once there is output, a toggle (sf-button, aria-expanded,
+//   aria-controls); open, a pre in a scroller of role log (not live,
+//   focusable to scroll), with copy (sf-button-copy, the pre as its target)
+//   and download. A job with no output has no toggle;
 // - actions: «Ещё N ошибок» at the start, then Minimize, Pause/Continue,
 //   Cancel, Retry and Hide, as their states allow.
-// The result line is the one status live region: it says the result and the
-// state changes; nothing else is live.
+// The result line is the status live region: it says the result and the
+// state changes. A second region, polite and visually hidden, says the count
+// while the job runs, at most every ANNOUNCE_MS (index.js); nothing else is
+// live.
 //
-// look compact: one line -- the bar and «62 % · 3 мин» while it runs, the
-// badge once it stopped -- and icon actions. look notice: the mark in the
-// icon field (the ring, or the state's icon), the name and a line of
-// figures, and Expand.
+// look row (a table row; compact is its dated former name, C134): one line --
+// the bar and «62 % · 3 мин» while it runs, the badge once it stopped -- and
+// icon actions. look notice: the mark in the icon field (the ring, or the
+// state's icon), the name and a line of figures, and Expand.
 // The rung below the run's: texts, times, the output, the badges and the
 // buttons. A size the template gives is relative to the run's (density, C22).
 
@@ -1763,7 +1848,8 @@ function heading(context) {
 }
 
 function progress(context) {
-  // A run of steps alone (1.2's look) has no overall bar: its steps say it.
+  // A run of steps alone (1.2's look) has no overall bar while it waits or
+  // once it ended: its steps say it. While it runs with no size, the bar runs.
   if (!context.showBar) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-run-progress">
     ${context.showBar ? bar(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1862,7 +1948,10 @@ function output(context) {
     size,
     outputOpen,
     words
-  } = context;
+  } = context; // No output, no toggle: an empty «Вывод» is a button that opens nothing.
+  // The first chunk brings it.
+
+  if (!context.outputShown) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const below = BELOW[size];
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-run-output-block">
     <div class="sf-progress-run-output-bar">
@@ -1877,7 +1966,6 @@ function output(context) {
     </div>
     ${outputOpen ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-run-output" id=${ids.output} role="log" aria-live="off" aria-label=${context.outputLabel} tabindex="0">
       <pre class="sf-progress-run-output-text" id=${`${ids.output}-text`}>${context.outputShown}</pre>
-      ${context.outputShown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-run-output-empty">${words.emptyOutput}</span>`}
     </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
 }
@@ -1937,13 +2025,13 @@ function iconActions(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-run-icon-actions">
     ${showPause ? one('pause', 'pause', words.pause, () => component.onPause()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${showResume ? one('resume', 'play_arrow', words.resume, () => component.onResume()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    ${showCancel && view === 'compact' ? one('cancel', 'close', words.cancel, () => component.onCancel()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    ${showRetry && view === 'compact' ? one('retry', 'replay', context.retryWord, () => component.onRetry()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${showCancel && view === 'row' ? one('cancel', 'close', words.cancel, () => component.onCancel()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${showRetry && view === 'row' ? one('retry', 'replay', context.retryWord, () => component.onRetry()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${view === 'notice' ? one('expand', 'open_in_full', `${words.expand}: ${regionLabel}`, () => component.onExpand()) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </span>`;
 }
 
-function compact(context) {
+function row(context) {
   const {
     state,
     ended,
@@ -2003,12 +2091,17 @@ function renderProgressRunTemplate(context) {
     ids,
     label
   } = context;
-  const classes = ['sf-progress-run', `sf-progress-run--size-${size === '1/2' ? 'half' : '1'}`, `sf-progress-run--${state}`, `sf-progress-run--view-${view}`, context.rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-progress-run', `sf-progress-run--size-${size === '1/2' ? 'half' : '1'}`, `sf-progress-run--${state}`, `sf-progress-run--view-${view}`, // The row writes its former class beside its own until 2027-01-01, so a
+  // page selector that reached sf-progress-run--view-compact still does
+  // (C134; journal value-progress-run-look-compact-to-row).
+  view === 'row' ? 'sf-progress-run--view-compact' : '', context.rootClass].filter(Boolean).join(' ');
+  const live = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-run-live sr-only" aria-live="polite" aria-atomic="true">${context.spoken}</div>`;
 
-  if (view === 'compact' || view === 'notice') {
+  if (view === 'row' || view === 'notice') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="group" aria-label=${context.regionLabel}>
-      ${view === 'compact' ? compact(context) : notice(context)}
+      ${view === 'row' ? row(context) : notice(context)}
       <div class=${`sf-progress-run-result sf-progress-run-result--${state} sr-only`} role="status">${context.announcement}</div>
+      ${view === 'notice' ? live : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>`;
   }
 
@@ -2021,6 +2114,7 @@ function renderProgressRunTemplate(context) {
     ${context.steps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ol class="sf-progress-run-steps" aria-label=${context.words.steps}>${context.steps.map(item => step(context, item))}</ol>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${output(context)}
     ${actions(context)}
+    ${live}
   </section>`;
 }
 __webpack_async_result__();
@@ -2147,24 +2241,31 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "5ffd5a820c01"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progress-run for the shim (core/js/aliases.js, standard §16 item 20).","component":"sf-progress-run","since":"2026-11-13","remove_after":"2027-01-01","aliases":[{"from":"compact","to":"row","kind":"value","setting":"look","component":"sf-progress-run","since":"2026-11-13","remove_after":"2027-01-01","section":"§16 item 20","note":"owner decision C134 (control/research/2026-11-13-navigation-density.md D5, Q1): the word compact means density only; the table row\'s look is look row and writes the class sf-progress-run--view-row beside its former sf-progress-run--view-compact until the date"}]}');
+
+/***/ },
+
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.3.3","kind":"leaf","settings":{"look":{"type":"enum","values":["full","compact","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.4.2","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "bb540c15b990"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress","runtime":{"label":"Progress","output-label":"Output","steps":"Steps","state-waiting":"waiting","state-running":"running","state-done":"done","state-failed":"failed","state-skipped":"skipped","result-done":"Done","result-failed":"Failed","result-cancelled":"Cancelled","cancel":"Cancel","retry":"Retry","hide":"Hide","copy":"Copy the output","download":"Download the output","empty-output":"No output yet","result-partial":"Done with errors","state-word-running":"Running","state-word-paused":"Paused","state-word-partial":"With errors","state-word-cancelled":"Cancelled","state-word-waiting":"Queued","announce-paused":"Paused","announce-resumed":"Going on","figures":"{value} of {total}{unit} · {percent}%","figures-count":"{value}{unit}","percent":"{percent}%","estimating":"estimating time…","remaining":"about {time} left","remaining-short":"{time}","remaining-less":"less than a minute left","remaining-less-short":"< 1 min","minutes":"{n} min","hours":"{h} h {m} min","took":"took {time}","errors-shown":{"one":"Errors: the first {n} of {total}","other":"Errors: the first {n} of {total}"},"more-errors":{"one":"{n} more error","other":"{n} more errors"},"errors-count":{"one":"{n} error","other":"{n} errors"},"no-errors":"no errors","retry-failed":"Retry failed","pause":"Pause","resume":"Continue","minimize":"Minimize","expand":"Expand","step-log":"Step log","counts":"Result","figures-plain":"{value} of {total}"},"events":{"cancel":{"label":"Cancel"},"retry":{"label":"Retry"},"close":{"label":"Hide"},"download":{"label":"Download the output"},"pause":{"label":"Pause"},"resume":{"label":"Continue"},"minimize":{"label":"Minimize"},"expand":{"label":"Expand"},"report":{"label":"Errors"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress","runtime":{"label":"Progress","output-label":"Output","steps":"Steps","state-waiting":"waiting","state-running":"running","state-done":"done","state-failed":"failed","state-skipped":"skipped","result-done":"Done","result-failed":"Failed","result-cancelled":"Cancelled","cancel":"Cancel","retry":"Retry","hide":"Hide","copy":"Copy the output","download":"Download the output","result-partial":"Done with errors","state-word-running":"Running","state-word-paused":"Paused","state-word-partial":"With errors","state-word-cancelled":"Cancelled","state-word-waiting":"Queued","announce-paused":"Paused","announce-resumed":"Going on","announce-progress":"{value} of {total}{unit}, {percent}%","announce-count":"{value}{unit}","figures":"{value} of {total}{unit} · {percent}%","figures-count":"{value}{unit}","percent":"{percent}%","estimating":"estimating time…","remaining":"about {time} left","remaining-short":"{time}","remaining-less":"less than a minute left","remaining-less-short":"< 1 min","minutes":"{n} min","hours":"{h} h {m} min","took":"took {time}","errors-shown":{"one":"Errors: the first {n} of {total}","other":"Errors: the first {n} of {total}"},"more-errors":{"one":"{n} more error","other":"{n} more errors"},"errors-count":{"one":"{n} error","other":"{n} errors"},"no-errors":"no errors","retry-failed":"Retry failed","pause":"Pause","resume":"Continue","minimize":"Minimize","expand":"Expand","step-log":"Step log","counts":"Result","figures-plain":"{value} of {total}"},"events":{"cancel":{"label":"Cancel"},"retry":{"label":"Retry"},"close":{"label":"Hide"},"download":{"label":"Download the output"},"pause":{"label":"Pause"},"resume":{"label":"Continue"},"minimize":{"label":"Minimize"},"expand":{"label":"Expand"},"report":{"label":"Errors"}}}');
 
 /***/ },
 
 /***/ "7e1b23a85a40"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Ход выполнения","runtime":{"label":"Ход выполнения","output-label":"Вывод","steps":"Шаги","state-waiting":"ожидает","state-running":"выполняется","state-done":"готово","state-failed":"не удалось","state-skipped":"пропущен","result-done":"Готово","result-failed":"Не удалось","result-cancelled":"Отменено","cancel":"Отменить","retry":"Повторить","hide":"Скрыть","copy":"Скопировать вывод","download":"Скачать вывод","empty-output":"Вывода пока нет","result-partial":"Готово с ошибками","state-word-running":"Идёт","state-word-paused":"Пауза","state-word-partial":"С ошибками","state-word-cancelled":"Отменено","state-word-waiting":"В очереди","announce-paused":"Пауза","announce-resumed":"Продолжается","figures":"{value} из {total}{unit} · {percent} %","figures-count":"{value}{unit}","percent":"{percent} %","estimating":"оцениваем время…","remaining":"осталось ≈ {time}","remaining-short":"{time}","remaining-less":"осталось меньше минуты","remaining-less-short":"< 1 мин","minutes":"{n} мин","hours":"{h} ч {m} мин","took":"заняло {time}","errors-shown":{"one":"Ошибки: первая {n} из {total}","few":"Ошибки: первые {n} из {total}","many":"Ошибки: первые {n} из {total}","other":"Ошибки: первые {n} из {total}"},"more-errors":{"one":"Ещё {n} ошибка","few":"Ещё {n} ошибки","many":"Ещё {n} ошибок","other":"Ещё {n} ошибки"},"errors-count":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"no-errors":"ошибок нет","retry-failed":"Повторить неудачные","pause":"Пауза","resume":"Продолжить","minimize":"Свернуть","expand":"Развернуть","step-log":"Журнал шага","counts":"Итог","figures-plain":"{value} из {total}"},"events":{"cancel":{"label":"Отменить"},"retry":{"label":"Повторить"},"close":{"label":"Скрыть"},"download":{"label":"Скачать вывод"},"pause":{"label":"Пауза"},"resume":{"label":"Продолжить"},"minimize":{"label":"Свернуть"},"expand":{"label":"Развернуть"},"report":{"label":"Ошибки"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Ход выполнения","runtime":{"label":"Ход выполнения","output-label":"Вывод","steps":"Шаги","state-waiting":"ожидает","state-running":"выполняется","state-done":"готово","state-failed":"не удалось","state-skipped":"пропущен","result-done":"Готово","result-failed":"Не удалось","result-cancelled":"Отменено","cancel":"Отменить","retry":"Повторить","hide":"Скрыть","copy":"Скопировать вывод","download":"Скачать вывод","result-partial":"Готово с ошибками","state-word-running":"Идёт","state-word-paused":"Пауза","state-word-partial":"С ошибками","state-word-cancelled":"Отменено","state-word-waiting":"В очереди","announce-paused":"Пауза","announce-resumed":"Продолжается","announce-progress":"{value} из {total}{unit}, {percent} %","announce-count":"{value}{unit}","figures":"{value} из {total}{unit} · {percent} %","figures-count":"{value}{unit}","percent":"{percent} %","estimating":"оцениваем время…","remaining":"осталось ≈ {time}","remaining-short":"{time}","remaining-less":"осталось меньше минуты","remaining-less-short":"< 1 мин","minutes":"{n} мин","hours":"{h} ч {m} мин","took":"заняло {time}","errors-shown":{"one":"Ошибки: первая {n} из {total}","few":"Ошибки: первые {n} из {total}","many":"Ошибки: первые {n} из {total}","other":"Ошибки: первые {n} из {total}"},"more-errors":{"one":"Ещё {n} ошибка","few":"Ещё {n} ошибки","many":"Ещё {n} ошибок","other":"Ещё {n} ошибки"},"errors-count":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"no-errors":"ошибок нет","retry-failed":"Повторить неудачные","pause":"Пауза","resume":"Продолжить","minimize":"Свернуть","expand":"Развернуть","step-log":"Журнал шага","counts":"Итог","figures-plain":"{value} из {total}"},"events":{"cancel":{"label":"Отменить"},"retry":{"label":"Повторить"},"close":{"label":"Скрыть"},"download":{"label":"Скачать вывод"},"pause":{"label":"Пауза"},"resume":{"label":"Продолжить"},"minimize":{"label":"Свернуть"},"expand":{"label":"Развернуть"},"report":{"label":"Ошибки"}}}');
 
 /***/ }
 

@@ -21,6 +21,70 @@
     --sf-highlight-line-number: var(--sf-on-surface-variant);
     --sf-highlight-line-divider: var(--sf-outline-variant);
   }
+  .theme-light .sf-code-surface {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-light .hljs {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-dark .sf-code-surface {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-dark .hljs {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
   .theme-light pre code.hljs,
   .theme-dark pre code.hljs {
     display: block;
@@ -33,7 +97,7 @@
   }
   .theme-light .hljs,
   .theme-dark .hljs {
-    color: var(--sf-highlight-text);
+    color: var(--sf-highlight--text);
     background: var(--sf-highlight-background);
   }
   .theme-light .hljs-doctag,
@@ -50,7 +114,7 @@
   .theme-dark .hljs-template-variable,
   .theme-dark .hljs-type,
   .theme-dark .hljs-variable.language_ {
-    color: var(--sf-highlight-keyword);
+    color: var(--sf-highlight--keyword);
   }
   .theme-light .hljs-title,
   .theme-light .hljs-title.class_,
@@ -60,7 +124,7 @@
   .theme-dark .hljs-title.class_,
   .theme-dark .hljs-title.class_.inherited__,
   .theme-dark .hljs-title.function_ {
-    color: var(--sf-highlight-title);
+    color: var(--sf-highlight--title);
   }
   .theme-light .hljs-attr,
   .theme-light .hljs-attribute,
@@ -82,7 +146,7 @@
   .theme-dark .hljs-selector-class,
   .theme-dark .hljs-selector-id,
   .theme-dark .hljs-variable {
-    color: var(--sf-highlight-attribute);
+    color: var(--sf-highlight--attribute);
   }
   .theme-light .hljs-meta .hljs-string,
   .theme-light .hljs-regexp,
@@ -90,13 +154,13 @@
   .theme-dark .hljs-meta .hljs-string,
   .theme-dark .hljs-regexp,
   .theme-dark .hljs-string {
-    color: var(--sf-highlight-string);
+    color: var(--sf-highlight--string);
   }
   .theme-light .hljs-built_in,
   .theme-light .hljs-symbol,
   .theme-dark .hljs-built_in,
   .theme-dark .hljs-symbol {
-    color: var(--sf-highlight-built-in);
+    color: var(--sf-highlight--built-in);
   }
   .theme-light .hljs-code,
   .theme-light .hljs-comment,
@@ -104,7 +168,7 @@
   .theme-dark .hljs-code,
   .theme-dark .hljs-comment,
   .theme-dark .hljs-formula {
-    color: var(--sf-highlight-comment);
+    color: var(--sf-highlight--comment);
   }
   .theme-light .hljs-name,
   .theme-light .hljs-quote,
@@ -114,7 +178,7 @@
   .theme-dark .hljs-quote,
   .theme-dark .hljs-selector-pseudo,
   .theme-dark .hljs-selector-tag {
-    color: var(--sf-highlight-tag);
+    color: var(--sf-highlight--tag);
   }
   .theme-light .hljs-subst,
   .theme-light .hljs-emphasis,
@@ -122,16 +186,16 @@
   .theme-dark .hljs-subst,
   .theme-dark .hljs-emphasis,
   .theme-dark .hljs-strong {
-    color: var(--sf-highlight-text);
+    color: var(--sf-highlight--text);
   }
   .theme-light .hljs-section,
   .theme-dark .hljs-section {
-    color: var(--sf-highlight-section);
+    color: var(--sf-highlight--section);
     font-weight: var(--sf-font-weight-bold);
   }
   .theme-light .hljs-bullet,
   .theme-dark .hljs-bullet {
-    color: var(--sf-highlight-bullet);
+    color: var(--sf-highlight--bullet);
   }
   .theme-light .hljs-emphasis,
   .theme-dark .hljs-emphasis {
@@ -143,17 +207,17 @@
   }
   .theme-light .hljs-addition,
   .theme-dark .hljs-addition {
-    color: var(--sf-highlight-addition);
+    color: var(--sf-highlight--addition);
     background-color: var(--sf-highlight-addition-background);
   }
   .theme-light .hljs-deletion,
   .theme-dark .hljs-deletion {
-    color: var(--sf-highlight-deletion);
+    color: var(--sf-highlight--deletion);
     background-color: var(--sf-highlight-deletion-background);
   }
   .theme-light .hljs-punctuation,
   .theme-dark .hljs-punctuation {
-    color: var(--sf-highlight-punctuation);
+    color: var(--sf-highlight--punctuation);
   }
 }
 @layer sf.components {
@@ -220,6 +284,7 @@
     -webkit-padding-end: var(--sf-space-1\/2);
             padding-inline-end: var(--sf-space-1\/2);
     color: var(--sf-on-surface-variant);
+    color: var(--sf-place--ink-variant, var(--sf-on-surface-variant));
     text-align: end;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -287,6 +352,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* Wrap and copy are a button group (C105 H5). */
+    -webkit-column-gap: var(--sf-space-1\/3);
+       -moz-column-gap: var(--sf-space-1\/3);
+            column-gap: var(--sf-space-1\/3);
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
   }
@@ -294,6 +363,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* Wrap and copy are a button group (C105 H5). */
+    -webkit-column-gap: var(--sf-space-1\/3);
+       -moz-column-gap: var(--sf-space-1\/3);
+            column-gap: var(--sf-space-1\/3);
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
   }
@@ -347,8 +420,10 @@
     min-width: 0;
     overflow: hidden;
     margin: 0;
+    /* On a grey plate the plate is the fill: the place hook draws none
+       (--sf-place--fill-surface, core mix/_mix__places.scss). */
     background: var(--sf-surface-container);
-    background: var(--sf-highlight-background-color, var(--sf-surface-container));
+    background: var(--sf-highlight-background-color, var(--sf-place--fill-surface, var(--sf-surface-container)));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     border: var(--sf-px) solid var(--sf-outline-variant);
     border: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
@@ -488,7 +563,7 @@
     padding-top: 0;
     padding-bottom: 0;
     text-align: center;
-    color: var(--sf-highlight-line-number);
+    color: var(--sf-highlight--line-number);
     vertical-align: top;
     /* your custom style here */
   }

@@ -10,8 +10,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NEW_TAB_WORDS: () => (/* binding */ NEW_TAB_WORDS),
 /* harmony export */   bindDownloadFile: () => (/* binding */ bindDownloadFile),
 /* harmony export */   buildAnchorDownload: () => (/* binding */ buildAnchorDownload),
+/* harmony export */   fileSaid: () => (/* binding */ fileSaid),
 /* harmony export */   initExistingDownloadFiles: () => (/* binding */ initExistingDownloadFiles),
 /* harmony export */   nameFromHref: () => (/* binding */ nameFromHref),
+/* harmony export */   spokenFileSize: () => (/* binding */ spokenFileSize),
 /* harmony export */   unbindDownloadFile: () => (/* binding */ unbindDownloadFile)
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
@@ -78,10 +80,28 @@ function isSameDocument(href) {
   } catch {
     return false;
   }
+} // Only a file on this page's own server is asked for its size (decision
+// C51, docs pre-check 2026-11-10 DF-15): a HEAD to another origin fails
+// without CORS and prints an error, and a server that does not answer HEAD
+// is asked for nothing. An opaque origin (a sandboxed frame) is never this
+// page's own. Everywhere else the page passes file-size.
+
+
+function isSameOriginHttp(href) {
+  if (typeof document === 'undefined' || typeof URL !== 'function') return false;
+
+  try {
+    const target = new URL(href, document.baseURI);
+    const own = globalThis.origin ?? new URL(document.URL).origin;
+    return /^https?:$/u.test(target.protocol) && target.origin === own;
+  } catch {
+    return false;
+  }
 }
 
 async function resolveRemoteFileSize(href, node = null) {
   if (!href || LOCAL_ADDRESS.test(href) || isSameDocument(href)) return '';
+  if (!isSameOriginHttp(href)) return '';
 
   try {
     const response = await fetch(href, {
@@ -115,7 +135,111 @@ const NEW_TAB_WORDS = {
   en: {
     'new-tab': '(opens in a new tab)'
   }
-}; // A file's name when the markup gives none: the link's last part, decoded.
+}; // The size as it is said (decision C51): the unit in words, in the page's
+// language and in the number's form -- «112 байт», «2,4 мегабайта», «1 KB» is
+// «1 kilobyte». The visible «CSV · 112 Б» is hidden from a screen reader,
+// which hears «Смета.csv, CSV, 112 байт», the commas its pauses.
+
+const SIZE_WORDS = {
+  en: {
+    byte: {
+      one: 'byte',
+      other: 'bytes'
+    },
+    kilobyte: {
+      one: 'kilobyte',
+      other: 'kilobytes'
+    },
+    megabyte: {
+      one: 'megabyte',
+      other: 'megabytes'
+    },
+    gigabyte: {
+      one: 'gigabyte',
+      other: 'gigabytes'
+    },
+    terabyte: {
+      one: 'terabyte',
+      other: 'terabytes'
+    }
+  },
+  ru: {
+    byte: {
+      one: 'байт',
+      few: 'байта',
+      many: 'байт',
+      other: 'байта'
+    },
+    kilobyte: {
+      one: 'килобайт',
+      few: 'килобайта',
+      many: 'килобайт',
+      other: 'килобайта'
+    },
+    megabyte: {
+      one: 'мегабайт',
+      few: 'мегабайта',
+      many: 'мегабайт',
+      other: 'мегабайта'
+    },
+    gigabyte: {
+      one: 'гигабайт',
+      few: 'гигабайта',
+      many: 'гигабайт',
+      other: 'гигабайта'
+    },
+    terabyte: {
+      one: 'терабайт',
+      few: 'терабайта',
+      many: 'терабайт',
+      other: 'терабайта'
+    }
+  }
+};
+const SIZE_UNIT_WORDS = {
+  'б': 'byte',
+  b: 'byte',
+  'байт': 'byte',
+  'байта': 'byte',
+  byte: 'byte',
+  bytes: 'byte',
+  'кб': 'kilobyte',
+  kb: 'kilobyte',
+  kib: 'kilobyte',
+  'мб': 'megabyte',
+  mb: 'megabyte',
+  mib: 'megabyte',
+  'гб': 'gigabyte',
+  gb: 'gigabyte',
+  gib: 'gigabyte',
+  'тб': 'terabyte',
+  tb: 'terabyte',
+  tib: 'terabyte'
+};
+const SIZE_TEXT = /^\s*(\d[\d\s\u00a0\u202f.,]*?)\s*([^\d\s.,]+)\.?\s*$/u;
+/** A size text as a screen reader should say it: «2,4 МБ» -> «2,4 мегабайта». */
+
+function spokenFileSize(text, node = null) {
+  const value = String(text || '').trim();
+  const match = SIZE_TEXT.exec(value);
+  if (!match) return value;
+  const key = SIZE_UNIT_WORDS[match[2].toLowerCase()];
+  if (!key) return value;
+  const count = Number(match[1].replace(/[\s\u00a0\u202f]/gu, '').replace(',', '.'));
+  const word = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SIZE_WORDS, key, node, {
+    component: 'download-file',
+    count: Number.isFinite(count) ? count : undefined
+  });
+  return `${match[1].trim()} ${word}`;
+}
+/** The hidden words after the name: «, CSV, 112 байт» -- empty with neither. */
+
+
+function fileSaid(fileType, fileSize, node = null) {
+  const parts = [String(fileType || '').trim(), spokenFileSize(fileSize, node)].filter(Boolean);
+  return parts.length ? `, ${parts.join(', ')}` : '';
+} // A file's name when the markup gives none: the link's last part, decoded.
+
 
 function nameFromHref(href) {
   const path = String(href || '').split(/[?#]/u)[0];
@@ -136,6 +260,22 @@ function getRootLink(root) {
 
 function getSizeNode(root) {
   return root?.querySelector?.('.sf-download-file-file-size') || null;
+} // A file's own row, the link or the button: a row that cannot be pressed (a
+// file that could not be made, or one ready to be fetched by its «Скачать»)
+// is a group or a plain line, and is not bound.
+// The name as shown: the name element less the words a screen reader hears
+// inside it («, CSV, 112 байт»).
+
+
+function shownFileName(node) {
+  if (!node) return '';
+  const copy = node.cloneNode(true);
+  copy.querySelectorAll('.sf-download-file__said').forEach(said => said.remove());
+  return String(copy.textContent || '').trim();
+}
+
+function isPressableRoot(root) {
+  return Boolean(root?.matches?.('a, button'));
 }
 
 function getRootHref(root) {
@@ -150,7 +290,7 @@ function isDisabledRoot(root) {
   return root.classList.contains('disabled') || root.hasAttribute('disabled') || root.getAttribute('aria-disabled') === 'true';
 }
 
-async function resolveAndApplyFileSize(root) {
+async function resolveAndApplyFileSize(root, onSize = null) {
   if (!root || isDisabledRoot(root)) return;
   const sizeNode = getSizeNode(root);
   if (!sizeNode) return;
@@ -158,8 +298,20 @@ async function resolveAndApplyFileSize(root) {
   const href = getRootHref(root);
   if (!href) return;
   const resolvedSize = await resolveRemoteFileSize(href, root);
-  if (!resolvedSize || !sizeNode.isConnected) return;
+  if (!resolvedSize || !sizeNode.isConnected) return; // An element that draws the row itself takes the size and draws it (a
+  // text written under its template would be lost on the next drawing).
+
+  if (typeof onSize === 'function') {
+    onSize(resolvedSize);
+    return;
+  }
+
   sizeNode.textContent = resolvedSize;
+  const saidNode = root.querySelector('.sf-download-file__said');
+
+  if (saidNode) {
+    saidNode.textContent = fileSaid(root.querySelector('.sf-download-file__type')?.textContent || '', resolvedSize, root);
+  }
 }
 
 function emitDownloadFileClick(root, href, fileName, download) {
@@ -178,9 +330,10 @@ function emitDownloadFileClick(root, href, fileName, download) {
 
 
 function bindDownloadFile(root, {
-  onActivate
+  onActivate,
+  onSize
 } = {}) {
-  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1') return;
+  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1' || !isPressableRoot(root)) return;
 
   const handleClick = event => {
     // A file being prepared (aria-busy) takes no second press: the first one
@@ -198,7 +351,7 @@ function bindDownloadFile(root, {
     }
 
     const href = getRootHref(root);
-    const fileName = root.getAttribute('download') || root.dataset.fileName || root.querySelector('.sf-download-file__name, .sf-download-file-file-name')?.textContent?.trim() || '';
+    const fileName = root.getAttribute('download') || root.dataset.fileName || shownFileName(root.querySelector('.sf-download-file__name, .sf-download-file-file-name')) || '';
     const download = root.hasAttribute('download') || root.dataset.download === 'true';
 
     if (typeof onActivate === 'function') {
@@ -229,7 +382,7 @@ function bindDownloadFile(root, {
   root.addEventListener('click', handleClick);
   root.__sfDownloadFileClick = handleClick;
   root.dataset[DOWNLOAD_FILE_BOUND_FLAG] = '1';
-  resolveAndApplyFileSize(root);
+  resolveAndApplyFileSize(root, onSize);
 }
 
 function unbindDownloadFile(root) {
@@ -266,7 +419,8 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       href = '',
       download = true,
       disabled = false,
-      target = ''
+      target = '',
+      fullWidth = false
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const isDisabled = toBoolean(disabled, false);
@@ -300,7 +454,9 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
 
 
     root.classList.add('sf-download-file');
-    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`);
+    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`); // The row is as wide as its text (decision C51); full-width stretches it.
+
+    if (toBoolean(fullWidth, false)) root.classList.add('sf-download-file--full-width');
 
     if (!isDisabled) {
       root.classList.add('cursor-pointer', 'transition');
@@ -321,14 +477,16 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     const iconNode = document.createElement('i');
     iconNode.classList.add('sf-download-file__icon', 'sf-icon');
     iconNode.setAttribute('aria-hidden', 'true');
-    iconNode.textContent = String(icon || 'download');
+    iconNode.textContent = String(icon || 'download'); // The name, then the type and the size right after it (decision C51); on
+    // a phone the two go under the name. The name is never cut.
+
+    const textNode = document.createElement('span');
+    textNode.classList.add('sf-download-file__text');
     const fileNameNode = document.createElement('span');
     fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
-    fileNameNode.textContent = shownName; // The name is one line cut with an ellipsis (component.download-file
-    // 1.1.0): the title shows the whole of it.
-
-    if (shownName) fileNameNode.title = shownName;
-    container.append(iconNode, fileNameNode);
+    fileNameNode.textContent = shownName;
+    container.append(iconNode, textNode);
+    textNode.append(fileNameNode);
 
     if (opensTab) {
       const tabNode = document.createElement('i');
@@ -338,12 +496,21 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       const tabWords = document.createElement('span');
       tabWords.classList.add('sf-download-file__tab-words');
       tabWords.textContent = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(NEW_TAB_WORDS, 'new-tab', document.documentElement, 'download-file');
-      container.append(tabNode, tabWords);
-    } // The type and the size are two facts (decision C25): «PDF · 2,4 МБ».
+      textNode.append(tabNode, tabWords);
+    } // What a screen reader hears after the name: «, CSV, 112 байт» -- inside
+    // the name, so it is heard as one line with it (after the tab words when
+    // the link opens a tab).
 
+
+    const saidNode = document.createElement('span');
+    saidNode.classList.add('sf-download-file__said');
+    saidNode.textContent = fileSaid(fileType, fileSize, document.documentElement);
+    (opensTab ? textNode : fileNameNode).append(saidNode); // The type and the size are two facts (decision C25): «PDF · 2,4 МБ»,
+    // seen; the words above are what is heard.
 
     const metaNode = document.createElement('span');
     metaNode.classList.add('sf-download-file__meta');
+    metaNode.setAttribute('aria-hidden', 'true');
 
     if (fileType) {
       const fileTypeNode = document.createElement('span');
@@ -356,7 +523,8 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');
     fileSizeNode.textContent = String(fileSize || '');
     metaNode.append(fileSizeNode);
-    wrap.append(container, metaNode);
+    textNode.append(metaNode);
+    wrap.append(container);
     root.append(wrap);
     this.href = String(href || '');
     this.download = canLink && !opensTab && toBoolean(download, true);

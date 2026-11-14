@@ -441,12 +441,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("34addf781b5b");
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("79f8b9b70d88");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c402762d3a76");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("65ba19e2ea5c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("78f638fb05ab");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("60a3f9a6662c");
+/* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d9c5a43b5214");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("79f8b9b70d88");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c402762d3a76");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("65ba19e2ea5c");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("78f638fb05ab");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__);
@@ -462,7 +464,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'pressed', 'label-pressed', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
+
+
+const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'href', 'target', 'rel', 'download', 'pressed', 'label-pressed', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -471,6 +475,24 @@ function applyButtonAttributes(host, button) {
     storageKey: '__sfIconButtonForwardedDataAttributes',
     targetStorageKey: '__sfIconButtonAttributeKeys'
   });
+} // href (1.9.0) takes sf-button's addresses: a relative one, a fragment,
+// http(s), mailto and tel. Any other scheme (javascript:, data:) draws the
+// icon button as a button.
+
+
+const SAFE_HREF = /^(?:[^:/?#]*(?:[/?#]|$)|https?:|mailto:|tel:)/iu;
+
+function linkAddress(value) {
+  const href = String(value || '').trim();
+  return href && SAFE_HREF.test(href) ? href : '';
+} // A link that opens a new tab says noopener noreferrer unless the page wrote
+// its own rel, as sf-button's.
+
+
+function linkRelation(target, rel) {
+  const own = String(rel || '').trim();
+  if (own) return own;
+  return String(target || '').trim().toLowerCase() === '_blank' ? 'noopener noreferrer' : '';
 } // sf-button-icon from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4): the settings are the attributes and properties
 // core/js/element-manifest.js makes from the manifest. The legacy names type,
@@ -479,14 +501,14 @@ function applyButtonAttributes(host, button) {
 // default, as sf-button's does.
 
 
-const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 }); // The looks C15 retired (docs review R033): surface is drawn as tonal with
 // the on-surface scheme, secondary as on-surface-variant. surface changes two
 // settings, which a value alias cannot do, so the component reads the word
@@ -512,9 +534,19 @@ class SfIconButton extends IconButtonElement {
 
   get retiredSurface() {
     return (this.getAttribute('appearance') ?? this.getAttribute('type')) === RETIRED_APPEARANCE;
+  } // A danger icon button is filled, outline or ghost (decision C116,
+  // #q-danger-looks): tonal, and the retired surface, with status danger draw
+  // as outline until 2027-01-01 (helpers/button-set.js, change journal
+  // value-button-set-c116).
+
+
+  get dangerFormer() {
+    return (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_8__.dangerLook)(this.getAttribute('appearance') ?? this.getAttribute('type'), this.getAttribute('status')).former;
   }
 
   get appearance() {
+    if (this.dangerFormer) return 'outline';
+
     if (this.retiredSurface) {
       (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({
         component: 'sf-button-icon',
@@ -605,7 +637,18 @@ class SfIconButton extends IconButtonElement {
   templateContext() {
     const props = this.getPropsContext();
     const cycle = this.cycleState();
-    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.warnCycleToggle)(this, ['pressed', 'label-pressed']);
+    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.warnCycleToggle)(this, ['pressed', 'label-pressed']); // success, warning, info: no such icon buttons (C13, BS-1); said once per page.
+
+    (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_7__.warnUnknownControlStatus)('sf-button-icon', this.getAttribute('status')); // A danger tonal or surface (C116); said once per page.
+
+    const dangerFormer = this.dangerFormer;
+    if (dangerFormer) (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_8__.sayButtonSetFormers)('sf-button-icon', [{
+      attribute: 'appearance',
+      from: dangerFormer,
+      to: 'outline',
+      danger: true,
+      drawn: 'appearance="outline" status="danger" (a danger icon button is filled, outline or ghost)'
+    }]);
     const announce = Boolean(cycle && this.__sfCycleAnnounce);
     this.__sfCycleAnnounce = false; // The icons a press can show, asked for before the press (R074).
 
@@ -647,6 +690,12 @@ class SfIconButton extends IconButtonElement {
       // tightness step; a value outside the list reads as default.
       height: this.height,
       badge: this.badgeState?.(),
+      // href (1.9.0): a link with the icon button's look; null download is
+      // none, '' the server's name.
+      href: linkAddress(this.getAttribute('href')),
+      linkTarget: this.getAttribute('target') || '',
+      linkRel: linkRelation(this.getAttribute('target'), this.getAttribute('rel')),
+      linkDownload: this.hasAttribute('download') ? this.getAttribute('download') : null,
       component: this
     });
   } // The count or dot on the button and what it says (simai/ui-source#12).
@@ -663,9 +712,10 @@ class SfIconButton extends IconButtonElement {
   resolveUpdateMode(changedAttributes = []) {
     // loading is drawn by the template, not patched: it puts the spinner in
     // place of the icon (simai/ui-source#10).
-    const directPatchAttributes = ['disabled', 'aria-label', 'icon']; // A cycle's name and icon come from its item: drawn, not patched.
+    const directPatchAttributes = ['disabled', 'aria-label', 'icon']; // A cycle's name and icon come from its item: drawn, not patched; a link
+    // is drawn too (disabled takes its href away).
 
-    if (this.cycleState()) return 'lit';
+    if (this.cycleState() || this.hasAttribute('href')) return 'lit';
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -971,7 +1021,31 @@ function renderIconButtonTemplate(context) {
     className: 'sf-icon-button-spinner'
   }) : context.component?.hasSlotContent?.('icon') ? context.component.getSlotContent('icon') : (kind ?? variant) === 'close' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <sf-button-close root-class="pointer-event-none" size="${size || '1'}"></sf-button-close>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-event-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`;
+                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-event-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`; // href (1.9.0, decision C51): a link with the icon button's look, as
+  // sf-button's -- the quiet «Скачать <name>» of a table row. Disabled or
+  // loading, the link has no href, so it is not reached or followed, and
+  // says aria-disabled; pressed and native-type do not apply to a link.
+
+  if (context.href) {
+    const inactive = Boolean(disabled || loading);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <a
+                href=${inactive ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.href}
+                target=${context.linkTarget || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                rel=${context.linkRel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                download=${context.linkDownload === null || inactive ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.linkDownload}
+                class=${(inactive && !rootClasses.includes('disabled') ? [...rootClasses, 'disabled'] : rootClasses).join(' ')}
+                style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                role=${inactive ? 'link' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-disabled=${inactive ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${name ? (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.nameWithBadge)(name, badge?.phrase) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >
+            ${iconContent}${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.renderAnchoredBadge)(badge)}${name ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.renderAnchoredBadgeText)(badge, false)}
+        </a>
+    `;
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 type=${nativeType}
@@ -1058,6 +1132,215 @@ function renderAnchoredBadgeText(badge, after = true) {
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "d9c5a43b5214"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BUTTON_SET_REMOVE_AFTER: () => (/* binding */ BUTTON_SET_REMOVE_AFTER),
+/* harmony export */   BUTTON_SET_SINCE: () => (/* binding */ BUTTON_SET_SINCE),
+/* harmony export */   buttonSetLook: () => (/* binding */ buttonSetLook),
+/* harmony export */   dangerLook: () => (/* binding */ dangerLook),
+/* harmony export */   isDangerStatus: () => (/* binding */ isDangerStatus),
+/* harmony export */   sayButtonSetFormers: () => (/* binding */ sayButtonSetFormers)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// The button set (owner decision C116, 2026-11-13; ui-control research
+// 2026-11-13-buttons-system, prototype buttons-system.html). Three words of a
+// button become former names until 2027-01-01 and draw as their successors:
+//
+// - scheme="secondary" on sf-button draws as on-surface (#q-secondary). The
+//   secondary colour stays in core for badges, tabs and segments; the icon
+//   button already reads it as on-surface-variant (C15, 2026-11-08).
+// - appearance="surface" on sf-button draws as the soft grey button, tonal
+//   with the on-surface scheme (#q-surface, C113).
+// - a danger button keeps three looks -- filled (the last confirmation),
+//   outline (opens a confirmation) and the fill-less icon in a row
+//   (#q-danger-looks); tonal or surface with status danger draws as outline,
+//   on sf-button and sf-button-icon alike.
+//
+// Each word is noted in SF.deprecations and said once per page in the console
+// for each component and word, whether or not the page opted in to the notes,
+// as sf-button's spacing and the BS-1 status warning are. Every bundle carries
+// its own copy of this module, so the words already said live on one shared
+// global.
+
+const BUTTON_SET_SINCE = '2026-11-13';
+const BUTTON_SET_REMOVE_AFTER = '2027-01-01';
+const DANGER = new Set(['danger', 'error', 'critical']);
+
+function saidWords() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfButtonSetWarned instanceof Set)) {
+    Object.defineProperty(root, '__sfButtonSetWarned', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfButtonSetWarned;
+} // Whether a status word paints the control as danger (C13: error and critical
+// are danger's former names on a control).
+
+
+function isDangerStatus(status) {
+  return DANGER.has(String(status ?? ''));
+} // A danger control's look: tonal and surface draw as outline. Answers the look
+// drawn and the former word, or '' when the look is one of danger's own.
+
+function dangerLook(appearance, status) {
+  if (!isDangerStatus(status)) return {
+    appearance,
+    former: ''
+  };
+  if (appearance === 'tonal' || appearance === 'surface') return {
+    appearance: 'outline',
+    former: appearance
+  };
+  return {
+    appearance,
+    former: ''
+  };
+} // sf-button's look under C116. `appearance` and `scheme` are the words the page
+// wrote (after the dated aliases: link is already ghost); answers the look and
+// the colour the template draws and the former words met, each
+// {attribute, from, to, drawn, danger?}.
+
+function buttonSetLook({
+  appearance,
+  scheme,
+  status
+} = {}) {
+  const formers = [];
+  let look = appearance;
+  let colour = scheme;
+  const danger = dangerLook(look, status);
+
+  if (danger.former) {
+    formers.push({
+      attribute: 'appearance',
+      from: danger.former,
+      to: 'outline',
+      danger: true,
+      drawn: 'appearance="outline" status="danger" (a danger button is filled, outline or a fill-less icon)'
+    });
+    look = danger.appearance;
+  } else if (look === 'surface') {
+    formers.push({
+      attribute: 'appearance',
+      from: 'surface',
+      to: 'tonal',
+      drawn: 'appearance="tonal" scheme="on-surface"'
+    });
+    look = 'tonal';
+    colour = 'on-surface';
+  }
+
+  if (scheme === 'secondary') {
+    formers.push({
+      attribute: 'scheme',
+      from: 'secondary',
+      to: 'on-surface',
+      drawn: 'scheme="on-surface"'
+    });
+    colour = 'on-surface';
+  }
+
+  return {
+    appearance: look,
+    scheme: colour,
+    formers
+  };
+}
+
+function sentence(component, former) {
+  return `[SIMAI Framework] ${component}: ${former.attribute}="${former.from}"${former.danger ? ' with status="danger"' : ''} is a former name until ${BUTTON_SET_REMOVE_AFTER} and draws as ${former.drawn}; write that instead (rule C116). See contracts/changes/journal.json (value-button-set-c116).`;
+} // Notes each former word in SF.deprecations and says it once per page.
+
+
+function sayButtonSetFormers(component, formers = []) {
+  for (const former of formers) {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component,
+      tag: component,
+      kind: 'value',
+      attribute: former.attribute,
+      from: former.danger ? `${former.from} (status danger)` : former.from,
+      to: former.to,
+      since: BUTTON_SET_SINCE,
+      remove_after: BUTTON_SET_REMOVE_AFTER
+    });
+    const said = saidWords();
+    const key = `${component}|${former.attribute}|${former.from}|${former.to}`;
+    if (said.has(key)) continue;
+    said.add(key);
+    globalThis.console?.warn?.(sentence(component, former));
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "60a3f9a6662c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   warnUnknownControlStatus: () => (/* binding */ warnUnknownControlStatus)
+/* harmony export */ });
+// A control's status is danger alone (rule C13): a button, an icon button or
+// a menu item that deletes, discards or cannot be undone. error is its former
+// name (until 2027-01-01) and critical an older one. There are no success,
+// warning or info controls -- a result's colour belongs to a notice or a
+// badge (ui-control research 2026-11-13-button-schemes, R202, defect BS-1).
+// Such a word used to be dropped without a sound and the scheme colour drawn;
+// it still draws so, and the console now says it once per page for each
+// component and word.
+//
+// Every bundle carries its own copy of this module, so the words already said
+// live on one shared global, as SF.deprecations keeps its notes.
+const CONTROL_STATUSES = Object.freeze(['', 'danger', 'error', 'critical']);
+
+function saidWords() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfUnknownStatusWarned instanceof Set)) {
+    Object.defineProperty(root, '__sfUnknownStatusWarned', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfUnknownStatusWarned;
+} // Answers whether `value` is a status the control does not know, and says so
+// once per page. `allowed` narrows the words a component reads; `label` is how
+// the message names the setting (status="…" on a host, an item's status).
+
+
+function warnUnknownControlStatus(component, value, {
+  allowed = CONTROL_STATUSES,
+  label = 'status'
+} = {}) {
+  if (value === null || value === undefined) return false;
+  const word = String(value);
+  if (allowed.includes(word)) return false;
+  const said = saidWords();
+  const key = `${component}|${label}|${word}`;
+  if (said.has(key)) return true;
+  said.add(key);
+  globalThis.console?.warn?.(`[SIMAI Framework] ${component}: ${label}="${word}" is not a status of a control; a control's status is danger (rule C13), and there are no success, warning or info controls. Drawn without a status.`);
+  return true;
+}
 
 /***/ },
 
@@ -1513,7 +1796,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.8.4","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.10.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

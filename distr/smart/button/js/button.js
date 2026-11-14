@@ -72,6 +72,12 @@ const KEY_CAPS = {
   end: 'End',
   pageup: 'PgUp',
   pagedown: 'PgDn'
+}; // An Apple keyboard's own signs where they differ (component.kbd 1.3.3, CM-9
+// of ui-control research 2026-11-14-context-menu): forward delete is ⌦, as
+// macOS menus print it; Del is a Windows word.
+
+const MAC_KEY_CAPS = {
+  delete: '⌦'
 }; // The names of KeyboardEvent.key for the words above.
 
 const KEY_NAMES = {
@@ -149,7 +155,7 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
     modifiers.push(caps[name]);
   }
 
-  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  const key = (apple ? MAC_KEY_CAPS[parsed.key] : undefined) ?? KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
   return [...modifiers, key].map(text => ({
     text,
     square: [...text].length === 1
@@ -479,6 +485,395 @@ function createInlineSpinner({
 
 /***/ },
 
+/***/ "f28a9d913ce0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Generated from the `tag` rows of src/smart/*/aliases.json and the element_aliases of
+// src/core/contracts/packages/*.package.json by scripts/tag-alias-table.mjs; do not edit.
+// The dated tag aliases of the Framework and of its component packages, read by core/js/tag-aliases.js.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
+  from: 'sf-avatars',
+  to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-button-group',
+  to: 'sf-segmented',
+  since: '2026-11-08',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-change-confirm',
+  to: 'sf-confirm-change',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-close',
+  to: 'sf-button-close',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-code-input',
+  to: 'sf-input-code',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-color',
+  to: 'sf-input-color',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-composition-overlay',
+  to: 'sf-editor-overlay',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-content-editor',
+  to: 'sf-editor-content',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-context-menu',
+  to: 'sf-menu-context',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-copy-button',
+  to: 'sf-button-copy',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-country-code',
+  to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-data-view',
+  to: 'sf-view',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-datepicker',
+  to: 'sf-input-date',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-download-file',
+  to: 'sf-file-download',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-icon-button',
+  to: 'sf-button-icon',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-image-field',
+  to: 'sf-input-image',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-inline-editor',
+  to: 'sf-editor-inline',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-lookup',
+  to: 'sf-input-lookup',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-page-header',
+  to: 'sf-header-page',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-property-view',
+  to: 'sf-view-properties',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-quantity',
+  to: 'sf-input-quantity',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-range-slider',
+  to: 'sf-slider-range',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-rich-text',
+  to: 'sf-input-rich',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-site-header',
+  to: 'sf-header-site',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-table',
+  to: 'sf-view-table',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-textarea',
+  to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-thread-list',
+  to: 'sf-chat-threads',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+})]));
+
+/***/ },
+
+/***/ "4a85acfb05c1"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
+/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
+/* harmony export */   isTag: () => (/* binding */ isTag),
+/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
+/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
+/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
+/* harmony export */   tagNames: () => (/* binding */ tagNames),
+/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5dcef5de40cf");
+/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_alias_table_js__WEBPACK_IMPORTED_MODULE_1__);
+// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
+// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
+// component takes a new tag, the old tag keeps working until its
+// `remove_after` day:
+//
+// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
+//   subclass of the class that defines the new one (the Smart base calls it
+//   from define()). The Loader's rule lists the old tag beside the new one, so
+//   markup with the old tag alone loads the bundle.
+// - Note. The first old-tag element a page connects is noted in
+//   SF.deprecations (kind "tag") and named once on the console with the new tag
+//   and the date, whatever the page opted into: an element name is the most
+//   visible thing a page writes, and the old one is going.
+// - Script. Code that finds a renamed element by name asks for both names
+//   through one helper instead of a literal:
+//
+//     import {tagSelector, isTag} from '../../core/js/smart-base';
+//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
+//     if (isTag(node, 'sf-button-close')) ...
+//
+// - Sheets. A selector that names the new tag names the old one beside it in
+//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
+//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
+//   contract test tests/tag-aliases.contract.test.mjs holds both).
+//
+// The aliases are a static table (tag-aliases.generated.js, written by
+// scripts/tag-alias-table.mjs from every component's aliases.json and from the
+// element_aliases of the component package references,
+// contracts/packages/*.package.json), so a lookup finds an old tag before the
+// renamed component's bundle has run, a package's (sf-table, rename plan R2)
+// as well as the Framework's. A package's component adds its rows again when it
+// is defined, which matters only for a package the pair does not reference. Every copy of this
+// module shares one state on the page (a global symbol); the Smart bundles
+// reach it through the shared runtime (smart-base re-exports it).
+
+
+
+const STATE = Symbol.for('simai.sf.tag-aliases');
+
+function state() {
+  if (!globalThis[STATE]) {
+    const shared = {
+      byOld: new Map(),
+      byNew: new Map(),
+      noted: new Set()
+    };
+    Object.defineProperty(globalThis, STATE, {
+      value: shared,
+      configurable: true
+    });
+
+    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
+  }
+
+  return globalThis[STATE];
+}
+
+function addRow(shared, row) {
+  if (shared.byOld.has(row.from)) return;
+  shared.byOld.set(row.from, row);
+  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
+} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
+// already known, a package's are added here.
+
+
+function registerTagAliases(table, tag) {
+  const {
+    rows
+  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
+    tag
+  });
+  const shared = state();
+
+  for (const row of rows) addRow(shared, row);
+
+  return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
+} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
+
+function tagNames(tag) {
+  const name = String(tag || '').toLowerCase();
+  return [name, ...(state().byNew.get(name) ?? [])];
+} // A selector for the tag that matches its old names too:
+// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
+
+function tagSelector(tag) {
+  const names = tagNames(tag);
+  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
+} // Whether an element is the tag, under its own or an old name.
+
+function isTag(element, tag) {
+  const name = element?.localName;
+  return Boolean(name) && tagNames(tag).includes(name);
+} // The current name of a tag: 'sf-button-close' for 'sf-close'. An old tag the
+// page still has as an element of its own stays itself: a component package
+// built before its rename (rules naming sf-table alone) beside a pair whose
+// table already knows the new name, where the new tag would never upgrade.
+
+function canonicalTag(tag) {
+  const name = String(tag || '').toLowerCase();
+  const row = state().byOld.get(name);
+  if (!row) return name;
+  const own = globalThis.customElements?.get?.(name);
+  if (own && !own.sfTagAliasOf) return name;
+  let rules = null;
+
+  try {
+    rules = globalThis.SF?.Loader?.getCustomElementRules?.() ?? null;
+  } catch {
+    rules = null;
+  }
+
+  if (rules && rules[name] && !rules[row.to]) return name;
+  return row.to;
+} // Every open row: [{from, to, since, remove_after}].
+
+function listTagAliases() {
+  return [...state().byOld.values()].map(row => ({ ...row
+  }));
+} // The page met an element under an old name: once per old tag.
+
+function noteTagAlias(row) {
+  const shared = state();
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.to,
+    kind: 'tag',
+    from: row.from,
+    to: row.to,
+    tag: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    expired
+  });
+  if (shared.noted.has(row.from)) return;
+  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
+  // page opted in; the note here is for the rest.
+
+  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+  if (expired || optedIn) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+} // Defines each old tag of `tag` as a subclass of `Base` (the class that
+// defines `tag`), through `define(name, Class)`: the Smart base passes its
+// definition queue, so both names are defined in the same batch. Returns the
+// rows defined.
+
+function defineTagAliases(Base, tag, {
+  table = Base?.aliases,
+  define
+} = {}) {
+  if (table) registerTagAliases(table, tag);
+  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
+  const registry = globalThis.customElements;
+  const defined = [];
+
+  for (const row of rows) {
+    if (!registry || registry.get(row.from)) continue;
+
+    class TagAlias extends Base {
+      connectedCallback() {
+        noteTagAlias(row);
+        super.connectedCallback?.();
+      }
+
+    }
+
+    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
+      value: row.to
+    });
+    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
+    defined.push(row);
+  }
+
+  return defined;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
+  // SF.tags.selector('sf-button-close').
+
+  if (!globalThis.SF.tags) {
+    globalThis.SF.tags = Object.freeze({
+      names: tagNames,
+      selector: tagSelector,
+      is: isTag,
+      canonical: canonicalTag,
+      list: listTagAliases
+    });
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "1fab5b780b3d"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -490,14 +885,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9abcb852f1cf");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("151a293c8c90");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5bb33fb22db3");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("902a6f38915d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d7b6a56d1dd6");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("96bdb2ff5f5d");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("60a3f9a6662c");
+/* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d9c5a43b5214");
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("151a293c8c90");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("5bb33fb22db3");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("902a6f38915d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("d7b6a56d1dd6");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("96bdb2ff5f5d");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_3__);
@@ -515,7 +913,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "height", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "full-width", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // height (1.10.0, decision C27): the size's tightness steps. A value outside
+
+
+
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "height", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "full-width", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "menu", "split", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // height (1.10.0, decision C27): the size's tightness steps. A value outside
 // the list reads as default and is said once per button.
 
 const HEIGHTS = new Set(["low", "default", "high", "highest"]);
@@ -556,37 +957,117 @@ function noteSpacing(host) {
     configurable: true
   });
   globalThis.console?.warn?.("[SIMAI Framework] sf-button: spacing is deprecated until 2027-01-01 and draws the side padding only; write height=\"low|default|high|highest\" for the control height. See contracts/changes/journal.json (attribute-button-spacing-to-height).");
-} // surface with the quiet scheme on-surface-variant is retired (1.11.0,
-// following C15 on the icon buttons; buttons review 2026-11-09): on the
-// surface fill the quiet ink read 4.88:1 in the dark theme and a key on it
-// 4.38:1. The pair draws as surface with on-surface until 2027-01-01 (change
-// journal value-button-surface-quiet-scheme), noted in SF.deprecations and
-// said once per page in the console with its replacement. A combination of two
-// settings, so the component reads it itself rather than through a value alias.
+} // The button set (1.14.0, owner decision C116; helpers/button-set.js):
+// scheme="secondary" draws as on-surface, appearance="surface" as the soft grey
+// button (tonal + on-surface, C113), and a danger button that asks for tonal or
+// surface draws as outline. Each is a former name until 2027-01-01, noted in
+// SF.deprecations and said once per page (change journal
+// value-button-set-c116). surface with on-surface-variant, retired in 1.11.0
+// (value-button-surface-quiet-scheme), is part of the retired surface now and
+// draws the same soft grey button. Words of two settings, so the component
+// reads them itself rather than through value aliases.
 
 
-function retiredSurfaceQuiet(host) {
-  const appearance = host.getAttribute("appearance") ?? host.getAttribute("type");
-  return appearance === "surface" && host.getAttribute("scheme") === "on-surface-variant";
+function setLook(host) {
+  return (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_7__.buttonSetLook)({
+    appearance: host.getAttribute("appearance") ?? host.getAttribute("type"),
+    scheme: host.getAttribute("scheme"),
+    status: host.getAttribute("status")
+  });
+} // menu and split (1.15.0, owner decision C119; ui-control research
+// 2026-11-13-buttons-system R206). menu is a list of sf-menu-context entries;
+// the attribute takes JSON, the property a list. With menu alone the button is
+// a menu button: the whole button opens the menu and draws its own arrow. With
+// split as well it is a split button: the label part acts (press) and a square
+// arrow part of the same height opens the menu, two tab stops, joined like a
+// button group. A split button is the main (default primary) or the regular
+// (outline) look only; another look, or a danger one, draws as a menu button
+// and says so once per page.
+
+
+function parseMenu(value) {
+  if (Array.isArray(value)) return value;
+  if (value === null || value === undefined || value === "") return [];
+
+  if (typeof value === "string") {
+    try {
+      const list = JSON.parse(value);
+      return Array.isArray(list) ? list : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
 }
 
-function noteSurfaceQuiet() {
-  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
-    component: "sf-button",
-    kind: "value",
-    attribute: "scheme",
-    from: "on-surface-variant",
-    to: "on-surface",
-    since: "2026-11-09",
-    remove_after: "2027-01-01"
-  });
+function menuEntries(host) {
+  const list = host.getProp?.("menu");
+  return Array.isArray(list) ? list.filter(entry => entry && typeof entry === "object") : [];
+} // Said once per page for each reason (every bundle carries its own copy of
+// this module, so the set lives on the shared global, as BS-1's does).
+
+
+function sayMenuOnce(key, message) {
   const root = globalThis.SF = globalThis.SF || {};
-  if (root.__sfButtonSurfaceQuietWarned) return;
-  Object.defineProperty(root, "__sfButtonSurfaceQuietWarned", {
-    value: true,
-    configurable: true
-  });
-  globalThis.console?.warn?.("[SIMAI Framework] sf-button: appearance=\"surface\" with scheme=\"on-surface-variant\" is retired until 2027-01-01 and draws as scheme=\"on-surface\"; write scheme=\"on-surface\", or appearance=\"tonal\" or \"outline\" to keep the quiet scheme. See contracts/changes/journal.json (value-button-surface-quiet-scheme).");
+
+  if (!(root.__sfButtonMenuWarned instanceof Set)) {
+    Object.defineProperty(root, "__sfButtonMenuWarned", {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  if (root.__sfButtonMenuWarned.has(key)) return;
+
+  root.__sfButtonMenuWarned.add(key);
+
+  globalThis.console?.warn?.(`[SIMAI Framework] sf-button: ${message}`);
+} // The menu element the template draws, by its current and its former tag.
+
+
+const MENU_ELEMENT = `:scope > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__.tagSelector)("sf-menu-context")}`;
+const SPLIT_ANSWERS = Object.freeze({
+  menu: "menu",
+  split: "split"
+}); // What the button is: null (a plain button), "menu" or "split".
+
+function menuMode(host, {
+  appearance,
+  scheme,
+  status,
+  text
+}) {
+  const entries = menuEntries(host);
+  const split = host.hasAttribute("split") && host.getAttribute("split") !== "false";
+
+  if (!entries.length) {
+    if (split) sayMenuOnce("split-empty", "split without menu entries is a plain button; give menu its entries (C119).");
+    return null;
+  }
+
+  if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(host)) {
+    sayMenuOnce("menu-cycle", "menu and cycle cannot share a button; the cycle is kept and the menu is left out.");
+    return null;
+  }
+
+  if (host.getAttribute("href")) {
+    sayMenuOnce("menu-href", "menu on a link (href) is left out; a link opens a page, not a menu.");
+    return null;
+  }
+
+  const label = String(text || "").trim().toLowerCase();
+
+  if (split && label && entries.some(entry => String(entry.text ?? "").trim().toLowerCase() === label)) {
+    sayMenuOnce("split-repeat", `the main action «${text}» is repeated in the menu of a split button; the menu holds the other actions only (C119).`);
+  }
+
+  if (!split) return SPLIT_ANSWERS.menu;
+  const danger = status === "danger" || status === "error";
+  const main = appearance === "default" && scheme === "primary";
+  if (!danger && (main || appearance === "outline")) return SPLIT_ANSWERS.split;
+  sayMenuOnce(`split-look|${appearance}|${scheme}|${danger ? "danger" : ""}`, `split is the main (default primary) or the regular (outline) look only (C119); appearance="${appearance}" scheme="${scheme}"${danger ? " status=\"danger\"" : ""} draws as a menu button.`);
+  return SPLIT_ANSWERS.menu;
 } // href (1.4.0) takes the addresses a link may follow: a relative one, a
 // fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
 // draws the button as a button.
@@ -623,14 +1104,14 @@ function applyButtonAttributes(host, button) {
 // notes the use, so a value outside a list reads as the default here.
 
 
-const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 });
 
 class SfButton extends ButtonElement {
@@ -640,9 +1121,30 @@ class SfButton extends ButtonElement {
       cycle: {
         type: Array,
         default: [],
-        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.parseCycle
+        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.parseCycle
+      },
+      // The menu's entries (1.15.0, C119): JSON on the attribute, a list as
+      // the property, shaped as sf-menu-context's entries.
+      menu: {
+        type: Array,
+        default: [],
+        parser: parseMenu
       }
     };
+  }
+
+  get menu() {
+    return this.getProp("menu");
+  }
+
+  set menu(value) {
+    Object.defineProperty(this, "menu", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value
+    });
+    this.requestComponentUpdate?.("menu");
   } // cycle is a list setting (§4.2) whose attribute keeps its JSON form, as
   // sf-segmented's items: a list set as a property stays the instance's own.
 
@@ -664,11 +1166,21 @@ class SfButton extends ButtonElement {
 
 
   cycleState() {
-    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.hasCycle)(this)) return null;
-    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.cycleState)(this, {
+    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(this)) return null;
+    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.cycleState)(this, {
       base: this.getAttribute("aria-label") || "",
       words: (key, options) => this.sfWord(key, options)
     });
+  } // aria-label is the host's (§3.1), not a setting, so the manifest makes no
+  // observed attribute of it, and the forwarder leaves it out (it is in
+  // COMPONENT_ATTRIBUTES): a name changed after the first drawing never reached
+  // the inner button. sf-input-image's «Заменить изображение «photo.png»» kept
+  // the first file's name after a new drop (1.14.0); sf-button-icon watched it
+  // since 2026-11-06. A change now draws the button again with the new name.
+
+
+  static get observedAttributes() {
+    return [...new Set([...super.observedAttributes, "aria-label"])];
   }
 
   constructor() {
@@ -676,16 +1188,23 @@ class SfButton extends ButtonElement {
     this._attributeObserver = null;
     this._textFromChildren = "";
     this._shortcutListener = null;
-  } // scheme: surface with on-surface-variant reads as on-surface (1.11.0).
+  } // appearance and scheme: the set's former words read as their successors
+  // (C116): surface as tonal, a danger tonal or surface as outline.
+
+
+  get appearance() {
+    const look = setLook(this);
+    return look.formers.some(former => former.attribute === "appearance") ? look.appearance : super.appearance;
+  }
+
+  set appearance(value) {
+    super.appearance = value;
+  } // secondary, and the scheme the retired surface brings, read as on-surface.
 
 
   get scheme() {
-    if (retiredSurfaceQuiet(this)) {
-      noteSurfaceQuiet();
-      return "on-surface";
-    }
-
-    return super.scheme;
+    const look = setLook(this);
+    return look.formers.some(former => former.attribute === "scheme" || former.from === "surface" && former.to === "tonal") ? look.scheme : super.scheme;
   }
 
   set scheme(value) {
@@ -764,7 +1283,7 @@ class SfButton extends ButtonElement {
 
   get pressed() {
     // A cycle is not a toggle: pressed is ignored beside it.
-    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.hasCycle)(this)) return undefined;
+    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(this)) return undefined;
     return this.hasAttribute("pressed") ? super.pressed : undefined;
   }
 
@@ -777,15 +1296,26 @@ class SfButton extends ButtonElement {
     this.captureTextChildren?.();
     const props = this.getPropsContext();
     const cycle = this.cycleState();
-    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.warnCycleToggle)(this, ["pressed", "text-pressed"]);
-    noteSpacing(this);
+    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.warnCycleToggle)(this, ["pressed", "text-pressed"]);
+    noteSpacing(this); // success, warning, info: no such buttons (C13, BS-1); said once per page.
+
+    (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_6__.warnUnknownControlStatus)("sf-button", this.getAttribute("status")); // secondary, surface, a danger tonal or surface (C116); said once per page.
+
+    (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_7__.sayButtonSetFormers)("sf-button", setLook(this).formers);
+    const mode = menuMode(this, {
+      appearance: this.appearance,
+      scheme: this.scheme,
+      status: this.status,
+      text: this.text
+    });
+    this._menuMode = mode;
     const announce = Boolean(cycle && this.__sfCycleAnnounce);
     this.__sfCycleAnnounce = false; // A cycle with an icon shows the item's icon in place of the start icon;
     // one without shows the item's label as its text.
 
     const cycleIcon = cycle?.item.icon || ""; // The icons a press can show, asked for before the press (R074).
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.preloadSwitchIcons)(this, {
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.preloadSwitchIcons)(this, {
       icons: [this.iconStart, this.iconEnd, ...["icon", "icon-left", "icon-right"].map(name => this.getAttribute(name))]
     });
     return this.createTemplateContext({ ...props,
@@ -795,6 +1325,8 @@ class SfButton extends ButtonElement {
       // Resolved names the template reads (contracts/template-context.json).
       iconStart: this.iconStart,
       iconEnd: this.iconEnd,
+      // A menu button draws its arrow at the end unless the page wrote an end icon.
+      menuArrow: mode === "menu" && this.iconEnd === null ? "expand_more" : "",
       appearance: this.appearance,
       type: this.appearance,
       status: this.status,
@@ -816,7 +1348,18 @@ class SfButton extends ButtonElement {
       // A cycle's name says its current value; without an aria-label the
       // shown label is the name.
       ariaLabel: cycle ? this.getAttribute("aria-label") || cycleIcon && !this.text ? cycle.name : "" : this.getAttribute("aria-label") || "",
-      expanded: this.expanded,
+      // A menu button says it has a menu and whether it is open; the menu
+      // writes aria-expanded while it is open.
+      expanded: mode === "menu" ? Boolean(this.expanded) : this.expanded,
+      hasPopup: mode === "menu" ? "menu" : "",
+      // The split button (C119): the arrow part's name and the menu's entries.
+      menuMode: mode,
+      menuEntries: mode ? menuEntries(this) : [],
+      splitLabel: mode === "split" ? this.sfWord("split-more", {
+        vars: {
+          label: this.text || this.getAttribute("aria-label") || ""
+        }
+      }) : "",
       pressed: cycle ? undefined : this.pressed,
       textPressed: cycle ? "" : this.textPressed,
       // The cycle's item: its icon in place of the start icon, or, without
@@ -832,11 +1375,11 @@ class SfButton extends ButtonElement {
       } : null,
       // The shortcut's key caps and its aria-keyshortcuts, in this platform's
       // words (component/kbd/js/shortcut.js).
-      shortcutCaps: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.shortcutCaps)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.parseShortcut)(this.shortcut)),
+      shortcutCaps: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.shortcutCaps)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut)),
       // Words join with + where the platform spells its modifiers (the kbd
       // sheet shows the join only where keys are plain glyphs).
-      shortcutJoin: !(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.isApplePlatform)(),
-      ariaKeyShortcuts: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.parseShortcut)(this.shortcut)),
+      shortcutJoin: !(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isApplePlatform)(),
+      ariaKeyShortcuts: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut)),
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing')
       }),
@@ -851,6 +1394,73 @@ class SfButton extends ButtonElement {
 
   resolveUpdateMode() {
     return "lit";
+  } // ─── the menu (1.15.0, C119) ───────────────────────────────────────────────
+
+
+  get menuElement() {
+    return this.querySelector(MENU_ELEMENT);
+  } // The control that opens the menu: the arrow part's native button on a
+  // split button, the button itself on a menu button.
+
+
+  menuAnchor() {
+    if (this._menuMode === "split") {
+      const arrow = this.querySelector(":scope > .sf-button-split > .sf-button-split-arrow");
+      return arrow?.querySelector("button") ?? null;
+    }
+
+    if (this._menuMode === "menu") return this.querySelector(".sf-button");
+    return null;
+  }
+  /** Opens or closes the menu; focus "first" or "last" picks the row it lands on. */
+
+
+  toggleMenu({
+    focus = "first",
+    open = false
+  } = {}) {
+    const menu = this.menuElement;
+    const anchor = this.menuAnchor();
+    if (!menu || !anchor || anchor.disabled) return;
+    const align = this._menuMode === "split" ? "end" : "start";
+    customElements.whenDefined("sf-menu-context").then(() => {
+      if (open) {
+        if (menu._owned?.anchor === anchor) return;
+        menu.openFor(anchor, {
+          align,
+          focus
+        });
+      } else {
+        menu.toggleFor(anchor, {
+          align,
+          focus
+        });
+      }
+    });
+  } // ArrowDown and ArrowUp on the control that opens the menu open it on the
+  // first and the last row; Enter and Space press the native button, whose
+  // click toggles it.
+
+
+  onMenuKey(event) {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    event.preventDefault();
+    this.toggleMenu({
+      focus: event.key === "ArrowUp" ? "last" : "first",
+      open: true
+    });
+  } // A row was chosen: the menu closes itself and returns focus to the control
+  // that opened it; the page hears sf-button-select, not the menu's event.
+
+
+  onMenuSelect(event) {
+    event.stopPropagation();
+    const id = event.detail?.id ?? null;
+    this.sfEmit("select", {
+      id,
+      entry: event.detail?.entry ?? null
+    });
   }
 
   onConnected() {
@@ -866,7 +1476,7 @@ class SfButton extends ButtonElement {
 
     if (!this._cycleTheme) {
       // A theme cycle follows the theme wherever it was set.
-      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.themeCycleFollow)(this);
+      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.themeCycleFollow)(this);
 
       globalThis.addEventListener?.("sf-theme-change", this._cycleTheme);
     }
@@ -888,7 +1498,7 @@ class SfButton extends ButtonElement {
 
 
   syncShortcutListener() {
-    const wanted = Boolean(this.shortcutListen) && Boolean((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.parseShortcut)(this.shortcut));
+    const wanted = Boolean(this.shortcutListen) && Boolean((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut));
 
     if (wanted && !this._shortcutListener) {
       this._shortcutListener = event => this.handleShortcut(event);
@@ -902,10 +1512,10 @@ class SfButton extends ButtonElement {
 
   handleShortcut(event) {
     if (event.defaultPrevented || event.repeat || event.isComposing) return;
-    const parsed = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.parseShortcut)(this.shortcut);
-    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.matchesShortcut)(event, parsed)) return;
+    const parsed = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut);
+    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.matchesShortcut)(event, parsed)) return;
     const target = event.composedPath?.()[0] ?? event.target;
-    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.isCommandShortcut)(parsed) && (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_6__.isEditableTarget)(target)) return;
+    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isCommandShortcut)(parsed) && (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isEditableTarget)(target)) return;
     const button = this.querySelector(".sf-button");
     if (!button || button.disabled || button.getAttribute("aria-disabled") === "true" || !button.getClientRects().length) return;
     event.preventDefault();
@@ -920,10 +1530,16 @@ class SfButton extends ButtonElement {
     const button = this.querySelector(".sf-button");
     if (!button || !(event.target instanceof Node) || !button.contains(event.target)) return; // A link that is off (href, disabled or loading: 1.4.0) is not pressed either.
 
-    if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
+    if (button.disabled || button.getAttribute("aria-disabled") === "true") return; // A menu button's press opens its menu (C119); it is not an action.
+
+    if (this._menuMode === "menu") {
+      this.toggleMenu();
+      return;
+    }
+
     this.sfEmit("press", {}); // A cycle moves to its next value after the press (D11d).
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.pressCycle)(this, this.cycleState());
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.pressCycle)(this, this.cycleState());
   }
 
   afterRender() {
@@ -986,6 +1602,8 @@ class SfButton extends ButtonElement {
       rel: this.getAttribute("rel") || "",
       shortcut: this.shortcut,
       shortcutListen: this.shortcutListen,
+      menu: menuEntries(this),
+      split: this.hasAttribute("split") && this.getAttribute("split") !== "false",
       ariaLabel: this.getAttribute("aria-label") || ""
     };
   }
@@ -1122,7 +1740,7 @@ function renderButtonTemplate(context) {
   const normalizedIconPosition = String(iconPosition || 'start').toLowerCase();
   const isIconEnd = ['right', 'end'].includes(normalizedIconPosition);
   const leftIconName = context.cycleView?.icon || (context.iconStart ?? (iconLeft || (icon && !isIconEnd ? icon : '')));
-  const rightIconName = context.iconEnd ?? (iconRight || (icon && isIconEnd ? icon : ''));
+  const rightIconName = context.menuArrow || (context.iconEnd ?? (iconRight || (icon && isIconEnd ? icon : '')));
   const component = context.component;
   const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName, context.pressed === true || Boolean(context.cycleView?.pressedLook));
   const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName, context.pressed === true); // A toggle whose label changes (text-pressed, 1.6.0): «В избранное» at rest,
@@ -1210,7 +1828,7 @@ function renderButtonTemplate(context) {
     `;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const button = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 type=${nativeType}
                 form=${context.formId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1222,13 +1840,277 @@ function renderButtonTemplate(context) {
                 aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-expanded=${context.expanded === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.expanded))}
+                aria-haspopup=${context.hasPopup || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                @keydown=${context.menuMode === 'menu' ? event => component.onMenuKey(event) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-pressed=${announcesPressed ? String(Boolean(context.pressed)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >${content}</button>${context.cycleView ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-announce sr-only" role="status" aria-live="polite" aria-atomic="true">${context.cycleView.announcement}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     `;
+  if (!context.menuMode) return button;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${context.menuMode === 'split' ? renderSplit(context, button) : button}${renderMenu(context)}`;
+}
+
+const stop = event => event.stopPropagation(); // The split button (1.15.0, owner decision C119): the label part is the button
+// above; the arrow part is an sf-button-icon of the same size, height, look and
+// radius -- square, so it is as tall as the label part on every size, height
+// and density -- with expand_more. The buttons sheet joins them like a button
+// group (sf-button-split): inner corners square, a 1 px seam (the page between
+// two filled parts, one shared border between two outlined ones). Its press
+// opens the menu and stays inside: the page hears sf-button-press from the
+// label part and sf-button-select from the menu.
+
+
+function renderSplit(context, button) {
+  const {
+    component
+  } = context;
+  const off = Boolean(context.disabled || context.loading);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-button-split', context.fullWidth ? 'sf-button-split--full-width' : ''].filter(Boolean).join(' ')}>${button}<sf-button-icon
+            class="sf-button-split-arrow"
+            icon="expand_more"
+            appearance=${context.appearance}
+            scheme=${context.scheme}
+            size=${context.size}
+            height=${context.height && context.height !== 'default' ? context.height : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            radius=${context.radius || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ?disabled=${off}
+            aria-label=${context.splitLabel}
+            title=${context.splitLabel}
+            aria-haspopup="menu"
+            aria-expanded="false"
+            @click=${() => component.toggleMenu()}
+            @keydown=${event => component.onMenuKey(event)}
+            @sf-button-icon-press=${stop}
+        ></sf-button-icon></span>`;
+} // The menu is the Framework's sf-menu-context, a popup opened under the
+// control (end-aligned under a split button's arrow). Its own events stay
+// inside: the page hears sf-button-select.
+
+
+function renderMenu(context) {
+  const {
+    component
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-menu-context
+            popup
+            size=${context.size === '1/3' || context.size === '1/2' ? '1/2' : '1'}
+            aria-label=${context.text || context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            .entries=${context.menuEntries}
+            @sf-menu-context-select=${event => component.onMenuSelect(event)}
+            @sf-context-menu-select=${stop}
+        ></sf-menu-context>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "d9c5a43b5214"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BUTTON_SET_REMOVE_AFTER: () => (/* binding */ BUTTON_SET_REMOVE_AFTER),
+/* harmony export */   BUTTON_SET_SINCE: () => (/* binding */ BUTTON_SET_SINCE),
+/* harmony export */   buttonSetLook: () => (/* binding */ buttonSetLook),
+/* harmony export */   dangerLook: () => (/* binding */ dangerLook),
+/* harmony export */   isDangerStatus: () => (/* binding */ isDangerStatus),
+/* harmony export */   sayButtonSetFormers: () => (/* binding */ sayButtonSetFormers)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// The button set (owner decision C116, 2026-11-13; ui-control research
+// 2026-11-13-buttons-system, prototype buttons-system.html). Three words of a
+// button become former names until 2027-01-01 and draw as their successors:
+//
+// - scheme="secondary" on sf-button draws as on-surface (#q-secondary). The
+//   secondary colour stays in core for badges, tabs and segments; the icon
+//   button already reads it as on-surface-variant (C15, 2026-11-08).
+// - appearance="surface" on sf-button draws as the soft grey button, tonal
+//   with the on-surface scheme (#q-surface, C113).
+// - a danger button keeps three looks -- filled (the last confirmation),
+//   outline (opens a confirmation) and the fill-less icon in a row
+//   (#q-danger-looks); tonal or surface with status danger draws as outline,
+//   on sf-button and sf-button-icon alike.
+//
+// Each word is noted in SF.deprecations and said once per page in the console
+// for each component and word, whether or not the page opted in to the notes,
+// as sf-button's spacing and the BS-1 status warning are. Every bundle carries
+// its own copy of this module, so the words already said live on one shared
+// global.
+
+const BUTTON_SET_SINCE = '2026-11-13';
+const BUTTON_SET_REMOVE_AFTER = '2027-01-01';
+const DANGER = new Set(['danger', 'error', 'critical']);
+
+function saidWords() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfButtonSetWarned instanceof Set)) {
+    Object.defineProperty(root, '__sfButtonSetWarned', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfButtonSetWarned;
+} // Whether a status word paints the control as danger (C13: error and critical
+// are danger's former names on a control).
+
+
+function isDangerStatus(status) {
+  return DANGER.has(String(status ?? ''));
+} // A danger control's look: tonal and surface draw as outline. Answers the look
+// drawn and the former word, or '' when the look is one of danger's own.
+
+function dangerLook(appearance, status) {
+  if (!isDangerStatus(status)) return {
+    appearance,
+    former: ''
+  };
+  if (appearance === 'tonal' || appearance === 'surface') return {
+    appearance: 'outline',
+    former: appearance
+  };
+  return {
+    appearance,
+    former: ''
+  };
+} // sf-button's look under C116. `appearance` and `scheme` are the words the page
+// wrote (after the dated aliases: link is already ghost); answers the look and
+// the colour the template draws and the former words met, each
+// {attribute, from, to, drawn, danger?}.
+
+function buttonSetLook({
+  appearance,
+  scheme,
+  status
+} = {}) {
+  const formers = [];
+  let look = appearance;
+  let colour = scheme;
+  const danger = dangerLook(look, status);
+
+  if (danger.former) {
+    formers.push({
+      attribute: 'appearance',
+      from: danger.former,
+      to: 'outline',
+      danger: true,
+      drawn: 'appearance="outline" status="danger" (a danger button is filled, outline or a fill-less icon)'
+    });
+    look = danger.appearance;
+  } else if (look === 'surface') {
+    formers.push({
+      attribute: 'appearance',
+      from: 'surface',
+      to: 'tonal',
+      drawn: 'appearance="tonal" scheme="on-surface"'
+    });
+    look = 'tonal';
+    colour = 'on-surface';
+  }
+
+  if (scheme === 'secondary') {
+    formers.push({
+      attribute: 'scheme',
+      from: 'secondary',
+      to: 'on-surface',
+      drawn: 'scheme="on-surface"'
+    });
+    colour = 'on-surface';
+  }
+
+  return {
+    appearance: look,
+    scheme: colour,
+    formers
+  };
+}
+
+function sentence(component, former) {
+  return `[SIMAI Framework] ${component}: ${former.attribute}="${former.from}"${former.danger ? ' with status="danger"' : ''} is a former name until ${BUTTON_SET_REMOVE_AFTER} and draws as ${former.drawn}; write that instead (rule C116). See contracts/changes/journal.json (value-button-set-c116).`;
+} // Notes each former word in SF.deprecations and says it once per page.
+
+
+function sayButtonSetFormers(component, formers = []) {
+  for (const former of formers) {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component,
+      tag: component,
+      kind: 'value',
+      attribute: former.attribute,
+      from: former.danger ? `${former.from} (status danger)` : former.from,
+      to: former.to,
+      since: BUTTON_SET_SINCE,
+      remove_after: BUTTON_SET_REMOVE_AFTER
+    });
+    const said = saidWords();
+    const key = `${component}|${former.attribute}|${former.from}|${former.to}`;
+    if (said.has(key)) continue;
+    said.add(key);
+    globalThis.console?.warn?.(sentence(component, former));
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "60a3f9a6662c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   warnUnknownControlStatus: () => (/* binding */ warnUnknownControlStatus)
+/* harmony export */ });
+// A control's status is danger alone (rule C13): a button, an icon button or
+// a menu item that deletes, discards or cannot be undone. error is its former
+// name (until 2027-01-01) and critical an older one. There are no success,
+// warning or info controls -- a result's colour belongs to a notice or a
+// badge (ui-control research 2026-11-13-button-schemes, R202, defect BS-1).
+// Such a word used to be dropped without a sound and the scheme colour drawn;
+// it still draws so, and the console now says it once per page for each
+// component and word.
+//
+// Every bundle carries its own copy of this module, so the words already said
+// live on one shared global, as SF.deprecations keeps its notes.
+const CONTROL_STATUSES = Object.freeze(['', 'danger', 'error', 'critical']);
+
+function saidWords() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfUnknownStatusWarned instanceof Set)) {
+    Object.defineProperty(root, '__sfUnknownStatusWarned', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfUnknownStatusWarned;
+} // Answers whether `value` is a status the control does not know, and says so
+// once per page. `allowed` narrows the words a component reads; `label` is how
+// the message names the setting (status="…" on a host, an item's status).
+
+
+function warnUnknownControlStatus(component, value, {
+  allowed = CONTROL_STATUSES,
+  label = 'status'
+} = {}) {
+  if (value === null || value === undefined) return false;
+  const word = String(value);
+  if (allowed.includes(word)) return false;
+  const said = saidWords();
+  const key = `${component}|${label}|${word}`;
+  if (said.has(key)) return true;
+  said.add(key);
+  globalThis.console?.warn?.(`[SIMAI Framework] ${component}: ${label}="${word}" is not a status of a control; a control's status is danger (rule C13), and there are no success, warning or info controls. Drawn without a status.`);
+  return true;
+}
 
 /***/ },
 
@@ -1623,6 +2505,13 @@ function preloadSwitchIcons(host, options = {}) {
 
 /***/ },
 
+/***/ "5dcef5de40cf"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("alias-table", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("alias-table", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "9abcb852f1cf"
 (module) {
 
@@ -1668,21 +2557,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.13.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.15.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"menu":{"type":"list","default":[],"of":{"id":"string","text":"string","icon":{"type":"icon","optional":true},"caption":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"kind":{"type":"string","optional":true}}},"split":{"type":"boolean","default":false}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}},"select":{"carries":{"id":{"type":"string","nullable":true},"entry":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 
 /***/ "d7b6a56d1dd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Buttons","runtime":{"theme":"Theme","theme-system":"system","theme-light":"light","theme-dark":"dark","theme-system-now":"system (now {theme})","cycle-next":"{name}. Press for {next}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Buttons","runtime":{"theme":"Theme","theme-system":"system","theme-light":"light","theme-dark":"dark","theme-system-now":"system (now {theme})","cycle-next":"{name}. Press for {next}","split-more":"More options: {label}"}}');
 
 /***/ },
 
 /***/ "96bdb2ff5f5d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопки","runtime":{"theme":"Тема","theme-system":"как в системе","theme-light":"светлая","theme-dark":"тёмная","theme-system-now":"как в системе (сейчас {theme})","cycle-next":"{name}. Нажмите — {next}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопки","runtime":{"theme":"Тема","theme-system":"как в системе","theme-light":"светлая","theme-dark":"тёмная","theme-system-now":"как в системе (сейчас {theme})","cycle-next":"{name}. Нажмите — {next}","split-more":"Другие варианты: {label}"}}');
 
 /***/ }
 

@@ -129,9 +129,19 @@ function joinClasses(...tokens) {
 function normalizeType(value) {
   const status = LEGACY_TOAST_TYPES[value] ?? value;
   return TOAST_TYPES.has(status) ? status : 'neutral';
+} // An error or a warning never leaves by itself (owner decision C114 (6),
+// NS-2; WCAG 2.2.1): it stays until a person closes it, whatever data-duration
+// it carries. A success, an info and a neutral message keep their time.
+
+
+const STAYING_TOAST_TYPES = new Set(['warning', 'error']);
+
+function staysUntilClosed(root) {
+  return [...STAYING_TOAST_TYPES].some(status => root.classList?.contains(`sf-toast--${status}`));
 }
 
 function readDuration(root) {
+  if (staysUntilClosed(root)) return 0;
   const duration = Number(root.getAttribute('data-duration'));
   return Number.isFinite(duration) && duration > 0 ? duration : 0;
 }
@@ -155,10 +165,13 @@ function pauseToastTimer(root, reason) {
   if (!root.__sfToastTimer) return;
   root.__sfToastRemaining = Math.max(0, root.__sfToastRemaining - (performance.now() - root.__sfToastStartedAt));
   clearToastTimer(root);
-}
+} // A reason that was not standing changes nothing: started again, the timer
+// would run its whole remainder from now (an open stack lays out on every
+// change and resumes every message it does not stand).
+
 
 function resumeToastTimer(root, reason) {
-  root.__sfToastPauseReasons?.delete(reason);
+  if (!root.__sfToastPauseReasons?.delete(reason)) return;
   startToastTimer(root);
 }
 
@@ -176,8 +189,11 @@ function bindToast(root, removalTarget = root) {
       event.preventDefault();
       dismissToast(root, root.__sfToastRemovalTarget || root, trigger);
       return;
-    }
+    } // A link action without an address is the page's to answer, not a jump
+    // to the top.
 
+
+    if (trigger.matches('a[href="#"]')) event.preventDefault();
     root.dispatchEvent(new CustomEvent('sf-toast-action', {
       bubbles: true,
       composed: true,
@@ -214,7 +230,26 @@ function bindToast(root, removalTarget = root) {
   root.__sfToastPauseReasons = new Set();
   root.__sfToastRemaining = readDuration(root);
   root.dataset[TOAST_BOUND_FLAG] = '1';
+  watchPageVisibility(); // A message raised while the page is out of sight waits for it.
+
+  if (document.hidden) root.__sfToastPauseReasons.add('page-hidden');
   startToastTimer(root);
+} // A message's time runs only while the page is in sight: hidden (another tab,
+// a minimised window) every timer stands and resumes with what was left (C50
+// call). One listener for the document.
+
+
+let pageVisibilityWatched = false;
+
+function watchPageVisibility() {
+  if (pageVisibilityWatched || typeof document === 'undefined') return;
+  pageVisibilityWatched = true;
+  document.addEventListener('visibilitychange', () => {
+    for (const root of document.querySelectorAll(TOAST_SELECTOR)) {
+      if (root.dataset[TOAST_BOUND_FLAG] !== '1') continue;
+      if (document.hidden) pauseToastTimer(root, 'page-hidden');else resumeToastTimer(root, 'page-hidden');
+    }
+  });
 }
 
 function unbindToast(root) {
@@ -279,15 +314,20 @@ function createToastElement(options = {}) {
     supportingText = '',
     actionText = '',
     action = '',
+    actions = null,
+    link = null,
     closable = true,
     closeLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(TOAST_TEXT, 'close', document.documentElement),
     duration = 0,
-    role = ''
+    role = '',
+    actionsLayout = 'auto'
   } = options;
   const root = document.createElement('div');
-  root.className = joinClasses('sf-toast', `sf-toast--${normalizeType(status ?? type)}`, 'flex', 'items-cross-start');
+  root.className = joinClasses('sf-toast', `sf-toast--${normalizeType(status ?? type)}`, // The author's switch (owner 2026-11-13): the action under the text at
+  // every width; auto is layout L3a (C115).
+  actionsLayout === 'under' ? 'sf-toast--actions-under' : '', 'flex', 'items-cross-start');
 
-  if (Number.isFinite(Number(duration)) && Number(duration) > 0) {
+  if (!STAYING_TOAST_TYPES.has(normalizeType(status ?? type)) && Number.isFinite(Number(duration)) && Number(duration) > 0) {
     root.dataset.duration = String(Number(duration));
   }
 
@@ -311,7 +351,14 @@ function createToastElement(options = {}) {
     titleNode.className = 'sf-toast-text';
     titleNode.textContent = title;
     wrap.append(titleNode);
-  }
+  } // Every action is a button (owner decision C126 (1)): one light
+  // navigation action (C50, `link`) is the one action button drawn as a link,
+  // an <a href> in the button's classes, in the action's place (C115). Undo,
+  // retry, extend and two actions are buttons (C35, C46). With `link` the
+  // other actions do not apply.
+
+
+  const linkText = String(link?.text ?? '').trim();
 
   if (supportingText) {
     const supportingTextNode = document.createElement('div');
@@ -321,22 +368,41 @@ function createToastElement(options = {}) {
   }
 
   container.append(wrap);
+  const buttons = linkText ? [{
+    text: linkText,
+    action: link.action || 'action',
+    href: link.href || '#',
+    target: link.target
+  }] : (Array.isArray(actions) ? actions : [{
+    text: actionText,
+    action
+  }]).filter(one => String(one?.text ?? '').trim()).slice(0, 2);
 
-  if (actionText) {
+  if (buttons.length) {
     const bottom = document.createElement('div');
     bottom.className = 'sf-toast-bottom flex items-center';
-    const actionButton = document.createElement('button');
-    actionButton.type = 'button'; // The notice's action (owner decision C35): an unsized low button, tonal
-    // primary, its label the notice's text size (as the Smart sf-toast).
+    buttons.forEach(one => {
+      const actionButton = document.createElement(one.href ? 'a' : 'button');
 
-    actionButton.className = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
-    actionButton.setAttribute('data-action', action || 'action');
-    actionButton.setAttribute('data-toast-action', action || 'action');
-    const actionTextNode = document.createElement('span');
-    actionTextNode.className = 'sf-button-text-container';
-    actionTextNode.textContent = actionText;
-    actionButton.append(actionTextNode);
-    bottom.append(actionButton);
+      if (one.href) {
+        actionButton.href = one.href;
+        if (one.target) actionButton.target = one.target;
+      } else {
+        actionButton.type = 'button';
+      } // The notice's action (owner decision C35; C110 variant E): an unsized
+      // low button, tonal surface (tonal on-surface), its label the notice's
+      // text size (as the Smart sf-toast).
+
+
+      actionButton.className = 'sf-button sf-button--tonal sf-button--on-surface sf-button--size-1 sf-button--height-low flex items-cross-center';
+      actionButton.setAttribute('data-action', one.action || 'action');
+      actionButton.setAttribute('data-toast-action', one.action || 'action');
+      const actionTextNode = document.createElement('span');
+      actionTextNode.className = 'sf-button-text-container';
+      actionTextNode.textContent = String(one.text).trim();
+      actionButton.append(actionTextNode);
+      bottom.append(actionButton);
+    });
     container.append(bottom);
   }
 
@@ -401,6 +467,8 @@ class Toast extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       supportingText = '',
       actionText = '',
       action = '',
+      actions = null,
+      link = null,
       closable = true
     } = this.params || {};
     this.template = createToastElement({
@@ -411,6 +479,8 @@ class Toast extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       supportingText,
       actionText,
       action,
+      actions,
+      link,
       closable,
       closeLabel: this.params?.closeLabel,
       duration: this.params?.duration,
@@ -442,7 +512,12 @@ if (typeof window !== 'undefined') {
   window.SF.Toast.unbind = unbindToast;
   window.SF.Toast.dismiss = dismissToast;
   window.SF.Toast.create = createToastElement;
-  window.SF.Toast.show = showToast;
+  window.SF.Toast.show = showToast; // A timer stands for as long as any reason holds it (pointer, focus, or the
+  // page's own: SF.notify stands every message of an open stack).
+
+  window.SF.Toast.pause = (root, reason = 'page') => root instanceof HTMLElement && pauseToastTimer(root, String(reason));
+
+  window.SF.Toast.resume = (root, reason = 'page') => root instanceof HTMLElement && resumeToastTimer(root, String(reason));
 }
 
 if (document.readyState === 'loading') {
@@ -1051,9 +1126,13 @@ class SfToast extends ToastElement {
 
   get status() {
     return this.getProp('status');
-  }
+  } // An error or a warning stays until a person closes it, whatever duration
+  // it is given (owner decision C114 (6), NS-2); the class toast holds the
+  // same rule on its root.
+
 
   get duration() {
+    if (this.status === 'error' || this.status === 'warning') return 0;
     const duration = Number(this.getAttribute('duration'));
     return Number.isFinite(duration) && duration > 0 ? duration : 0;
   } // The root's role: the host's role attribute when it says status or alert.
@@ -1188,6 +1267,9 @@ class SfToast extends ToastElement {
       supportingText: this.supportingText,
       actionText: this.actionText,
       action: this.action,
+      actionHref: this.actionHref,
+      secondaryActionText: this.secondaryActionText,
+      secondaryAction: this.secondaryAction,
       closable: this.closable,
       closeLabel: this.closeLabel,
       duration: this.duration,
@@ -1253,7 +1335,8 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   renderToastTemplate: () => (/* binding */ renderToastTemplate)
+/* harmony export */   renderToastTemplate: () => (/* binding */ renderToastTemplate),
+/* harmony export */   toastActions: () => (/* binding */ toastActions)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
@@ -1266,17 +1349,63 @@ function joinClasses(...tokens) {
   return tokens.flat().filter(Boolean).join(' ');
 } // The notice's action and close (owner decision C35): the action is an
 // unsized (size 1) low button -- 32, compact and phone 28 -- whose label is
-// the notice's text size, tonal primary, its plate starting at the text edge;
+// the notice's text size, tonal surface (C110 variant E: tonal on-surface),
+// its plate starting at the text edge;
 // the close a size-1 low icon button, 32 / 28 / 28, centred on the first line.
 // The same classes as the class toast (component/toast/js/_toast.js).
 
 
-const TOAST_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
-const TOAST_CLOSE_CLASSES = 'sf-icon-button sf-icon-button--close sf-icon-button--variant-close sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-1 sf-icon-button--height-low flex items-cross-center';
+const TOAST_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--on-surface sf-button--size-1 sf-button--height-low flex items-cross-center';
+const TOAST_CLOSE_CLASSES = 'sf-icon-button sf-icon-button--close sf-icon-button--variant-close sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-1 sf-icon-button--height-low flex items-cross-center'; // The actions (owner decisions C50 and C126 (1), the model of
+// SF.Toast.create): every action is a button. One light navigation action --
+// action-text with action-href and no secondary action -- is the one action
+// button drawn as a link, an <a href> in the button's classes, in the action's
+// place (C115); undo, retry, extend and two actions are buttons (C35, C46).
+// A link in the text leads to help only (C126; the notice-link rule).
+
+function toastActions(context) {
+  const first = String(context.actionText ?? '').trim();
+  const second = String(context.secondaryActionText ?? '').trim();
+  const href = String(context.actionHref ?? '').trim();
+  const buttons = [];
+  if (first) buttons.push({
+    text: first,
+    action: context.action || 'action',
+    href: href && !second ? href : ''
+  });
+  if (second) buttons.push({
+    text: second,
+    action: context.secondaryAction || 'secondary',
+    href: ''
+  });
+  return {
+    buttons
+  };
+}
+
+function renderAction(button) {
+  return button.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+        class=${TOAST_ACTION_CLASSES}
+        href=${button.href}
+        data-action=${button.action}
+        data-toast-action=${button.action}
+      ><span class="sf-button-text-container">${button.text}</span></a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+        type="button"
+        class=${TOAST_ACTION_CLASSES}
+        data-action=${button.action}
+        data-toast-action=${button.action}
+      ><span class="sf-button-text-container">${button.text}</span></button>`;
+}
+
 function renderToastTemplate(context) {
+  const {
+    buttons
+  } = toastActions(context);
   const rootClasses = joinClasses('sf-toast', // The component normalises the legacy words, so the template sees only the
   // shared vocabulary.
-  `sf-toast--${['neutral', 'info', 'success', 'warning', 'error'].includes(context.status ?? context.type) ? context.status ?? context.type : 'neutral'}`, 'flex', 'items-cross-start', context.rootClass);
+  `sf-toast--${['neutral', 'info', 'success', 'warning', 'error'].includes(context.status ?? context.type) ? context.status ?? context.type : 'neutral'}`, // The author's switch (owner 2026-11-13, #q-layout-override): the action
+  // under the text at every width; auto (and any other word) is layout L3a.
+  context.actionsLayout === 'under' ? 'sf-toast--actions-under' : '', 'flex', 'items-cross-start', context.rootClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses}
@@ -1297,16 +1426,9 @@ function renderToastTemplate(context) {
           ${context.supportingText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-toast-supporting-text">${context.supportingText}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
 
-        ${context.actionText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        ${buttons.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
               <div class="sf-toast-bottom flex items-center">
-                <button
-                  type="button"
-                  class=${TOAST_ACTION_CLASSES}
-                  data-action=${context.action || 'action'}
-                  data-toast-action=${context.action || 'action'}
-                >
-                  <span class="sf-button-text-container">${context.actionText}</span>
-                </button>
+                ${buttons.map(renderAction)}
               </div>
             ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
@@ -1373,7 +1495,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.2.1","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.4.0","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"action-href":{"type":"string","default":""},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -121,11 +121,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -138,6 +140,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -176,15 +181,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -199,6 +216,92 @@ function retireFieldSizeClass(root, block) {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
 
 /***/ },
 
@@ -749,12 +852,402 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "f28a9d913ce0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Generated from the `tag` rows of src/smart/*/aliases.json and the element_aliases of
+// src/core/contracts/packages/*.package.json by scripts/tag-alias-table.mjs; do not edit.
+// The dated tag aliases of the Framework and of its component packages, read by core/js/tag-aliases.js.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
+  from: 'sf-avatars',
+  to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-button-group',
+  to: 'sf-segmented',
+  since: '2026-11-08',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-change-confirm',
+  to: 'sf-confirm-change',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-close',
+  to: 'sf-button-close',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-code-input',
+  to: 'sf-input-code',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-color',
+  to: 'sf-input-color',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-composition-overlay',
+  to: 'sf-editor-overlay',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-content-editor',
+  to: 'sf-editor-content',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-context-menu',
+  to: 'sf-menu-context',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-copy-button',
+  to: 'sf-button-copy',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-country-code',
+  to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-data-view',
+  to: 'sf-view',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-datepicker',
+  to: 'sf-input-date',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-download-file',
+  to: 'sf-file-download',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-icon-button',
+  to: 'sf-button-icon',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-image-field',
+  to: 'sf-input-image',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-inline-editor',
+  to: 'sf-editor-inline',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-lookup',
+  to: 'sf-input-lookup',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-page-header',
+  to: 'sf-header-page',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-property-view',
+  to: 'sf-view-properties',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-quantity',
+  to: 'sf-input-quantity',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-range-slider',
+  to: 'sf-slider-range',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-rich-text',
+  to: 'sf-input-rich',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-site-header',
+  to: 'sf-header-site',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-table',
+  to: 'sf-view-table',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-textarea',
+  to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-thread-list',
+  to: 'sf-chat-threads',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+})]));
+
+/***/ },
+
+/***/ "4a85acfb05c1"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
+/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
+/* harmony export */   isTag: () => (/* binding */ isTag),
+/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
+/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
+/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
+/* harmony export */   tagNames: () => (/* binding */ tagNames),
+/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5dcef5de40cf");
+/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_alias_table_js__WEBPACK_IMPORTED_MODULE_1__);
+// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
+// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
+// component takes a new tag, the old tag keeps working until its
+// `remove_after` day:
+//
+// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
+//   subclass of the class that defines the new one (the Smart base calls it
+//   from define()). The Loader's rule lists the old tag beside the new one, so
+//   markup with the old tag alone loads the bundle.
+// - Note. The first old-tag element a page connects is noted in
+//   SF.deprecations (kind "tag") and named once on the console with the new tag
+//   and the date, whatever the page opted into: an element name is the most
+//   visible thing a page writes, and the old one is going.
+// - Script. Code that finds a renamed element by name asks for both names
+//   through one helper instead of a literal:
+//
+//     import {tagSelector, isTag} from '../../core/js/smart-base';
+//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
+//     if (isTag(node, 'sf-button-close')) ...
+//
+// - Sheets. A selector that names the new tag names the old one beside it in
+//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
+//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
+//   contract test tests/tag-aliases.contract.test.mjs holds both).
+//
+// The aliases are a static table (tag-aliases.generated.js, written by
+// scripts/tag-alias-table.mjs from every component's aliases.json and from the
+// element_aliases of the component package references,
+// contracts/packages/*.package.json), so a lookup finds an old tag before the
+// renamed component's bundle has run, a package's (sf-table, rename plan R2)
+// as well as the Framework's. A package's component adds its rows again when it
+// is defined, which matters only for a package the pair does not reference. Every copy of this
+// module shares one state on the page (a global symbol); the Smart bundles
+// reach it through the shared runtime (smart-base re-exports it).
+
+
+
+const STATE = Symbol.for('simai.sf.tag-aliases');
+
+function state() {
+  if (!globalThis[STATE]) {
+    const shared = {
+      byOld: new Map(),
+      byNew: new Map(),
+      noted: new Set()
+    };
+    Object.defineProperty(globalThis, STATE, {
+      value: shared,
+      configurable: true
+    });
+
+    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
+  }
+
+  return globalThis[STATE];
+}
+
+function addRow(shared, row) {
+  if (shared.byOld.has(row.from)) return;
+  shared.byOld.set(row.from, row);
+  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
+} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
+// already known, a package's are added here.
+
+
+function registerTagAliases(table, tag) {
+  const {
+    rows
+  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
+    tag
+  });
+  const shared = state();
+
+  for (const row of rows) addRow(shared, row);
+
+  return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
+} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
+
+function tagNames(tag) {
+  const name = String(tag || '').toLowerCase();
+  return [name, ...(state().byNew.get(name) ?? [])];
+} // A selector for the tag that matches its old names too:
+// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
+
+function tagSelector(tag) {
+  const names = tagNames(tag);
+  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
+} // Whether an element is the tag, under its own or an old name.
+
+function isTag(element, tag) {
+  const name = element?.localName;
+  return Boolean(name) && tagNames(tag).includes(name);
+} // The current name of a tag: 'sf-button-close' for 'sf-close'. An old tag the
+// page still has as an element of its own stays itself: a component package
+// built before its rename (rules naming sf-table alone) beside a pair whose
+// table already knows the new name, where the new tag would never upgrade.
+
+function canonicalTag(tag) {
+  const name = String(tag || '').toLowerCase();
+  const row = state().byOld.get(name);
+  if (!row) return name;
+  const own = globalThis.customElements?.get?.(name);
+  if (own && !own.sfTagAliasOf) return name;
+  let rules = null;
+
+  try {
+    rules = globalThis.SF?.Loader?.getCustomElementRules?.() ?? null;
+  } catch {
+    rules = null;
+  }
+
+  if (rules && rules[name] && !rules[row.to]) return name;
+  return row.to;
+} // Every open row: [{from, to, since, remove_after}].
+
+function listTagAliases() {
+  return [...state().byOld.values()].map(row => ({ ...row
+  }));
+} // The page met an element under an old name: once per old tag.
+
+function noteTagAlias(row) {
+  const shared = state();
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.to,
+    kind: 'tag',
+    from: row.from,
+    to: row.to,
+    tag: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    expired
+  });
+  if (shared.noted.has(row.from)) return;
+  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
+  // page opted in; the note here is for the rest.
+
+  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+  if (expired || optedIn) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+} // Defines each old tag of `tag` as a subclass of `Base` (the class that
+// defines `tag`), through `define(name, Class)`: the Smart base passes its
+// definition queue, so both names are defined in the same batch. Returns the
+// rows defined.
+
+function defineTagAliases(Base, tag, {
+  table = Base?.aliases,
+  define
+} = {}) {
+  if (table) registerTagAliases(table, tag);
+  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
+  const registry = globalThis.customElements;
+  const defined = [];
+
+  for (const row of rows) {
+    if (!registry || registry.get(row.from)) continue;
+
+    class TagAlias extends Base {
+      connectedCallback() {
+        noteTagAlias(row);
+        super.connectedCallback?.();
+      }
+
+    }
+
+    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
+      value: row.to
+    });
+    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
+    defined.push(row);
+  }
+
+  return defined;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
+  // SF.tags.selector('sf-button-close').
+
+  if (!globalThis.SF.tags) {
+    globalThis.SF.tags = Object.freeze({
+      names: tagNames,
+      selector: tagSelector,
+      is: isTag,
+      canonical: canonicalTag,
+      list: listTagAliases
+    });
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -842,12 +1335,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -865,6 +1360,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -966,6 +1466,71 @@ const FormField = Base => class extends Base {
   }
 
 };
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
+  }
+
+};
 
 /***/ },
 
@@ -980,34 +1545,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("15360766166a");
-/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a5c6bf6ad612");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1a493783d3b8");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8278668e929b");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6e7f9092a98a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c317333b88f8");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("8ddd5798abe5");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _value_mjs__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _value_mjs__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("15360766166a");
+/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("a5c6bf6ad612");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("1a493783d3b8");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("8278668e929b");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("6e7f9092a98a");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c317333b88f8");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("8ddd5798abe5");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
-// sf-input-image: a form field that holds one image (simai/ui-source#27). It
-// shows the image as a thumbnail with its file name and size, offers
-// «Заменить…» and «Убрать», and takes a file dropped anywhere on it -- the image
-// well a page editor, a brand logo or an admin media field needs. ui-mail's
-// polish audit (2026-10-22, B1) found the only part the Framework had for it was
-// sf-file-upload, which is a drop zone with a list of transfers: after a choice
-// it kept its whole zone, showed no image and had no way to replace one.
+// sf-input-image: a form field that holds one image (simai/ui-source#27; the
+// single-file view of the upload family, C81; its looks and parts, C94). It
+// shows the image -- as a row (thumbnail, name and size, the buttons) or as a
+// preview (the picture in its frame, the row under it) -- and takes a file the
+// person chooses, drops or pastes on it, or a picture from the page's library
+// or an address. ui-mail's polish audit (2026-10-22, B1) found the only part
+// the Framework had for it was sf-file-upload, a drop zone with a list of
+// transfers.
 //
-// It does what sf-file-upload does with a file and no more: it raises the File
-// the person chose, in the events, and transfers no bytes. The host uploads it
-// and writes back the stored value, with the address the image now has. Until
-// then the thumbnail shows the chosen file from an object URL, so the person
-// sees what they picked at once rather than after a round trip.
+// What a file must be is the upload core's rule (component/file-upload/js/
+// intake.mjs): the type accept names, not empty, not past max-size; and, for a
+// picture, at least min-width × min-height pixels. A file that fails is said
+// under the field, in words that name the file and the reason (C81: the
+// message under the field), and in `rejected`. Of several files dropped at
+// once the first image is taken and the field says so (IF-3).
+//
+// It transfers nothing itself. Without `uploader` it raises the File, in the
+// events, and the host uploads it and writes back the stored value; until then
+// the thumbnail shows the chosen file from an object URL. With `uploader` --
+// the page's async (file, {signal, onProgress}) => {value, href} | id, the
+// contract sf-file-upload's uploader has -- the field sends the file itself and
+// shows the transfer on the picture: a ring with the share, «Отменить», and on
+// a failure the reason, «Повторить» (IF-12).
+//
+// The picture's description (alt) and «Декоративная» are inside the field when
+// the page asks for them (`alt`); the frame and the focal point are edited in
+// a window over the page (`edit`, C125: sf-modal, the whole screen on a
+// phone), never the pixels: they go in the value, and the server or CDN cuts
+// the sizes (C94 points 3, 4).
 //
 // The field half -- label, help text, error, required, disabled, read-only --
 // is the one every Framework field has (component/field-contract.js), so the
@@ -1024,31 +1607,67 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+
  // Every word this component says is lang/<locale>.json runtime (standard
 // 1.3.8 §11). `quoted` wraps a file name the way the language quotes: «…» in
 // Russian, “…” in English.
 
-const WORD_KEYS = Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime);
+const WORD_KEYS = Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime).filter(key => typeof _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime[key] === 'string');
 
 const camel = key => key.replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
 
 const kebab = key => key.replace(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
 
-const DEFAULT_ACCEPT = 'image/*'; // sf-input-image from its component.json (standard simai.smart-component
+const DEFAULT_ACCEPT = 'image/*';
+const SOURCES = ['device', 'library', 'url'];
+const EDITS = ['crop', 'focus'];
+const MENU = `:scope .sf-image-field-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`;
+const EDITOR_WINDOW = ':scope > .sf-image-field > .sf-image-field-window'; // Whether the pointer is a finger: no hover, no drag words (IF-1).
+
+const coarseQuery = () => {
+  try {
+    return globalThis.matchMedia?.('(pointer: coarse)') ?? null;
+  } catch {
+    return null;
+  }
+}; // The pixels of a picture at an address, or null when it does not load.
+
+
+function readDimensions(href) {
+  return new Promise(resolve => {
+    if (!href || typeof Image !== 'function') {
+      resolve(null);
+      return;
+    }
+
+    const image = new Image();
+
+    image.onload = () => resolve(image.naturalWidth ? {
+      width: image.naturalWidth,
+      height: image.naturalHeight
+    } : null);
+
+    image.onerror = () => resolve(null);
+
+    image.src = href;
+  });
+} // sf-input-image from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §4.4, §8, §16.20, §17.1, §17.2): the settings are attributes
 // and properties made by core/js/element-manifest.js, the actions answer an
 // outcome, the events have their vocabulary names (the shim sends the colon
 // names after them), and the host is the form control through
 // ElementInternals.
 
-const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+
+const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
   actions: {
     // Opens the platform's file dialog, as «Заменить…» and «Выбрать…» do.
     choose() {
@@ -1063,7 +1682,7 @@ const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
       file,
       source = 'input'
     } = {}) {
-      return this._takeFile(file, source || 'input');
+      return this._takeFiles(file ? [file] : [], source || 'input');
     },
 
     'remove-image'() {
@@ -1099,7 +1718,7 @@ const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   }
 });
 
-class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(ImageFieldElement) {
+class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.FormField)(ImageFieldElement) {
   static get props() {
     return { ...super.props,
       templateName: {
@@ -1113,7 +1732,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       },
       size: {
         default: '1',
-        values: _component_field_size__WEBPACK_IMPORTED_MODULE_4__.FIELD_SIZES
+        values: _component_field_size__WEBPACK_IMPORTED_MODULE_6__.FIELD_SIZES
       },
       // The group's name when no label is drawn: a field renderer's panel
       // prints the label beside the field, and a second, visible one inside it
@@ -1141,7 +1760,16 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     if (Object.prototype.hasOwnProperty.call(this, 'value')) {
       const early = this.value;
       delete this.value;
-      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(early);
+      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(early);
+    } // The page's transfer, a property like sf-file-upload's.
+
+
+    this._uploader = null;
+
+    if (Object.prototype.hasOwnProperty.call(this, 'uploader')) {
+      const early = this.uploader;
+      delete this.uploader;
+      this._uploader = typeof early === 'function' ? early : null;
     }
 
     this._objectUrl = '';
@@ -1149,7 +1777,43 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     this._failed = new Set();
     this.dragging = false;
     this.announcement = '';
-    this._focusAfterRender = '';
+    this._focusAfterRender = ''; // What the field says under itself apart from the hint and the page's
+    // error: a refused file (error) or what it did with extra files (info).
+
+    this._notice = null; // A required field left empty says so when focus leaves it or the form
+    // checks it, not only on submit (IF-6).
+
+    this._missingShown = false; // The transfer the uploader runs: {state: process|error, progress,
+    // controller, previous, message}.
+
+    this._upload = null;
+    this._urlOpen = false;
+    this._urlError = ''; // The editor's working copy: {mode, crop, focus}, or null while closed.
+
+    this._editor = null;
+    this._coarse = Boolean(coarseQuery()?.matches);
+
+    this._onCoarse = event => {
+      this._coarse = Boolean(event.matches);
+      this.requestComponentUpdate('pointer');
+    }; // Under md the editor's window is the whole screen (C125; the forms in
+    // popups are sheets there, C32).
+
+
+    this._phone = false;
+
+    this._onPhone = event => {
+      this._phone = Boolean(event.matches);
+      if (this._editor) this.requestComponentUpdate('phone');
+    };
+
+    this._onInvalid = () => this._showMissing();
+
+    this._onFocusOut = event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return;
+
+      this._showMissing();
+    };
   }
 
   attributeChangedCallback(name, previous, next) {
@@ -1162,8 +1826,31 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     super.attributeChangedCallback(name, previous, next);
   }
 
+  onConnected() {
+    const query = coarseQuery();
+    this._coarse = Boolean(query?.matches);
+    query?.addEventListener?.('change', this._onCoarse);
+    this._phoneQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__.breakpointMedia)('md', {
+      below: true
+    });
+    this._phone = Boolean(this._phoneQuery?.matches);
+    this._phoneQuery?.addEventListener?.('change', this._onPhone);
+    this.addEventListener('invalid', this._onInvalid);
+    this.addEventListener('focusout', this._onFocusOut);
+  }
+
+  onDisconnected() {
+    clearTimeout(this._announceTimer);
+    coarseQuery()?.removeEventListener?.('change', this._onCoarse);
+    this._phoneQuery?.removeEventListener?.('change', this._onPhone);
+    this._phoneQuery = null;
+    this.removeEventListener('invalid', this._onInvalid);
+    this.removeEventListener('focusout', this._onFocusOut);
+    this._upload?.controller?.abort();
+  }
+
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-image');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_6__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-image');
   }
 
   get accept() {
@@ -1172,6 +1859,40 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   get ariaLabel() {
     return this.getProp('ariaLabel') || '';
+  }
+
+  get layoutName() {
+    return this.getAttribute('layout') === 'preview' ? 'preview' : 'row';
+  }
+
+  get shapeName() {
+    return this.getAttribute('shape') === 'circle' ? 'circle' : 'square';
+  }
+
+  get fitName() {
+    return this.getAttribute('fit') === 'contain' ? 'contain' : 'cover';
+  }
+
+  get sourceList() {
+    const list = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.listOf)(this.hasAttribute('sources') ? this.getAttribute('sources') : 'device', SOURCES);
+    return list.length ? list : ['device'];
+  }
+
+  get editList() {
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.listOf)(this.getAttribute('edit'), EDITS);
+  }
+
+  get altMode() {
+    const mode = this.getAttribute('alt');
+    return mode === 'field' || mode === 'required' ? mode : 'none';
+  }
+
+  get limits() {
+    return {
+      maxSize: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('max-size')),
+      minWidth: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('min-width')),
+      minHeight: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('min-height'))
+    };
   } // The ids the template writes come from the instance path (§7.1.1), never
   // from a counter.
 
@@ -1185,7 +1906,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   get value() {
     if (this._value !== undefined) return this._value;
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(this.getAttribute('value'));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(this.getAttribute('value'));
   } // Set from code, the value is not a change: no event, as for a native field.
 
 
@@ -1194,12 +1915,25 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
   }
 
   setValue(next) {
-    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(next);
+    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(next);
     if (value?.href !== this._objectUrl) this._releaseObjectUrl();
     this._value = value;
+    if (value) this._missingShown = false;
     this.requestComponentUpdate('value');
     this.sfSyncFormState();
     return this;
+  } // The page's transfer (IF-12): async (file, {signal, onProgress, value}) =>
+  // the stored value ({value, href} or an id). With it the field sends each
+  // file it takes and shows the transfer; without it the host uploads the File
+  // the events carry and calls setValue().
+
+
+  get uploader() {
+    return this._uploader;
+  }
+
+  set uploader(value) {
+    this._uploader = typeof value === 'function' ? value : null;
   } // What the form gets (§17.1): the File the person chose, or the stored
   // image's id (else its address); nothing while empty or disabled. Read-only
   // still submits.
@@ -1219,14 +1953,50 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       message: this.sfWord('value-missing'),
       anchor: this.focusDelegate()
     };
+  } // Beside value-missing, what keeps the form from submitting: a transfer
+  // still going or failed, and a description the page requires (alt
+  // required) that is neither written nor waived as decorative.
+
+
+  fieldCustomError() {
+    if (this.disabled) return '';
+    if (this._upload?.state === 'process') return this.sfWord('wait-for-upload');
+    if (this._upload?.state === 'error') return this.sfWord('upload-failed-validity');
+    return this._altMissing() ? this.sfWord('alt-missing') : '';
+  }
+
+  sfSyncValidity() {
+    const internals = this.sfInternals;
+    const own = this.fieldCustomError();
+
+    if (!internals || !own || this.sfCustomError) {
+      super.sfSyncValidity();
+      return;
+    }
+
+    try {
+      const anchor = this.focusDelegate();
+      internals.setValidity({
+        customError: true
+      }, own, anchor && this.contains(anchor) ? anchor : undefined);
+    } catch (error) {
+      this.reportComponentError?.(error, 'validity');
+    }
   } // form.reset(): back to the image the field was written with, without
   // events (§17.1 item 4).
 
 
   fieldReset() {
+    this._upload?.controller?.abort();
+    this._upload = null;
+
     this._releaseObjectUrl();
 
     this._value = undefined;
+    this._notice = null;
+    this._missingShown = false;
+    this._urlOpen = false;
+    this._editor = null;
     const input = this.input();
     if (input) input.value = '';
     this.requestComponentUpdate('value');
@@ -1248,18 +2018,40 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   formatSize(size) {
     const units = ['bytes', 'kilobytes', 'megabytes', 'gigabytes'].map(key => this.text(key));
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.formatFileSize)(size, {
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.formatFileSize)(size, {
       units,
       node: this
     });
+  } // The image's pixels: the value's own, else what the picture said once it
+  // loaded.
+
+
+  dimensionsOf(value) {
+    if (!value) return null;
+    if (value.width && value.height) return {
+      width: value.width,
+      height: value.height
+    };
+    return value.href ? this._dimensions.get(value.href) || null : null;
   } // «450×300 · 2 КБ»: the image's own dimensions once it has loaded, then its
-  // size. The host's `meta` replaces the line when it knows better.
+  // size. The host's `meta` replaces the line when it knows better. While a
+  // transfer runs it is the share, and after a failure the failure.
 
 
   metaText(value) {
+    if (this._upload?.state === 'process') {
+      const share = this._upload.progress;
+      return share === null || share === undefined ? this.sfWord('uploading-plain') : this.sfWord('uploading', {
+        vars: {
+          n: share
+        }
+      });
+    }
+
+    if (this._upload?.state === 'error') return this.sfWord('upload-failed-plain');
     if (this.meta) return this.meta;
     if (!value) return '';
-    const dimensions = value.href ? this._dimensions.get(value.href) : null;
+    const dimensions = this.dimensionsOf(value);
     return [dimensions ? `${dimensions.width}×${dimensions.height}` : '', this.formatSize(value.size)].filter(Boolean).join(' · ');
   }
 
@@ -1267,35 +2059,176 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     return this.querySelector(':scope .sf-image-field-input');
   }
 
+  get menu() {
+    return this.querySelector(MENU);
+  }
+
   focusDelegate() {
     return this.querySelector(':scope .sf-image-field-actions button:not([disabled])');
-  } // The person chose a file: from the dialog (source input) or by dropping it
-  // (source drop). The thumbnail shows it at once from an object URL; the host
-  // hears of it in input, change and attach (sf-image-field:select after it),
-  // each carrying the File, and uploads it. The action take-file answers
-  // its outcome (§4.4).
+  } // Shown once focus leaves the field or the form checks it: an empty
+  // required field, or a description the page requires and nobody wrote.
 
 
-  _takeFile(file, source = 'input') {
-    if (!file) return 'no-file';
+  _showMissing() {
+    if (this.disabled || this._missingShown) return;
+    if (!(this.required && !this.value) && !this._altMissing()) return;
+    this._missingShown = true;
+    this.requestComponentUpdate('missing');
+  }
+
+  _altMissing() {
+    const value = this.value;
+    return this.altMode === 'required' && Boolean(value) && !value.decorative && !String(value.alt || '').trim();
+  }
+
+  _say(kind, text) {
+    this._notice = text ? {
+      kind,
+      text
+    } : null;
+  } // The person gave files: from the dialog (input), a drop, a paste, or the
+  // host's take-file. One image is taken: the first that passes the checks.
+  // The rest are refused with their reason (rejected, under the field), and
+  // extra images are said as an information line (IF-2, IF-3). With a minimum
+  // width or height the picture is read first, so the action answers a
+  // promise of its outcome there (§4.4).
+
+
+  _takeFiles(files, source = 'input') {
+    const list = Array.from(files || []).filter(Boolean);
+    if (!list.length) return 'no-file';
     if (!this.interactive) return 'inactive';
+    const {
+      maxSize,
+      minWidth,
+      minHeight
+    } = this.limits;
+    const rejected = [];
+    let chosen = null;
 
-    if (!(0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file)) {
-      this.reject([file], source);
-      return 'rejected';
+    for (const file of list) {
+      if (chosen) {
+        rejected.push(this._rejection(file, 'count'));
+        continue;
+      }
+
+      const reason = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.fileRejection)(file, {
+        accept: this.accept,
+        maxSize
+      });
+      if (reason) rejected.push(this._rejection(file, reason, {
+        max: maxSize
+      }));else chosen = file;
     }
 
-    this._releaseObjectUrl();
+    const extra = chosen ? rejected.filter(entry => entry.reason === 'count').length : 0;
+
+    const finish = taken => {
+      const refused = taken ? rejected.filter(entry => entry.reason !== 'count') : rejected;
+      const shown = refused.length ? refused : [];
+      if (shown.length) this._say('error', shown.length === 1 ? shown[0].message : shown.map(entry => entry.message).join('. '));else if (taken && extra) this._say('info', this.sfWord('taken-first', {
+        vars: {
+          n: list.length
+        }
+      }));else this._say('', '');
+      if (rejected.length) this._reject(rejected, source);
+      this.requestComponentUpdate('notice');
+      return taken ? 'applied' : 'rejected';
+    };
+
+    if (!chosen) return finish(false);
+
+    if (!minWidth && !minHeight) {
+      this._take(chosen, source, null);
+
+      return finish(true);
+    } // The picture is read before it is taken: a too-small image never shows.
+
 
     let href = '';
 
     try {
-      href = URL.createObjectURL(file);
-      this._objectUrl = href;
+      href = URL.createObjectURL(chosen);
     } catch {
       href = '';
     }
 
+    return readDimensions(href).then(dimensions => {
+      const small = !dimensions ? 'unreadable' : minWidth && dimensions.width < minWidth ? 'min-width' : minHeight && dimensions.height < minHeight ? 'min-height' : '';
+
+      if (small) {
+        try {
+          URL.revokeObjectURL(href);
+        } catch {// Nothing to release.
+        }
+
+        rejected.unshift(this._rejection(chosen, small, {
+          dimensions,
+          min: small === 'min-height' ? minHeight : minWidth
+        }));
+        return finish(false);
+      }
+
+      this._take(chosen, source, {
+        href,
+        dimensions
+      });
+
+      return finish(true);
+    });
+  }
+
+  _rejection(file, reason, {
+    max = 0,
+    min = 0,
+    dimensions = null
+  } = {}) {
+    const name = String(file?.name || '');
+    const vars = {
+      name
+    };
+    if (reason === 'type') vars.formats = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.acceptFormats)(this.accept, kind => this.sfWord(`formats-${kind}`));
+    if (reason === 'size') Object.assign(vars, {
+      size: this.formatSize(file?.size),
+      max: this.formatSize(max)
+    });
+
+    if (reason === 'min-width' || reason === 'min-height') {
+      Object.assign(vars, {
+        width: dimensions?.width ?? 0,
+        height: dimensions?.height ?? 0,
+        min
+      });
+    }
+
+    return {
+      file,
+      name,
+      reason,
+      message: this.sfWord(`reject-${reason}`, {
+        vars
+      })
+    };
+  }
+
+  _take(file, source, read) {
+    this._upload?.controller?.abort();
+    this._upload = null;
+    const previous = this.value && !this.value.file ? this.value : null;
+
+    this._releaseObjectUrl();
+
+    let href = read?.href || '';
+
+    if (!href) {
+      try {
+        href = URL.createObjectURL(file);
+      } catch {
+        href = '';
+      }
+    }
+
+    this._objectUrl = href;
     const value = {
       value: '',
       label: file.name,
@@ -1304,7 +2237,17 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       href,
       file
     };
+
+    if (read?.dimensions) {
+      value.width = read.dimensions.width;
+      value.height = read.dimensions.height;
+    } // A new picture needs its own description; the old one's does not fit it.
+
+
     this._value = value;
+    this._missingShown = false;
+    this._urlOpen = false;
+    this._editor = null;
     this.announce(`${this.text('chosen')} ${this.quote(file.name)}`);
     this.requestComponentUpdate('value');
 
@@ -1321,6 +2264,122 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       value,
       name: this.name
     });
+    if (this._uploader) this._send(file, previous);
+  } // The transfer through the page's uploader: the share it reports, then the
+  // stored value (done) or the reason (error). Cancel aborts it and puts the
+  // stored image back.
+
+
+  _send(file, previous = this._upload?.previous ?? null) {
+    const send = this._uploader;
+    if (!send || !file) return;
+    this._upload?.controller?.abort();
+    const controller = new AbortController();
+    const upload = {
+      state: 'process',
+      progress: null,
+      controller,
+      previous,
+      message: ''
+    };
+    this._upload = upload;
+    this.requestComponentUpdate('upload');
+    this.sfSyncFormState();
+    const {
+      signal
+    } = controller;
+
+    const onProgress = (done, total) => {
+      if (signal.aborted || this._upload !== upload) return;
+      const share = Number(total) > 0 ? Math.round(Number(done) / Number(total) * 100) : null;
+      upload.progress = share === null ? null : Math.max(0, Math.min(100, share));
+      this.requestComponentUpdate('upload-progress');
+    };
+
+    Promise.resolve().then(() => send.call(null, file, {
+      signal,
+      onProgress,
+      value: this.value
+    })).then(answer => {
+      if (signal.aborted || this._upload !== upload) return;
+      this._upload = null;
+      const stored = answer !== null && typeof answer === 'object' ? answer : {
+        value: answer
+      };
+      const current = this.value || {};
+      const next = { ...current,
+        value: stored.value === undefined || stored.value === null ? '' : String(stored.value)
+      };
+
+      if (stored.href) {
+        this._releaseObjectUrl();
+
+        next.href = String(stored.href);
+      }
+
+      delete next.file;
+      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(next);
+      this.announce(this.sfWord('uploaded'));
+      this.requestComponentUpdate('upload-done');
+
+      this._emitValue({
+        value: this._value,
+        file: null,
+        source: 'upload'
+      }, ['change']);
+    }).catch(error => {
+      if (signal.aborted || this._upload !== upload) return;
+      upload.state = 'error';
+      upload.message = String(error?.message || '');
+      const message = upload.message ? this.sfWord('upload-failed-line', {
+        vars: {
+          message: upload.message
+        }
+      }) : this.sfWord('upload-failed-plain');
+
+      this._say('error', message);
+
+      this.announce(message);
+      this.requestComponentUpdate('upload-failed');
+      this.sfSyncFormState();
+    });
+  }
+
+  _retryUpload() {
+    const file = this.value?.file;
+    if (!file || this._upload?.state !== 'error') return 'unchanged';
+
+    this._say('', '');
+
+    this._send(file, this._upload.previous);
+
+    return 'applied';
+  } // Cancel a transfer, or give up on a failed one: the stored image comes
+  // back (or the field is empty again), as before the choice.
+
+
+  _cancelUpload() {
+    const upload = this._upload;
+    if (!upload) return 'unchanged';
+    upload.controller?.abort();
+    this._upload = null;
+
+    this._releaseObjectUrl();
+
+    this._value = upload.previous;
+
+    this._say('', '');
+
+    this._focusAfterRender = 'choose';
+    this.announce(this.sfWord('upload-cancelled'));
+    this.requestComponentUpdate('upload-cancelled');
+
+    this._emitValue({
+      value: this._value,
+      file: null,
+      source: 'cancel'
+    });
+
     return 'applied';
   } // The person removed the image. Focus goes to «Выбрать…», which is where the
   // removed button stood, so the keyboard does not fall back to the page. Not
@@ -1331,13 +2390,21 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     const previous = this.value;
     if (!previous) return 'empty';
     if (!this.interactive) return 'inactive';
+    this._upload?.controller?.abort();
+    this._upload = null;
 
     this._releaseObjectUrl();
 
     this._value = null;
+
+    this._say('', '');
+
+    this._editor = null;
     const input = this.input();
     if (input) input.value = '';
-    this._focusAfterRender = 'choose';
+    this._focusAfterRender = 'choose'; // A required field emptied from code says so at once.
+
+    if (this.required) this._missingShown = true;
     this.announce(this.text('removed'));
     this.requestComponentUpdate('value');
 
@@ -1354,11 +2421,12 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     return 'applied';
   }
 
-  reject(files, source) {
-    const names = files.map(file => this.quote(file.name)).join(', ');
-    this.announce(`${this.text('rejected')}: ${names}`);
+  _reject(rejected, source) {
+    const files = rejected.map(entry => entry.file);
+    this.announce(rejected.map(entry => entry.message).join('. '));
     this.sfEmit('rejected', {
       files,
+      rejected,
       accept: this.accept,
       source
     });
@@ -1376,16 +2444,18 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     }, 50);
   } // `input` and `change` once each per choice or removal, as a native file
   // input sends them, on the host with the value, the File and the form name.
+  // A transfer that ends (source upload) sends change alone: the form value
+  // moved from the File to the stored id.
 
 
   _emitValue({
     value,
     file,
     source
-  }) {
+  }, types = ['input', 'change']) {
     this.sfSyncFormState();
 
-    for (const type of ['input', 'change']) this.sfEmit(type, {
+    for (const type of types) this.sfEmit(type, {
       value,
       file,
       source,
@@ -1411,13 +2481,406 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   onInputChange(event) {
     event.stopPropagation();
-    const file = event.target?.files?.[0];
-    if (file) this._takeFile(file, 'input');
+    const files = Array.from(event.target?.files || []);
+    if (files.length) this._takeFiles(files, 'input'); // The same file chosen again is a choice again.
+
+    if (event.target && !this._uploader) event.target.value = '';
   }
 
   onInputEvent(event) {
     event.stopPropagation();
-  } // A file held over the field: the whole field is the target, and says so --
+  } // The inner sf-input and sf-switch (description, decorative, address) send
+  // their native input and change; they are this field's parts, so they stop
+  // here and the field says its own.
+
+
+  stopInner(event) {
+    event.stopPropagation();
+  } // «Выбрать…» / «Заменить…»: the dialog when the page gave one source, the
+  // menu of sources when it gave more (C94 point 5).
+
+
+  onChoosePress(event) {
+    if (!this.interactive) return;
+    const sources = this.sourceList;
+
+    if (sources.length > 1) {
+      const menu = this.menu;
+      const trigger = event?.currentTarget?.querySelector?.('button') ?? event?.currentTarget;
+      if (menu && trigger) customElements.whenDefined('sf-menu-context').then(() => menu.toggleFor(trigger, {
+        side: 'block-end',
+        align: 'start'
+      }));
+      return;
+    }
+
+    this._useSource(sources[0]);
+  }
+
+  onMenuSelect(event) {
+    event.stopPropagation();
+    const id = event.detail?.id;
+    if (id) this._useSource(id);
+  }
+
+  _useSource(source) {
+    if (!this.interactive) return;
+
+    if (source === 'device') {
+      this.choose();
+      return;
+    }
+
+    if (source === 'library') {
+      // The library is the page's (Larena «Файлы», the letter's images): it
+      // opens its own and calls setValue() with the picture.
+      this.sfEmit('library', {
+        value: this.value,
+        name: this.name
+      });
+      return;
+    }
+
+    if (source === 'url') {
+      this._urlOpen = true;
+      this._urlError = '';
+      this._focusAfterRender = 'url';
+      this.requestComponentUpdate('url');
+    }
+  }
+
+  _closeUrl() {
+    this._urlOpen = false;
+    this._urlError = '';
+    this._focusAfterRender = 'choose';
+    this.requestComponentUpdate('url');
+  } // An address: the picture is read, checked against the minimum pixels and
+  // taken as the value (change, source url). Nothing is uploaded: the address
+  // is the stored image.
+
+
+  async _takeUrl() {
+    const field = this.querySelector(':scope .sf-image-field-url-input');
+    const address = String(field?.value ?? '').trim();
+    if (!address) return 'no-address';
+    const dimensions = await readDimensions(address);
+    const {
+      minWidth,
+      minHeight
+    } = this.limits;
+    let problem = '';
+    if (!dimensions) problem = this.sfWord('url-failed');else if (minWidth && dimensions.width < minWidth || minHeight && dimensions.height < minHeight) {
+      problem = this._rejection({
+        name: address
+      }, minWidth && dimensions.width < minWidth ? 'min-width' : 'min-height', {
+        dimensions,
+        min: minWidth && dimensions.width < minWidth ? minWidth : minHeight
+      }).message;
+    }
+
+    if (problem) {
+      this._urlError = problem;
+      this.requestComponentUpdate('url');
+      return 'rejected';
+    }
+
+    this._upload?.controller?.abort();
+    this._upload = null;
+
+    this._releaseObjectUrl();
+
+    this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)({
+      value: '',
+      href: address,
+      width: dimensions.width,
+      height: dimensions.height
+    });
+    this._urlOpen = false;
+    this._urlError = '';
+
+    this._say('', '');
+
+    this._missingShown = false;
+    this._focusAfterRender = 'choose';
+    this.requestComponentUpdate('value');
+
+    this._emitValue({
+      value: this._value,
+      file: null,
+      source: 'url'
+    });
+
+    return 'applied';
+  }
+
+  onUrlKey(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      this._takeUrl();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+
+      this._closeUrl();
+    }
+  } // The description and «Декоративная» (C94 point 4): written into the value
+  // as the person types; input on each key, change when it is committed.
+
+
+  onAltInput(event, type) {
+    event.stopPropagation();
+    const value = this.value;
+    if (!value) return;
+    const text = String(event.target?.value ?? event.currentTarget?.value ?? '');
+    this._value = { ...value,
+      alt: text
+    };
+    this.sfSyncFormState();
+
+    this._emitValue({
+      value: this._value,
+      file: value.file ?? null,
+      source: 'alt'
+    }, [type]);
+  }
+
+  onDecorative(event) {
+    event.stopPropagation();
+    const value = this.value;
+    if (!value) return;
+    const host = event.currentTarget;
+    const on = Boolean(host?.checked ?? event.target?.checked);
+    const next = { ...value
+    };
+    if (on) next.decorative = true;else delete next.decorative;
+    this._value = next;
+    this.requestComponentUpdate('alt');
+
+    this._emitValue({
+      value: next,
+      file: value.file ?? null,
+      source: 'alt'
+    });
+  } // --------------------------------------------------------------- editor
+  // The frame (crop) and the focal point (C94 point 3): edited on the picture
+  // itself, never cut, in a window over the page (C125: the field no longer
+  // grows under the picture). The working copy is kept until «Готово»; the
+  // window gives focus back to «Изменить» however it closes.
+
+
+  get cropAspect() {
+    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.aspectRatio)(this.getAttribute('aspect'));
+    if (own) return own;
+    if (this.shapeName === 'circle') return '1 / 1';
+    return this.layoutName === 'row' ? '1 / 1' : '16 / 9';
+  }
+
+  _openEditor() {
+    const value = this.value;
+    const modes = this.editList;
+    if (!value?.href || !modes.length || !this.interactive) return 'unchanged';
+    this._editor = {
+      mode: modes[0],
+      crop: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCrop)(value.crop) || {
+        aspect: this.cropAspect.replace(/\s/gu, ''),
+        zoom: 1,
+        x: 0.5,
+        y: 0.5
+      },
+      focus: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseFocus)(value.focus) || {
+        x: 0.5,
+        y: 0.5
+      }
+    }; // The window opens as it is drawn and puts focus on the picture (its
+    // autofocus), and remembers «Изменить» to give it back.
+
+    this.requestComponentUpdate('editor');
+    return 'applied';
+  }
+
+  _setEditorMode(mode) {
+    if (!this._editor || !EDITS.includes(mode)) return;
+    this._editor.mode = mode;
+    this.requestComponentUpdate('editor');
+  } // «Готово» (save) writes the working copy into the value; «Отмена» leaves
+  // it. Either way the window closes, and its sf-modal-closed drops the copy
+  // (onEditorClosed), as Escape, the scrim and the × do.
+
+
+  _closeEditor(save) {
+    const editor = this._editor;
+    if (!editor || this._editorClosing) return;
+
+    if (save && this.value) {
+      const next = { ...this.value
+      };
+      const modes = this.editList;
+      if (modes.includes('crop')) next.crop = { ...editor.crop
+      };
+      if (modes.includes('focus')) next.focus = { ...editor.focus
+      };
+      this._value = next;
+
+      this._emitValue({
+        value: next,
+        file: next.file ?? null,
+        source: 'edit'
+      });
+    }
+
+    const editorWindow = this.querySelector?.(EDITOR_WINDOW);
+
+    if (editorWindow && typeof editorWindow.close === 'function' && editorWindow.openState) {
+      this._editorClosing = true;
+      const outcome = save ? editorWindow.confirm?.() : editorWindow.close({
+        reason: 'cancelled'
+      });
+      if (outcome?.outcome !== 'refused') return;
+      this._editorClosing = false;
+    }
+
+    this._dropEditor();
+  } // The window has closed, by «Готово», «Отмена», Escape, the scrim or its ×:
+  // the working copy goes and the window leaves the field. The window put
+  // focus back on «Изменить»; if it could not (the page moved it), the field
+  // does.
+
+
+  onEditorClosed(event) {
+    event?.stopPropagation?.();
+    if (event && event.target !== event.currentTarget) return;
+
+    this._dropEditor();
+  }
+
+  _dropEditor() {
+    this._editorClosing = false;
+    if (!this._editor) return;
+    this._editor = null;
+    this._drag = null;
+    const active = globalThis.document?.activeElement;
+    if (!active || !this.contains?.(active)) this._focusAfterRender = 'edit';
+    this.requestComponentUpdate('editor');
+  }
+
+  _zoomBy(step) {
+    const editor = this._editor;
+    if (!editor) return;
+    const zoom = Math.round((editor.crop.zoom + step) * 100) / 100;
+    editor.crop.zoom = Math.max(_value_mjs__WEBPACK_IMPORTED_MODULE_9__.ZOOM_MIN, Math.min(_value_mjs__WEBPACK_IMPORTED_MODULE_9__.ZOOM_MAX, zoom));
+    this.requestComponentUpdate('editor');
+  }
+
+  _moveEditor(dx, dy) {
+    const editor = this._editor;
+    if (!editor) return;
+
+    const clamp = number => Math.max(0, Math.min(1, number));
+
+    const point = editor.mode === 'focus' ? editor.focus : editor.crop;
+    point.x = Math.round(clamp(point.x + dx) * 1000) / 1000;
+    point.y = Math.round(clamp(point.y + dy) * 1000) / 1000;
+    this.requestComponentUpdate('editor');
+  }
+
+  onStageKey(event) {
+    const step = event.shiftKey ? 0.1 : 0.02;
+    const moves = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+      ArrowDown: [0, step]
+    };
+    const move = moves[event.key];
+
+    if (move) {
+      event.preventDefault(); // The frame moves the other way from the picture under it: an arrow to
+      // the right shows more of the right.
+
+      this._moveEditor(move[0], move[1]);
+
+      return;
+    }
+
+    if (this._editor?.mode === 'crop' && ['+', '=', '-'].includes(event.key)) {
+      event.preventDefault();
+
+      this._zoomBy(event.key === '-' ? -0.1 : 0.1);
+
+      return;
+    } // Enter is «Готово»; Escape is the window's own (close-on-esc), which
+    // leaves the value as «Отмена» does.
+
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      this._closeEditor(true);
+    }
+  }
+
+  onStagePointer(event) {
+    const editor = this._editor;
+    const stage = event.currentTarget;
+    if (!editor || !stage) return;
+    const box = stage.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+
+    const clamp = number => Math.max(0, Math.min(1, number));
+
+    if (event.type === 'pointerdown') {
+      stage.setPointerCapture?.(event.pointerId);
+      this._drag = {
+        x: event.clientX,
+        y: event.clientY,
+        crop: { ...editor.crop
+        }
+      };
+    }
+
+    if (!this._drag) return;
+
+    if (event.type === 'pointerup' || event.type === 'pointercancel') {
+      this._drag = null;
+      return;
+    }
+
+    if (editor.mode === 'focus') {
+      editor.focus = {
+        x: clamp((event.clientX - box.left) / box.width),
+        y: clamp((event.clientY - box.top) / box.height)
+      };
+    } else if (event.type === 'pointermove') {
+      const k = 1 / Math.max(1, editor.crop.zoom);
+      editor.crop.x = clamp(this._drag.crop.x - (event.clientX - this._drag.x) / box.width * k);
+      editor.crop.y = clamp(this._drag.crop.y - (event.clientY - this._drag.y) / box.height * k);
+    }
+
+    this.requestComponentUpdate('editor');
+  }
+
+  _editorState() {
+    const editor = this._editor;
+    if (!editor) return '';
+
+    const pct = number => Math.round(number * 100);
+
+    if (editor.mode === 'focus') return this.sfWord('focus-state', {
+      vars: {
+        x: pct(editor.focus.x),
+        y: pct(editor.focus.y)
+      }
+    });
+    return this.sfWord('crop-state', {
+      vars: {
+        aspect: String(editor.crop.aspect || '').replace('/', ':'),
+        zoom: pct(editor.crop.zoom),
+        x: pct(editor.crop.x),
+        y: pct(editor.crop.y)
+      }
+    });
+  } // ------------------------------------------------------- drop and paste
+  // A file held over the field: the whole field is the target, and says so --
   // the border and fill of a selection and the words «Отпустите файл…». Only a
   // drag that carries files is taken, so text dragged across a form is not.
 
@@ -1461,27 +2924,21 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       this.requestComponentUpdate('drag');
     }
 
-    if (!this.interactive || !files.length) return; // One image: the first file the field accepts. The rest are reported, as
-    // sf-file-upload reports a drop the accept list leaves out.
+    if (!this.interactive || !files.length) return;
 
-    const accepted = files.find(file => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file));
-    const rejected = files.filter(file => !(0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file));
-    if (rejected.length) this.reject(rejected, 'drop');
-    if (!accepted) return; // The native input holds the dropped file too, so a form that submits
-    // this field sends it under `name` as it sends a picked one.
+    this._takeFiles(files, 'drop');
+  } // A picture pasted while the field has focus (IF-5): the files the
+  // clipboard holds, as a drop's. Text pasted elsewhere -- the description,
+  // the address -- is not this.
 
-    const input = this.input();
 
-    if (input && typeof DataTransfer === 'function') {
-      try {
-        const transfer = new DataTransfer();
-        transfer.items.add(accepted);
-        input.files = transfer.files;
-      } catch {// A browser without a settable FileList still raises the File.
-      }
-    }
+  onPaste(event) {
+    if (!this.interactive) return;
+    const files = Array.from(event.clipboardData?.files || []);
+    if (!files.length) return;
+    event.preventDefault();
 
-    this._takeFile(accepted, 'drop');
+    this._takeFiles(files, 'paste');
   }
 
   onImageLoad(event, href) {
@@ -1512,10 +2969,16 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     if (typeof callback === 'function') return super.afterRender(callback);
 
     if (this._focusAfterRender) {
+      const target = this._focusAfterRender;
       this._focusAfterRender = ''; // The sf-button host, not its inner button: a button drawn in this
       // render has not drawn its own yet, and the host's focus() waits for it.
 
-      this.querySelector(':scope .sf-image-field-actions sf-button:not([disabled])')?.focus({
+      const selector = {
+        choose: ':scope .sf-image-field-actions :is(sf-button, sf-button-icon):not([disabled])',
+        url: ':scope .sf-image-field-url-input',
+        edit: ':scope .sf-image-field-edit'
+      }[target];
+      this.querySelector(selector || '')?.focus?.({
         preventScroll: true
       });
     }
@@ -1524,46 +2987,102 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     return undefined;
   }
 
-  onDisconnected() {
-    clearTimeout(this._announceTimer);
-  }
-
   templateContext() {
     const props = this.getPropsContext();
     const value = this.value;
-    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_3__.createFieldContract)(this, {
+    const upload = this._upload;
+    const notice = this._notice;
+    const missing = this._missingShown && this.required && !value && !this.disabled;
+    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_5__.createFieldContract)(this, {
       prefix: 'sf-image-field',
       required: this.required,
       // error is a dated alias of invalid (§17.2, aliases.json).
-      invalid: this.invalid || this.hasAttribute('error'),
+      invalid: this.invalid || this.hasAttribute('error') || missing || notice?.kind === 'error',
       hint: this.hint,
       errorMessage: this.errorMessage
     });
-    const errorContent = this.hasSlotContent?.('error') ? this.getSlotContent('error') : this.errorMessage;
-    const hintContent = this.hasSlotContent?.('hint') ? this.getSlotContent('hint') : this.hint;
+    const pageError = this.invalid || this.hasAttribute('error') ? this.hasSlotContent?.('error') ? this.getSlotContent('error') : this.errorMessage : '';
+    const hintContent = this.hasSlotContent?.('hint') ? this.getSlotContent('hint') : this.hint; // The page's error first, then what the field says itself, then the hint.
+
+    let message = hintContent;
+    let messageKind = 'hint';
+
+    if (pageError) {
+      message = pageError;
+      messageKind = 'error';
+    } else if (notice) {
+      message = notice.text;
+      messageKind = notice.kind;
+    } else if (missing) {
+      message = this.sfWord('value-missing');
+      messageKind = 'error';
+    }
+
     const fileName = value?.label || '';
+    const shownName = fileName || (value ? this.sfWord('group') : '');
     const words = Object.fromEntries(WORD_KEYS.map(key => [camel(key), this.sfWord(key)]));
+    const sources = this.sourceList;
+    const editor = this._editor;
+    const dimensions = this.dimensionsOf(value);
     return this.createTemplateContext({ ...props,
       component: this,
       id: this._id,
       field,
       value,
       size: this.size,
+      layout: this.layoutName,
+      shape: this.shapeName,
+      fit: this.fitName,
+      // The frame of the preview: the page's aspect, else a circle's square,
+      // else the picture's own proportion once known.
+      frameAspect: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.aspectRatio)(this.getAttribute('aspect')) || (this.shapeName === 'circle' ? '1 / 1' : dimensions ? `${dimensions.width} / ${dimensions.height}` : '16 / 9'),
+      transparent: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.mayBeTransparent)(value),
       accept: this.accept,
-      fileName,
+      fileName: shownName,
       metaText: this.metaText(value),
       broken: Boolean(value?.href && this._failed.has(value.href)),
       dragging: this.dragging && this.interactive,
       interactive: this.interactive,
+      coarse: this._coarse,
+      required: this.required,
+      removable: !this.required,
+      upload,
+      sources,
+      menuEntries: sources.length > 1 ? sources.map(source => ({
+        id: source,
+        text: source === 'library' ? this.getAttribute('library-label') || words.sourceLibrary : source === 'device' ? this._coarse ? words.sourceDeviceCoarse : words.sourceDevice : words.sourceUrl,
+        icon: {
+          device: 'upload',
+          library: 'photo_library',
+          url: 'link'
+        }[source]
+      })) : [],
+      menuSize: this.size === '1/2' ? '1/2' : '1',
+      edits: this.editList,
+      editor,
+      editorState: this._editorState(),
+      phone: this._phone,
+      altMode: this.altMode,
+      altMissing: this._missingShown && this._altMissing(),
+      urlOpen: this._urlOpen,
+      urlError: this._urlError,
       announcement: this.announcement,
-      message: field.invalid && errorContent ? errorContent : hintContent,
-      messageKind: field.invalid && errorContent ? 'error' : 'hint',
+      message,
+      messageKind,
       words,
       names: {
         group: this.label || this.ariaLabel || words.group,
         choose: words.chooseName,
         replace: fileName ? `${words.replaceName} ${this.quote(fileName)}` : words.replaceName,
-        remove: fileName ? `${words.removeName} ${this.quote(fileName)}` : words.removeName
+        remove: fileName ? `${words.removeName} ${this.quote(fileName)}` : words.removeName,
+        edit: fileName ? `${words.editName} ${this.quote(fileName)}` : words.editName,
+        cancel: fileName ? `${words.cancelUploadName} ${this.quote(fileName)}` : words.cancelUploadName,
+        retry: fileName ? `${words.retryName} ${this.quote(fileName)}` : words.retryName,
+        upload: this.sfWord('upload-name', {
+          vars: {
+            name: fileName || words.group
+          }
+        })
       },
       rootClass: this.getRootClass(),
       // The host is the form control where the browser has ElementInternals,
@@ -1573,7 +3092,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderImageFieldTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderImageFieldTemplate)(this.templateContext());
   }
 
 }
@@ -1605,17 +3124,49 @@ const BUTTON_SIZE = {
   '1/2': '1/3',
   '1': '1/2',
   '2': '1'
+}; // The ring over a thumbnail is the smallest; over a preview one rung up.
+
+const RING_SIZE = {
+  row: '1/2',
+  preview: '1'
+}; // The inner fields (description, address) are the field's own size, at most 1.
+
+const INNER_SIZE = {
+  '1/2': '1/2',
+  '1': '1',
+  '2': '1'
 }; // What stands in the thumbnail when there is no picture to show: an invitation
 // while the field is empty, a broken image when the address did not load, and
 // a plain image glyph for a value the host gave without an address.
 
 function thumbIcon(context) {
-  if (!context.value) return 'add_photo_alternate';
+  if (!context.value) return context.shape === 'circle' ? 'add_a_photo' : 'add_photo_alternate';
   if (context.broken) return 'broken_image';
   return 'image';
+} // Where the picture stands in its box: the frame's centre and zoom when the
+// person cut one (preview), else the focal point, else the middle. The
+// original is never cut: the frame is drawn by position and scale.
+
+
+function imageStyle(context) {
+  const {
+    value,
+    layout
+  } = context;
+  const crop = value?.crop;
+  const focus = value?.focus;
+
+  const pct = number => `${Math.round(number * 1000) / 10}%`;
+
+  if (crop && layout === 'preview' && context.fit === 'cover') {
+    return `object-position: ${pct(crop.x)} ${pct(crop.y)}; transform: scale(${crop.zoom}); transform-origin: ${pct(crop.x)} ${pct(crop.y)}`;
+  }
+
+  if (focus && context.fit === 'cover') return `object-position: ${pct(focus.x)} ${pct(focus.y)}`;
+  return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
-function renderThumb(context) {
+function renderPicture(context) {
   const {
     value,
     component
@@ -1623,14 +3174,53 @@ function renderThumb(context) {
   const href = value?.href || '';
 
   if (href && !context.broken) {
-    // The image is fitted, never stretched or cropped: a logo 900×300 stays a
-    // logo. alt is the file's name, the one thing the field knows about it.
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-image-field-image" src=${href} alt=${context.fileName}
+    // The description is the person's (alt), empty for a decorative picture
+    // and while none is written: the name beside it is read anyway, and the
+    // file name is not a description (IF-11).
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-image-field-image" src=${href} alt=${value.decorative ? '' : value.alt || ''}
+                     style=${imageStyle(context)} draggable="false"
                      @load=${event => component.onImageLoad(event, href)}
                      @error=${() => component.onImageError(href)}>`;
   }
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${thumbIcon(context)}</i>`;
+}
+
+function renderRing(context) {
+  const {
+    upload,
+    names
+  } = context;
+  if (upload?.state !== 'process') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const known = upload.progress !== null && upload.progress !== undefined;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-ring">
+    <sf-progress-ring size=${RING_SIZE[context.layout]} label=${names.upload}
+                      value=${known ? upload.progress : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} ?indeterminate=${!known}></sf-progress-ring>
+  </span>`;
+}
+
+function renderChoose(context, {
+  replace
+}) {
+  const {
+    component,
+    words,
+    names,
+    field
+  } = context;
+  const size = BUTTON_SIZE[context.size] ?? '1/2';
+  const many = context.sources.length > 1;
+  const describedBy = context.message ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // «Заменить ▾» opens the menu of sources the page enabled; with one source
+  // it is a plain button that goes there («Заменить…», C94 point 5).
+
+  const text = replace ? many ? words.replaceMenu : words.replace : many ? words.chooseMenu : words.choose;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class=${replace ? 'sf-image-field-replace' : 'sf-image-field-choose'} size=${size}
+                         appearance="outline" scheme="on-surface"
+                         text=${text} icon-end=${many ? 'expand_more' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                         aria-haspopup=${many ? 'menu' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                         aria-label=${replace ? names.replace : names.choose} aria-describedby=${describedBy}
+                         ?disabled=${context.disabled}
+                         @click=${event => component.onChoosePress(event)}></sf-button>`;
 }
 
 function renderActions(context) {
@@ -1639,69 +3229,289 @@ function renderActions(context) {
     value,
     words,
     names,
-    field
+    upload
   } = context;
   if (context.readonly) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const size = BUTTON_SIZE[context.size] ?? '1/2';
-  const describedBy = context.message ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // Real buttons with names that say what they act on: «Заменить изображение
-  // «logo.png»», each beginning with its visible words so a voice command
-  // naming what is seen still reaches it.
+  let buttons;
 
+  if (upload?.state === 'process') {
+    buttons = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-image-field-cancel" size=${size} appearance="outline" scheme="on-surface"
+                              text=${words.cancelUpload} aria-label=${names.cancel}
+                              @click=${() => component._cancelUpload()}></sf-button>`;
+  } else if (upload?.state === 'error') {
+    buttons = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <sf-button class="sf-image-field-retry" size=${size} appearance="outline" scheme="on-surface"
+                 text=${words.retry} aria-label=${names.retry}
+                 @click=${() => component._retryUpload()}></sf-button>
+      <sf-button-icon class="sf-image-field-cancel" size=${size} appearance="ghost" scheme="on-surface-variant"
+                      icon="close" aria-label=${names.cancel} title=${words.cancelUpload}
+                      @click=${() => component._cancelUpload()}></sf-button-icon>`;
+  } else if (value) {
+    // Real buttons with names that say what they act on: «Заменить изображение
+    // «logo.png»», each beginning with its visible words so a voice command
+    // naming what is seen still reaches it. Remove is the icon (IF-9), so the
+    // size line keeps its room, and a required field has none (IF-6).
+    buttons = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      ${renderChoose(context, {
+      replace: true
+    })}
+      ${context.edits.length && value.href && !context.broken ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-image-field-edit" size=${size} appearance="ghost" scheme="on-surface"
+                          text=${words.edit} aria-label=${names.edit} aria-haspopup="dialog"
+                          ?disabled=${context.disabled}
+                          @click=${() => component._openEditor()}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${context.removable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-image-field-remove" size=${size} appearance="ghost" scheme="on-surface-variant"
+                               icon="delete" aria-label=${names.remove} title=${words.remove}
+                               ?disabled=${context.disabled}
+                               @click=${() => component.removeImage()}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+  } else {
+    buttons = renderChoose(context, {
+      replace: false
+    });
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-actions">${buttons}</span>`;
+} // The words of the line under the name: the file's while it holds one; when
+// empty, how to put one -- with a mouse drag or paste, on a phone take a
+// photo or choose (IF-1: no drag words where there is nothing to drag with).
+
+
+function emptyWords(context) {
+  if (!context.interactive) return '';
+  return context.coarse ? context.words.emptyHintCoarse : context.words.emptyHint;
+}
+
+function renderBody(context) {
+  const {
+    value,
+    words
+  } = context;
+  const title = context.dragging ? words.drop : value ? context.fileName : context.emptyText || words.empty;
+  const meta = context.dragging ? '' : value ? context.metaText : emptyWords(context);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-body">
+    <span class="sf-image-field-name">${title}</span>
+    ${meta ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-meta">${meta}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </span>`;
+} // The group the drop and the paste land on: the row, or the frame of the
+// preview.
+
+
+function groupAttributes(context) {
+  const {
+    field,
+    component
+  } = context;
+  return {
+    labelledby: context.label ? `${context.id}-label` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    label: context.label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.names.group,
+    describedby: context.message ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    invalid: field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    handlers: {
+      dragenter: event => component.onDragOver(event),
+      dragover: event => component.onDragOver(event),
+      dragleave: event => component.onDragLeave(event),
+      drop: event => component.onDrop(event),
+      paste: event => component.onPaste(event)
+    }
+  };
+}
+
+function renderRow(context) {
+  const group = groupAttributes(context);
+  const thumbClasses = ['sf-image-field-thumb', context.value && context.transparent ? 'sf-image-field-thumb--transparent' : ''];
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <span class="sf-image-field-actions">
-      ${value ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-          <sf-button class="sf-image-field-replace" size=${size} appearance="outline" scheme="on-surface"
-                     text=${words.replace} aria-label=${names.replace} aria-describedby=${describedBy}
-                     ?disabled=${context.disabled}
-                     @click=${() => component.choose()}></sf-button>
-          <sf-button class="sf-image-field-remove" size=${size} appearance="ghost" scheme="on-surface"
-                     text=${words.remove} aria-label=${names.remove}
-                     ?disabled=${context.disabled}
-                     @click=${() => component.removeImage()}></sf-button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-          <sf-button class="sf-image-field-choose" size=${size} appearance="outline" scheme="on-surface"
-                     text=${words.choose} aria-label=${names.choose} aria-describedby=${describedBy}
-                     ?disabled=${context.disabled}
-                     @click=${() => component.choose()}></sf-button>`}
-    </span>
-  `;
+    <div class="sf-image-field-well"
+         role="group"
+         aria-labelledby=${group.labelledby}
+         aria-label=${group.label}
+         aria-describedby=${group.describedby}
+         aria-invalid=${group.invalid}
+         @dragenter=${group.handlers.dragenter}
+         @dragover=${group.handlers.dragover}
+         @dragleave=${group.handlers.dragleave}
+         @drop=${group.handlers.drop}
+         @paste=${group.handlers.paste}>
+      <span class=${thumbClasses.filter(Boolean).join(' ')}>${renderPicture(context)}${renderRing(context)}</span>
+      ${renderBody(context)}
+      ${renderActions(context)}
+    </div>`;
+} // The preview (C94 point 1): the picture is the field, in its frame; the row
+// under it -- name, size, the buttons -- keeps to the picture's width, with a
+// floor that leaves room for a name and the buttons, and its buttons wrap
+// under the name from the picture's start edge, never pushed to the field's
+// far edge (owner's layout rule, as C88). The buttons are never laid over the
+// picture (C94 point 2).
+
+
+function renderPreview(context) {
+  const group = groupAttributes(context);
+  const {
+    value,
+    words
+  } = context;
+  const frameClasses = ['sf-image-field-frame', value && context.transparent ? 'sf-image-field-frame--transparent' : ''];
+  const circleEmpty = !value && context.shape === 'circle';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class=${frameClasses.filter(Boolean).join(' ')}
+         role="group"
+         style=${`--sf-image-field--aspect: ${context.frameAspect}`}
+         aria-labelledby=${group.labelledby}
+         aria-label=${group.label}
+         aria-describedby=${group.describedby}
+         aria-invalid=${group.invalid}
+         @dragenter=${group.handlers.dragenter}
+         @dragover=${group.handlers.dragover}
+         @dragleave=${group.handlers.dragleave}
+         @drop=${group.handlers.drop}
+         @paste=${group.handlers.paste}>
+      ${value ? renderPicture(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${thumbIcon(context)}</i>
+          ${circleEmpty ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-frame-text">${context.dragging ? words.drop : emptyWords(context)}</span>`}
+          ${circleEmpty ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : renderActions(context)}`}
+      ${renderRing(context)}
+    </div>
+    ${value || circleEmpty ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-image-field-under">${renderBody(context)}${renderActions(context)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+} // The address (source url): a text field, «Взять» and a close button, under
+// the picture; Enter takes, Escape closes.
+
+
+function renderUrl(context) {
+  if (!context.urlOpen || !context.interactive) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const {
+    component,
+    words
+  } = context;
+  const size = INNER_SIZE[context.size] ?? '1';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-image-field-url">
+    <sf-input class="sf-image-field-url-input" size=${size} input-type="url" label=${words.urlLabel}
+              placeholder="https://…" ?invalid=${Boolean(context.urlError)} error-message=${context.urlError || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+              @input=${event => component.stopInner(event)} @change=${event => component.stopInner(event)}
+              @keydown=${event => component.onUrlKey(event)}></sf-input>
+    <sf-button class="sf-image-field-url-take" size=${size} text=${words.urlTake}
+               @click=${() => component._takeUrl()}></sf-button>
+    <sf-button-icon class="sf-image-field-url-close" size=${size} appearance="ghost" scheme="on-surface-variant"
+                    icon="close" aria-label=${words.urlClose} title=${words.urlClose}
+                    @click=${() => component._closeUrl()}></sf-button-icon>
+  </div>`;
+} // The editor (C94 point 3) in its own window over the page (C125): the frame
+// or the focal point, on the picture, with the mouse, a finger or the arrows,
+// in an sf-modal -- a centred window on a wide screen, the whole screen under
+// md (the forms in popups are sheets there, C32). Nothing is cut: «Готово»
+// writes crop {aspect, zoom, x, y} and focus {x, y} into the value, «Отмена»,
+// Escape, the scrim and the × leave it. The window says nothing to the page:
+// its own sf-modal-* events stop at it, so a page that listens to its own
+// window does not hear this one.
+
+
+const EDITOR_PART = '1/2';
+const EDITOR_ANSWER = '1';
+
+const stopWindowEvent = event => event.stopPropagation();
+
+function renderEditor(context) {
+  const {
+    editor,
+    value,
+    component,
+    words
+  } = context;
+  if (!editor || !value?.href) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const crop = editor.mode === 'crop';
+
+  const pct = number => `${Math.round(number * 1000) / 10}%`;
+
+  const imageStyleText = crop ? `object-fit: cover; object-position: ${pct(editor.crop.x)} ${pct(editor.crop.y)}; transform: scale(${editor.crop.zoom}); transform-origin: ${pct(editor.crop.x)} ${pct(editor.crop.y)}` : 'object-fit: contain';
+  const stageAspect = crop ? String(editor.crop.aspect || '1/1').replace('/', ' / ') : context.frameAspect;
+
+  const pointer = event => component.onStagePointer(event);
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-modal class="sf-image-field-window" open heading=${words.editTitle}
+                        width="var(--sf-h0)" fullscreen=${context.phone ? 'true' : 'false'}
+                        @sf-modal-open=${stopWindowEvent} @sf-modal-opened=${stopWindowEvent}
+                        @sf-modal-close=${stopWindowEvent}
+                        @sf-modal-closed=${event => component.onEditorClosed(event)}>
+    <div slot="content" class="sf-image-field-editor">
+      ${context.edits.length > 1 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-editor-modes" role="group" aria-label=${words.editName}>
+            ${context.edits.map(mode => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${EDITOR_PART} appearance=${editor.mode === mode ? 'tonal' : 'ghost'}
+                scheme="on-surface" text=${mode === 'crop' ? words.crop : words.focus}
+                icon-start=${mode === 'crop' ? 'crop' : 'center_focus_strong'}
+                aria-pressed=${editor.mode === mode ? 'true' : 'false'}
+                @click=${() => component._setEditorMode(mode)}></sf-button>`)}
+          </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      <div class=${['sf-image-field-stage', context.shape === 'circle' && crop ? 'sf-image-field-stage--circle' : ''].filter(Boolean).join(' ')}
+           tabindex="0" role="application" aria-roledescription=${words.stageName} autofocus
+           aria-label=${context.editorState} aria-describedby=${`${context.id}-editor-hint`}
+           style=${`--sf-image-field--aspect: ${stageAspect}`}
+           @keydown=${event => component.onStageKey(event)}
+           @pointerdown=${pointer} @pointermove=${pointer} @pointerup=${pointer} @pointercancel=${pointer}>
+        <img src=${value.href} alt="" draggable="false" style=${imageStyleText}>
+        ${crop ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-stage-grid" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${crop && context.shape === 'circle' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-stage-mask" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${crop ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-focus-dot" aria-hidden="true"
+                                      style=${`inset-inline-start: ${pct(editor.focus.x)}; inset-block-start: ${pct(editor.focus.y)}`}></span>`}
+      </div>
+      <span class="sf-image-field-editor-hint" id=${`${context.id}-editor-hint`}>${crop ? words.cropHint : words.focusHint}</span>
+      ${crop ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-editor-zoom">
+            <sf-button-icon class="sf-image-field-zoom-out" size=${EDITOR_PART} appearance="ghost" scheme="on-surface-variant" icon="zoom_out"
+                            aria-label=${words.zoomOut} title=${words.zoomOut}
+                            @click=${() => component._zoomBy(-0.1)}></sf-button-icon>
+            <sf-button-icon class="sf-image-field-zoom-in" size=${EDITOR_PART} appearance="ghost" scheme="on-surface-variant" icon="zoom_in"
+                            aria-label=${words.zoomIn} title=${words.zoomIn}
+                            @click=${() => component._zoomBy(0.1)}></sf-button-icon>
+          </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </div>
+    <sf-button slot="footer" class="sf-image-field-editor-cancel" size=${EDITOR_ANSWER} appearance="ghost" scheme="on-surface"
+               text=${words.editCancel} @click=${() => component._closeEditor(false)}></sf-button>
+    <sf-button slot="footer" class="sf-image-field-editor-done" size=${EDITOR_ANSWER} text=${words.editDone}
+               @click=${() => component._closeEditor(true)}></sf-button>
+  </sf-modal>`;
+} // The description and «Декоративная» (C94 point 4), when the page asks for
+// them (alt field | required): inside the field, under the picture.
+
+
+function renderAlt(context) {
+  const {
+    value,
+    component,
+    words
+  } = context;
+  if (context.altMode === 'none' || !value || !context.interactive || context.upload?.state === 'process') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const size = INNER_SIZE[context.size] ?? '1';
+  const required = context.altMode === 'required';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-image-field-alt">
+    <sf-input class="sf-image-field-alt-input" size=${size} label=${words.altLabel}
+              placeholder=${words.altPlaceholder} .value=${value.alt || ''}
+              hint=${required ? words.altHintRequired : words.altHint}
+              ?disabled=${Boolean(value.decorative) || context.disabled}
+              ?invalid=${context.altMissing} error-message=${context.altMissing ? words.altMissing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+              @input=${event => component.onAltInput(event, 'input')}
+              @change=${event => component.onAltInput(event, 'change')}></sf-input>
+    <sf-switch class="sf-image-field-decorative" size=${size} label=${words.decorative}
+               ?checked=${Boolean(value.decorative)} ?disabled=${context.disabled}
+               @input=${event => component.stopInner(event)}
+               @change=${event => component.onDecorative(event)}></sf-switch>
+  </div>`;
 }
 
 function renderImageFieldTemplate(context) {
   const {
     component,
     field,
-    value,
-    words
+    value
   } = context;
   const labelId = `${context.id}-label`;
-  const rootClasses = ['sf-image-field', `sf-image-field--size-${context.size}`, value ? 'sf-image-field--filled' : 'sf-image-field--empty', field.invalid ? 'error' : '', context.dragging ? 'dragover' : '', context.disabled ? 'disabled' : '', context.readonly ? 'readonly' : '', context.rootClass].filter(Boolean);
-  const title = context.dragging ? words.drop : value ? context.fileName || words.group : context.emptyText || words.empty;
-  const meta = context.dragging ? '' : value ? context.metaText : context.interactive ? words.emptyHint : '';
+  const rootClasses = ['sf-image-field', `sf-image-field--size-${context.size}`, `sf-image-field--${context.layout}`, value ? 'sf-image-field--filled' : 'sf-image-field--empty', field.invalid ? 'error' : '', context.dragging ? 'dragover' : '', context.disabled ? 'disabled' : '', context.readonly ? 'readonly' : '', context.upload ? `sf-image-field--upload-${context.upload.state}` : '', context.rootClass].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${rootClasses.join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <div class=${rootClasses.join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         data-shape=${context.shape} data-fit=${context.fit}>
       ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <span class="sf-image-field-label" id=${labelId}>
             <span class="sf-image-field-label-text">${context.label}</span>
             ${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-required">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
-      <div class="sf-image-field-well"
-           role="group"
-           aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           aria-label=${context.label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.names.group}
-           aria-describedby=${context.message ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           @dragenter=${event => component.onDragOver(event)}
-           @dragover=${event => component.onDragOver(event)}
-           @dragleave=${event => component.onDragLeave(event)}
-           @drop=${event => component.onDrop(event)}>
-        <span class="sf-image-field-thumb">${renderThumb(context)}</span>
-        <span class="sf-image-field-body">
-          <span class="sf-image-field-name">${title}</span>
-          ${meta ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-meta">${meta}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        </span>
-        ${renderActions(context)}
-      </div>
+      ${context.layout === 'preview' ? renderPreview(context) : renderRow(context)}
+      ${renderUrl(context)}
+      ${renderEditor(context)}
 
       <input type="file"
              class="sf-image-field-input"
@@ -1718,6 +3528,15 @@ function renderImageFieldTemplate(context) {
       ${context.message ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${field.messageId} class="sf-image-field-message"
                      data-field-message=${context.messageKind}>${context.message}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
+      ${renderAlt(context)}
+
+      ${context.menuEntries.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-parts" style="display: contents">
+            <sf-menu-context popup size=${context.menuSize} aria-label=${context.words.sourcesName}
+                             .entries=${context.menuEntries}
+                             @sf-menu-context-select=${event => component.onMenuSelect(event)}
+                             @sf-context-menu-select=${event => event.stopPropagation()}></sf-menu-context>
+          </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+
       <span class="sf-image-field-live" role="status" aria-live="polite" aria-atomic="true">${context.announcement}</span>
     </div>
   `;
@@ -1733,6 +3552,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "5dcef5de40cf"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("alias-table", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("alias-table", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1778,6 +3604,93 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "ab7ec7cd175d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FORMAT_NAMES: () => (/* binding */ FORMAT_NAMES),
+/* harmony export */   acceptFormats: () => (/* binding */ acceptFormats),
+/* harmony export */   acceptsFile: () => (/* binding */ acceptsFile),
+/* harmony export */   fileRejection: () => (/* binding */ fileRejection),
+/* harmony export */   positiveLimit: () => (/* binding */ positiveLimit)
+/* harmony export */ });
+// The upload core's checks (C81: one core, five views), as pure functions:
+// which files an accept list names, why one file is refused before any count
+// is taken, and how the formats read in a message. sf-file-upload's intake
+// (_file_upload.js takeFiles) and sf-input-image (src/smart/input-image) both
+// read them from here, so a file is refused for the same reasons and in the
+// same words in a list and in an image field. This module binds nothing and
+// reads no page: _file_upload.js binds every .sf-file-upload as it loads,
+// which a page with only an image field has no use for, so the field imports
+// these and not that.
+
+// Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
+// as the platform dialog reads it. The dialog filters what a person may pick;
+// a drop (or a paste, or the dialog's «All files») goes past it.
+function acceptsFile(accept, file) {
+  const tokens = String(accept || '').split(',').map((token) => token.trim().toLowerCase()).filter(Boolean);
+  if (!tokens.length) return true;
+  const name = String(file?.name || '').toLowerCase();
+  const type = String(file?.type || '').toLowerCase();
+  return tokens.some((token) => {
+    if (token.startsWith('.')) return name.endsWith(token);
+    if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
+    return type === token;
+  });
+}
+
+// A limit in bytes, pixels or files: a positive number, else none (0).
+function positiveLimit(value) {
+  const number = Number(value ?? '');
+  return Number.isFinite(number) && number > 0 ? number : 0;
+}
+
+// Why one file is refused on its own, before the list's counts: '' when it
+// passes; else 'type' (accept does not name it), 'empty' (no bytes), 'size'
+// (past maxSize) or 'min-size' (under minSize). The order is the order a
+// person fixes them in: the kind of file first, then its size.
+function fileRejection(file, {accept = '', maxSize = 0, minSize = 0} = {}) {
+  if (!acceptsFile(accept, file)) return 'type';
+  const bytes = Number(file?.size) || 0;
+  if (bytes === 0) return 'empty';
+  if (maxSize && bytes > maxSize) return 'size';
+  if (minSize && bytes < minSize) return 'min-size';
+  return '';
+}
+
+// The names people know a format by, where its media subtype is not one:
+// image/jpeg is a JPG, image/svg+xml an SVG.
+const FORMAT_NAMES = Object.freeze({
+  jpeg: 'JPG',
+  pjpeg: 'JPG',
+  'svg+xml': 'SVG',
+  webp: 'WebP',
+  'x-icon': 'ICO',
+  'vnd.microsoft.icon': 'ICO',
+});
+
+// The formats an accept list names, as people read them: «PDF, DOCX»,
+// «JPG, PNG», «изображения». `kindWord(kind)` gives the word of a whole kind
+// (`image/*`, `video/*`, `audio/*`) in the page's language.
+function acceptFormats(accept, kindWord = (kind) => kind) {
+  const parts = String(accept || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const wild = /^(image|video|audio)\/\*$/iu.exec(part);
+      if (wild) return kindWord(wild[1].toLowerCase());
+      const bare = part.replace(/^\./u, '');
+      const sub = (bare.includes('/') ? bare.split('/').pop() || bare : bare).toLowerCase();
+      return FORMAT_NAMES[sub] ?? sub.toUpperCase();
+    });
+  return [...new Set(parts)].join(', ');
+}
+
+
+/***/ },
+
 /***/ "fb0bdf7719f0"
 (__webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -1810,8 +3723,12 @@ _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[
 
 
 // The last part of an address, decoded, without its query and fragment: the
-// name a file is shown under when it has no label.
+// name a file is shown under when it has no label. A data: or blob: address
+// has no name in it -- the last «/» of `data:image/svg+xml,<svg …>` falls
+// inside the content, and the name read «>» (image field study IF-14) -- so it
+// gives none, and the caller says what the file is instead.
 function fileNameFromAddress(href) {
+  if (/^\s*(?:data|blob):/iu.test(String(href ?? ''))) return '';
   const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
   try {
     return decodeURIComponent(tail);
@@ -1853,12 +3770,23 @@ __webpack_async_result__();
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   acceptsFile: () => (/* binding */ acceptsFile),
+/* harmony export */   ZOOM_MAX: () => (/* binding */ ZOOM_MAX),
+/* harmony export */   ZOOM_MIN: () => (/* binding */ ZOOM_MIN),
+/* harmony export */   acceptFormats: () => (/* reexport safe */ _component_file_upload_js_intake_mjs__WEBPACK_IMPORTED_MODULE_2__.acceptFormats),
+/* harmony export */   acceptsFile: () => (/* reexport safe */ _component_file_upload_js_intake_mjs__WEBPACK_IMPORTED_MODULE_2__.acceptsFile),
+/* harmony export */   aspectRatio: () => (/* binding */ aspectRatio),
+/* harmony export */   fileRejection: () => (/* reexport safe */ _component_file_upload_js_intake_mjs__WEBPACK_IMPORTED_MODULE_2__.fileRejection),
 /* harmony export */   formatFileSize: () => (/* reexport safe */ _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_1__.formatFileSize),
-/* harmony export */   normaliseImageValue: () => (/* binding */ normaliseImageValue)
+/* harmony export */   listOf: () => (/* binding */ listOf),
+/* harmony export */   mayBeTransparent: () => (/* binding */ mayBeTransparent),
+/* harmony export */   normaliseCrop: () => (/* binding */ normaliseCrop),
+/* harmony export */   normaliseFocus: () => (/* binding */ normaliseFocus),
+/* harmony export */   normaliseImageValue: () => (/* binding */ normaliseImageValue),
+/* harmony export */   positiveLimit: () => (/* reexport safe */ _component_file_upload_js_intake_mjs__WEBPACK_IMPORTED_MODULE_2__.positiveLimit)
 /* harmony export */ });
 /* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fb0bdf7719f0");
 /* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c016c43b1452");
+/* harmony import */ var _component_file_upload_js_intake_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ab7ec7cd175d");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // The parts of sf-input-image that are about data, not the page: which files
@@ -1875,22 +3803,73 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-// Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
-// as the platform dialog reads it. The dialog filters what a person may pick;
-// a drop goes past it and would take any file at all. It is the rule
-// sf-file-upload applies to a drop, written again here rather than imported:
-// that module binds every .sf-file-upload on the page as it loads, which a
-// page with only an image field has no use for.
-function acceptsFile(accept, file) {
-  const tokens = String(accept || '').split(',').map((token) => token.trim().toLowerCase()).filter(Boolean);
-  if (!tokens.length) return true;
-  const name = String(file?.name || '').toLowerCase();
-  const type = String(file?.type || '').toLowerCase();
-  return tokens.some((token) => {
-    if (token.startsWith('.')) return name.endsWith(token);
-    if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
-    return type === token;
-  });
+// Whether a file is one the accept list names, and why one is refused: the
+// upload core's own rules (component/file-upload/js/intake.mjs, C81), the
+// ones sf-file-upload applies, so a list and an image field refuse a file for
+// the same reasons. Written here once before; the core module binds nothing,
+// so a page with only an image field loads no file area with it.
+
+
+// The kinds of image that can hold transparent pixels: the field draws the
+// checkerboard under them (C86), so a white logo is seen. A JPEG cannot, and
+// letterboxing around it is not the picture's.
+const MAY_BE_TRANSPARENT = /^image\/(?:png|apng|gif|webp|avif|svg\+xml|x-icon|vnd\.microsoft\.icon)$/u;
+const TRANSPARENT_EXTENSION = /\.(?:png|apng|gif|webp|avif|svg|ico)(?:[?#]|$)/iu;
+
+function mayBeTransparent(value) {
+  if (!value) return false;
+  const mime = String(value.mime || '').toLowerCase();
+  if (mime) return MAY_BE_TRANSPARENT.test(mime);
+  const href = String(value.href || '');
+  const svgData = /^data:image\/svg\+xml[,;]/iu.test(href);
+  const pngData = /^data:image\/(?:png|gif|webp|avif)[,;]/iu.test(href);
+  return svgData || pngData || TRANSPARENT_EXTENSION.test(String(value.label || '')) || TRANSPARENT_EXTENSION.test(href);
+}
+
+const unit = (number) => {
+  const value = Number(number);
+  return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.5;
+};
+
+// Reads a list of names (sources, edit) against the names it may hold, in
+// their order there. Commas, spaces or both separate them: the docs write
+// `device,library,url`, a page may write `device library url` or
+// `crop, focus`, and each reads the same.
+function listOf(text, known) {
+  const asked = String(text ?? '').split(/[\s,]+/u).filter(Boolean);
+  return known.filter((name) => asked.includes(name));
+}
+
+// A point on the picture, 0..1 across and down: the focal point (C94 point 3).
+function normaliseFocus(input) {
+  if (!input || typeof input !== 'object') return null;
+  return {x: unit(input.x), y: unit(input.y)};
+}
+
+// The frame: the aspect it is cut in, the zoom (1..3) and the centre, 0..1.
+// The original is kept; the frame is a parameter the server or CDN applies.
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 3;
+
+function normaliseCrop(input) {
+  if (!input || typeof input !== 'object') return null;
+  const zoom = Number(input.zoom);
+  return {
+    aspect: String(input.aspect || ''),
+    zoom: Number.isFinite(zoom) ? Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom)) : 1,
+    x: unit(input.x),
+    y: unit(input.y),
+  };
+}
+
+// An aspect as CSS writes it, from «16/9», «16:9», «1.91/1» or «1»: «16 / 9».
+// Anything else is none.
+function aspectRatio(text) {
+  const match = /^\s*(\d+(?:\.\d+)?)\s*(?:[/:]\s*(\d+(?:\.\d+)?))?\s*$/u.exec(String(text ?? ''));
+  if (!match) return '';
+  const width = Number(match[1]);
+  const height = match[2] === undefined ? 1 : Number(match[2]);
+  return width > 0 && height > 0 ? `${width} / ${height}` : '';
 }
 
 // The value is the file shape the Framework already uses for a stored file --
@@ -1928,6 +3907,22 @@ function normaliseImageValue(input) {
     size: typeof source.size === 'number' ? source.size : String(source.size ?? ''),
     href,
   };
+  // What the field knows of the picture beyond the file (C94): its pixels,
+  // its description -- or that it is decorative and needs none -- and the
+  // focal point and frame chosen in the editor. Each only when it is there,
+  // so a value without them reads exactly as it did.
+  const width = Number(source.width);
+  const height = Number(source.height);
+  if (Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0) {
+    value.width = width;
+    value.height = height;
+  }
+  if (source.alt !== undefined && source.alt !== null) value.alt = String(source.alt);
+  if (source.decorative === true) value.decorative = true;
+  const focus = normaliseFocus(source.focus);
+  if (focus) value.focus = focus;
+  const crop = normaliseCrop(source.crop);
+  if (crop) value.crop = crop;
   // A file chosen in this page and not stored yet carries the File itself.
   if (source.file) value.file = source.file;
   return value;
@@ -1941,28 +3936,28 @@ __webpack_async_result__();
 /***/ "8278668e929b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-image-field:select","to":"sf-image-field-attach","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"the detail keeps file, source, value and name and adds files: the old fields are all there"},{"from":"sf-image-field:remove","to":"sf-image-field-detach","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"same detail"},{"from":"sf-image-field:reject","to":"sf-image-field-rejected","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"same detail"},{"from":"error","to":"invalid","kind":"setting","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","section":"§17.2","note":"error is a dated alias of invalid; the attribute and the property write invalid"},{"from":"sf-image-field","to":"sf-input-image","kind":"tag","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-image; sf-image-field is a subclass defined beside it until the date"},{"from":"sf-image-field-attach","to":"sf-input-image-attach","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-image-field-detach","to":"sf-input-image-detach","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-image-field-rejected","to":"sf-input-image-rejected","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-image-field:select","to":"sf-image-field-attach","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"the detail keeps file, source, value and name and adds files: the old fields are all there"},{"from":"sf-image-field:remove","to":"sf-image-field-detach","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"same detail"},{"from":"sf-image-field:reject","to":"sf-image-field-rejected","kind":"event","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, vocabulary 1.1.5 §9.1","note":"same detail"},{"from":"error","to":"invalid","kind":"setting","component":"sf-input-image","since":"2026-10-27","remove_after":"2026-12-01","section":"§17.2","note":"error is a dated alias of invalid; the attribute and the property write invalid"},{"from":"sf-image-field","to":"sf-input-image","kind":"tag","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-image; sf-image-field is a subclass defined beside it until the date"},{"from":"sf-image-field-attach","to":"sf-input-image-attach","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-image-field-detach","to":"sf-input-image-detach","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-image-field-library","to":"sf-input-image-library","kind":"event","component":"sf-input-image","since":"2026-11-12","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag; new in 1.4.0, sent under the dated tag too so a page on sf-image-field hears it"},{"from":"sf-image-field-rejected","to":"sf-input-image-rejected","kind":"event","component":"sf-input-image","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"}]}');
 
 /***/ },
 
 /***/ "1a493783d3b8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.3.3","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.5.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "6e7f9092a98a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Image field","runtime":{"bytes":"B","choose":"Choose…","choose-name":"Choose an image","chosen":"Image chosen","drop":"Drop the file to use it","empty":"No image chosen","empty-hint":"Drop a file here or choose one","gigabytes":"GB","group":"Image","kilobytes":"KB","megabytes":"MB","quoted":"“%s”","rejected":"This file is not accepted","remove":"Remove","remove-name":"Remove the image","removed":"Image removed","replace":"Replace…","replace-name":"Replace the image","value-missing":"Choose an image."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Image field","runtime":{"alt-hint":"For screen readers and search engines.","alt-hint-required":"A screen reader reads it, and mail shows it when images are off.","alt-label":"Image description","alt-missing":"Describe the image or mark it decorative.","alt-placeholder":"What the picture shows","bytes":"B","cancel-upload":"Cancel","cancel-upload-name":"Cancel the upload","choose":"Choose…","choose-menu":"Choose","choose-name":"Choose an image","chosen":"Image chosen","crop":"Frame","crop-hint":"Drag the picture or use the arrows; zoom with the buttons or + and −. Enter to finish, Esc to cancel.","crop-state":"Frame {aspect}, zoom {zoom} %, centre {x} % across, {y} % down","decorative":"Decorative — no description needed","drop":"Drop the file to use it","edit":"Edit","edit-cancel":"Cancel","edit-done":"Done","edit-name":"Edit the frame","edit-title":"Edit the image","empty":"No image chosen","empty-hint":"Drop or paste an image","empty-hint-coarse":"Take a photo or choose one","focus":"Focal point","focus-hint":"Click the main part of the picture or move the point with the arrows: it stays in the frame at any width.","focus-state":"Focal point: {x} % across, {y} % down","formats-audio":"audio","formats-image":"images","formats-video":"video","gigabytes":"GB","group":"Image","kilobytes":"KB","megabytes":"MB","quoted":"“%s”","reject-count":"“{name}” was not added: this field holds one image","reject-empty":"“{name}” is empty","reject-min-height":"“{name}” is {width}×{height} px; it must be at least {min} px high","reject-min-width":"“{name}” is {width}×{height} px; it must be at least {min} px wide","reject-size":"“{name}” is {size}; the limit is {max}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-unreadable":"“{name}” does not open as an image","rejected":"This file is not accepted","remove":"Remove","remove-name":"Remove the image","removed":"Image removed","replace":"Replace…","replace-menu":"Replace","replace-name":"Replace the image","retry":"Try again","retry-name":"Try the upload again","source-device":"From this computer","source-device-coarse":"From this device","source-library":"From the library","source-url":"By address","sources-name":"Where to take the image from","stage-name":"frame","taken-first":"The first image of {n} was taken: this field holds one","upload-cancelled":"Upload cancelled","upload-failed-line":"Not uploaded: {message}","upload-failed-plain":"Not uploaded","upload-failed-validity":"The image was not uploaded: try again or choose another","upload-name":"Uploading {name}","uploaded":"Image uploaded","uploading":"Uploading · {n} %","uploading-plain":"Uploading…","url-close":"Close the address field","url-failed":"The image at this address could not be opened. Check the address.","url-label":"Image address","url-take":"Use","value-missing":"Choose an image.","wait-for-upload":"Wait until the image is uploaded","zoom-in":"Zoom in","zoom-out":"Zoom out"}}');
 
 /***/ },
 
 /***/ "c317333b88f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Поле изображения","runtime":{"bytes":"Б","choose":"Выбрать…","choose-name":"Выбрать изображение","chosen":"Выбрано изображение","drop":"Отпустите файл, чтобы поставить его","empty":"Изображение не выбрано","empty-hint":"Перетащите файл сюда или выберите его","gigabytes":"ГБ","group":"Изображение","kilobytes":"КБ","megabytes":"МБ","quoted":"«%s»","rejected":"Этот файл не подходит","remove":"Убрать","remove-name":"Убрать изображение","removed":"Изображение убрано","replace":"Заменить…","replace-name":"Заменить изображение","value-missing":"Выберите изображение."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Поле изображения","runtime":{"alt-hint":"Для незрячих и поисковиков.","alt-hint-required":"Его прочитает диктор и покажет почта, если картинки выключены.","alt-label":"Описание изображения","alt-missing":"Опишите изображение или отметьте его декоративным.","alt-placeholder":"Что на картинке","bytes":"Б","cancel-upload":"Отменить","cancel-upload-name":"Отменить загрузку","choose":"Выбрать…","choose-menu":"Выбрать","choose-name":"Выбрать изображение","chosen":"Выбрано изображение","crop":"Кадр","crop-hint":"Перетащите картинку или нажимайте стрелки; масштаб — кнопками или + и −. Enter — готово, Esc — отмена.","crop-state":"Кадр {aspect}, масштаб {zoom} %, центр {x} % по ширине, {y} % по высоте","decorative":"Декоративная — описание не нужно","drop":"Отпустите файл, чтобы поставить его","edit":"Изменить","edit-cancel":"Отмена","edit-done":"Готово","edit-name":"Изменить кадр","edit-title":"Изменить изображение","empty":"Изображение не выбрано","empty-hint":"Перетащите или вставьте изображение","empty-hint-coarse":"Сфотографируйте или выберите","focus":"Точка фокуса","focus-hint":"Щёлкните главное на картинке или двигайте точку стрелками: оно останется в кадре при любой ширине.","focus-state":"Точка фокуса: {x} % по ширине, {y} % по высоте","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","gigabytes":"ГБ","group":"Изображение","kilobytes":"КБ","megabytes":"МБ","quoted":"«%s»","reject-count":"«{name}» не добавлен: в этом поле одно изображение","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-height":"«{name}» — {width}×{height} px, а нужно от {min} px в высоту","reject-min-width":"«{name}» — {width}×{height} px, а нужно от {min} px в ширину","reject-size":"«{name}» — {size}, а можно до {max}","reject-type":"«{name}» не подходит: можно {formats}","reject-unreadable":"«{name}» не открывается как изображение","rejected":"Этот файл не подходит","remove":"Убрать","remove-name":"Убрать изображение","removed":"Изображение убрано","replace":"Заменить…","replace-menu":"Заменить","replace-name":"Заменить изображение","retry":"Повторить","retry-name":"Повторить загрузку","source-device":"С компьютера","source-device-coarse":"С устройства","source-library":"Из библиотеки","source-url":"По ссылке","sources-name":"Откуда взять изображение","stage-name":"кадр","taken-first":"Взято первое изображение из {n}: в этом поле одно","upload-cancelled":"Загрузка отменена","upload-failed-line":"Не загрузилось: {message}","upload-failed-plain":"Не загрузилось","upload-failed-validity":"Изображение не загрузилось: повторите или выберите другое","upload-name":"Загрузка {name}","uploaded":"Изображение загружено","uploading":"Загружается · {n} %","uploading-plain":"Загружается…","url-close":"Закрыть ввод адреса","url-failed":"Не удалось открыть изображение по ссылке. Проверьте адрес.","url-label":"Адрес изображения","url-take":"Взять","value-missing":"Выберите изображение.","wait-for-upload":"Дождитесь, пока изображение загрузится","zoom-in":"Увеличить","zoom-out":"Уменьшить"}}');
 
 /***/ }
 

@@ -34,11 +34,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   unbindSlider: () => (/* binding */ unbindSlider)
 /* harmony export */ });
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
+([_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
 
-const SLIDER_SELECTOR = '.sf-slider';
+
+ // The words a slider says about itself (SL-5), for the class block; sf-slider
+// hands its own from lang/ through the root's attributes, which win. A product
+// adds a language with SF.language.register('sf-slider', code, words).
+
+const SLIDER_TEXT = {
+  en: {
+    label: 'Slides',
+    carousel: 'carousel',
+    slide: 'slide',
+    position: '{n} of {count}',
+    pause: 'Stop slides',
+    play: 'Start slides',
+    thumb: 'Go to slide {n}'
+  },
+  ru: {
+    label: 'Слайды',
+    carousel: 'карусель',
+    slide: 'слайд',
+    position: '{n} из {count}',
+    pause: 'Остановить прокрутку',
+    play: 'Запустить прокрутку',
+    thumb: 'Перейти к слайду {n}'
+  }
+};
+const SLIDER_SELECTOR = '.sf-slider'; // Up to seven slides are dots; from eight a counter «2 / 12» stands in their
+// place (C143 (4), as sf-gallery counts pictures, C97).
+
+const DOTS_LIMIT = 7; // Cards (sf-slider--content: news, reviews, products) show the next card's
+// edge (C143 (7)): 1.15 cards on a phone, 2.2 from the sm step up.
+
+const PEEK_PER_VIEW = 1.15;
+const PEEK_PER_VIEW_WIDE = 2.2;
 const SLIDER_BOUND_FLAG = 'sfSliderBound';
 const SLIDER_WAITING_FLAG = 'sfSliderWaiting';
 const SWIPER_NESTED_OPTION_PREFIXES = ['a11y', 'autoplay', 'cardsEffect', 'coverflowEffect', 'creativeEffect', 'cubeEffect', 'fadeEffect', 'flipEffect', 'freeMode', 'grid', 'keyboard', 'mousewheel', 'scrollbar', 'thumbs', 'virtual'];
@@ -165,9 +199,12 @@ function collectSwiperDataOptions(...elements) {
       if (isPlainObject(parsedOptions)) {
         options = deepMerge(options, parsedOptions);
       }
-    }
+    } // Only the data-swiper-* attributes are options; the block's own words
+    // (data-slide-label «{n} из {count}») are not JSON and stay unread here.
+
 
     Object.entries(element.dataset).forEach(([key, value]) => {
+      if (!key.startsWith('swiper') || key === 'swiperOptions') return;
       setSwiperDataOption(options, key, parseDataValue(value));
     });
     return options;
@@ -189,15 +226,42 @@ function normalizeAutoplayOptions(options = {}) {
   return options;
 }
 
-function createPaginationOptions(paginationEl) {
-  if (!paginationEl) return undefined;
+function createPaginationOptions(paginationEl, slidesCount) {
+  if (!paginationEl) return undefined; // From eight slides the dots give way to a counter; the slides' own names
+  // («2 из 12») and the live strip say it to a reader, so the counter is
+  // only drawn.
+
+  if (slidesCount > DOTS_LIMIT) {
+    paginationEl.classList.add('sf-slider-dots--count');
+    paginationEl.setAttribute('aria-hidden', 'true');
+    return {
+      el: paginationEl,
+      type: 'fraction',
+      currentClass: 'sf-slider-dots-current',
+      totalClass: 'sf-slider-dots-total'
+    };
+  }
+
+  paginationEl.classList.remove('sf-slider-dots--count');
+  paginationEl.removeAttribute('aria-hidden');
   return {
     el: paginationEl,
     bulletActiveClass: 'active',
     bulletClass: 'sf-slider-dots-dot',
     bulletElement: 'button',
-    clickable: true
+    clickable: true,
+    // One Tab stop for all the dots; the arrow keys page (C143 (5)).
+    keyboard: true
   };
+}
+
+function isContentSlider(root) {
+  return root.classList.contains('sf-slider--content');
+} // Cards peek (C143 (7)) unless the page chose how many are in view.
+
+
+function hasAuthoredPerView(root, element) {
+  return getOption(root, element, 'slidesPerView') !== undefined || [root, element].some(node => node?.dataset?.swiperSlidesPerView !== undefined || /slidesPerView|breakpoints/.test(node?.dataset?.swiperOptions || ''));
 }
 
 function createNavigationOptions(prevEl, nextEl) {
@@ -212,30 +276,91 @@ function createNavigationOptions(prevEl, nextEl) {
 } // The Framework's slider takes no `thumbs` option, so a thumbnail was a picture
 // that did nothing. A thumbnail moves the main slider to its slide, and the one
 // shown is marked.
+// A thumbnail is a button (GL-2, SL-12): named by its picture's alt, else
+// «Перейти к слайду 2»; the thumbnails are one Tab stop -- the current one --
+// and ArrowLeft / ArrowRight (mirrored right to left), Home and End move the
+// slide and the focus with it, as the dots do (C143 (5)); Enter and Space
+// press it.
 
 
-function linkThumbnails(slider, thumbs) {
+function thumbnailName(root, slide, index) {
+  const alt = slide.querySelector('img[alt], [aria-label]');
+  const own = alt?.getAttribute('alt') ?? alt?.getAttribute('aria-label');
+  return own?.trim() || sliderWord(root, 'thumb').replaceAll('{n}', String(index + 1));
+}
+
+function linkThumbnails(root, slider, thumbs) {
   if (!slider || !thumbs?.slides?.length) return () => {};
+  const slides = Array.from(thumbs.slides);
+  const authored = slides.map(slide => ({
+    role: slide.getAttribute('role'),
+    tabindex: slide.getAttribute('tabindex'),
+    label: slide.getAttribute('aria-label')
+  })); // The page's own name, as the engine kept it before writing «1 / 6».
+
+  const names = slides.map((slide, index) => (slide.__sfAuthoredLabel ?? authored[index].label)?.trim?.() || thumbnailName(root, slide, index));
+
+  const name = () => slides.forEach((slide, index) => {
+    slide.setAttribute('role', 'button');
+    slide.setAttribute('aria-label', names[index]);
+  });
 
   const mark = () => {
-    thumbs.slides.forEach((slide, index) => {
+    slides.forEach((slide, index) => {
       const active = index === slider.activeIndex;
       slide.classList.toggle('swiper-slide-thumb-active', active);
+      slide.tabIndex = active ? 0 : -1;
       if (active) slide.setAttribute('aria-current', 'true');else slide.removeAttribute('aria-current');
     });
   };
 
-  const listeners = thumbs.slides.map((slide, index) => {
+  const listeners = slides.map((slide, index) => {
     const listener = () => slider.slideTo(index);
 
     slide.addEventListener('click', listener);
     return [slide, listener];
   });
+
+  const onKey = event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const slide = event.target instanceof Element ? event.target.closest('.swiper-slide') : null;
+    const at = slides.indexOf(slide);
+    if (at < 0) return;
+    const rtl = getComputedStyle(thumbs.el).direction === 'rtl';
+    const last = slides.length - 1;
+    let next;
+    if (event.key === 'Enter' || event.key === ' ') next = at;else if (event.key === 'ArrowRight') next = at + (rtl ? -1 : 1);else if (event.key === 'ArrowLeft') next = at + (rtl ? 1 : -1);else if (event.key === 'Home') next = 0;else if (event.key === 'End') next = last;else return;
+    event.preventDefault(); // The thumbnails' own keys: the strip's keyboard option does not page twice.
+
+    event.stopPropagation();
+    if (slider.params?.loop) next = (next % (last + 1) + last + 1) % (last + 1);
+    next = Math.min(Math.max(next, 0), last);
+    slider.slideTo(next);
+    mark();
+    slides[next]?.focus?.();
+  }; // The thumbnails' engine names its slides again on every update.
+
+
+  const onUpdate = () => {
+    name();
+    mark();
+  };
+
+  thumbs.el.addEventListener('keydown', onKey);
+  thumbs.on?.('update', onUpdate);
   slider.on?.('slideChange', mark);
+  name();
   mark();
   return () => {
     listeners.forEach(([slide, listener]) => slide.removeEventListener('click', listener));
+    thumbs.el.removeEventListener('keydown', onKey);
+    thumbs.off?.('update', onUpdate);
     slider.off?.('slideChange', mark);
+    slides.forEach((slide, index) => {
+      if (!slide.isConnected) return;
+      [['role', authored[index].role], ['tabindex', authored[index].tabindex], ['aria-label', authored[index].label]].forEach(([attr, value]) => value === null ? slide.removeAttribute(attr) : slide.setAttribute(attr, value));
+      slide.removeAttribute('aria-current');
+    });
   };
 }
 
@@ -275,6 +400,7 @@ function createAutoplayOptions(root, element) {
 }
 
 function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
+  const peek = element instanceof Element && !element.classList.contains('sf-slider-thumbnails') && isContentSlider(root) && !hasAuthoredPerView(root, element);
   let options = {
     centeredSlides: toBoolean(getOption(root, element, 'centeredSlides'), false),
     loop: toBoolean(getOption(root, element, 'loop'), false),
@@ -283,6 +409,18 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
     speed: toNumber(getOption(root, element, 'speed'), resolveCssDuration(root, '--sf-slider--duration', 300)),
     watchSlidesProgress: true
   };
+
+  if (peek) {
+    options.slidesPerView = PEEK_PER_VIEW; // From the sm step of the Framework's ladder (rem, as the sheets write it).
+
+    const from = Number.parseFloat(_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__.BREAKPOINTS.sm) * 16;
+    options.breakpoints = {
+      [from]: {
+        slidesPerView: PEEK_PER_VIEW_WIDE
+      }
+    };
+  }
+
   const autoplay = createAutoplayOptions(root, element);
 
   if (autoplay) {
@@ -367,45 +505,188 @@ function createArrowStateGuard(slider, prevEl, nextEl) {
   events.forEach(name => slider.on(name, sync));
   sync();
   return () => events.forEach(name => slider.off?.(name, sync));
+} // Autoplay turns the slides only with a pause button the person can see
+// (C143 (6), WCAG 2.2.2, as sf-carousel required): .sf-slider-rotation, a
+// button or an sf-button-icon host whose button carries it. Without one the
+// slider does not turn.
+
+
+function findRotationButton(root) {
+  const marked = root.querySelector('.sf-slider-rotation');
+  if (!(marked instanceof HTMLElement)) return null;
+  const button = marked.matches('button') ? marked : marked.querySelector('button');
+  return button instanceof HTMLButtonElement ? button : null;
 }
 
-function createAutoplayGuard(root, slider) {
-  if (!slider?.autoplay || prefersReducedMotion()) return () => {};
-  const pauseReasons = new Set();
-  let resumeOwned = false;
+function isShown(element) {
+  if (typeof element.checkVisibility === 'function') {
+    return element.checkVisibility({
+      checkOpacity: true,
+      checkVisibilityCSS: true
+    });
+  }
 
-  const pause = reason => {
-    pauseReasons.add(reason);
-    if (!slider.autoplay.running) return;
-    resumeOwned = true;
-    slider.autoplay.stop();
+  return element.getClientRects().length > 0;
+} // The rotation is the person's: the pause button stops and starts it, and a
+// keyboard focus inside the slider stops it until the button starts it again
+// (APG carousel). The pointer over the slider and a hidden tab only hold it
+// while they last. The button is named by what it does next (C12: no
+// aria-pressed on a toggle whose name changes).
+
+
+function createAutoplayGuard(root, slider, rotationButton) {
+  if (!slider?.autoplay || !slider.params?.autoplay || prefersReducedMotion()) return () => {};
+  const holds = new Set();
+  let stopped = false;
+  let applying = false;
+  const host = rotationButton?.closest?.((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.tagSelector)('sf-button-icon')) || null;
+
+  const label = key => (key === 'pause' ? root.dataset.pauseLabel : root.dataset.playLabel) || sliderWord(root, key);
+
+  const paint = () => {
+    if (!rotationButton) return;
+    const key = stopped ? 'play' : 'pause';
+    rotationButton.removeAttribute('aria-pressed');
+
+    if (host) {
+      host.setAttribute('icon', stopped ? 'play_arrow' : 'pause');
+      host.setAttribute('aria-label', label(key));
+    } else {
+      rotationButton.setAttribute('aria-label', label(key));
+    }
+
+    root.dataset.rotation = stopped ? 'stopped' : 'playing';
   };
 
-  const resume = reason => {
-    pauseReasons.delete(reason);
-    if (!resumeOwned || pauseReasons.size || !root.isConnected) return;
-    resumeOwned = false;
-    slider.autoplay.start();
+  const apply = () => {
+    const run = !stopped && holds.size === 0 && root.isConnected;
+    if (run === slider.autoplay.running) return;
+    applying = true;
+    if (run) slider.autoplay.start();else slider.autoplay.stop();
+    applying = false;
   };
 
-  const onFocusIn = () => pause('focus');
-
-  const onFocusOut = event => {
-    if (!root.contains(event.relatedTarget)) resume('focus');
+  const stop = () => {
+    stopped = true;
+    paint();
+    apply();
   };
+
+  const start = () => {
+    stopped = false;
+    paint();
+    apply();
+  };
+
+  const hold = reason => {
+    holds.add(reason);
+    apply();
+  };
+
+  const release = reason => {
+    holds.delete(reason);
+    apply();
+  }; // The engine stops by itself on a swipe (disableOnInteraction): that is the
+  // person's stop too, and the button says so.
+
+
+  const onEngineStop = () => {
+    if (!applying) {
+      stopped = true;
+      paint();
+    }
+  };
+
+  const onRotation = event => {
+    event.preventDefault();
+    if (stopped) start();else stop();
+  };
+
+  const onFocusIn = event => {
+    if (event.target === rotationButton) return;
+    if (event.target instanceof Element && event.target.matches(':focus-visible')) stop();
+  };
+
+  const onPointerEnter = () => hold('pointer');
+
+  const onPointerLeave = () => release('pointer');
 
   const onVisibilityChange = () => {
-    if (document.hidden) pause('visibility');else resume('visibility');
+    if (document.hidden) hold('visibility');else release('visibility');
   };
 
+  slider.on?.('autoplayStop', onEngineStop);
+  rotationButton?.addEventListener('click', onRotation);
   root.addEventListener('focusin', onFocusIn);
-  root.addEventListener('focusout', onFocusOut);
+  root.addEventListener('pointerenter', onPointerEnter);
+  root.addEventListener('pointerleave', onPointerLeave);
   document.addEventListener('visibilitychange', onVisibilityChange);
   onVisibilityChange();
+  paint();
   return () => {
+    slider.off?.('autoplayStop', onEngineStop);
+    rotationButton?.removeEventListener('click', onRotation);
     root.removeEventListener('focusin', onFocusIn);
-    root.removeEventListener('focusout', onFocusOut);
+    root.removeEventListener('pointerenter', onPointerEnter);
+    root.removeEventListener('pointerleave', onPointerLeave);
     document.removeEventListener('visibilitychange', onVisibilityChange);
+    delete root.dataset.rotation;
+  };
+} // The block is a region the reader can find and leave, named and described as
+// a carousel, its slides «слайд, 2 из 5» (SL-5, as the APG carousel and
+// sf-carousel). A name or role the page wrote stays; unbinding puts back what
+// was there before.
+
+
+function sliderWord(root, key) {
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(SLIDER_TEXT, key, root, 'sf-slider');
+}
+
+function applyRegionSemantics(root) {
+  const authored = {
+    role: root.getAttribute('role'),
+    roleDescription: root.getAttribute('aria-roledescription'),
+    label: root.getAttribute('aria-label')
+  };
+  if (!authored.role) root.setAttribute('role', 'region');
+  if (!authored.roleDescription) root.setAttribute('aria-roledescription', sliderWord(root, 'carousel'));
+
+  if (!authored.label && !root.hasAttribute('aria-labelledby')) {
+    root.setAttribute('aria-label', root.dataset.label || sliderWord(root, 'label'));
+  }
+
+  return authored;
+}
+
+function restoreRegionSemantics(root, authored) {
+  if (!authored) return;
+  [['role', authored.role], ['aria-roledescription', authored.roleDescription], ['aria-label', authored.label]].forEach(([name, value]) => {
+    if (value === null) root.removeAttribute(name);else root.setAttribute(name, value);
+  });
+}
+
+function slideMessages(root) {
+  const position = root.dataset.slideLabel || sliderWord(root, 'position');
+  return {
+    itemRoleDescriptionMessage: root.dataset.slideRoledescription || sliderWord(root, 'slide'),
+    slideLabelMessage: position.replaceAll('{n}', '{{index}}').replaceAll('{count}', '{{slidesLength}}')
+  };
+} // While autoplay turns the slides, the change is not announced; stopped, the
+// new slide is announced politely (APG carousel).
+
+
+function createLiveRegionGuard(slider, mainEl) {
+  if (!(mainEl instanceof HTMLElement) || typeof slider?.on !== 'function') return () => {};
+  const authored = mainEl.getAttribute('aria-live');
+
+  const sync = () => mainEl.setAttribute('aria-live', slider.autoplay?.running ? 'off' : 'polite');
+
+  const events = ['init', 'autoplayStart', 'autoplayStop'];
+  events.forEach(name => slider.on(name, sync));
+  sync();
+  return () => {
+    events.forEach(name => slider.off?.(name, sync));
+    if (authored === null) mainEl.removeAttribute('aria-live');else mainEl.setAttribute('aria-live', authored);
   };
 }
 
@@ -477,14 +758,32 @@ function bindSlider(root) {
       centeredSlides: false,
       spaceBetween: toNumber(getOption(root, thumbsEl, 'spaceBetween'), resolveCssLength(root, '--sf-slider-thumbnails--space-between', 0)),
       slidesPerView: Math.min(thumbsCount, 6),
-      slideToClickedSlide: false
+      slideToClickedSlide: false,
+      // A thumbnail is pressed, not dragged: the strip is as wide as they are.
+      allowTouchMove: false,
+      // The thumbnails never turn by themselves; data-autoplay is the slides'.
+      autoplay: false
     });
   }
 
   const sliderOptions = { ...createBaseOptions(root, mainEl, 1)
   };
   const navigation = createNavigationOptions(prevEl, nextEl);
-  const pagination = createPaginationOptions(paginationEl);
+  const pagination = createPaginationOptions(paginationEl, getSlidesCount(mainEl));
+  const rotationButton = findRotationButton(root);
+
+  if (sliderOptions.autoplay && !(rotationButton && isShown(rotationButton))) {
+    delete sliderOptions.autoplay;
+  } // A pause button with nothing to pause (no autoplay, or reduced motion) is
+  // not shown.
+
+
+  const rotationHost = rotationButton?.closest?.((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.tagSelector)('sf-button-icon')) || rotationButton;
+
+  if (rotationHost && !sliderOptions.autoplay) {
+    rotationHost.hidden = true;
+    root._sfSliderRotationHidden = rotationHost;
+  }
 
   if (navigation) {
     sliderOptions.navigation = navigation;
@@ -498,12 +797,29 @@ function bindSlider(root) {
     sliderOptions.thumbs = {
       swiper: thumbs
     };
+  } // The keys listen on the whole block: the arrows and the dots, where the
+  // focus is, sit outside the strip (SL-3).
+
+
+  if (sliderOptions.keyboard === true || sliderOptions.keyboard?.enabled) {
+    sliderOptions.keyboard = { ...(isPlainObject(sliderOptions.keyboard) ? sliderOptions.keyboard : {}),
+      enabled: true,
+      el: root
+    };
   }
 
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
+
+  if (sliderOptions.a11y !== false) {
+    sliderOptions.a11y = { ...slideMessages(root),
+      ...sliderOptions.a11y
+    };
+  }
+
+  root._sfSliderRegion = applyRegionSemantics(root);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(slider, thumbs)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider, rotationButton), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(root, slider, thumbs), createLiveRegionGuard(slider, mainEl)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));
@@ -543,6 +859,10 @@ function unbindSlider(root) {
     if (element.getAttribute('aria-label') !== applied) return;
     if (authored === null) element.removeAttribute('aria-label');else element.setAttribute('aria-label', authored);
   });
+  if (root._sfSliderRotationHidden) root._sfSliderRotationHidden.hidden = false;
+  delete root._sfSliderRotationHidden;
+  restoreRegionSemantics(root, root._sfSliderRegion);
+  delete root._sfSliderRegion;
   delete root._sfSliderNavigationLabels;
   delete root._sfSliderCleanup;
   delete root._sfSlider;
@@ -593,6 +913,92 @@ sliderObserver.observe(document.documentElement, {
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
 
 /***/ },
 
@@ -1058,7 +1464,20 @@ class SfSlider extends SliderElement {
       rootClass: this.getRootClass(),
       slides: this.slides,
       previousLabel: this.sfWord('previous'),
-      nextLabel: this.sfWord('next')
+      nextLabel: this.sfWord('next'),
+      // The region and its slides (SL-5): the page's aria-label names the
+      // region, else the word «Слайды»; «{n} из {count}» stays a pattern the
+      // engine fills per slide.
+      regionLabel: this.getAttribute('aria-label') || this.sfWord('label'),
+      regionRoleDescription: this.sfWord('carousel'),
+      slideRoleDescription: this.sfWord('slide'),
+      slideLabel: this.sfWord('position'),
+      // Autoplay is off unless the page asks (data-autoplay); then the pause
+      // button is drawn and named by what it does (C143 (6)).
+      autoplay: ['1', 'true', 'yes', 'on'].includes(String(this.getAttribute('data-autoplay') || '').toLowerCase()),
+      pauseLabel: this.sfWord('pause'),
+      playLabel: this.sfWord('play'),
+      ratio: this.ratio
     });
   }
 
@@ -1295,18 +1714,22 @@ function joinClasses(...tokens) {
 
 function normalizeOption(value = '') {
   return String(value || '').trim().toLowerCase();
-}
+} // Paging is no main action (decision C116, SL-11): the arrows are icon
+// buttons, and by default the soft grey ones; primary stays a choice.
 
-function getButtonOptions(type = 'primary') {
+
+function getButtonOptions(type = 'secondary') {
   const normalizedType = normalizeOption(type);
   const options = {
     primary: {
       type: 'default',
       scheme: 'primary'
     },
+    // The soft grey arrows (decision C116, BS-2): secondary is no colour of a
+    // button any more; the button-type keeps its name.
     secondary: {
       type: 'tonal',
-      scheme: 'secondary'
+      scheme: 'on-surface'
     },
     dark: {
       type: 'default',
@@ -1319,20 +1742,32 @@ function getButtonOptions(type = 'primary') {
       scheme: 'on-surface'
     }
   };
-  return options[normalizedType] || options.primary;
-}
+  return options[normalizedType] || options.secondary;
+} // The dots' plate by its colour role (sf-slider 1.2.0, docs precheck Q4). The
+// former words are dated aliases until 2027-01-01 (the shim rewrites them on
+// the host); they stay here for a value handed to the template directly.
 
-function getDotsClasses(type = 'primary-dark', size = '2') {
-  const normalizedType = normalizeOption(type);
+
+function getDotsClasses(type = 'primary-container', size = '2', place = '') {
+  const normalizedType = normalizeOption(type); // The dots' place when the page chose no plate (C143 (2), (3)): over a
+  // picture a popup plate with its shadow, under cards no plate at all.
+
+  if (place) {
+    return joinClasses('sf-slider-dots', `sf-slider-dots--${place}`, `sf-slider-dots--size-${size || '2'}`, 'flex', 'sf-slider-pagination');
+  }
+
   const typeClasses = {
-    primary: ['sf-slider-dots--primary', 'sf-slider-dots--dark'],
+    'primary-container': ['sf-slider-dots--primary', 'sf-slider-dots--dark'],
+    primary: ['sf-slider-dots--primary', 'sf-slider-dots--light'],
+    'surface-container': ['sf-slider-dots--clear', 'sf-slider-dots--light'],
+    'surface-inverse': ['sf-slider-dots--clear', 'sf-slider-dots--dark'],
     'primary-light': ['sf-slider-dots--primary', 'sf-slider-dots--light'],
     'primary-dark': ['sf-slider-dots--primary', 'sf-slider-dots--dark'],
     light: ['sf-slider-dots--clear', 'sf-slider-dots--light'],
     dark: ['sf-slider-dots--clear', 'sf-slider-dots--dark'],
     clear: ['sf-slider-dots--clear', 'sf-slider-dots--light']
   };
-  return joinClasses('sf-slider-dots', typeClasses[normalizedType] || typeClasses['primary-dark'], 'sf-slider-dots--framed', `sf-slider-dots--size-${size || '2'}`, 'flex', 'sf-slider-pagination');
+  return joinClasses('sf-slider-dots', typeClasses[normalizedType] || typeClasses['primary-container'], 'sf-slider-dots--framed', `sf-slider-dots--size-${size || '2'}`, 'flex', 'sf-slider-pagination');
 }
 
 function normalizeSlides(slides) {
@@ -1404,14 +1839,25 @@ function renderThumbSlides(context) {
         </div>
       </div>
     `);
+} // Over a picture the quiet arrows stand on popup plates with the overlay
+// shadow (C143 (2)): a ghost button on the plate, so its hover tints the plate
+// and an arrow with nowhere to go dims its glyph and keeps its plate.
+
+
+function isPlated(context) {
+  return !context.content && normalizeOption(context.buttonType || 'secondary') === 'secondary';
 }
 
 function renderArrows(context) {
   if (!context.arrows) return '';
-  const buttonOptions = getButtonOptions(context.buttonType);
+  const plated = isPlated(context);
+  const buttonOptions = plated ? {
+    type: 'ghost',
+    scheme: 'on-surface'
+  } : getButtonOptions(context.buttonType);
   const buttonSize = context.buttonSize || '1';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class="sf-slider-arrows sf-slider-arrows--size-2">
+    <div class=${joinClasses('sf-slider-arrows sf-slider-arrows--size-2', plated && 'sf-slider-arrows--plate')}>
       <sf-button-icon
         root-class="sf-slider-button-prev"
         icon="keyboard_arrow_left"
@@ -1430,9 +1876,40 @@ function renderArrows(context) {
       ></sf-button-icon>
     </div>
   `;
+} // The pause button (C143 (6)): drawn only when the page asks for autoplay,
+// first in the Tab order; the slider turns only while it is shown.
+
+
+function renderRotation(context) {
+  if (!context.autoplay) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const plated = !context.content;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class=${joinClasses('sf-slider-rotation-place', plated && 'sf-slider-arrows--plate')}>
+      <sf-button-icon
+        root-class="sf-slider-rotation sf-slider-button-rotation"
+        icon="pause"
+        size=${context.buttonSize || '1'}
+        appearance=${plated ? 'ghost' : 'tonal'}
+        scheme="on-surface"
+        aria-label=${context.pauseLabel}
+      ></sf-button-icon>
+    </div>
+  `;
 }
 
+function renderPosition(context) {
+  if (!context.dots) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const authored = context.component?.hasAttribute?.('dots-type');
+  const place = authored ? '' : context.content ? 'bare' : 'plate';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${getDotsClasses(context.dotsType, context.dotsSize, place)}></div>`;
+}
+
+const RATIOS = new Set(['16/9', '4/3', '3/2', '1/1', '21/9', 'auto']);
 function renderSliderTemplate(context) {
+  context = { ...context,
+    content: /(^|\s)sf-slider--content(\s|$)/.test(context.rootClass || '')
+  };
+  const ratio = String(context.ratio || '16/9').replace(/\s+/g, '');
   const rootClasses = joinClasses('sf-slider', context.rootClass);
   const authoredSpaceBetween = context.component?.hasAttribute('space-between');
   const authoredSpeed = context.component?.hasAttribute('speed');
@@ -1440,6 +1917,13 @@ function renderSliderTemplate(context) {
     <div
       class=${rootClasses}
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-roledescription=${context.regionRoleDescription || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-label=${context.regionLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-slide-label=${context.slideLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-slide-roledescription=${context.slideRoleDescription || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-ratio=${RATIOS.has(ratio) ? ratio : '16/9'}
+      data-pause-label=${context.pauseLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-play-label=${context.playLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-loop=${String(!!context.loop)}
       data-space-between=${authoredSpaceBetween ? String(context.spaceBetween) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-speed=${authoredSpeed ? String(context.speed) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1458,10 +1942,10 @@ function renderSliderTemplate(context) {
             </div>
           ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
-      ${context.arrows || context.dots ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      ${context.arrows || context.dots || context.autoplay ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <div class="sf-slider-controls">
-              ${renderArrows(context)}
-              ${context.dots ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${getDotsClasses(context.dotsType, context.dotsSize)}></div>` : ''}
+              ${renderRotation(context)}
+              ${context.content ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderPosition(context)}${renderArrows(context)}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderArrows(context)}${renderPosition(context)}`}
             </div>
           ` : ''}
     </div>
@@ -1500,6 +1984,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
@@ -1510,28 +2001,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "2487a822fc8d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-slider for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-slide-change","to":"change","kind":"event","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8","note":"the old name follows change with the same detail; component, tagName and template are no longer in it (§8)"},{"from":"getSlider","to":null,"kind":"action","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-slider for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-slide-change","to":"change","kind":"event","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8","note":"the old name follows change with the same detail; component, tagName and template are no longer in it (§8)"},{"from":"getSlider","to":null,"kind":"action","component":"sf-slider","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"},{"from":"primary-dark","to":"primary-container","kind":"value","setting":"dots-type","component":"sf-slider","since":"2026-11-10","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-slider-dots-type-to-roles (docs precheck Q4): the dots\' words name the plate\'s colour role"},{"from":"primary-light","to":"primary","kind":"value","setting":"dots-type","component":"sf-slider","since":"2026-11-10","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-slider-dots-type-to-roles (docs precheck Q4): the dots\' words name the plate\'s colour role"},{"from":"light","to":"surface-container","kind":"value","setting":"dots-type","component":"sf-slider","since":"2026-11-10","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-slider-dots-type-to-roles (docs precheck Q4): the dots\' words name the plate\'s colour role"},{"from":"clear","to":"surface-container","kind":"value","setting":"dots-type","component":"sf-slider","since":"2026-11-10","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-slider-dots-type-to-roles (docs precheck Q4): the dots\' words name the plate\'s colour role"},{"from":"dark","to":"surface-inverse","kind":"value","setting":"dots-type","component":"sf-slider","since":"2026-11-10","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-slider-dots-type-to-roles (docs precheck Q4): the dots\' words name the plate\'s colour role"}]}');
 
 /***/ },
 
 /***/ "85a15fb0aee7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.1.11","kind":"leaf","settings":{"button-type":{"type":"string","default":"primary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-dark"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.3.0","kind":"leaf","settings":{"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""},"ratio":{"type":"enum","values":["16/9","4/3","3/2","1/1","21/9","auto"],"default":"16/9"}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "dd6cee132a1d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Slider","runtime":{"next":"Next slide","previous":"Previous slide"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Slider","runtime":{"next":"Next slide","previous":"Previous slide","label":"Slides","carousel":"carousel","slide":"slide","position":"{n} of {count}","pause":"Stop slides","play":"Start slides"}}');
 
 /***/ },
 
 /***/ "c9b3780c37ac"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер контента","runtime":{"next":"Следующий слайд","previous":"Предыдущий слайд"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер контента","runtime":{"next":"Следующий слайд","previous":"Предыдущий слайд","label":"Слайды","carousel":"карусель","slide":"слайд","position":"{n} из {count}","pause":"Остановить прокрутку","play":"Запустить прокрутку"}}');
 
 /***/ }
 

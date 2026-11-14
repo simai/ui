@@ -8,11 +8,13 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -25,6 +27,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -63,15 +68,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -89,12 +106,99 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -182,12 +286,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -205,6 +311,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -306,6 +417,71 @@ const FormField = Base => class extends Base {
   }
 
 };
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
+  }
+
+};
 
 /***/ },
 
@@ -319,22 +495,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("292f5fe79a22");
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("116963e5e31b");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d7180f8fbd98");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("881c6d727a36");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2fe06cbdeec6");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("8752f4d5d78e");
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("bf0cea966575");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("292f5fe79a22");
+/* harmony import */ var _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d8c852b40b52");
+/* harmony import */ var _js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c4779e51fee1");
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("d7180f8fbd98");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("881c6d727a36");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("2fe06cbdeec6");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("8752f4d5d78e");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("bf0cea966575");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_9__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_11__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_9__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_11__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__);
 
 
 
@@ -348,7 +529,19 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+
+
+
+const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/; // Between the two dates of a range in its one field: an en dash with a space
+// on each side, «01.09.2026 – 07.09.2026» (owner decision C62).
+
+const RANGE_SEPARATOR = ' \u2013 '; // The ribbon of months on a phone: how many months it shows before and after
+// the one it opens on, and how many it adds as it nears an end.
+
+const RIBBON_BEFORE = 3;
+const RIBBON_AFTER = 12;
+const RIBBON_STEP = 6;
 const YEARS_PAGE_SIZE = 18;
 
 function padDatePart(value) {
@@ -647,7 +840,7 @@ function normalizeLocale(value = '', node = null) {
   // is the opposite of the rule (peer session, 2026-10-11).
 
 
-  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageLocale)(node ?? globalThis.document?.documentElement ?? null);
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_11__.pageLocale)(node ?? globalThis.document?.documentElement ?? null);
 }
 
 function capitalizeFirstLetter(value = '') {
@@ -676,25 +869,6 @@ function dateFormat(locale, options) {
   }
 
   return format;
-} // The first day of the locale's week, read once per locale: the grid asks it
-// several times a render.
-
-
-const weekStarts = new Map();
-
-function localeWeekStart(code) {
-  if (weekStarts.has(code)) return weekStarts.get(code);
-  let first = 1;
-
-  try {
-    const locale = new Intl.Locale(code);
-    const info = typeof locale.getWeekInfo === 'function' ? locale.getWeekInfo() : locale.weekInfo;
-    if (info?.firstDay) first = info.firstDay % 7;
-  } catch {// An unknown locale keeps the Monday the grid always had.
-  }
-
-  weekStarts.set(code, first);
-  return first;
 }
 
 function getMonthLabel(month, locale) {
@@ -790,7 +964,7 @@ function presetTextKey(id) {
 const wordKey = key => String(key).replace(/_/gu, '-').replace(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
 
 function getLabels(node) {
-  const keys = ['previousMonth', 'nextMonth', 'previousYears', 'nextYears', 'chooseMonth', 'chooseYear', 'presets', 'customRange', 'time', 'hours', 'minutes', 'earlierHour', 'laterHour', 'earlierMinute', 'laterMinute', 'timeNotSet'];
+  const keys = ['previousMonth', 'nextMonth', 'previousYears', 'nextYears', 'chooseMonth', 'chooseYear', 'presets', 'customRange', 'time', 'hours', 'minutes', 'earlierHour', 'laterHour', 'earlierMinute', 'laterMinute', 'timeNotSet', 'period', 'done', 'chooseStart', 'chooseEnd', 'goToToday', 'close'];
   return Object.fromEntries(keys.map(key => [key, node.sfWord(wordKey(key))]));
 } // sf-input-date from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §4.4, §7.1.1, §8, §11, §16.20, §17.1). It stays a leaf: the one
@@ -801,19 +975,20 @@ function getLabels(node) {
 // ElementInternals.
 
 
-const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
   actions: {
     'open-panel'({
       options
     } = {}) {
       if (this.disabled) return 'disabled';
+      if (this.valueLocked) return 'readonly';
 
       this._openPanel(options || {});
 
@@ -823,7 +998,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
     'close-panel'({
       options
     } = {}) {
-      if (!this.open) return 'unchanged';
+      if (!this.open && !this._sheetOpen) return 'unchanged';
 
       this._closePanel(options || {});
 
@@ -831,7 +1006,9 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
     },
 
     'toggle-panel'() {
-      if (!this.open && this.disabled) return 'disabled';
+      const open = this.open || this._sheetOpen;
+      if (!open && this.disabled) return 'disabled';
+      if (!open && this.valueLocked) return 'readonly';
 
       this._togglePanel();
 
@@ -842,6 +1019,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
       item
     } = {}) {
       if (this.disabled) return 'disabled';
+      if (this.valueLocked) return 'readonly';
       if (!item || item.disabled || !this.range) return 'unavailable-preset';
 
       this._choosePreset(item);
@@ -851,6 +1029,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
 
     'choose-custom-range'() {
       if (this.disabled) return 'disabled';
+      if (this.valueLocked) return 'readonly';
       if (!this.range) return 'not-a-range';
 
       this._chooseCustomRange();
@@ -950,11 +1129,17 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
         type: Number,
         default: null
       },
+      // The days off, drawn red: the locale's when empty, "none", or a
+      // list of days 0-7 (see get weekendDays).
+      weekend: {
+        default: ''
+      },
       locale: {
         default: ''
       },
+      // No default: the locale's order and signs (see get format).
       format: {
-        default: 'DD.MM.YYYY'
+        default: ''
       },
       rootClass: {
         default: ''
@@ -1538,10 +1723,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get input() {
     return this.getBooleanAttr('input', true);
-  }
+  } // A read-only field is never open, even when a host writes `open`: its
+  // calendar would offer a choice the field does not take (C62).
+
 
   get open() {
-    return this.getBooleanAttr('open', false);
+    return this.getBooleanAttr('open', false) && !(this.input && this.valueLocked);
   }
 
   get portal() {
@@ -1555,7 +1742,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldSize)(this.getAttribute('size') || this.getAttribute('input-size') || '1', 'sf-input-date');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.ladderSize)(this.getAttribute('size') || this.getAttribute('input-size'));
   }
 
   get inputSize() {
@@ -1564,10 +1751,16 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get inputName() {
     return this.getAttribute('input-name') || this.getAttribute('name') || '';
-  }
+  } // The hint in an empty field: the host's, or -- where a date is typed --
+  // the format in the letters of the locale (ДД.ММ.ГГГГ, MM/DD/YYYY,
+  // TT.MM.JJJJ), so the person sees the order the field reads (owner
+  // decision C62). A range or a read-only field is not typed: no hint.
+
 
   get placeholder() {
-    return this.getAttribute('placeholder') || '';
+    const written = this.getAttribute('placeholder') || '';
+    if (written || !this.typed) return written;
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__.formatPlaceholder)(this.format, this.locale);
   } // What the form gets (§17.1): the ISO date, never the display text; a
   // range as start/end (an ISO 8601 interval); nothing while disabled.
 
@@ -1698,22 +1891,40 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       return Number.isInteger(day) && day >= 0 && day <= 7 ? day % 7 : 1;
     }
 
-    return localeWeekStart(this.locale);
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__.localeWeekStart)(this.locale);
   }
 
   get locale() {
     return normalizeLocale(this.getAttribute('locale'), this);
+  }
+
+  get weekend() {
+    return this.getAttribute('weekend') || '';
+  } // The days drawn as days off (owner decision C62): the locale's
+  // (Intl.Locale#getWeekInfo, Saturday and Sunday where it does not say),
+  // none for weekend="none" -- a product whose weekends are working days --
+  // or the days the attribute lists, 0 or 7 Sunday to 6 Saturday. They
+  // were Saturday and Sunday for every locale and every product.
+
+
+  get weekendDays() {
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__.weekendDays)(this.weekend, this.locale);
   } // The display format of the mode. A written format the mode cannot use is
   // completed: datetime adds « HH:mm» to a date format, time takes HH:mm.
+  // Without one the date's format is the locale's (owner decision C62): the
+  // order of the parts and the signs between them from Intl formatToParts --
+  // DD.MM.YYYY in ru and de, MM/DD/YYYY in en-US, YYYY-MM-DD in sv-SE. It was
+  // DD.MM.YYYY for every language, so an en-US page showed 03.09.2026 for
+  // September 3 and read 09/03/2026 as March 9.
 
 
   get format() {
     const written = this.getAttribute('format') || '';
     const mode = this.mode;
-    if (mode === 'date') return written || 'DD.MM.YYYY';
+    if (mode === 'date') return written || (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__.localeDateFormat)(this.locale);
     if (mode === 'time') return written && formatPattern(written, 'time') ? written : 'HH:mm';
     if (written && formatPattern(written, 'datetime')) return written;
-    return `${written && formatPattern(written, 'date') ? written : 'DD.MM.YYYY'} HH:mm`;
+    return `${written && formatPattern(written, 'date') ? written : (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_8__.localeDateFormat)(this.locale)} HH:mm`;
   } // The name for a field whose label is drawn outside it -- a record panel
   // prints the label itself, and passing it to the control printed it twice.
 
@@ -1730,6 +1941,17 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get readonly() {
     return this.range || this.getBooleanAttr('readonly', false);
+  } // The host's `readonly`: the value is shown and submitted, never changed
+  // here (owner decision C62: a read-only field does not open the calendar).
+  // The field opens no panel, and an inline calendar takes no choice -- its
+  // days, quick ranges and time stay readable and can be walked through.
+  // `readonly` above also counts a range, which is only "not typed": a range
+  // still opens its calendar. It opened for the host's `readonly` too, so a
+  // value the page said could not be changed could be changed on the grid.
+
+
+  get valueLocked() {
+    return this.getBooleanAttr('readonly', false);
   } // A date can be typed. The field was hard-readonly, so a host that edits a
   // date could only pick one on the grid -- and the mask properties beside it
   // reached a field nobody could type in (Larena storage QA, 2026-10-22).
@@ -1758,10 +1980,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   get displayValue() {
     if (!this.range) {
       return this.formattedValue;
-    }
+    } // One field, «с – по»: the two dates with an en dash between spaces
+    // (owner decision C62). It was a hyphen, the sign of a compound word.
+
 
     if (this.formattedStartValue && this.formattedEndValue) {
-      return `${this.formattedStartValue} - ${this.formattedEndValue}`;
+      return `${this.formattedStartValue}${RANGE_SEPARATOR}${this.formattedEndValue}`;
     }
 
     return this.formattedStartValue || this.formattedEndValue || '';
@@ -1781,6 +2005,16 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get weekdays() {
     return getWeekdays(this.locale, this.weekStart);
+  } // Which weekday columns are days off, in the order of the weekday row
+  // (owner decision C62 «выходные красным», prototypes/datepicker.html: the
+  // headers сб and вс take the days' red too). The same days as the grid's.
+
+
+  get weekdaysOff() {
+    const daysOff = this.weekendDays;
+    return Array.from({
+      length: 7
+    }, (_, index) => daysOff.has((this.weekStart + index) % 7));
   }
 
   get calendarLabel() {
@@ -1841,6 +2075,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     const maxDate = this.setMaxDate();
     const activeDate = this.activeDate;
     const today = new Date();
+    const daysOff = this.weekendDays;
     return Array.from({
       length: 42
     }).map((_, index) => {
@@ -1849,17 +2084,19 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       // or the inline one, takes no choice (see panelDisabled).
 
       const disabled = Boolean(this.disabled || minDate && time < minDate.getTime() || maxDate && time > maxDate.getTime());
+      const weekend = daysOff.has(date.getDay());
       return {
         date,
         value: formatIsoDate(date),
         formattedValue: formatDateValue(date, this.format),
-        // A day off says so in its name (DP-02): the ink is no longer
-        // the only cue, and the error red is gone from it.
-        label: [0, 6].includes(date.getDay()) ? `${getDateLabel(date, this.locale)}, ${this.sfWord('day-off')}` : getDateLabel(date, this.locale),
+        // A day off says so in its name (DP-02): the ink is not the
+        // only cue. The ink is the calendar's day-off role
+        // (--sf-datepicker-day-off, C67 H2), not the error red.
+        label: weekend ? `${getDateLabel(date, this.locale)}, ${this.sfWord('day-off')}` : getDateLabel(date, this.locale),
         day: date.getDate(),
         today: sameDay(date, today),
         currentMonth: date.getMonth() === this.month,
-        weekend: [0, 6].includes(date.getDay()),
+        weekend,
         disabled: disabled,
         selected: this.range ? sameDay(date, startDate) || sameDay(date, endDate) : sameDay(date, this.selectedDate),
         rangeStart: this.range && hasRangeEnd && sameDay(date, startDate),
@@ -1924,7 +2161,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     let mask = String(format).replace(/[A-Za-z]/g, '0');
 
     if (this.range) {
-      mask += ` - ${mask}`;
+      mask += `${RANGE_SEPARATOR}${mask}`;
     }
 
     return mask;
@@ -2059,7 +2296,14 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   _openPanel({
     focusCalendar = false
   } = {}) {
-    if (this.disabled) return this;
+    if (this.disabled || this.valueLocked) return this;
+
+    if (this._sheetOpen || this.usesRibbon) {
+      this._openRibbon();
+
+      return this;
+    }
+
     this._focusCalendarOnOpen = focusCalendar;
     if (!this.open) this.showValueMonth();else if (!this.state.activeDate) {
       this.set({
@@ -2081,6 +2325,14 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   _closePanel({
     restoreFocus = false
   } = {}) {
+    if (this._sheetOpen) {
+      // The sheet gives the focus back to the field itself.
+      this._sheet?.close?.({
+        reason: 'api'
+      });
+      return this;
+    }
+
     if (!this.open) {
       return this;
     }
@@ -2094,7 +2346,564 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   _togglePanel() {
-    return this.open ? this._closePanel() : this._openPanel();
+    return this.open || this._sheetOpen ? this._closePanel() : this._openPanel();
+  } // The period on a phone (owner decision C62, agreed 2026-11-11; ui-control
+  // prototypes/datepicker.html#lenta): below the phone step (60rem, the
+  // breakpoint lg) a range opens a ribbon of months in the Framework's bottom
+  // sheet instead of one month with arrows -- the weekday row pinned, the
+  // months one under another, the period and «Готово» at the bottom. A
+  // period across months is two taps and one scroll, where the arrows needed
+  // a tap per month and never showed the start beside the end. The choice is
+  // a draft until «Готово»; closing the sheet any other way (the close
+  // button, the scrim, Escape, a swipe down) keeps the value it had.
+
+
+  get usesRibbon() {
+    if (!this.range || !this.input || this._ribbonUnavailable) return false;
+    return (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_10__.matchesBreakpoint)('lg', {
+      below: true
+    });
+  }
+
+  async _openRibbon() {
+    if (this._sheetOpen || this._sheetOpening) return;
+    this._sheetOpening = true;
+
+    try {
+      // The sheet is a lazy relation: asked for when a phone opens a period.
+      if (!globalThis.customElements?.get('sf-drawer')) await globalThis.SF?.Loader?.ensure?.(['sf-drawer']);
+    } catch {// The popup below.
+    }
+
+    this._sheetOpening = false;
+    if (!this.isConnected || this.disabled || this.valueLocked) return;
+
+    if (!globalThis.customElements?.get('sf-drawer')) {
+      // No bottom sheet on this page: the popup, as on a wide screen.
+      this._ribbonUnavailable = true;
+
+      this._openPanel();
+
+      return;
+    }
+
+    const {
+      startDate,
+      endDate
+    } = this.normalizedRange;
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    let anchor = startDate || new Date();
+    if (minDate && compareDates(anchor, minDate) < 0) anchor = minDate;
+    if (maxDate && compareDates(anchor, maxDate) > 0) anchor = maxDate;
+    const first = new Date(anchor.getFullYear(), anchor.getMonth() - RIBBON_BEFORE, 1);
+    this._ribbon = {
+      start: startDate ? formatIsoDate(startDate) : '',
+      end: startDate && endDate ? formatIsoDate(endDate) : '',
+      focus: formatIsoDate(anchor),
+      anchor: `${anchor.getFullYear()}-${padDatePart(anchor.getMonth() + 1)}`,
+      from: this.clampRibbonMonth(first),
+      count: 0
+    };
+    this._ribbon.count = this.ribbonMonthsUntil(new Date(anchor.getFullYear(), anchor.getMonth() + RIBBON_AFTER, 1));
+    const sheet = this.ribbonSheet(); // The sheet's head is the ribbon's own (the title, «К сегодня», the
+    // close button, as in #lenta): the drawer's head has no place for a
+    // second action. The drawer keeps the name of its dialog.
+
+    this._ribbon.title = this.label || this.ariaLabel || this.sfWord('period');
+    sheet.setAttribute('label', this._ribbon.title);
+    sheet.setAttribute('panel-style', this.ribbonSheetStyle());
+    this._sheetOpen = true;
+    this.renderRibbon();
+    this.watchRibbonPanelFocus();
+    sheet.open();
+    this.requestComponentUpdate('sheet');
+  } // The bottom sheet, made once and kept in the host, so it carries the
+  // field's language, direction, theme and variables to its portal.
+
+
+  ribbonSheet() {
+    if (this._sheet?.isConnected && this._sheet.parentNode === this) return this._sheet;
+    const sheet = document.createElement('sf-drawer');
+    sheet.id = (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+      kind: 'sf-input-date'
+    }), 'sheet');
+    sheet.setAttribute('placement', 'bottom');
+    sheet.setAttribute('show-close', 'false');
+    const body = document.createElement('div');
+    body.className = 'sf-datepicker sf-datepicker--sheet';
+    sheet.append(body);
+    sheet.addEventListener('sf-drawer-opened', () => this.showRibbonAnchor());
+    sheet.addEventListener('sf-drawer-closed', () => this.ribbonClosed());
+    this.append(sheet);
+    this._sheet = sheet;
+    this._sheetBody = body;
+    return sheet;
+  } // How tall the sheet is (#lenta): it stops a step 1 under the field it
+  // fills, so the field and its label stay readable through the scrim; it
+  // took the whole screen (snap full, intent acceptance 2026-11-12 D3). A
+  // field low on the screen still gets half of it. The sheet rests at its
+  // content's height (snap auto), held to this.
+
+
+  ribbonSheetStyle() {
+    const box = (this.querySelector('.sf-datepicker-wrap') || this).getBoundingClientRect();
+    const top = Math.max(0, Math.round(box.bottom));
+    return `max-block-size: max(50%, calc(100% - ${top}px - var(--sf-space-1)));`;
+  } // «К сегодня» in the sheet's head: the ribbon brings today's month to its
+  // top (smoothly, unless the person asked for less motion) and today
+  // becomes the ribbon's tab stop; the draft period stays as it is. Today
+  // outside min-date and max-date goes to the nearest allowed day.
+
+
+  ribbonToToday() {
+    const ribbon = this._ribbon;
+    if (!ribbon) return;
+    let today = new Date();
+    today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    if (minDate && compareDates(today, minDate) < 0) today = minDate;
+    if (maxDate && compareDates(today, maxDate) > 0) today = maxDate;
+    const month = new Date(today.getFullYear(), today.getMonth(), 1);
+    const last = new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() + ribbon.count - 1, 1); // Outside the window: the window starts over around today, as it
+    // does around the start when the sheet opens.
+
+    const outside = month < ribbon.from || month > last;
+
+    if (outside) {
+      ribbon.from = this.clampRibbonMonth(new Date(month.getFullYear(), month.getMonth() - RIBBON_BEFORE, 1));
+      ribbon.count = this.ribbonMonthsUntil(new Date(month.getFullYear(), month.getMonth() + RIBBON_AFTER, 1));
+    }
+
+    ribbon.focus = formatIsoDate(today);
+    this.renderRibbon();
+    const scroller = this.ribbonScroller;
+    const target = scroller?.querySelector(`[data-month="${today.getFullYear()}-${padDatePart(today.getMonth() + 1)}"]`);
+    if (!scroller || !target) return;
+    const smooth = !outside && !globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+    if (!smooth) {
+      scroller.scrollTo({
+        top: target.offsetTop,
+        behavior: 'instant'
+      });
+      return;
+    } // The window does not grow while the ribbon glides there: a month put
+    // above would move the place it is gliding to.
+
+
+    ribbon.shown = false;
+
+    const settle = () => {
+      if (this._ribbon !== ribbon || ribbon.shown) return;
+      ribbon.shown = true;
+      this.handleRibbonScroll();
+    };
+
+    scroller.addEventListener('scrollend', settle, {
+      once: true
+    });
+    setTimeout(settle, 1000);
+    scroller.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  } // The close button of the sheet's head: as the drawer's own, it keeps the
+  // value the field had.
+
+
+  closeRibbon() {
+    this._sheet?.close?.({
+      reason: 'close'
+    });
+  }
+
+  ribbonClosed() {
+    this.stopRibbonSizeWatch();
+    this.stopRibbonPanelFocus();
+    this._sheetOpen = false;
+    this._ribbon = null;
+    this.requestComponentUpdate('sheet');
+  } // The first month the ribbon may show: min-date's, or any.
+
+
+  clampRibbonMonth(date) {
+    const min = this.setMinDate();
+    const floor = min ? new Date(min.getFullYear(), min.getMonth(), 1) : null;
+    return floor && date < floor ? floor : date;
+  } // How many months from the ribbon's first one up to `last` (held to
+  // max-date's month).
+
+
+  ribbonMonthsUntil(last) {
+    const max = this.setMaxDate();
+    const ceiling = max ? new Date(max.getFullYear(), max.getMonth(), 1) : null;
+    const end = ceiling && last > ceiling ? ceiling : last;
+    const {
+      from
+    } = this._ribbon;
+    return Math.max(1, (end.getFullYear() - from.getFullYear()) * 12 + end.getMonth() - from.getMonth() + 1);
+  }
+
+  get ribbonScroller() {
+    return this._sheetBody?.querySelector('.sf-datepicker-ribbon') || null;
+  } // The month the ribbon opens on stands at its top, at once (no animation),
+  // and its focused day takes the focus. The sheet has its size only once it
+  // is open and laid out -- and on the first open, only once the drawer's
+  // own sheet has come: the drawer holds its panel out of view until then,
+  // and gives the panel the focus when it shows. Thirty frames of waiting
+  // ran out before that on every first open (intent acceptance 2026-11-12,
+  // D2: 36 of 36 phone views), so the day was never focused and the panel
+  // kept the focus. The ribbon waits for its own size instead, however long
+  // the sheet takes, and takes the focus after the drawer has given it.
+
+
+  showRibbonAnchor() {
+    const scroller = this.ribbonScroller;
+    if (!this._ribbon || !scroller) return;
+
+    if (!scroller.clientHeight) {
+      this.waitForRibbonSize(scroller);
+      return;
+    }
+
+    const month = scroller.querySelector(`[data-month="${this._ribbon.anchor}"]`);
+    if (month) scroller.scrollTo({
+      top: month.offsetTop,
+      behavior: 'instant'
+    });
+    this.focusRibbonDay(); // The window grows only from here: before, the ribbon stood at its top
+    // and would have asked for months it does not show.
+
+    this._ribbon.shown = true;
+  } // The drawer gives the focus to its panel when it opens, and on the first
+  // open again when it shows the panel it held out of view until its sheet
+  // came -- after the ribbon had tried to focus its day on a panel that could
+  // not take a focus yet (intent acceptance 2026-11-12, D2). The panel
+  // taking the focus while the ribbon is open hands it on to the ribbon's
+  // day, so the sheet always opens on the start, focused.
+
+
+  watchRibbonPanelFocus() {
+    if (this._ribbonPanelFocus) return;
+
+    this._ribbonPanelFocus = event => {
+      const panel = this._sheetBody?.closest('[data-sf-drawer-panel]');
+      if (!this._sheetOpen || !this._ribbon || !panel || event.target !== panel) return;
+      if (!this.ribbonScroller?.clientHeight) return;
+      this.focusRibbonDay();
+    };
+
+    document.addEventListener('focusin', this._ribbonPanelFocus, true);
+  }
+
+  stopRibbonPanelFocus() {
+    if (!this._ribbonPanelFocus) return;
+    document.removeEventListener('focusin', this._ribbonPanelFocus, true);
+    this._ribbonPanelFocus = null;
+  }
+
+  waitForRibbonSize(scroller) {
+    if (this._ribbonSizeWatch || typeof ResizeObserver !== 'function') return;
+    const ribbon = this._ribbon;
+    const watch = new ResizeObserver(() => {
+      if (this._ribbon !== ribbon || !this._sheetOpen) {
+        this.stopRibbonSizeWatch();
+        return;
+      }
+
+      if (!scroller.clientHeight) return;
+      this.stopRibbonSizeWatch();
+      this.showRibbonAnchor();
+    });
+    this._ribbonSizeWatch = watch;
+    watch.observe(scroller);
+  }
+
+  stopRibbonSizeWatch() {
+    this._ribbonSizeWatch?.disconnect();
+    this._ribbonSizeWatch = null;
+  }
+
+  focusRibbonDay() {
+    const scroller = this.ribbonScroller;
+    const day = scroller?.querySelector(`.sf-datepicker-day[data-date="${this._ribbon?.focus}"]`);
+    if (!day) return;
+    day.focus({
+      preventScroll: true
+    }); // Only the ribbon scrolls, never the page, and the month's title held
+    // over the top does not cover the focused row.
+
+    const title = scroller.querySelector('.sf-datepicker-ribbon-title')?.offsetHeight || 0;
+    const box = scroller.getBoundingClientRect();
+    const cell = day.getBoundingClientRect();
+    if (cell.top - box.top < title) scroller.scrollBy({
+      top: cell.top - box.top - title,
+      behavior: 'instant'
+    });else if (cell.bottom > box.bottom) scroller.scrollBy({
+      top: cell.bottom - box.bottom,
+      behavior: 'instant'
+    });
+  } // More months as the ribbon nears an end: a window of them, not every
+  // month there is. Months put before keep the ones in view where they were.
+
+
+  handleRibbonScroll() {
+    const scroller = this.ribbonScroller;
+    const ribbon = this._ribbon;
+    if (!scroller || !ribbon || !ribbon.shown || this._ribbonGrowing) return;
+    const room = scroller.clientHeight;
+
+    if (scroller.scrollTop < room) {
+      const from = this.clampRibbonMonth(new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() - RIBBON_STEP, 1));
+      const added = (ribbon.from.getFullYear() - from.getFullYear()) * 12 + ribbon.from.getMonth() - from.getMonth();
+
+      if (added > 0) {
+        const height = scroller.scrollHeight;
+        ribbon.from = from;
+        ribbon.count += added;
+        this._ribbonGrowing = true;
+        this.renderRibbon();
+        scroller.scrollTo({
+          top: scroller.scrollTop + scroller.scrollHeight - height,
+          behavior: 'instant'
+        });
+        this._ribbonGrowing = false;
+      }
+    }
+
+    if (scroller.scrollHeight - scroller.scrollTop - room < room) {
+      const last = new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() + ribbon.count - 1 + RIBBON_STEP, 1);
+      const count = this.ribbonMonthsUntil(last);
+
+      if (count > ribbon.count) {
+        ribbon.count = count;
+        this.renderRibbon();
+      }
+    }
+  } // A tap: the first is the start, the second the end; a day before the
+  // start, or a tap after both, starts again.
+
+
+  pickRibbonDay(value) {
+    const ribbon = this._ribbon;
+    if (!ribbon || this.disabled || this.valueLocked) return;
+
+    if (!ribbon.start || ribbon.end || value < ribbon.start) {
+      ribbon.start = value;
+      ribbon.end = '';
+    } else {
+      ribbon.end = value;
+    }
+
+    ribbon.focus = value;
+    this.renderRibbon();
+  } // «Готово»: the period chosen is the value, said once, and the sheet closes.
+
+
+  commitRibbon() {
+    const ribbon = this._ribbon;
+    if (!ribbon?.start || !ribbon.end) return;
+    const end = parseDate(ribbon.end);
+    this.setState({
+      startValue: ribbon.start,
+      endValue: ribbon.end,
+      date: ribbon.start,
+      preset: '',
+      year: end.getFullYear(),
+      month: end.getMonth(),
+      context: ''
+    });
+    this.set({
+      activeDate: ribbon.end
+    });
+    this.emitChange();
+    this._sheet?.close?.({
+      reason: 'close'
+    });
+  } // The ribbon's keys are the grid's (APG date picker): the arrows a day and
+  // a week across the months' borders, Home and End the week's ends,
+  // PageUp and PageDown a month, with Shift a year, all held to min-date and
+  // max-date; Enter and Space are the day's own button. The ribbon scrolls
+  // to the day.
+
+
+  handleRibbonKeydown(event, value) {
+    const ribbon = this._ribbon;
+    const date = parseDate(value);
+    if (!ribbon || !date) return;
+    const horizontal = this.isRtl ? -1 : 1;
+    const steps = {
+      ArrowLeft: -horizontal,
+      ArrowRight: horizontal,
+      ArrowUp: -7,
+      ArrowDown: 7
+    };
+    let next = null;
+    if (event.key in steps) next = addDays(date, steps[event.key]);else if (event.key === 'Home' || event.key === 'End') {
+      const offset = (date.getDay() - this.weekStart + 7) % 7;
+      next = addDays(date, event.key === 'Home' ? -offset : 6 - offset);
+    } else if (event.key === 'PageUp' || event.key === 'PageDown') {
+      next = shiftDateByMonth(date, (event.key === 'PageUp' ? -1 : 1) * (event.shiftKey ? 12 : 1));
+    } else {
+      return;
+    }
+    event.preventDefault();
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    if (minDate && compareDates(next, minDate) < 0) next = minDate;
+    if (maxDate && compareDates(next, maxDate) > 0) next = maxDate;
+    const month = new Date(next.getFullYear(), next.getMonth(), 1);
+
+    if (month < ribbon.from) {
+      const added = (ribbon.from.getFullYear() - month.getFullYear()) * 12 + ribbon.from.getMonth() - month.getMonth();
+      ribbon.from = month;
+      ribbon.count += added;
+    }
+
+    const last = new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() + ribbon.count - 1, 1);
+    if (month > last) ribbon.count = this.ribbonMonthsUntil(month);
+    ribbon.focus = formatIsoDate(next);
+    this.renderRibbon();
+    this.focusRibbonDay();
+  } // What the ribbon draws: the months of its window, each a list of weeks
+  // (null for the days of the weeks outside the month), the draft period,
+  // and the line under it.
+
+
+  ribbonContext() {
+    const ribbon = this._ribbon;
+    const locale = this.locale;
+    const weekStart = this.weekStart;
+    const daysOff = this.weekendDays;
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    const start = parseDate(ribbon.start);
+    const end = parseDate(ribbon.end);
+    const today = new Date();
+    const months = Array.from({
+      length: ribbon.count
+    }, (_, index) => {
+      const first = new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() + index, 1);
+      const lead = (first.getDay() - weekStart + 7) % 7;
+      const length = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+      const cells = Array.from({
+        length: Math.ceil((lead + length) / 7) * 7
+      }, (_, at) => {
+        const day = at - lead + 1;
+        if (day < 1 || day > length) return null;
+        const date = new Date(first.getFullYear(), first.getMonth(), day);
+        const value = formatIsoDate(date);
+        const weekend = daysOff.has(date.getDay());
+        const disabled = Boolean(minDate && compareDates(date, minDate) < 0 || maxDate && compareDates(date, maxDate) > 0);
+        const both = Boolean(start && end);
+        return {
+          value,
+          day,
+          weekend,
+          disabled,
+          today: sameDay(date, today),
+          label: weekend ? `${getDateLabel(date, locale)}, ${this.sfWord('day-off')}` : getDateLabel(date, locale),
+          selected: sameDay(date, start) || sameDay(date, end),
+          rangeStart: both && sameDay(date, start),
+          rangeEnd: both && sameDay(date, end),
+          rangeSelected: both && isBetweenDates(date, start, end),
+          tabIndex: value === ribbon.focus ? 0 : -1
+        };
+      });
+      const weeks = [];
+
+      for (let at = 0; at < cells.length; at += 7) weeks.push(cells.slice(at, at + 7));
+
+      let label;
+
+      try {
+        label = capitalizeFirstLetter(dateFormat(locale, {
+          month: 'long',
+          year: 'numeric'
+        }).format(first));
+      } catch {
+        label = `${first.getMonth() + 1}.${first.getFullYear()}`;
+      }
+
+      return {
+        key: `${first.getFullYear()}-${padDatePart(first.getMonth() + 1)}`,
+        label,
+        weeks
+      };
+    });
+    return {
+      component: this,
+      months,
+      weekdays: this.weekdays,
+      weekdaysOff: this.weekdaysOff,
+      weekdayNames: getWeekdays(locale, weekStart, 'long'),
+      labels: this.labels,
+      title: ribbon.title,
+      complete: Boolean(start && end),
+      periodSummary: this.ribbonSummary(start, end)
+    };
+  } // The line over «Готово»: what to do next, or the period and its length,
+  // in the page's language (Intl formatRange and a unit of days).
+
+
+  ribbonSummary(start, end) {
+    const locale = this.locale;
+    const long = {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+    if (!start) return {
+      strong: '',
+      note: this.sfWord('choose-start')
+    };
+
+    if (!end) {
+      let text;
+
+      try {
+        text = dateFormat(locale, long).format(start);
+      } catch {
+        text = formatIsoDate(start);
+      }
+
+      return {
+        strong: `${text} \u2013`,
+        note: this.sfWord('choose-end')
+      };
+    }
+
+    let text;
+    let length;
+    const days = Math.round((end - start) / 86400000) + 1;
+
+    try {
+      text = dateFormat(locale, long).formatRange(start, end);
+    } catch {
+      text = `${formatIsoDate(start)}${RANGE_SEPARATOR}${formatIsoDate(end)}`;
+    }
+
+    try {
+      length = new Intl.NumberFormat(locale, {
+        style: 'unit',
+        unit: 'day',
+        unitDisplay: 'long'
+      }).format(days);
+    } catch {
+      length = String(days);
+    }
+
+    return {
+      strong: text,
+      note: length
+    };
+  }
+
+  renderRibbon() {
+    if (!this._sheetBody || !this._ribbon) return;
+    (0,lit__WEBPACK_IMPORTED_MODULE_5__.render)((0,_js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_7__.renderDatepickerRibbon)(this.ribbonContext()), this._sheetBody);
   } // What is typed is read through the declared format, so «14.10.2026» and
   // «2026-10-14» both land. Text that is not a date, or a date outside the
   // allowed range, puts the field back to the value it held: a half-typed date
@@ -2339,7 +3148,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       return;
     }
 
-    if (!(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__.isTopOpenSurface)(this)) {
+    if (!(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.isTopOpenSurface)(this)) {
       return;
     }
 
@@ -2359,7 +3168,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   syncOverlayListeners() {
     const open = Boolean(this.input && this.open);
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__.holdOpenSurfaceMark)(this, open);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.holdOpenSurfaceMark)(this, open);
 
     if (open) {
       document.addEventListener('click', this._documentClickHandler);
@@ -2371,7 +3180,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   removeOverlayListeners() {
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_12__.holdOpenSurfaceMark)(this, false);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.holdOpenSurfaceMark)(this, false);
     document.removeEventListener('click', this._documentClickHandler);
     document.removeEventListener('keydown', this._documentKeydownHandler, true);
     this.stopPanelPosition();
@@ -2402,7 +3211,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       });
       this._panelAnchorPanel = panel;
       this._panelAnchorTrigger = trigger;
-      this._panelAnchor = (globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default())).anchor(trigger, panel, {
+      this._panelAnchor = (globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_9___default())).anchor(trigger, panel, {
         side: 'block-end',
         align: 'start',
         onPosition: ({
@@ -2428,7 +3237,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   selectDate(day) {
-    if (this.disabled || !day?.date || day.disabled) {
+    if (this.disabled || this.valueLocked || !day?.date || day.disabled) {
       return this;
     }
 
@@ -2523,7 +3332,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   _choosePreset(item) {
-    if (this.disabled || !item || item.disabled) return this;
+    if (this.disabled || this.valueLocked || !item || item.disabled) return this;
     const from = formatIsoDate(item.from);
     const to = formatIsoDate(item.to);
     this.setState({
@@ -2547,7 +3356,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   _chooseCustomRange() {
-    if (this.disabled) return this;
+    if (this.disabled || this.valueLocked) return this;
     if (this.preset) this.setState({
       preset: '',
       startValue: '',
@@ -2636,6 +3445,8 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   setTime(minutes) {
+    if (this.disabled || this.valueLocked) return this;
+
     if (this.mode === 'time') {
       this.setState({
         date: formatIsoTime(minutes)
@@ -2665,7 +3476,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   stepTime(part, direction = 1) {
-    if (this.disabled) return this;
+    if (this.disabled || this.valueLocked) return this;
     const day = this.mode === 'datetime' ? this.selectedDate : null;
     const current = this.currentMinutes;
     const {
@@ -2876,6 +3687,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       calendarLabel: this.calendarLabel,
       labels: this.labels,
       weekdays: this.weekdays,
+      weekdaysOff: this.weekdaysOff,
       // The column headers a screen reader reads: the full names.
       weekdayNames: getWeekdays(this.locale, this.weekStart, 'long'),
       panelId: this._panelId,
@@ -2909,6 +3721,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       label: this.label,
       ariaLabel: this.ariaLabel,
       readonly: this.readonly,
+      valueLocked: this.valueLocked,
       disabled: this.disabled,
       required: this.required,
       invalid: this.invalid,
@@ -2932,18 +3745,20 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderDatepickerTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderDatepickerTemplate)(this.templateContext());
   }
 
   afterRender() {
-    this._input = this.refs.input?.value?.querySelector('input') || null;
+    this._input = this.refs.input?.value?.querySelector('input') || null; // A read-only field opens nothing, so it names no popup either.
 
-    if (this._input) {
+    if (this._input && this.valueLocked) {
+      for (const name of ['aria-haspopup', 'aria-expanded', 'aria-controls']) this._input.removeAttribute(name);
+    } else if (this._input) {
       this._input.setAttribute('aria-haspopup', 'dialog');
 
-      this._input.setAttribute('aria-expanded', this.open ? 'true' : 'false');
+      this._input.setAttribute('aria-expanded', this.open || this._sheetOpen ? 'true' : 'false');
 
-      this._input.setAttribute('aria-controls', this._panelId);
+      this._input.setAttribute('aria-controls', this._sheetOpen && this._sheet ? this._sheet.id : this._panelId);
     }
 
     const monthToggle = this.querySelector('.sf-datepicker-month-toggle button');
@@ -2983,6 +3798,8 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   onDisconnected() {
     this.removeOverlayListeners();
+    this.stopRibbonSizeWatch();
+    this.stopRibbonPanelFocus();
     super.onDisconnected();
   }
 
@@ -3008,6 +3825,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       maxTime: this.maxTime,
       minuteStep: this.minuteStep,
       locale: this.locale,
+      weekend: this.weekend,
       input: this.input,
       open: this.open,
       portal: this.portal,
@@ -3034,6 +3852,163 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 SfDatepicker.define('sf-input-date');
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c4779e51fee1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatPlaceholder: () => (/* binding */ formatPlaceholder),
+/* harmony export */   localeDateFormat: () => (/* binding */ localeDateFormat),
+/* harmony export */   localeWeekStart: () => (/* binding */ localeWeekStart),
+/* harmony export */   localeWeekend: () => (/* binding */ localeWeekend),
+/* harmony export */   weekendDays: () => (/* binding */ weekendDays)
+/* harmony export */ });
+// What a locale says about its calendar, read from Intl once per locale: the
+// first day of the week and the days off (Intl.Locale#getWeekInfo, the older
+// weekInfo getter where a browser still has that). No DOM, so the rules are
+// unit-tested as they are (tests/datepicker-c62.contract.test.mjs).
+//
+// Days are numbered as Date#getDay numbers them, 0 Sunday to 6 Saturday; Intl
+// numbers them 1 Monday to 7 Sunday, so 7 is read as Sunday too.
+const weekInfos = new Map();
+
+function weekInfo(code) {
+  if (weekInfos.has(code)) return weekInfos.get(code);
+  let info = null;
+
+  try {
+    const locale = new Intl.Locale(code);
+    info = (typeof locale.getWeekInfo === 'function' ? locale.getWeekInfo() : locale.weekInfo) || null;
+  } catch {// An unknown locale keeps the defaults below.
+  }
+
+  weekInfos.set(code, info);
+  return info;
+} // The first day of the locale's week, read once per locale: the grid asks it
+// several times a render. Monday where the locale does not say.
+
+
+function localeWeekStart(code) {
+  const first = weekInfo(code)?.firstDay;
+  return Number.isInteger(first) ? first % 7 : 1;
+}
+const SATURDAY_SUNDAY = Object.freeze([6, 0]); // The locale's days off: Saturday and Sunday in ru, de and en-US, Friday and
+// Saturday in ar-EG and he-IL. Saturday and Sunday where the locale does not say.
+
+function localeWeekend(code) {
+  const days = weekInfo(code)?.weekend;
+  if (!Array.isArray(days) || !days.length) return SATURDAY_SUNDAY;
+  return Object.freeze(days.map(day => day % 7));
+} // The `weekend` setting (owner decision C62: days off are red, and a product
+// whose weekends are working days says so). Empty: the locale's days off.
+// "none": no day is a day off. Otherwise the days, comma or space separated,
+// 0 or 7 Sunday, 1 Monday to 6 Saturday ("6,7" as Intl writes Saturday and
+// Sunday, "5,6" for Friday and Saturday). Anything else in the list is left
+// out; a list with nothing left falls back to the locale.
+
+function weekendDays(setting, code) {
+  const text = String(setting ?? '').trim().toLowerCase();
+  if (!text) return new Set(localeWeekend(code));
+  if (text === 'none') return new Set();
+  const days = text.split(/[\s,]+/u).filter(part => /^[0-7]$/u.test(part)).map(part => Number(part) % 7);
+  return new Set(days.length ? days : localeWeekend(code));
+} // The date format of a locale, in the component's tokens (owner decision C62:
+// typing follows the language and the country, not a fixed «ДД.ММ.ГГГГ»). The
+// parts' order and the signs between them come from Intl alone:
+// formatToParts of a two-digit day and month and a numeric year gives
+// DD.MM.YYYY for ru and de, MM/DD/YYYY for en-US, DD/MM/YYYY for en-GB and fr,
+// YYYY-MM-DD for sv-SE and en-CA. A sign before the first part or after the
+// last («12.11.2026 г.» in bg, the closing dot of hu and ko) is left out: it is
+// not between two numbers, and a person does not type it. Right-to-left marks
+// are left out of the signs too. A locale Intl refuses, or a sign that is not
+// one a date is typed with (. / - , or a space), keeps DD.MM.YYYY.
+
+const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
+const PART_TOKENS = {
+  day: 'DD',
+  month: 'MM',
+  year: 'YYYY'
+};
+const dateFormats = new Map();
+function localeDateFormat(code) {
+  if (dateFormats.has(code)) return dateFormats.get(code);
+  let format = DEFAULT_DATE_FORMAT;
+
+  try {
+    const parts = new Intl.DateTimeFormat(code, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).formatToParts(new Date(2026, 10, 12));
+    const tokens = [];
+    const signs = [];
+    let sign = '';
+
+    for (const part of parts) {
+      if (part.type === 'literal') {
+        sign += part.value.replace(/[\u200e\u200f\u061c]/gu, '');
+      } else if (PART_TOKENS[part.type]) {
+        if (tokens.length) signs.push(sign);
+        tokens.push(PART_TOKENS[part.type]);
+        sign = '';
+      }
+    }
+
+    const whole = tokens.length === 3 && new Set(tokens).size === 3 && signs.every(one => /^[\s./,-]+$/u.test(one));
+    if (whole) format = tokens.reduce((text, token, index) => text + (index ? signs[index - 1] : '') + token, '');
+  } catch {// An unknown locale keeps the default.
+  }
+
+  dateFormats.set(code, format);
+  return format;
+} // The hint in an empty field: the format written with the letters of the
+// locale's own names for the parts (Intl.DisplayNames, type dateTimeField):
+// ДД.ММ.ГГГГ in ru, MM/DD/YYYY in en-US, TT.MM.JJJJ in de, JJ/MM/AAAA in fr.
+// A name in a script without letter case or initials (日, 年) gives the Latin
+// D, M, Y, H instead.
+
+const LATIN_LETTERS = {
+  DD: 'D',
+  MM: 'M',
+  YYYY: 'Y',
+  YY: 'Y',
+  HH: 'H',
+  mm: 'M'
+};
+const FIELD_NAMES = {
+  DD: 'day',
+  MM: 'month',
+  YYYY: 'year',
+  YY: 'year',
+  HH: 'hour',
+  mm: 'minute'
+};
+const INITIAL_RE = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]/u;
+const placeholders = new Map();
+
+function letterOf(token, code) {
+  try {
+    const name = new Intl.DisplayNames(code, {
+      type: 'dateTimeField'
+    }).of(FIELD_NAMES[token]) || '';
+    const first = name.trim().charAt(0);
+    if (INITIAL_RE.test(first)) return first.toLocaleUpperCase(code);
+  } catch {// No names for this locale: the Latin letter below.
+  }
+
+  return LATIN_LETTERS[token];
+}
+
+function formatPlaceholder(format, code) {
+  const key = `${code}|${format}`;
+  if (placeholders.has(key)) return placeholders.get(key);
+  const text = String(format || '').replace(/YYYY|YY|MM|DD|HH|mm/gu, token => letterOf(token, code).repeat(token.length));
+  placeholders.set(key, text);
+  return text;
+}
 
 /***/ },
 
@@ -3192,7 +4167,8 @@ function renderGrid(context) {
   for (let at = 0; at < context.days.length; at += 7) weeks.push(context.days.slice(at, at + 7));
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}>
+        <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}
+            aria-readonly=${context.valueLocked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <div class="sf-datepicker-week" role="row">
                 ${context.weekdayNames.map(name => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only" role="columnheader">${name}</span>`)}
             </div>
@@ -3304,7 +4280,7 @@ function renderDatepickerPanel(context) {
                 <div class="sf-datepicker-main relative">
                     ${renderContext(context)}
                     <div class="sf-datepicker-weekdays grid grid-col-7" aria-hidden="true">
-                        ${context.weekdays.map(weekday => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-datepicker-weekday">${weekday}</span>`)}
+                        ${context.weekdays.map((weekday, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${context.weekdaysOff?.[at] ? 'sf-datepicker-weekday sf-datepicker-weekday-off' : 'sf-datepicker-weekday'}>${weekday}</span>`)}
                     </div>
                     ${renderGrid(context)}
                 </div>
@@ -3320,6 +4296,100 @@ function renderDatepickerTemplate(context) {
             ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerRoot)} data-portal=${context.portal ? 'true' : 'false'}>
             ${renderDatepickerInput(context)}
             ${context.open ? renderDatepickerPanel(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "d8c852b40b52"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   renderDatepickerRibbon: () => (/* binding */ renderDatepickerRibbon)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+function joinClasses(...tokens) {
+  return tokens.flat().filter(Boolean).join(' ');
+} // One day of the ribbon: the same cell, classes and names as the popup grid's
+// (templates/default.js renderDay), so a day looks and reads the same in both.
+
+
+function renderRibbonDay(day, context) {
+  const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.disabled ? 'disabled' : '');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <button class=${classes} type="button" role="gridcell" ?disabled=${day.disabled}
+            data-date=${day.value} aria-label=${day.label}
+            aria-current=${day.today ? 'date' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-selected=${day.selected || day.rangeSelected ? 'true' : 'false'} tabindex=${day.tabIndex}
+            @click=${() => context.component.pickRibbonDay(day.value)}
+            @keydown=${event => context.component.handleRibbonKeydown(event, day.value)}>
+            <span class="sf-datepicker-day-date">${day.day}</span>
+        </button>`;
+} // A month of the ribbon: its title, held over it while it is in view, then its
+// weeks. The days before the first and after the last are empty cells, so the
+// columns stay the weekdays'.
+
+
+function renderRibbonMonth(month, context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <section class="sf-datepicker-ribbon-month" data-month=${month.key}>
+            <div class="sf-datepicker-ribbon-title" aria-hidden="true">${month.label}</div>
+            <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${month.label}>
+                <div class="sf-datepicker-week" role="row">
+                    ${context.weekdayNames.map(name => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only" role="columnheader">${name}</span>`)}
+                </div>
+                ${month.weeks.map(week => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-datepicker-week" role="row">${week.map(day => day ? renderRibbonDay(day, context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-datepicker-day-empty" role="gridcell"></span>`)}</div>`)}
+            </div>
+        </section>`;
+} // The period on a phone (owner decision C62, ui-control prototypes/
+// datepicker.html#lenta): a ribbon of months in a bottom sheet. The weekday
+// row is pinned above the ribbon, the months stand one under another and
+// scroll with a finger, and the period chosen and «Готово» are pinned under
+// it. The sheet is the Framework's (sf-drawer placement="bottom"); this is
+// its content. Its head is the ribbon's own, as in #lenta: the title,
+// «К сегодня» (today's month to the top) and the close button, which keeps
+// the value the field had, as any close but «Готово» does.
+
+
+function renderDatepickerRibbon(context) {
+  // The period line under the ribbon (index.js ribbonSummary).
+  const summary = context.periodSummary;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-datepicker-sheet-head">
+            <span class="sf-datepicker-sheet-title">${context.title}</span>
+            <sf-button class="sf-datepicker-sheet-today" size="1/2" appearance="ghost" scheme="primary"
+                text=${context.labels.goToToday}
+                @click=${() => context.component.ribbonToToday()}></sf-button>
+            <sf-button-icon class="sf-datepicker-sheet-close" size="1" appearance="ghost" scheme="on-surface"
+                icon="close" aria-label=${context.labels.close}
+                @click=${() => context.component.closeRibbon()}></sf-button-icon>
+        </div>
+        <div class="sf-datepicker-sheet-weekdays" aria-hidden="true">
+            ${context.weekdays.map((weekday, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${joinClasses('sf-datepicker-weekday', context.weekdaysOff[at] && 'sf-datepicker-weekday-off')}>${weekday}</span>`)}
+        </div>
+        <div class="sf-datepicker-ribbon" @scroll=${() => context.component.handleRibbonScroll()}>
+            ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.months, month => month.key, month => renderRibbonMonth(month, context))}
+        </div>
+        <div class="sf-datepicker-sheet-foot">
+            <div class="sf-datepicker-sheet-summary" aria-live="polite">
+                ${summary.strong ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<b>${summary.strong}</b>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ${summary.note ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span>${summary.note}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            </div>
+            <sf-button class="sf-datepicker-sheet-done" size="1" appearance="default" scheme="primary" full-width
+                text=${context.labels.done} ?disabled=${!context.complete}
+                @click=${() => context.component.commitRibbon()}></sf-button>
         </div>`;
 }
 __webpack_async_result__();
@@ -3352,6 +4422,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/ref.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/ref.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "efa66f8927d1"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/repeat.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/repeat.js", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -3400,21 +4477,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.5.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.7.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "2fe06cbdeec6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-month":"Choose a month","choose-year":"Choose a year","custom-range":"Custom range","day-off":"day off","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","preset-last-month":"Last month","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-this-month":"This month","preset-this-week":"This week","preset-today":"Today","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-end":"choose the end","choose-month":"Choose a month","choose-start":"Choose the start of the period","choose-year":"Choose a year","close":"Close","custom-range":"Custom range","day-off":"day off","done":"Done","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","go-to-today":"Today","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","period":"Period","preset-last-month":"Last month","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-this-month":"This month","preset-this-week":"This week","preset-today":"Today","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
 
 /***/ },
 
 /***/ "8752f4d5d78e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Календарь","runtime":{"choose-month":"Выберите месяц","choose-year":"Выберите год","custom-range":"Свой период","day-off":"выходной","earlier-hour":"Предыдущий час","earlier-minute":"Предыдущие минуты","hours":"Часы","later-hour":"Следующий час","later-minute":"Следующие минуты","minutes":"Минуты","next-month":"Следующий месяц","next-years":"Следующие годы","preset-last-month":"Прошлый месяц","preset-last30-days":"Последние 30 дней","preset-last7-days":"Последние 7 дней","preset-this-month":"Этот месяц","preset-this-week":"Эта неделя","preset-today":"Сегодня","preset-yesterday":"Вчера","presets":"Быстрый выбор","previous-month":"Предыдущий месяц","previous-years":"Предыдущие годы","time":"Время","time-not-set":"Не задано","value-missing":"Выберите дату.","value-missing-datetime":"Выберите дату и время.","value-missing-time":"Выберите время."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Календарь","runtime":{"choose-end":"выберите конец","choose-month":"Выберите месяц","choose-start":"Выберите начало периода","choose-year":"Выберите год","close":"Закрыть","custom-range":"Свой период","day-off":"выходной","done":"Готово","earlier-hour":"Предыдущий час","earlier-minute":"Предыдущие минуты","go-to-today":"К сегодня","hours":"Часы","later-hour":"Следующий час","later-minute":"Следующие минуты","minutes":"Минуты","next-month":"Следующий месяц","next-years":"Следующие годы","period":"Период","preset-last-month":"Прошлый месяц","preset-last30-days":"Последние 30 дней","preset-last7-days":"Последние 7 дней","preset-this-month":"Этот месяц","preset-this-week":"Эта неделя","preset-today":"Сегодня","preset-yesterday":"Вчера","presets":"Быстрый выбор","previous-month":"Предыдущий месяц","previous-years":"Предыдущие годы","time":"Время","time-not-set":"Не задано","value-missing":"Выберите дату.","value-missing-datetime":"Выберите дату и время.","value-missing-time":"Выберите время."}}');
 
 /***/ }
 

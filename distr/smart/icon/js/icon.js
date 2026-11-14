@@ -306,7 +306,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const weightClasses = new Map([[100, "thin"], [200, "extra-light"], [300, "light"], [400, "regular"], [500, "medium"], [600, "semi-bold"], [700, "bold"]]);
-const iconTypes = ["outlined", "rounded", "sharp"];
 const iconSizes = ["1/4", "1/3", "1/2", "1", "2", "3", "4", "5", "6", "7"];
 
 function clampAxis(value, fallback, minimum, maximum) {
@@ -315,10 +314,12 @@ function clampAxis(value, fallback, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, numericValue));
 } // sf-icon from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4): the settings are the attributes and properties core/js/element-manifest.js
-// makes from the manifest, `loaded` is the value the Loader reports, and the
-// family's old name `shape` is a dated value alias of `sharp` (aliases.json).
-// What stays here is behaviour: the exact subset the glyph waits for, the
-// axes' bounds and the badge.
+// makes from the manifest, and `loaded` is the value the Loader reports. One
+// family is drawn, outlined (1.2.0, icons study IC-4): rounded, sharp and the
+// older shape are dated value aliases of outlined until 2027-01-01
+// (aliases.json); their fonts were never shipped. What stays here is
+// behaviour: the exact subset the glyph waits for, the axes' bounds and the
+// badge.
 // One IntersectionObserver for every icon that cannot draw yet: an icon in a
 // copy that is not rendered (a closed panel, a display: none menu or header
 // copy) checks again, and asks the Loader for its glyph, when the copy is
@@ -469,13 +470,13 @@ class SfIcon extends IconElement {
     let weight = this.getProp("weight");
     weight = this.toNumber(weight, 400);
     return weightClasses.get(weight) || weightClasses.get(400);
-  }
+  } // The one family sf-icon draws (IC-4). A page's default family
+  // (SF_BOOT_CONFIG icons.type) no longer changes it: rounded and sharp fell
+  // back to the old Material Icons font on every load.
+
 
   get iconType() {
-    const requestedType = String(this.getProp("type") || "").trim().toLowerCase();
-    const type = requestedType || window.SF?.Loader?.getDefaultIconType?.() || window.SF_BOOT_CONFIG?.icons?.type || window.SF_ICON_TYPE || "outlined";
-    const normalizedType = type === "shape" ? "sharp" : type;
-    return iconTypes.includes(normalizedType) ? normalizedType : "outlined";
+    return "outlined";
   }
 
   get iconSize() {
@@ -496,8 +497,6 @@ class SfIcon extends IconElement {
       icon: this.getProp("icon"),
       loaded: this.getProp("loaded"),
       filled: this.getProp("filled"),
-      rounded: this.iconType === "rounded",
-      sharp: this.iconType === "sharp",
       weightClass: this.weightClass,
       size: this.iconSize,
       grade: this.iconGrade,
@@ -563,8 +562,6 @@ function getIconData(context) {
     icon,
     size,
     filled,
-    rounded,
-    sharp,
     weightClass,
     loaded,
     rootClass,
@@ -574,7 +571,7 @@ function getIconData(context) {
     label,
     foreignClass
   } = context;
-  const ownClass = ["sf-icon", size ? `sf-icon--size-${size}` : "", loaded ? "sf-icon-loaded" : "", weightClass ? `sf-icon--weight-${weightClass}` : "", rounded ? "sf-icon--rounded" : "", sharp ? "sf-icon--sharp" : "", filled ? "sf-icon--filled" : "", rootClass].filter(Boolean).join(" "); // What the element did not write itself (sf-icon's foreignGlyphClasses).
+  const ownClass = ["sf-icon", size ? `sf-icon--size-${size}` : "", loaded ? "sf-icon-loaded" : "", weightClass ? `sf-icon--weight-${weightClass}` : "", filled ? "sf-icon--filled" : "", rootClass].filter(Boolean).join(" "); // What the element did not write itself (sf-icon's foreignGlyphClasses).
 
   const className = [ownClass, foreignClass].filter(Boolean).join(" ");
   const style = [rootStyle, `--sf-icon--grade:${grade}`, `--sf-icon--optical-size:${opticalSize}`].filter(Boolean).join(";");
@@ -661,14 +658,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "75949279fd27"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-icon","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"shape","to":"sharp","kind":"value","setting":"type","component":"sf-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the family\'s old name; the attribute is written with sharp"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-icon","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"shape","to":"outlined","kind":"value","setting":"type","component":"sf-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the family\'s old name; sharp itself is a former value since 1.2.0, so shape draws outlined"},{"from":"rounded","to":"outlined","kind":"value","setting":"type","component":"sf-icon","since":"2026-11-14","remove_after":"2027-01-01","section":"§16 item 20; icons study IC-4","note":"journal value-icon-one-family: the family\'s font was never shipped; the value draws outlined until the date"},{"from":"sharp","to":"outlined","kind":"value","setting":"type","component":"sf-icon","since":"2026-11-14","remove_after":"2027-01-01","section":"§16 item 20; icons study IC-4","note":"journal value-icon-one-family: the family\'s font was never shipped; the value draws outlined until the date"}]}');
 
 /***/ },
 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.1.7","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined","rounded","sharp"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.2.0","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

@@ -18,14 +18,15 @@ __webpack_require__.r(__webpack_exports__);
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
 // root or on a container moves every component one ladder step down; the CSS
 // does it (core/scss/_sf_css__density.scss): each step variable holds the step
-// below, and an element with an explicit size takes the normal ladder back.
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
 //
-// "Explicit" is a size the page gave. A size a component's template gives an
-// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
-// relative to the component's own size: under a compact sf-input its button
-// has to come down with it, not stand at the normal ladder. Those are marked
-// data-sf-size-relative here, once the component has drawn; the CSS leaves
-// them in the region's ladder.
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
 //
 // What a component holds of the page's own (captured slot content, children
 // left in place) keeps its size explicit. The store is on the shared global:
@@ -99,13 +100,12 @@ function followDensity(element, from) {
   const density = densityOf(from);
   if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
   return element;
-} // The density an element stands in: the nearest region's, or "normal" under an
-// explicit size (where the ladder is the normal one again); null outside any.
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -208,7 +208,8 @@ class SfPageHeader extends PageHeaderElement {
       const nodes = this._liveSlotNodes.get(name) || [];
       nodes.push(child);
 
-      this._liveSlotNodes.set(name, nodes); // The page's content: a size it gives stays explicit (density, C22).
+      this._liveSlotNodes.set(name, nodes); // The page's content: a size it gives stays the page's (density, C22; it
+      // follows the region like any size since C79).
 
 
       (0,_core_js_density__WEBPACK_IMPORTED_MODULE_2__.noteAuthored)([child]);
@@ -297,7 +298,7 @@ function renderPageHeaderTemplate(context) {
     hasHostSlot,
     rootClass
   } = context;
-  const classes = ['sf-page-header', 'flex', 'flex-col', 'min-w-0', rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-page-header', 'flex', 'flex-col', 'min-w-0', context.expressive ? 'sf-page-header--expressive' : '', rootClass].filter(Boolean).join(' ');
   const on = star === true;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<header class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${hasHostSlot('path') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-path flex items-cross-center min-w-0">${hostSlot('path')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -367,7 +368,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "96b1e08482fd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.2.6","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.3.2","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
 
 /***/ },
 

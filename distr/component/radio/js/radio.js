@@ -9,6 +9,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
 /* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   SWITCH_TEXT_PARTS: () => (/* binding */ SWITCH_TEXT_PARTS),
 /* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
 /* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
 /* harmony export */ });
@@ -138,6 +139,16 @@ const RADIO_TEXT_PARTS = Object.freeze({
   label: '.sf-radio-button-top',
   column: '.sf-radio-button-container',
   description: '.sf-radio-button-description'
+}); // sf-switch reads the same binding since C63 W9 (it had its own copy in
+// component/switch/js/_switch.js, written first, the same algorithm).
+
+const SWITCH_TEXT_PARTS = Object.freeze({
+  kind: 'sf-switch',
+  classKind: 'sf-switch',
+  text: '.sf-switch-container',
+  label: '.sf-switch-top',
+  column: '.sf-switch-container-wrap',
+  description: '.sf-switch-description'
 });
 
 /***/ },

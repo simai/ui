@@ -382,14 +382,16 @@ function renderContent(context, section) {
   if (section.slot && component?.hasSlotContent?.(section.slot)) return component.getSlotContent(section.slot);
   return section.content || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // What stands in the header: an icon before the title, the title, a badge
-// after it, then the class accordion's marker.
+// after it, then the class accordion's marker. The badge is tonal, grey (owner
+// decision C140): it took sf-badge's former default, the dark grey fill.
 
 
 function renderHeaderContent(context, section, open) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     ${section.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-accordion-lead" aria-hidden="true">${section.icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     <span class="sf-accordion-title">${section.title}</span>
-    ${section.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-accordion-badge" size=${_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.BADGE_SIZE[context.size] || '1/3'} text=${section.badge}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${section.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-accordion-badge" appearance="tonal" size=${_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.BADGE_SIZE[context.size] || '1/3'}
+          line=${_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.BADGE_LINE[context.size] || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${section.badge}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.isStatic ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${(0,_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.markerGlyph)(context.marker, open)}</i>`}
   `;
 }
@@ -487,6 +489,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ACCORDION_APPEARANCES: () => (/* binding */ ACCORDION_APPEARANCES),
 /* harmony export */   ACCORDION_MARKERS: () => (/* binding */ ACCORDION_MARKERS),
 /* harmony export */   ACCORDION_SIZES: () => (/* binding */ ACCORDION_SIZES),
+/* harmony export */   BADGE_LINE: () => (/* binding */ BADGE_LINE),
 /* harmony export */   BADGE_SIZE: () => (/* binding */ BADGE_SIZE),
 /* harmony export */   REGION_LIMIT: () => (/* binding */ REGION_LIMIT),
 /* harmony export */   markerGlyph: () => (/* binding */ markerGlyph),
@@ -589,6 +592,18 @@ function markerGlyph(marker, open) {
 // rung below the header (sf-badge has 1/3, 1/2 and 1).
 const BADGE_SIZE = Object.freeze({'': '1/3', '1/3': '1/3', '1/2': '1/3', 1: '1/3', 2: '1/2', 3: '1'});
 
+// The badge takes the line of the text beside it at every size (sf-badge
+// line="text": the title's size and line, one figure a circle), so the header
+// keeps its control height (C01, C18; C95 point 6: a mark beside an item's
+// text is as high as its line). A badge size stood taller than the title's
+// line wherever the line steps down: at size 1/2 a 1/3 badge (24, phone 20)
+// grew the 32 header to 36 (phone 28 to 32); in a compact region the default
+// and size 1 headers (14/20 text) took a 24 badge, 48 to 52 and 32 to 36; on a
+// phone size 3 (18/24 text) took a 28 badge, 52 to 56 (intent acceptance
+// 2026-11-13, content-5). The badge size stays the fallback where line is
+// not read.
+const BADGE_LINE = Object.freeze({'': 'text', '1/3': 'text', '1/2': 'text', 1: 'text', 2: 'text', 3: 'text'});
+
 
 /***/ },
 
@@ -602,7 +617,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-accor
 /***/ "f733ebfdf5a9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.1.8","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"default"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.1.12","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"default"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

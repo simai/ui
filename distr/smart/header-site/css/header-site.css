@@ -15,6 +15,18 @@
     position: relative;
     display: block;
     box-sizing: border-box;
+    /* The row's gutter, the .container ladder read from the utility's own
+       steps, for the side panel's head (its close button on the menu button's
+       axis). */
+    --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-1));
+    /* How far the row's container stands in from the page's edge when the page
+       is wider than the container's step (its max-width is the step's
+       breakpoint, centred): half the difference. The page's width is the one
+       the container's breakout reads, --sf-container-breakout-page when a
+       product sets it, else the window. Zero below the first step. */
+    --sf-site-header--centring: calc(var(--sf-px) * 0);
+    /* The open panel's width, read by the panel and by its head. */
+    --sf-site-header--sheet-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
     min-height: var(--sf-site-header--block-size);
     min-block-size: var(--sf-site-header--block-size);
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
@@ -180,18 +192,38 @@
     grid-area: 1/3;
     justify-content: flex-end;
   }
-  /* Collapsed: the menu button first, the brand, then the tools at the end; the
-     panel is shown only while open, as a side panel at the inline start over a
-     scrim. Height and focus come from the layer stack (core/js/layer-stack.js),
+  /* Collapsed: the menu button first, the brand, then the tools at the end (or
+     the brand, the tools and the menu button last, menu-placement inline-end);
+     the panel is shown only while open, as a side panel from the button's edge
+     over a scrim. Height and focus come from the layer stack (core/js/layer-stack.js),
      which lifts the whole header to the layer's z-index while it is open. */
   .sf-site-header--collapse-always {
     /* A row again whatever navigation-align says: the nav is in the panel. */
     /* flex, as the icon button's own utility draws it. */
+    /* menu-placement inline-end (C104): the button is drawn last, after the
+       tools, and stands at the end of the bar; behind the tools it follows them
+       at the row's gap. */
     /* The brand gives way, the tools stay whole: a bar narrower than the menu
        button, the brand and the tools shrinks the brand (its text ends in the
        page's own ellipsis) instead of scrolling the page sideways. */
+    /* While open, the scrim and the panel stand above everything in the bar
+       (C104, MP-6): the header is the layer's stacking context (place() in
+       index.js), the scrim and the panel take the first step of the z-index
+       scale inside it, and the bar's own parts are isolated, so a z-index in
+       them (sf-button's text, z-index 1; a page's switch in the tools) stays
+       under the scrim. Closed, nothing is isolated: a menu that drops from the
+       tools is not capped by the bar. */
     /* The panel's head is as tall as the bar, its close button on the axis of
-       the menu button. */
+       the menu button (R189 MP-3): first in the head, at the bar's own gutter
+       (the .container inset of the row, --sf-container-gutter when a product
+       sets it), so the close stands where the menu button stood and the heading
+       follows it. The DOM keeps the heading first: the close is the head's only
+       focusable part, and a reader still hears the panel's name before it. */
+    /* menu-placement inline-end: the panel comes from the end edge. */
+    /* On the button: the sf-button-icon host is display: contents. */
+    /* menu-placement inline-end: the close stands at the end of the head, on
+       the button's axis there, and the heading keeps the start at the panel's
+       own inset, in line with its rows. */
     /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
        control height of the ladder (44 on a phone), the words still size 1. */
     /* A plain list of links in the nav stands as a column in the panel; an
@@ -229,15 +261,77 @@
     -webkit-margin-start: auto;
             margin-inline-start: auto;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+    margin-left: auto;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(ltr)){
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+    margin-right: auto;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(rtl)){
+    margin-right: auto;
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-menu-button > button {
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+    margin-left: 0;
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+    margin-left: 0;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(ltr)){
+    margin-left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+    margin-right: 0;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+    margin-right: 0;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(rtl)){
+    margin-right: 0;
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button {
+    -webkit-margin-start: 0;
+            margin-inline-start: 0;
+  }
   .sf-site-header--collapse-always .sf-site-header-brand {
     flex: 0 1 auto;
   }
   .sf-site-header--collapse-always .sf-site-header-panel {
     display: none;
   }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-brand:not(does-not-exist) {
+    isolation: isolate;
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-tools:not(does-not-exist) {
+    isolation: isolate;
+  }
+  .sf-site-header--collapse-always.sf-site-header--open :is(.sf-site-header-menu-button > button) {
+    isolation: isolate;
+  }
   .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-scrim {
     display: block;
     position: fixed;
+    z-index: var(--sf-z-index-1);
     top: 0;
     right: 0;
     bottom: 0;
@@ -273,6 +367,7 @@
   }
   .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
     position: fixed;
+    z-index: var(--sf-z-index-1);
     top: 0;
     bottom: 0;
     inset-block: 0;
@@ -280,11 +375,8 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    width: min(90vw, var(--sf-g1));
-    inline-size: min(90vw, var(--sf-g1));
-    width: min(90vw, var(--sf-g1));
-    width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
-    inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+    width: var(--sf-site-header--sheet-size);
+    inline-size: var(--sf-site-header--sheet-size);
     height: 100dvh;
     block-size: 100dvh;
     overflow: auto;
@@ -295,22 +387,27 @@
     --sf-surface-place: var(--sf-surface-popup);
     --sf-surface-place-solid: var(--sf-surface-popup);
     --sf-surface-place-ground: var(--sf-surface-popup);
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -320,10 +417,12 @@
     --sf-place--container-outline: initial;
     color: var(--sf-on-surface);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -335,6 +434,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
     --sf-primary: var(--sf-place--found-primary);
@@ -352,51 +469,67 @@
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-left: var(--sf-space-2);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    left: auto;
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-left: var(--sf-space-2);
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    left: auto;
     }
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-right: var(--sf-space-1);
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+    left: auto;
   }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-right: var(--sf-space-1);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    right: auto;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    right: auto;
     }
   }
-  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
-    padding-left: var(--sf-space-2);
-    padding-right: var(--sf-space-1);
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+    right: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-right: var(--sf-space-2);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    right: 0;
   }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-right: var(--sf-space-2);
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    right: 0;
     }
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-left: var(--sf-space-1);
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+    right: 0;
   }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
-    padding-left: var(--sf-space-1);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    left: 0;
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+    left: 0;
     }
   }
-  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
-    padding-right: var(--sf-space-2);
-    padding-left: var(--sf-space-1);
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+    left: 0;
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
   }
   .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head {
+    /* The menu button's axis from the panel's edge: the row's gutter and the
+       container's centring offset, held inside the panel (the button and a
+       gutter beyond it) when the window is so wide that the axis lies past
+       the panel. */
+    --sf-site-header--axis-inset: min(
+      calc(var(--sf-site-header--gutter) + var(--sf-site-header--centring)),
+      calc(var(--sf-site-header--sheet-size) - var(--sf-site-header--control-height) - var(--sf-site-header--gutter))
+    );
     display: flex;
     flex: none;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: var(--sf-space-2);
     box-sizing: border-box;
     min-height: var(--sf-site-header--block-size);
@@ -404,7 +537,9 @@
     padding-top: var(--sf-space-1);
     padding-bottom: var(--sf-space-1);
     padding-block: var(--sf-space-1);
-    padding-inline: var(--sf-space-2) var(--sf-space-1);
+    padding-left: var(--sf-site-header--axis-inset);
+    padding-right: var(--sf-site-header--axis-inset);
+    padding-inline: var(--sf-site-header--axis-inset);
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
             border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -412,6 +547,56 @@
     border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
     -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
             border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  .sf-site-header--collapse-always .sf-site-header-close-button > button {
+    order: -1;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-2);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-2);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-site-header--axis-inset);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-site-header--axis-inset);
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+    padding-left: var(--sf-space-2);
+    padding-right: var(--sf-site-header--axis-inset);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-2);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-2);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-site-header--axis-inset);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-site-header--axis-inset);
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+    padding-right: var(--sf-space-2);
+    padding-left: var(--sf-site-header--axis-inset);
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head {
+    justify-content: space-between;
+    padding-inline: var(--sf-space-2) var(--sf-site-header--axis-inset);
+  }
+  .sf-site-header--collapse-always.sf-site-header--menu-inline-end .sf-site-header-close-button > button {
+    order: 0;
   }
   .sf-site-header--collapse-always .sf-site-header-panel-heading {
     font-size: var(--sf-text-medium--size);
@@ -439,15 +624,64 @@
     flex-direction: column;
     align-items: stretch;
   }
+  @media (min-width: 32rem) {
+    .sf-site-header {
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-2));
+      --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-sm)) / 2));
+    }
+  }
+  @media (min-width: 44rem) {
+    .sf-site-header {
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-3));
+      --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-md)) / 2));
+    }
+  }
+  @media (min-width: 60rem) {
+    .sf-site-header {
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-4));
+      --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-lg)) / 2));
+    }
+  }
+  @media (min-width: 72rem) {
+    .sf-site-header {
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-5));
+      --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-xl)) / 2));
+    }
+  }
+  @media (min-width: 80rem) {
+    .sf-site-header {
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-6));
+      --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-xxl)) / 2));
+    }
+  }
   @media not all and (min-width: 32rem) {
     .sf-site-header--collapse-sm {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* menu-placement inline-end (C104): the button is drawn last, after the
+         tools, and stands at the end of the bar; behind the tools it follows them
+         at the row's gap. */
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* While open, the scrim and the panel stand above everything in the bar
+         (C104, MP-6): the header is the layer's stacking context (place() in
+         index.js), the scrim and the panel take the first step of the z-index
+         scale inside it, and the bar's own parts are isolated, so a z-index in
+         them (sf-button's text, z-index 1; a page's switch in the tools) stays
+         under the scrim. Closed, nothing is isolated: a menu that drops from the
+         tools is not capped by the bar. */
       /* The panel's head is as tall as the bar, its close button on the axis of
-         the menu button. */
+         the menu button (R189 MP-3): first in the head, at the bar's own gutter
+         (the .container inset of the row, --sf-container-gutter when a product
+         sets it), so the close stands where the menu button stood and the heading
+         follows it. The DOM keeps the heading first: the close is the head's only
+         focusable part, and a reader still hears the panel's name before it. */
+      /* menu-placement inline-end: the panel comes from the end edge. */
+      /* On the button: the sf-button-icon host is display: contents. */
+      /* menu-placement inline-end: the close stands at the end of the head, on
+         the button's axis there, and the heading keeps the start at the panel's
+         own inset, in line with its rows. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -485,15 +719,77 @@
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-menu-button > button {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
     .sf-site-header--collapse-sm .sf-site-header-brand {
       flex: 0 1 auto;
     }
     .sf-site-header--collapse-sm .sf-site-header-panel {
       display: none;
     }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-brand:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-tools:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open :is(.sf-site-header-menu-button > button) {
+      isolation: isolate;
+    }
     .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-scrim {
       display: block;
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -529,6 +825,7 @@
     }
     .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       bottom: 0;
       inset-block: 0;
@@ -536,11 +833,8 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      width: min(90vw, var(--sf-g1));
-      inline-size: min(90vw, var(--sf-g1));
-      width: min(90vw, var(--sf-g1));
-      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
-      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      width: var(--sf-site-header--sheet-size);
+      inline-size: var(--sf-site-header--sheet-size);
       height: 100dvh;
       block-size: 100dvh;
       overflow: auto;
@@ -551,22 +845,27 @@
       --sf-surface-place: var(--sf-surface-popup);
       --sf-surface-place-solid: var(--sf-surface-popup);
       --sf-surface-place-ground: var(--sf-surface-popup);
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -576,10 +875,12 @@
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -591,6 +892,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--found-primary);
@@ -608,51 +927,67 @@
       --sf-elevation-3--surface: var(--sf-surface-popup);
       --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
     }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
       }
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: auto;
     }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
       }
     }
-    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
-      padding-left: var(--sf-space-2);
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: auto;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
     }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    @supports not (inset-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
       }
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      right: 0;
     }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
       }
     }
-    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
-      padding-right: var(--sf-space-2);
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      left: 0;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
     }
     .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head {
+      /* The menu button's axis from the panel's edge: the row's gutter and the
+         container's centring offset, held inside the panel (the button and a
+         gutter beyond it) when the window is so wide that the axis lies past
+         the panel. */
+      --sf-site-header--axis-inset: min(
+        calc(var(--sf-site-header--gutter) + var(--sf-site-header--centring)),
+        calc(var(--sf-site-header--sheet-size) - var(--sf-site-header--control-height) - var(--sf-site-header--gutter))
+      );
       display: flex;
       flex: none;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: var(--sf-space-2);
       box-sizing: border-box;
       min-height: var(--sf-site-header--block-size);
@@ -660,7 +995,9 @@
       padding-top: var(--sf-space-1);
       padding-bottom: var(--sf-space-1);
       padding-block: var(--sf-space-1);
-      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      padding-left: var(--sf-site-header--axis-inset);
+      padding-right: var(--sf-site-header--axis-inset);
+      padding-inline: var(--sf-site-header--axis-inset);
       border-bottom: var(--sf-px) solid var(--sf-outline-variant);
       -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
               border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -668,6 +1005,56 @@
       border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
       -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
               border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-sm .sf-site-header-close-button > button {
+      order: -1;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head {
+      justify-content: space-between;
+      padding-inline: var(--sf-space-2) var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-sm.sf-site-header--menu-inline-end .sf-site-header-close-button > button {
+      order: 0;
     }
     .sf-site-header--collapse-sm .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
@@ -700,11 +1087,30 @@
     .sf-site-header--collapse-md {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* menu-placement inline-end (C104): the button is drawn last, after the
+         tools, and stands at the end of the bar; behind the tools it follows them
+         at the row's gap. */
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* While open, the scrim and the panel stand above everything in the bar
+         (C104, MP-6): the header is the layer's stacking context (place() in
+         index.js), the scrim and the panel take the first step of the z-index
+         scale inside it, and the bar's own parts are isolated, so a z-index in
+         them (sf-button's text, z-index 1; a page's switch in the tools) stays
+         under the scrim. Closed, nothing is isolated: a menu that drops from the
+         tools is not capped by the bar. */
       /* The panel's head is as tall as the bar, its close button on the axis of
-         the menu button. */
+         the menu button (R189 MP-3): first in the head, at the bar's own gutter
+         (the .container inset of the row, --sf-container-gutter when a product
+         sets it), so the close stands where the menu button stood and the heading
+         follows it. The DOM keeps the heading first: the close is the head's only
+         focusable part, and a reader still hears the panel's name before it. */
+      /* menu-placement inline-end: the panel comes from the end edge. */
+      /* On the button: the sf-button-icon host is display: contents. */
+      /* menu-placement inline-end: the close stands at the end of the head, on
+         the button's axis there, and the heading keeps the start at the panel's
+         own inset, in line with its rows. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -742,15 +1148,77 @@
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-menu-button > button {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
     .sf-site-header--collapse-md .sf-site-header-brand {
       flex: 0 1 auto;
     }
     .sf-site-header--collapse-md .sf-site-header-panel {
       display: none;
     }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-brand:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-tools:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-md.sf-site-header--open :is(.sf-site-header-menu-button > button) {
+      isolation: isolate;
+    }
     .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-scrim {
       display: block;
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -786,6 +1254,7 @@
     }
     .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       bottom: 0;
       inset-block: 0;
@@ -793,11 +1262,8 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      width: min(90vw, var(--sf-g1));
-      inline-size: min(90vw, var(--sf-g1));
-      width: min(90vw, var(--sf-g1));
-      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
-      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      width: var(--sf-site-header--sheet-size);
+      inline-size: var(--sf-site-header--sheet-size);
       height: 100dvh;
       block-size: 100dvh;
       overflow: auto;
@@ -808,22 +1274,27 @@
       --sf-surface-place: var(--sf-surface-popup);
       --sf-surface-place-solid: var(--sf-surface-popup);
       --sf-surface-place-ground: var(--sf-surface-popup);
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -833,10 +1304,12 @@
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -848,6 +1321,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--found-primary);
@@ -865,51 +1356,67 @@
       --sf-elevation-3--surface: var(--sf-surface-popup);
       --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
     }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
       }
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: auto;
     }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
       }
     }
-    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
-      padding-left: var(--sf-space-2);
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: auto;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
     }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    @supports not (inset-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
       }
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      right: 0;
     }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
       }
     }
-    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
-      padding-right: var(--sf-space-2);
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      left: 0;
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
     }
     .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head {
+      /* The menu button's axis from the panel's edge: the row's gutter and the
+         container's centring offset, held inside the panel (the button and a
+         gutter beyond it) when the window is so wide that the axis lies past
+         the panel. */
+      --sf-site-header--axis-inset: min(
+        calc(var(--sf-site-header--gutter) + var(--sf-site-header--centring)),
+        calc(var(--sf-site-header--sheet-size) - var(--sf-site-header--control-height) - var(--sf-site-header--gutter))
+      );
       display: flex;
       flex: none;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: var(--sf-space-2);
       box-sizing: border-box;
       min-height: var(--sf-site-header--block-size);
@@ -917,7 +1424,9 @@
       padding-top: var(--sf-space-1);
       padding-bottom: var(--sf-space-1);
       padding-block: var(--sf-space-1);
-      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      padding-left: var(--sf-site-header--axis-inset);
+      padding-right: var(--sf-site-header--axis-inset);
+      padding-inline: var(--sf-site-header--axis-inset);
       border-bottom: var(--sf-px) solid var(--sf-outline-variant);
       -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
               border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -925,6 +1434,56 @@
       border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
       -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
               border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-md .sf-site-header-close-button > button {
+      order: -1;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head {
+      justify-content: space-between;
+      padding-inline: var(--sf-space-2) var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-md.sf-site-header--menu-inline-end .sf-site-header-close-button > button {
+      order: 0;
     }
     .sf-site-header--collapse-md .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
@@ -957,11 +1516,30 @@
     .sf-site-header--collapse-lg {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* menu-placement inline-end (C104): the button is drawn last, after the
+         tools, and stands at the end of the bar; behind the tools it follows them
+         at the row's gap. */
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* While open, the scrim and the panel stand above everything in the bar
+         (C104, MP-6): the header is the layer's stacking context (place() in
+         index.js), the scrim and the panel take the first step of the z-index
+         scale inside it, and the bar's own parts are isolated, so a z-index in
+         them (sf-button's text, z-index 1; a page's switch in the tools) stays
+         under the scrim. Closed, nothing is isolated: a menu that drops from the
+         tools is not capped by the bar. */
       /* The panel's head is as tall as the bar, its close button on the axis of
-         the menu button. */
+         the menu button (R189 MP-3): first in the head, at the bar's own gutter
+         (the .container inset of the row, --sf-container-gutter when a product
+         sets it), so the close stands where the menu button stood and the heading
+         follows it. The DOM keeps the heading first: the close is the head's only
+         focusable part, and a reader still hears the panel's name before it. */
+      /* menu-placement inline-end: the panel comes from the end edge. */
+      /* On the button: the sf-button-icon host is display: contents. */
+      /* menu-placement inline-end: the close stands at the end of the head, on
+         the button's axis there, and the heading keeps the start at the panel's
+         own inset, in line with its rows. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -999,15 +1577,77 @@
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-menu-button > button {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
     .sf-site-header--collapse-lg .sf-site-header-brand {
       flex: 0 1 auto;
     }
     .sf-site-header--collapse-lg .sf-site-header-panel {
       display: none;
     }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-brand:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-tools:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open :is(.sf-site-header-menu-button > button) {
+      isolation: isolate;
+    }
     .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-scrim {
       display: block;
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -1043,6 +1683,7 @@
     }
     .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       bottom: 0;
       inset-block: 0;
@@ -1050,11 +1691,8 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      width: min(90vw, var(--sf-g1));
-      inline-size: min(90vw, var(--sf-g1));
-      width: min(90vw, var(--sf-g1));
-      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
-      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      width: var(--sf-site-header--sheet-size);
+      inline-size: var(--sf-site-header--sheet-size);
       height: 100dvh;
       block-size: 100dvh;
       overflow: auto;
@@ -1065,22 +1703,27 @@
       --sf-surface-place: var(--sf-surface-popup);
       --sf-surface-place-solid: var(--sf-surface-popup);
       --sf-surface-place-ground: var(--sf-surface-popup);
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1090,10 +1733,12 @@
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1105,6 +1750,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--found-primary);
@@ -1122,51 +1785,67 @@
       --sf-elevation-3--surface: var(--sf-surface-popup);
       --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
     }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
       }
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: auto;
     }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
       }
     }
-    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
-      padding-left: var(--sf-space-2);
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: auto;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
     }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    @supports not (inset-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
       }
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      right: 0;
     }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
       }
     }
-    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
-      padding-right: var(--sf-space-2);
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      left: 0;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
     }
     .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head {
+      /* The menu button's axis from the panel's edge: the row's gutter and the
+         container's centring offset, held inside the panel (the button and a
+         gutter beyond it) when the window is so wide that the axis lies past
+         the panel. */
+      --sf-site-header--axis-inset: min(
+        calc(var(--sf-site-header--gutter) + var(--sf-site-header--centring)),
+        calc(var(--sf-site-header--sheet-size) - var(--sf-site-header--control-height) - var(--sf-site-header--gutter))
+      );
       display: flex;
       flex: none;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: var(--sf-space-2);
       box-sizing: border-box;
       min-height: var(--sf-site-header--block-size);
@@ -1174,7 +1853,9 @@
       padding-top: var(--sf-space-1);
       padding-bottom: var(--sf-space-1);
       padding-block: var(--sf-space-1);
-      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      padding-left: var(--sf-site-header--axis-inset);
+      padding-right: var(--sf-site-header--axis-inset);
+      padding-inline: var(--sf-site-header--axis-inset);
       border-bottom: var(--sf-px) solid var(--sf-outline-variant);
       -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
               border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -1182,6 +1863,56 @@
       border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
       -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
               border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-lg .sf-site-header-close-button > button {
+      order: -1;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head {
+      justify-content: space-between;
+      padding-inline: var(--sf-space-2) var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-lg.sf-site-header--menu-inline-end .sf-site-header-close-button > button {
+      order: 0;
     }
     .sf-site-header--collapse-lg .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
@@ -1214,11 +1945,30 @@
     .sf-site-header--collapse-xl {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* menu-placement inline-end (C104): the button is drawn last, after the
+         tools, and stands at the end of the bar; behind the tools it follows them
+         at the row's gap. */
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* While open, the scrim and the panel stand above everything in the bar
+         (C104, MP-6): the header is the layer's stacking context (place() in
+         index.js), the scrim and the panel take the first step of the z-index
+         scale inside it, and the bar's own parts are isolated, so a z-index in
+         them (sf-button's text, z-index 1; a page's switch in the tools) stays
+         under the scrim. Closed, nothing is isolated: a menu that drops from the
+         tools is not capped by the bar. */
       /* The panel's head is as tall as the bar, its close button on the axis of
-         the menu button. */
+         the menu button (R189 MP-3): first in the head, at the bar's own gutter
+         (the .container inset of the row, --sf-container-gutter when a product
+         sets it), so the close stands where the menu button stood and the heading
+         follows it. The DOM keeps the heading first: the close is the head's only
+         focusable part, and a reader still hears the panel's name before it. */
+      /* menu-placement inline-end: the panel comes from the end edge. */
+      /* On the button: the sf-button-icon host is display: contents. */
+      /* menu-placement inline-end: the close stands at the end of the head, on
+         the button's axis there, and the heading keeps the start at the panel's
+         own inset, in line with its rows. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -1256,15 +2006,77 @@
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-menu-button > button {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-left: 0;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button{
+      margin-right: 0;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-tools ~ .sf-site-header-menu-button > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
     .sf-site-header--collapse-xl .sf-site-header-brand {
       flex: 0 1 auto;
     }
     .sf-site-header--collapse-xl .sf-site-header-panel {
       display: none;
     }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-brand:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-tools:not(does-not-exist) {
+      isolation: isolate;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open :is(.sf-site-header-menu-button > button) {
+      isolation: isolate;
+    }
     .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-scrim {
       display: block;
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       right: 0;
       bottom: 0;
@@ -1300,6 +2112,7 @@
     }
     .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
       position: fixed;
+      z-index: var(--sf-z-index-1);
       top: 0;
       bottom: 0;
       inset-block: 0;
@@ -1307,11 +2120,8 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      width: min(90vw, var(--sf-g1));
-      inline-size: min(90vw, var(--sf-g1));
-      width: min(90vw, var(--sf-g1));
-      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
-      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      width: var(--sf-site-header--sheet-size);
+      inline-size: var(--sf-site-header--sheet-size);
       height: 100dvh;
       block-size: 100dvh;
       overflow: auto;
@@ -1322,22 +2132,27 @@
       --sf-surface-place: var(--sf-surface-popup);
       --sf-surface-place-solid: var(--sf-surface-popup);
       --sf-surface-place-ground: var(--sf-surface-popup);
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1347,10 +2162,12 @@
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1362,6 +2179,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
       --sf-primary: var(--sf-place--found-primary);
@@ -1379,51 +2214,67 @@
       --sf-elevation-3--surface: var(--sf-surface-popup);
       --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
     }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-2);
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: auto;
       }
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: auto;
     }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: auto;
       }
     }
-    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
-      padding-left: var(--sf-space-2);
-      padding-right: var(--sf-space-1);
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: auto;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
     }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-right: var(--sf-space-2);
+    @supports not (inset-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      right: 0;
       }
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      right: 0;
     }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
-      padding-left: var(--sf-space-1);
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel{
+      left: 0;
       }
     }
-    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
-      padding-right: var(--sf-space-2);
-      padding-left: var(--sf-space-1);
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      left: 0;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
     }
     .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head {
+      /* The menu button's axis from the panel's edge: the row's gutter and the
+         container's centring offset, held inside the panel (the button and a
+         gutter beyond it) when the window is so wide that the axis lies past
+         the panel. */
+      --sf-site-header--axis-inset: min(
+        calc(var(--sf-site-header--gutter) + var(--sf-site-header--centring)),
+        calc(var(--sf-site-header--sheet-size) - var(--sf-site-header--control-height) - var(--sf-site-header--gutter))
+      );
       display: flex;
       flex: none;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: var(--sf-space-2);
       box-sizing: border-box;
       min-height: var(--sf-site-header--block-size);
@@ -1431,7 +2282,9 @@
       padding-top: var(--sf-space-1);
       padding-bottom: var(--sf-space-1);
       padding-block: var(--sf-space-1);
-      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      padding-left: var(--sf-site-header--axis-inset);
+      padding-right: var(--sf-site-header--axis-inset);
+      padding-inline: var(--sf-site-header--axis-inset);
       border-bottom: var(--sf-px) solid var(--sf-outline-variant);
       -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
               border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -1439,6 +2292,56 @@
       border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
       -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
               border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-xl .sf-site-header-close-button > button {
+      order: -1;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-site-header--axis-inset);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-site-header--axis-inset);
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end.sf-site-header--open .sf-site-header-panel-head {
+      justify-content: space-between;
+      padding-inline: var(--sf-space-2) var(--sf-site-header--axis-inset);
+    }
+    .sf-site-header--collapse-xl.sf-site-header--menu-inline-end .sf-site-header-close-button > button {
+      order: 0;
     }
     .sf-site-header--collapse-xl .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);

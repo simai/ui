@@ -121,7 +121,7 @@
     --sf-context-menu--row-height: var(--sf-ui-1\/2--control-height);
     --sf-context-menu--row-padding: var(--sf-space-1\/2);
     --sf-context-menu--row-radius: var(--sf-context-menu-row-radius, var(--sf-radius--ui));
-    --sf-context-menu--thumb: var(--sf-space-1\/4);
+    --sf-context-menu--thumb: var(--sf-scroll-thumb-width);
     --sf-context-menu--item-inset-start-1\/2: var(--sf-context-menu--row-padding);
     --sf-context-menu--item-inset-end-1\/2: var(--sf-context-menu--row-padding);
     --sf-context-menu--label-inset-1\/2: calc(var(--sf-context-menu--item-inset-start-1\/2) + var(--sf-ui-1\/2--text-space-x));
@@ -307,48 +307,48 @@
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content:where(:dir(ltr)){
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content{
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content{
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content:where(:dir(rtl)){
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   .sf-context-menu .sf-context-menu-content:where(:dir(ltr)){
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content{
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content{
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   .sf-context-menu .sf-context-menu-content:where(:dir(rtl)){
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
   }
   .sf-context-menu .sf-context-menu-content {
     /* The profile menu's surface is every menu's (owner, 2026-10-12): the
@@ -358,22 +358,27 @@
     --sf-surface-place: var(--sf-context-menu-content--background-color);
     --sf-surface-place-solid: var(--sf-context-menu-content--background-color);
     --sf-surface-place-ground: var(--sf-context-menu-content--background-color);
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -392,14 +397,23 @@
     --sf-context-menu-content--padding-inline-end: var(--sf-context-menu-padding-inline, var(--sf-space-1\/4));
     --sf-context-menu-content--padding-inline-start: var(--sf-context-menu-padding-inline, var(--sf-space-1\/4));
     --sf-context-menu-content--padding-top: var(--sf-context-menu-padding-block, var(--sf-space-1\/4));
+    /* The 1 px border is inside the inline inset (owner decision C105 H4, as
+       the fields' C77 inset; spacing audit C2): what stands at the inset --
+       the rows' plates, a search header, a drilling head, a footer, a panel's
+       body -- starts the inset less the border from the border's inner edge,
+       so a row's icon or text is 16 from the panel's outer edge (compact and
+       phone 12), not 17 (13). The scrollbar's gap on either side of its thumb
+       is the whole inset (C07, C106). */
+    --sf-context-menu-content--edge-inline-start: calc(var(--sf-context-menu-content--padding-inline-start) - var(--sf-context-menu-border-width, var(--sf-px)));
+    --sf-context-menu-content--edge-inline-end: calc(var(--sf-context-menu-content--padding-inline-end) - var(--sf-context-menu-border-width, var(--sf-px)));
     --sf-context-menu-content--border-radius: var(--sf-context-menu-radius, var(--sf-radius--surface));
     border-radius: var(--sf-context-menu-content--border-radius);
     background-color: var(--sf-context-menu-content--background-color);
     padding-bottom: var(--sf-context-menu-content--padding-bottom);
-    -webkit-padding-end: var(--sf-context-menu-content--padding-inline-end);
-            padding-inline-end: var(--sf-context-menu-content--padding-inline-end);
-    -webkit-padding-start: var(--sf-context-menu-content--padding-inline-start);
-            padding-inline-start: var(--sf-context-menu-content--padding-inline-start);
+    -webkit-padding-end: var(--sf-context-menu-content--edge-inline-end);
+            padding-inline-end: var(--sf-context-menu-content--edge-inline-end);
+    -webkit-padding-start: var(--sf-context-menu-content--edge-inline-start);
+            padding-inline-start: var(--sf-context-menu-content--edge-inline-start);
     padding-top: var(--sf-context-menu-content--padding-top);
     min-width: 0;
     min-inline-size: 0;
@@ -423,10 +437,12 @@
         overscroll-behavior: contain;
     scroll-behavior: auto;
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-context-menu .sf-context-menu-content {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-context-menu .sf-context-menu-content {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-context-menu .sf-context-menu-content {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-context-menu .sf-context-menu-content {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -438,6 +454,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-context-menu .sf-context-menu-content {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-context-menu .sf-context-menu-content {
     --sf-primary: var(--sf-place--found-primary);
@@ -678,24 +712,34 @@
     width: var(--sf-context-menu--line);
     inline-size: var(--sf-context-menu--line);
   }
-  /* A picture in the lead: a site's logo or a person, the icon's size, with
-     its initials on the secondary tone when there is no picture. */
-  .sf-context-menu-item-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--sf-context-menu--line);
-    inline-size: var(--sf-context-menu--line);
-    height: var(--sf-context-menu--line);
-    block-size: var(--sf-context-menu--line);
-    border-radius: var(--sf-radius--ui);
-    background-color: var(--sf-secondary-container);
-    color: var(--sf-on-secondary-container);
-    font-size: var(--sf-text-size-1\/4);
-    font-weight: var(--sf-font-weight-medium);
-    line-height: 1;
-    -o-object-fit: cover;
-       object-fit: cover;
+  /* A picture in the lead: a site's logo or a person, the icon's size. It is
+     sf-avatar's drawing (the avatars sheet: the photo, the initials on the
+     neutral plate, the person glyph; square, as the row drew it); the menu
+     gives it the row's line only (avatar study AV-8, 2026-11-14). It was the
+     menu's own picture on the secondary container in the medium weight. */
+  .sf-avatar.sf-context-menu-item-avatar {
+    --sf-avatar--width: var(--sf-context-menu--line);
+    --sf-avatar--height: var(--sf-context-menu--line);
+    --sf-avatar--font-size: var(--sf-text-size-1\/4);
+    --sf-avatar--line-height: 1;
+  }
+  /* A colour in the lead (sf-settings' colour rows, C85): a circle of the
+     text's square less a quarter step, as an icon's glyph sits in its line, on
+     the hairline every colour swatch has (sf-input-color, R169). */
+  .sf-context-menu-item-swatch {
+    box-sizing: border-box;
+    display: block;
+    flex: none;
+    width: calc(var(--sf-context-menu--line) - var(--sf-space-1\/4));
+    inline-size: calc(var(--sf-context-menu--line) - var(--sf-space-1\/4));
+    height: calc(var(--sf-context-menu--line) - var(--sf-space-1\/4));
+    block-size: calc(var(--sf-context-menu--line) - var(--sf-space-1\/4));
+    margin: calc(var(--sf-space-1\/4) / 2);
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    border-radius: var(--sf-radius-circle);
+    background-color: transparent;
+    background-color: var(--sf-context-menu-swatch, transparent);
+    background-clip: padding-box;
   }
   .sf-context-menu-item-icon,
   .sf-context-menu-item-chevron {
@@ -903,11 +947,14 @@
   .sf-context-menu-value-row {
     white-space: normal;
   }
+  /* Names wrap between words (C32); a word breaks only when it alone is wider
+     than the row. anywhere let a row with a value at its end squeeze the name
+     mid-word («Плотнос / ть», docs precheck SE-01). */
   .sf-context-menu--drill .sf-context-menu-item-label,
   .sf-context-menu--drill .sf-context-menu-item-caption,
   .sf-context-menu-value-row .sf-context-menu-item-label,
   .sf-context-menu-value-row .sf-context-menu-item-caption {
-    word-wrap: anywhere;
+    word-wrap: break-word;
   }
   /* What leads a row stands on the row's centre line, a two-line row too. */
   .sf-context-menu--drill .sf-context-menu-item-lead,
@@ -924,7 +971,7 @@
   }
   .sf-context-menu-item--switch .sf-context-menu-item-label,
   .sf-context-menu-item--switch .sf-context-menu-item-caption {
-    word-wrap: anywhere;
+    word-wrap: break-word;
   }
   /* A row's shortcut is the kbd component's: plain glyphs in the muted ink,
      a step smaller, flex: none (owner decision 2026-11-07, docs review R030,
@@ -946,22 +993,13 @@
     gap: var(--sf-space-1\/2);
     padding: var(--sf-context-menu--space-y) var(--sf-context-menu--inset-end) var(--sf-context-menu--space-y) var(--sf-context-menu--inset-start);
   }
-  .sf-context-menu-header-avatar {
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-    width: var(--sf-d0);
-    inline-size: var(--sf-d0);
-    height: var(--sf-d0);
-    block-size: var(--sf-d0);
-    border-radius: 50%;
-    background-color: var(--sf-secondary-container);
-    color: var(--sf-on-secondary-container);
-    font-size: var(--sf-text-size-1\/3);
-    font-weight: var(--sf-font-weight-medium);
-    -o-object-fit: cover;
-       object-fit: cover;
+  /* The header's picture: sf-avatar's drawing at the d0 step (the avatars
+     sheet; avatar study AV-8), the menu giving it the step only. */
+  .sf-avatar.sf-context-menu-header-avatar {
+    --sf-avatar--width: var(--sf-d0);
+    --sf-avatar--height: var(--sf-d0);
+    --sf-avatar--font-size: var(--sf-text-size-1\/3);
+    --sf-avatar--line-height: 1;
   }
   .sf-context-menu-header-text {
     display: flex;
@@ -1369,7 +1407,15 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-surface-container-hover);
   }
+  /* A tile is a control: its icon is half a step paler than its name (C107,
+     owner 2026-11-12), and takes the name's colour under a pointer. */
   .sf-context-menu-tile-icon {
+    --sf-icon--color: var(--sf-on-surface-icon);
+  }
+  .sf-context-menu-tile.sf-context-menu-item:not(.sf-context-menu-tile--on):not(:disabled):hover .sf-context-menu-tile-icon {
+    --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-context-menu-tile.sf-context-menu-item:not(.sf-context-menu-tile--on):not(:disabled):active .sf-context-menu-tile-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
   .sf-context-menu-tile-name,
@@ -1495,44 +1541,44 @@
     overflow: hidden;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search:where(:dir(ltr)){
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search:where(:dir(rtl)){
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search {
     display: flex;
@@ -1544,51 +1590,51 @@
     padding-top: 0;
     padding-bottom: 0;
     padding-block: 0;
-    padding-inline: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2)) calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    padding-inline: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-space-1\/2)) calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-space-1\/2));
     border: 0;
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
             border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list:where(:dir(ltr)){
-    padding-left: var(--sf-context-menu-content--padding-inline-start);
-    padding-right: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-end);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list:where(:dir(rtl)){
-    padding-right: var(--sf-context-menu-content--padding-inline-start);
-    padding-left: var(--sf-context-menu-content--padding-inline-end);
+    padding-right: var(--sf-context-menu-content--edge-inline-start);
+    padding-left: var(--sf-context-menu-content--edge-inline-end);
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list {
     display: flex;
@@ -1601,7 +1647,7 @@
     padding-top: var(--sf-context-menu-content--padding-top);
     padding-bottom: var(--sf-context-menu-content--padding-bottom);
     padding-block: var(--sf-context-menu-content--padding-top) var(--sf-context-menu-content--padding-bottom);
-    padding-inline: var(--sf-context-menu-content--padding-inline-start) var(--sf-context-menu-content--padding-inline-end);
+    padding-inline: var(--sf-context-menu-content--edge-inline-start) var(--sf-context-menu-content--edge-inline-end);
     overflow-x: hidden;
     overflow-y: auto;
     -ms-scroll-chaining: none;
@@ -1614,93 +1660,93 @@
   /* The drilling level's head stays on top with the field, where the content's
      padding used to put it: its way back on the rows' leading axis. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-left: var(--sf-context-menu-content--padding-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (margin-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-left: var(--sf-context-menu-content--padding-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-right: var(--sf-context-menu-content--padding-inline-end);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (margin-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-right: var(--sf-context-menu-content--padding-inline-end);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head:where(:dir(ltr)){
-    margin-left: var(--sf-context-menu-content--padding-inline-start);
-    margin-right: var(--sf-context-menu-content--padding-inline-end);
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-right: var(--sf-context-menu-content--padding-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
   }
   @supports not (margin-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-right: var(--sf-context-menu-content--padding-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-left: var(--sf-context-menu-content--padding-inline-end);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
   }
   @supports not (margin-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head{
-    margin-left: var(--sf-context-menu-content--padding-inline-end);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head:where(:dir(rtl)){
-    margin-right: var(--sf-context-menu-content--padding-inline-start);
-    margin-left: var(--sf-context-menu-content--padding-inline-end);
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-drill-head {
     flex: none;
     margin-top: var(--sf-context-menu-content--padding-top);
     -webkit-margin-before: var(--sf-context-menu-content--padding-top);
             margin-block-start: var(--sf-context-menu-content--padding-top);
-    margin-inline: var(--sf-context-menu-content--padding-inline-start) var(--sf-context-menu-content--padding-inline-end);
+    margin-inline: var(--sf-context-menu-content--edge-inline-start) var(--sf-context-menu-content--edge-inline-end);
   }
   /* The content has no padding of its own to reach past: the footer stands
      under the scroll area as it is. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer:where(:dir(ltr)){
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer:where(:dir(rtl)){
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start));
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-right: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start));
+    padding-left: calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-footer {
     position: static;
@@ -1710,7 +1756,7 @@
     padding-bottom: var(--sf-context-menu--block-space);
     -webkit-padding-after: var(--sf-context-menu--block-space);
             padding-block-end: var(--sf-context-menu--block-space);
-    padding-inline: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--inset-start)) calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--inset-end));
+    padding-inline: calc(var(--sf-context-menu-content--edge-inline-start) + var(--sf-context-menu--inset-start)) calc(var(--sf-context-menu-content--edge-inline-end) + var(--sf-context-menu--inset-end));
   }
   .sf-context-menu-heading {
     padding: var(--sf-context-menu--space-y) var(--sf-context-menu--inset-end) var(--sf-a2) var(--sf-context-menu--inset-start);
@@ -1870,10 +1916,10 @@
     padding-block: calc((var(--sf-context-menu--row-step, var(--sf-context-menu--row-height)) - var(--sf-context-menu--line)) / 2);
   }
   .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-label {
-    word-wrap: anywhere;
+    word-wrap: break-word;
   }
   .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-caption {
-    word-wrap: anywhere;
+    word-wrap: break-word;
   }
   .sf-context-menu .sf-context-menu-content[data-sf-width=list] .sf-context-menu-item-lead {
     align-self: center;
@@ -2143,16 +2189,218 @@
   .sf-context-menu-head .sf-tabs-main-container {
     display: none;
   }
+  /* The body is the panel's scroll area (the scroll-area inset rule, owner
+     C106 addendum to C105, 2026-11-12): one inset I = --sf-space-1/4 on every
+     side of the rows' plates, from the panel's edge; while its scrollbar takes
+     room the body gives up its inline-end padding and the track is I, the
+     thumb, I (14, --sf-scroll-bg-width). sf-menu-context marks it
+     sf-context-menu-body--scrollbar. It kept a stable gutter before: an empty
+     14 beside rows that did not scroll, and 18 from a plate to the edge when
+     they did. The content gives its inline padding to the body; the head and
+     the footer keep their places. */
+  .sf-context-menu.sf-context-menu--panel .sf-context-menu-content {
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+  }
   .sf-context-menu--panel .sf-context-menu-body {
-    padding-top: var(--sf-space-1\/4);
-    padding-bottom: var(--sf-space-1\/4);
-    padding-block: var(--sf-space-1\/4);
-    scrollbar-gutter: stable;
+    padding: var(--sf-space-1\/4);
+    /* The border inside the inline inset, as the content's (C105 H4). */
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-inline: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-context-menu-border-width, var(--sf-px)));
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-context-menu-border-width, var(--sf-px)));
+    padding-inline: calc(var(--sf-space-1\/4) - var(--sf-context-menu-border-width, var(--sf-px)));
     overflow-x: hidden;
+    --sf-context-menu--track: calc(2 * var(--sf-space-1\/4) + var(--sf-context-menu--thumb));
+  }
+  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar {
+    width: var(--sf-context-menu--track);
+    height: var(--sf-context-menu--track);
+  }
+  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-track {
+    border: 0;
+    background-color: transparent;
+  }
+  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb {
+    min-height: var(--sf-context-menu--row-height);
+    border: var(--sf-space-1\/4) solid transparent;
+    border-radius: var(--sf-context-menu--track);
+    background-clip: padding-box;
+    background-color: var(--sf-scroll-bg-thumb);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    .sf-context-menu--panel .sf-context-menu-body {
+      scrollbar-width: thin;
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar{
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar{
+    padding-right: 0;
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar:where(:dir(ltr)){
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar{
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar{
+    padding-left: 0;
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar:where(:dir(rtl)){
+    padding-left: 0;
+  }
+  .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-head{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-head{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-head{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-head{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-head:where(:dir(ltr)){
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-head{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-head{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-head{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-head{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-head:where(:dir(rtl)){
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  .sf-context-menu--panel .sf-context-menu-head {
+    margin-inline: var(--sf-context-menu-content--edge-inline-start) var(--sf-context-menu-content--edge-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-top{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-top{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-top{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-top{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-top:where(:dir(ltr)){
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-top{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-top{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-top{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-top{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-top:where(:dir(rtl)){
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  .sf-context-menu--panel .sf-context-menu-top {
+    margin-inline: var(--sf-context-menu-content--edge-inline-start) var(--sf-context-menu-content--edge-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-footer{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-footer{
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-footer{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-footer{
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-footer:where(:dir(ltr)){
+    margin-left: var(--sf-context-menu-content--edge-inline-start);
+    margin-right: var(--sf-context-menu-content--edge-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-footer{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-footer{
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--panel .sf-context-menu-footer{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-context-menu--panel .sf-context-menu-footer{
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+    }
+  }
+  .sf-context-menu--panel .sf-context-menu-footer:where(:dir(rtl)){
+    margin-right: var(--sf-context-menu-content--edge-inline-start);
+    margin-left: var(--sf-context-menu-content--edge-inline-end);
+  }
+  .sf-context-menu--panel .sf-context-menu-footer {
+    margin-inline: var(--sf-context-menu-content--edge-inline-start) var(--sf-context-menu-content--edge-inline-end);
   }
   /* A row of a panel holds anything -- a handle, a label, a checkbox, a pin --
-     on one line: what leads, the text that takes the rest and gives way with an
-     ellipsis, what ends it. A row as tall as a menu item of the panel's size. */
+     on one line, placed by role and not by count (R193, DP-1): what stands
+     before the text leads (a handle), the text takes the rest of the row and
+     gives way with an ellipsis, and what follows it -- the mark, a pin -- ends
+     the row at its inline end. A row with no handle starts with its text, and
+     its mark still stands at the end: three positional columns put the mark in
+     the text's place then, right after a label of any length (55-141 px from
+     the row start on the docs page). A row as tall as a menu item of the
+     panel's size. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-row{
     padding-left: var(--sf-context-menu--inset-start);
   }
@@ -2194,23 +2442,36 @@
     padding-left: var(--sf-context-menu--inset-end);
   }
   .sf-context-menu-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    display: flex;
     align-items: center;
-    grid-gap: var(--sf-space-1\/3);
     gap: var(--sf-space-1\/3);
     min-height: var(--sf-ui-1\/2--control-height);
     min-block-size: var(--sf-ui-1\/2--control-height);
     padding-inline: var(--sf-context-menu--inset-start) var(--sf-context-menu--inset-end);
   }
+  .sf-context-menu-row > * {
+    flex: none;
+  }
   .sf-context-menu--size-1 .sf-context-menu-row {
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
+  }
+  .sf-context-menu-row > .sf-context-menu-row-text {
+    flex: 1 1 0;
+    min-width: 0;
+    min-inline-size: 0;
   }
   .sf-context-menu-row-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /* A panel row is a plate (C05, R193 DP-3): rounded as a control, the hover
+     plate under the pointer, and a chosen row -- its checkbox or radio checked --
+     the theme's light fill (owner decision C106 (2)). The plate stands the
+     inset from the panel's edge (the body's padding). */
+  .sf-context-menu-row {
+    border-radius: var(--sf-context-menu--row-radius);
   }
   /* ─── the scrollbar: only when the rows do not fit, in the inset ───────── */
   /* What scrolls the rows -- the content of a menu, or the rows' area under a
@@ -2325,6 +2586,49 @@
       border-bottom-color: Highlight;
       border-block-end-color: Highlight;
     }
+  }
+  /* A panel row (R193 DP-3, C05, owner decision C106 (2)): the hover plate
+     under the pointer; checked, the theme's light fill, and its own hover.
+     Each is a translucent fill, as an item's (C43 D3, D4): a tonal badge on
+     the row keeps its own tone and an anchored badge's ring is the row's
+     colour. */
+  .sf-context-menu-row:hover {
+    background-color: var(--sf-surface-state-select);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-surface-state-select);
+  }
+  .sf-context-menu-row:has(> sf-checkbox :checked, > input:checked) {
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container);
+  }
+  .sf-context-menu-row:has(> sf-radio :checked, > input:checked) {
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container);
+  }
+  .sf-context-menu-row:has(> input :checked, > input:checked) {
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container);
+  }
+  .sf-context-menu-row:has(> sf-checkbox :checked, > input:checked):hover {
+    background-color: var(--sf-primary-container-hover);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container-hover);
+  }
+  .sf-context-menu-row:has(> sf-radio :checked, > input:checked):hover {
+    background-color: var(--sf-primary-container-hover);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container-hover);
+  }
+  .sf-context-menu-row:has(> input :checked, > input:checked):hover {
+    background-color: var(--sf-primary-container-hover);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container-hover);
   }
   .sf-context-menu-item.focus-visible,
   .sf-context-menu-range-input.focus-visible {

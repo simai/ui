@@ -8,6 +8,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindRangeSlider: () => (/* binding */ bindRangeSlider),
+/* harmony export */   formatRangeSliderNumber: () => (/* binding */ formatNumberOnly),
+/* harmony export */   formatRangeSliderText: () => (/* binding */ formatRangeText),
 /* harmony export */   getRangeSliderValue: () => (/* binding */ getRangeSliderValue),
 /* harmony export */   initExistingRangeSliders: () => (/* binding */ initExistingRangeSliders),
 /* harmony export */   setRangeSliderValue: () => (/* binding */ setRangeSliderValue),
@@ -78,16 +80,21 @@ function getDecimalPlaces(value) {
   const [coefficient, exponent = '0'] = normalized.split('e');
   const fraction = coefficient.split('.')[1]?.replace(/0+$/, '').length || 0;
   return Math.min(100, Math.max(0, fraction - Number(exponent)));
-}
+} // Digits after the decimal mark: data-precision, as sf-input-quantity names it
+// (S1); data-decimals is its former name and is still read until 2027-01-01.
+// Unset, the step's digits (0.5 has one). Never fewer than the step's: a value
+// on its step is not shown rounded off it (2.6 with step 0.1 is «2,6», not «3»).
+
 
 function getValueDecimals(root) {
-  const decimalsAttr = root.getAttribute('data-decimals');
+  const stepDecimals = getDecimalPlaces(root.getAttribute('data-step'));
+  const decimalsAttr = root.getAttribute('data-precision') ?? root.getAttribute('data-decimals');
 
   if (decimalsAttr !== null && decimalsAttr !== '') {
-    return Math.min(100, Math.max(0, Math.trunc(toNumber(decimalsAttr, 0))));
+    return Math.min(100, Math.max(stepDecimals, Math.trunc(toNumber(decimalsAttr, 0))));
   }
 
-  return getDecimalPlaces(root.getAttribute('data-step'));
+  return stepDecimals;
 }
 
 function isMultipleRoot(root) {
@@ -124,12 +131,19 @@ function getHandleLabelPosition(root, mode = 'none') {
   }
 
   return mode === 'text' ? 'bottom' : 'top';
+} // A unit is held to its number by a no-break space (S1): «20 000 ₽» never
+// breaks before «₽». An author's ordinary space at the joint becomes one.
+
+
+function unitText(text, side) {
+  const value = String(text || '');
+  return side === 'prefix' ? value.replace(/[ \t]+$/u, '\u00a0') : value.replace(/^[ \t]+/u, '\u00a0');
 }
 
 function formatValue(root, value) {
   const decimals = getValueDecimals(root);
-  const prefix = root.getAttribute('data-prefix') || '';
-  const suffix = root.getAttribute('data-suffix') || '';
+  const prefix = unitText(root.getAttribute('data-prefix'), 'prefix');
+  const suffix = unitText(root.getAttribute('data-suffix'), 'suffix');
   const numeric = Number(value);
 
   if (!Number.isFinite(numeric)) {
@@ -137,23 +151,43 @@ function formatValue(root, value) {
   }
 
   return `${prefix}${formatDecimal(root, numeric, decimals)}${suffix}`;
-} // The number in the page's language, as sf-quantity writes it: a Russian page
-// reads «1,23 кг», not «1.23 кг» (docs pre-check 2026-11-10 CRS-01). The
-// `data-locale` of the slider wins over the page's `lang`. Grouping follows
-// the locale. Number.toFixed is the fallback where Intl refuses the digits.
+} // The number in the page's language, as sf-input-quantity writes it: a Russian
+// page reads «1,23 кг», not «1.23 кг» (docs pre-check 2026-11-10 CRS-01). The
+// `data-locale` of the slider wins over the page's `lang`. Thousands are
+// grouped the locale's way unless data-grouping="false" (a year, a code).
+// Number.toFixed is the fallback where Intl refuses the digits.
 
 
 function formatDecimal(root, numeric, decimals) {
   const locale = root.getAttribute('data-locale') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageLocale)(root);
+  const grouping = String(root.getAttribute('data-grouping') ?? '').trim().toLowerCase() !== 'false';
 
   try {
     return new Intl.NumberFormat(locale, {
       minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
+      maximumFractionDigits: Math.min(20, decimals),
+      useGrouping: grouping
     }).format(numeric);
   } catch {
     return numeric.toFixed(decimals);
   }
+} // The number alone, in the slider's language and digits: the joined value of a
+// range and the from/to field write each number this way, the unit once.
+
+
+function formatNumberOnly(root, value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? formatDecimal(root, numeric, getValueDecimals(root)) : String(value ?? '');
+} // One value with its prefix and unit; a range as «от 5 000 – 20 000 ₽»: the
+// prefix before the first number, the unit after the last (C78 name line).
+
+
+function formatRangeText(root, values = []) {
+  const list = (Array.isArray(values) ? values : [values]).map(Number);
+  if (list.length < 2) return formatValue(root, list[0]);
+  const prefix = unitText(root.getAttribute('data-prefix'), 'prefix');
+  const suffix = unitText(root.getAttribute('data-suffix'), 'suffix');
+  return `${prefix}${formatNumberOnly(root, list[0])} – ${formatNumberOnly(root, list[1])}${suffix}`;
 }
 
 function createVisualNode(mode = 'none', position = 'top') {
@@ -238,7 +272,15 @@ function bindSliderAccessibility(root, owner = root) {
         handle.setAttribute(name, value);
         next[name] = value;
       }
-    });
+    }); // The visible name of the field (C78: label above the slider, as every
+    // field) names a handle nothing else names.
+
+    const visibleName = root.getAttribute('data-labelledby');
+
+    if (visibleName && !handle.hasAttribute('aria-label') && !handle.hasAttribute('aria-labelledby')) {
+      handle.setAttribute('aria-labelledby', visibleName);
+      next['aria-labelledby'] = visibleName;
+    }
 
     if (isDisabledRoot(root)) {
       handle.setAttribute('aria-disabled', 'true');
@@ -251,6 +293,7 @@ function bindSliderAccessibility(root, owner = root) {
   sync();
   state.observer = new MutationObserver(sync);
   const ownerFilter = owner === root ? [...accessibleAttributes, ...handleLabelAttributes] : [...accessibleAttributes, 'lower-label', 'upper-label'];
+  ownerFilter.push('data-labelledby');
 
   if (owner === root) {
     state.observer.observe(root, {
@@ -264,7 +307,7 @@ function bindSliderAccessibility(root, owner = root) {
     });
     state.observer.observe(root, {
       attributes: true,
-      attributeFilter: [...handleLabelAttributes, 'disabled', 'class']
+      attributeFilter: [...handleLabelAttributes, 'data-labelledby', 'disabled', 'class']
     });
   }
 
@@ -315,8 +358,11 @@ function bindHandleLabels(root) {
   row.className = `sf-range-slider-labels sf-thumb sf-thumb--label-${mode} sf-range-slider-labels--${position}`; // Each handle exposes its exact value and units through ARIA already.
 
   row.setAttribute('aria-hidden', 'true');
-  const entries = getHandles(root).map(handle => {
-    const label = handle.querySelector(mode === 'tooltip' ? '.sf-tooltip' : '.sf-thumb-text');
+  const entries = getHandles(root).map((handle, index) => {
+    const label = handle.querySelector(mode === 'tooltip' ? '.sf-tooltip' : '.sf-thumb-text'); // The sheet shows a tooltip only while its own handle is dragged or
+    // keyboard-focused (C78), so each label knows its handle.
+
+    label.dataset.handle = String(index);
     const text = mode === 'tooltip' ? label.querySelector('.sf-tooltip-text') : label;
     row.append(label);
     return {
@@ -356,6 +402,7 @@ function bindHandleLabels(root) {
     }) => label.getBoundingClientRect().width);
     const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
     const plan = planLabelPositions(bounds.width, centers, sizes, gap);
+    row.classList.toggle('sf-range-slider-labels--merged', plan.merged);
 
     if (plan.merged) {
       entries[0].text.textContent = state.values.join(' – ');
@@ -421,6 +468,11 @@ function isDisabledRoot(root) {
   return root.hasAttribute('disabled') || root.classList.contains('disabled');
 }
 
+function isReadonlyRoot(root) {
+  if (typeof root?.hasAttribute !== 'function') return false;
+  return root.hasAttribute('readonly') || Boolean(root.classList?.contains?.('readonly')) || toBoolean(root.getAttribute('data-readonly'), false);
+}
+
 function createSliderOptions(root) {
   const {
     min,
@@ -438,11 +490,14 @@ function createSliderOptions(root) {
     },
     connect: getConnect(root, multiple),
     step: root.hasAttribute('data-step') && toNumber(root.getAttribute('data-step'), 0) > 0 ? toNumber(root.getAttribute('data-step'), 1) : undefined,
+    pageStep: toNumber(root.getAttribute('data-page-step'), 0) > 0 ? toNumber(root.getAttribute('data-page-step'), 0) : undefined,
     margin: multiple && root.hasAttribute('data-margin') && toNumber(root.getAttribute('data-margin'), 0) > 0 ? Math.min(max - min, toNumber(root.getAttribute('data-margin'), 0)) : undefined,
     range: {
       min,
       max
     },
+    readonly: isReadonlyRoot(root),
+    ticks: toBoolean(root.getAttribute('data-ticks'), false),
     keyboardSupport: !root.hasAttribute('data-keyboard') || toBoolean(root.getAttribute('data-keyboard'), true),
     cssPrefix: '',
     cssClasses: {
@@ -543,9 +598,14 @@ function bindRangeSlider(root, accessibilityOwner) {
       margin = 0
     } = slider.options;
     getHandles(root).forEach((node, index) => {
-      node.setAttribute('aria-valuenow', String(numericValues[index]));
-      node.setAttribute('aria-valuemin', String(index > 0 ? Math.max(range.min, numericValues[index - 1] + margin) : range.min));
-      node.setAttribute('aria-valuemax', String(index < numericValues.length - 1 ? Math.min(range.max, numericValues[index + 1] - margin) : range.max));
+      node.setAttribute('aria-valuenow', String(numericValues[index])); // Rounded to the step's digits, as the values are (S2): 0.2 + 0.1 is 0.3.
+
+      const digits = Math.max(getDecimalPlaces(slider.options.step ?? ''), getDecimalPlaces(range.min));
+
+      const bound = number => String(Number(Number(number).toFixed(Math.min(20, Math.max(digits, getDecimalPlaces(margin))))));
+
+      node.setAttribute('aria-valuemin', index > 0 ? bound(Math.max(range.min, numericValues[index - 1] + margin)) : String(range.min));
+      node.setAttribute('aria-valuemax', index < numericValues.length - 1 ? bound(Math.min(range.max, numericValues[index + 1] - margin)) : String(range.max));
     });
     updateHandleLabels(root, numericValues);
     dispatchSliderEvent(root, 'update', numericValues, {
@@ -694,7 +754,9 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createNativeSlider: () => (/* binding */ createNativeSlider)
+/* harmony export */   createNativeSlider: () => (/* binding */ createNativeSlider),
+/* harmony export */   decimalPlaces: () => (/* binding */ decimalPlaces),
+/* harmony export */   roundToDigits: () => (/* binding */ roundToDigits)
 /* harmony export */ });
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, Number(value)));
@@ -702,6 +764,25 @@ function clamp(value, min, max) {
 
 function numericList(value) {
   return (Array.isArray(value) ? value : [value]).map(Number);
+} // Digits after the point a number is written with: 0.1 has one, 2.5e-3 four,
+// 500 none. A value is rounded to the digits of its step and its minimum, so
+// three steps of 0.1 are 0.3, not 0.30000000000000004 (S2).
+
+
+function decimalPlaces(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text || !Number.isFinite(Number(text))) return 0;
+  const [coefficient, exponent = '0'] = text.split('e');
+  const fraction = coefficient.split('.')[1]?.length || 0;
+  return Math.min(20, Math.max(0, fraction - Number(exponent)));
+}
+function roundToDigits(value, digits) {
+  const rounded = Number(Number(value).toFixed(Math.min(20, Math.max(0, digits))));
+  return Object.is(rounded, -0) ? 0 : rounded;
+}
+
+function span(range) {
+  return range.max - range.min;
 }
 
 function createNode(tag, className) {
@@ -714,9 +795,16 @@ function createNativeSlider(root, options) {
   const classes = options.cssClasses;
   const range = options.range;
   const margin = Number(options.margin || 0);
-  const step = Number(options.step || 1);
+  const step = Number(options.step || 1); // PageUp, PageDown and Shift with an arrow move by the large step: ten
+  // steps unless page-step says otherwise, as sf-input-quantity (S4; APG,
+  // Radix, Carbon).
+
+  const pageStep = Number(options.pageStep) > 0 ? Number(options.pageStep) : step * 10;
+  const digits = Math.max(decimalPlaces(step), decimalPlaces(range.min));
   const listeners = new Map();
-  let disabled = false;
+  let disabled = false; // Read-only (C80): focusable and read out, but neither keys nor a pointer move it.
+
+  let readonly = Boolean(options.readonly);
   let values = numericList(options.start).map(value => clamp(value, range.min, range.max));
   root.classList.add(classes.target, classes.horizontal, options.direction === 'rtl' ? classes.textDirectionRtl : classes.textDirectionLtr);
   root.replaceChildren();
@@ -726,7 +814,23 @@ function createNativeSlider(root, options) {
   const connect = createNode('div', classes.connect);
   connects.append(connect);
   base.append(track, connects);
-  root.append(base);
+  root.append(base); // Ticks T1 (C80): a dot per step, at most twenty, over the rail and the fill.
+
+  const tickCount = span(range) / step;
+
+  if (options.ticks && Number.isFinite(tickCount) && tickCount >= 1 && tickCount <= 20) {
+    const ticks = createNode('div', 'sf-range-slider-ticks');
+    ticks.setAttribute('aria-hidden', 'true');
+
+    for (let index = 0; index <= Math.floor(tickCount + 1e-9); index += 1) {
+      const tick = createNode('span', 'sf-range-slider-tick');
+      tick.style.insetInlineStart = `${Math.min(100, index * step / span(range) * 100)}%`;
+      ticks.append(tick);
+    }
+
+    base.append(ticks);
+  }
+
   const handles = values.map((value, index) => {
     const origin = createNode('div', classes.origin);
     const handle = createNode('div', `${classes.handle} ${index === 0 ? classes.handleLower : classes.handleUpper}`);
@@ -749,14 +853,14 @@ function createNativeSlider(root, options) {
   };
 
   const boundsFor = index => ({
-    min: index > 0 ? values[index - 1] + margin : range.min,
-    max: index < values.length - 1 ? values[index + 1] - margin : range.max
+    min: index > 0 ? roundToDigits(values[index - 1] + margin, digits) : range.min,
+    max: index < values.length - 1 ? roundToDigits(values[index + 1] - margin, digits) : range.max
   });
 
   const normalize = (value, index) => {
     const bounds = boundsFor(index);
-    const stepped = range.min + Math.round((Number(value) - range.min) / step) * step;
-    return clamp(stepped, bounds.min, bounds.max);
+    const stepped = roundToDigits(range.min + Math.round((Number(value) - range.min) / step) * step, digits);
+    return roundToDigits(clamp(stepped, bounds.min, bounds.max), digits);
   };
 
   const render = () => {
@@ -771,6 +875,7 @@ function createNativeSlider(root, options) {
       handle.setAttribute('aria-valuemin', String(boundsFor(index).min));
       handle.setAttribute('aria-valuemax', String(boundsFor(index).max));
       handle.setAttribute('aria-valuetext', options.ariaFormat?.to?.(values[index]) || String(values[index]));
+      if (readonly) handle.setAttribute('aria-readonly', 'true');else handle.removeAttribute('aria-readonly');
     });
     const start = values.length > 1 ? percents[0] : options.connect === 'upper' ? percents[0] : 0;
     const end = values.length > 1 ? percents[1] : options.connect === false ? percents[0] : options.connect === 'upper' ? 100 : percents[0]; // connect: false draws no fill at all; it drew one from the start of the
@@ -797,10 +902,13 @@ function createNativeSlider(root, options) {
   };
 
   const beginPointer = event => {
-    if (disabled || event.button !== 0) return;
+    if (disabled || readonly || event.button !== 0) return;
     const value = valueFromPointer(event);
     const index = values.length === 1 || Math.abs(values[0] - value) <= Math.abs(values[1] - value) ? 0 : 1;
-    event.preventDefault();
+    event.preventDefault(); // Marks the handle being dragged: its value bubble shows only meanwhile (C78).
+
+    const dragged = handles[index].handle;
+    dragged.classList.add('sf-range-slider-handle--dragging');
     emit('start', index);
     setHandle(index, value);
 
@@ -808,6 +916,7 @@ function createNativeSlider(root, options) {
 
     const end = next => {
       setHandle(index, valueFromPointer(next), true);
+      dragged.classList.remove('sf-range-slider-handle--dragging');
       emit('end', index);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', end);
@@ -823,17 +932,21 @@ function createNativeSlider(root, options) {
   }, index) => handle.addEventListener('keydown', event => {
     if (disabled || options.keyboardSupport === false) return;
     const direction = options.direction === 'rtl' ? -1 : 1;
+    const by = event.shiftKey ? pageStep : step;
     const delta = {
-      ArrowRight: step * direction,
-      ArrowLeft: -step * direction,
-      ArrowUp: step,
-      ArrowDown: -step
+      ArrowRight: by * direction,
+      ArrowLeft: -by * direction,
+      ArrowUp: by,
+      ArrowDown: -by,
+      PageUp: pageStep,
+      PageDown: -pageStep
     }[event.key];
     let next = delta === undefined ? null : values[index] + delta;
     if (event.key === 'Home') next = boundsFor(index).min;
     if (event.key === 'End') next = boundsFor(index).max;
     if (next === null) return;
     event.preventDefault();
+    if (readonly) return;
     emit('start', index);
     setHandle(index, next, true);
     emit('end', index);
@@ -871,6 +984,11 @@ function createNativeSlider(root, options) {
         handle.tabIndex = -1;
         handle.setAttribute('aria-disabled', 'true');
       });
+    },
+
+    setReadonly(next = true) {
+      readonly = Boolean(next);
+      render();
     },
 
     enable() {

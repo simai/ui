@@ -344,6 +344,39 @@
   .sf-scrollbar[data-sf-scrollbar-overflow=false] .sf-scrollbar__track {
     display: none;
   }
+  .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-direction: to bottom;
+    --sf-scrollbar--fade-start: 0px;
+    --sf-scrollbar--fade-end: 0px;
+  }
+  .sf-scrollbar[data-sf-scrollbar-more]:not([data-mode=standard]):not(:not([data-mode])[data-sf-scrollbar=standard]) .sf-scrollbar__viewport {
+    -webkit-mask-image: linear-gradient(var(--sf-scrollbar--fade-direction), transparent 0, var(--sf-black) var(--sf-scrollbar--fade-start), var(--sf-black) calc(100% - var(--sf-scrollbar--fade-end)), transparent 100%);
+            mask-image: linear-gradient(var(--sf-scrollbar--fade-direction), transparent 0, var(--sf-black) var(--sf-scrollbar--fade-start), var(--sf-black) calc(100% - var(--sf-scrollbar--fade-end)), transparent 100%);
+  }
+  .sf-scrollbar[data-sf-scrollbar-more=start] .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-start: var(--sf-scrollbar-fade-size, var(--sf-space-2));
+  }
+  .sf-scrollbar[data-sf-scrollbar-more=both] .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-start: var(--sf-scrollbar-fade-size, var(--sf-space-2));
+  }
+  .sf-scrollbar[data-sf-scrollbar-more=end] .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-end: var(--sf-scrollbar-fade-size, var(--sf-space-2));
+  }
+  .sf-scrollbar[data-sf-scrollbar-more=both] .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-end: var(--sf-scrollbar-fade-size, var(--sf-space-2));
+  }
+  .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-direction: to right;
+  }
+  .sf-scrollbar[data-sf-scrollbar-axis=horizontal]:not([data-axis]) .sf-scrollbar__viewport {
+    --sf-scrollbar--fade-direction: to right;
+  }
+  .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport:dir(rtl) {
+    --sf-scrollbar--fade-direction: to left;
+  }
+  .sf-scrollbar[data-sf-scrollbar-axis=horizontal]:not([data-axis]) .sf-scrollbar__viewport:dir(rtl) {
+    --sf-scrollbar--fade-direction: to left;
+  }
   .sf-scrollbar__thumb.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));

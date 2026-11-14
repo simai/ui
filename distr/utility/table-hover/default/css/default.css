@@ -3,8 +3,12 @@
   .table-hover > tbody > tr:hover > * {
     --sf-table-accent-bg: var(--sf-table-hover-bg);
     color: var(--sf-table-hover-color);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
   .table-hover.table-stripe > tbody > tr:nth-of-type(odd):hover > * {
     --sf-table-accent-bg: var(--sf-surface-state-select);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
 }

@@ -2,6 +2,658 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "f3cba14ced8a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_KINDS: () => (/* binding */ FILE_KINDS),
+/* harmony export */   fileKind: () => (/* binding */ fileKind),
+/* harmony export */   fileKindIcon: () => (/* binding */ fileKindIcon),
+/* harmony export */   fileKindOfName: () => (/* binding */ fileKindOfName),
+/* harmony export */   fileType: () => (/* binding */ fileType)
+/* harmony export */ });
+/* harmony import */ var _file_types_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9bbeb11fb966");
+// The type of an entry -- a file, a page, a folder -- and its icon, from one
+// map (file-types.json; owner decision C102, 2026-11-12). Who chooses the icon,
+// first word wins:
+//
+//   icon        a name the host gives (or false: no icon)
+//   kind        one of the twelve words of the map (page, image, code, ...)
+//   extension   of the name, when names say their type (file-types="name")
+//   place       a folder (it has children, or kind="folder"), else a file
+//
+// No top-level side effects: a bundle that imports one function carries the
+// map and nothing else. sf-tree draws its rows with it; sf-file-upload,
+// sf-file-download and sf-view's file cells are to follow (C102 item 2).
+
+const KINDS = _file_types_json__WEBPACK_IMPORTED_MODULE_0__.kinds;
+/** The twelve kinds, in the map's order. */
+
+const FILE_KINDS = /* @__PURE__ */Object.freeze(Object.keys(KINDS));
+
+const BY_EXTENSION = /* @__PURE__ */(() => {
+  const found = new Map();
+
+  for (const [kind, spec] of Object.entries(KINDS)) for (const extension of spec.extensions ?? []) found.set(extension, kind);
+
+  return found;
+})();
+/** A word of the map, or '' for anything else (an old or unknown word). */
+
+
+function fileKind(word) {
+  const kind = String(word ?? '').trim().toLowerCase();
+  return Object.hasOwn(KINDS, kind) ? kind : '';
+}
+/** The kind a name's extension says («Смета.xlsx» → table), or ''. */
+
+function fileKindOfName(name) {
+  const found = /\.([a-z0-9]+)$/iu.exec(String(name ?? '').trim());
+  return found ? BY_EXTENSION.get(found[1].toLowerCase()) ?? '' : '';
+}
+/** The icon of a kind; a folder open shows its open icon. */
+
+function fileKindIcon(kind, {
+  open = false
+} = {}) {
+  const spec = KINDS[fileKind(kind)];
+  if (!spec) return KINDS.file.icon;
+  return open && spec['open-icon'] ? spec['open-icon'] : spec.icon;
+}
+/**
+ * The kind an entry is shown as and its icon.
+ *
+ *   fileType({icon, kind, name, folder, open, byName})
+ *     icon     a name, or false for none ('' / true: choose)
+ *     kind     a word of the map, or ''
+ *     name     the entry's name, read for its extension when byName
+ *     folder   the entry has children (or says it will have them)
+ *     open     a folder that is open
+ *     byName   the extension may say the kind (default true)
+ *   → {kind, icon}   icon '' when the host said false
+ */
+
+function fileType({
+  icon,
+  kind,
+  name,
+  folder = false,
+  open = false,
+  byName = true
+} = {}) {
+  let shown = fileKind(kind); // A folder is a folder by its place; file is the word for "some file", which
+  // the name may say more about.
+
+  if (!shown || shown === 'file') {
+    if (folder && !shown) shown = 'folder';else shown = byName && fileKindOfName(name) || shown || 'file';
+  }
+
+  if (icon === false || icon === 'false') return {
+    kind: shown,
+    icon: ''
+  };
+  if (typeof icon === 'string' && icon.trim() && icon !== 'true') return {
+    kind: shown,
+    icon: icon.trim()
+  };
+  return {
+    kind: shown,
+    icon: fileKindIcon(shown, {
+      open
+    })
+  };
+}
+
+/***/ },
+
+/***/ "e577837dd70a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Dates in the page's language: formatDate, the calendar day offset and the
+// next midnight, with no top-level side effects (format-intl.js). The same
+// functions as core/js/format.js and SF.format; relative days and times are
+// format-relative.js, so a bundle that writes a date does not carry them.
+
+
+const DAY_MS = 86400000;
+
+function hasDateStyle(style) {
+  return style === 'short' || style === 'medium' || style === 'long' || style === 'full';
+}
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
+ * `gap`, '' by default.
+ */
+
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (hasDateStyle(date)) options.dateStyle = date;
+    if (hasDateStyle(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone: 0 today,
+ * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
+ * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
+ * day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date()
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !today) return Number.NaN;
+  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
+  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date()) {
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return next.getTime() - today.getTime();
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c016c43b1452"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// File sizes in the page's language («1,4 МБ»), with no top-level side
+// effects (format-intl.js). The same functions as core/js/format.js,
+// composition/file-size.mjs and SF.format.fileSize.
+ // The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits. A component
+// with words of its own passes them as `units`.
+
+const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
+  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+});
+/** The unit words for a locale: its language's, else English. */
+
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+/**
+ * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
+ * of 1024; one digit after the point under ten of a unit, none above it or in
+ * bytes. Text a host already formatted is returned as it came; anything that
+ * is not a size is ''.
+ *
+ *   formatFileSize(size, {node, units?, locale?})
+ *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
+ *                                            and sf-image-field 1.x published
+ */
+
+function formatFileSize(size, options = {}, legacyLocale) {
+  const where = Array.isArray(options) ? {
+    units: options,
+    locale: legacyLocale ?? 'en'
+  } : options ?? {};
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const units = where.units?.length ? where.units : fileSizeUnits(locale);
+  let amount = bytes;
+  let index = 0;
+
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  return `${(0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    maximumFractionDigits: digits
+  }).format(amount)} ${units[index]}`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const word = String(format || 'number').trim();
+  if (word === 'integer') return {
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "ee5c3aad2640"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _format_date_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _format_date_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+// Relative days and times in the page's language («вчера», «5 минут назад»),
+// with no top-level side effects (format-intl.js). The same functions as
+// core/js/format.js and SF.format.relativeDay / relativeTime.
+
+ // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+
+function capitalise(text, locale) {
+  const first = Array.from(text)[0] ?? '';
+  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+}
+/**
+ * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
+ * the weekday within the last week («понедельник»), else the date («3 ноября»,
+ * with the year when it is not this one). The words are the platform's for
+ * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
+ * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
+ * `weekday: false` goes from yesterday straight to the date; `capital: true`
+ * starts the word with a capital, as a heading or a divider does.
+ *
+ * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
+ * says when.
+ */
+
+
+function formatRelativeDay(value, {
+  now = new Date(),
+  today,
+  yesterday,
+  tomorrow,
+  weekday = true,
+  capital = false,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
+    now
+  });
+  const own = {
+    0: today,
+    [-1]: yesterday,
+    1: tomorrow
+  }[offset];
+  let text;
+
+  if (own) {
+    text = String(own);
+  } else if (offset >= -1 && offset <= 1) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    }).format(offset, 'day');
+  } else if (weekday && offset < -1 && offset > -7) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      weekday: 'long'
+    }).format(moment);
+  } else {
+    const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
+      year: 'numeric'
+    };
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      day: 'numeric',
+      month: 'long',
+      ...year
+    }).format(moment);
+  }
+
+  return capital ? capitalise(text, locale) : text;
+} // The largest unit a span reaches is the one it is said in (mail-letters'
+// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
+
+const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
+
+function formatRelativeTime(value, {
+  now = new Date(),
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const base = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !base) return gap;
+  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
+  const format = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), {
+    numeric: 'auto'
+  });
+
+  for (const [unit, size] of RELATIVE_STEPS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+
+  return format.format(seconds, 'second');
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "5b8371b87515"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.FILE_SIZE_UNITS),
+/* harmony export */   calendarDayOffset: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.fileSizeUnits),
+/* harmony export */   formatDate: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize),
+/* harmony export */   formatLocale: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale),
+/* harmony export */   formatNumber: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber),
+/* harmony export */   formatRelativeDay: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime),
+/* harmony export */   msUntilNextDay: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay),
+/* harmony export */   numberOptions: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions),
+/* harmony export */   publishFormat: () => (/* binding */ publishFormat),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _format_relative_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ee5c3aad2640");
+/* harmony import */ var _format_number_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _format_date_js__WEBPACK_IMPORTED_MODULE_1__, _format_relative_js__WEBPACK_IMPORTED_MODULE_2__, _format_number_js__WEBPACK_IMPORTED_MODULE_3__, _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__]);
+([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _format_date_js__WEBPACK_IMPORTED_MODULE_1__, _format_relative_js__WEBPACK_IMPORTED_MODULE_2__, _format_number_js__WEBPACK_IMPORTED_MODULE_3__, _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+// Dates, days, numbers and file sizes as people read them, in the page's
+// language (reuse audit 2026-11-02, finding 7). About fourteen components
+// wrote these themselves -- three relative-day rules (thread-list, chat-window
+// with its own midnight refresh, mail-letters), file sizes in four places,
+// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
+// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
+// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
+// number words are kept as they were.
+//
+// The locale is the page's (page-language.js pageLocale): an explicit
+// `locale`, else the language of `node` -- the nearest [lang] above it, the
+// page's choice, <html lang>, English. Never a fixed ru-RU.
+//
+// This module gathers the helpers and the SF.format object; the helpers live
+// in modules of their own with no top-level side effects (core.runtime 1.28.0;
+// ui-chart, 2026-11-05), and a bundle imports what it calls from those:
+//
+//   format-number.js     formatNumber, numberOptions
+//   format-date.js       formatDate, calendarDayOffset, msUntilNextDay, toDate
+//   format-relative.js   formatRelativeDay, formatRelativeTime
+//   format-file-size.js  formatFileSize, fileSizeUnits, FILE_SIZE_UNITS
+//   format-intl.js       formatLocale, toDate (and the shared Intl formatters)
+//
+// Until 1.28.0 this module published SF.format on load, from whichever bundle
+// ran it first; that kept every helper in every bundle that imported one (each
+// chart bundle grew by 1.3-1.4 KB gzip). Core's entry publishes it now
+// (index.js calls publishFormat), and importing this module changes nothing on
+// the page. Its exports are as they were.
+
+
+
+
+
+
+const Format = /* @__PURE__ */Object.freeze({
+  locale: _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale,
+  date: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate,
+  relativeDay: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay,
+  relativeTime: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime,
+  dayOffset: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset,
+  msUntilNextDay: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay,
+  number: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber,
+  numberOptions: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions,
+  fileSize: _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize
+});
+/**
+ * Publishes SF.format on `root` (the page's global), unless something is there
+ * already: core's entry calls it once; a component bundle never does.
+ */
+
+function publishFormat(root = typeof globalThis !== 'undefined' ? globalThis : undefined) {
+  if (!root) return undefined;
+  root.SF = root.SF || {};
+  if (!root.SF.format) root.SF.format = Format;
+  return root.SF.format;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Format);
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "781dfa6013bf"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -11,15 +663,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d4eb2cc82833");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f3f4ec5c87ca");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("49343ffee6b1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ba7a8d52b29c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("66b9acf74a27");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_file_types_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f3cba14ced8a");
+/* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f3f4ec5c87ca");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("49343ffee6b1");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ba7a8d52b29c");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("66b9acf74a27");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
 
 
 
@@ -35,16 +693,44 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // name, size, type, sf-file-preview:download, sf-file-preview:remove, open,
 // setOpen(), toggleOpen() -- are dated rows of aliases.json.
 
-const FilePreviewElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const FilePreviewElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
-const IMAGE_EXTENSION = /\.(?:avif|bmp|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i; // What retires without a new name (aliases.json rows with `to: null`): kept
+const IMAGE_EXTENSION = /\.(?:avif|bmp|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i;
+const STATES = ['ready', 'uploading', 'error']; // The media type a name's extension says, for the formats the core's file
+// icons tell apart (core/js/composition/file-size.mjs FILE_ICONS, the icons
+// sf-file-upload's rows draw): PDF, a sheet and slides each get their own
+// glyph (C81: «значок с типом у остальных»). Other names take the kind of the
+// file-type map (core/js/file-types, C102): code, data, image, video, audio.
+
+const EXTENSION_MEDIA = Object.freeze({
+  pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  odt: 'application/vnd.oasis.opendocument.text',
+  rtf: 'application/rtf',
+  txt: 'text/plain',
+  md: 'text/markdown',
+  csv: 'text/csv',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ods: 'application/vnd.oasis.opendocument.spreadsheet',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  odp: 'application/vnd.oasis.opendocument.presentation',
+  zip: 'application/zip',
+  rar: 'application/vnd.rar',
+  '7z': 'application/x-7z-compressed',
+  tar: 'application/x-tar',
+  gz: 'application/gzip'
+});
+const SIZE_STEPS = ['byte', 'kilobyte', 'megabyte', 'gigabyte']; // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each call is noted with it.
 
 function noteRetired(from) {
@@ -54,8 +740,8 @@ function noteRetired(from) {
     kind: 'action',
     from,
     to: null,
-    since: _aliases_json__WEBPACK_IMPORTED_MODULE_5__.since,
-    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_5__.remove_after
+    since: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.since,
+    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.remove_after
   });
 }
 
@@ -99,6 +785,87 @@ class SfFilePreview extends FilePreviewElement {
   get extension() {
     const match = /\.([a-z0-9]{1,5})$/iu.exec(String(this.fileName || '').trim());
     return match ? match[1].toUpperCase() : '';
+  } // The glyph of the file's type (C81, C51): the host's icon when it names one,
+  // else the media type's, else the name's extension's, else the default.
+
+
+  get typeIcon() {
+    if (this.hasAttribute('icon') && this.icon) return this.icon;
+    const byMedia = (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(String(this.mimeType || '').toLowerCase());
+    if (byMedia !== 'download') return byMedia;
+    const byExtension = (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(EXTENSION_MEDIA[this.extension.toLowerCase()] || '');
+    if (byExtension !== 'download') return byExtension;
+    const {
+      kind,
+      icon
+    } = (0,_core_js_file_types_index_js__WEBPACK_IMPORTED_MODULE_4__.fileType)({
+      name: this.fileName
+    });
+    return kind !== 'file' && icon ? icon : this.icon;
+  } // The state of the file (C81, the upload core's rows): ready, uploading or
+  // error; anything else reads as ready.
+
+
+  get shownState() {
+    const state = String(this.getAttribute('state') || '').trim().toLowerCase();
+    return STATES.includes(state) ? state : 'ready';
+  } // The upload's share, per cent (0 to 100), or null: not known yet.
+
+
+  get shownProgress() {
+    const raw = this.getAttribute('value');
+    if (raw === null || String(raw).trim() === '') return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : null;
+  } // A size in bytes («2457600») is drawn in the page's units («2,3 МБ», C25,
+  // core formatFileSize); a size the host wrote as text stays as written.
+
+
+  get bytes() {
+    const raw = this.fileSize;
+    if (typeof raw === 'number') return Number.isFinite(raw) && raw >= 0 ? raw : null;
+    return /^\s*\d+\s*$/u.test(String(raw ?? '')) ? Number(raw) : null;
+  }
+
+  get shownSize() {
+    const bytes = this.bytes;
+    return bytes === null ? String(this.fileSize ?? '').trim() : (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.formatFileSize)(bytes, {
+      node: this
+    });
+  } // The size as it is said (C51: the unit as a word): «2,3 мегабайта».
+
+
+  get spokenSize() {
+    const bytes = this.bytes;
+    if (bytes === null) return this.shownSize;
+    let amount = bytes;
+    let index = 0;
+
+    while (amount >= 1024 && index < SIZE_STEPS.length - 1) {
+      amount /= 1024;
+      index += 1;
+    }
+
+    const digits = index === 0 || amount >= 10 ? 0 : 1;
+
+    try {
+      return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__.intlFormatter)('NumberFormat', (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__.formatLocale)({
+        node: this
+      }), {
+        style: 'unit',
+        unit: SIZE_STEPS[index],
+        unitDisplay: 'long',
+        maximumFractionDigits: digits
+      }).format(amount);
+    } catch {
+      return this.shownSize;
+    }
+  } // What a screen reader hears after the name (C51): «, PDF, 2,3 мегабайта».
+
+
+  get said() {
+    const parts = [this.extension, this.shownState === 'ready' ? this.spokenSize : ''].filter(Boolean);
+    return parts.length ? `, ${parts.join(', ')}` : '';
   }
 
   get isImage() {
@@ -109,11 +876,19 @@ class SfFilePreview extends FilePreviewElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    const name = this.fileName;
+    const state = this.shownState;
+    const errorText = String(this.getAttribute('error-text') || '').trim();
     return this.createTemplateContext({ ...props,
       component: this,
-      fileName: this.fileName,
-      fileSize: this.fileSize,
-      icon: this.icon,
+      fileName: name,
+      fileSize: this.shownSize,
+      said: this.said,
+      state,
+      progress: this.shownProgress,
+      // The name is a link to the file while the file is there (C51).
+      linked: Boolean(this.href) && state === 'ready' && !this.disabled,
+      icon: this.typeIcon,
       href: this.href,
       type: this.kind,
       mimeType: this.mimeType,
@@ -129,10 +904,39 @@ class SfFilePreview extends FilePreviewElement {
       removeAction: this.removeAction,
       disabled: this.disabled,
       ariaLabel: this.accessibleName,
-      downloadLabel: this.downloadLabel,
-      removeLabel: this.removeLabel,
+      // «Скачать <имя>», «Удалить <имя>» (C51): a page's own label is kept.
+      downloadLabel: this.getAttribute('download-label') || this.sfWord('download-label', {
+        vars: {
+          name
+        }
+      }),
+      removeLabel: this.getAttribute('remove-label') || this.sfWord('remove-label', {
+        vars: {
+          name
+        }
+      }),
+      words: {
+        uploading: this.sfWord('uploading-label', {
+          vars: {
+            name
+          }
+        }),
+        failed: errorText ? this.sfWord('error-line', {
+          vars: {
+            message: errorText
+          }
+        }) : this.sfWord('error-text'),
+        retry: this.sfWord('retry-text'),
+        retryLabel: this.sfWord('retry-label', {
+          vars: {
+            name
+          }
+        })
+      },
+      onOpen: event => this.handleOpen(event),
       onDownload: event => this.handleDownload(event),
-      onRemove: event => this.handleRemove(event)
+      onRemove: event => this.handleRemove(event),
+      onRetry: event => this.handleRetry(event)
     });
   }
 
@@ -151,6 +955,9 @@ class SfFilePreview extends FilePreviewElement {
       fileSize: this.fileSize,
       icon: this.icon,
       href: this.href,
+      kind: this.kind,
+      // The field's former name, until 2027-01-01 (docs precheck smart content
+      // FP-05; journal event-file-preview-value-type-to-kind): the same value.
       type: this.kind,
       mimeType: this.mimeType,
       imageUrl: this.imageUrl,
@@ -209,6 +1016,19 @@ class SfFilePreview extends FilePreviewElement {
     }
 
     anchor.click();
+  } // The name is the file's link (C51): the browser follows it as any link
+  // (a middle click, «copy address» work); the same cancelable download
+  // request goes first, and a page that refuses it keeps the press.
+
+
+  handleOpen(event) {
+    if (this.disabled || !this.request('download', 'download')) event?.preventDefault?.();
+  } // retry {id}: the host sends the file again and sets the state.
+
+
+  handleRetry(event) {
+    event?.preventDefault?.();
+    if (!this.disabled) this.request('retry', 'retry');
   } // detach {id}: the host removes the file; the preview only asks.
 
 
@@ -250,7 +1070,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
-
+ // The download and remove buttons stand on the step of the name beside them,
+// size 1 (C103: one line, one step -- text 1, button size 1, 40 with a 24
+// icon; docs precheck FP-06: they were 1/2, 32 beside the 16 px name).
 
 function renderAction({
   icon,
@@ -262,7 +1084,7 @@ function renderAction({
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
       type="button"
-      class="sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/2"
+      class="sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1"
       data-action=${action}
       ?disabled=${disabled}
       aria-label=${label}
@@ -271,6 +1093,15 @@ function renderAction({
       <i class="sf-icon" aria-hidden="true">${icon}</i>
     </button>
   `;
+} // A file name breaks between its words only (C34): spaces, and after the
+// joints names use instead of spaces -- «_», «-», «–», «—», «/», «+» -- where
+// a <wbr> lets the line end. Never inside a word, never before the extension's
+// dot. The text itself (copy, a screen reader, the tooltip) is unchanged.
+
+
+function nameParts(name) {
+  const parts = String(name ?? '').split(/(?<=[_\-–—/+])/u);
+  return parts.map((part, index) => index ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<wbr>${part}` : part);
 } // Only the leading visual, named by the file: the image, or the extension in a
 // tile (the type's icon when the name has none). A link when the file has an
 // address, so a list row opens it the way the record does.
@@ -283,38 +1114,103 @@ function renderCompact(context) {
   return context.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${context.href} target=${context.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${context.fileName}
               aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} title=${context.fileName} role=${context.isImage ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'img'}
               aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></span>`;
+} // The name: a link to the file when it is there (C51: the name is a link), a
+// line of text while it uploads or after it failed. Two lines at most, then an
+// ellipsis; the whole name in the tooltip and for a screen reader (C88). The
+// type and the size follow it for a screen reader only (C51: «имя, тип,
+// размер», the unit as a word); the eye reads the size line under it.
+
+
+function renderName(context) {
+  const said = context.said ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-said">${context.said}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (context.linked) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+      class="sf-file-preview-name"
+      href=${context.href}
+      download=${context.download ? context.fileName : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      target=${!context.download && context.target ? context.target : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      rel=${!context.download && context.target === '_blank' ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      title=${context.fileName}
+      @click=${context.onOpen}
+    >${nameParts(context.fileName)}${said}</a>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-name" title=${context.fileName}>${nameParts(context.fileName)}${said}</span>`;
+} // The line under the name, by the state (C81: one family with the upload
+// core's rows): the size; while uploading the upload row's bar with its per
+// cent at the end; after a failure the reason in the error colour.
+
+
+function renderLine(context) {
+  if (context.state === 'uploading') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar
+      class="sf-file-preview-progress"
+      size="1/2"
+      value=${context.progress === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(context.progress)}
+      ?indeterminate=${context.progress === null}
+      text-position="inline-end"
+      label=${context.words.uploading}
+    ></sf-progress-bar>`;
+  }
+
+  if (context.state === 'error') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-error">${context.words.failed}</span>`;
+  }
+
+  return context.fileSize ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-size" aria-hidden=${context.said ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${context.fileSize}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderFilePreviewTemplate(context) {
   if (context.compact) return renderCompact(context);
-  const rootClasses = ['sf-file-preview', context.surface ? 'sf-file-preview--surface' : '', context.disabled ? 'disabled' : '', context.rootClass].filter(Boolean);
-  const hasActions = context.actions && (context.downloadAction || context.removeAction);
+  const state = context.state;
+  const rootClasses = ['sf-file-preview', context.surface ? 'sf-file-preview--surface' : '', state !== 'ready' ? `sf-file-preview--${state}` : '', context.disabled ? 'disabled' : '', context.rootClass].filter(Boolean); // A file not there yet (uploading) or not there at all (failed) has nothing
+  // to download; it can still be taken away.
+
+  const download = context.downloadAction && state === 'ready';
+  const hasActions = context.actions && (download || context.removeAction);
+  const retry = state === 'error' && !context.disabled;
+  const grouped = hasActions || retry;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses.join(' ')}
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-render-managed="1"
-      role=${hasActions ? 'group' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-label=${hasActions ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      role=${grouped ? 'group' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${grouped ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-busy=${state === 'uploading' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
       <span class="sf-file-preview-holder">
         ${context.isImage ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-file-preview-thumbnail" src=${context.imageUrl || context.href} alt="">` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`}
       </span>
       <span class="sf-file-preview-main">
-        <span class="sf-file-preview-name">${context.fileName}</span>
-        ${context.fileSize ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-size">${context.fileSize}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${renderName(context)}
+        ${renderLine(context)}
       </span>
-      ${hasActions ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      ${grouped ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <span class="sf-file-preview-actions">
-            ${context.downloadAction ? renderAction({
-    icon: 'download',
+            ${retry ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
+                class="sf-file-preview-retry"
+                size="1"
+                height="low"
+                appearance="ghost"
+                scheme="primary"
+                icon-start="refresh"
+                text=${context.words.retry}
+                aria-label=${context.words.retryLabel}
+                @click=${context.onRetry}
+              ></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${hasActions && download ? renderAction({
+    // A file opened in a new tab shows the sign of it (C25): the
+    // download glyph promised a download the browser never made.
+    icon: !context.download && context.target === '_blank' ? 'open_in_new' : 'download',
     label: context.downloadLabel,
     disabled: context.disabled,
     action: 'download',
     onClick: context.onDownload
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            ${context.removeAction ? renderAction({
+            ${hasActions && context.removeAction ? renderAction({
     icon: 'delete',
     label: context.removeLabel,
     disabled: context.disabled,
@@ -352,10 +1248,97 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "fb0bdf7719f0"
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_ICONS: () => (/* binding */ FILE_ICONS),
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.FILE_SIZE_UNITS),
+/* harmony export */   fileIcon: () => (/* binding */ fileIcon),
+/* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.formatFileSize)
+/* harmony export */ });
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5b8371b87515");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// How a stored file reads to people: its size in the page's language and its
+// name when nobody gave it one. sf-image-field wrote these first (its
+// value.mjs re-exports them); the Composition renderer draws content.file with
+// the same rule, so a size reads the same in a field and on a page. No DOM.
+
+// The size rule is core's number format (core/js/format.js, reuse audit
+// 2026-11-02 finding 7), re-exported under the names this module published:
+// formatFileSize(size, units, locale) still reads as it did. Imported through
+// format.js on purpose: the builder ships a source module's relative imports
+// beside it, and this import is what lays core/js/format.js and its parts
+// (format-*.js) in the distribution for products that import them. None of
+// them has a top-level side effect, so a bundle keeps only what it calls.
+
+
+// The last part of an address, decoded, without its query and fragment: the
+// name a file is shown under when it has no label. A data: or blob: address
+// has no name in it -- the last «/» of `data:image/svg+xml,<svg …>` falls
+// inside the content, and the name read «>» (image field study IF-14) -- so it
+// gives none, and the caller says what the file is instead.
+function fileNameFromAddress(href) {
+  if (/^\s*(?:data|blob):/iu.test(String(href ?? ''))) return '';
+  const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
+  try {
+    return decodeURIComponent(tail);
+  } catch {
+    return tail;
+  }
+}
+
+// The icon of a file's kind, by its media type: sf-download-file's own glyph
+// (download) when the type says nothing a reader would recognise. The
+// Composition renderer draws content.file with it; an editor that draws the
+// same row (sf-content-editor) imports it from here rather than keeping a copy.
+// Each entry is [pattern, icon]; the first pattern that matches wins.
+const FILE_ICONS = Object.freeze([
+  [/^application\/pdf$/u, 'picture_as_pdf'],
+  [/^image\//u, 'image'],
+  [/^video\//u, 'movie'],
+  [/^audio\//u, 'audio_file'],
+  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
+  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
+  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
+  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
+].map((entry) => Object.freeze(entry)));
+
+// The icon name for a media type; download when there is none or nothing matches.
+function fileIcon(mime) {
+  if (typeof mime !== 'string' || !mime) return 'download';
+  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "9bbeb11fb966"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The kinds of an entry and the extensions of a name that say them: one map for every SIMAI Framework part that shows a file or a page by its type -- sf-tree\'s rows today; sf-file-upload, sf-file-download and sf-view\'s file cells to follow; Docara\'s static tree, Larena\'s files and ui-mail read the same words (owner decision C102, 2026-11-12; research ui-control control/research/2026-11-12-tree.md section 7 items 2-3). A kind is one of twelve words; its icon is a Material Symbols name of the Framework\'s icon font. An extension is matched on the name\'s last dot, in lower case. A kind without extensions is said by the host (kind) or by the entry\'s place (folder: it has children). Keep the words: they are public (an entry\'s kind).","schema":"simai.framework.file-types","version":1,"kinds":{"folder":{"icon":"folder","open-icon":"folder_open","extensions":[]},"file":{"icon":"draft","extensions":[]},"page":{"icon":"article","extensions":[]},"document":{"icon":"description","extensions":["md","txt","doc","docx","pdf","rtf","odt"]},"image":{"icon":"image","extensions":["png","jpg","jpeg","gif","svg","webp","ico","avif"]},"code":{"icon":"code","extensions":["js","mjs","ts","css","scss","html","php","py","sh","vue"]},"data":{"icon":"data_object","extensions":["json","yml","yaml","xml","toml","lock","ini","env"]},"table":{"icon":"table_chart","extensions":["csv","xls","xlsx","ods"]},"archive":{"icon":"folder_zip","extensions":["zip","tar","gz","rar","7z"]},"video":{"icon":"movie","extensions":["mp4","mov","webm"]},"audio":{"icon":"audio_file","extensions":["mp3","wav","ogg","m4a"]},"link":{"icon":"link","extensions":[]}}}');
 
 /***/ },
 
@@ -369,21 +1352,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.1.5","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"download":{"type":"boolean","default":true},"target":{"type":"string","default":"_blank"},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"disabled":{"type":"boolean","default":false},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.3.0","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "ba7a8d52b29c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"File Preview","runtime":{"aria-label":"File","download-label":"Download file","remove-label":"Remove file"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"File Preview","runtime":{"aria-label":"File","download-label":"Download {name}","remove-label":"Remove {name}","uploading-label":"Uploading {name}","error-text":"Not uploaded","error-line":"Not uploaded: {message}","retry-text":"Retry","retry-label":"Retry {name}"}}');
 
 /***/ },
 
 /***/ "66b9acf74a27"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Предпросмотр файла","runtime":{"aria-label":"Файл","download-label":"Скачать файл","remove-label":"Удалить файл"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Предпросмотр файла","runtime":{"aria-label":"Файл","download-label":"Скачать {name}","remove-label":"Удалить {name}","uploading-label":"Загрузка {name}","error-text":"Не загрузился","error-line":"Не загрузился: {message}","retry-text":"Повторить","retry-label":"Повторить {name}"}}');
 
 /***/ }
 

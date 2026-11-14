@@ -91,7 +91,40 @@ const AlertElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.e
 }); // The live region a status speaks through (§4.8, §7.4.1): polite for news,
 // assertive for a warning or an error.
 
-const ASSERTIVE = new Set(['warning', 'error']);
+const ASSERTIVE = new Set(['warning', 'error']); // A notice printed with the page is not news (NS-1, notices study
+// 2026-11-12; WAI-ARIA APG alert: an alert present before the page has loaded
+// is not announced and must not interrupt). So an alert the page had before
+// its load event -- or whose server-printed first paint is in it -- is a
+// polite status at every level; an alert put in the page after the load, or
+// put back after it was taken out, speaks with its level's role. The host's
+// own role attribute, status or alert (§3.1, as on sf-toast), is the author's
+// choice and always wins.
+// The page is settled at its load event and, on a page the Loader drives,
+// once the Loader has sent sf-loader-ready ("all components loaded"): a page's
+// own Smart modules can arrive after the load event, and their elements are
+// defined in a batch on a later frame, so the alerts in the page at that
+// moment are noted then. A module that arrives after the page settled was
+// asked for by an alert put in later, which speaks.
+
+const loaderPending = () => typeof window !== 'undefined' && Boolean(window.SF?.Loader) && !window.SF.Loader.eventSend;
+
+let pageLoaded = typeof document === 'undefined' || document.readyState === 'complete' && !loaderPending();
+const inPageAtLoad = new WeakSet();
+
+if (!pageLoaded) {
+  const settle = () => {
+    if (pageLoaded || document.readyState !== 'complete' || loaderPending()) return;
+    document.querySelectorAll('sf-alert').forEach(element => inPageAtLoad.add(element));
+    pageLoaded = true;
+  };
+
+  window.addEventListener('load', settle, {
+    once: true
+  });
+  window.addEventListener('sf-loader-ready', () => setTimeout(settle, 0), {
+    once: true
+  });
+}
 
 class SfAlert extends AlertElement {
   static get props() {
@@ -120,7 +153,20 @@ class SfAlert extends AlertElement {
 
   constructor() {
     super();
-    this._boundRoot = null;
+    this._boundRoot = null; // In the page before the load, or carrying its server-printed first paint.
+
+    this._printedWithPage = !pageLoaded || inPageAtLoad.has(this) || Boolean(this.querySelector?.(':scope > [data-sf-static]'));
+    this._connectedBefore = false;
+  }
+
+  onConnected() {
+    super.onConnected?.(); // Taken out and put back after the load: it is revealed, so it speaks.
+
+    if (this._connectedBefore && pageLoaded && this._printedWithPage) {
+      this._printedWithPage = false;
+    }
+
+    this._connectedBefore = true;
   }
 
   get status() {
@@ -140,6 +186,9 @@ class SfAlert extends AlertElement {
   }
 
   get liveRole() {
+    const own = this.getAttribute('role');
+    if (own === 'status' || own === 'alert') return own;
+    if (this._printedWithPage) return 'status';
     return ASSERTIVE.has(this.status) ? 'alert' : 'status';
   }
 
@@ -291,16 +340,19 @@ function resolveIcon(context) {
   return byStatus[context.status ?? context.type] || 'info';
 } // The notice's actions (owner decision C35, as the toast; DEV acceptance D3):
 // unsized (size 1) low buttons -- 32, compact and phone 28 -- whose label is
-// the notice's text size; the first tonal primary, its plate starting at the
-// text edge, the second ghost on-surface after it (the research's pair,
-// control/research/2026-11-09-notice-actions.md). The class toast writes the
-// same classes (component/toast/js/_toast.js).
+// the notice's text size; the first tonal surface (owner decision C110 as
+// amended 2026-11-12, variant E: tonal on-surface, the same neutral plate on
+// every level), its plate starting at the text edge, the second ghost
+// on-surface after it. The class toast writes the same classes
+// (component/toast/js/_toast.js).
 
 
-const ALERT_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--primary sf-button--size-1 sf-button--height-low flex items-cross-center';
+const ALERT_ACTION_CLASSES = 'sf-button sf-button--tonal sf-button--on-surface sf-button--size-1 sf-button--height-low flex items-cross-center';
 const ALERT_SECONDARY_ACTION_CLASSES = 'sf-button sf-button--ghost sf-button--link sf-button--on-surface sf-button--size-1 sf-button--height-low flex items-cross-center';
 function renderAlertTemplate(context) {
-  const rootClasses = joinClasses('sf-alert', `sf-alert--${context.status ?? context.type}`, `sf-alert--${context.appearance ?? context.variant}`, 'flex', 'items-start', context.rootClass);
+  const rootClasses = joinClasses('sf-alert', `sf-alert--${context.status ?? context.type}`, `sf-alert--${context.appearance ?? context.variant}`, // The author's switch (owner 2026-11-13, #q-layout-override): the actions
+  // under the text at every width; auto (and any other word) is layout L3a.
+  context.actionsLayout === 'under' ? 'sf-alert--actions-under' : '', 'flex', 'items-start', context.rootClass);
   const iconName = resolveIcon(context);
   const titleContent = context.component?.hasSlotContent?.('title') ? context.component.getSlotContent('title') : context.heading;
   const supportingTextContent = context.component?.hasSlotContent?.('supporting-text') ? context.component.getSlotContent('supporting-text') : context.supportingText;
@@ -396,7 +448,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.2.1","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.4.1","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -14,6 +14,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   refreshCarousel: () => (/* binding */ refreshCarousel),
 /* harmony export */   unbindCarousel: () => (/* binding */ unbindCarousel)
 /* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+ // One slider (decision C143 (1), owner 2026-11-14): sf-slider took this
+// block's region name and its mandatory pause button. .sf-carousel keeps
+// working as an old name until 2027-01-01 and is noted once in
+// SF.deprecations (journal class-sf-carousel-to-sf-slider).
+
+const DEPRECATED = {
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+};
 const CAROUSEL_SELECTOR = '.sf-carousel';
 const BOUND_FLAG = 'sfCarouselBound';
 const WAITING_FLAG = 'sfCarouselWaiting';
@@ -221,6 +231,13 @@ function bindCarousel(root) {
     rotation
   } = getCarouselParts(root);
   if (!(main instanceof HTMLElement)) return null;
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: 'sf-carousel',
+    kind: 'class',
+    from: 'sf-carousel',
+    to: 'sf-slider',
+    ...DEPRECATED
+  });
   const autoplayRequested = normalizeBoolean(root.dataset.autoplay, false);
   const autoplayAllowed = autoplayRequested && rotation instanceof HTMLButtonElement && Boolean(root.dataset.playLabel?.trim()) && Boolean(root.dataset.pauseLabel?.trim());
   root._sfCarouselAutoplayAllowed = autoplayAllowed;
@@ -352,6 +369,125 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
 
 /***/ },
 

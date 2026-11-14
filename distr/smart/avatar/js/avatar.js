@@ -216,11 +216,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -233,6 +235,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -271,15 +276,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -311,14 +328,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cbce4a5232a6");
 /* harmony import */ var _js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a6b3ed0c1589");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("34addf781b5b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("488a9707ea64");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("f2cb53b98f17");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("7ebc02c41719");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("56400745dab0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _js_picture__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c69a3dc158df");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("488a9707ea64");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("f2cb53b98f17");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("7ebc02c41719");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("56400745dab0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__, _js_picture__WEBPACK_IMPORTED_MODULE_10__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__, _js_picture__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+
+
 
 
 
@@ -337,14 +358,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // dated alias (aliases.json, §3.1); the default name is the language files'
 // runtime aria-label.
 
-const AvatarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const AvatarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 });
 const TEMPLATE_RENDERERS = {
   default: _js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderDefaultTemplate,
@@ -386,6 +407,51 @@ class SfAvatar extends AvatarElement {
     }
 
     this.setAttribute("aria-label", value);
+  } // The name the avatar is read by (avatar study AV-2, 2026-11-14): the
+  // host's aria-label, else the heading the author gave, else the initials of
+  // text, else the language file's word («Аватар»). heading named nobody: it
+  // gave the initials and the hue, and the button still read «Аватар» (10 of
+  // 36 avatars on the docs page). el.ariaLabel keeps answering the attribute
+  // or the word, as it did.
+
+
+  get accessibleName() {
+    return this.getAttribute("aria-label") || String(this.heading ?? "").trim() || String(this.text ?? "").trim() || this.sfWord("aria-label");
+  } // The presence word (AV-4): online and offline join the name as the count
+  // does -- «Анна Белова, в сети, 3 непрочитанных» -- in the page's language
+  // (lang runtime status-online / status-offline). The company and verified
+  // marks are not presence and add nothing.
+
+
+  get presenceWord() {
+    if (this.status === "online") return this.sfWord("status-online");
+    if (this.status === "offline") return this.sfWord("status-offline");
+    return "";
+  }
+
+  get spokenName() {
+    const presence = this.presenceWord;
+    const name = presence ? `${this.accessibleName}, ${presence}` : this.accessibleName;
+    return (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.nameWithBadge)(name, (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.elementBadge)(this).phrase);
+  }
+
+  connectedCallback() {
+    super.connectedCallback(); // The placeholder's glyph is asked for before the avatar draws, as the
+    // tag's is (R074 F3): one request with the page's first icons.
+
+    if (this.isConnected) this.preloadIcons();
+  }
+
+  preloadIcons() {
+    const icons = (0,_js_picture__WEBPACK_IMPORTED_MODULE_10__.avatarPictureIcons)({
+      imageUrl: this.imageUrl,
+      text: this.displayText,
+      icon: this.icon
+    });
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_9__.preloadControlIcons)(this, icons.map(icon => ({
+      icon,
+      filled: false
+    })));
   } // The text attribute as given; the template draws displayText (the text,
   // else initials), an exemption of contracts/template-context.json.
 
@@ -413,6 +479,12 @@ class SfAvatar extends AvatarElement {
 
     if (this.isImage) {
       return "";
+    } // A glyph the author names (a bot, a system) stands in for the initials
+    // of the name, which still names the avatar (AV-8).
+
+
+    if (String(this.icon ?? "").trim()) {
+      return "";
     }
 
     return (0,_helpers_text__WEBPACK_IMPORTED_MODULE_6__.getInitials)(this.heading || (this.hasAttribute("aria-label") ? this.ariaLabel : ""));
@@ -420,7 +492,9 @@ class SfAvatar extends AvatarElement {
   // one of the name, the words the initials stand for rather than the two
   // letters, so two people with the same initials differ. Only initials take a
   // hue: a picture covers the fill and the placeholder stays neutral. The
-  // former tone setting is read when hue is empty (rose is pink).
+  // former tone setting is read when hue is empty (rose is pink). A card
+  // without a photo draws the initials on the hue of the name when no hue is
+  // set (owner decision C124): auto is the card's default.
 
 
   get resolvedHue() {
@@ -428,7 +502,8 @@ class SfAvatar extends AvatarElement {
       return "";
     }
 
-    return (0,_js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveAvatarHue)(this.hue, this.heading || this.getAttribute("aria-label") || this.text, this.tone);
+    const cardDefault = this.templateName === "card" && !this.hue && !this.tone ? "auto" : "";
+    return (0,_js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveAvatarHue)(this.hue || cardDefault, this.heading || this.getAttribute("aria-label") || this.text, this.tone);
   }
 
   templateContext() {
@@ -436,8 +511,10 @@ class SfAvatar extends AvatarElement {
     const badge = (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.elementBadge)(this);
     return this.createTemplateContext({ ...props,
       ariaLabel: this.ariaLabel,
-      // The count joins the name: «Анна Белова, 3 непрочитанных».
-      buttonLabel: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.nameWithBadge)(this.ariaLabel, badge.phrase),
+      // The name, the presence and the count: «Анна Белова, в сети,
+      // 3 непрочитанных».
+      buttonLabel: this.spokenName,
+      icon: this.icon,
       size: this.size,
       line: this.line,
       shape: this.shape,
@@ -465,6 +542,7 @@ class SfAvatar extends AvatarElement {
   }
 
   template() {
+    this.preloadIcons();
     return this.templateRenderer()(this.templateContext());
   }
 
@@ -486,7 +564,7 @@ class SfAvatar extends AvatarElement {
     }
 
     if (changedAttributes.includes("aria-label")) {
-      button.setAttribute("aria-label", (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.nameWithBadge)(this.ariaLabel, (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.elementBadge)(this).phrase));
+      button.setAttribute("aria-label", this.spokenName);
     }
 
     if (changedAttributes.includes("disabled")) {
@@ -508,6 +586,7 @@ class SfAvatar extends AvatarElement {
       hue: this.hue,
       tone: this.tone,
       status: this.status,
+      icon: this.icon,
       ariaLabel: this.ariaLabel,
       heading: this.heading,
       description: this.description,
@@ -534,6 +613,195 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "c69a3dc158df"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_PLACEHOLDER_ICON: () => (/* binding */ AVATAR_PLACEHOLDER_ICON),
+/* harmony export */   AVATAR_SIZES: () => (/* binding */ AVATAR_SIZES),
+/* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
+/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
+/* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+
+ // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
+// component that shows a person beside its own content -- sf-avatar-group,
+// sf-tag, sf-list-item, sf-dropdown, sf-input-lookup, sf-menu-context, the
+// signs of sf-list -- draw the picture with these functions and the avatars
+// sheet's classes: a photo is an <img> filling the circle, initials stand on
+// the neutral plate (or the hue the host names, C17), and with neither the
+// placeholder is a glyph on the neutral plate -- person by default, the
+// host's icon for a bot, a system or a service. Before, five copies drew it
+// five ways: the photo as a background image in the tag, the list row and the
+// dropdown, an empty transparent circle in a row with no photo, and the
+// context menu's own classes on the secondary container.
+
+/** The sizes of the avatar ladder. */
+
+const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
+/** The glyph of a placeholder: a person, unless the host names another. */
+
+const AVATAR_PLACEHOLDER_ICON = "person";
+/**
+ * The drawing context of one avatar picture, from what a host knows: the photo,
+ * the initials or the name they are taken from, the hue, the placeholder's
+ * glyph, the size (or the text line of a form size) and the shape.
+ */
+
+function avatarPictureContext(options = {}) {
+  const imageUrl = String(options.imageUrl ?? "").trim();
+  const name = String(options.name ?? "").trim();
+  const explicitText = String(options.text ?? "").trim();
+  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them.
+
+  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
+  const isImage = Boolean(imageUrl);
+  const isText = !isImage && Boolean(text);
+  const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
+  return {
+    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    line: String(options.line ?? ""),
+    shape: options.shape === "square" ? "square" : "circle",
+    imageUrl,
+    isImage,
+    isText,
+    text,
+    icon,
+    status: options.status || "none",
+    expressive: Boolean(options.expressive),
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    rootClass: options.rootClass || "",
+    rootStyle: options.rootStyle || "",
+    disabled: Boolean(options.disabled),
+    // A long list's rows load their photos as they scroll in.
+    lazy: Boolean(options.lazy),
+    component: options.component
+  };
+}
+/**
+ * The classes of the avatar picture. The avatars sheet answers every class
+ * this file writes. sf-avatar's own templates hand it their utility classes
+ * for the box (options.layout, src/smart/avatar/js/templates/shared.js), as
+ * they wrote them before; a host's picture writes none -- sf-avatar--picture
+ * gives it the same box from the avatars sheet -- so a host asks the Loader
+ * for no utility it did not ask for before (a menu, a tag, a list row).
+ */
+
+function avatarClasses(context, options = {}) {
+  const includeRootClass = options.includeRootClass !== false;
+  const layout = options.layout ?? null;
+  const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
+
+  if (context.isImage && layout) {
+    classes.push(layout.center);
+  }
+
+  if (context.isText) {
+    classes.push("sf-avatar--text");
+    if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
+
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
+    }
+  }
+
+  if (!context.isImage && !context.isText) {
+    classes.push("sf-avatar--placeholder");
+    if (layout) classes.push(layout.center);
+  } // The decorative level (C91 level 2): the sheet turns the initials'
+  // plate of the largest size into a cover of its hue.
+
+
+  if (context.expressive) {
+    classes.push("sf-avatar--expressive");
+  }
+
+  if (context.status && context.status !== "none" && layout) {
+    classes.push(layout.anchor);
+  }
+
+  if (context.shape === "square") {
+    classes.push("sf-avatar--square");
+  }
+
+  if (context.status === "online") {
+    classes.push("sf-avatar--status-icon-online-indicator");
+  }
+
+  if (options.disabled) {
+    classes.push("disabled");
+  }
+
+  if (includeRootClass && context.rootClass) {
+    classes.push(context.rootClass);
+  }
+
+  if (options.extraClass) {
+    classes.push(options.extraClass);
+  }
+
+  return classes.join(" ");
+}
+/**
+ * What the circle holds: the photo, the initials, or the placeholder glyph as
+ * an sf-icon element, so its name reaches the icon font request (a bare
+ * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
+ * review 2026-11-09).
+ */
+
+function avatarContent(context) {
+  if (context.isText) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
+  }
+
+  if (context.isImage) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+}
+/** The icon names a picture draws (for a host's icon preload). */
+
+function avatarPictureIcons(options = {}) {
+  const context = avatarPictureContext(options);
+  return context.isImage || context.isText ? [] : [context.icon];
+}
+/**
+ * One avatar picture beside a host's own content: a span hidden from
+ * assistive technology (the host's visible text names the person), drawn with
+ * the avatars sheet. extraClass adds the host's own geometry class.
+ */
+
+function avatarPicture(options = {}) {
+  const context = avatarPictureContext(options);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        class=${avatarClasses(context, {
+    extraClass: options.extraClass,
+    disabled: context.disabled
+  })}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-hidden="true"
+    >${avatarContent(context)}</span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "c0c2069e1237"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -547,6 +815,26 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The media box without a photo (owner decision C124, 2026-11-13; research
+// control/research/2026-11-13-avatar-placeholder.md): the initials of the
+// name on the person's hue (the round avatar's hue="auto" rule), and with no
+// name a person glyph on the neutral fill. The heading beside it already
+// names the person, so the box is decoration for assistive technology.
+
+function cardPlaceholder(context) {
+  if (context.isText) {
+    const hue = context.resolvedHue ? ` sf-hue-${context.resolvedHue}` : "";
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
+      class="sf-avatar-card-placeholder sf-avatar-card-placeholder--text${hue} flex items-center justify-center w-full h-full"
+      aria-hidden="true"
+    ><span class="sf-avatar-card-initials">${context.text}</span></div>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
+    class="sf-avatar-card-placeholder sf-avatar-card-placeholder--icon flex items-center justify-center w-full h-full"
+    aria-hidden="true"
+  ><i class="sf-icon" aria-hidden="true">${context.icon || "person"}</i></div>`;
+}
 
 function renderCardTemplate(context) {
   const variant = context.cardVariant || "square";
@@ -557,10 +845,7 @@ function renderCardTemplate(context) {
       style=${context.rootStyle || ""}
     >
       <div class="sf-avatar-card-image flex flex-col">
-        ${context.imageUrl ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img src=${context.imageUrl} alt=${imageAlt} />` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
-              class="sf-avatar-card-placeholder bg-surface-container w-full h-full"
-              aria-hidden="true"
-            ></div>`}
+        ${context.imageUrl ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img src=${context.imageUrl} alt=${imageAlt} />` : cardPlaceholder(context)}
       </div>
       <div class="sf-avatar-card-content flex-1 flex flex-col">
         ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-avatar-card-title">${context.heading}</div>` : ""}
@@ -649,17 +934,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   avatarButton: () => (/* binding */ avatarButton),
 /* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
-/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarContent: () => (/* reexport safe */ _picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent),
 /* harmony export */   onlineIndicator: () => (/* binding */ onlineIndicator),
 /* harmony export */   statusBadge: () => (/* binding */ statusBadge)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("34addf781b5b");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _picture__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c69a3dc158df");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__, _picture__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__, _picture__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // sf-avatar's box in utility classes, as its templates have always written
+// it (their words stay here, where the Loader's template-utilities table
+// reads them); a host's picture takes the same box from the avatars sheet.
+
+const AVATAR_LAYOUT = Object.freeze({
+  box: "transition flex-none",
+  inline: "inline-flex",
+  center: "items-cross-center content-main-center",
+  anchor: "relative"
+});
+/** The classes of sf-avatar's own picture: the sheet's and its utilities. */
+
+function avatarClasses(context, options = {}) {
+  return (0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarClasses)(context, { ...options,
+    layout: AVATAR_LAYOUT
+  });
+}
 
 function getCompanyBadge(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span aria-hidden="true"
@@ -709,58 +1012,11 @@ function getVerifiedBadge(context) {
       </svg>
     </span>
     `;
-}
+} // The picture's classes and content are the one avatar drawing every host
+// shares (js/picture.js, avatar study AV-8).
 
-function avatarClasses(context, options = {}) {
-  const includeRootClass = options.includeRootClass !== false;
-  const classes = ["sf-avatar", "transition", 'flex-none', `sf-avatar--size-${context.size}`, context.line ? `sf-avatar--line-${context.line}` : "", "inline-flex"].filter(Boolean);
 
-  if (context.isImage) {
-    classes.push("items-cross-center", "content-main-center");
-  }
 
-  if (context.isText) {
-    classes.push("sf-avatar--text", "items-cross-center", "content-main-center"); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
-    // draws the plate and the ink from it.
-
-    if (context.resolvedHue) {
-      classes.push(`sf-hue-${context.resolvedHue}`);
-    }
-  }
-
-  if (!context.isImage && !context.isText) {
-    classes.push("sf-avatar--placeholder", "items-cross-center", "content-main-center");
-  }
-
-  if (context.status !== "none") {
-    classes.push("relative");
-  }
-
-  if (context.shape === "square") {
-    classes.push("sf-avatar--square");
-  }
-
-  if (context.status === "online") {
-    classes.push("sf-avatar--status-icon-online-indicator");
-  }
-
-  if (includeRootClass && context.rootClass) {
-    classes.push(context.rootClass);
-  }
-
-  return classes.join(" ");
-}
-function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">person</i>`;
-}
 function onlineIndicator(context) {
   if (context.component?.hasSlotContent?.("online-indicator")) {
     return context.component.getSlotContent("online-indicator");
@@ -813,7 +1069,7 @@ function avatarButton(context, options = {}) {
                 ?disabled=${context.disabled}
                 type="button"
         >
-            ${avatarContent(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}
+            ${(0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent)(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}
         </button>
     `;
 }
@@ -889,6 +1145,397 @@ function renderAnchoredBadgeText(badge, after = true) {
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "64feefebb417"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   THEME_ICONS: () => (/* binding */ THEME_ICONS),
+/* harmony export */   cycleItems: () => (/* binding */ cycleItems),
+/* harmony export */   cycleState: () => (/* binding */ cycleState),
+/* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
+/* harmony export */   nextTheme: () => (/* binding */ nextTheme),
+/* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
+/* harmony export */   preloadSwitchIcons: () => (/* binding */ preloadSwitchIcons),
+/* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   switchIconEntries: () => (/* binding */ switchIconEntries),
+/* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
+/* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
+/* harmony export */   themePreference: () => (/* binding */ themePreference),
+/* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
+/* harmony export */ });
+// One button, several values (docs review R039, owner decision D11d;
+// research ui-control control/research/2026-11-08-cycle-button.md).
+//
+// sf-button and sf-button-icon share this: the `cycle` setting is a list of
+// items shaped like sf-segmented's items ({value, label, icon} and an
+// optional `pressed`, which draws the item with the pressed look), `value`
+// is the current item, and a press moves to the next item and wraps. The
+// `theme-cycle` setting draws a ready theme switch over SF.Loader's theme
+// (the same contract as sf-segmented's theme-switch: themePreference,
+// setTheme, sf-theme-change).
+//
+// The name and the icon say the current value («Тема: тёмная»), the tooltip
+// says the current and the next («Тема: тёмная. Нажмите — как в системе»),
+// and a polite live region says the new value after a press. A cycle is a
+// plain button: it carries no aria-pressed, so pressed, label-pressed and
+// text-pressed are ignored beside it (with one console warning).
+const THEME_VALUES = ['system', 'light', 'dark']; // «Как в системе» in a cycle is the half-dark, half-light circle (D11d): a
+// monitor alone does not say a theme.
+
+const THEME_ICONS = Object.freeze({
+  system: 'contrast',
+  light: 'light_mode',
+  dark: 'dark_mode'
+});
+
+function parseList(source) {
+  if (Array.isArray(source)) return source;
+  const text = String(source ?? '').trim();
+  if (!text) return [];
+
+  if (text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  } // value::label::flags|… as sf-segmented's items take it; a flag icon=<name>
+  // names the icon, pressed draws the pressed look.
+
+
+  return text.split('|').map(entry => {
+    const [value, label = value, flags = ''] = entry.split('::');
+    const list = flags.split(',').map(flag => flag.trim()).filter(Boolean);
+    const icon = list.find(flag => flag.startsWith('icon='));
+    return {
+      value: value.trim(),
+      label: label.trim(),
+      icon: icon ? icon.slice(5) : '',
+      pressed: list.includes('pressed')
+    };
+  });
+}
+/** The cycle's items, normalised: a value each, once, in the given order. */
+
+/** Reads the attribute's JSON or value::label::flags form; a list stays a list. */
+
+
+function parseCycle(value) {
+  return parseList(value);
+}
+function cycleItems(source) {
+  const seen = new Set();
+  return parseList(source).map((item, index) => {
+    const one = typeof item === 'string' ? {
+      value: item,
+      label: item
+    } : item;
+    if (!one || typeof one !== 'object') return null;
+    const value = String(one.value ?? one.id ?? index).trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return {
+      value,
+      label: String(one.label ?? one.text ?? value),
+      icon: String(one.icon || ''),
+      lang: String(one.lang || '').trim(),
+      pressed: Boolean(one.pressed)
+    };
+  }).filter(Boolean);
+}
+/** The themes a theme-cycle offers: all three, or the two it names. */
+
+function themeCycleValues(attribute) {
+  const named = String(attribute ?? '').trim().toLowerCase().split(/[\s,]+/u).map(word => word === 'auto' ? 'system' : word).filter(word => THEME_VALUES.includes(word));
+  const unique = [...new Set(named)]; // Two themes without «as the system» flip the visible theme; anything else
+  // (empty, one word, all three) is the full cycle.
+
+  if (unique.length === 2 && !unique.includes('system')) return ['light', 'dark'];
+  return THEME_VALUES;
+}
+
+const opposite = theme => theme === 'dark' ? 'light' : 'dark';
+
+function loader() {
+  return globalThis.SF?.Loader;
+}
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
+
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
+
+function visibleTheme() {
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
+  if (theme === 'dark' || theme === 'light') return theme;
+  const root = globalThis.document?.documentElement;
+  if (root?.classList?.contains('theme-dark')) return 'dark';
+  if (root?.classList?.contains('theme-light')) return 'light';
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+}
+/** What the person chose: system, light or dark. */
+
+function themePreference() {
+  const preference = loader()?.themePreference;
+  return THEME_VALUES.includes(preference) ? preference : 'system';
+}
+/**
+ * The owner's order (D11d): first the theme opposite to the visible one,
+ * then the other, then «as the system». It needs the value before the
+ * current one: from an explicit theme reached from the other explicit theme
+ * the next is system; from system, or from a theme the page loaded with, the
+ * opposite theme. Two themes: always the opposite of the visible theme.
+ */
+
+function nextTheme({
+  values,
+  current,
+  previous
+}) {
+  if (!values.includes('system')) return opposite(visibleTheme());
+  if (current === 'system') return opposite(visibleTheme());
+  if (previous && previous !== 'system' && previous === opposite(current)) return 'system';
+  return opposite(current);
+}
+/**
+ * The cycle state the template reads: {items, item, next, index, name,
+ * tooltip}. `words(key, vars)` gives the element's words; `base` is the
+ * button's own name (aria-label, or the text of an sf-button).
+ */
+
+function hasCycle(host) {
+  if (host.hasAttribute('theme-cycle')) return true;
+  const own = host.getProp?.('cycle');
+  return Boolean(host.hasAttribute('cycle') || Array.isArray(own) && own.length);
+}
+function cycleState(host, {
+  base = '',
+  words
+}) {
+  if (host.hasAttribute('theme-cycle')) {
+    const values = themeCycleValues(host.getAttribute('theme-cycle'));
+    const two = !values.includes('system');
+    const current = two ? visibleTheme() : themePreference();
+
+    const label = value => words(`theme-${value}`);
+
+    const items = values.map(value => ({
+      value,
+      label: label(value),
+      icon: THEME_ICONS[value],
+      lang: '',
+      pressed: false
+    }));
+    const item = items.find(one => one.value === current) ?? items[0];
+    const nextValue = nextTheme({
+      values,
+      current: item.value,
+      previous: host.__sfCyclePrevious
+    });
+    const next = items.find(one => one.value === nextValue) ?? items[0];
+    const title = base || words('theme');
+    const now = item.value === 'system' ? words('theme-system-now', {
+      vars: {
+        theme: label(visibleTheme())
+      }
+    }) : item.label;
+    const name = `${title}: ${now}`;
+    return {
+      theme: true,
+      items,
+      item,
+      next,
+      name,
+      tooltip: words('cycle-next', {
+        vars: {
+          name,
+          next: next.label
+        }
+      })
+    };
+  }
+
+  const items = cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle'));
+  if (!items.length) return null;
+  const at = Math.max(0, items.findIndex(one => one.value === (host.getAttribute('value') ?? '')));
+  const item = items[at];
+  const next = items[(at + 1) % items.length];
+  const name = base ? `${base}: ${item.label}` : item.label;
+  return {
+    theme: false,
+    items,
+    item,
+    next,
+    name,
+    tooltip: words('cycle-next', {
+      vars: {
+        name,
+        next: next.label
+      }
+    })
+  };
+}
+/** A cycle beside a toggle's settings: the toggle's are ignored, said once. */
+
+function warnCycleToggle(host, names) {
+  const given = names.filter(name => host.hasAttribute(name));
+  if (!given.length || host.__sfCycleWarned) return;
+  host.__sfCycleWarned = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
+}
+/**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
+ * A person's press of a cycle: the next value, the change event and the
+ * announcement. Answers true when it moved.
+ */
+
+function pressCycle(host, state) {
+  if (!state) return false;
+  const previous = state.item.value;
+  const value = state.next.value; // Said after the drawing that follows: the flag first, as the drawing may
+  // come at once.
+
+  const before = host.__sfCyclePrevious;
+  host.__sfCycleAnnounce = true;
+  host.__sfCyclePrevious = previous;
+
+  if (state.theme) {
+    // The Loader moves the page first, so a listener of change finds the
+    // page in the theme it chose; a Loader that cannot (absent, or the
+    // theme switched off) leaves the cycle where it is.
+    host.__sfCycleExpect = value;
+
+    if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
+      host.__sfCycleAnnounce = false;
+      host.__sfCyclePrevious = before;
+      host.__sfCycleExpect = undefined;
+      return false;
+    }
+  } else {
+    host.setAttribute('value', value);
+  }
+
+  host.requestComponentUpdate?.('value');
+  const item = state.items.find(one => one.value === value) ?? null;
+  host.sfEmit('change', {
+    previous,
+    value,
+    item: item ? { ...item
+    } : null
+  });
+  return true;
+}
+/**
+ * sf-theme-change for a theme cycle: a theme set elsewhere (another switch,
+ * SF.Loader.setTheme) starts the order afresh from what is shown.
+ */
+
+function themeCycleFollow(host) {
+  if (!host.hasAttribute('theme-cycle')) return;
+  const values = themeCycleValues(host.getAttribute('theme-cycle'));
+  const now = values.includes('system') ? themePreference() : visibleTheme();
+  if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
+  host.__sfCycleExpect = undefined;
+  host.requestComponentUpdate?.('theme-cycle');
+} // The icons a control can switch to, asked for before it switches (R074).
+// Only the icon on screen was tracked, so the first press that showed another
+// one asked the subset service for a grown font on the click, and the new
+// icon stayed blank while the service built it (up to ~30 s when it was busy).
+// Asked for when the control is drawn, the names join the page's first icon
+// request (held until the Loader is ready); a control added later costs one
+// grown font off the click.
+
+/**
+ * The icon entries ({icon, filled}) a cycle, a theme cycle or a toggle can
+ * show. `icons` are a toggle's own icon names: with `pressed` present they
+ * are drawn filled while on, so both forms are asked for. `filled` is the
+ * control's own filled setting (every form filled).
+ */
+
+function switchIconEntries(host, {
+  icons = [],
+  filled = false
+} = {}) {
+  const entries = [];
+
+  const add = (icon, fill) => {
+    const name = String(icon || '').trim();
+    if (name) entries.push({
+      icon: name,
+      filled: Boolean(fill || filled)
+    });
+  };
+
+  if (host.hasAttribute('theme-cycle')) {
+    themeCycleValues(host.getAttribute('theme-cycle')).forEach(value => add(THEME_ICONS[value], false));
+  } else if (hasCycle(host)) {
+    cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle')).forEach(item => add(item.icon, item.pressed));
+  } else if (host.hasAttribute('pressed')) {
+    icons.forEach(icon => {
+      add(icon, false);
+      add(icon, true);
+    });
+  }
+
+  const seen = new Set();
+  return entries.filter(entry => {
+    const key = `${entry.icon}|${entry.filled}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+/**
+ * Asks the Loader for these icon entries once per distinct list (a render
+ * that draws the same items asks nothing). Answers the number of new names.
+ */
+
+function preloadControlIcons(host, entries) {
+  if (!Array.isArray(entries) || !entries.length) return 0;
+  const key = JSON.stringify(entries);
+  if (host.__sfPreloadedIcons === key) return 0;
+  const preload = loader()?.preloadIcons;
+  if (typeof preload !== 'function') return 0;
+  host.__sfPreloadedIcons = key;
+  return preload.call(loader(), entries) || 0;
+}
+/** switchIconEntries, asked for. */
+
+function preloadSwitchIcons(host, options = {}) {
+  return preloadControlIcons(host, switchIconEntries(host, options));
+}
 
 /***/ },
 
@@ -1095,21 +1742,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.3.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"hue":{"type":"enum","values":["","auto","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"hue":{"type":"enum","values":["","auto","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"expressive":{"type":"boolean","default":false},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 
 /***/ "7ebc02c41719"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Avatar","runtime":{"aria-label":"Avatar"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Avatar","runtime":{"aria-label":"Avatar","status-online":"online","status-offline":"offline"}}');
 
 /***/ },
 
 /***/ "56400745dab0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Аватар","runtime":{"aria-label":"Аватар"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Аватар","runtime":{"aria-label":"Аватар","status-online":"в сети","status-offline":"не в сети"}}');
 
 /***/ }
 

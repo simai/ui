@@ -619,8 +619,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //
 // The answers call the actions confirm and cancel, which a page reaches as
 // data-sf-action="<id>.confirm" and "<id>.cancel" (§8, §19.4). A dangerous
-// acceptance (status="danger") is a filled danger answer beside a quiet
-// declining one (decision C25); a plain question has two outlined answers.
+// acceptance (status="danger") is a filled danger answer (decision C25), a
+// plain one outlined; «Отмена» beside it is always quiet (ghost, C116).
 
 function renderConfirmTemplate(context) {
   if (context.appearance === "window") return renderConfirmWindow(context);
@@ -1153,26 +1153,29 @@ function confirmSurface(Base, {
 // two answers. `block` is the drawn surface's class; `acceptStatus` "danger"
 // marks a destructive acceptance (a delete, decision C13).
 //
-// The answers (decision C25): a plain question offers two outlined answers of
-// one weight. A dangerous one fills the accepting answer with the danger
-// colour and leaves the declining one quiet (ghost, no frame), so the two are
-// told apart by more than the red of a word. Both stand on the element's size
+// The answers (decision C25): a plain question's accepting answer is outlined;
+// a dangerous one fills it with the danger colour. The declining answer, the
+// question's «Отмена», is always the quiet one, ghost on-surface (decision
+// C116, #q-cancel: «Отмена» is quiet everywhere), so the two are told apart by
+// more than the red of a word. A surface whose declining answer is a decision
+// of its own weight rather than a cancel -- sf-confirm-change's «Отклонить» --
+// asks for `declineAppearance: "outline"`. Both stand on the element's size
 // (context.size, 1 unless the page gives one); a size a template gives is
 // relative, so a compact region (data-sf-density, C22) moves them down a step.
 //
-// In a window (sf-confirm appearance="window", decision C39) the declining
-// answer of a dangerous question is tonal, the window's quiet answer beside
-// the filled one, and the answers come before the status line, at the start.
+// In a window (sf-confirm appearance="window", decision C39) the answers come
+// before the status line, at the start; the declining one is ghost there too
+// (C116; it was tonal, the window's quiet answer).
 
 function renderConfirmFooter(context, block, {
   acceptStatus = "",
-  window = false
+  window = false,
+  declineAppearance = "ghost"
 } = {}) {
   const {
     component
   } = context;
   const danger = acceptStatus === "danger" || acceptStatus === "error";
-  const quiet = window ? "tonal" : "ghost";
   const size = context.size || "1";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <footer class="${block}__footer">
@@ -1199,7 +1202,7 @@ function renderConfirmFooter(context, block, {
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
-                            appearance=${danger ? quiet : "outline"}
+                            appearance=${declineAppearance}
                             scheme="on-surface"
                             size=${size}
                             text=${context.declineText}
@@ -1270,7 +1273,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.3.1","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.3.4","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

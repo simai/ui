@@ -217,6 +217,19 @@ function resolveSize(value) {
 
 function styleMap(style = {}) {
   return Object.entries(style).filter(([, value]) => value !== undefined && value !== null && value !== '').map(([key, value]) => `${key}: ${value}`).join('; ');
+} // True for a circle, square or rounded skeleton given no width (other than
+// the default 100 %) and no height: the sheet draws it as the square box of
+// its step (C130 (1)).
+
+
+function isShapeBox(variant, type, widths, heights) {
+  if (type === 'icon' || !['circle', 'square', 'rounded'].includes(variant)) return false;
+  const ownWidth = widths.some(value => {
+    const resolved = resolveSize(value);
+    return resolved && resolved !== '100%';
+  });
+  const ownHeight = heights.some(value => resolveSize(value));
+  return !ownWidth && !ownHeight;
 }
 
 function renderSkeletonTemplate(context) {
@@ -236,12 +249,28 @@ function renderSkeletonTemplate(context) {
   const animation = ['pulse', 'wave', 'none'].includes(`${rawAnimation}`) ? `${rawAnimation}` : 'pulse';
   const requestedShape = rawKind ?? rawVariant;
   const variant = ['text', 'circle', 'square', 'rounded'].includes(`${requestedShape}`) ? `${requestedShape}` : 'text';
-  const type = rawType === 'icon' ? 'icon' : '';
+  const type = rawType === 'icon' ? 'icon' : ''; // A circle or a square without a width of its own has equal sides, as an
+  // icon placeholder does (docs precheck SK-01): given the row's full width,
+  // a circle drew a long pill, and in a flex row a narrow upright one. The
+  // setting's default is 100 %, so "of its own" is a width that resolves to
+  // something other than the full row (acceptance 2026-11-11 D2: the default
+  // kept every circle a bar); a value the contract ignores (64px) is none.
+
+  const ownWidths = normalizeList(width).map(resolveSize).filter(value => value && value !== '100%');
+  const equalSides = type === 'icon' || (variant === 'circle' || variant === 'square') && ownWidths.length === 0;
   const widths = normalizeList(width, ['100%']);
-  const heights = normalizeList(height);
+  const heights = normalizeList(height); // A shape with no size of its own is the square box of its step (owner
+  // decision C130 (1)): the sheet sizes it, so it is written with no width
+  // and its root does not stretch. "Of its own" is a width other than the
+  // setting's default 100 % or any height.
+
+  const box = isShapeBox(variant, type, widths, heights); // Group build 3: a box (C130 (1)) and equal sides (SK-01: a circle or a
+  // square with a height but no width of its own is that height square) both
+  // take no stretching width; everything else is the row's bar.
+
   const rootClasses = ['sf-skeleton', 'flex'];
 
-  if (type !== 'icon') {
+  if (!equalSides && !box) {
     rootClasses.push('flex-1');
   }
 
@@ -253,7 +282,7 @@ function renderSkeletonTemplate(context) {
     rootClasses.push(...String(rootClass).split(/\s+/).filter(Boolean));
   }
 
-  const rootStyle = type !== 'icon' && widths.length ? styleMap({
+  const rootStyle = !equalSides && !box && widths.length ? styleMap({
     'inline-size': resolveSize(widths[0])
   }) : '';
   const countValue = Number(count);
@@ -271,14 +300,23 @@ function renderSkeletonTemplate(context) {
 
     if (type) {
       itemClasses.push(`sf-skeleton-${type}`);
-    }
+    } // Several lines of text with one width: even lines and a short last
+    // one, 60 % (owner decision C136 (3), (4)): the end of a paragraph
+    // reads at once. A list of widths is the page's and is kept.
 
-    const resolvedWidth = widths[index % widths.length] || '';
-    const resolvedHeight = heights[index % heights.length] || '';
-    const itemStyle = type !== 'icon' ? styleMap({
+
+    const shortLast = variant === 'text' && type !== 'icon' && !box && widths.length === 1 && itemsCount > 1 && index === itemsCount - 1;
+    const resolvedWidth = shortLast ? '60%' : widths[index % widths.length] || '';
+    const resolvedHeight = heights[index % heights.length] || ''; // Equal sides take a given height on both sides.
+
+    const sideHeight = equalSides && resolvedHeight ? resolveSize(resolvedHeight) : '';
+    const itemStyle = !equalSides && !box ? styleMap({
       'inline-size': resolveSize(resolvedWidth || '100%'),
       'block-size': resolvedHeight ? resolveSize(resolvedHeight) : ''
-    }) : '';
+    }) : styleMap({
+      'inline-size': sideHeight,
+      'block-size': sideHeight
+    });
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <div
             class=${itemClasses.join(' ')}
@@ -326,7 +364,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-skele
 /***/ "1b576216d612"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.skeleton","tag":"sf-skeleton","version":"1.1.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.skeleton","tag":"sf-skeleton","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}}}');
 
 /***/ },
 

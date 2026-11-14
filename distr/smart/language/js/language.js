@@ -662,6 +662,7 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -749,12 +750,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -772,6 +775,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -873,6 +881,71 @@ const FormField = Base => class extends Base {
   }
 
 };
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
+  }
+
+};
 
 /***/ },
 
@@ -883,35 +956,39 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfLanguage: () => (/* binding */ SfLanguage),
+/* harmony export */   languageRows: () => (/* reexport safe */ _js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows),
 /* harmony export */   rememberKey: () => (/* binding */ rememberKey)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("688582849827");
-/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("464bf30e7c23");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("11b7e7a66992");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("1fc6cbb91573");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8773c52f3b37");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("688582849827");
+/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("464bf30e7c23");
+/* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9937e6b314d1");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("11b7e7a66992");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("1fc6cbb91573");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("8773c52f3b37");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 // sf-language: the site's language picker. One element whose look follows the
 // number of languages it is given:
 //
-//   <sf-language languages="ru en"></sf-language>            two: a segmented switch
-//   <sf-language languages="ru en de fr es"></sf-language>   five: an icon button and a menu
+//   <sf-language languages="ru en"></sf-language>            two and more: a button «RU ▾» and a menu
 //   <sf-language languages="ru en de … ja zh ar"></sf-language>  eight and more: the menu with search
+//   <sf-language languages="ru en" mode="inline"></sf-language>  a settings page: a segmented switch
 //
-// One language draws nothing. The names come from the browser
-// (Intl.DisplayNames): each language is named in itself («Deutsch»), and in
-// the menu in English beside it («German»); no dictionary ships with the
-// component. A choice is a cancellable change event first; not cancelled, the
+// One language draws nothing. Each language is named in itself («Deutsch»),
+// and in the menu in English beside it («German»): the names of the languages
+// it supports ship with it (data/names.json, CLDR), the browser
+// (Intl.DisplayNames) names the rest. A choice is a cancellable change event first; not cancelled, the
 // element follows the language's href when it has one (a site with /ru/ and
 // /en/), and otherwise applies it to the page: SF.language.use(code), and lang
 // and dir on <html>. remember="<name>" keeps the choice (SF.Preferences, in
@@ -919,8 +996,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // first paint is the site's (docs.md).
 //
 // It composes the Framework's parts and draws nothing of its own: the switch
-// is sf-segmented on its track, the trigger sf-button-icon with
-// the Material Symbols «translate» glyph, the list sf-menu-context with its
+// is sf-segmented on its track, the trigger sf-button with
+// the Material Symbols «translate» glyph, the current code and expand_more, the list sf-menu-context with its
 // search. Their events stay inside: the page hears this element's change.
 //
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4, §8,
@@ -936,10 +1013,39 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // The parts it draws, found under their current names and their former ones.
 
-const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.tagSelector)('sf-menu-context')}`;
-const TRIGGER = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.tagSelector)('sf-button-icon')}`;
+
+
+(0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_9__); // The parts it draws, found under their current names and their former ones.
+
+const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
+const TRIGGER = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button')}`;
+const TRACK = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-segmented')}`;
+const FIELD = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-dropdown')}`; // A phone: below the md breakpoint, where core declares --sf-breakpoint-md
+// (sf-menu-context's own test for its sheet).
+
+const onPhone = node => {
+  const root = node?.ownerDocument?.documentElement;
+  return Boolean(root) && !getComputedStyle(root).getPropertyValue('--sf-breakpoint-md').trim();
+}; // The keys that walk the switch's segments (C142 (4): they move the focus;
+// Enter or Space chooses, since a choice may reload the page).
+
+
+const WALK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']); // The boolean compact showed the codes; it is a dated alias of labels="code"
+// (owner decision C134: compact means density only; journal
+// attribute-language-compact-to-labels-code), read here, since a boolean's
+// presence cannot be a value alias of the shim.
+
+const COMPACT_ALIAS = {
+  component: 'sf-language',
+  tag: 'sf-language',
+  kind: 'attribute',
+  from: 'compact',
+  to: 'labels="code"',
+  since: '2026-11-13',
+  remove_after: '2027-01-01'
+};
+const LABELS = ['name', 'code'];
 
 const text = value => value === undefined || value === null ? '' : String(value).trim(); // A remembered choice is a preference of the person (SF.Preferences, owner
 // 2026-10-14): in the browser under sf-pref:sf-language/<remember>, and by a
@@ -947,16 +1053,16 @@ const text = value => value === undefined || value === null ? '' : String(value)
 // when core has published it (every bundle has its own copy).
 
 
-const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_3__["default"];
+const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__["default"];
 /** The SF.Preferences key a remember name keeps the choice under. */
 
 
 const rememberKey = name => text(name) ? `sf-language/${text(name)}` : '';
-const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: 'ru',
   actions: {
@@ -968,12 +1074,18 @@ const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1_
   }
 });
 
-class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(LanguageElement) {
+class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(LanguageElement) {
   constructor() {
     super(); // What the element last drew, so a change of the page's language that
     // this element did not make moves the shown value with it.
 
-    this._shownLook = '';
+    this._shownLook = ''; // What the menu's search field holds: the element narrows the rows
+    // itself (the menu's search is remote), by word starts.
+
+    this._query = ''; // The switch's arrows move the focus only (C142 (4)): taken here, in
+    // the capture phase, before sf-segmented's own keys choose.
+
+    this.addEventListener('keydown', event => this.onTrackKeys(event), true);
   }
 
   connectedCallback() {
@@ -987,7 +1099,10 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
 
 
   get languageList() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.normalizeLanguages)(this.languages, this.items, this.href);
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.normalizeLanguages)(this.languages, this.items, this.href, {
+      missing: this.missing,
+      home: this.home
+    });
   } // The language shown as chosen: the value when it is one of the list, else
   // the page's language, else the first.
 
@@ -997,7 +1112,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     if (!list.length) return null;
     const own = this.getAttribute('value');
     const doc = this.ownerDocument?.documentElement;
-    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageLocale)(doc)) ?? list[0];
+    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(doc)) ?? list[0];
   } // The value is a language code of the list; the chosen one is read through
   // current, so an element written without value says the page's language.
 
@@ -1007,14 +1122,48 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   }
 
   set value(next) {
-    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.canonicalCode)(next);
+    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.canonicalCode)(next);
     if (code) this.setAttribute('value', code);else this.removeAttribute('value');
     this.sfSyncFormState?.();
+  } // What the segments say: name or code. labels wins; without it the dated
+  // boolean compact says code, noted once per element in SF.deprecations.
+
+
+  get labelsShown() {
+    const own = this.getAttribute('labels');
+    if (LABELS.includes(own)) return own;
+
+    if (own === null && this.hasAttribute('compact')) {
+      if (!this._compactNoted) {
+        this._compactNoted = true;
+        (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)(COMPACT_ALIAS);
+      }
+
+      return 'code';
+    }
+
+    return 'name';
+  } // The property of the dated boolean, for a script that set it: it writes the
+  // attribute, which is read (and noted) as above.
+
+
+  get compact() {
+    return this.hasAttribute('compact');
+  }
+
+  set compact(next) {
+    this.toggleAttribute('compact', Boolean(next));
+  } // compact is observed so a change of it draws again (the base's
+  // attributeChangedCallback asks for the update).
+
+
+  static get observedAttributes() {
+    return [...new Set([...super.observedAttributes, 'compact'])];
   } // What the element looks like now: none, inline, menu or search.
 
 
   get look() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.lookFor)(this.languageList.length, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.lookFor)(this.languageList.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
@@ -1037,7 +1186,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
 
   choose(next, reason = 'press') {
     const list = this.languageList;
-    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.matchLanguage)(list, next);
+    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, next);
     if (!language) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('unknown');
     if (this.disabled || this.sfFormDisabled) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('disabled');
     const previous = this.value;
@@ -1109,6 +1258,35 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     const group = event.currentTarget;
     const result = this.choose(group?.value, 'press');
     if (result.outcome !== 'applied' && group && group.value !== this.value) group.value = this.value;
+  } // An arrow, Home or End in the switch moves the focus between the
+  // languages and chooses nothing; Enter or Space presses the focused one
+  // (its native click), which chooses it. Owner decision C142 (4): a choice
+  // may reload the page or go to another address, so walking must not.
+
+
+  onTrackKeys(event) {
+    if (!WALK.has(event.key) || event.altKey || event.ctrlKey || event.metaKey) return;
+    const track = this.querySelector(TRACK);
+    const from = event.target?.closest?.('button[role="radio"]');
+    if (!track || !from || !track.contains(from) || from.closest('.sf-button-group-narrow')) return;
+    const radios = [...track.querySelectorAll('button[role="radio"]:not(:disabled)')];
+    const at = radios.indexOf(from);
+    if (at < 0) return;
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? radios.length - 1 : ['ArrowLeft', 'ArrowUp'].includes(event.key) ? (at - 1 + radios.length) % radios.length : (at + 1) % radios.length;
+    event.preventDefault();
+    event.stopPropagation();
+    radios[next].focus();
+  } // The field look's dropdown chose a language: the element answers for it,
+  // and the dropdown's own change stays inside.
+
+
+  onFieldChange(event) {
+    event.stopPropagation();
+    const field = event.currentTarget;
+    const next = event.detail?.value ?? field?.value;
+    if (!next) return;
+    const result = this.choose(next, 'press');
+    if (result.outcome !== 'applied' && field && field.value !== this.value) field.value = this.value;
   } // A row of the menu was chosen: the menu closes itself and returns focus to
   // the trigger; its event stays inside.
 
@@ -1126,7 +1304,13 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   get trigger() {
     return this.querySelector(TRIGGER);
   }
-  /** Opens or closes the menu of a menu or search look. */
+  /**
+   * Opens or closes the menu of a menu or search look. Open, the chosen
+   * language is in view (research LG-5: with Greek chosen of forty the list
+   * opened at Русский): in the menu look it takes the focus, so the arrows go
+   * on from it; in the search look the field keeps the focus and the list is
+   * scrolled to the chosen row.
+   */
 
 
   toggleMenu() {
@@ -1134,35 +1318,162 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     const host = this.trigger;
     if (!menu || !host || this.disabled) return;
     const anchor = host.querySelector('button') ?? host;
-    customElements.whenDefined('sf-menu-context').then(() => menu.toggleFor(anchor));
-  } // The menu's rows: the name in itself, its English name beside it, the
-  // radio mark on the chosen one; each row in its own language. The search
-  // reads the native name, the English name, the name in the page's language
-  // and the code (keywords).
+    const reset = Boolean(this._query);
+
+    if (reset) {
+      this._query = '';
+      this.requestComponentUpdate('query');
+    } // From searchFrom languages on a phone the menu is a sheet at the bottom
+    // of the screen (owner decision C142 (5)): sf-menu-context's own sheet,
+    // the one a form takes there, with the search on top and no field
+    // focused, so no keyboard covers the list; the chosen row takes the
+    // focus. Up to searchFrom the menu stays a popover by the trigger.
 
 
-  menuEntries(list, current) {
-    const page = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageLocale)(this);
+    const sheet = this.look === 'search' && onPhone(this);
+    customElements.whenDefined('sf-menu-context').then(async () => {
+      if (reset) await this.whenRendered(null, {
+        next: true
+      });
+      const result = await menu.toggleFor(anchor, sheet ? {
+        width: 'form',
+        focus: 'none'
+      } : {});
+      if (result?.outcome !== 'applied' || result.value !== true) return;
+      this._sheet = sheet;
+      this.revealChosen(menu, true);
+      this.followChosen(menu);
+    });
+  } // The chosen row in view, within the menu's own scrolling list (the page
+  // does not move); focused in the menu look, where no field takes the focus.
+
+
+  revealChosen(menu, focus) {
+    if (!menu.isOpen) return;
+    const row = menu.querySelector('[role="menuitemradio"][aria-checked="true"]');
+    if (!row) return;
+    if (focus && (this.look === 'menu' || this._sheet)) row.focus({
+      preventScroll: true
+    });
+    let list = row.parentElement;
+
+    while (list && list !== menu && !(list.scrollHeight > list.clientHeight + 1 && /(auto|scroll)/u.test(getComputedStyle(list).overflowY))) list = list.parentElement;
+
+    if (!list || list === menu) return;
+    const box = list.getBoundingClientRect();
+    const own = row.getBoundingClientRect(); // Out of view, it comes to the middle of the list (as far as the list
+    // goes); in view, nothing moves.
+
+    if (own.top < box.top || own.bottom > box.bottom) list.scrollTop += own.top - box.top - (box.height - own.height) / 2;
+  } // The menu is placed after it opens, and placed again when it or the
+  // screen changes size: a placement measures the panel at its natural
+  // height for a moment, which takes the list's scroll back to the top
+  // (within one frame, so the list's size does not change). So until the
+  // person does something in the menu, the chosen row is brought back into
+  // view whenever the list changes size or is scrolled by something else.
+
+
+  followChosen(menu) {
+    this.stopFollowing();
+    const surface = menu.querySelector(':scope > .sf-context-menu');
+    if (!surface) return;
+
+    const again = () => this.revealChosen(menu, false);
+
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(again) : null;
+    observer?.observe(surface);
+    const lists = [...surface.querySelectorAll('.sf-context-menu-list, .sf-context-menu-content')];
+
+    for (const list of lists) {
+      observer?.observe(list);
+      list.addEventListener('scroll', again, {
+        passive: true
+      });
+    }
+
+    const stop = () => this.stopFollowing();
+
+    const events = ['pointerdown', 'wheel', 'keydown', 'input', 'touchstart'];
+
+    for (const name of events) surface.addEventListener(name, stop, {
+      passive: true
+    });
+
+    this._following = () => {
+      observer?.disconnect();
+
+      for (const list of lists) list.removeEventListener('scroll', again);
+
+      for (const name of events) surface.removeEventListener(name, stop);
+    };
+  }
+
+  stopFollowing() {
+    const following = this._following;
+    this._following = null;
+    following?.();
+  }
+
+  disconnectedCallback() {
+    this.stopFollowing();
+    super.disconnectedCallback?.();
+  } // The menu's search field changed: the rows are narrowed here (remote).
+
+
+  onMenuSearch(event) {
+    event.stopPropagation();
+    const query = String(event.detail?.query ?? '');
+    if (query === this._query) return;
+    this._query = query;
+    this.requestComponentUpdate('query');
+  } // The menu closed: the next opening starts with every row (the menu clears
+  // its field without telling a remote search).
+
+
+  onMenuClosed(event) {
+    event.stopPropagation();
+    this.stopFollowing();
+    if (!this._query) return;
+    this._query = '';
+    this.requestComponentUpdate('query');
+  } // The menu's rows: the name in itself, beside it its name in the page's
+  // language (owner decision C142 (3): «Deutsch немецкий»; none when the two
+  // are the same word, «Русский» on a Russian page), the radio mark on the
+  // chosen one; each row in its own language. A language this page has no
+  // translation of says so under its name (C142 (6)). A search
+  // keeps the rows whose words -- the label, the native name, the English
+  // name, the name in the page's language and the code -- a query's words
+  // begin (research LG-8: a query matched inside words, «ру» found
+  // белорусский and грузинский).
+
+
+  menuEntries(list, current, query = '') {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows)(list, current, {
+      page: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(this),
+      query,
+      missing: this.sfWord('missing')
+    });
+  } // The field look's options (sf-dropdown): the name in itself, the code as
+  // the value.
+
+
+  fieldOptions(list) {
     return list.map(language => ({
-      id: language.code,
+      type: 'text',
       text: language.label,
-      value: language.english !== language.label ? language.english : undefined,
-      kind: 'radio',
-      checked: language.code === current?.code,
-      lang: language.code,
-      keywords: [language.native, language.english, (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.nameIn)(language.code, page), language.code].filter(Boolean).join(' ')
+      value: language.code
     }));
   }
 
   templateContext() {
     const list = this.languageList;
     const current = this.current;
-    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_7__.lookFor)(list.length, {
+    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.lookFor)(list.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
     });
-    const size = _js_languages__WEBPACK_IMPORTED_MODULE_7__.SIZES.includes(this.size) ? this.size : '1';
+    const size = _js_languages__WEBPACK_IMPORTED_MODULE_8__.SIZES.includes(this.size) ? this.size : '1';
     this.sfHostState('data-look', look);
     this._shownLook = look;
     const label = this.label;
@@ -1172,7 +1483,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
       size,
       // The menu has two rungs: rows of 32 px up to 1/2, of 40 px from 1.
       menuSize: size === '1/3' || size === '1/2' ? '1/2' : '1',
-      compact: Boolean(this.compact),
+      codes: this.labelsShown === 'code',
       disabled: Boolean(this.disabled || this.sfFormDisabled),
       list,
       current,
@@ -1184,17 +1495,29 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
           name: current.native
         }
       }) : label,
-      entries: look === 'menu' || look === 'search' ? this.menuEntries(list, current) : [],
-      search: look === 'search' ? {
-        placeholder: this.sfWord('search'),
-        empty: this.sfWord('empty')
-      } : null,
+      entries: look === 'menu' || look === 'search' ? this.menuEntries(list, current, look === 'search' ? this._query : '') : [],
+      search: look === 'search' ? this.searchOptions() : null,
+      // The field look (C142 (8)): sf-dropdown on its own ladder (1/2, 1, 2),
+      // its search from searchFrom languages.
+      fieldSize: size === '1/3' ? '1/2' : size === '3' ? '2' : size,
+      fieldOptions: look === 'field' ? this.fieldOptions(list) : [],
+      fieldSearch: look === 'field' && list.length >= (Number(this.searchFrom) || 8),
       rootClass: this.getRootClass()
     });
+  } // The menu's search: the field's words, and remote -- the menu tells this
+  // element the query and shows the rows it is given.
+
+
+  searchOptions() {
+    return {
+      placeholder: this.sfWord('search'),
+      empty: this.sfWord('empty'),
+      remote: true
+    };
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderLanguageTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderLanguageTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -1203,10 +1526,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
     const menu = this.menu;
 
     if (menu) {
-      const search = this.look === 'search' ? {
-        placeholder: this.sfWord('search'),
-        empty: this.sfWord('empty')
-      } : null;
+      const search = this.look === 'search' ? this.searchOptions() : null;
       if (JSON.stringify(menu.search) !== JSON.stringify(search)) menu.search = search;
     }
 
@@ -1214,6 +1534,61 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   }
 
 }
+/**
+ * The «Язык» row of an app's menu (owner decision C142 (7)): an
+ * sf-menu-context entry with the translate glyph, the current language's
+ * name as its value and a submenu of sf-language's rows -- the name in
+ * itself, its name in the page's language beside it (C49), the radio mark on
+ * the current one -- with a search from searchFrom languages. The rows' ids
+ * are «language:<code>»; the menu's select event carries it, and the app
+ * applies the language (SfLanguage.codeOf(id) reads the code back).
+ *
+ *   menu.entries = [themeRow, SfLanguage.menuEntry({languages: 'ru en de', value: 'ru'}), ...];
+ */
+
+
+SfLanguage.menuEntry = function menuEntry({
+  languages = '',
+  items = [],
+  value = '',
+  page = '',
+  label = '',
+  missing = '',
+  home = '',
+  href = '',
+  searchFrom = 8
+} = {}) {
+  const list = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.normalizeLanguages)(languages, items, href, {
+    missing,
+    home
+  });
+  const doc = globalThis.document?.documentElement;
+  const pageCode = page || doc?.getAttribute('lang') || 'en';
+  const words = (String(pageCode).toLowerCase().startsWith('ru') ? _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ : _lang_en_json__WEBPACK_IMPORTED_MODULE_11__).runtime;
+  const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
+  const entry = {
+    id: 'language',
+    text: label || words.label,
+    icon: 'translate',
+    value: current?.label,
+    submenu: (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows)(list, current, {
+      page: pageCode,
+      missing: words.missing,
+      prefix: 'language:'
+    }),
+    // The rows' second names need the panel's width (C32, C142 (3)).
+    width: 'panel'
+  };
+  if (list.length >= (Number(searchFrom) || 8)) entry.search = {
+    placeholder: words.search,
+    empty: words.empty
+  };
+  return entry;
+};
+/** The language code of an app menu row's id («language:de» -> «de»); '' for another row. */
+
+
+SfLanguage.codeOf = id => String(id ?? '').startsWith('language:') ? String(id).slice('language:'.length) : '';
 
 SfLanguage.define('sf-language');
 
@@ -1232,18 +1607,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   canonicalCode: () => (/* binding */ canonicalCode),
 /* harmony export */   dirOf: () => (/* binding */ dirOf),
 /* harmony export */   englishName: () => (/* binding */ englishName),
+/* harmony export */   isVariant: () => (/* binding */ isVariant),
+/* harmony export */   languageRows: () => (/* binding */ languageRows),
 /* harmony export */   lookFor: () => (/* binding */ lookFor),
 /* harmony export */   matchLanguage: () => (/* binding */ matchLanguage),
+/* harmony export */   matchesQuery: () => (/* binding */ matchesQuery),
 /* harmony export */   nameIn: () => (/* binding */ nameIn),
 /* harmony export */   nativeName: () => (/* binding */ nativeName),
 /* harmony export */   normalizeLanguages: () => (/* binding */ normalizeLanguages),
-/* harmony export */   shortLabel: () => (/* binding */ shortLabel)
+/* harmony export */   pageName: () => (/* binding */ pageName),
+/* harmony export */   searchWords: () => (/* binding */ searchWords),
+/* harmony export */   shortLabel: () => (/* binding */ shortLabel),
+/* harmony export */   shortLabelIn: () => (/* binding */ shortLabelIn),
+/* harmony export */   useNames: () => (/* binding */ useNames)
 /* harmony export */ });
 // The languages of sf-language, without the element: codes made canonical,
-// named by the browser (Intl.DisplayNames) in themselves and in English, the
-// direction each is written in, and the look a count of them takes. No
-// dictionary: what the browser cannot name is shown as its code.
-const MODES = ['auto', 'inline', 'menu', 'search'];
+// named in themselves and in English, the direction each is written in, the
+// look a count of them takes, and what a search finds. The names of the
+// languages the component supports ship with it (data/names.json, from CLDR:
+// the browser's Intl.DisplayNames names fewer -- research LG-7); the browser
+// names the rest, and what neither can name is shown as its code. The
+// element gives this module the shipped names (useNames), so the module
+// itself has no import a plain Node.js test cannot take.
+const MODES = ['auto', 'inline', 'menu', 'search', 'field'];
 const SIZES = ['1/3', '1/2', '1', '2', '3']; // The languages written right to left, by their primary subtag, where the
 // browser cannot say it itself (Intl.Locale textInfo); and the scripts that
 // make any language right to left (ku-Arab, pa-Arab, ms-Arab).
@@ -1282,9 +1668,34 @@ function dirOf(code) {
   const script = rest.find(part => part.length === 4);
   if (script) return RTL_SCRIPTS.has(script) ? 'rtl' : 'ltr';
   return RTL_LANGUAGES.has(primary) ? 'rtl' : 'ltr';
-} // A language's name in a language, from the browser; '' when it has none.
+} // The shipped names, by canonical code in lower case.
+
+const SHIPPED = new Map();
+/** Takes the shipped names (data/names.json): {names: {<code>: {native, en, ru}}}. */
+
+function useNames(data) {
+  SHIPPED.clear();
+
+  for (const [code, names] of Object.entries(data?.names ?? {})) {
+    if (names && typeof names === 'object') SHIPPED.set(code.toLowerCase(), names);
+  }
+} // A shipped name of a language in a language: native (in itself), en or ru;
+// '' when none ships.
+
+function shippedName(code, inLanguage) {
+  const names = SHIPPED.get(String(code).toLowerCase());
+  if (!names) return '';
+  const want = String(inLanguage).toLowerCase();
+  if (want === String(code).toLowerCase()) return names.native || '';
+  return names[want] || names[want.split('-')[0]] || '';
+} // A language's name in a language: the shipped one first, else the
+// browser's; '' when neither has one.
+
 
 function displayName(code, inLanguage) {
+  const shipped = shippedName(code, inLanguage);
+  if (shipped) return shipped;
+
   try {
     const name = new Intl.DisplayNames([inLanguage], {
       type: 'language',
@@ -1296,21 +1707,98 @@ function displayName(code, inLanguage) {
   }
 } // A name begins with a capital in a list, as a person writes it in a menu
 // («Русский», «Español»); the capital is the language's own.
+// Georgian has no capitals in running text: its upper case (Mtavruli) is a
+// display style, so «ქართული» stays as it is.
 
+
+const UNCASED = /^[\u10D0-\u10FF]/u;
 
 function capitalised(name, code) {
   if (!name) return '';
+  if (UNCASED.test(name)) return name;
 
   try {
     return name.charAt(0).toLocaleUpperCase(code) + name.slice(1);
   } catch {
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
-}
-/** The name of a language in itself: «Deutsch» for de. */
+} // A code's parts: the primary language, and the script and region subtags
+// that make it a variant (pt-BR, zh-Hant), or '' when it has none.
 
+
+function partsOf(code) {
+  const [primary = '', ...rest] = String(code).split('-');
+  const script = rest.find(part => /^[a-z]{4}$/iu.test(part)) || '';
+  const region = rest.find(part => /^([a-z]{2}|\d{3})$/iu.test(part)) || '';
+  return {
+    primary: primary.toLowerCase(),
+    script,
+    region
+  };
+} // A name from the browser in its standard form: the language and, in
+// brackets, what makes the variant («português (Brasil)», «中文（简体）»),
+// not the dialect name («português europeu», «简体中文»).
+
+
+function standardName(code, inLanguage) {
+  try {
+    const name = new Intl.DisplayNames([inLanguage], {
+      type: 'language',
+      languageDisplay: 'standard',
+      fallback: 'none'
+    }).of(code);
+    return name && name !== code ? name : '';
+  } catch {
+    return '';
+  }
+}
+
+function subtagName(type, subtag, inLanguage) {
+  try {
+    return new Intl.DisplayNames([inLanguage], {
+      type,
+      fallback: 'none'
+    }).of(subtag) || '';
+  } catch {
+    return '';
+  }
+} // What makes a variant, in a language: the region («Бразилия») or the script.
+
+
+function qualifierIn(code, inLanguage) {
+  const {
+    script,
+    region
+  } = partsOf(code);
+  if (region) return subtagName('region', region.toUpperCase(), inLanguage);
+  if (script) return subtagName('script', script.charAt(0).toUpperCase() + script.slice(1).toLowerCase(), inLanguage);
+  return '';
+}
+/** Whether a code is a variant of a language: it names a script or a region (pt-BR, zh-Hant). */
+
+
+function isVariant(code) {
+  const {
+    script,
+    region
+  } = partsOf(code);
+  return Boolean(script || region);
+}
+/**
+ * The name of a language in itself: «Deutsch» for de. A variant is the full
+ * name with what makes it one, in its own words (owner decision C142 (9)):
+ * «Português (Brasil)», «Português (Portugal)», «中文（简体）».
+ */
 
 function nativeName(code) {
+  if (isVariant(code)) {
+    const full = standardName(code, code);
+    if (full) return capitalised(full, code);
+    const base = displayName(partsOf(code).primary, partsOf(code).primary);
+    const qualifier = qualifierIn(code, code);
+    if (base && qualifier) return capitalised(`${base} (${qualifier})`, code);
+  }
+
   return capitalised(displayName(code, code), code) || code.toUpperCase();
 }
 /** The name of a language in English: «German» for de. */
@@ -1323,57 +1811,181 @@ function englishName(code) {
 function nameIn(code, language) {
   return displayName(code, language);
 }
-/** The code as a compact label shows it: RU, EN, PT-BR. */
+/**
+ * The second name of a menu row: the language's name in the page's language
+ * (owner decision C142 (3): «Deutsch немецкий» on a Russian page, W3C
+ * language navigation), as it is written in running text. A variant says
+ * what makes it one: «португальский, Бразилия»; a script variant the name
+ * the component ships («китайский, упрощенное письмо»). '' when the page's
+ * language has no name for it.
+ */
+
+function pageName(code, page) {
+  const language = text(page) || 'en';
+
+  if (isVariant(code)) {
+    const {
+      primary,
+      region
+    } = partsOf(code);
+
+    if (region) {
+      const base = displayName(primary, language);
+      const qualifier = qualifierIn(code, language);
+      if (base && qualifier) return `${base}, ${qualifier}`;
+    }
+
+    const shipped = shippedName(code, language);
+    if (shipped) return shipped;
+    const full = standardName(code, language);
+    if (full) return full;
+  }
+
+  return displayName(code, language);
+}
+/** The code as a code label (labels="code") shows it: RU, EN, PT-BR. */
 
 function shortLabel(code) {
   return code.toUpperCase();
+} // Chinese is told apart by its script, not its country (C142 (9)): the
+// labels Chinese sites themselves write.
+
+const CHINESE_SCRIPT = {
+  hans: '简体',
+  hant: '繁體'
+};
+const CHINESE_REGION_SCRIPT = {
+  cn: 'hans',
+  sg: 'hans',
+  my: 'hans',
+  tw: 'hant',
+  hk: 'hant',
+  mo: 'hant'
+};
+/**
+ * The code a list shows for a language (the trigger, labels="code"): the
+ * language alone while the list holds one variant of it («PT» for pt-BR);
+ * the region too when it holds two («PT-BR», «PT-PT»); Chinese by its script
+ * («简体», «繁體»). Owner decision C142 (9).
+ */
+
+function shortLabelIn(code, list) {
+  const {
+    primary,
+    script,
+    region
+  } = partsOf(code);
+  const variants = list.filter(one => partsOf(one).primary === primary).length;
+  if (variants < 2) return primary.toUpperCase();
+
+  if (primary === 'zh') {
+    const by = (script || CHINESE_REGION_SCRIPT[region.toLowerCase()] || '').toLowerCase();
+    if (CHINESE_SCRIPT[by]) return CHINESE_SCRIPT[by];
+  }
+
+  return shortLabel(code);
 }
 /**
  * The languages as given: codes in a string («ru en de», commas allowed), or a
- * list of codes or of {code, label, href}. `href` (a pattern with {code})
- * gives each language without its own href one. Unknown codes and repeats are
- * left out.
+ * list of codes or of {code, label, short, href, missing}. `href` (a pattern
+ * with {code}) gives each language without its own href one. A language this
+ * page has no translation for -- written in `missing` («de fr») or an item's
+ * missing: true -- stays in the list (C142 (6)); its address is `home` (a
+ * pattern with {code}) when given, the site's main page in that language.
+ * Unknown codes and repeats are left out.
  */
 
-function normalizeLanguages(languages, items, href = '') {
+function normalizeLanguages(languages, items, href = '', {
+  missing = '',
+  home = ''
+} = {}) {
   const source = Array.isArray(items) && items.length ? items : Array.isArray(languages) ? languages : text(languages).split(/[\s,;]+/u);
   const pattern = text(href);
+  const homePattern = text(home);
+  const absent = new Set(text(missing).split(/[\s,;]+/u).map(one => canonicalCode(one).toLowerCase()).filter(Boolean));
   const seen = new Set();
-  const list = [];
+  const given = [];
 
   for (const entry of source) {
-    const given = typeof entry === 'string' ? {
+    const one = typeof entry === 'string' ? {
       code: entry
     } : entry && typeof entry === 'object' ? entry : null;
-    if (!given) continue;
-    const code = canonicalCode(given.code ?? given.value ?? given.lang);
+    if (!one) continue;
+    const code = canonicalCode(one.code ?? one.value ?? one.lang);
     if (!code || seen.has(code.toLowerCase())) continue;
     seen.add(code.toLowerCase());
-    const own = nativeName(code);
-    const label = text(given.label) || own;
-    list.push({
-      code,
-      label,
-      native: own,
-      english: englishName(code),
-      short: text(given.short) || shortLabel(code),
-      href: text(given.href) || (pattern ? pattern.replace(/\{(code|lang)\}/gu, code) : ''),
-      dir: dirOf(code)
-    });
+    given.push([code, one]);
   }
 
-  return list;
+  const codes = given.map(([code]) => code);
+  return given.map(([code, one]) => {
+    const own = nativeName(code);
+    const untranslated = one.missing === true || absent.has(code.toLowerCase());
+    const address = untranslated && homePattern ? homePattern.replace(/\{(code|lang)\}/gu, code) : text(one.href) || (pattern ? pattern.replace(/\{(code|lang)\}/gu, code) : '');
+    return {
+      code,
+      label: text(one.label) || own,
+      native: own,
+      english: englishName(code),
+      short: text(one.short) || shortLabelIn(code, codes),
+      href: address,
+      missing: untranslated,
+      dir: dirOf(code)
+    };
+  });
+} // What a search compares: lower case in the root locale, without accents
+// (é and ё compare as e and е), so a query matches whatever case and marks it
+// is typed in.
+
+const folded = value => String(value ?? '').normalize('NFD').replace(/\p{M}+/gu, '').toLocaleLowerCase('und'); // The words a name is made of: split at spaces, hyphens, brackets and the
+// like, so «português (Brasil)» is «português» and «brasil», and pt-BR is pt
+// and br as well as pt-br.
+
+
+const WORD_BREAK = /[\s\-\u2010-\u2015()（）[\],.;:'"«»·/]+/u;
+/** The word starts of a text, folded: what a search query must begin. */
+
+function searchWords(...texts) {
+  const words = new Set();
+
+  for (const text of texts) {
+    const whole = folded(text).trim();
+    if (!whole) continue;
+    words.add(whole);
+
+    for (const word of whole.split(WORD_BREAK)) if (word) words.add(word);
+  }
+
+  return [...words];
 }
-/** The look for a number of languages: none, inline, menu or search. */
+/**
+ * Whether a query finds a language by its words (searchWords): each word of
+ * the query begins one of them. «ру» finds Русский and румынский, not
+ * белорусский or грузинский, where «ру» is inside the word (research LG-8).
+ */
+
+function matchesQuery(words, query) {
+  const parts = folded(query).trim().split(WORD_BREAK).filter(Boolean);
+  if (!parts.length) return true;
+  return parts.every(part => words.some(word => word.startsWith(part)));
+}
+/**
+ * The look for a number of languages: none, inline, menu, search or field. In auto
+ * every count from two is the menu (owner decision C142: one button, no
+ * jump of width from a track to a button when a language is added), from
+ * searchFrom the menu with search; the track is mode="inline", for a
+ * settings page. inlineMax (1 since 1.4.0) still lets auto draw the track up
+ * to that count for a page that writes it.
+ */
 
 function lookFor(count, {
   mode = 'auto',
-  inlineMax = 3,
+  inlineMax = 1,
   searchFrom = 8
 } = {}) {
   if (count < 2) return 'none';
-  if (mode === 'inline' || mode === 'menu' || mode === 'search') return mode;
-  const inline = Number.isFinite(Number(inlineMax)) ? Number(inlineMax) : 3;
+  if (mode === 'inline' || mode === 'menu' || mode === 'search' || mode === 'field') return mode;
+  const inline = Number.isFinite(Number(inlineMax)) ? Number(inlineMax) : 1;
   const search = Number.isFinite(Number(searchFrom)) ? Number(searchFrom) : 8;
   if (count >= search) return 'search';
   return count <= inline ? 'inline' : 'menu';
@@ -1387,6 +1999,37 @@ function matchLanguage(list, value) {
   if (exact) return exact;
   const primary = code.split('-')[0];
   return list.find(language => language.code.toLowerCase() === primary) ?? list.find(language => language.code.toLowerCase().split('-')[0] === primary) ?? null;
+}
+/**
+ * The menu rows of a list of languages (sf-menu-context entries): the name in
+ * itself; beside it, as the row's value, its name in the page's language
+ * (owner decision C142 (3)), left out when it is the same word; under it, for
+ * a language this page has no translation of, the line `missing` (C142 (6));
+ * the radio mark on the chosen one; each row in its own language. A query
+ * keeps the rows whose words it begins (research LG-8). `prefix` goes before
+ * each row's id (an app menu's «language:»).
+ */
+
+function languageRows(list, current, {
+  page = 'en',
+  query = '',
+  missing = '',
+  prefix = ''
+} = {}) {
+  const same = (a, b) => String(a).toLocaleLowerCase() === String(b).toLocaleLowerCase();
+
+  return list.filter(language => !query || matchesQuery(searchWords(language.label, language.native, language.english, nameIn(language.code, page), pageName(language.code, page), language.code), query)).map(language => {
+    const second = pageName(language.code, page);
+    return {
+      id: `${prefix}${language.code}`,
+      text: language.label,
+      value: second && !same(second, language.label) && !same(second, language.native) ? second : undefined,
+      caption: language.missing && missing ? missing : undefined,
+      kind: 'radio',
+      checked: language.code === current?.code,
+      lang: language.code
+    };
+  });
 }
 
 /***/ },
@@ -1408,13 +2051,28 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // already has, so the element has no sheet of its own.
 //
 // - none (one language or none): nothing at all.
-// - inline (two or three): sf-segmented on its track, a radio
-//   group named by label, one segment per language labelled with its own
-//   name (compact: its code, the name kept as the segment's accessible
-//   name), each segment in its own language (lang).
-// - menu and search (four and more): sf-button-icon with the «translate»
-//   glyph, named «Язык: Русский», and sf-menu-context, a popup menu of radio
-//   rows, each in its own language; search adds the menu's own search field.
+// - menu and search (two and more in auto, owner decision C142): sf-button
+//   with the «translate» glyph, the current language's code and the
+//   expand_more glyph («RU ▾»), named «Язык: Русский», and sf-menu-context,
+//   a popup menu of radio rows, each in its own language; search adds the
+//   menu's own search field (remote: the element narrows the rows by word
+//   starts) and the panel's constant width of decision C32 (width="panel":
+//   20rem, 18rem compact). The code keeps one width whatever language is
+//   chosen: every code of the list stands in the same grid cell, the others
+//   hidden, so the label is as wide as the widest of them.
+// - inline (mode="inline" only, for a settings page): sf-segmented on its
+//   track, a radio group named by label, one segment per language labelled
+//   with its own name (labels="code": its code, the name kept as the
+//   segment's accessible name), each segment in its own language (lang).
+//   The arrows move the focus, Enter or Space chooses (C142 (4), the
+//   element's keydown).
+// - field (mode="field", C142 (8)): sf-dropdown as a form field, its label
+//   above it, its rows the languages' names, its search from searchFrom.
+//
+// Every menu is decision C32's panel width (width="panel": 20rem, 18rem
+// compact; C142 (3)): a row holds the name and, beside it, the name in the
+// page's language, longer in Russian («французский»). From searchFrom
+// languages on a phone it opens as sf-menu-context's sheet (C142 (5)).
 //
 // The parts' events stay inside the element (stopPropagation): the page hears
 // sf-language's change, never a segment's or a menu row's.
@@ -1424,8 +2082,8 @@ const stop = event => event.stopPropagation();
 function renderInline(context) {
   const items = context.list.map(language => ({
     value: language.code,
-    label: context.compact ? language.short : language.label,
-    ariaLabel: context.compact ? language.label : '',
+    label: context.codes ? language.short : language.label,
+    ariaLabel: context.codes ? language.label : '',
     lang: language.code
   }));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-segmented
@@ -1439,12 +2097,29 @@ function renderInline(context) {
       @change=${event => context.component.onGroupChange(event)}
       @sf-button-group-change=${stop}
     ></sf-segmented>`;
+} // The trigger's label: the current code, with every other code of the list
+// in the same grid cell and hidden, so the button keeps the width of the
+// widest code whatever is chosen (C142: the width does not change with the
+// language). The hidden codes are out of the accessibility tree; the
+// button's name is its aria-label.
+
+
+function renderCode(context) {
+  const shown = context.current?.short ?? '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-language-code" style="display: inline-grid">${context.list.map(language => {
+    const own = language.short === shown;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        style=${own ? 'grid-area: 1 / 1' : 'grid-area: 1 / 1; visibility: hidden'}
+        aria-hidden=${own ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}
+      >${language.short}</span>`;
+  })}</span>`;
 }
 
 function renderMenu(context) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
       class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
-      icon="translate"
+      icon-start="translate"
+      icon-end="expand_more"
       appearance="ghost"
       scheme="on-surface"
       size=${context.size}
@@ -1453,14 +2128,19 @@ function renderMenu(context) {
       aria-haspopup="menu"
       ?disabled=${context.disabled}
       @click=${() => context.component.toggleMenu()}
-    ></sf-button-icon>
+    >${renderCode(context)}</sf-button>
     <sf-menu-context
       popup
       size=${context.menuSize}
+      width="panel"
       aria-label=${context.label}
       .entries=${context.entries}
       @sf-menu-context-select=${event => context.component.onMenuSelect(event)}
       @sf-context-menu-select=${stop}
+      @sf-menu-context-search=${event => context.component.onMenuSearch(event)}
+      @sf-context-menu-search=${stop}
+      @sf-menu-context-closed=${event => context.component.onMenuClosed(event)}
+      @sf-context-menu-closed=${stop}
     ></sf-menu-context>`;
 } // The parts stand in a frame without a box of its own (display: contents), so
 // they lay out in the host's place. The frame is what the first paint prints
@@ -1471,8 +2151,27 @@ function renderMenu(context) {
 
 const frame = parts => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-language-parts" style="display: contents">${parts}</div>`;
 
+function renderField(context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown
+      class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
+      mode="select"
+      appearance="outlined"
+      size=${context.fieldSize}
+      label=${context.label}
+      .options=${context.fieldOptions}
+      value=${context.value}
+      .search=${context.fieldSearch}
+      search-placeholder=${context.fieldSearch ? context.component.sfWord('search') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?disabled=${context.disabled}
+      @change=${event => context.component.onFieldChange(event)}
+      @sf-dropdown-change=${stop}
+      @input=${stop}
+    ></sf-dropdown>`;
+}
+
 function renderLanguageTemplate(context) {
   if (context.look === 'inline') return frame(renderInline(context));
+  if (context.look === 'field') return frame(renderField(context));
   if (context.look === 'menu' || context.look === 'search') return frame(renderMenu(context));
   return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
@@ -1526,21 +2225,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.2.4","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":3},"search-from":{"type":"number","integer":true,"min":2,"default":8},"compact":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+
+/***/ },
+
+/***/ "9937e6b314d1"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native), in English (en) and in Russian (ru), the component\'s two languages. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with all three names.","names":{"ru":{"native":"русский","en":"Russian","ru":"русский"},"en":{"native":"English","en":"English","ru":"английский"},"de":{"native":"Deutsch","en":"German","ru":"немецкий"},"fr":{"native":"français","en":"French","ru":"французский"},"es":{"native":"español","en":"Spanish","ru":"испанский"},"it":{"native":"italiano","en":"Italian","ru":"итальянский"},"pt":{"native":"português","en":"Portuguese","ru":"португальский"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese","ru":"бразильский португальский"},"pt-PT":{"native":"português europeu","en":"European Portuguese","ru":"европейский португальский"},"tr":{"native":"Türkçe","en":"Turkish","ru":"турецкий"},"pl":{"native":"polski","en":"Polish","ru":"польский"},"uk":{"native":"українська","en":"Ukrainian","ru":"украинский"},"be":{"native":"беларуская","en":"Belarusian","ru":"белорусский"},"kk":{"native":"қазақ тілі","en":"Kazakh","ru":"казахский"},"uz":{"native":"o‘zbek","en":"Uzbek","ru":"узбекский"},"az":{"native":"azərbaycan","en":"Azerbaijani","ru":"азербайджанский"},"hy":{"native":"հայերեն","en":"Armenian","ru":"армянский"},"ka":{"native":"ქართული","en":"Georgian","ru":"грузинский"},"he":{"native":"עברית","en":"Hebrew","ru":"иврит"},"ar":{"native":"العربية","en":"Arabic","ru":"арабский"},"fa":{"native":"فارسی","en":"Persian","ru":"персидский"},"hi":{"native":"हिन्दी","en":"Hindi","ru":"хинди"},"bn":{"native":"বাংলা","en":"Bangla","ru":"бенгальский"},"ja":{"native":"日本語","en":"Japanese","ru":"японский"},"ko":{"native":"한국어","en":"Korean","ru":"корейский"},"zh":{"native":"中文","en":"Chinese","ru":"китайский"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese","ru":"китайский, упрощенное письмо"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese","ru":"китайский, традиционное письмо"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)","ru":"китайский (Тайвань)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese","ru":"вьетнамский"},"th":{"native":"ไทย","en":"Thai","ru":"тайский"},"id":{"native":"Indonesia","en":"Indonesian","ru":"индонезийский"},"ms":{"native":"Melayu","en":"Malay","ru":"малайский"},"nl":{"native":"Nederlands","en":"Dutch","ru":"нидерландский"},"sv":{"native":"svenska","en":"Swedish","ru":"шведский"},"no":{"native":"norsk","en":"Norwegian","ru":"норвежский"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål","ru":"норвежский букмол"},"da":{"native":"dansk","en":"Danish","ru":"датский"},"fi":{"native":"suomi","en":"Finnish","ru":"финский"},"cs":{"native":"čeština","en":"Czech","ru":"чешский"},"sk":{"native":"slovenčina","en":"Slovak","ru":"словацкий"},"hu":{"native":"magyar","en":"Hungarian","ru":"венгерский"},"ro":{"native":"română","en":"Romanian","ru":"румынский"},"bg":{"native":"български","en":"Bulgarian","ru":"болгарский"},"el":{"native":"Ελληνικά","en":"Greek","ru":"греческий"},"tt":{"native":"татар","en":"Tatar","ru":"татарский"},"ky":{"native":"кыргызча","en":"Kyrgyz","ru":"киргизский"},"tg":{"native":"тоҷикӣ","en":"Tajik","ru":"таджикский"},"ba":{"native":"башҡорт","en":"Bashkir","ru":"башкирский"},"sah":{"native":"саха тыла","en":"Yakut","ru":"саха"},"tk":{"native":"türkmen dili","en":"Turkmen","ru":"туркменский"},"mn":{"native":"монгол","en":"Mongolian","ru":"монгольский"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash","ru":"чувашский"},"ce":{"native":"нохчийн","en":"Chechen","ru":"чеченский"},"os":{"native":"ирон","en":"Ossetic","ru":"осетинский"},"lv":{"native":"latviešu","en":"Latvian","ru":"латышский"},"lt":{"native":"lietuvių","en":"Lithuanian","ru":"литовский"},"et":{"native":"eesti","en":"Estonian","ru":"эстонский"},"sr":{"native":"српски","en":"Serbian","ru":"сербский"},"hr":{"native":"hrvatski","en":"Croatian","ru":"хорватский"},"sl":{"native":"slovenščina","en":"Slovenian","ru":"словенский"},"mk":{"native":"македонски","en":"Macedonian","ru":"македонский"},"sq":{"native":"shqip","en":"Albanian","ru":"албанский"},"bs":{"native":"bosanski","en":"Bosnian","ru":"боснийский"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur","ru":"уйгурский"},"ur":{"native":"اردو","en":"Urdu","ru":"урду"}}}');
 
 /***/ },
 
 /***/ "1fc6cbb91573"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Language","runtime":{"label":"Language","trigger":"{label}: {name}","search":"Find a language","empty":"No language found"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Language","runtime":{"label":"Language","trigger":"{label}: {name}","search":"Find a language","empty":"No language found","missing":"no translation — the home page opens"}}');
 
 /***/ },
 
 /***/ "8773c52f3b37"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Язык","runtime":{"label":"Язык","trigger":"{label}: {name}","search":"Найти язык","empty":"Язык не найден"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Язык","runtime":{"label":"Язык","trigger":"{label}: {name}","search":"Найти язык","empty":"Язык не найден","missing":"нет перевода — откроется главная"}}');
 
 /***/ }
 

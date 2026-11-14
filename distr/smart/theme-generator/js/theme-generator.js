@@ -3,47 +3,65 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "e16a74b1f0e0"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DEFAULT_THEME_COLOR: () => (/* binding */ DEFAULT_THEME_COLOR),
 /* harmony export */   STATIC_ALPHA: () => (/* binding */ STATIC_ALPHA),
 /* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
 /* harmony export */   STATIC_HUE_NAMES: () => (/* binding */ STATIC_HUE_NAMES),
+/* harmony export */   STATUS_COMPAT: () => (/* binding */ STATUS_COMPAT),
 /* harmony export */   STATUS_HUES: () => (/* binding */ STATUS_HUES),
 /* harmony export */   THEME_ALPHA: () => (/* binding */ THEME_ALPHA),
+/* harmony export */   THEME_CHECKS: () => (/* binding */ THEME_CHECKS),
 /* harmony export */   THEME_PALETTES: () => (/* binding */ THEME_PALETTES),
 /* harmony export */   THEME_RULES: () => (/* binding */ THEME_RULES),
 /* harmony export */   THEME_TONES: () => (/* binding */ THEME_TONES),
 /* harmony export */   VIVID_CHROMA: () => (/* binding */ VIVID_CHROMA),
 /* harmony export */   applyTheme: () => (/* binding */ applyTheme),
+/* harmony export */   brandVariables: () => (/* binding */ brandVariables),
 /* harmony export */   colorToHct: () => (/* binding */ colorToHct),
+/* harmony export */   contrastRatio: () => (/* binding */ contrastRatio),
 /* harmony export */   isThemeColor: () => (/* binding */ isThemeColor),
 /* harmony export */   staticPalette: () => (/* binding */ staticPalette),
 /* harmony export */   staticVariables: () => (/* binding */ staticVariables),
+/* harmony export */   themeChecks: () => (/* binding */ themeChecks),
 /* harmony export */   themeFromColor: () => (/* binding */ themeFromColor),
 /* harmony export */   themeFromHct: () => (/* binding */ themeFromHct),
 /* harmony export */   themeToCss: () => (/* binding */ themeToCss),
-/* harmony export */   themeVariables: () => (/* binding */ themeVariables)
+/* harmony export */   themeVariables: () => (/* binding */ themeVariables),
+/* harmony export */   withStatusCompat: () => (/* binding */ withStatusCompat)
 /* harmony export */ });
 /* harmony import */ var _vendor_material_color_utilities_hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2bcd13326fc9");
 /* harmony import */ var _vendor_material_color_utilities_palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("165b8320fb88");
 /* harmony import */ var _vendor_material_color_utilities_utils_string_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("4355ff5cca9a");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_3__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_3__);
 // A whole theme from one colour (owner, 2026-10-10: «a Smart component where
 // you choose the main colour and it makes all the other variables»).
 //
-// The Framework's colours are eight tonal palettes of sixteen tones each --
+// The Framework's colours are tonal palettes of sixteen tones each --
 // --sf-<palette>-<tone>, 98 down to 5 -- and every semantic token (--sf-primary,
-// --sf-surface, --sf-outline, ...) reads them through light-dark(). So a theme
-// is those 128 primitives, and nothing else needs to change.
+// --sf-surface, --sf-outline, ...) reads them through light-dark(). A theme is
+// the four dynamic palettes -- primary, secondary, tertiary and neutral, 64
+// primitives and their 80 translucent steps -- and nothing else needs to
+// change. The four status palettes are not the theme's: core declares them as
+// var() of the static hues (C17), and a theme that wrote them as literal
+// colours froze them at the hues of the day it was made (TG-01, 2026-11-11:
+// a themed page kept its old status tones whatever core declared).
 //
 // The palettes are made the way the SIMAI generator makes them (ui-doc,
 // fundamentals/color/color-generator), on Google's HCT colour space: the chosen
 // colour gives the primary palette its hue and chroma, and the others follow
 // fixed rules. Fed the Framework's own primary (#005bbe: hue 265, chroma 85 as
-// the generator's UI Kit values), these rules give back all 128 shipped
-// primitives exactly -- tests/theme-palette.contract.test.mjs holds that.
+// the generator's UI Kit values), these rules give back the 64 shipped
+// primitives of the dynamic palettes exactly -- tests/theme-palette.contract.test.mjs
+// holds that.
 //
 // The generator's own inputs are a hue and a chroma in whole numbers
 // (themeFromHct). A colour is read as them (themeFromColor): its hue to the
@@ -58,6 +76,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const THEME_TONES = Object.freeze([98, 95, 90, 85, 80, 70, 60, 50, 40, 35, 30, 25, 20, 15, 10, 5]); // The static palette (owner decision C17, 2026-11-08; research
 // control/research/2026-11-08-palette.md 3.2): sixteen fixed hues run through
 // the same generator as the theme, so every hue has the same sixteen tones and
@@ -65,8 +84,10 @@ const THEME_TONES = Object.freeze([98, 95, 90, 85, 80, 70, 60, 50, 40, 35, 30, 2
 // the product comes from this palette or from the dynamic one the theme makes
 // (C18). The four status hues keep their numbers, byte for byte: red is error,
 // amber warning, green success, blue info. Information is a status, not the
-// brand (owner, 2026-10-21, simai/ui-source#14): blue is the fixed palette of
-// #005bbe, HCT hue 265.1 at chroma 58.6 -- the nearest tenth above #005bbe's
+// brand (owner, 2026-10-21, simai/ui-source#14), and it stays blue (owner
+// decision C100, 2026-11-12: blue reads best as information; the sky amendment
+// of 2026-11-11 is withdrawn), with no shift on a site whose brand colour is
+// blue (C90). Blue is the fixed palette of #005bbe, HCT hue 265.1 at chroma 58.6 -- the nearest tenth above #005bbe's
 // own 58.5, the one that puts tone 40 on #005bbe itself. Every added hue is
 // chroma 60, brown 30 and gray 0. No hue is shifted toward the theme colour
 // (research 3.3): a hue keeps its name on every site.
@@ -141,36 +162,33 @@ const STATIC_HUES = Object.freeze({
     chroma: 0
   })
 });
-const STATIC_HUE_NAMES = Object.freeze(Object.keys(STATIC_HUES)); // The hue each status is.
+const STATIC_HUE_NAMES = Object.freeze(Object.keys(STATIC_HUES)); // The hue each status is. Core's --sf-<status>-<tone> are var() of these
+// hues' primitives; a theme does not write them (TG-01).
 
 const STATUS_HUES = Object.freeze({
   error: 'red',
   warning: 'amber',
   success: 'green',
   info: 'blue'
-});
-
-function statusRule(status) {
-  const {
-    hue,
-    chroma
-  } = STATIC_HUES[STATUS_HUES[status]];
-  return {
-    hue,
-    chroma
-  };
-} // The translucent steps of every static hue: the status steps, tone 50 at the
+}); // The translucent steps of every static hue: the status steps, tone 50 at the
 // state and fill families (4 to 32), tone 90 at 4, 8, 12 and 24, and tone 20
 // at the state and fill families and the ink steps 64 and 80 -- the dark ink of
 // a coloured place (C16, research 2026-11-08-surfaces 4.3; dispatcher 2026-11-09).
-
 
 const STATIC_ALPHA = Object.freeze({
   20: Object.freeze([4, 8, 12, 16, 20, 24, 64, 80]),
   50: Object.freeze([4, 8, 12, 16, 20, 24, 28, 32]),
   90: Object.freeze([4, 8, 12, 24])
-}); // The generator's defaults. `hue` and `chroma` are either a number or a
+}); // The greys' chroma, and the line under which a colour is a grey (C16): a
+// colour no more chromatic than the greys has no hue to give a theme.
+
+const NEUTRAL_CHROMA = 5; // A grey colour makes a grey theme (C16, TG-03): its secondary and tertiary
+// take its own chroma, not 20 and 40 in a hue it barely has -- #111111 is HCT
+// hue 209, and a chroma-20 secondary of it is a bluish grey.
+
+const accent = chroma => source => source.chroma < NEUTRAL_CHROMA ? source.chroma : chroma; // The generator's defaults. `hue` and `chroma` are either a number or a
 // function of the primary's; a caller may override any of them.
+
 
 const THEME_RULES = Object.freeze({
   primary: {
@@ -179,29 +197,24 @@ const THEME_RULES = Object.freeze({
   },
   secondary: {
     hue: source => source.hue,
-    chroma: 20
+    chroma: accent(20)
   },
   tertiary: {
     hue: source => (source.hue + 60) % 360,
-    chroma: 40
+    chroma: accent(40)
   },
   // The greys take the source's hue at chroma 5, or at the source's own chroma
   // when that is lower (C16): a near-grey brand colour made teal or violet
   // greys out of a hue it barely has.
   neutral: {
     hue: source => source.hue,
-    chroma: source => Math.min(5, source.chroma)
-  },
-  // The four statuses are four hues of the static palette (C17): error is red,
-  // warning amber, success green and info blue, by the same numbers, so a
-  // status and its hue are one palette. A theme may still override a status
-  // here; the hue it was made from stays as it is.
-  error: statusRule('error'),
-  warning: statusRule('warning'),
-  success: statusRule('success'),
-  info: statusRule('info')
+    chroma: source => Math.min(NEUTRAL_CHROMA, source.chroma)
+  } // No status rule: the four statuses are four hues of the static palette
+  // (C17, C100: error red, warning amber, success green, info blue), declared by core
+  // and moved by no theme (TG-01).
+
 });
-const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The translucent steps core defines on a tone: --sf-<palette>-<tone>--alfa-<n>,
+const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The translucent steps core defines on a dynamic palette's tone: --sf-<palette>-<tone>--alfa-<n>,
 // the tone with n% opacity (the alpha scale: state 4/8/12, fill 12-32, ink
 // 48/64/80). Core writes them as literal colours, so a theme that set the tones
 // alone left every container fill and hover in the old hue (DEV, 2026-10-18:
@@ -230,28 +243,75 @@ const THEME_ALPHA = Object.freeze({
     60: [48, 64],
     80: [48],
     90: [4, 8, 12, 16, 20, 24, 32, 48]
-  },
-  error: {
-    20: [4, 8, 12, 16, 20, 24, 64, 80],
-    50: [4, 8, 12, 16, 20, 24, 28, 32],
-    90: [4, 8, 12, 24]
-  },
-  warning: {
-    20: [4, 8, 12, 16, 20, 24, 64, 80],
-    50: [4, 8, 12, 16, 20, 24, 28, 32],
-    90: [4, 8, 12, 24]
-  },
-  success: {
-    20: [4, 8, 12, 16, 20, 24, 64, 80],
-    50: [4, 8, 12, 16, 20, 24, 28, 32],
-    90: [4, 8, 12, 24]
-  },
-  info: {
-    20: [4, 8, 12, 16, 20, 24, 64, 80],
-    50: [4, 8, 12, 16, 20, 24, 28, 32],
-    90: [4, 8, 12, 24]
   }
 });
+const STATUS_NAMES = Object.freeze(Object.keys(STATUS_HUES)); // The status palettes left the theme on 2026-11-12 (TG-01). Until
+// STATUS_COMPAT.remove_after a status override in the options is ignored and
+// theme.palettes.<status> still reads -- as the static hue core draws it with.
+// Each use is noted in SF.deprecations, like every compatibility note
+// (contracts/lifecycle-policy.json): always in the list, in the console only
+// when the page opts in (data-sf-deprecations="warn" or SF.deprecations.warn)
+// (journal option-theme-status-override, property-theme-status-palettes).
+// After that date the override throws and the read is undefined.
+
+const STATUS_COMPAT = Object.freeze({
+  since: '2026-11-12',
+  remove_after: '2027-01-01',
+  docs: 'https://ui.simai.io/ru/smart-components/forms/theme-generator/'
+});
+
+function noteStatusUse(kind, names) {
+  const from = kind === 'option' ? `themeFromHct options ${names.join(', ')}` : `theme.palettes.${names.join(', ')}`;
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+    component: 'theme-palette',
+    kind,
+    from,
+    to: `SF.ThemePalette.staticPalette()[SF.ThemePalette.STATUS_HUES.<status>] (${STATUS_COMPAT.docs})`,
+    since: STATUS_COMPAT.since,
+    remove_after: STATUS_COMPAT.remove_after
+  });
+}
+
+const compatOpen = (now = new Date()) => now.toISOString().slice(0, 10) <= STATUS_COMPAT.remove_after;
+/**
+ * The read-only status palettes of the former theme shape, until
+ * STATUS_COMPAT.remove_after: theme.palettes.error (and warning, success,
+ * info) is the static hue core draws that status with, each read noted in
+ * SF.deprecations (the console only when the page opts in). Not enumerable, so Object.keys, JSON and the CSS
+ * see the four theme palettes only. Returns the theme.
+ */
+
+
+function withStatusCompat(theme) {
+  const palettes = theme?.palettes;
+  if (!palettes || !compatOpen()) return theme;
+
+  for (const status of STATUS_NAMES) {
+    if (Object.hasOwn(palettes, status)) continue;
+    Object.defineProperty(palettes, status, {
+      configurable: true,
+      enumerable: false,
+
+      get() {
+        noteStatusUse('property', [status]);
+        const {
+          hue,
+          chroma,
+          tones
+        } = staticPalette()[STATUS_HUES[status]];
+        return {
+          hue,
+          chroma,
+          tones: { ...tones
+          }
+        };
+      }
+
+    });
+  }
+
+  return theme;
+}
 
 const alphaHex = percent => Math.round(percent * 255 / 100).toString(16).padStart(2, '0'); // The Framework's own primary: the theme every page has until one is chosen.
 
@@ -279,10 +339,15 @@ function colorToHct(color) {
   if (!isThemeColor(color)) throw new TypeError(`A theme colour is a hex colour, #rgb or #rrggbb: ${String(color)}`);
   const hex = expand(color);
   const hct = _vendor_material_color_utilities_hct_hct_js__WEBPACK_IMPORTED_MODULE_0__.Hct.fromInt((0,_vendor_material_color_utilities_utils_string_utils_js__WEBPACK_IMPORTED_MODULE_2__.argbFromHex)(hex)); // As vivid as the hue holds at this tone: asked for far more, the tone
-  // comes back no more chromatic than the colour itself.
+  // comes back no more chromatic than the colour itself. Not a grey, though
+  // (C16, TG-03): at black and white the gamut holds no chroma at all, so
+  // #000000 and #ffffff are "as vivid as they can be" and read as chroma 85
+  // -- a pink theme from black, a teal one from white. A colour no more
+  // chromatic than the greys keeps its own chroma.
 
   const limit = _vendor_material_color_utilities_hct_hct_js__WEBPACK_IMPORTED_MODULE_0__.Hct.from(hct.hue, 200, hct.tone).chroma;
-  const chroma = hct.chroma >= limit - 1 ? Math.max(VIVID_CHROMA, Math.round(hct.chroma)) : Math.round(hct.chroma);
+  const vivid = hct.chroma >= NEUTRAL_CHROMA && hct.chroma >= limit - 1;
+  const chroma = vivid ? Math.max(VIVID_CHROMA, Math.round(hct.chroma)) : Math.round(hct.chroma);
   return {
     hex,
     hue: Math.round(hct.hue) % 360,
@@ -305,6 +370,13 @@ function themeFromHct({
     hue: (hue % 360 + 360) % 360,
     chroma: Math.max(0, chroma)
   };
+  const overridden = STATUS_NAMES.filter(status => options?.[status] !== undefined);
+
+  if (overridden.length) {
+    if (!compatOpen()) throw new TypeError(`${overridden.join(', ')}: a status palette is core's static hue, not a theme's (TG-01)`);
+    noteStatusUse('option', overridden);
+  }
+
   const palettes = {};
 
   for (const name of THEME_PALETTES) {
@@ -322,12 +394,12 @@ function themeFromHct({
     };
   }
 
-  return {
+  return withStatusCompat({
     schema: 'simai.framework.theme',
     schema_version: 1,
     source,
     palettes
-  };
+  });
 }
 /** The theme one colour makes (see colorToHct for how it is read). */
 
@@ -341,16 +413,21 @@ function themeFromColor(color = DEFAULT_THEME_COLOR, options = {}) {
     }
   };
 }
-/** The theme's CSS custom properties, {name: value}. */
+/**
+ * The theme's CSS custom properties, {name: value}: the dynamic palettes'
+ * tones and translucent steps. A theme object stored before TG-01 still holds
+ * the four status palettes; they are not written, so core's static hues apply.
+ */
 
 function themeVariables(theme) {
   const variables = {};
+  const palettes = THEME_PALETTES.map(name => [name, theme?.palettes?.[name]]).filter(([, palette]) => palette);
 
-  for (const [name, palette] of Object.entries(theme?.palettes ?? {})) {
+  for (const [name, palette] of palettes) {
     for (const [tone, value] of Object.entries(palette.tones ?? {})) variables[`--sf-${name}-${tone}`] = value;
   }
 
-  for (const [name, palette] of Object.entries(theme?.palettes ?? {})) {
+  for (const [name, palette] of palettes) {
     for (const [tone, steps] of Object.entries(THEME_ALPHA[name] ?? {})) {
       const base = palette.tones?.[tone];
       if (!base) continue;
@@ -363,8 +440,7 @@ function themeVariables(theme) {
 }
 /**
  * The static palette: for every hue its HCT numbers and its sixteen tones,
- * {name: {hue, chroma, tones}}. The same TonalPalette as the theme's, so a
- * status palette the theme makes is the static hue it names, byte for byte.
+ * {name: {hue, chroma, tones}}. The same TonalPalette as the theme's.
  */
 
 function staticPalette() {
@@ -398,6 +474,141 @@ function staticVariables(palettes = staticPalette()) {
   }
 
   return variables;
+} // What a person should know about the theme a colour makes (docs study
+// 2026-11-11 TG-04; the checks of prototypes/theme-generator-study.html, C84):
+// the generator took a light colour to a darker button or a red one to a
+// button beside «Удалить» and said nothing.
+
+const relativeLuminance = hex => {
+  const channel = at => {
+    const value = parseInt(hex.slice(at, at + 2), 16) / 255;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+
+  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+};
+/** WCAG 2 contrast ratio of two #rrggbb colours. */
+
+
+function contrastRatio(a, b) {
+  const [high, low] = [relativeLuminance(expand(a)), relativeLuminance(expand(b))].sort((x, y) => y - x);
+  return (high + 0.05) / (low + 0.05);
+}
+
+const hueDistance = (a, b) => {
+  const apart = Math.abs(a - b) % 360;
+  return apart > 180 ? 360 - apart : apart;
+}; // The numbers of the checks: text on a filled control at 4.5 (WCAG AA); a
+// colour lighter than tone 58 or darker than 25 is not the one its buttons
+// get (tone 40); a vivid colour (chroma over 40) within 16 degrees of a
+// status hue reads as that status; under chroma 8 the accent is a grey.
+
+
+const THEME_CHECKS = Object.freeze({
+  contrast: 4.5,
+  light: 58,
+  dark: 25,
+  statusHue: 16,
+  statusChroma: 40,
+  grey: 8
+}); // The statuses a brand colour is checked against. Info is not one of them
+// (C90, C100): info is blue like the Framework's own colour, and a blue brand
+// beside a blue information block is the intended look, not a warning.
+
+const CHECKED_STATUSES = Object.freeze(['error', 'warning', 'success']); // The light scheme's --sf-on-primary is --sf-white: tone 100 of any palette.
+
+const ON_PRIMARY_LIGHT = (0,_vendor_material_color_utilities_utils_string_utils_js__WEBPACK_IMPORTED_MODULE_2__.hexFromArgb)(_vendor_material_color_utilities_palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__.TonalPalette.fromHueAndChroma(0, 0).tone(100));
+/**
+ * The checks of a theme, [{code, level, ...}], in this order:
+ * - {code: 'contrast', level: 'error', scheme: 'light'|'dark', ratio}: the
+ *   text on a filled control (--sf-on-primary on --sf-primary) is under 4.5;
+ * - {code: 'adjusted', level: 'warning', from, to, lighter}: the colour is
+ *   light or dark, and its buttons get tone 40 (`to`), not the colour itself;
+ * - {code: 'close-to-status', level: 'warning', status, hue}: the colour is
+ *   near the hue of error (red), warning (amber) or success (green), which
+ *   no theme moves (C17). Not info: info is blue, the Framework's own colour,
+ *   and stays blue beside a blue brand colour with nothing to warn of (C90,
+ *   C100);
+ * - {code: 'grey', level: 'notice'}: the colour is nearly grey, so are its
+ *   accents.
+ * The ratios are rounded to a tenth. A theme made from a hue and a chroma
+ * (no hex) has no 'adjusted' check.
+ */
+
+function themeChecks(theme) {
+  const checks = [];
+  const primary = theme?.palettes?.primary?.tones;
+  const source = theme?.source ?? {};
+  if (!primary) return checks;
+  const light = contrastRatio(ON_PRIMARY_LIGHT, primary[40]);
+  const dark = contrastRatio(primary[20], primary[80]);
+  if (light < THEME_CHECKS.contrast) checks.push({
+    code: 'contrast',
+    level: 'error',
+    scheme: 'light',
+    ratio: round(light)
+  });
+  if (dark < THEME_CHECKS.contrast) checks.push({
+    code: 'contrast',
+    level: 'error',
+    scheme: 'dark',
+    ratio: round(dark)
+  });
+
+  if (source.hex && Number.isFinite(source.tone) && (source.tone > THEME_CHECKS.light || source.tone < THEME_CHECKS.dark) && source.hex !== primary[40]) {
+    checks.push({
+      code: 'adjusted',
+      level: 'warning',
+      from: source.hex,
+      to: primary[40],
+      lighter: source.tone > THEME_CHECKS.light
+    });
+  }
+
+  if (source.chroma > THEME_CHECKS.statusChroma) {
+    for (const status of CHECKED_STATUSES) {
+      const hueName = STATUS_HUES[status];
+      if (hueDistance(source.hue, STATIC_HUES[hueName].hue) < THEME_CHECKS.statusHue) checks.push({
+        code: 'close-to-status',
+        level: 'warning',
+        status,
+        hue: hueName
+      });
+    }
+  }
+
+  if (source.chroma < THEME_CHECKS.grey) checks.push({
+    code: 'grey',
+    level: 'notice'
+  });
+  return checks;
+}
+/**
+ * The brand fill of a site's large areas -- its header and its cover (owner
+ * decision C84; Material's Fidelity idea): {'--sf-brand', '--sf-on-brand'}.
+ * A light colour (tone over THEME_CHECKS.light) fills them as it is, with
+ * black or white text, whichever reads better on it; its buttons and links
+ * keep the readable tone 40 of the primary palette. Any other colour fills
+ * them with the primary role and its text. A theme without a hex (made from a
+ * hue and a chroma) is the primary role too. The values are the colour itself
+ * or core's own roles, never a new tone.
+ */
+
+function brandVariables(theme) {
+  const source = theme?.source ?? {};
+  const light = isThemeColor(source.hex) && Number.isFinite(source.tone) && source.tone > THEME_CHECKS.light;
+  if (!light) return {
+    '--sf-brand': 'var(--sf-primary)',
+    '--sf-on-brand': 'var(--sf-on-primary)'
+  };
+  const hex = expand(source.hex);
+  const luminance = relativeLuminance(hex); // The ratio against black is (L + 0.05) / 0.05, against white 1.05 / (L + 0.05).
+
+  const dark = (luminance + 0.05) / 0.05 >= 1.05 / (luminance + 0.05);
+  return {
+    '--sf-brand': hex,
+    '--sf-on-brand': dark ? 'var(--sf-black)' : 'var(--sf-white)'
+  };
 }
 /** The theme as a stylesheet rule, for a page's or a site's own CSS. */
 
@@ -432,6 +643,9 @@ if (typeof window !== 'undefined') {
     colorToHct,
     themeToCss,
     themeVariables,
+    themeChecks,
+    contrastRatio,
+    brandVariables,
     applyTheme,
     isThemeColor,
     staticPalette,
@@ -443,9 +657,12 @@ if (typeof window !== 'undefined') {
     STATIC_HUE_NAMES,
     STATUS_HUES,
     STATIC_ALPHA,
+    THEME_CHECKS,
     DEFAULT_THEME_COLOR
   });
 }
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -459,17 +676,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e16a74b1f0e0");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ef761541fe6e");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bc9a73b2d5a7");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("365c1fe558c1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1ec50e997e9a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d7615363c74c");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b4c25f97bb99");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e16a74b1f0e0");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ef761541fe6e");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bc9a73b2d5a7");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("365c1fe558c1");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1ec50e997e9a");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d7615363c74c");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b4c25f97bb99");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
 // sf-theme-generator: a theme from one colour (owner, 2026-10-10: «a Smart
 // component where a person chooses the main colour and it makes all the
 // other variables»).
@@ -495,7 +714,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // The tones the preview shows: light to dark, the brand tone (40) among them.
+
+ // The journal record component-theme-generator-to-input-color-brand.
+
+const RETIRED = Object.freeze({
+  since: '2026-11-12',
+  remove_after: '2027-01-01'
+}); // The tones the preview shows: light to dark, the brand tone (40) among them.
 
 const PREVIEW_TONES = [90, 70, 50, 40, 30, 10];
 const LIMITS = {
@@ -507,7 +732,7 @@ const LIMITS = {
 const normaliseColor = value => {
   let text = String(value ?? '').trim();
   if (/^#?[0-9a-f]{8}$/iu.test(text)) text = text.replace(/^#?/u, '#').slice(0, 7);
-  return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.isThemeColor)(text) ? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.colorToHct)(text).hex : '';
+  return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.isThemeColor)(text) ? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.colorToHct)(text).hex : '';
 }; // A whole number in the field's range, or null. `clamp` takes a number out of
 // range to its edge (a committed field); without it such a number is not read
 // at all (a field still being typed: «4» on the way to «45» is not 4 yet, but
@@ -523,16 +748,20 @@ const readNumber = (value, [min, max], clamp = false) => {
   return number;
 };
 
-const copy = value => JSON.parse(JSON.stringify(value));
+const copy = value => JSON.parse(JSON.stringify(value)); // A copy of the theme for a host: the four theme palettes, and until
+// 2027-01-01 the former status palettes as read-only, warned reads (TG-01).
 
-const ThemeGeneratorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+
+const themeCopy = theme => (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.withStatusCompat)(copy(theme));
+
+const ThemeGeneratorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   actions: {
     reset() {
       return this.runReset();
@@ -567,12 +796,12 @@ class SfThemeGenerator extends ThemeGeneratorElement {
 
 
   get color() {
-    return this.value || _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.DEFAULT_THEME_COLOR;
+    return this.value || _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.DEFAULT_THEME_COLOR;
   } // Unset, the colour's own reading; out of range, the edge (§4.2 nullable).
 
 
   get hue() {
-    return readNumber(this.getAttribute('hue'), LIMITS.hue, true) ?? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.colorToHct)(this.color).hue;
+    return readNumber(this.getAttribute('hue'), LIMITS.hue, true) ?? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.colorToHct)(this.color).hue;
   }
 
   set hue(next) {
@@ -580,7 +809,7 @@ class SfThemeGenerator extends ThemeGeneratorElement {
   }
 
   get chroma() {
-    return readNumber(this.getAttribute('chroma'), LIMITS.chroma, true) ?? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.colorToHct)(this.color).chroma;
+    return readNumber(this.getAttribute('chroma'), LIMITS.chroma, true) ?? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.colorToHct)(this.color).chroma;
   }
 
   set chroma(next) {
@@ -598,19 +827,19 @@ class SfThemeGenerator extends ThemeGeneratorElement {
 
 
   get theme() {
-    return copy(this._currentTheme());
+    return themeCopy(this._currentTheme());
   }
   /** The theme as one stylesheet rule of its 128 primitives. */
 
 
   toCSS(selector = this.selector) {
-    return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.themeToCss)(this._currentTheme(), selector || ':root');
+    return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeToCss)(this._currentTheme(), selector || ':root');
   }
   /** The theme object (simai.framework.theme.v1). */
 
 
   toJSON() {
-    return copy(this._currentTheme());
+    return themeCopy(this._currentTheme());
   }
   /** The action reset: back to SIMAI Framework's own colour; a committed choice. */
 
@@ -646,10 +875,10 @@ class SfThemeGenerator extends ThemeGeneratorElement {
 
     if (key !== this._themeKey) {
       const tuned = this.hasAttribute('hue') || this.hasAttribute('chroma');
-      this._theme = tuned ? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.themeFromHct)({
+      this._theme = tuned ? (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeFromHct)({
         hue: this.hue,
         chroma: this.chroma
-      }) : (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.themeFromColor)(this.color);
+      }) : (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeFromColor)(this.color);
       this._themeKey = key;
     }
 
@@ -663,10 +892,46 @@ class SfThemeGenerator extends ThemeGeneratorElement {
       value: this.value,
       hue: this.hue,
       chroma: this.chroma,
-      theme: copy(theme),
-      variables: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.themeVariables)(theme),
-      css: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.themeToCss)(theme, this.selector)
+      theme: themeCopy(theme),
+      variables: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeVariables)(theme),
+      css: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeToCss)(theme, this.selector),
+      checks: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeChecks)(theme)
     };
+  }
+  /** What a person should know about the theme now (core themeChecks, TG-04). */
+
+
+  get checks() {
+    return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeChecks)(this._currentTheme());
+  } // A check in words: the language file's check-<code>, with its numbers.
+
+
+  _checkText(check) {
+    const word = key => this.sfWord(key);
+
+    switch (check.code) {
+      case 'contrast':
+        return this.sfWord('check-contrast', {
+          vars: {
+            scheme: word(`scheme-${check.scheme}`),
+            ratio: String(check.ratio).replace('.', word('decimal'))
+          }
+        });
+
+      case 'adjusted':
+        return this.sfWord(check.lighter ? 'check-adjusted-light' : 'check-adjusted-dark', {
+          vars: {
+            from: check.from,
+            to: check.to
+          }
+        });
+
+      case 'close-to-status':
+        return this.sfWord(`check-status-${check.status}`);
+
+      default:
+        return this.sfWord(`check-${check.code}`);
+    }
   }
 
   _emitChange() {
@@ -728,7 +993,7 @@ class SfThemeGenerator extends ThemeGeneratorElement {
 
     this._unapply();
 
-    if (target) this._undo = (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.applyTheme)(this._currentTheme(), target);
+    if (target) this._undo = (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.applyTheme)(this._currentTheme(), target);
     this._applied = {
       target,
       key
@@ -750,7 +1015,19 @@ class SfThemeGenerator extends ThemeGeneratorElement {
   }
 
   connectedCallback() {
-    super.connectedCallback?.();
+    super.connectedCallback?.(); // Leaving (owner decision C84, 2026-11-12): the brand colour is a mode of
+    // sf-input-color, and the large tone tables go to the docs page
+    // «Конструктор темы». The element works as it did until the date, noted in
+    // SF.deprecations (in the console only when the page opts in).
+
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: 'sf-theme-generator',
+      kind: 'component',
+      from: 'sf-theme-generator',
+      to: 'sf-input-color variant="brand"',
+      since: RETIRED.since,
+      remove_after: RETIRED.remove_after
+    });
     this._committedKey = this._key();
 
     this._sync();
@@ -837,7 +1114,7 @@ class SfThemeGenerator extends ThemeGeneratorElement {
       component: this,
       size: this.size,
       value: this.value,
-      inheritedValue: _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.DEFAULT_THEME_COLOR,
+      inheritedValue: _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.DEFAULT_THEME_COLOR,
       hue: this.hue,
       chroma: this.chroma,
       swatches: this.swatches,
@@ -850,9 +1127,13 @@ class SfThemeGenerator extends ThemeGeneratorElement {
         chroma: text('chroma'),
         chromaHint: text('chroma-hint'),
         reset: text('reset'),
-        preview: text('preview')
+        preview: text('preview'),
+        checks: text('checks')
       },
-      palettes: _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_2__.THEME_PALETTES.map(name => ({
+      checks: (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeChecks)(theme).map(check => ({ ...check,
+        text: this._checkText(check)
+      })),
+      palettes: _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.THEME_PALETTES.map(name => ({
         name,
         label: text(name),
         swatches: PREVIEW_TONES.map(tone => ({
@@ -867,7 +1148,7 @@ class SfThemeGenerator extends ThemeGeneratorElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderThemeGeneratorTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderThemeGeneratorTemplate)(this.templateContext());
   }
 
 }
@@ -892,11 +1173,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
- // The choice above, the palettes below. The colour is sf-color: the
+ // The choice above, what to know about it (core themeChecks: contrast, a
+// colour its buttons do not get, a colour near a status, a grey; TG-04), the
+// palettes below. The checks are a polite status region that is always in the
+// tree, so a check that appears is announced; empty, it takes no room. The colour is sf-color: the
 // platform's picker and the product's own swatches, unset while the
 // Framework's colour applies. Hue and chroma, the generator's own inputs, are
 // folded away: most people choose a colour and are done. The <details> is not
 // bound to anything, so a redraw never folds it while somebody is typing.
+//
+// The colour field shows no palette hues (palette="false"): a hue is stored by
+// its name, and a theme is made from a code; the product's swatches and
+// «Своё» give codes.
 //
 // The colour field draws its own label (one field label look, docs pre-check
 // 2026-11-10 FB-10), so the generator no longer prints a copy of it above.
@@ -926,6 +1214,7 @@ function renderThemeGeneratorTemplate(context) {
                     inherited-value=${context.inheritedValue}
                     inherited-text=${text.inherited}
                     swatches=${context.swatches || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    palette="false"
                     @input=${event => component._colorInput(event)}
                     @change=${event => component._colorChange(event)}></sf-input-color>
         </div>
@@ -940,6 +1229,18 @@ function renderThemeGeneratorTemplate(context) {
           ${field('chroma', context.chroma, text.chromaHint)}
         </div>
       </details>
+      <div class="sf-theme-generator-checks" role="status" aria-label=${text.checks}
+           data-count=${context.checks.length}>
+        ${context.checks.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+          <ul class="sf-theme-generator-check-list">
+            ${context.checks.map(check => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+              <li class="sf-theme-generator-check" data-check=${check.code} data-level=${check.level}
+                  data-status=${check.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+                <sf-icon icon=${check.level === 'notice' ? 'info' : check.level} size="1/2" aria-hidden="true"></sf-icon>
+                <span class="sf-theme-generator-check-text">${check.text}</span>
+              </li>`)}
+          </ul>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      </div>
       <section class="sf-theme-generator-preview" aria-label=${text.preview}>
         ${context.palettes.map(palette => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <div class="sf-theme-generator-row" data-palette=${palette.name}>
@@ -968,6 +1269,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -2874,21 +3182,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-theme
 /***/ "bc9a73b2d5a7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.1.13","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.2.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "1ec50e997e9a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Theme generator","runtime":{"advanced":"Advanced","chroma":"Chroma","chroma-hint":"0 to 150","color":"Main colour","error":"Error","hue":"Hue","hue-hint":"0 to 360","info":"Information","inherited":"SIMAI Framework colour","neutral":"Neutral","preview":"Theme preview","primary":"Primary","reset":"Reset","secondary":"Secondary","success":"Success","tertiary":"Tertiary","title":"Theme generator","warning":"Warning"},"events":{"committed":{"label":"Theme committed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Theme generator","runtime":{"advanced":"Advanced","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","chroma":"Chroma","chroma-hint":"0 to 150","color":"Main colour","decimal":".","hue":"Hue","hue-hint":"0 to 360","inherited":"SIMAI Framework colour","neutral":"Neutral","preview":"Theme preview","primary":"Primary","reset":"Reset","scheme-dark":"dark","scheme-light":"light","secondary":"Secondary","tertiary":"Tertiary","title":"Theme generator"},"events":{"committed":{"label":"Theme committed"}}}');
 
 /***/ },
 
 /***/ "d7615363c74c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Генератор темы","runtime":{"advanced":"Тонкая настройка","chroma":"Насыщенность","chroma-hint":"От 0 до 150","color":"Основной цвет","error":"Ошибка","hue":"Тон","hue-hint":"От 0 до 360","info":"Информация","inherited":"цвет SIMAI Framework","neutral":"Нейтральная","preview":"Предпросмотр темы","primary":"Основная","reset":"Сбросить","secondary":"Вторичная","success":"Успех","tertiary":"Дополнительная","title":"Генератор темы","warning":"Предупреждение"},"events":{"committed":{"label":"Тема выбрана"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Генератор темы","runtime":{"advanced":"Тонкая настройка","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","chroma":"Насыщенность","chroma-hint":"От 0 до 150","color":"Основной цвет","decimal":",","hue":"Тон","hue-hint":"От 0 до 360","inherited":"цвет SIMAI Framework","neutral":"Нейтральная","preview":"Предпросмотр темы","primary":"Основная","reset":"Сбросить","scheme-dark":"тёмной","scheme-light":"светлой","secondary":"Вторичная","tertiary":"Дополнительная","title":"Генератор темы"},"events":{"committed":{"label":"Тема выбрана"}}}');
 
 /***/ }
 

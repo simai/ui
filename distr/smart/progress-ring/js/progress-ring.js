@@ -8,6 +8,7 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   drawnStatus: () => (/* binding */ drawnStatus),
 /* harmony export */   showChunk: () => (/* binding */ showChunk)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
@@ -68,10 +69,55 @@ function showChunk(element, done, total) {
   return {
     outcome: 'applied'
   };
+} // The status drawn (owner decision C131 (7), as sf-progress-bar 1.2.0): the
+// more serious of the page's status and the threshold the value reached. The
+// thresholds are the page's, in per cent like the value; unset is none.
+
+const RANK = {
+  warning: 1,
+  error: 2
+};
+function drawnStatus(status, value, warningAt, errorAt) {
+  const number = Number(value);
+  let reached = '';
+
+  if (Number.isFinite(number)) {
+    if (Number.isFinite(errorAt) && number >= errorAt) reached = 'error';else if (Number.isFinite(warningAt) && number >= warningAt) reached = 'warning';
+  }
+
+  return (RANK[reached] ?? 0) > (RANK[status] ?? 0) ? reached : status;
 }
 
 class SfProgressRing extends ProgressRingElement {
-  // The accessible name: label, else the host's aria-label (§3.1, §4.8).
+  static get props() {
+    return { ...super.props,
+      // No status (empty) is the theme's primary; neutral is grey (C131 (1)).
+      status: {
+        default: '',
+        values: ['', 'neutral', 'info', 'success', 'warning', 'error'],
+        valueAliases: {
+          '': ['primary']
+        }
+      }
+    };
+  }
+
+  get status() {
+    return this.getProp('status');
+  } // A threshold holds only where the page set it.
+
+
+  threshold(attribute) {
+    if (!this.hasAttribute(attribute)) return null;
+    const number = Number(this.getAttribute(attribute));
+    return Number.isFinite(number) ? number : null;
+  }
+
+  get drawnStatus() {
+    return drawnStatus(this.status, this.value, this.threshold('warning-at'), this.threshold('error-at'));
+  } // The accessible name: label, else the host's aria-label (§3.1, §4.8).
+
+
   get accessibleLabel() {
     return this.label || this.getAttribute('aria-label') || '';
   }
@@ -81,7 +127,10 @@ class SfProgressRing extends ProgressRingElement {
   }
 
   templateContext() {
+    const status = this.drawnStatus;
+    this.sfHostState('data-status', status);
     return this.createTemplateContext({ ...this.getPropsContext(),
+      drawnStatus: status,
       label: this.accessibleLabel,
       content: this.hasSlotContent?.('content') ? this.getSlotContent('content') : null,
       rootClass: this.getRootClass(),
@@ -115,9 +164,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The avatar's ladder (owner decision C131 (5)).
 
-const SIZES = ['1/2', '1', '2'];
-const STATUSES = ['neutral', 'info', 'success', 'warning', 'error']; // A number from 0 to 100; anything else reads 0.
+const SIZES = ['1/4', '1/3', '1/2', '1', '2', '3']; // No status (empty) is the theme's primary and carries no class; neutral is
+// grey (C131 (1)).
+
+const STATUSES = ['neutral', 'info', 'success', 'warning', 'error']; // Below size 1 the box leaves no room for a percentage on the text ladder.
+
+const TEXTLESS = new Set(['1/4', '1/3', '1/2']); // A number from 0 to 100; anything else reads 0.
 
 function normalizeValue(value) {
   const parsed = Number(value);
@@ -133,16 +187,20 @@ const on = value => value === true || value === '' || value === 'true'; // The c
 
 function renderProgressRingTemplate(context) {
   const size = SIZES.includes(String(context.size)) ? String(context.size) : '1';
-  const status = STATUSES.includes(String(context.status)) ? String(context.status) : 'neutral';
+  const given = String(context.drawnStatus ?? context.status ?? '');
+  const status = STATUSES.includes(given) ? given : '';
   const indeterminate = on(context.indeterminate);
   const meter = on(context.meter);
   const value = normalizeValue(context.value);
   const role = meter ? 'meter' : 'progressbar'; // A meter always has a value; only a progressbar can be indeterminate.
 
-  const unknown = indeterminate && !meter;
-  const text = on(context.showText) && !unknown ? `${value}%` : '';
+  const unknown = indeterminate && !meter; // Below size 1 no percentage is shown (PG-10, C131 (5)): the box leaves
+  // 8 px letters, below the text ladder. The value stays the ring's
+  // (aria-valuenow), so a screen reader still says it; the eye reads the arc.
+
+  const text = on(context.showText) && !unknown && !TEXTLESS.has(size) ? `${value}%` : '';
   const content = context.content && context.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? context.content : null;
-  const rootClasses = ['sf-progress-ring', `sf-progress-ring--size-${size}`, status === 'neutral' ? '' : `sf-progress-ring--${status}`, unknown ? 'sf-progress-ring--indeterminate' : '', context.rootClass].filter(Boolean).join(' ');
+  const rootClasses = ['sf-progress-ring', `sf-progress-ring--size-${size}`, status ? `sf-progress-ring--${status}` : '', unknown ? 'sf-progress-ring--indeterminate' : '', context.rootClass].filter(Boolean).join(' ');
   const style = [`--sf-progress-ring--value: ${unknown ? 0 : value}`, context.rootStyle].filter(Boolean).join('; ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${rootClasses} style=${style} data-value=${String(value)} data-status=${status}>
@@ -188,7 +246,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.0.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

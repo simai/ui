@@ -199,6 +199,103 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
     this.waitForLocalIconFont(normalizedType);
     return false;
+  }; // An icon drawn in a face the page brought itself. A Docara example frame
+  // (data-docara-example-frame) runs the Loader with the subset off and gets
+  // its icon faces from the shell -- its own subset family ("Material Symbols
+  // Outlined Subset 1923885bcfbd"), "Material Symbols Outlined Full", the
+  // catalogue families, Rounded and Sharp -- and marks the icons it draws
+  // sf-icon-loaded. The Loader knew only the faces of the plain family (subset
+  // off) or of its own subset requests (subset on), so it took the class away
+  // on every scan and Docara put it back (about every 104 ms; decision with
+  // Docara 2026-11-11, core.runtime 1.54.1). An icon is loaded when the first family of its computed
+  // font-family has a loaded face in document.fonts and is not a subset
+  // family of the Loader's own: those draw only the names their manifest
+  // lists, and the manifest path answers for them. A full face of the icon
+  // family the Loader left in document.fonts after a fallback does not count
+  // while the icon is drawn in the subset family.
+  // Only a family of the icon fonts counts ("Material Symbols Outlined",
+  // "Material Symbols Outlined Full", "Docara Symbols Rounded Filled …"):
+  // an icon whose own stylesheet is not in yet inherits the text font, and a
+  // loaded Inter face must not mark it loaded -- it would spell its name.
+
+
+  const iconFacePattern = /\bSymbols (Outlined|Rounded|Sharp)\b/;
+
+  const iconFamilyName = value => String(value || "").split(",")[0].replace(/["']/g, "").trim();
+
+  SFLoaderPlugin.prototype.getLoaderIconSubsetFamilies = function () {
+    const families = new Set(Object.values(localIconFontFamilies).map(family => `${family} Subset`));
+    document.querySelectorAll?.("style[data-sf-icons-subset-family]")?.forEach?.(style => {
+      const text = style.textContent || "";
+      const pattern = /font-family:\s*(["'])([^"']+)\1/g;
+      let match = pattern.exec(text);
+
+      while (match) {
+        families.add(match[2].trim());
+        match = pattern.exec(text);
+      }
+    });
+    return families;
+  }; // The families with a loaded face that are not the Loader's subset
+  // families; read once per task, every icon of a scan shares it.
+
+
+  SFLoaderPlugin.prototype.getPageIconFaceFamilies = function () {
+    if (this.pageIconFaceFamilies) return this.pageIconFaceFamilies;
+    const fonts = globalThis.document?.fonts;
+    const families = new Set();
+
+    if (fonts?.forEach) {
+      const own = this.getLoaderIconSubsetFamilies();
+      fonts.forEach(face => {
+        if (face.status !== "loaded") return;
+        const family = iconFamilyName(face.family);
+
+        if (iconFacePattern.test(family) && !own.has(family)) {
+          families.add(family);
+        }
+      });
+    }
+
+    this.pageIconFaceFamilies = families;
+
+    const forget = () => {
+      this.pageIconFaceFamilies = null;
+    };
+
+    if (typeof queueMicrotask === "function") queueMicrotask(forget);else Promise.resolve().then(forget);
+    return families;
+  };
+
+  SFLoaderPlugin.prototype.isIconDrawnByPageFace = function (el) {
+    if (!el || typeof globalThis.getComputedStyle !== "function") return false;
+    const families = this.getPageIconFaceFamilies();
+    if (!families.size) return false;
+    const family = iconFamilyName(globalThis.getComputedStyle(el).fontFamily);
+    return Boolean(family) && families.has(family);
+  }; // Once: when a page face loads later (loadingdone), or is
+  // added already loaded (no font event; looked for every 100 ms for 10 s),
+  // the static icons are synced, so an icon drawn in it gets the class once
+  // and keeps it. A sync runs only when the set of page faces grew.
+
+
+  SFLoaderPlugin.prototype.watchPageIconFaces = function () {
+    const fonts = globalThis.document?.fonts;
+    if (!fonts?.forEach || this.pageIconFaceWatch) return;
+    this.pageIconFaceWatch = true;
+    let seen = this.getPageIconFaceFamilies().size;
+
+    const check = () => {
+      this.pageIconFaceFamilies = null;
+      const size = this.getPageIconFaceFamilies().size;
+      if (size <= seen) return;
+      seen = size;
+      this.syncStaticIconLoadedState();
+    };
+
+    fonts.addEventListener?.("loadingdone", check);
+    const poll = setInterval(check, 100);
+    setTimeout(() => clearInterval(poll), 10000);
   };
 
   SFLoaderPlugin.prototype.waitForLocalIconFont = function (type = "") {
@@ -729,21 +826,31 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     return [...keys];
   };
 
-  SFLoaderPlugin.prototype.isTrackedIconLoaded = function (tracked) {
+  SFLoaderPlugin.prototype.isTrackedIconLoaded = function (tracked, el = null) {
     if (!tracked?.icon) {
       return false;
     }
 
-    const loadAttrs = this.getIconLoadAttrs(tracked.attrs);
+    const loadAttrs = this.getIconLoadAttrs(tracked.attrs); // An icon drawn in a face the page brought itself (a Docara example
+    // frame) is loaded once that face is: see isIconDrawnByPageFace.
 
     if (!this.isIconSubsetEnabled()) {
-      return this.isLocalIconFontReady(loadAttrs.type);
+      if (this.isLocalIconFontReady(loadAttrs.type)) return true;
+      if (!el) return false;
+      if (this.isIconDrawnByPageFace(el)) return true;
+      this.watchPageIconFaces();
+      return false;
     }
 
     if (this.isIconCoveredByManifest(tracked.icon, loadAttrs)) {
       return true;
     }
 
+    if (el && this.isIconDrawnByPageFace(el)) {
+      return true;
+    }
+
+    if (el) this.watchPageIconFaces();
     const descriptorKey = this.getLoadedIconDescriptorKey(tracked.icon, tracked.attrs);
     return this.loadedIcons.has(descriptorKey);
   };
@@ -761,7 +868,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
   SFLoaderPlugin.prototype.isStaticIconLoadedStateCurrent = function (el, tracked) {
     if (!el || !tracked) return false;
-    return el.classList.contains("sf-icon-loaded") === this.isTrackedIconLoaded(tracked);
+    return el.classList.contains("sf-icon-loaded") === this.isTrackedIconLoaded(tracked, el);
   };
 
   SFLoaderPlugin.prototype.syncTrackedStaticIconElement = function (el, tracked) {
@@ -769,7 +876,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const nextKey = this.getLoadedIconDescriptorKey(tracked.icon, tracked.attrs);
     const prevKey = this.staticIconDescriptorKeys.get(el);
 
-    if (prevKey && prevKey !== nextKey && !this.isTrackedIconLoaded(tracked)) {
+    if (prevKey && prevKey !== nextKey && !this.isTrackedIconLoaded(tracked, el)) {
       el.classList.remove("sf-icon-loaded");
     }
 
@@ -796,9 +903,16 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       if (isTruthyIconFlag(value)) {
         attrs.filled = "1";
       }
-    }
+    } // sf-icon draws one family, outlined (smart.icon 1.2.0, icons study IC-4):
+    // its type rounded and sharp are dated aliases of outlined, and the page
+    // is scanned before the element upgrades and rewrites the attribute. Asked
+    // for here, those families had no font to load and fell back to the old
+    // Material Icons font with a console warning on every load. The class
+    // markup families (.sf-icon-rounded, .sf-icon-shape) are untouched: a host
+    // that ships their fonts (Docara) still draws them.
 
-    attrs.type = this.normalizeIconType(attrs.type || this.getDefaultIconType());
+
+    attrs.type = el.localName === "sf-icon" ? "outlined" : this.normalizeIconType(attrs.type || this.getDefaultIconType());
     return {
       icon,
       attrs
@@ -931,7 +1045,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     if (!el || !el.classList.contains("sf-icon-loaded")) return;
     const tracked = this.getTrackedStaticIconAttrs(el);
 
-    if (!tracked || !this.isTrackedIconLoaded(tracked)) {
+    if (!tracked || !this.isTrackedIconLoaded(tracked, el)) {
       el.classList.remove("sf-icon-loaded");
     }
   };
@@ -966,7 +1080,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
         return;
       }
 
-      updateLoadedClass(el, this.isTrackedIconLoaded(tracked));
+      updateLoadedClass(el, this.isTrackedIconLoaded(tracked, el));
     };
 
     this.isSyncingStaticIconState = true;
@@ -1027,7 +1141,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
             return;
           }
 
-          if (this.isTrackedIconLoaded(tracked)) {
+          if (this.isTrackedIconLoaded(tracked, el)) {
             el.classList.add("sf-icon-loaded");
             this.adoptedIconsPending.delete(el);
           }
@@ -1051,7 +1165,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
         added += this.trackIconDescriptor(tracked.icon, tracked.attrs);
       }
 
-      if (this.isTrackedIconLoaded(tracked)) {
+      if (this.isTrackedIconLoaded(tracked, el)) {
         el.classList.add("sf-icon-loaded");
         this.adoptedIconsPending.delete(el);
       } else {
@@ -5324,10 +5438,18 @@ SFLoaderPlugin.prototype.search = function () {
       if (change.type === 'characterData' || change.type === 'childList') {
         _this.holdChangedStaticIcon?.(change.target);
       }
-    });
+    }); // One record at a time: a page that draws hundreds of components in one
+    // task hands over hundreds of thousands of records, and spread into
+    // push() as arguments they ran past the call stack (RangeError: Maximum
+    // call stack size exceeded, once a load on the 470-row sf-tabs page, C54
+    // D4) and that whole batch of changes was lost.
+
+    const keep = into => {
+      for (const change of relevantChanges) into.push(change);
+    };
 
     if (_this.searchEnd) {
-      mutationBuffer.push(...relevantChanges);
+      keep(mutationBuffer);
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         const bufferedChanges = [...mutationBuffer];
@@ -5335,7 +5457,7 @@ SFLoaderPlugin.prototype.search = function () {
         queueChanges(bufferedChanges);
       }, DEBOUNCE_MS);
     } else {
-      _this.observeElements.push(...relevantChanges);
+      keep(_this.observeElements);
     }
   }; // Changes met while the search was still running wait in observeElements;
   // they are processed when it ends, not dropped.
@@ -8265,6 +8387,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   convertTailwindClasses: () => (/* binding */ convertTailwindClasses),
 /* harmony export */   mapTailwindBaseClass: () => (/* binding */ mapTailwindBaseClass)
 /* harmony export */ });
+// A legacy alias is rewritten only when the whole class is a utility name:
+// a family prefix followed by one of its values. A prefix alone is not
+// enough -- an author's own class pr-row, mt-section, right-panel or
+// grid-cols-wrap is a name, not a utility, and it stays as written (DEV,
+// dropdown-panels study R193: pr-row became p-inline-end-row at load).
+// The size ladder a0..i9 is a value too (pt-a5, -left-b2, mr-i9): the
+// documentation names it, and the built sheets ship it for every side family.
+const SIZE = String.raw`(?:\d+(?:\.\d+)?|\d+\/\d+|[a-i]\d|px|\[[^\]\s]+\])`;
+const PADDING_VALUE = new RegExp(`^${SIZE}$`);
+const MARGIN_VALUE = new RegExp(`^(?:${SIZE}|auto)$`);
+const POSITION_VALUE = new RegExp(`^(?:${SIZE}|auto|full)$`);
+const BORDER_SIDE_VALUE = /^(?:\d+|px|solid|dashed|dotted|double|hidden|none|inset|\[[^\]\s]+\])$/;
+const GRID_COLS_VALUE = /^(?:\d+|none|subgrid|\[[^\]\s]+\])$/;
+
+const sideValue = (mp, value) => (mp === 'p' ? PADDING_VALUE : MARGIN_VALUE).test(value);
+
 function mapTailwindBaseClass(className) {
   if (!className) return null;
   const TAILWIND_COLOR_MAP = {
@@ -8445,6 +8583,7 @@ function mapTailwindBaseClass(className) {
 
   if (sideMatch) {
     const [, sideKey, value] = sideMatch;
+    if (!sideValue(sideKey[0], value)) return null;
     if (negative && sideKey[0] === 'p') return null;
     return `${negative}${sideMap[sideKey]}-${value}`;
   }
@@ -8453,6 +8592,7 @@ function mapTailwindBaseClass(className) {
 
   if (legacySideMatch) {
     const [, mp, side, value] = legacySideMatch;
+    if (!sideValue(mp, value)) return null;
     if (negative && mp === 'p') return null;
     const mappedSide = side === 'left' ? 'inline-start' : 'inline-end';
     return `${negative}${mp}-${mappedSide}-${value}`;
@@ -8460,21 +8600,21 @@ function mapTailwindBaseClass(className) {
 
   const borderSideMatch = base.match(/^border-(l|r)-(.+)$/);
 
-  if (borderSideMatch) {
+  if (borderSideMatch && BORDER_SIDE_VALUE.test(borderSideMatch[2])) {
     const side = borderSideMatch[1] === 'l' ? 'inline-start' : 'inline-end';
     return `border-${side}-${borderSideMatch[2]}`;
   }
 
   const borderSideLegacyMatch = base.match(/^border-(left|right)-(.+)$/);
 
-  if (borderSideLegacyMatch) {
+  if (borderSideLegacyMatch && BORDER_SIDE_VALUE.test(borderSideLegacyMatch[2])) {
     const side = borderSideLegacyMatch[1] === 'left' ? 'inline-start' : 'inline-end';
     return `border-${side}-${borderSideLegacyMatch[2]}`;
   }
 
   const gridColsMatch = base.match(/^grid-cols-(.+)$/);
 
-  if (gridColsMatch) {
+  if (gridColsMatch && GRID_COLS_VALUE.test(gridColsMatch[1])) {
     return `grid-col-${gridColsMatch[1]}`;
   }
 
@@ -8625,9 +8765,11 @@ function mapTailwindBaseClass(className) {
 
   const positionMatch = base.match(/^(left|right)-(.+)$/);
 
-  if (positionMatch) {
-    const side = positionMatch[1] === 'left' ? 'inline-start' : 'inline-end';
-    return `${side}-${positionMatch[2]}`;
+  if (positionMatch && POSITION_VALUE.test(positionMatch[2])) {
+    const side = positionMatch[1] === 'left' ? 'inline-start' : 'inline-end'; // A negative offset keeps its sign: -left-b2 is the documented
+    // left: calc(0rem - var(--sf-b2)), shipped as -inline-start-b2.
+
+    return `${negative}${side}-${positionMatch[2]}`;
   }
 
   return null;
@@ -8780,7 +8922,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","visibility/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","visibility/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

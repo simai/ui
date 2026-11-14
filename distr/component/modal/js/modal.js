@@ -699,14 +699,16 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       panel.style.setProperty('--sf-modal-height', height);
       panel.setAttribute('data-sf-modal-has-height', '');
     } // The window's frame is the question window's (decision C39; dispatcher
-    // decision d, docs pre-check 2026-11-10): the frame --sf-space-3, the
+    // decision d, docs pre-check 2026-11-10): the frame -- since C105 a
+    // window's inset, --sf-space-2 with the edge inside it, drawn by the
+    // sheet (sf.base, so a surfaceClass padding utility still wins) -- the
     // title --sf-space-1 above the content, no line under the header, and the
     // close button on the frame's corner, the title centred on its line. The
     // frame was --sf-space-2 with a line under the header.
 
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-3 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal p-3 flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal flex flex-col gap-1 min-w-0', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
     header.className = joinClasses('sf-modal-header flex items-start min-w-0 gap-1', params.headerClass);
@@ -1620,6 +1622,12 @@ __webpack_require__.r(__webpack_exports__);
 // modal opened from a drawer is above it, takes Escape and Tab while it is,
 // and gives focus back into the drawer when it closes (simai/ui-source#36,
 // #37). Registries, public instance APIs and rendering stay separate.
+//
+// The bundle carries the whole of core/js/layer-stack.js, so its bytes move
+// with that module even where this one does not: component.modal 1.3.1 is the
+// C79 change of densityOf there (an explicit size follows its region). The
+// class modal does not call carryLayerOrigin, so nothing it draws or does
+// changes; sf-modal's portal is the one that takes the region's density.
 
  // sf-modal's window is its modalRoot (its reader getModalRoot retires, standard
 // 1.3.8 §16.13); the class Modal holds its markup in `template`.
@@ -3036,14 +3044,14 @@ const THEMES = ['theme-dark', 'theme-light'];
  * longer different is taken back, so a host moved to another area takes that
  * area's values.
  */
-// The density a host stands in (C22; core/js/density.js says the same): the
-// nearest region's, or "normal" under an explicit size. Written here, not
-// imported: this module is loaded on its own (shared runtime, tests).
+// The density a host stands in (C22, C79; core/js/density.js says the same):
+// the nearest region's -- an explicit size follows its region since C79.
+// Written here, not imported: this module is loaded on its own (shared
+// runtime, tests).
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;

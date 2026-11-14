@@ -72,6 +72,12 @@ const KEY_CAPS = {
   end: 'End',
   pageup: 'PgUp',
   pagedown: 'PgDn'
+}; // An Apple keyboard's own signs where they differ (component.kbd 1.3.3, CM-9
+// of ui-control research 2026-11-14-context-menu): forward delete is ⌦, as
+// macOS menus print it; Del is a Windows word.
+
+const MAC_KEY_CAPS = {
+  delete: '⌦'
 }; // The names of KeyboardEvent.key for the words above.
 
 const KEY_NAMES = {
@@ -149,7 +155,7 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
     modifiers.push(caps[name]);
   }
 
-  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  const key = (apple ? MAC_KEY_CAPS[parsed.key] : undefined) ?? KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
   return [...modifiers, key].map(text => ({
     text,
     square: [...text].length === 1
@@ -436,7 +442,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toolt
 /***/ "9279cc82ea5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.2.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.2.1","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -11,8 +11,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NEW_TAB_WORDS: () => (/* binding */ NEW_TAB_WORDS),
 /* harmony export */   bindDownloadFile: () => (/* binding */ bindDownloadFile),
 /* harmony export */   buildAnchorDownload: () => (/* binding */ buildAnchorDownload),
+/* harmony export */   fileSaid: () => (/* binding */ fileSaid),
 /* harmony export */   initExistingDownloadFiles: () => (/* binding */ initExistingDownloadFiles),
 /* harmony export */   nameFromHref: () => (/* binding */ nameFromHref),
+/* harmony export */   spokenFileSize: () => (/* binding */ spokenFileSize),
 /* harmony export */   unbindDownloadFile: () => (/* binding */ unbindDownloadFile)
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
@@ -82,10 +84,28 @@ function isSameDocument(href) {
   } catch {
     return false;
   }
+} // Only a file on this page's own server is asked for its size (decision
+// C51, docs pre-check 2026-11-10 DF-15): a HEAD to another origin fails
+// without CORS and prints an error, and a server that does not answer HEAD
+// is asked for nothing. An opaque origin (a sandboxed frame) is never this
+// page's own. Everywhere else the page passes file-size.
+
+
+function isSameOriginHttp(href) {
+  if (typeof document === 'undefined' || typeof URL !== 'function') return false;
+
+  try {
+    const target = new URL(href, document.baseURI);
+    const own = globalThis.origin ?? new URL(document.URL).origin;
+    return /^https?:$/u.test(target.protocol) && target.origin === own;
+  } catch {
+    return false;
+  }
 }
 
 async function resolveRemoteFileSize(href, node = null) {
   if (!href || LOCAL_ADDRESS.test(href) || isSameDocument(href)) return '';
+  if (!isSameOriginHttp(href)) return '';
 
   try {
     const response = await fetch(href, {
@@ -119,7 +139,111 @@ const NEW_TAB_WORDS = {
   en: {
     'new-tab': '(opens in a new tab)'
   }
-}; // A file's name when the markup gives none: the link's last part, decoded.
+}; // The size as it is said (decision C51): the unit in words, in the page's
+// language and in the number's form -- «112 байт», «2,4 мегабайта», «1 KB» is
+// «1 kilobyte». The visible «CSV · 112 Б» is hidden from a screen reader,
+// which hears «Смета.csv, CSV, 112 байт», the commas its pauses.
+
+const SIZE_WORDS = {
+  en: {
+    byte: {
+      one: 'byte',
+      other: 'bytes'
+    },
+    kilobyte: {
+      one: 'kilobyte',
+      other: 'kilobytes'
+    },
+    megabyte: {
+      one: 'megabyte',
+      other: 'megabytes'
+    },
+    gigabyte: {
+      one: 'gigabyte',
+      other: 'gigabytes'
+    },
+    terabyte: {
+      one: 'terabyte',
+      other: 'terabytes'
+    }
+  },
+  ru: {
+    byte: {
+      one: 'байт',
+      few: 'байта',
+      many: 'байт',
+      other: 'байта'
+    },
+    kilobyte: {
+      one: 'килобайт',
+      few: 'килобайта',
+      many: 'килобайт',
+      other: 'килобайта'
+    },
+    megabyte: {
+      one: 'мегабайт',
+      few: 'мегабайта',
+      many: 'мегабайт',
+      other: 'мегабайта'
+    },
+    gigabyte: {
+      one: 'гигабайт',
+      few: 'гигабайта',
+      many: 'гигабайт',
+      other: 'гигабайта'
+    },
+    terabyte: {
+      one: 'терабайт',
+      few: 'терабайта',
+      many: 'терабайт',
+      other: 'терабайта'
+    }
+  }
+};
+const SIZE_UNIT_WORDS = {
+  'б': 'byte',
+  b: 'byte',
+  'байт': 'byte',
+  'байта': 'byte',
+  byte: 'byte',
+  bytes: 'byte',
+  'кб': 'kilobyte',
+  kb: 'kilobyte',
+  kib: 'kilobyte',
+  'мб': 'megabyte',
+  mb: 'megabyte',
+  mib: 'megabyte',
+  'гб': 'gigabyte',
+  gb: 'gigabyte',
+  gib: 'gigabyte',
+  'тб': 'terabyte',
+  tb: 'terabyte',
+  tib: 'terabyte'
+};
+const SIZE_TEXT = /^\s*(\d[\d\s\u00a0\u202f.,]*?)\s*([^\d\s.,]+)\.?\s*$/u;
+/** A size text as a screen reader should say it: «2,4 МБ» -> «2,4 мегабайта». */
+
+function spokenFileSize(text, node = null) {
+  const value = String(text || '').trim();
+  const match = SIZE_TEXT.exec(value);
+  if (!match) return value;
+  const key = SIZE_UNIT_WORDS[match[2].toLowerCase()];
+  if (!key) return value;
+  const count = Number(match[1].replace(/[\s\u00a0\u202f]/gu, '').replace(',', '.'));
+  const word = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SIZE_WORDS, key, node, {
+    component: 'download-file',
+    count: Number.isFinite(count) ? count : undefined
+  });
+  return `${match[1].trim()} ${word}`;
+}
+/** The hidden words after the name: «, CSV, 112 байт» -- empty with neither. */
+
+
+function fileSaid(fileType, fileSize, node = null) {
+  const parts = [String(fileType || '').trim(), spokenFileSize(fileSize, node)].filter(Boolean);
+  return parts.length ? `, ${parts.join(', ')}` : '';
+} // A file's name when the markup gives none: the link's last part, decoded.
+
 
 function nameFromHref(href) {
   const path = String(href || '').split(/[?#]/u)[0];
@@ -140,6 +264,22 @@ function getRootLink(root) {
 
 function getSizeNode(root) {
   return root?.querySelector?.('.sf-download-file-file-size') || null;
+} // A file's own row, the link or the button: a row that cannot be pressed (a
+// file that could not be made, or one ready to be fetched by its «Скачать»)
+// is a group or a plain line, and is not bound.
+// The name as shown: the name element less the words a screen reader hears
+// inside it («, CSV, 112 байт»).
+
+
+function shownFileName(node) {
+  if (!node) return '';
+  const copy = node.cloneNode(true);
+  copy.querySelectorAll('.sf-download-file__said').forEach(said => said.remove());
+  return String(copy.textContent || '').trim();
+}
+
+function isPressableRoot(root) {
+  return Boolean(root?.matches?.('a, button'));
 }
 
 function getRootHref(root) {
@@ -154,7 +294,7 @@ function isDisabledRoot(root) {
   return root.classList.contains('disabled') || root.hasAttribute('disabled') || root.getAttribute('aria-disabled') === 'true';
 }
 
-async function resolveAndApplyFileSize(root) {
+async function resolveAndApplyFileSize(root, onSize = null) {
   if (!root || isDisabledRoot(root)) return;
   const sizeNode = getSizeNode(root);
   if (!sizeNode) return;
@@ -162,8 +302,20 @@ async function resolveAndApplyFileSize(root) {
   const href = getRootHref(root);
   if (!href) return;
   const resolvedSize = await resolveRemoteFileSize(href, root);
-  if (!resolvedSize || !sizeNode.isConnected) return;
+  if (!resolvedSize || !sizeNode.isConnected) return; // An element that draws the row itself takes the size and draws it (a
+  // text written under its template would be lost on the next drawing).
+
+  if (typeof onSize === 'function') {
+    onSize(resolvedSize);
+    return;
+  }
+
   sizeNode.textContent = resolvedSize;
+  const saidNode = root.querySelector('.sf-download-file__said');
+
+  if (saidNode) {
+    saidNode.textContent = fileSaid(root.querySelector('.sf-download-file__type')?.textContent || '', resolvedSize, root);
+  }
 }
 
 function emitDownloadFileClick(root, href, fileName, download) {
@@ -182,9 +334,10 @@ function emitDownloadFileClick(root, href, fileName, download) {
 
 
 function bindDownloadFile(root, {
-  onActivate
+  onActivate,
+  onSize
 } = {}) {
-  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1') return;
+  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1' || !isPressableRoot(root)) return;
 
   const handleClick = event => {
     // A file being prepared (aria-busy) takes no second press: the first one
@@ -202,7 +355,7 @@ function bindDownloadFile(root, {
     }
 
     const href = getRootHref(root);
-    const fileName = root.getAttribute('download') || root.dataset.fileName || root.querySelector('.sf-download-file__name, .sf-download-file-file-name')?.textContent?.trim() || '';
+    const fileName = root.getAttribute('download') || root.dataset.fileName || shownFileName(root.querySelector('.sf-download-file__name, .sf-download-file-file-name')) || '';
     const download = root.hasAttribute('download') || root.dataset.download === 'true';
 
     if (typeof onActivate === 'function') {
@@ -233,7 +386,7 @@ function bindDownloadFile(root, {
   root.addEventListener('click', handleClick);
   root.__sfDownloadFileClick = handleClick;
   root.dataset[DOWNLOAD_FILE_BOUND_FLAG] = '1';
-  resolveAndApplyFileSize(root);
+  resolveAndApplyFileSize(root, onSize);
 }
 
 function unbindDownloadFile(root) {
@@ -270,7 +423,8 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       href = '',
       download = true,
       disabled = false,
-      target = ''
+      target = '',
+      fullWidth = false
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const isDisabled = toBoolean(disabled, false);
@@ -304,7 +458,9 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
 
 
     root.classList.add('sf-download-file');
-    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`);
+    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`); // The row is as wide as its text (decision C51); full-width stretches it.
+
+    if (toBoolean(fullWidth, false)) root.classList.add('sf-download-file--full-width');
 
     if (!isDisabled) {
       root.classList.add('cursor-pointer', 'transition');
@@ -325,14 +481,16 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     const iconNode = document.createElement('i');
     iconNode.classList.add('sf-download-file__icon', 'sf-icon');
     iconNode.setAttribute('aria-hidden', 'true');
-    iconNode.textContent = String(icon || 'download');
+    iconNode.textContent = String(icon || 'download'); // The name, then the type and the size right after it (decision C51); on
+    // a phone the two go under the name. The name is never cut.
+
+    const textNode = document.createElement('span');
+    textNode.classList.add('sf-download-file__text');
     const fileNameNode = document.createElement('span');
     fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
-    fileNameNode.textContent = shownName; // The name is one line cut with an ellipsis (component.download-file
-    // 1.1.0): the title shows the whole of it.
-
-    if (shownName) fileNameNode.title = shownName;
-    container.append(iconNode, fileNameNode);
+    fileNameNode.textContent = shownName;
+    container.append(iconNode, textNode);
+    textNode.append(fileNameNode);
 
     if (opensTab) {
       const tabNode = document.createElement('i');
@@ -342,12 +500,21 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       const tabWords = document.createElement('span');
       tabWords.classList.add('sf-download-file__tab-words');
       tabWords.textContent = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(NEW_TAB_WORDS, 'new-tab', document.documentElement, 'download-file');
-      container.append(tabNode, tabWords);
-    } // The type and the size are two facts (decision C25): «PDF · 2,4 МБ».
+      textNode.append(tabNode, tabWords);
+    } // What a screen reader hears after the name: «, CSV, 112 байт» -- inside
+    // the name, so it is heard as one line with it (after the tab words when
+    // the link opens a tab).
 
+
+    const saidNode = document.createElement('span');
+    saidNode.classList.add('sf-download-file__said');
+    saidNode.textContent = fileSaid(fileType, fileSize, document.documentElement);
+    (opensTab ? textNode : fileNameNode).append(saidNode); // The type and the size are two facts (decision C25): «PDF · 2,4 МБ»,
+    // seen; the words above are what is heard.
 
     const metaNode = document.createElement('span');
     metaNode.classList.add('sf-download-file__meta');
+    metaNode.setAttribute('aria-hidden', 'true');
 
     if (fileType) {
       const fileTypeNode = document.createElement('span');
@@ -360,7 +527,8 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');
     fileSizeNode.textContent = String(fileSize || '');
     metaNode.append(fileSizeNode);
-    wrap.append(container, metaNode);
+    textNode.append(metaNode);
+    wrap.append(container);
     root.append(wrap);
     this.href = String(href || '');
     this.download = canLink && !opensTab && toBoolean(download, true);
@@ -973,18 +1141,26 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92b137c03f44");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("deb1a4d61565");
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f61e7676b0d2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("312445577dad");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9288cedb5bb5");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("6da9b5d8b341");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("25a776704bf3");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("deb1a4d61565");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f61e7676b0d2");
+/* harmony import */ var _js_error_fit_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("5a234b6890bd");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("312445577dad");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9288cedb5bb5");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6da9b5d8b341");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("25a776704bf3");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
 
 
 
@@ -996,39 +1172,124 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
  // sf-file-download from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8): the settings are the attributes and properties
 // core/js/element-manifest.js makes from the manifest. A press sends the
-// cancelable request sf-download-file-download {href, fileName, download}
-// (vocabulary 1.1.5 §5.1) on the host; the old sf-download-file:click follows
-// it as a dated alias (aliases.json), and a refused request stops the download.
+// cancelable request sf-file-download-request {href, fileName, download}
+// (vocabulary 1.1.5 §5.1) on the host; its former names --
+// sf-file-download-download, sf-download-file-download and the class event
+// sf-download-file:click -- follow it as dated aliases (aliases.json), and a
+// refused request stops the download.
 
-const DownloadFileElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
-  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
+const DownloadFileElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  // «Не удалось подготовить файл» was the heading of the notice under the
+  // file; the row now says «Не удалось собрать» itself (decision C51). A word
+  // a page registered under the old key is still said until the day.
+  formerWords: {
+    since: '2026-11-11',
+    remove_after: '2027-01-01',
+    words: {
+      'failed-text': 'error-heading'
+    }
+  }
 });
 const STATES = ['ready', 'preparing', 'error']; // The settings that can draw the file as another element (a button or a link).
 
-const REDRAWN_BY = new Set(['href', 'disabled', 'state', 'target']);
+const REDRAWN_BY = new Set(['href', 'disabled', 'state', 'target']); // A file that comes within this long after the press, while the page is in
+// sight, is fetched by itself; later, or on a hidden page, it waits for
+// «Скачать» (decision C51): a download that arrives unasked surprises, and a
+// phone may ask first.
+
+const FETCH_ITSELF_WITHIN = 10000; // The box that holds the row: the first ancestor that draws one (the host is
+// display: contents).
+
+function layoutParent(node) {
+  for (let current = node.parentElement; current; current = current.parentElement) {
+    if (getComputedStyle(current).display !== 'contents') return current;
+  }
+
+  return null;
+} // An element's max-content width, read with its inline size freed for one
+// layout and given back.
+
+
+function maxContentWidth(element) {
+  const {
+    style
+  } = element;
+  const saved = [style.getPropertyValue('inline-size'), style.getPropertyPriority('inline-size'), style.getPropertyValue('max-inline-size'), style.getPropertyPriority('max-inline-size')];
+  style.setProperty('inline-size', 'max-content', 'important');
+  style.setProperty('max-inline-size', 'none', 'important');
+  const width = element.getBoundingClientRect().width;
+  if (saved[0]) style.setProperty('inline-size', saved[0], saved[1]);else style.removeProperty('inline-size');
+  if (saved[2]) style.setProperty('max-inline-size', saved[2], saved[3]);else style.removeProperty('max-inline-size');
+  return width;
+} // The width of `count` characters (ch) in an element's own font: ch is the
+// advance of the digit zero, read from a canvas in the element's font -- no
+// probe in the page.
+
+
+let charsContext = null;
+
+function charsWidth(element, count) {
+  const style = getComputedStyle(element);
+  charsContext ??= element.ownerDocument.createElement('canvas').getContext('2d');
+  if (!charsContext) return 0;
+  charsContext.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  return charsContext.measureText('0').width * count;
+}
+
+function contentWidth(element) {
+  const style = getComputedStyle(element);
+  return element.clientWidth - (parseFloat(style.paddingInlineStart) || 0) - (parseFloat(style.paddingInlineEnd) || 0);
+}
 
 class SfDownloadFile extends DownloadFileElement {
   constructor() {
     super();
     this._boundRoot = null; // A press the host answered by preparing the file: when the file is ready
-    // (state back to ready with an href) it is fetched once, as the person
-    // asked (decision C25). A file prepared before anyone pressed is not.
+    // (state back to ready with an href) it is fetched, as the person asked
+    // (decision C25) -- by itself within ten seconds on a page in sight, else
+    // by «Скачать» (C51). A file prepared before anyone pressed is not.
 
     this._awaiting = false;
+    this._pressedAt = 0;
+    this._offer = false;
+    this._cancelAsked = false;
     this._refocus = false;
+    this._resolvedSize = '';
+    this._live = {
+      polite: '',
+      assertive: ''
+    }; // A failed row's fit (decision C88): narrow puts «Повторить» under the
+    // text, retryIcon draws it as the icon alone; retryWidth is the width of
+    // the button with its words, measured while it had them.
 
-    this._onAlertAction = event => this.onAlertAction(event);
+    this._narrow = false;
+    this._retryIcon = false;
+    this._retryWidth = 0;
+    this._retryReach = 0;
+    this._fitObserver = null;
+    this._fitFrame = 0;
+
+    this._onPress = event => this.onPress(event);
   }
 
   get shownState() {
     const value = this.getAttribute('state');
     return STATES.includes(value) ? value : 'ready';
+  } // What the row shows: the state, and offer for a ready file that waits for
+  // its «Скачать».
+
+
+  get view() {
+    const state = this.shownState;
+    if (state === 'ready' && this._offer && this.getAttribute('href') && !this.hasAttribute('disabled')) return 'offer';
+    return state;
   } // What the template draws is what the component answers (template-context):
   // an absent name is the link's last part, else «Файл»; a file link
   // downloads in the same tab unless target="_blank" opens it to view
@@ -1045,6 +1306,20 @@ class SfDownloadFile extends DownloadFileElement {
 
   get templateName() {
     return this.getAttribute('template') || 'default';
+  } // The share made so far, 0 to 100, or null when the host does not know it
+  // (the spinner then stands in the sign's place).
+
+
+  get shownValue() {
+    const raw = this.getAttribute('value');
+    if (raw === null || raw.trim() === '') return null;
+    const number = Number(raw);
+    if (!Number.isFinite(number)) return null;
+    return Math.min(100, Math.max(0, Math.round(number)));
+  }
+
+  get shownSize() {
+    return this.getAttribute('file-size') || this._resolvedSize || '';
   } // The sign is the download sign (decision C25): a file-type glyph in its
   // place read as «open a document». icon is still drawn until 2027-01-01 and
   // noted once; the type is file-type, in words.
@@ -1071,91 +1346,311 @@ class SfDownloadFile extends DownloadFileElement {
     return icon;
   }
 
+  percentText(value) {
+    try {
+      return new Intl.NumberFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageLocale)(this), {
+        style: 'percent',
+        maximumFractionDigits: 0
+      }).format(value / 100);
+    } catch {
+      return `${value} %`;
+    }
+  }
+
   templateContext() {
     const props = this.getPropsContext();
     const href = this.getAttribute('href') || '';
     const opensTab = Boolean(href) && this.getAttribute('target') === '_blank';
+    const name = this.fileName;
+    const fileType = this.getAttribute('file-type') || '';
+    const fileSize = this.shownSize;
+    const value = this.shownValue;
     return this.createTemplateContext({ ...props,
       size: this.size,
       state: this.shownState,
+      view: this.view,
       // No invented file: an absent name is the link's last part, else «Файл».
-      fileName: this.fileName,
-      fileType: this.getAttribute('file-type') || '',
+      fileName: name,
+      fileType,
+      fileSize,
+      // «, CSV, 112 байт»: what a screen reader hears after the name.
+      said: (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.fileSaid)(fileType, fileSize, this),
       icon: this.signIcon,
       opensTab,
       // A file link downloads where the person is (decision C25): the
       // download semantics are the default, a tab opened to view has none.
       download: this.download,
+      fullWidth: this.hasAttribute('full-width') && this.getAttribute('full-width') !== 'false',
+      value,
+      cancelable: this.hasAttribute('cancelable') && this.getAttribute('cancelable') !== 'false',
       errorText: this.getAttribute('error-text') || '',
+      narrow: this._narrow,
+      retryIcon: this._retryIcon,
+      tipIds: this.view === 'error' ? {
+        name: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this, {
+          kind: 'sf-file-download'
+        }), 'name'),
+        retry: this._retryIcon ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this, {
+          kind: 'sf-file-download'
+        }), 'retry') : ''
+      } : {},
       words: {
         preparing: this.sfWord('preparing-text'),
-        errorHeading: this.sfWord('error-heading'),
+        preparingValue: value === null ? '' : this.sfWord('preparing-value-text', {
+          vars: {
+            percent: this.percentText(value)
+          }
+        }),
+        failed: this.sfWord('failed-text'),
         retry: this.sfWord('retry-text'),
+        retryLabel: this.sfWord('retry-label', {
+          vars: {
+            name
+          }
+        }),
+        cancel: this.sfWord('cancel-text'),
+        cancelLabel: this.sfWord('cancel-label', {
+          vars: {
+            name
+          }
+        }),
+        ready: this.sfWord('ready-text'),
+        get: this.sfWord('get-text'),
+        getLabel: this.sfWord('get-label', {
+          vars: {
+            name
+          }
+        }),
         newTab: this.sfWord('new-tab-text')
       },
+      live: this._live,
       ariaLabel: this.getAttribute('aria-label') || '',
       component: this
     });
+  } // A line for the live regions: polite for the start, the end and a cancel,
+  // assertive for an error (decision C51). The other region is emptied, so a
+  // later line of the same words is said again.
+
+
+  say(text, {
+    urgent = false
+  } = {}) {
+    this._live = urgent ? {
+      polite: '',
+      assertive: text
+    } : {
+      polite: text,
+      assertive: ''
+    };
+    this.requestComponentUpdate?.('live');
+  } // Did the focus sit on what this element drew (read before a change draws
+  // anything)?
+
+
+  holdsFocus() {
+    const active = this.ownerDocument.activeElement;
+    return Boolean(active && active !== this.ownerDocument.body && this.contains(active));
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     // The file is a button until it has an address and a link after (a host
-    // that prepares the file sets href when it is ready): the new element
+    // that prepares the file sets href when it is ready), and a row that
+    // cannot be pressed when it failed or waits for «Скачать»: the new element
     // takes the focus the old one held, so a keyboard user is not dropped to
     // the page's body. Only when the focus was on the file; read before the
     // change draws anything.
-    if (oldValue !== newValue && REDRAWN_BY.has(name) && this._boundRoot && this.ownerDocument.activeElement === this._boundRoot) {
+    if (oldValue !== newValue && REDRAWN_BY.has(name) && this.holdsFocus()) {
       this._refocus = true;
+    }
+
+    if (name === 'href' && oldValue !== newValue) this._resolvedSize = ''; // Another size or another state draws «Повторить» anew: its width with
+    // its words is measured again.
+
+    if ((name === 'size' || name === 'state' || name === 'lang') && oldValue !== newValue) {
+      this._retryIcon = false;
+      this._retryWidth = 0;
     }
 
     super.attributeChangedCallback?.(name, oldValue, newValue);
     if (name !== 'state' || oldValue === newValue) return;
     const next = STATES.includes(newValue) ? newValue : 'ready';
-    if (next === 'error') return;
+    const previous = STATES.includes(oldValue) ? oldValue : 'ready';
+    const file = this.fileName; // A state the page was written with is shown, not said: only a change
+    // while the file is on the page is announced.
 
-    if (next === 'ready' && this._awaiting && oldValue === 'preparing') {
-      this._awaiting = false;
-      const href = this.getAttribute('href');
+    const shown = this.isRendered;
 
-      if (href && !this.hasAttribute('disabled')) {
-        (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.buildAnchorDownload)(href, this.getAttribute('file-name') || (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.nameFromHref)(href));
-      }
+    if (next === 'preparing') {
+      this._offer = false;
+      this._cancelAsked = false;
+      if (shown) this.say(this.sfWord('said-preparing', {
+        vars: {
+          name: file
+        }
+      }));
+      return;
     }
+
+    if (next === 'error') {
+      this._offer = false;
+      this._awaiting = false;
+      this._cancelAsked = false;
+      const reason = this.getAttribute('error-text') || '';
+      if (shown) this.say(`${this.sfWord('said-failed', {
+        vars: {
+          name: file
+        }
+      })}${reason ? ` ${reason}` : ''}`, {
+        urgent: true
+      });
+      return;
+    }
+
+    if (previous !== 'preparing') return; // Back to ready after «Отменить»: the file was not made.
+
+    if (this._cancelAsked) {
+      this._cancelAsked = false;
+      this._awaiting = false;
+      if (shown) this.say(this.sfWord('said-cancelled', {
+        vars: {
+          name: file
+        }
+      }));
+      return;
+    }
+
+    if (!shown) return;
+    const href = this.getAttribute('href');
+
+    if (!href || this.hasAttribute('disabled')) {
+      this._awaiting = false;
+      return;
+    }
+
+    const said = (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.fileSaid)(this.getAttribute('file-type') || '', this.shownSize, this);
+
+    if (!this._awaiting) {
+      this.say(this.sfWord('said-ready', {
+        vars: {
+          name: file,
+          said
+        }
+      }));
+      return;
+    }
+
+    this._awaiting = false;
+    const inTime = Date.now() - this._pressedAt <= FETCH_ITSELF_WITHIN;
+    const inSight = this.ownerDocument.visibilityState !== 'hidden';
+
+    if (inTime && inSight) {
+      (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.buildAnchorDownload)(href, this.getAttribute('file-name') || (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.nameFromHref)(href));
+      this.say(this.sfWord('said-fetched', {
+        vars: {
+          name: file,
+          said
+        }
+      }));
+      return;
+    }
+
+    this._offer = true;
+    this.say(this.sfWord('said-offer', {
+      vars: {
+        name: file,
+        said
+      }
+    }));
+    this.requestComponentUpdate?.('state');
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderDownloadFileTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderDownloadFileTemplate)(this.templateContext());
   } // The class binder's activation, as the element's request: false when a
   // listener refused it. A refused request is the host taking the download
   // over -- preparing the file, perhaps -- so the press is remembered.
 
 
   requestDownload = detail => {
-    const delivered = this.sfEmit('download', detail, {
+    const delivered = this.sfEmit('request', detail, {
       cancelable: true
     });
     this._awaiting = !delivered;
+    if (!delivered) this._pressedAt = Date.now();
     return delivered;
-  }; // «Повторить» under a file that could not be prepared: the host is asked to
-  // make it again (vocabulary §5 retry); the press counts as the person's.
+  }; // The size the class binder asked of the file (one HEAD to this page's own
+  // server): drawn by the template, which also says it.
 
-  onAlertAction(event) {
-    if (event.detail?.action !== 'retry' || !event.target?.closest?.('.sf-download-file__error')) return;
-    event.stopPropagation();
-    this._awaiting = true; // The notice and its button go away when the host starts preparing the
-    // file again; focus would fall to the page's body (docs acceptance
-    // 2026-11-10, L1). It is kept on the file the person asked for.
+  takeResolvedSize = text => {
+    if (this.getAttribute('file-size') || this._resolvedSize === text) return;
+    this._resolvedSize = text;
+    this.requestComponentUpdate?.('file-size');
+  }; // The buttons the row draws (decision C51): «Повторить» in a row that
+  // failed, «Отменить» beside one being made, «Скачать» beside one ready.
 
+  onPress(event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const control = target.closest('.sf-download-file__retry, .sf-download-file__cancel, .sf-download-file__get');
+    if (!control || !this.contains(control)) return;
+    const href = this.getAttribute('href') || '';
+    const fileName = this.getAttribute('file-name') || '';
+
+    if (control.classList.contains('sf-download-file__retry')) {
+      if (this.shownState !== 'error') return; // The press counts as the person's: the file is fetched when it is made.
+
+      this._awaiting = true;
+      this._pressedAt = Date.now(); // The row and its button are drawn again when the host starts preparing
+      // the file; the focus is kept on the file the person asked for (docs
+      // acceptance 2026-11-10, L1).
+
+      this._refocus = true;
+      this.sfEmit('retry', {
+        href,
+        fileName
+      });
+      return;
+    }
+
+    if (control.classList.contains('sf-download-file__cancel')) {
+      if (this.shownState !== 'preparing') return;
+      this._refocus = true; // A cancelable request: a host that answers it itself prevents it;
+      // otherwise the file is back as it was before the press.
+      // The host that prevents it sets ready itself when the work stopped;
+      // either way the return to ready is said as a cancel.
+
+      this._cancelAsked = true;
+      this._awaiting = false;
+      const goes = this.sfEmit('cancel', {
+        href,
+        fileName
+      }, {
+        cancelable: true
+      });
+      if (goes) this.setAttribute('state', 'ready');
+      return;
+    } // «Скачать»: the person's fresh press fetches the file; the row is the
+    // file's link again and takes the focus.
+
+
+    if (this.view !== 'offer' || !href) return;
+    this._offer = false;
     this._refocus = true;
-    this.sfEmit('retry', {
-      href: this.getAttribute('href') || '',
-      fileName: this.getAttribute('file-name') || ''
-    });
+    (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.buildAnchorDownload)(href, fileName || (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.nameFromHref)(href));
+    this.requestComponentUpdate?.('state');
   }
 
   onConnected() {
     super.onConnected?.();
-    this.addEventListener('sf-alert-action', this._onAlertAction);
+    this.addEventListener('click', this._onPress);
+  } // Where the focus goes when what held it was drawn away: the button the
+  // row now offers, else the row.
+
+
+  focusTarget() {
+    const view = this.view;
+    const host = view === 'error' ? this.querySelector('.sf-download-file__retry') : view === 'offer' ? this.querySelector('.sf-download-file__get') : null;
+    return host || this._boundRoot;
   }
 
   afterRender() {
@@ -1164,35 +1659,167 @@ class SfDownloadFile extends DownloadFileElement {
       this._boundRoot = null;
     }
 
-    this._boundRoot = this.querySelector('.sf-download-file');
+    const root = this.querySelector('.sf-download-file');
+    this._boundRoot = root?.matches('a, button') ? root : null;
 
     if (this._boundRoot) {
       // The class script binds every .sf-download-file it finds on the page; a
       // root it reached first is bound again with the element's request.
       (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.unbindDownloadFile)(this._boundRoot);
       (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.bindDownloadFile)(this._boundRoot, {
-        onActivate: this.requestDownload
+        onActivate: this.requestDownload,
+        onSize: this.takeResolvedSize
       });
-    } // After «Повторить», or when the file was redrawn as another element
-    // while it held the focus (the button became the link): once the notice
-    // is gone, the file takes the focus back -- only if the focus was lost
-    // with it, never taken from where the person has moved since.
+    }
 
+    this.watchFit(); // After «Повторить», «Отменить» or «Скачать», or when the file was drawn
+    // as another element while it held the focus (the button became the link,
+    // the row failed): the file, or the button it now offers, takes the focus
+    // back -- only if the focus was lost with it, never taken from where the
+    // person has moved since.
 
-    if (this._refocus && !this.querySelector('.sf-download-file__error')) {
+    if (this._refocus) {
       this._refocus = false;
       const active = document.activeElement;
 
-      if (this._boundRoot && (!active || active === document.body)) {
-        this._boundRoot.focus({
-          preventScroll: true
-        });
+      if (!active || active === document.body) {
+        const target = this.focusTarget();
+
+        if (target === this._boundRoot && this._boundRoot) {
+          this._boundRoot.focus({
+            preventScroll: true
+          });
+        } else if (target) {
+          // An sf-button draws its own button and shows it once its sheets
+          // are applied: before that the button takes no focus (the probe of
+          // 2026-11-11 found the focus left on the body). Focus it when it has
+          // rendered.
+          const place = () => {
+            const now = document.activeElement;
+            if (target.isConnected && (!now || now === document.body)) target.focus({
+              preventScroll: true
+            });
+          };
+
+          customElements.whenDefined(target.localName).then(() => {
+            if (target.isRendered === false && typeof target.whenRendered === 'function') target.whenRendered(place);else place();
+          });
+        }
       }
     }
+  } // A failed row's fit (decision C88; the rule is js/error-fit.js), measured
+  // after it is drawn and again when its column or the row changes size.
+
+
+  fitError() {
+    const row = this.view === 'error' ? this.querySelector('.sf-download-file--error') : null;
+
+    if (!row) {
+      this._fitObserver?.disconnect();
+      return;
+    }
+
+    const column = layoutParent(this);
+    const rem = parseFloat(getComputedStyle(this.ownerDocument.documentElement).fontSize) || 16;
+    const width = column ? contentWidth(column) : 0; // The button's own width with its words (max-content): under the text a
+    // button wider than its column is squeezed to it, so its drawn width
+    // cannot tell whether the words fit.
+
+    const button = row.querySelector('.sf-download-file__retry > button');
+
+    if (!this._retryIcon && button) {
+      const measured = maxContentWidth(button);
+
+      if (measured > 0) {
+        this._retryWidth = measured;
+        this._retryReach = parseFloat(getComputedStyle(button).paddingInlineStart) || 0;
+      }
+    }
+
+    const text = row.querySelector('.sf-download-file__text');
+    const name = row.querySelector('.sf-download-file__name'); // Until the button has drawn with its words there is nothing to weigh:
+    // the button's first size calls the fit again.
+
+    if (!(width > 0) || !text || !name || !(this._retryWidth > 0)) return; // The text column at the column's whole width, the same in both layouts:
+    // the column less the row's border and padding, the sign and the gap
+    // before the text, and the border and padding after it.
+
+    const rowBox = row.getBoundingClientRect();
+    const textBox = text.getBoundingClientRect();
+    const rowStyle = getComputedStyle(row);
+    const rtl = rowStyle.direction === 'rtl';
+    const lead = rtl ? rowBox.right - textBox.right : textBox.left - rowBox.left;
+    const padEnd = parseFloat(rowStyle.paddingInlineEnd) || 0;
+    const trail = padEnd + (parseFloat(rowStyle.borderInlineEndWidth) || 0);
+    const textColumn = width - lead - trail;
+    const body = row.querySelector('.sf-download-file__body');
+    const gap = body ? parseFloat(getComputedStyle(body).columnGap) || 0 : 0;
+    const {
+      narrow,
+      retryIcon
+    } = (0,_js_error_fit_js__WEBPACK_IMPORTED_MODULE_7__.errorFit)({
+      width,
+      rem,
+      textColumn,
+      gap,
+      retryWidth: this._retryWidth,
+      reach: this._retryReach,
+      padEnd,
+      chars: charsWidth(name, _js_error_fit_js__WEBPACK_IMPORTED_MODULE_7__.NAME_KEEPS_CHARS)
+    });
+    if (narrow === this._narrow && retryIcon === this._retryIcon) return;
+    if (retryIcon !== this._retryIcon && this.holdsFocus()) this._refocus = true;
+    this._narrow = narrow;
+    this._retryIcon = retryIcon;
+    this.requestComponentUpdate?.('fit');
+  }
+
+  watchFit() {
+    if (this.view !== 'error') {
+      this._fitObserver?.disconnect();
+      return;
+    }
+
+    if (typeof ResizeObserver === 'undefined') return;
+
+    if (!this._fitObserver) {
+      this._fitObserver = new ResizeObserver(() => {
+        if (this._fitFrame) return;
+        this._fitFrame = requestAnimationFrame(() => {
+          this._fitFrame = 0;
+          this.fitError();
+        });
+      });
+      globalThis.document?.fonts?.ready?.then?.(() => this.fitError());
+    }
+
+    this._fitObserver.disconnect();
+
+    const column = layoutParent(this);
+    const row = this.querySelector('.sf-download-file--error');
+    const retry = this.querySelector('.sf-download-file__retry');
+    if (column) this._fitObserver.observe(column);
+    if (row) this._fitObserver.observe(row); // The button draws itself after the row (its host is display: contents
+    // and has no size of its own): its first drawn size starts the fit.
+
+    if (retry) customElements.whenDefined(retry.localName).then(() => {
+      const drawn = () => {
+        const inner = retry.querySelector(':scope > button');
+        if (inner && this._fitObserver) this._fitObserver.observe(inner);
+        this.fitError();
+      };
+
+      if (retry.isRendered === false && typeof retry.whenRendered === 'function') retry.whenRendered(drawn);else drawn();
+    });
+    this.fitError();
   }
 
   onDisconnected() {
-    this.removeEventListener('sf-alert-action', this._onAlertAction);
+    this._fitObserver?.disconnect();
+    this._fitObserver = null;
+    if (this._fitFrame) cancelAnimationFrame(this._fitFrame);
+    this._fitFrame = 0;
+    this.removeEventListener('click', this._onPress);
 
     if (this._boundRoot) {
       (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.unbindDownloadFile)(this._boundRoot);
@@ -1205,6 +1832,70 @@ class SfDownloadFile extends DownloadFileElement {
 SfDownloadFile.define('sf-file-download');
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "5a234b6890bd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NAME_KEEPS_CHARS: () => (/* binding */ NAME_KEEPS_CHARS),
+/* harmony export */   NARROW_BELOW_REM: () => (/* binding */ NARROW_BELOW_REM),
+/* harmony export */   errorFit: () => (/* binding */ errorFit)
+/* harmony export */ });
+// Where a failed row draws «Повторить» (owner decision C88, prototype
+// prototypes/file-download-row-composition.html variant B, dispatcher rules
+// F1 and F2 of 2026-11-12). The element measures the row and asks this; a pure
+// module, so a contract reads it.
+//
+// narrow -- «Повторить» goes under the text, from the text's edge: in a
+//   column narrower than 22.5rem (360 px, C88), and also wherever the name's
+//   column beside the button with its words would hold fewer than 16
+//   characters (ch) at the name's own text size (F2). The width alone did not
+//   fit sizes 2 and 3: at 360 px their wide button left the name 90.7 and
+//   41.6 px, and it broke letter by letter.
+// retryIcon -- the icon alone, its name in aria-label and a tooltip: only
+//   while narrow, and only when the button with its words is wider than the
+//   room under the text. That room is the text column, plus the button's own
+//   padding before it (the plate reaches into the gap, so its words line up
+//   with the text), plus the same again after it as prototype B allows (F1),
+//   but never past the row's own padding there: on the phone ladder at sizes 2
+//   and 3 the button's padding is the wider one, and the plate would cross the
+//   frame (0.8 px past a 200 px box at 390, measured).
+const NARROW_BELOW_REM = 22.5;
+const NAME_KEEPS_CHARS = 16;
+/**
+ * @param {object} row
+ * @param {number} row.width      the column's content width
+ * @param {number} row.rem        the root font size
+ * @param {number} row.textColumn the text column at the column's whole width
+ * @param {number} row.gap        the row's column gap
+ * @param {number} row.retryWidth the button with its words (max-content)
+ * @param {number} row.reach      the button's inline padding
+ * @param {number} row.padEnd     the row's inline-end padding
+ * @param {number} row.chars      NAME_KEEPS_CHARS characters (ch) at the name's size
+ * @returns {{narrow: boolean, retryIcon: boolean}}
+ */
+
+function errorFit({
+  width,
+  rem,
+  textColumn,
+  gap,
+  retryWidth,
+  reach,
+  padEnd,
+  chars
+}) {
+  const nameBeside = textColumn - gap - retryWidth;
+  const narrow = width < NARROW_BELOW_REM * rem || nameBeside < chars - 0.5;
+  const room = textColumn + reach + Math.min(reach, padEnd);
+  return {
+    narrow,
+    retryIcon: narrow && retryWidth > room + 0.5
+  };
+}
 
 /***/ },
 
@@ -1223,67 +1914,165 @@ var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
- // One file to fetch (decision C25, 2026-11-09):
-//   ready      the download sign, the name, the type and the size;
-//   preparing  the Framework's spinner in the sign's place, «Готовим файл…»
-//              in place of the type and the size, aria-busy, no second press;
-//   error      the file as when ready, and under it an error notice
-//              «Не удалось подготовить файл» with «Повторить».
+ // One file to fetch (decisions C25, C51):
+//   ready      the download sign, the name, and right after it the type and
+//              the size (under it on a phone); the row is as wide as its text
+//              unless full-width. A screen reader hears «name, type, size»,
+//              the unit in words.
+//   preparing  the Framework's spinner in the sign's place -- the progress
+//              ring with value -- and «Готовим файл…» or «Готовим… N %» in
+//              place of the type and the size, aria-busy, no second press;
+//              «Отменить» beside the row while cancelable.
+//   offer      ready after a long wait, or while the page was hidden: the
+//              success sign, «Готово · type · size» and «Скачать» beside it.
+//   error      the row itself says so (decision C88): one grid of the
+//              error sign, the text and «Повторить». The sign stands on the
+//              name's first line, the name takes two lines at most (the whole
+//              name in its tooltip and for a screen reader), «Не удалось
+//              собрать» and error-text a step smaller under it, inside the
+//              frame. «Повторить» ends the first line; in a column narrower
+//              than 360 px, or where the name beside it would keep fewer than
+//              16 characters, it goes under the text, and only when its words do
+//              not fit there either is it the icon alone, its name in
+//              aria-label and a tooltip.
 // A file link downloads in the same tab; target="_blank" is a file opened to
 // view, and says so with a sign after the name and words for a screen reader.
+// Two hidden live regions follow the file: the start, the end and a cancel
+// are said politely, an error at once.
 
 function renderDownloadFileTemplate(context) {
   const {
+    live = {}
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderFile(context)}<span class="sf-download-file__live" role="status">${live.polite || ''}</span><span class="sf-download-file__live" role="alert">${live.assertive || ''}</span>`;
+}
+
+function rowClasses(context, view) {
+  const {
+    size,
+    disabled,
+    fullWidth
+  } = context;
+  return ['sf-download-file', `sf-download-file--size-${size}`, `sf-download-file--${view}`, fullWidth ? 'sf-download-file--full-width' : '', context.rootClass, view === 'ready' || view === 'preparing' ? disabled ? 'disabled' : 'cursor-pointer transition' : ''].filter(Boolean).join(' ');
+} // The Framework's plain tooltip (component.tooltip, class markup), hidden
+// until the tooltip controller shows it on hover or keyboard focus of the
+// trigger that names it. aria-hidden: what it says is already the trigger's
+// name.
+
+
+function tip(id, text) {
+  if (!id) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${id} class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-download-file__tip" aria-hidden="true" hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${text}</span></span></span>`;
+}
+
+function sizeMeta(fileType, fileSize, lead = lit__WEBPACK_IMPORTED_MODULE_0__.nothing) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__meta" aria-hidden="true">${lead}${fileType ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__type">${fileType}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-download-file__size sf-download-file-file-size">${fileSize}</span></span>`;
+}
+
+function body(sign, text, end = lit__WEBPACK_IMPORTED_MODULE_0__.nothing) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <span class="sf-download-file__body sf-download-file-wrap">
+      <span class="sf-download-file__main sf-download-file-container">
+        ${sign}
+        <span class="sf-download-file__text">${text}</span>
+      </span>
+      ${end}
+    </span>
+  `;
+}
+
+function renderFile(context) {
+  const {
+    view,
     size,
     fileName,
     fileType,
     fileSize,
-    icon,
+    said,
+    words,
+    fullWidth
+  } = context;
+
+  const stack = content => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${fullWidth ? 'sf-download-file__stack sf-download-file__stack--full-width' : 'sf-download-file__stack'}>${content}</div>`; // The hidden words stand inside the name, so a screen reader hears them as
+  // one line with it: «Смета.csv, CSV, 112 байт».
+
+
+  const name = (words = '') => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__name sf-download-file-file-name">${fileName}${words ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__said">${words}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+
+  if (view === 'error') {
+    const {
+      narrow,
+      retryIcon,
+      tipIds = {}
+    } = context;
+    const retry = retryIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon
+          class="sf-download-file__retry"
+          size=${size}
+          height="low"
+          appearance="ghost"
+          scheme="primary"
+          icon="refresh"
+          aria-label=${words.retryLabel}
+          data-tooltip=${tipIds.retry || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ></sf-button-icon>${tip(tipIds.retry, words.retry)}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
+          class="sf-download-file__retry"
+          size=${size}
+          height="low"
+          appearance="ghost"
+          scheme="primary"
+          icon-start="refresh"
+          text=${words.retry}
+          aria-label=${words.retryLabel}
+        ></sf-button>`;
+    const classes = [rowClasses(context, 'error'), narrow ? 'sf-download-file--narrow' : '', retryIcon ? 'sf-download-file--retry-icon' : ''].filter(Boolean).join(' '); // The name is cut after two lines: its tooltip shows it whole, and the
+    // words stay whole in the markup, so a screen reader hears all of them.
+
+    const row = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="group" aria-label=${fileName}>
+        ${body((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__icon sf-icon" aria-hidden="true">error</i>`, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__name sf-download-file-file-name" data-tooltip=${tipIds.name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${fileName}<span class="sf-download-file__said">, ${words.failed}</span></span><span class="sf-download-file__meta" aria-hidden="true"><span class="sf-download-file__status">${words.failed}</span></span>${context.errorText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__reason">${context.errorText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__end">${retry}</span>`)}
+        ${tip(tipIds.name, fileName)}
+      </div>
+    `;
+    return stack(row);
+  }
+
+  if (view === 'offer') {
+    const row = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <span class=${rowClasses(context, 'offer')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+        ${body((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__icon sf-icon" aria-hidden="true">check_circle</i>`, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${name(`, ${words.ready}${said}`)}${sizeMeta(fileType, fileSize, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__status">${words.ready}</span>`)}`)}
+      </span>
+    `;
+    return stack((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-download-file__line">${row}<sf-button
+      class="sf-download-file__get"
+      size=${size}
+      height="low"
+      appearance="default"
+      scheme="primary"
+      icon-start="download"
+      text=${words.get}
+      aria-label=${words.getLabel}
+    ></sf-button></div>`);
+  }
+
+  const preparing = view === 'preparing';
+  const {
     href,
     download,
     disabled,
     opensTab,
-    ariaLabel,
-    state,
-    words
+    ariaLabel
   } = context;
-  const preparing = state === 'preparing';
-  const tagName = href && !disabled ? 'a' : 'button';
-  const rootClasses = ['sf-download-file', `sf-download-file--size-${size}`, `sf-download-file--${state}`, context.rootClass, disabled ? 'disabled' : 'cursor-pointer transition'].filter(Boolean);
-  const sign = preparing ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__.createInlineSpinner)({
+  const hasValue = preparing && context.value !== null;
+  const sign = !preparing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__icon sf-icon" aria-hidden="true">${context.icon}</i>` : hasValue ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__ring" aria-hidden="true"><span class="sf-progress-ring" style=${`--sf-progress-ring--value:${context.value}`}><span class="sf-progress-ring-indicator"></span></span></span>` : (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__.createInlineSpinner)({
     className: 'sf-download-file__spinner'
-  }) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__icon sf-icon" aria-hidden="true">${icon}</i>`;
-  const meta = preparing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__meta"><span class="sf-download-file__status">${words.preparing}</span></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__meta">${fileType ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__type">${fileType}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-download-file__size sf-download-file-file-size">${fileSize}</span></span>`;
-  const content = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <span class="sf-download-file__body sf-download-file-wrap">
-      <span class="sf-download-file__main sf-download-file-container">
-        ${sign}
-        <span class="sf-download-file__name sf-download-file-file-name" title=${fileName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${fileName}</span>
-        ${opensTab ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__tab sf-icon" aria-hidden="true">open_in_new</i><span class="sf-download-file__tab-words">${words.newTab}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      </span>
-      ${meta}
-    </span>
-  `;
-  const notice = state === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-alert
-        class="sf-download-file__error"
-        status="error"
-        appearance="outlined"
-        icon="error"
-        heading=${words.errorHeading}
-        supporting-text=${context.errorText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        action-text=${words.retry}
-        action="retry"
-      ></sf-alert>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The host is display: contents, so whatever it draws is laid out by the
-  // page's container. The file and its notice are one column of their own: as
-  // two siblings, a flex row put the notice beside the file (docs pre-check
-  // 2026-11-10 DF-13). Ready and preparing draw the file alone, as before.
-
-  const withNotice = file => notice === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? file : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-download-file__stack">${file}${notice}</div>`;
-
-  if (tagName === 'a') {
-    return withNotice((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  });
+  const tab = opensTab ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-download-file__tab sf-icon" aria-hidden="true">open_in_new</i><span class="sf-download-file__tab-words">${words.newTab}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const text = preparing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${name(', ')}<span class="sf-download-file__meta"><span class="sf-download-file__status">${hasValue ? words.preparingValue : words.preparing}</span></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${name(opensTab ? '' : said)}${tab}${opensTab && said ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-download-file__said">${said}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${sizeMeta(fileType, fileSize)}`;
+  const content = body(sign, text);
+  const classes = rowClasses(context, preparing ? 'preparing' : 'ready');
+  const row = href && !disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <a
-        class=${rootClasses.join(' ')}
+        class=${classes}
         style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         href=${href}
         target=${opensTab ? '_blank' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1294,22 +2083,34 @@ function renderDownloadFileTemplate(context) {
       >
         ${content}
       </a>
-    `);
+    ` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <button
+        type="button"
+        class=${classes}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ?disabled=${disabled}
+        aria-disabled=${disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-busy=${preparing ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      >
+        ${content}
+      </button>
+    `; // «Отменить» stands beside the row while the file is made and the host
+  // can stop it (cancelable).
+
+  if (preparing && context.cancelable) {
+    return stack((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-download-file__line">${row}<sf-button
+      class="sf-download-file__cancel"
+      size=${size}
+      height="low"
+      appearance="ghost"
+      scheme="on-surface"
+      text=${words.cancel}
+      aria-label=${words.cancelLabel}
+    ></sf-button></div>`);
   }
 
-  return withNotice((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <button
-      type="button"
-      class=${rootClasses.join(' ')}
-      style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ?disabled=${disabled}
-      aria-disabled=${disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-busy=${preparing ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    >
-      ${content}
-    </button>
-  `);
+  return row;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1327,6 +2128,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1361,28 +2169,28 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /***/ "9288cedb5bb5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-download for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-download-file:click","to":"sf-download-file-download","kind":"event","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":true,"manifest":{"from":"sf-download-file:click","to":"sf-download-file-download"},"section":"§8, vocabulary 1.1.5 §5.1","note":"the class event\'s name; bx-simai.main listens to it (vocabulary §9.2). The shim sends it after sf-download-file-download, one detail, one cancel"},{"from":"sf-download-file","to":"sf-file-download","kind":"tag","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-file-download; sf-download-file is a subclass defined beside it until the date"},{"from":"sf-download-file-download","to":"sf-file-download-download","kind":"event","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-download-file-retry","to":"sf-file-download-retry","kind":"event","component":"sf-file-download","since":"2026-11-09","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag; the former tag sf-download-file sends its own name until the tag alias goes"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-download for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-download-file:click","to":"sf-download-file-download","kind":"event","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":true,"manifest":{"from":"sf-download-file:click","to":"sf-download-file-download"},"section":"§8, vocabulary 1.1.5 §5.1","note":"the class event\'s name; bx-simai.main listens to it (vocabulary §9.2). The shim sends it after sf-download-file-download, one detail, one cancel"},{"from":"sf-download-file","to":"sf-file-download","kind":"tag","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-file-download; sf-download-file is a subclass defined beside it until the date"},{"from":"sf-download-file-download","to":"sf-file-download-download","kind":"event","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-download-file-retry","to":"sf-file-download-retry","kind":"event","component":"sf-file-download","since":"2026-11-09","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag; the former tag sf-download-file sends its own name until the tag alias goes"},{"from":"sf-file-download-download","to":"sf-file-download-request","kind":"event","component":"sf-file-download","since":"2026-11-11","remove_after":"2027-01-01","mode":"same-detail","cancelable":true,"section":"§8, vocabulary 1.1.5 §5.1","note":"the request doubled the word in its name (owner decision C51, docs pre-check DF-11); the shim sends the old name after sf-file-download-request, one detail, one cancel, and the older names after it"},{"from":"sf-download-file-request","to":"sf-file-download-request","kind":"event","component":"sf-file-download","since":"2026-11-11","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag; the former tag sf-download-file sends its own name until the tag alias goes"},{"from":"sf-download-file-cancel","to":"sf-file-download-cancel","kind":"event","component":"sf-file-download","since":"2026-11-11","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag; the former tag sf-download-file sends its own name until the tag alias goes"}]}');
 
 /***/ },
 
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.5.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "6da9b5d8b341"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Download File","runtime":{"file":"File","preparing-text":"Preparing the file…","error-heading":"Could not prepare the file","retry-text":"Retry","new-tab-text":"(opens in a new tab)"},"events":{"retry":{"label":"Retry"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Download File","runtime":{"file":"File","preparing-text":"Preparing the file…","preparing-value-text":"Preparing… {percent}","failed-text":"Could not be made","retry-text":"Retry","retry-label":"Retry: {name}","cancel-text":"Cancel","cancel-label":"Cancel: {name}","ready-text":"Ready","get-text":"Download","get-label":"Download {name}","new-tab-text":"(opens in a new tab)","said-preparing":"Preparing the file “{name}”","said-ready":"The file is ready: “{name}”{said}","said-fetched":"The file is ready and downloaded: “{name}”{said}","said-offer":"The file is ready: “{name}”{said}. Button “Download”","said-cancelled":"Preparation cancelled: “{name}”","said-failed":"Error: could not make “{name}”."},"events":{"retry":{"label":"Retry"},"cancel":{"label":"Cancel"}}}');
 
 /***/ },
 
 /***/ "25a776704bf3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Скачивание файла","runtime":{"file":"Файл","preparing-text":"Готовим файл…","error-heading":"Не удалось подготовить файл","retry-text":"Повторить","new-tab-text":"(откроется в новой вкладке)"},"events":{"retry":{"label":"Повторить"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Скачивание файла","runtime":{"file":"Файл","preparing-text":"Готовим файл…","preparing-value-text":"Готовим… {percent}","failed-text":"Не удалось собрать","retry-text":"Повторить","retry-label":"Повторить: {name}","cancel-text":"Отменить","cancel-label":"Отменить: {name}","ready-text":"Готово","get-text":"Скачать","get-label":"Скачать {name}","new-tab-text":"(откроется в новой вкладке)","said-preparing":"Готовим файл «{name}»","said-ready":"Файл готов: «{name}»{said}","said-fetched":"Файл готов и скачан: «{name}»{said}","said-offer":"Файл готов: «{name}»{said}. Кнопка «Скачать»","said-cancelled":"Подготовка отменена: «{name}»","said-failed":"Ошибка: не удалось собрать «{name}»."},"events":{"retry":{"label":"Повторить"},"cancel":{"label":"Отменить"}}}');
 
 /***/ }
 

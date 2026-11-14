@@ -2,6 +2,187 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
+}
+
+/***/ },
+
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+}
+
+/***/ },
+
 /***/ "51250bf01ab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -670,14 +851,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4bfbd0eebbca");
-/* harmony import */ var _js_settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bb67a9697f33");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("72cabd0f91e5");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fb3a1cbd7459");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0eadcd89fc76");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("bf0cea966575");
+/* harmony import */ var _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _js_settings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("bb67a9697f33");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("72cabd0f91e5");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("e1c707506370");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("fb3a1cbd7459");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("0eadcd89fc76");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__);
 // sf-settings: compact settings -- a few settings a person changes on the
 // spot, a reader's theme and text size, a table's density, a chat's sound.
 // The items are data, each holding its own value:
@@ -711,14 +901,36 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+
+
+ // The panel look's sheet (C106); the menu looks draw nothing of their own.
+
+
+
  // The menu it draws, found under its current name and its former one.
 
-const MENU = `:scope > .sf-settings-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`;
+const MENU = `:scope > .sf-settings-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`; // The colour window of the colour rows (C85): sf-input-color's own, opened on «Своё».
+
+const PICKER = `:scope > .sf-settings-parts > .sf-settings-color > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-input-color')}`;
 const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]';
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 
-const same = (a, b) => a === b || Number.isNaN(a) && Number.isNaN(b); // The values are a preference of the person (SF.Preferences, owner
+const same = _js_settings__WEBPACK_IMPORTED_MODULE_10__.sameValue; // The anchored positioning Core published, or the bundle's own copy.
+
+const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default()); // On a phone -- below the md breakpoint, where core declares
+// --sf-breakpoint-md -- the panel is a sheet at the bottom of the screen
+// (C106 (8), C32), as sf-menu-context's forms are.
+
+
+const onPhone = () => !getComputedStyle(document.documentElement).getPropertyValue('--sf-breakpoint-md').trim(); // The panel's own parts (templates/panel.js).
+
+
+const PANEL = ':scope > .sf-settings-parts > .sf-settings-panel';
+const ROW = '.sf-settings-row-main';
+
+const rowKey = main => main?.dataset.sfOption ?? main?.dataset.sfSetting ?? ''; // The values are a preference of the person (SF.Preferences, owner
 // 2026-10-14): in the browser under sf-pref:sf-settings/<remember>, and by a
 // host that keeps preferences for its user. The registry is the shared one
 // when core has published it (every bundle has its own copy).
@@ -729,11 +941,11 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 
 
 const rememberKey = name => text(name) ? `sf-settings/${text(name)}` : '';
-const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
   },
   source: 'ru'
 });
@@ -753,7 +965,27 @@ class SfSettings extends SettingsElement {
 
     this._onDocumentClick = event => this.onDocumentClick(event);
 
-    this._onHostClick = event => this.onHostClick(event);
+    this._onHostClick = event => this.onHostClick(event); // The panel look (C106): whether a popup panel is open, the search, the
+    // chosen tab, the values a button-applied panel holds until «Применить»,
+    // and each list's Tab stop by the list's key.
+
+
+    this._open = null;
+    this._query = '';
+    this._tab = 0;
+    this._draft = null;
+    this._current = new Map();
+    this._scrollbar = new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_9__.PanelScrollbar();
+
+    this._onPanelKeyDown = event => this.onPanelKeyDown(event);
+
+    this._onPanelInput = event => this.onPanelInput(event);
+
+    this._onPanelFocusIn = event => this.onPanelFocusIn(event);
+
+    this._onPanelFocusOut = event => this.onPanelFocusOut(event);
+
+    this._onPanelPointerDown = event => this.onPanelPointerDown(event);
   } // The trigger is the default slot (component.json): the children the page
   // wrote without a slot attribute, taken live like the named ones. The JSON
   // island is read and taken out before (element-manifest.js).
@@ -774,11 +1006,31 @@ class SfSettings extends SettingsElement {
 
     document.addEventListener('click', this._onDocumentClick);
     this.addEventListener('click', this._onHostClick);
+    this.addEventListener('keydown', this._onPanelKeyDown);
+    this.addEventListener('input', this._onPanelInput);
+    this.addEventListener('focusin', this._onPanelFocusIn);
+    this.addEventListener('focusout', this._onPanelFocusOut);
+    this.addEventListener('pointerdown', this._onPanelPointerDown);
   }
 
   disconnectedCallback() {
+    this._colorWatch?.disconnect();
+    this._colorWatch = null;
+    this.closePanel({
+      restoreFocus: false,
+      reason: 'api',
+      ask: false
+    });
+
+    this._scrollbar.disconnect();
+
     document.removeEventListener('click', this._onDocumentClick);
     this.removeEventListener('click', this._onHostClick);
+    this.removeEventListener('keydown', this._onPanelKeyDown);
+    this.removeEventListener('input', this._onPanelInput);
+    this.removeEventListener('focusin', this._onPanelFocusIn);
+    this.removeEventListener('focusout', this._onPanelFocusOut);
+    this.removeEventListener('pointerdown', this._onPanelPointerDown);
     super.disconnectedCallback?.();
   } // ------------------------------------------------------------- the values
   // The declared values: the ones the items carried when the page gave them,
@@ -787,7 +1039,7 @@ class SfSettings extends SettingsElement {
 
   declaredValues() {
     if (this._declaredFor !== this.items) {
-      this._declared = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valueMap)(this.items);
+      this._declared = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
       this._declaredFor = this.items;
     }
 
@@ -808,7 +1060,7 @@ class SfSettings extends SettingsElement {
 
   get values() {
     this.restore();
-    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valueMap)(this.items);
+    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
   } // A remembered element puts the person's values back into the items the
   // first time it meets them -- before its first drawing, so the panel never
   // shows one value and then another. Nothing is announced: the page reads
@@ -833,7 +1085,7 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.rewriteValues)(items, item => Object.hasOwn(kept, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, kept[item.id]) : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(items, item => Object.hasOwn(kept, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, kept[item.id]) : null);
     if (!count) return;
     this._declaredFor = list;
     this._restoredFor = list;
@@ -845,7 +1097,7 @@ class SfSettings extends SettingsElement {
     if (!key) return;
 
     try {
-      preferences().write(key, (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valueMap)(this.items));
+      preferences().write(key, (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items));
     } catch {// A page without storage (private mode, blocked) still changes the value.
     }
   } // A person asks the menu for a value: the page is asked first, by this
@@ -859,13 +1111,23 @@ class SfSettings extends SettingsElement {
       value,
       previous
     } = event.detail ?? {};
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.findItem)(this.items, id);
-    if (!item) return;
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, value);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    if (!item) return; // «Свой цвет…» is not a value: it closes the menu and opens the colour
+    // window on «Своё»; what is chosen there is the change.
+
+    if (item.type === 'color' && value === _js_settings__WEBPACK_IMPORTED_MODULE_10__.OWN_COLOR) {
+      event.preventDefault();
+
+      this._openOwnColor(item);
+
+      return;
+    }
+
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
     const detail = {
       id,
       value,
-      previous: previous ?? (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.itemValue)(item),
+      previous: previous ?? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item),
       item: { ...item,
         ...(patch ?? {})
       }
@@ -884,13 +1146,13 @@ class SfSettings extends SettingsElement {
       value,
       previous
     } = event.detail ?? {};
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
     if (!item) return;
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, value);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
     if (!patch) return;
     const {
       list
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.rewriteValues)(this.items, one => one.id === id ? patch : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null);
     this.writeItems(list);
     this.sfEmit('changed', {
       id,
@@ -916,20 +1178,20 @@ class SfSettings extends SettingsElement {
       id: target,
       value: given
     };
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
     if (!item) return {
       outcome: 'refused',
       reason: 'not-found'
     };
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, value);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
     if (!patch) return {
       outcome: 'refused',
       reason: 'invalid'
     };
-    if (same((0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.itemValue)(item), patch.value)) return {
+    if (same((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item), patch.value)) return {
       outcome: 'applied'
     };
-    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
     return {
       outcome: 'applied'
     };
@@ -946,7 +1208,7 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.rewriteValues)(this.items, item => Object.hasOwn(map, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, map[item.id]) : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, item => Object.hasOwn(map, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, map[item.id]) : null);
     if (!count) return {
       outcome: 'refused',
       reason: 'not-found',
@@ -976,12 +1238,12 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.rewriteValues)(this.items, item => {
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, item => {
       if (!Object.hasOwn(declared, item.id)) return null;
-      const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.itemValue)(item);
+      const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
       const value = declared[item.id];
       if (same(previous, value)) return null;
-      const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.valuePatch)(item, value);
+      const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
       if (patch) facts.push({
         id: item.id,
         value,
@@ -1009,11 +1271,12 @@ class SfSettings extends SettingsElement {
 
   async show(given) {
     const id = given && typeof given === 'object' ? given.id : given;
-    if (!(0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.findItem)(this.items, id)) return {
+    if (!(0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id)) return {
       outcome: 'refused',
       reason: 'not-found'
     };
     await this.whenRendered?.();
+    if (this.isPanel) return this.showInPanel(id);
     const menu = this.menu;
     if (!menu) return {
       outcome: 'unavailable',
@@ -1054,6 +1317,112 @@ class SfSettings extends SettingsElement {
     return {
       outcome: 'applied'
     };
+  } // ------------------------------------------------------------- the colour
+
+
+  get _colorPicker() {
+    return this.querySelector(PICKER);
+  }
+  /** Whether one of the items is a colour row: then the colour window is drawn beside the menu. */
+
+
+  get _hasColor() {
+    const walk = list => (Array.isArray(list) ? list : []).some(item => item?.type === 'color' || item?.type === 'group' && walk(item.items));
+
+    return walk(this.items);
+  }
+  /**
+   * Opens sf-input-color's window on «Своё» for a colour row (C85), against
+   * the trigger (or the panel when the element stands inline); the menu
+   * closes first. Returns an outcome.
+   */
+
+
+  async _openOwnColor(given) {
+    const id = given && typeof given === 'object' ? given.id : given;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    if (!item || item.type !== 'color') return {
+      outcome: 'refused',
+      reason: 'not-found'
+    };
+    if (item.custom === false || item.disabled) return {
+      outcome: 'refused',
+      reason: 'not-allowed'
+    };
+    await this.whenRendered?.();
+    const picker = this._colorPicker;
+    if (!picker) return {
+      outcome: 'unavailable',
+      reason: 'no-picker'
+    };
+    const menu = this.menu;
+    const anchor = this.popup && this.anchor() || menu;
+    if (this.popup && menu?.isOpen) menu.close?.({
+      restoreFocus: false,
+      reason: 'own-color'
+    });
+    await customElements.whenDefined('sf-input-color');
+    this._colorItem = item.id;
+    picker.setAttribute('aria-label', item.text ?? '');
+    picker.value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.colorCode)((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item));
+    await picker.whenRendered?.();
+    const holder = picker.parentElement;
+    holder.inert = false;
+
+    if (!picker.openPicker({
+      anchor,
+      view: 'own'
+    })) {
+      holder.inert = true;
+      return {
+        outcome: 'unavailable',
+        reason: 'disabled'
+      };
+    } // Inert again once the window has closed.
+
+
+    this._colorWatch?.disconnect();
+    this._colorWatch = new MutationObserver(() => {
+      if (picker.isOpen) return;
+      holder.inert = true;
+      this._colorWatch?.disconnect();
+      this._colorWatch = null;
+    });
+
+    this._colorWatch.observe(picker, {
+      childList: true,
+      subtree: true
+    });
+
+    return {
+      outcome: 'applied'
+    };
+  } // A colour chosen in the window: asked for and written as a row's value
+  // is (change, then changed). The window's input stays inside.
+
+
+  _onColorPicked(event) {
+    event.stopPropagation();
+    if (event.type !== 'change') return;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, this._colorItem);
+    const value = event.detail?.value;
+    if (!item || !value) return;
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    if (!patch || patch.value === (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item)) return;
+    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
+    const asked = {
+      id: item.id,
+      value: patch.value,
+      previous,
+      item: { ...item,
+        ...patch
+      }
+    };
+    if (!this.sfEmit('change', asked, {
+      cancelable: true
+    })) return;
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === item.id ? patch : null).list);
+    this.sfEmit('changed', asked);
   } // ------------------------------------------------------------- the popup
 
 
@@ -1084,8 +1453,17 @@ class SfSettings extends SettingsElement {
 
 
   toggle(trigger) {
-    const menu = this.menu;
     const anchor = this.anchor(trigger);
+
+    if (this.isPanel) {
+      if (!anchor || !this.popup) return;
+      if (this._open) this.closePanel({
+        reason: 'close'
+      });else this.openPanel(anchor);
+      return;
+    }
+
+    const menu = this.menu;
     if (!menu || !anchor || !this.popup) return;
     customElements.whenDefined('sf-menu-context').then(() => menu.toggleFor(anchor));
   }
@@ -1093,6 +1471,12 @@ class SfSettings extends SettingsElement {
   onHostClick(event) {
     if (event.defaultPrevented) return;
     const target = event.target instanceof Element ? event.target : null;
+
+    if (target && this.panel?.contains(target)) {
+      this.onPanelClick(event, target);
+      return;
+    }
+
     const trigger = target && this.triggers().find(one => one.contains(target));
     if (trigger) this.toggle(trigger);
   }
@@ -1107,7 +1491,9 @@ class SfSettings extends SettingsElement {
 
   syncTriggers() {
     for (const trigger of this.triggers()) {
-      const control = this.anchor(trigger);
+      const control = this.anchor(trigger); // A panel is a dialog (C106, DP-7); the other looks are menus.
+
+      if (control && this.isPanel) control.setAttribute('aria-haspopup', 'dialog');
       if (control && !control.hasAttribute('aria-haspopup')) control.setAttribute('aria-haspopup', 'menu');
       if (control && !control.hasAttribute('aria-expanded')) control.setAttribute('aria-expanded', 'false');
     }
@@ -1121,12 +1507,17 @@ class SfSettings extends SettingsElement {
     const cache = this._entries;
 
     if (cache.items !== this.items || cache.look !== look || cache.label !== tilesLabel) {
+      const word = (key, vars) => this.sfWord(key, vars ? {
+        vars
+      } : undefined);
+
       this._entries = {
         items: this.items,
         look,
         label: tilesLabel,
-        list: (0,_js_settings__WEBPACK_IMPORTED_MODULE_5__.entriesFor)(this.items, look, {
-          tilesLabel
+        list: (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.entriesFor)(this.items, look, {
+          tilesLabel,
+          word
         })
       };
     }
@@ -1136,17 +1527,19 @@ class SfSettings extends SettingsElement {
 
   templateContext() {
     this.restore();
-    const look = _js_settings__WEBPACK_IMPORTED_MODULE_5__.LOOKS.includes(this.look) ? this.look : 'drill';
-    const size = _js_settings__WEBPACK_IMPORTED_MODULE_5__.SIZES.includes(this.size) ? this.size : '1/2';
+    const look = _js_settings__WEBPACK_IMPORTED_MODULE_10__.LOOKS.includes(this.look) ? this.look : 'drill';
+    const size = _js_settings__WEBPACK_IMPORTED_MODULE_10__.SIZES.includes(this.size) ? this.size : '1/2';
     const popup = this.popup;
     this.sfHostState('data-look', look);
     return this.createTemplateContext({ ...this.getPropsContext(),
+      ...(look === 'panel' ? this.panelContext() : {}),
       component: this,
       look,
       size,
       popup,
       label: this.label,
-      entries: this.entries(look, this.sfWord('tiles')),
+      entries: look === 'panel' ? [] : this.entries(look, this.sfWord('tiles')),
+      hasColor: this._hasColor,
       slot: name => this.getSlotContent(name),
       hasSlot: name => name === 'trigger' && this.hasSlotContent(name),
       rootClass: this.getRootClass()
@@ -1160,6 +1553,645 @@ class SfSettings extends SettingsElement {
   afterRender(changed) {
     super.afterRender?.(changed);
     this.syncTriggers();
+    if (this.isPanel) this.afterPanelRender();else this._scrollbar.disconnect();
+  } // ─────────────────────────────────────────── the panel look (C106)
+  // A list's view settings in a panel of this element's own: groups as
+  // sections in one scroll or as tabs, fields lists with a check, a handle, a
+  // pin and a search, applied at once or by «Применить». It is not a mode of
+  // the action menu (DP-7): a popup is a dialog with its own closing (×,
+  // Escape, a press outside, Tab out), a panel in the page's flow a group.
+
+
+  get isPanel() {
+    return this.look === 'panel';
+  }
+
+  get panel() {
+    return this.querySelector(PANEL);
+  }
+  /** How a panel applies: at once (instant) or by its «Применить» button. */
+
+
+  get applyMode() {
+    return _js_settings__WEBPACK_IMPORTED_MODULE_10__.APPLY.includes(this.apply) ? this.apply : 'instant';
+  } // What the rows show: the values a button-applied panel holds until
+  // «Применить», else the items.
+
+
+  shownItems() {
+    return this._draft ?? this.items;
+  }
+
+  panelContext() {
+    const items = this.shownItems();
+    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelGroups)(items);
+    const layout = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelLayout)(items, {
+      search: Boolean(this.search)
+    });
+    const tab = Math.min(this._tab, Math.max(0, groups.length - 1));
+    const shown = layout === 'tabs' ? [groups[tab]].filter(Boolean) : groups;
+    const query = this.search ? this._query : '';
+
+    const rowsOf = list => list.flatMap(item => item.type === 'fields' || item.type === 'choice' ? (item.options ?? []).map(option => [item.type === 'choice' ? item.text : '', option.text]) : [[item.text, item.caption]]);
+
+    const nothingFound = Boolean(query) && !shown.some(group => rowsOf(group.items.filter(item => item.type !== 'heading' && item.type !== 'separator')).some(words => (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.matches)(query, ...words)));
+    return {
+      groups,
+      layout,
+      tab,
+      query,
+      nothingFound,
+      open: Boolean(this._open),
+      search: Boolean(this.search),
+      apply: this.applyMode,
+      count: (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.applyCount)(items),
+      current: this._current,
+      words: {
+        label: this.sfWord('label'),
+        close: this.sfWord('close'),
+        reset: this.sfWord('reset'),
+        apply: this.sfWord('apply'),
+        search: this.sfWord('search'),
+        empty: this.sfWord('empty'),
+        pin: this.sfWord('pin'),
+        unpin: this.sfWord('unpin'),
+        moveHint: this.sfWord('move-hint')
+      }
+    };
+  } // The scroll area's mark (the scroll-area inset rule, C105 addendum): the
+  // body gives up its inline-end padding while its scrollbar takes room.
+
+
+  afterPanelRender() {
+    const body = this.panel?.querySelector('.sf-settings-panel-body') ?? null;
+
+    this._scrollbar.watch(body, 'sf-settings-panel-body--scrollbar');
+  } // A value a person gives in the panel. Applied at once, it is asked
+  // (change, cancellable), written and reported (changed), as a menu row's;
+  // applied by the button, it waits in the panel's draft.
+
+
+  async commitValue(id, value) {
+    if (this.applyMode === 'button') {
+      const draft = this.shownItems();
+      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(draft, id);
+      const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+      if (!patch) return false;
+      this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(draft, one => one.id === id ? patch : null).list;
+      this.requestComponentUpdate('draft');
+      await this.whenRendered?.();
+      return true;
+    }
+
+    return this.writeAsked(id, value);
+  } // change (cancellable), then the write and changed: one setting.
+
+
+  writeAsked(id, value) {
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    if (!patch) return false;
+    const next = { ...item,
+      ...patch
+    };
+    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
+    const asked = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(next);
+    if (same(previous, asked)) return true;
+
+    if (!this.sfEmit('change', {
+      id,
+      value: asked,
+      previous,
+      item: next
+    }, {
+      cancelable: true
+    })) {
+      this.requestComponentUpdate('refused');
+      return false;
+    }
+
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
+    this.sfEmit('changed', {
+      id,
+      value: asked,
+      previous,
+      item: next
+    });
+    return true;
+  } // «Применить»: every setting the draft moved is asked and written, as at
+  // once; then the popup closes.
+
+
+  applyDraft() {
+    const draft = this._draft;
+    this._draft = null;
+
+    if (draft) {
+      const wanted = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(draft);
+      const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
+
+      for (const [id, value] of Object.entries(wanted)) if (!same(now[id], value)) this.writeAsked(id, value);
+    }
+
+    this.requestComponentUpdate('draft');
+    if (this._open) this.closePanel({
+      reason: 'api'
+    });
+  } // «Сбросить»: at once, the declared values back (reset, cancellable);
+  // applied by the button, the draft takes them and waits for «Применить».
+
+
+  resetPanel() {
+    if (this.applyMode !== 'button') {
+      this.reset();
+      return;
+    }
+
+    const declared = this.declaredValues();
+    this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.shownItems(), item => Object.hasOwn(declared, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, declared[item.id]) : null).list;
+    this.requestComponentUpdate('draft');
+  }
+  /** A tab of the panel chosen (the groups shown as tabs). */
+
+
+  chooseGroup(index) {
+    if (!Number.isInteger(index) || index === this._tab) return;
+    this._tab = index;
+    this.requestComponentUpdate('tab');
+  } // A press in the panel: a row's control, a pin, the close button, the
+  // footer's buttons.
+
+
+  onPanelClick(event, target) {
+    if (target.closest('[data-sf-close]')) {
+      this.closePanel({
+        reason: 'close'
+      });
+      return;
+    }
+
+    if (target.closest('[data-sf-reset]')) {
+      this.resetPanel();
+      return;
+    }
+
+    if (target.closest('[data-sf-apply]')) {
+      this.applyDraft();
+      return;
+    }
+
+    const pin = target.closest('.sf-settings-row-pin');
+
+    if (pin) {
+      this.togglePin(pin);
+      return;
+    }
+
+    if (target.closest('.sf-settings-row-handle')) return;
+    const main = target.closest('.sf-settings-row')?.querySelector(`:scope > ${ROW}`);
+
+    if (main) {
+      this.stand(main);
+      this.activate(main);
+    }
+  } // What a row's control does: a switch turns, an option is chosen, a field
+  // is checked or not.
+
+
+  activate(main) {
+    if (main.getAttribute('aria-disabled') === 'true') return;
+    const id = main.dataset.sfSetting;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+    if (!item) return;
+    if (item.type === 'switch') this.commitValue(id, !(0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item));else if (item.type === 'choice') this.commitValue(id, main.dataset.sfOption);else if (item.type === 'fields') {
+      const value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.toggledField)(item, main.dataset.sfOption, 'checked');
+      if (value) this.commitValue(id, value);
+    }
+  }
+
+  async togglePin(pin) {
+    const id = pin.dataset.sfSetting;
+    const option = pin.dataset.sfOption;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.toggledField)(item, option, 'pinned');
+    if (!value) return;
+    const focused = pin === document.activeElement;
+    await this.commitValue(id, value);
+    await this.whenRendered?.();
+    if (focused) this.rowControl(id, option, '.sf-settings-row-pin')?.focus({
+      preventScroll: true
+    });
+  } // A row's control or pin by its setting and option, after a drawing.
+
+
+  rowControl(id, option, selector = ROW) {
+    return [...(this.panel?.querySelectorAll(selector) ?? [])].find(one => one.dataset.sfSetting === id && (option === undefined || one.dataset.sfOption === option)) ?? null;
+  } // The rows of a list a person can reach: shown and not disabled.
+
+
+  listRows(list) {
+    return [...(list?.querySelectorAll(`:scope > .sf-settings-row:not([hidden]) > ${ROW}`) ?? [])].filter(main => main.getAttribute('aria-disabled') !== 'true');
+  } // A row becomes its list's Tab stop (DP-4): one stop per list, the one the
+  // person stood on last.
+
+
+  stand(main) {
+    const list = main.closest('.sf-settings-list');
+    if (!list) return;
+
+    this._current.set(list.dataset.sfList, rowKey(main));
+
+    for (const one of list.querySelectorAll(`:scope > .sf-settings-row > ${ROW}`)) one.tabIndex = one === main ? 0 : -1;
+  }
+
+  onPanelFocusIn(event) {
+    const main = event.target?.closest?.(ROW);
+    if (main && this.panel?.contains(main)) this.stand(main);
+  } // Tab out of a popup closes it (a dialog that does not keep the focus); a
+  // sheet keeps it (the layer's Tab below).
+
+
+  onPanelFocusOut(event) {
+    const panel = this.panel;
+    if (!this._open || this._open.sheet || !panel?.contains(event.target)) return;
+    const next = event.relatedTarget;
+    if (!(next instanceof Node) || panel.contains(next) || this._open.anchor.contains(next)) return;
+    this.closePanel({
+      restoreFocus: false,
+      reason: 'api'
+    });
+  } // The search: the rows are filtered as the field is typed in (no case, ё as
+  // е); the scroll area's mark follows the rows left.
+
+
+  onPanelInput(event) {
+    const field = event.target;
+    if (!field?.matches?.('[data-sf-search]') || !this.panel?.contains(field)) return;
+    this._query = field.value;
+    this.requestComponentUpdate('query');
+    this.whenRendered?.().then(() => this._scrollbar.mark());
+  }
+
+  onPanelKeyDown(event) {
+    const panel = this.panel;
+    const target = event.target;
+    if (!panel || !(target instanceof Element) || !panel.contains(target) || event.defaultPrevented) return;
+    const rtl = getComputedStyle(panel).direction === 'rtl';
+    const inward = rtl ? 'ArrowLeft' : 'ArrowRight';
+    const outward = rtl ? 'ArrowRight' : 'ArrowLeft';
+
+    if (target.matches('[data-sf-search]')) {
+      if (event.key === 'ArrowDown') {
+        const list = [...panel.querySelectorAll('.sf-settings-list:not([hidden])')][0];
+        const main = list?.querySelector(`${ROW}[tabindex="0"]`) ?? this.listRows(list)[0];
+
+        if (main) {
+          event.preventDefault();
+          main.focus();
+        }
+      }
+
+      return;
+    }
+
+    const pin = target.closest('.sf-settings-row-pin');
+    const main = pin ? pin.parentElement?.querySelector(`:scope > ${ROW}`) : target.closest(ROW);
+    if (!main) return;
+    const list = main.closest('.sf-settings-list');
+    const rows = this.listRows(list);
+    const at = rows.indexOf(main);
+
+    if (pin) {
+      if (event.key === outward) {
+        event.preventDefault();
+        main.focus();
+      } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const next = rows[(at + (event.key === 'ArrowDown' ? 1 : rows.length - 1)) % rows.length];
+        next?.parentElement?.querySelector(':scope > .sf-settings-row-pin')?.focus() ?? next?.focus();
+      }
+
+      return;
+    }
+
+    if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+      if (main.querySelector('.sf-settings-row-handle')) {
+        event.preventDefault();
+        this.moveRow(main, event.key === 'ArrowUp' ? -1 : 1);
+      }
+
+      return;
+    }
+
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    let next = null;
+    if (event.key === 'ArrowDown') next = rows[(at + 1) % rows.length];else if (event.key === 'ArrowUp') next = rows[(at - 1 + rows.length) % rows.length];else if (event.key === 'Home') next = rows[0];else if (event.key === 'End') next = rows[rows.length - 1];
+
+    if (next) {
+      event.preventDefault();
+      this.stand(next);
+      next.focus(); // A radio group chooses as it moves (APG radio group).
+
+      if (next.getAttribute('role') === 'radio' && next !== main) this.activate(next);
+      return;
+    }
+
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      this.activate(main);
+      return;
+    }
+
+    if (event.key === inward) {
+      const own = main.parentElement?.querySelector(':scope > .sf-settings-row-pin');
+
+      if (own) {
+        event.preventDefault();
+        own.focus();
+      }
+    }
+  } // Alt+↑/↓ (C106 (6)): the row moves one place within its block (the pinned
+  // or the rest), keeps the focus, and its place is said: «Срок: 3 из 8».
+
+
+  async moveRow(main, step) {
+    const id = main.dataset.sfSetting;
+    const option = main.dataset.sfOption;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.movedField)(item, option, step);
+    if (!value) return;
+    await this.commitValue(id, value);
+    await this.whenRendered?.();
+    this.afterMove(id, option);
+  }
+
+  afterMove(id, option) {
+    const main = this.rowControl(id, option);
+    if (!main) return;
+    this.stand(main);
+    if (document.activeElement !== main) main.focus({
+      preventScroll: false
+    });
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+    const options = item ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item) : [];
+    const index = options.findIndex(one => one.id === option) + 1;
+    const label = main.querySelector('.sf-settings-row-label')?.textContent ?? '';
+    this.announce(this.sfWord('position', {
+      vars: {
+        text: label,
+        index,
+        count: options.length
+      }
+    }));
+  } // The panel's live region: emptied first, so the same words are said again.
+
+
+  announce(words) {
+    const live = this.panel?.querySelector('.sf-settings-panel-live');
+    if (!live) return;
+    live.textContent = '';
+    requestAnimationFrame(() => {
+      live.textContent = words;
+    });
+  } // A drag by the handle (C106 (6)): the row follows the pointer within its
+  // block; its new place is written when the pointer is let go.
+
+
+  onPanelPointerDown(event) {
+    const handle = event.target?.closest?.('.sf-settings-row-handle');
+    if (!handle || !this.panel?.contains(handle) || event.button > 0) return;
+    const row = handle.closest('.sf-settings-row');
+    const main = row?.querySelector(`:scope > ${ROW}`);
+    const list = row?.parentElement;
+    if (!main || !list) return;
+    event.preventDefault();
+    const id = main.dataset.sfSetting;
+    const option = main.dataset.sfOption;
+    row.classList.add('sf-settings-row--dragging'); // The rows stay where the drawing put them (lit owns their order); a line
+    // shows where the row will land.
+
+    let before = undefined;
+
+    const marks = () => list.querySelectorAll(':scope > .sf-settings-row--drop-before, :scope > .sf-settings-row--drop-after');
+
+    const move = moved => {
+      const rows = [...list.querySelectorAll(':scope > .sf-settings-row:not([hidden])')].filter(one => one !== row);
+      const over = rows.find(one => {
+        const box = one.getBoundingClientRect();
+        return moved.clientY < box.top + box.height / 2;
+      });
+      before = over ? rowKey(over.querySelector(`:scope > ${ROW}`)) : null;
+
+      for (const one of marks()) one.classList.remove('sf-settings-row--drop-before', 'sf-settings-row--drop-after');
+
+      if (over) over.classList.add('sf-settings-row--drop-before');else rows[rows.length - 1]?.classList.add('sf-settings-row--drop-after');
+    };
+
+    const up = async () => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      document.removeEventListener('pointercancel', up);
+      row.classList.remove('sf-settings-row--dragging');
+
+      for (const one of marks()) one.classList.remove('sf-settings-row--drop-before', 'sf-settings-row--drop-after');
+
+      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+      const value = before === undefined || !item ? null : (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.placedField)(item, option, before);
+      if (!value) return;
+      await this.commitValue(id, value);
+      await this.whenRendered?.();
+      this.afterMove(id, option);
+    };
+
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+    document.addEventListener('pointercancel', up);
+  } // ─── the popup panel
+  // Opens the panel against the control that opened it: anchored in the top
+  // layer, a sheet at the bottom on a phone (C106 (8)); the focus goes to the
+  // search, else the first list's stop, else the first control. The request
+  // goes first, as sf-menu-context's does (open, cancelable; opened once it
+  // is drawn): a listener that prevents it keeps the panel closed. Returns
+  // whether the panel is open.
+
+
+  async openPanel(anchor) {
+    if (this._open || !anchor) return false;
+    if (!this.sfEmit('open', {}, {
+      cancelable: true
+    })) return false;
+    this._open = {
+      anchor,
+      sheet: false,
+      position: null,
+      returnTo: document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : anchor
+    };
+    this.requestComponentUpdate('open');
+    await this.whenRendered?.();
+    const panel = this.panel;
+    const owned = this._open;
+    if (!panel || !owned) return false;
+    anchor.setAttribute('aria-expanded', 'true'); // The density of the control that opened it (C22), where the panel draws.
+
+    owned.density = panel.getAttribute('data-sf-density');
+    panel.setAttribute('data-sf-density', (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.densityOf)(anchor) ?? 'normal');
+
+    if (typeof panel.showPopover === 'function') {
+      panel.setAttribute('popover', 'manual');
+      if (!panel.matches(':popover-open')) panel.showPopover();
+    }
+
+    const place = sheet => {
+      owned.position?.stop();
+      owned.position = null;
+      owned.sheet = sheet;
+      panel.toggleAttribute('data-sf-sheet', sheet);
+      if (!sheet) owned.position = position().anchor(anchor, panel, {
+        side: 'block-end',
+        align: 'start',
+        flip: true,
+        shift: true,
+        fitHeight: true,
+        topLayer: false
+      });
+    };
+
+    place(onPhone());
+
+    owned.onResize = () => {
+      if (this._open === owned && onPhone() !== owned.sheet) place(onPhone());
+    };
+
+    window.addEventListener('resize', owned.onResize);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__.holdOpenSurfaceMark)(this, true, {
+      root: () => this.panel,
+      onEscape: () => {
+        this.closePanel({
+          reason: 'escape'
+        });
+        return true;
+      },
+      onOutsidePress: event => {
+        const path = event.composedPath?.() ?? [];
+        if (!path.includes(anchor)) this.closePanel({
+          restoreFocus: false,
+          reason: 'outside'
+        });
+      },
+      // A sheet covers the page, so Tab goes round inside it.
+      onTab: event => {
+        if (!owned.sheet) return;
+        const controls = (0,_core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__.focusablesIn)(panel);
+        if (!controls.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    this._scrollbar.mark();
+
+    const field = panel.querySelector('[data-sf-search]');
+    const stop = panel.querySelector(`.sf-settings-list:not([hidden]) ${ROW}[tabindex="0"]`);
+    (field ?? stop ?? (0,_core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__.focusablesIn)(panel)[0])?.focus({
+      preventScroll: true
+    });
+    this.sfEmit('opened', {});
+    return true;
+  } // Closes a popup panel: what it held unapplied is dropped, the search is
+  // cleared, the focus goes back to the trigger (not after a press outside).
+  // As sf-menu-context's close: reason is escape, outside, close (the close
+  // button, the trigger again) or api (Apply, Tab out, a script); a listener
+  // that prevents close keeps the panel open, unsaved says a draft of
+  // apply="button" moved something; closed follows. `ask: false` closes
+  // without asking (the element is leaving the page).
+
+
+  closePanel({
+    restoreFocus = true,
+    reason = 'api',
+    ask = true
+  } = {}) {
+    const owned = this._open;
+    if (!owned) return false;
+    if (ask && !this.sfEmit('close', {
+      reason,
+      unsaved: this.draftMoved()
+    }, {
+      cancelable: true
+    })) return false;
+    this._open = null;
+    owned.position?.stop();
+    window.removeEventListener('resize', owned.onResize);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__.holdOpenSurfaceMark)(this, false);
+    const panel = this.panel;
+
+    if (panel) {
+      if (panel.matches?.(':popover-open')) panel.hidePopover();
+      panel.removeAttribute('popover');
+      panel.removeAttribute('data-sf-sheet');
+      if (owned.density === null || owned.density === undefined) panel.removeAttribute('data-sf-density');else panel.setAttribute('data-sf-density', owned.density);
+    }
+
+    owned.anchor.setAttribute('aria-expanded', 'false');
+    this._draft = null;
+    this._query = '';
+    this.requestComponentUpdate('open');
+    if (restoreFocus) (owned.returnTo?.isConnected ? owned.returnTo : owned.anchor)?.focus?.({
+      preventScroll: true
+    });
+    this.sfEmit('closed', {
+      reason
+    });
+    return true;
+  } // Whether the draft of apply="button" holds a value the items do not.
+
+
+  draftMoved() {
+    if (!this._draft) return false;
+    const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
+    return Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this._draft)).some(([id, value]) => !same(now[id], value));
+  } // show(id) in the panel: a popup opens, the tab that holds the setting is
+  // chosen, the focus goes to its row.
+
+
+  async showInPanel(id) {
+    if (this.popup && !this._open) {
+      const anchor = this.anchor();
+      if (!anchor) return {
+        outcome: 'unavailable',
+        reason: 'no-trigger'
+      };
+      if (!(await this.openPanel(anchor))) return {
+        outcome: 'cancelled'
+      };
+    }
+
+    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelGroups)(this.shownItems());
+    const at = groups.findIndex(group => (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(group.items, id));
+    if (at >= 0 && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelLayout)(this.shownItems(), {
+      search: Boolean(this.search)
+    }) === 'tabs') this.chooseGroup(at);
+    await this.whenRendered?.();
+    const control = this.rowControl(id) ?? this.panel?.querySelector(`[data-sf-setting="${CSS.escape(id)}"]`);
+    if (!control) return {
+      outcome: 'unavailable',
+      reason: 'no-panel'
+    };
+    if (control.matches(ROW)) this.stand(control);
+    control.focus({
+      preventScroll: false
+    });
+    return {
+      outcome: 'applied'
+    };
   }
 
 }
@@ -1176,15 +2208,31 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   APPLY: () => (/* binding */ APPLY),
+/* harmony export */   COLOR_OPTIONS: () => (/* binding */ COLOR_OPTIONS),
+/* harmony export */   HUES: () => (/* binding */ HUES),
 /* harmony export */   LOOKS: () => (/* binding */ LOOKS),
+/* harmony export */   OWN_COLOR: () => (/* binding */ OWN_COLOR),
 /* harmony export */   SIZES: () => (/* binding */ SIZES),
 /* harmony export */   TYPES: () => (/* binding */ TYPES),
+/* harmony export */   applyCount: () => (/* binding */ applyCount),
+/* harmony export */   colorCode: () => (/* binding */ colorCode),
+/* harmony export */   colorFill: () => (/* binding */ colorFill),
 /* harmony export */   entriesFor: () => (/* binding */ entriesFor),
+/* harmony export */   fieldOptions: () => (/* binding */ fieldOptions),
 /* harmony export */   findItem: () => (/* binding */ findItem),
+/* harmony export */   folded: () => (/* binding */ folded),
 /* harmony export */   holdsValue: () => (/* binding */ holdsValue),
 /* harmony export */   itemValue: () => (/* binding */ itemValue),
+/* harmony export */   matches: () => (/* binding */ matches),
+/* harmony export */   movedField: () => (/* binding */ movedField),
+/* harmony export */   panelGroups: () => (/* binding */ panelGroups),
+/* harmony export */   panelLayout: () => (/* binding */ panelLayout),
+/* harmony export */   placedField: () => (/* binding */ placedField),
 /* harmony export */   rewriteValues: () => (/* binding */ rewriteValues),
+/* harmony export */   sameValue: () => (/* binding */ sameValue),
 /* harmony export */   tileItems: () => (/* binding */ tileItems),
+/* harmony export */   toggledField: () => (/* binding */ toggledField),
 /* harmony export */   valueMap: () => (/* binding */ valueMap),
 /* harmony export */   valuePatch: () => (/* binding */ valuePatch)
 /* harmony export */ });
@@ -1197,20 +2245,123 @@ __webpack_require__.r(__webpack_exports__);
 //   {id, type: 'switch', text, value: true}                         a boolean
 //   {id, type: 'choice', text, value: 'dark', options: [{id, text}]} one of a few
 //   {id, type: 'range', text, value: 100, min, max, step, unit}      a number
+//   {id, type: 'color', text, value: 'blue', options?, custom?}       a colour
 //   {type: 'heading', text}, {type: 'separator'}
 //   {type: 'group', text, items: [...]}                              a titled block
+//   {id, type: 'fields', text, options: [{id, text, checked, pinned}],
+//    sortable, pinnable}                                             a list of many
 //
-// The value lives in the item and nowhere else.
-const LOOKS = ['drill', 'rows', 'tiles'];
+// The value lives in the item and nowhere else. A fields list (the panel look,
+// owner decision C106) keeps its value in its options: their order, which are
+// checked and which are pinned; its value reads them as [{id, checked, pinned}]
+// in order, the pinned ones first.
+const LOOKS = ['drill', 'rows', 'tiles', 'panel'];
 const SIZES = ['1/2', '1'];
-const TYPES = ['switch', 'choice', 'range', 'heading', 'separator', 'group'];
-const VALUE_TYPES = new Set(['switch', 'choice', 'range']);
+const APPLY = ['instant', 'button'];
+const TYPES = ['switch', 'choice', 'range', 'color', 'heading', 'separator', 'group', 'fields'];
+const VALUE_TYPES = new Set(['switch', 'choice', 'range', 'color', 'fields']); // ─── the colour row (owner decision C85) ─────────────────────────────────
+//
+// A colour setting -- a site's or a reader's colour in a settings menu, beside
+// the theme -- is a row with the current colour as a circle in its lead; it
+// opens a level of palette hues, each a circle and its word, and, unless
+// custom is false, «Свой цвет…», which opens sf-input-color's window on «Своё».
+// The value is what sf-input-color stores (C83): a palette hue by its name
+// (blue), the same in every language, painted 50 light / 70 dark, or an own
+// colour as its code (#rrggbb).
+// The sixteen hues of the static palette (C17), the names a colour value may
+// take (sf-input-color's PALETTE).
+
+const HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The level a colour row opens when its item names no options: the ten hues
+// of the accepted menu (prototype theme-generator-study #practice-menu).
+
+const COLOR_OPTIONS = Object.freeze(['red', 'orange', 'amber', 'green', 'teal', 'sky', 'blue', 'violet', 'pink', 'gray']); // The id of the «Свой цвет…» option in the menu's entries.
+
+const OWN_COLOR = '#own';
+const SHORT_HEX = /^#?([0-9a-f])([0-9a-f])([0-9a-f])$/iu;
+const LONG_HEX = /^#?([0-9a-f]{6})$/iu;
+/** An own colour's code, lowercase #rrggbb; '' for anything else. */
+
+function colorCode(value) {
+  const text = String(value ?? '').trim();
+  const short = SHORT_HEX.exec(text);
+  if (short) return `#${short[1]}${short[1]}${short[2]}${short[2]}${short[3]}${short[3]}`.toLowerCase();
+  const long = LONG_HEX.exec(text);
+  return long ? `#${long[1].toLowerCase()}` : '';
+}
+/** The CSS colour a colour value paints: a hue's tone for the theme (50 light, 70 dark), or the code. */
+
+const colorFill = value => HUES.includes(value) ? `light-dark(var(--sf-${value}-50), var(--sf-${value}-70))` : colorCode(value); // The hues a colour row offers: its options (names, or {id, text}) that are
+// palette hues, else the default ten.
+
+function colorOptions(item) {
+  const given = Array.isArray(item?.options) ? item.options : null;
+  const list = (given ?? COLOR_OPTIONS).map(option => typeof option === 'string' ? {
+    id: option
+  } : option).filter(option => option && HUES.includes(option.id));
+  return list;
+}
+
+const allowsOwn = item => item?.custom !== false;
 
 const isItem = item => Boolean(item) && typeof item === 'object' && TYPES.includes(item.type);
 
 const optionsOf = item => Array.isArray(item?.options) ? item.options.filter(option => option && typeof option === 'object' && option.id !== undefined && option.id !== null) : [];
-/** Whether an item holds a value (a switch, a choice or a range with an id). */
+/**
+ * A fields list's options in the order they stand, the pinned ones first (a
+ * pinned field stays on top, C106 (6)); the order among the pinned and among
+ * the rest is the order given.
+ */
 
+
+function fieldOptions(item) {
+  const options = optionsOf(item);
+  return [...options.filter(option => option.pinned), ...options.filter(option => !option.pinned)];
+} // What a fields list is given as its value: the ids to check, in the order
+// they stand ([id, ...]), or the options themselves ([{id, checked, pinned}])
+// in a new order -- the ones left out keep their state and follow. An id the
+// list does not hold makes the value invalid.
+
+function fieldsPatch(item, value) {
+  if (!Array.isArray(value)) return null;
+  const options = optionsOf(item);
+  const byId = new Map(options.map(option => [option.id, option]));
+
+  if (value.every(one => typeof one === 'string')) {
+    if (!value.every(id => byId.has(id))) return null;
+    const on = new Set(value);
+    return {
+      options: fieldOptions({
+        options: options.map(option => ({ ...option,
+          checked: on.has(option.id)
+        }))
+      })
+    };
+  }
+
+  if (!value.every(one => one && typeof one === 'object' && byId.has(one.id))) return null;
+  const listed = new Set(value.map(one => one.id));
+  const ordered = value.map(one => {
+    const option = { ...byId.get(one.id)
+    };
+    if (typeof one.checked === 'boolean') option.checked = one.checked;
+    if (typeof one.pinned === 'boolean') option.pinned = one.pinned;
+    return option;
+  });
+  return {
+    options: fieldOptions({
+      options: [...ordered, ...options.filter(option => !listed.has(option.id))]
+    })
+  };
+}
+/** Whether two values are the same: by identity, or for a fields list by what it holds. */
+
+
+function sameValue(a, b) {
+  if (a === b || Number.isNaN(a) && Number.isNaN(b)) return true;
+  if (Array.isArray(a) && Array.isArray(b)) return JSON.stringify(a) === JSON.stringify(b);
+  return false;
+}
+/** Whether an item holds a value (a switch, a choice, a range or a fields list with an id). */
 
 const holdsValue = item => isItem(item) && VALUE_TYPES.has(item.type) && typeof item.id === 'string' && item.id !== '';
 /**
@@ -1220,6 +2371,11 @@ const holdsValue = item => isItem(item) && VALUE_TYPES.has(item.type) && typeof 
  */
 
 function itemValue(item) {
+  if (item?.type === 'fields') return fieldOptions(item).map(option => ({
+    id: option.id,
+    checked: Boolean(option.checked),
+    pinned: Boolean(option.pinned)
+  }));
   if (item?.type === 'switch') return Boolean(item.value);
 
   if (item?.type === 'range') {
@@ -1233,14 +2389,28 @@ function itemValue(item) {
     return options.find(option => option.checked)?.id ?? null;
   }
 
+  if (item?.type === 'color') return colorPatch(item, item.value)?.value ?? null;
   return null;
+} // A colour row takes a hue it offers, or a code while it allows an own colour.
+
+function colorPatch(item, value) {
+  if (typeof value !== 'string') return null;
+  if (colorOptions(item).some(option => option.id === value)) return {
+    value
+  };
+  const code = allowsOwn(item) ? colorCode(value) : '';
+  return code ? {
+    value: code
+  } : null;
 }
 /**
  * What to write into an item to give it a value; null when the item cannot
  * hold that value (a choice without such an option, a range given no number).
  */
 
+
 function valuePatch(item, value) {
+  if (item?.type === 'fields') return fieldsPatch(item, value);
   if (item?.type === 'switch') return typeof value === 'boolean' ? {
     value
   } : null;
@@ -1256,6 +2426,7 @@ function valuePatch(item, value) {
   if (item?.type === 'choice') return optionsOf(item).some(option => option.id === value) ? {
     value
   } : null;
+  if (item?.type === 'color') return colorPatch(item, value);
   return null;
 }
 /** Every setting's value by its id, at the depth it sits. */
@@ -1323,15 +2494,65 @@ function rewriteValues(items, resolve) {
   };
 } // ─── entries of sf-menu-context ───────────────────────────────────────────
 
-const own = (item, keys) => Object.fromEntries(keys.filter(key => item[key] !== undefined && item[key] !== null).map(key => [key, item[key]])); // One setting as a menu entry. A choice's value becomes its options' checked
+const own = (item, keys) => Object.fromEntries(keys.filter(key => item[key] !== undefined && item[key] !== null).map(key => [key, item[key]])); // A colour row as the menu's choice: the current colour as the row's circle,
+// the hues as options with their circles and words, and «Свой цвет…» last
+// (OWN_COLOR) -- checked, with its circle and code, while the value is one.
+
+
+function colorEntry(item, base, look, word) {
+  const value = itemValue(item);
+  const options = colorOptions(item).map(option => ({
+    id: option.id,
+    text: option.text ?? word(`hue-${option.id}`),
+    swatch: colorFill(option.id),
+    checked: option.id === value
+  }));
+  const code = colorCode(value);
+
+  if (allowsOwn(item)) {
+    options.push(code ? {
+      id: OWN_COLOR,
+      text: word('own-color-value', {
+        value: code
+      }),
+      swatch: code,
+      checked: true
+    } : {
+      id: OWN_COLOR,
+      text: word('own-color'),
+      icon: 'colorize',
+      checked: false
+    });
+  }
+
+  return { ...base,
+    type: 'choice',
+    ...(look === 'drill' ? {
+      view: 'drill'
+    } : {}),
+    ...(value ? {
+      swatch: colorFill(value)
+    } : {}),
+    options
+  };
+} // The words a colour row needs when the element gives none (the contract
+// test, a server printing entries): the hue's name and the own colour's.
+
+
+const plainWord = (key, vars = {}) => {
+  if (key === 'own-color') return 'Own colour…';
+  if (key === 'own-color-value') return `Own: ${vars.value ?? ''}`;
+  return key.replace(/^hue-/u, '');
+}; // One setting as a menu entry. A choice's value becomes its options' checked
 // marks, the way the menu reads it; drill opens its options in the panel.
 
 
-function settingEntry(item, look) {
+function settingEntry(item, look, word = plainWord) {
   const base = { ...own(item, ['id', 'text', 'caption', 'icon', 'keywords']),
     type: item.type
   };
   if (item.disabled) base.disabled = true;
+  if (item.type === 'color') return colorEntry(item, base, look, word);
   if (item.type === 'switch') return { ...base,
     value: itemValue(item)
   };
@@ -1356,7 +2577,7 @@ function settingEntry(item, look) {
 // rows; an item of no known type is left out.
 
 
-function entriesOf(items, look, skip) {
+function entriesOf(items, look, skip, word) {
   const out = [];
 
   for (const item of Array.isArray(items) ? items : []) {
@@ -1372,7 +2593,7 @@ function entriesOf(items, look, skip) {
         type: 'separator'
       });
     } else if (item.type === 'group') {
-      const rows = entriesOf(item.items, look, skip);
+      const rows = entriesOf(item.items, look, skip, word);
       if (!rows.length) continue;
       if (item.text) out.push({
         type: 'heading',
@@ -1383,8 +2604,9 @@ function entriesOf(items, look, skip) {
         ...own(item, ['text']),
         items: rows
       });
-    } else if (holdsValue(item) && !skip.has(item.id)) {
-      out.push(settingEntry(item, look));
+    } else if (holdsValue(item) && item.type !== 'fields' && !skip.has(item.id)) {
+      // A fields list is the panel look's alone: a menu has no row for it.
+      out.push(settingEntry(item, look, word));
     }
   } // A separator does not open or close the list, and two do not stand together.
 
@@ -1422,12 +2644,13 @@ function tileItems(items) {
  */
 
 function entriesFor(items, look = 'drill', {
-  tilesLabel = ''
+  tilesLabel = '',
+  word = plainWord
 } = {}) {
-  if (look !== 'tiles') return entriesOf(items, look, new Set());
+  if (look !== 'tiles') return entriesOf(items, look, new Set(), word);
   const tiles = tileItems(items);
-  if (!tiles.length) return entriesOf(items, 'rows', new Set());
-  const rest = entriesOf(items, 'rows', new Set(tiles.map(item => item.id)));
+  if (!tiles.length) return entriesOf(items, 'rows', new Set(), word);
+  const rest = entriesOf(items, 'rows', new Set(tiles.map(item => item.id)), word);
   const top = {
     type: 'group',
     view: 'tiles',
@@ -1437,6 +2660,136 @@ function entriesFor(items, look = 'drill', {
   return rest.length ? [top, {
     type: 'separator'
   }, ...rest] : [top];
+} // ─── the panel look (owner decision C106) ─────────────────────────────────
+
+/**
+ * The panel's groups: each top-level group, and the settings between groups
+ * gathered into an untitled one, in the order they stand. A heading or a
+ * separator stays in the group it stands in.
+ */
+
+function panelGroups(items) {
+  const groups = [];
+  let loose = null;
+
+  for (const item of Array.isArray(items) ? items : []) {
+    if (!isItem(item)) continue;
+
+    if (item.type === 'group') {
+      loose = null;
+      const inner = (Array.isArray(item.items) ? item.items : []).filter(isItem);
+      if (inner.length) groups.push({
+        text: item.text ?? '',
+        items: inner
+      });
+      continue;
+    }
+
+    if (!loose) {
+      loose = {
+        text: '',
+        items: []
+      };
+      groups.push(loose);
+    }
+
+    loose.items.push(item);
+  }
+
+  return groups.filter(group => group.items.some(item => holdsValue(item)));
+}
+/**
+ * How the panel shows its groups (C106 (5)): sections in one scroll by
+ * default; tabs when the panel has a search and a group holds its own long
+ * list (a fields list) -- the list and its search take a tab of their own.
+ * A single group is never a tab.
+ */
+
+function panelLayout(items, {
+  search = false
+} = {}) {
+  const groups = panelGroups(items);
+  if (!search || groups.length < 2) return 'sections';
+  return groups.some(group => group.items.some(item => item.type === 'fields')) ? 'tabs' : 'sections';
+} // A search's words: no case, ё as е.
+
+const folded = value => String(value ?? '').toLocaleLowerCase().replace(/ё/gu, 'е').trim();
+/** Whether a row's words hold the query (no case, ё as е). An empty query holds every row. */
+
+function matches(query, ...words) {
+  const asked = folded(query);
+  if (!asked) return true;
+  return words.flat().some(word => folded(word).includes(asked));
+}
+/**
+ * What «Применить (N)» counts in a panel applied by a button (a filter, C106
+ * (4)): the conditions it will hold -- the checked fields of every list and
+ * the switches that are on.
+ */
+
+function applyCount(items) {
+  let count = 0;
+
+  for (const item of Array.isArray(items) ? items : []) {
+    if (item?.type === 'group') count += applyCount(item.items);else if (holdsValue(item) && item.type === 'fields') count += optionsOf(item).filter(option => option.checked).length;else if (holdsValue(item) && item.type === 'switch' && itemValue(item)) count += 1;
+  }
+
+  return count;
+}
+/**
+ * A fields list with one option moved by `step` places within its own block
+ * (the pinned or the rest: a pinned field stays above every other), or null
+ * when it cannot move that way. Its value, ready for valuePatch.
+ */
+
+function movedField(item, optionId, step) {
+  const options = fieldOptions(item);
+  const at = options.findIndex(option => option.id === optionId);
+  const to = at + step;
+  if (at < 0 || to < 0 || to >= options.length || Boolean(options[to].pinned) !== Boolean(options[at].pinned)) return null;
+  const list = [...options];
+  const [moved] = list.splice(at, 1);
+  list.splice(to, 0, moved);
+  return list.map(option => ({
+    id: option.id,
+    checked: Boolean(option.checked),
+    pinned: Boolean(option.pinned)
+  }));
+}
+/** A fields list's value with one option put before another of the same block (a drag), or null. */
+
+function placedField(item, optionId, beforeId) {
+  const options = fieldOptions(item);
+  const moving = options.find(option => option.id === optionId);
+  if (!moving || optionId === beforeId) return null;
+  const rest = options.filter(option => option.id !== optionId);
+  let at = beforeId === null ? rest.length : rest.findIndex(option => option.id === beforeId);
+  if (at < 0) return null; // A pinned field stays among the pinned, the rest below them.
+
+  const pinned = rest.filter(option => option.pinned).length;
+  at = moving.pinned ? Math.min(at, pinned) : Math.max(at, pinned);
+  rest.splice(at, 0, moving);
+  const value = rest.map(option => ({
+    id: option.id,
+    checked: Boolean(option.checked),
+    pinned: Boolean(option.pinned)
+  }));
+  return sameValue(value, itemValue(item)) ? null : value;
+}
+/** A fields list's value with one option checked or pinned the other way, or null. */
+
+function toggledField(item, optionId, key = 'checked') {
+  const options = fieldOptions(item);
+  const option = options.find(one => one.id === optionId);
+  if (!option || key === 'checked' && option.disabled) return null;
+  return options.map(one => ({
+    id: one.id,
+    checked: Boolean(one.checked),
+    pinned: Boolean(one.pinned),
+    ...(one.id === optionId ? {
+      [key]: !one[key]
+    } : {})
+  }));
 }
 
 /***/ },
@@ -1450,13 +2803,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderSettingsTemplate: () => (/* binding */ renderSettingsTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _panel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("04a48c16a107");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _panel_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _panel_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
  // sf-settings' markup: sf-menu-context with the items as its entries, and,
-// in a popup, the page's trigger beside it. The element draws nothing of its
-// own, so it has no sheet.
+// in a popup, the page's trigger beside it. In the drill, rows and tiles looks
+// the element draws nothing of its own; the panel look draws its panel
+// (templates/panel.js) with the element's sheet.
 //
 // - inline (no trigger): the menu stands open in the page's flow;
 // - popup (a trigger in the trigger slot, or one named by for): the trigger as
@@ -1504,14 +2859,333 @@ function renderMenu(context) {
 // printed picture from it, rather than drawing alone, empty, before it.
 
 
-const frame = parts => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-parts" style="display: contents">${parts}</div>`;
+const frame = parts => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-parts" style="display: contents">${parts}</div>`; // The colour window of the colour rows (C85): sf-input-color without its
+// palette (the menu's level is the palette) and without a box in the page --
+// a holder of no size, so only its window is seen; the window stands in the
+// top layer against the trigger, where no box of the page clips it. The
+// holder is inert while the window is closed, so its hidden field is never a
+// tab stop; _openOwnColor lifts that for as long as the window is open.
+
+
+function renderColor(context) {
+  const {
+    component
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-color" inert style="position: absolute; inline-size: 0; block-size: 0; overflow: hidden">
+    <sf-input-color palette="false"
+        @input=${event => event.stopPropagation()}
+        @change=${event => component._onColorPicked(event)}></sf-input-color>
+  </span>`;
+} // The panel look (owner decision C106) is this element's own markup
+// (templates/panel.js), not a menu: its role is a dialog over the page and a
+// group in the page's flow, and the action menu keeps the actions.
+
 
 function renderSettingsTemplate(context) {
   const trigger = context.popup && context.hasSlot('trigger') ? context.slot('trigger') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return frame((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${trigger}${renderMenu(context)}`);
+  return frame((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${trigger}${context.look === 'panel' ? (0,_panel_js__WEBPACK_IMPORTED_MODULE_1__.renderPanel)(context) : renderMenu(context)}${context.hasColor ? renderColor(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "04a48c16a107"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   renderPanel: () => (/* binding */ renderPanel)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
+/* harmony import */ var _settings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("bb67a9697f33");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
+
+ // sf-settings' panel look (owner decision C106, 2026-11-12): the settings of a
+// list's view -- its fields, their order, the density -- in a panel of its own,
+// not in the action menu. The panel is this element's markup and its sheet
+// (scss/_smart__settings.scss); the other looks stay sf-menu-context's.
+//
+//   head     the title, or the groups as tabs; the close button of a popup
+//   search   the setting search: a header over the rows (C06), «from ten rows»
+//   body     the groups as sections in one scroll, or the chosen tab's rows;
+//            the only part that scrolls (the scroll-area inset rule)
+//   footer   apply="instant": one «Сбросить»; apply="button" (a filter):
+//            «Сбросить» and «Применить (N)»
+//
+// A row is a plate (.sf-settings-row) with the control a person works
+// (.sf-settings-row-main, the role) and, in a fields list that pins, the pin
+// button beside it. A selected row is the theme's light fill with a check in
+// one column at the inline end (C106 (2)); a choice of one is the fill alone
+// (C106 (3)); the handle stands at the row's start (C106 (6)). The rows of one
+// list are one Tab stop with the arrows inside (DP-4); index.js keeps the
+// roving tabindex and the keys.
+
+const icon = (name, className) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${className} aria-hidden="true"><i class="sf-icon">${name}</i></span>`; // What a row shows after its text: the check of a checked row (a fields list,
+// C106 (2)), the switch of a switch, nothing for a choice (the fill alone).
+
+
+function mark(kind, checked) {
+  if (kind === 'switch') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-switch class="sf-settings-row-switch" size="1/2" ?checked=${checked} inert aria-hidden="true"></sf-switch>`;
+  }
+
+  if (kind === 'field') return icon('check', 'sf-settings-row-check');
+  return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // One row. `row` is {key, kind: field|switch|option, role, checked, text,
+// caption, disabled, hidden, current, setting, option, handle, pin, pinned}.
+
+
+function renderRow(row, context) {
+  const {
+    words
+  } = context;
+  const main = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-main" role=${row.role}
+            aria-checked=${row.checked ? 'true' : 'false'}
+            aria-disabled=${row.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            tabindex=${row.current ? '0' : '-1'}
+            data-sf-setting=${row.setting}
+            data-sf-option=${row.option ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            ${row.handle ? icon('drag_indicator', 'sf-settings-row-handle') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            <span class="sf-settings-row-text">
+                <span class="sf-settings-row-label">${row.text}</span>
+                ${row.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-caption">${row.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            </span>
+            ${row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-pin-place" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${mark(row.kind, row.checked)}
+        </span>`;
+  const pin = row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" class="sf-settings-row-pin" tabindex="-1"
+                aria-pressed=${row.pinned ? 'true' : 'false'}
+                aria-label=${`${row.pinned ? words.unpin : words.pin}: ${row.text}`}
+                title=${row.pinned ? words.unpin : words.pin}
+                data-sf-setting=${row.setting} data-sf-option=${row.option}>
+                <i class="sf-icon" aria-hidden="true">push_pin</i>
+            </button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${['sf-settings-row', `sf-settings-row--${row.kind}`, row.pin ? 'sf-settings-row--pins' : ''].filter(Boolean).join(' ')}
+            ?hidden=${row.hidden}
+            ?data-checked=${row.checked}
+            ?data-pinned=${row.pinned}
+            ?data-disabled=${row.disabled}>${main}${pin}</div>`;
+} // The rows of one list, and whether each is the list's Tab stop: the one the
+// person last stood on (index.js remembers it by its key), else the first one
+// shown -- for a choice, the chosen one (a radio group's stop is its checked
+// radio).
+
+
+function withCurrent(rows, remembered) {
+  const shown = rows.filter(row => !row.hidden && !row.disabled);
+  const current = shown.find(row => row.key === remembered) ?? (rows[0]?.kind === 'option' ? shown.find(row => row.checked) : null) ?? shown[0];
+  return rows.map(row => ({ ...row,
+    current: row === current
+  }));
+}
+
+function listOf(key, role, label, rows, context, {
+  sortable = false
+} = {}) {
+  const marked = withCurrent(rows, context.current.get(key));
+  if (!marked.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const empty = marked.every(row => row.hidden);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-list" role=${role} aria-label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            data-sf-list=${key} ?hidden=${empty}
+            aria-description=${sortable ? context.words.moveHint : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(marked, row => row.key, row => renderRow(row, context))}
+        </div>`;
+} // The rows a group's settings make, in their lists: the switches standing
+// together are one list, a choice is a radio group, a fields list is a list
+// of its own; a heading heads the rows under it, a separator is a line.
+
+
+function renderItems(items, context) {
+  const parts = [];
+  let switches = [];
+
+  const flush = () => {
+    if (!switches.length) return;
+    const key = `switches:${switches[0].setting}`;
+    parts.push(listOf(key, 'group', '', switches, context));
+    switches = [];
+  };
+
+  for (const item of items) {
+    if (item.type === 'heading') {
+      flush();
+      parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-label" role="presentation">${item.text ?? ''}</div>`);
+      continue;
+    }
+
+    if (item.type === 'separator') {
+      flush();
+      parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-separator" role="separator"></div>`);
+      continue;
+    }
+
+    if (!(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.holdsValue)(item)) continue;
+
+    if (item.type === 'switch') {
+      switches.push({
+        key: item.id,
+        kind: 'switch',
+        role: 'switch',
+        setting: item.id,
+        checked: (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item),
+        text: item.text ?? '',
+        caption: item.caption,
+        disabled: Boolean(item.disabled),
+        hidden: !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, item.text, item.caption, item.keywords)
+      });
+      continue;
+    }
+
+    flush();
+
+    if (item.type === 'choice') {
+      const value = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item);
+      const hit = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, item.text);
+      const rows = (Array.isArray(item.options) ? item.options : []).filter(option => option && option.id !== undefined && option.id !== null).map(option => ({
+        key: String(option.id),
+        kind: 'option',
+        role: 'radio',
+        setting: item.id,
+        option: String(option.id),
+        checked: option.id === value,
+        text: option.text ?? '',
+        disabled: Boolean(item.disabled || option.disabled),
+        hidden: !hit && !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, option.text)
+      }));
+      if (item.text) parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-label" role="presentation" ?hidden=${rows.every(row => row.hidden)}>${item.text}</div>`);
+      parts.push(listOf(`choice:${item.id}`, 'radiogroup', item.text, rows, context));
+      continue;
+    }
+
+    if (item.type === 'fields') {
+      const rows = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.fieldOptions)(item).map(option => ({
+        key: String(option.id),
+        kind: 'field',
+        role: 'checkbox',
+        setting: item.id,
+        option: String(option.id),
+        checked: Boolean(option.checked),
+        pinned: Boolean(option.pinned),
+        text: option.text ?? '',
+        disabled: Boolean(item.disabled || option.disabled),
+        handle: Boolean(item.sortable),
+        pin: Boolean(item.pinnable),
+        hidden: !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, option.text, option.keywords)
+      }));
+      if (item.text && context.layout !== 'tabs') parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-label" role="presentation" ?hidden=${rows.every(row => row.hidden)}>${item.text}</div>`);
+      parts.push(listOf(`fields:${item.id}`, 'group', item.text, rows, context, {
+        sortable: Boolean(item.sortable)
+      }));
+      continue;
+    }
+
+    if (item.type === 'range') {
+      parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-settings-row sf-settings-row--range" ?hidden=${!(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, item.text)}>
+                <span class="sf-settings-row-text"><span class="sf-settings-row-label">${item.text ?? ''}</span></span>
+                <input class="sf-settings-row-range" type="range" data-sf-setting=${item.id}
+                    min=${item.min ?? 0} max=${item.max ?? 100} step=${item.step ?? 1} .value=${String((0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item))}
+                    ?disabled=${Boolean(item.disabled)} aria-valuetext=${`${(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item)}${item.unit ?? ''}`}>
+                <output class="sf-settings-row-value">${(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item)}${item.unit ?? ''}</output>
+            </label>`);
+    }
+  }
+
+  flush();
+  return parts;
+} // A section: its heading over its rows. The untitled group of the settings
+// between groups has no heading.
+
+
+function renderSection(group, context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<section class="sf-settings-panel-section" aria-label=${group.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+        ${group.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-heading">${group.text}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${renderItems(group.items, context)}
+    </section>`;
+}
+
+function renderHead(context) {
+  const {
+    groups,
+    layout,
+    tab,
+    size,
+    words
+  } = context;
+  const tabs = layout === 'tabs' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tabs class="sf-settings-panel-tabs" type="underline" size=${size === '1' ? '1' : '1/2'}
+                items=${groups.map(group => group.text || words.label).join('|')}
+                active-index=${String(tab)}
+                @sf-tabs-change=${event => {
+    event.stopPropagation();
+    context.component.chooseGroup(Number(event.detail?.current ?? 0));
+  }}></sf-tabs>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-panel-title">${context.label}</span>`;
+  const close = context.popup ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-panel-close" appearance="ghost" scheme="on-surface" size="1/2" icon="close"
+                aria-label=${words.close} title=${words.close} data-sf-close></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-head">${tabs}${close}</div>`;
+}
+
+function renderSearch(context) {
+  if (!context.search) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-settings-panel-search">
+        <span class="sf-settings-panel-search-icon" aria-hidden="true"><i class="sf-icon">search</i></span>
+        <input type="search" class="sf-settings-panel-search-input" autocomplete="off" spellcheck="false"
+            placeholder=${context.words.search} aria-label=${context.words.search} .value=${context.query} data-sf-search>
+    </label>`;
+}
+
+function renderFooter(context) {
+  const {
+    words,
+    apply,
+    count
+  } = context;
+  const reset = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size="1/2" appearance="outline" scheme="on-surface" text=${words.reset} data-sf-reset></sf-button>`;
+  if (apply !== 'button') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-footer">${reset}</div>`;
+  const label = count ? `${words.apply} (${count})` : words.apply;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-footer">${reset}<sf-button size="1/2" text=${label} data-sf-apply></sf-button></div>`;
+}
+
+function renderPanel(context) {
+  const {
+    groups,
+    layout,
+    tab,
+    query
+  } = context;
+  const shown = layout === 'tabs' ? [groups[tab] ?? groups[0]].filter(Boolean) : groups;
+  const body = shown.map(group => layout === 'tabs' ? renderItems(group.items, context) : renderSection(group, context));
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${['sf-settings-panel', `sf-settings-panel--size-${context.size === '1' ? '1' : '1-2'}`, context.popup ? 'sf-settings-panel--popup' : '', context.rootClass].filter(Boolean).join(' ')}
+            role=${context.popup ? 'dialog' : 'group'}
+            aria-label=${context.label}
+            ?hidden=${context.popup && !context.open}>
+        ${renderHead(context)}
+        ${renderSearch(context)}
+        <div class="sf-settings-panel-body" role=${layout === 'tabs' ? 'tabpanel' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-label=${layout === 'tabs' ? shown[0]?.text || context.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            ${body}
+            <p class="sf-settings-panel-empty" role="status" ?hidden=${!query || !context.nothingFound}>${context.words.empty}</p>
+        </div>
+        ${renderFooter(context)}
+        <span class="sf-settings-panel-live" aria-live="polite" aria-atomic="true"></span>
+    </div>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "e1c707506370"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ },
 
@@ -1536,10 +3210,38 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "18003344cff0"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("layer-stack", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("layer-stack", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "efa66f8927d1"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/repeat.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/repeat.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "bf0cea966575"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("open-surface-mark", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("open-surface-mark", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "116963e5e31b"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("position", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("position", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1553,21 +3255,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.1.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","heading","separator","group"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"disabled":{"type":"boolean"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","tiles"],"default":"drill"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.2.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","tiles","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
 /***/ "fb3a1cbd7459"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings","runtime":{"label":"Settings","tiles":"Quick settings"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings","runtime":{"label":"Settings","tiles":"Quick settings","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","own-color":"Own colour…","own-color-value":"Own: {value}","close":"Close","reset":"Reset","apply":"Apply","search":"Find","empty":"Nothing found","pin":"Pin","unpin":"Unpin","move-hint":"Alt with the up and down arrows changes the order","position":"{text}: {index} of {count}"}}');
 
 /***/ },
 
 /***/ "0eadcd89fc76"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки","runtime":{"label":"Настройки","tiles":"Быстрые настройки"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки","runtime":{"label":"Настройки","tiles":"Быстрые настройки","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","own-color":"Свой цвет…","own-color-value":"Свой: {value}","close":"Закрыть","reset":"Сбросить","apply":"Применить","search":"Найти","empty":"Ничего не найдено","pin":"Закрепить","unpin":"Открепить","move-hint":"Alt и стрелки вверх и вниз меняют порядок","position":"{text}: {index} из {count}"}}');
 
 /***/ }
 

@@ -1543,7 +1543,10 @@ const STATE_ICONS = {
 const ALERT_STATUS = {
   done: 'success',
   error: 'error'
-};
+}; // The row is sf-steps 1.4 (owner decision C101): a row always (the wizard
+// draws its own compact head when narrow), the steps the wizard's rule lets a
+// person reach as buttons (navigation free over the wizard's own reachable),
+// each step's state in sf-steps' words.
 
 function stepsRow(context) {
   const {
@@ -1555,20 +1558,25 @@ function stepsRow(context) {
   } = context;
   const items = steps.map(step => ({
     label: step.label,
-    state: step.current && !step.state ? 'default' : STAGE[step.state] ?? 'default',
+    ...(step.state || !step.current ? {
+      state: STAGES[step.state || '']
+    } : {}),
     ...(step.reachable ? {} : {
       disabled: true
     })
   }));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-steps class="sf-wizard-steps" size=${size} current=${String(index)} aria-label=${words.steps}
+    layout="row" navigation="free"
     items=${JSON.stringify(items)} @sf-steps-change=${event => component.onProgress(event)}></sf-steps>`;
-}
+} // sf-steps' word for each state of a wizard step.
 
-const STAGE = {
-  done: 'completed',
+
+const STAGES = {
+  done: 'done',
   skipped: 'skipped',
   running: 'running',
-  error: 'error'
+  error: 'error',
+  '': 'ahead'
 };
 
 function stepList(context, extra = '') {
@@ -1779,7 +1787,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "c784a72456f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.2.5","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.2.8","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

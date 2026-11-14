@@ -29,20 +29,31 @@
        control of the lookup's size, its avatar or text --sf-space-1/2 inside
        its highlight. Before R029 a row's text kept the field's axis. */
     --sf-lookup--row-height: var(--sf-ui-1--control-height);
-    /* The clear's box: the icon button's control at the step it is asked for
-       (templates/default.js CLEAR_SIZE). */
-    --sf-lookup--clear-box: var(--sf-ui-1\/3--control-height);
+    /* The clear is the field layer's action (C123): the leading picture's
+       size, the field's height, the field's plain inset. */
+    --sf-field-action--glyph: var(--sf-text-height-1);
+    --sf-field-action--height: var(--sf-ui-1--control-height);
     --sf-lookup--row-padding-inline: var(--sf-space-1\/2);
-    /* Wrapped chips: the rows stand far enough apart for sf-tag's remove targets
-       (--sf-c2 square, centred on the line) to meet at most, whatever line the
-       size and the viewport's text ladder give: 4px on a 20px line, 8 on 16. */
+    /* A chip is the field less --sf-space-1/4 above and below (owner decision
+       C58): 32 in a 40 field, 24 in 32 (size 1/2, compact 1), 28 in 36 (phone),
+       40 in 48, 48 in 56, 20 in 28 (1/3 desktop, 1/2 phone). Wrapped rows and
+       neighbouring chips stand --sf-space-1/4 apart; a remove target (at least
+       --sf-c2, centred on the chip) of a chip under 24 reaches 2 past it, so the
+       targets of two rows meet at most. Chips stood on the field's text line
+       before (24 in a 40 field), their rows 4 or 8 apart (LS-1). */
+    --sf-lookup--chip-height: calc(var(--sf-field-action--height) - 2 * var(--sf-space-1\/4));
     /* The list's inset (C05, R029; R017's 1/3 before): rows and their fills
        stand --sf-space-1/4 from the panel's edge, and the scrollbar stands in
        that inset (C07). */
     --sf-lookup--panel-padding: var(--sf-space-1\/4);
-    --sf-lookup--chip-row-gap: max(var(--sf-space-1\/4), calc(var(--sf-c2) - var(--sf-lookup--line-height)));
+    --sf-lookup--chip-row-gap: var(--sf-space-1\/4);
+    /* The remove cross, a small step by the chip's tag (owner decision C132,
+       the cross row: tags 1/3 and 1/2 → 8, 1 and 2 → 12); its target stays at
+       least --sf-c2 whatever the chip (LS-3). It was the tag's text step, 10. */
+    --sf-lookup--chip-cross: var(--sf-a8);
   }
   .sf-lookup.sf-lookup--size-2 {
+    --sf-lookup--chip-cross: var(--sf-b2);
     --sf-lookup--font-size: var(--sf-text-size-2);
     --sf-lookup--line-height: var(--sf-text-height-2);
     --sf-lookup--label-size: var(--sf-text-size-1);
@@ -54,7 +65,8 @@
     --sf-lookup--text-inset: var(--sf-ui-2--text-space-x);
     --sf-lookup--row-padding-block: var(--sf-ui-2--space-y-tightness-low);
     --sf-lookup--row-height: var(--sf-ui-2--control-height);
-    --sf-lookup--clear-box: var(--sf-ui-1\/2--control-height);
+    --sf-field-action--glyph: var(--sf-text-height-2);
+    --sf-field-action--height: var(--sf-ui-2--control-height);
   }
   .sf-lookup.sf-lookup--size-1\/2 {
     --sf-lookup--font-size: var(--sf-text-size-1\/2);
@@ -68,6 +80,45 @@
     --sf-lookup--text-inset: var(--sf-ui-1\/2--text-space-x);
     --sf-lookup--row-padding-block: var(--sf-ui-1\/2--space-y-tightness-low);
     --sf-lookup--row-height: var(--sf-ui-1\/2--control-height);
+    --sf-field-action--glyph: var(--sf-text-height-1\/2);
+    --sf-field-action--height: var(--sf-ui-1\/2--control-height);
+  }
+  /* The outer steps of the field ladder (inputs/scss/_field-ladder.scss): at
+     1/3 and 3 the lookup is as tall as sf-input of the size (28 / 56 on a
+     desktop). It drew the neighbouring kept size, 32 / 48. */
+  .sf-lookup.sf-lookup--size-1\/3 {
+    --sf-lookup--font-size: var(--sf-text-size-1\/3);
+    --sf-lookup--line-height: var(--sf-text-height-1\/3);
+    --sf-lookup--label-size: var(--sf-text-size-1\/4);
+    --sf-lookup--label-height: var(--sf-text-height-1\/4);
+    --sf-lookup--caption-size: var(--sf-text-size-1\/4);
+    --sf-lookup--caption-height: var(--sf-text-height-1\/4);
+    --sf-lookup--padding-block: var(--sf-lookup-padding-block, calc(var(--sf-ui-1\/3--space-y-tightness-default) - var(--sf-px)));
+    --sf-lookup--padding-inline: var(--sf-lookup-padding-inline, var(--sf-ui-1\/3--space-x));
+    --sf-lookup--text-inset: var(--sf-ui-1\/3--text-space-x);
+    --sf-lookup--row-padding-block: var(--sf-ui-1\/3--space-y-tightness-low);
+    --sf-lookup--row-height: var(--sf-ui-1\/3--control-height);
+    --sf-field-action--glyph: var(--sf-text-height-1\/3);
+    --sf-field-action--height: var(--sf-ui-1\/3--control-height);
+  }
+  .sf-lookup.sf-lookup--size-3 {
+    --sf-lookup--font-size: var(--sf-text-size-3);
+    --sf-lookup--line-height: var(--sf-text-height-3);
+    --sf-lookup--label-size: var(--sf-text-size-2);
+    --sf-lookup--label-height: var(--sf-text-height-2);
+    --sf-lookup--caption-size: var(--sf-text-size-2);
+    --sf-lookup--caption-height: var(--sf-text-height-2);
+    --sf-lookup--padding-block: var(--sf-lookup-padding-block, calc(var(--sf-ui-3--space-y-tightness-default) - var(--sf-px)));
+    --sf-lookup--padding-inline: var(--sf-lookup-padding-inline, var(--sf-ui-3--space-x));
+    --sf-lookup--text-inset: var(--sf-ui-3--text-space-x);
+    --sf-lookup--row-padding-block: var(--sf-ui-3--space-y-tightness-low);
+    --sf-lookup--row-height: var(--sf-ui-3--control-height);
+    --sf-field-action--glyph: var(--sf-text-height-3);
+    --sf-field-action--height: var(--sf-ui-3--control-height);
+  }
+  /* At 3 the chip is an sf-tag 2: the cross of tag 2, 12 (C132). */
+  .sf-lookup.sf-lookup--size-3 {
+    --sf-lookup--chip-cross: var(--sf-b2);
   }
   /* The label row and the message line: sf-input's. */
   .sf-lookup .sf-lookup-label {
@@ -247,28 +298,176 @@
     color: inherit;
     cursor: default;
   }
-  /* Chips stand on the field's text line: one row of them keeps the height. */
-  .sf-lookup .sf-lookup-chip {
+  /* Chips (C58): the field less --sf-space-1/4 above and below, so a row of
+     them keeps the field's height: the frame pads them by that inset less its
+     hairline and the search box takes the chip's height. The chip is told its
+     line (--sf-tag--line), which makes it, its text line and its remove box
+     that high. A long name ends in an ellipsis, the chip no wider than 20rem
+     (the whole name is its title). */
+  .sf-lookup .sf-lookup-chip,
+  .sf-lookup .sf-lookup-more-chips {
+    --sf-tag--line: var(--sf-lookup--chip-height);
+  }
+  .sf-lookup .sf-lookup-chip > .sf-tag,
+  .sf-lookup .sf-lookup-more-chips > .sf-tag {
     min-width: 0;
     min-inline-size: 0;
-    max-width: 100%;
-    max-inline-size: 100%;
+    max-width: min(100%, var(--sf-g0));
+    max-inline-size: min(100%, var(--sf-g0));
   }
-  /* The clear is sf-button-close, plain (C14): the icon button's square box of
-     its step, the cross inside it (LK-08: it was the text line high and the
-     button's width wide, 28 by 24, 24 by 20 on a phone). A plain close draws no
-     spot, so the box is its target alone: it stands over the frame's block
-     padding by what it passes the text line, and a value never grows the field.
-     The host is display: contents; the box is the button. */
-  .sf-lookup .sf-lookup-frame > sf-button-close > .sf-lookup-clear {
-    margin-top: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
-    margin-bottom: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
-    margin-block: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+  .sf-lookup .sf-lookup-chip > .sf-tag > .sf-tag-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .sf-lookup .sf-lookup-frame > sf-close > .sf-lookup-clear {
-    margin-top: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
-    margin-bottom: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
-    margin-block: calc((var(--sf-lookup--line-height) - var(--sf-lookup--clear-box)) / 2);
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame {
+    padding-top: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-bottom: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-block: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-top: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-top: var(--sf-lookup-padding-block, calc(var(--sf-space-1\/4) - var(--sf-px)));
+    padding-bottom: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-bottom: var(--sf-lookup-padding-block, calc(var(--sf-space-1\/4) - var(--sf-px)));
+    padding-block: var(--sf-lookup-padding-block, calc(var(--sf-space-1\/4) - var(--sf-px)));
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input {
+    height: var(--sf-lookup--chip-height);
+    block-size: var(--sf-lookup--chip-height);
+  }
+  /* The search box beside the chips (LS-15). It asked 4ch at every moment and
+     dropped to an empty row of its own whenever the chips left less (two chips
+     in a 1/2 field 208-348 wide on a desktop: 56 in place of 32). At rest and
+     empty it leaves the flow (it is still reached by Tab and a press in the
+     frame); focused it asks room for the caret, typed into 4ch, and a row of
+     its own only when the chips leave less. */
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed) {
+    min-width: var(--sf-space-1);
+    min-inline-size: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus){
+    right: 0;
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus){
+    right: 0;
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus):where(:dir(ltr)){
+    right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus){
+    left: 0;
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus){
+    left: 0;
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus):where(:dir(rtl)){
+    left: 0;
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-input:not(.sf-lookup-input--typed):not(:focus) {
+    position: absolute;
+    top: 0;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: 0;
+    inline-size: 0;
+    min-width: 0;
+    min-inline-size: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+  }
+  /* One row (chips="row", PROVISIONAL name; C58: filters, tables and cards).
+     While the field is closed the chips stand in one row at their own widths;
+     the component counts how many the row holds and draws «+N» after them. The
+     rest stay drawn out of the flow and unseen, so they are measured but not
+     reached. The focus coming into the field, or a press on «+N», opens it to
+     the wrapping rows of a form. */
+  .sf-lookup.sf-lookup--chips-collapsed .sf-lookup-frame {
+    flex-wrap: nowrap;
+    overflow-x: clip;
+  }
+  .sf-lookup.sf-lookup--chips-collapsed .sf-lookup-chip > .sf-tag,
+  .sf-lookup.sf-lookup--chips-collapsed .sf-lookup-more-chips > .sf-tag {
+    flex-shrink: 0;
+  }
+  /* One chip and «+N»: the chip gives way, its name ends in an ellipsis. */
+  .sf-lookup.sf-lookup--chips-one .sf-lookup-chip:not(.sf-lookup-chip--over) > .sf-tag {
+    flex-shrink: 1;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag{
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag{
+    left: 0;
+    }
+  }
+  .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag:where(:dir(ltr)){
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag{
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag{
+    right: 0;
+    }
+  }
+  .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag:where(:dir(rtl)){
+    right: 0;
+  }
+  .sf-lookup .sf-lookup-chip.sf-lookup-chip--over > .sf-tag {
+    position: absolute;
+    top: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .sf-lookup .sf-lookup-more-chips > .sf-tag {
+    cursor: pointer;
+  }
+  /* A search inside the delay with nothing to show yet draws no panel. */
+  .sf-lookup.sf-lookup--open .sf-lookup-panel.sf-lookup-panel--blank {
+    display: none;
+  }
+  /* The clear is the field layer's action (C123; it was sf-button-close plain,
+     C14): a glyph without a plate, its hit area the field's inner height. It
+     stands over the frame's block padding by what it passes the text line, so a
+     value never grows the field; the value keeps half an inset before it. */
+  .sf-lookup .sf-lookup-frame > .sf-field-action {
+    margin-top: calc(-1 * var(--sf-lookup--padding-block));
+    margin-bottom: calc(-1 * var(--sf-lookup--padding-block));
+    margin-block: calc(-1 * var(--sf-lookup--padding-block));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
+    padding-right: calc(var(--sf-field-action--inset) / 4);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
+    padding-right: calc(var(--sf-field-action--inset) / 4);
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action):where(:dir(ltr)){
+    padding-right: calc(var(--sf-field-action--inset) / 4);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
+    padding-left: calc(var(--sf-field-action--inset) / 4);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
+    padding-left: calc(var(--sf-field-action--inset) / 4);
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action):where(:dir(rtl)){
+    padding-left: calc(var(--sf-field-action--inset) / 4);
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action) {
+    -webkit-padding-end: calc(var(--sf-field-action--inset) / 4);
+            padding-inline-end: calc(var(--sf-field-action--inset) / 4);
   }
   /* The list: sf-dropdown's menu surface, in the top layer under the frame. */
   .sf-lookup .sf-lookup-panel {
@@ -287,22 +486,27 @@
     --sf-surface-place: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-ground: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -315,12 +519,14 @@
     overflow: auto;
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
-    --sf-lookup--track: calc(2 * var(--sf-lookup--panel-padding) + var(--sf-space-1\/4));
+    --sf-lookup--track: calc(2 * var(--sf-lookup--panel-padding) + var(--sf-scroll-thumb-width));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-lookup .sf-lookup-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-lookup .sf-lookup-panel {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-lookup .sf-lookup-panel {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-lookup .sf-lookup-panel {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -332,6 +538,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-lookup .sf-lookup-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-lookup .sf-lookup-panel {
     --sf-primary: var(--sf-place--found-primary);
@@ -431,16 +655,123 @@
     cursor: pointer;
     color: var(--sf-on-surface);
   }
-  /* A row with a caption (LK-05, owner decision C49 read literally, the
-     whole-lines rule): the one-line row plus the caption's line, its text as
-     far inside it as a one-line row's, (row - line) / 2: 60 = 8 + 24 + 20 + 8
-     at size 1 on a desktop, 48 = 6 + 20 + 16 + 6 at size 1/2, 72 at size 2, 52
-     on a phone. A one-line row keeps the row step (40 at size 1); the height is
-     the row's own, so no row changes height while the answers change. Before,
-     a caption row was 52 at size 1 (44 on a phone): 4 + 24 + 20 + 4. */
+  /* A row with a caption is a menu's row with a caption (owner decision C49;
+     dispatcher ruling LS-14, C139): one height for every «name + caption» row,
+     the menu's row step (a control of 1/2) and the menu caption's line, 48 on a
+     desktop, 44 compact, 60 under a coarse pointer (below), its text centred in
+     it and at least --sf-a2 from its edges, as a menu row's; a larger size whose
+     two lines need more grows by them (56 at 2, 68 at 3). A one-line row keeps the
+     row step (40 at size 1). It was the whole-lines reading of LK-05: 60 at
+     size 1 on a desktop, 52 on a phone, 72 at size 2. */
+  .sf-lookup {
+    --sf-lookup--caption-row: calc(var(--sf-ui-1\/2--control-height) + var(--sf-text-height-1\/3));
+  }
   .sf-lookup .sf-lookup-option.sf-lookup-option--caption {
-    min-height: calc(var(--sf-lookup--row-height) + var(--sf-lookup--caption-height));
-    min-block-size: calc(var(--sf-lookup--row-height) + var(--sf-lookup--caption-height));
+    min-height: var(--sf-lookup--caption-row);
+    min-block-size: var(--sf-lookup--caption-row);
+    padding-top: var(--sf-a2);
+    padding-bottom: var(--sf-a2);
+    padding-block: var(--sf-a2);
+  }
+  /* The matched part of a name or a caption (owner decision C139 (8)): the
+     medium weight; the colour stays the text's. */
+  .sf-lookup .sf-lookup-match {
+    font-weight: var(--sf-font-weight-medium);
+  }
+  /* A search runs over the rows of the last answer (C139 (4)): they stay, a
+     step paler -- the name on on-surface-variant, the caption on
+     on-surface-disabled -- until the answer replaces them. */
+  .sf-lookup .sf-lookup-list.sf-lookup-list--stale .sf-lookup-option-label {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-lookup .sf-lookup-list.sf-lookup-list--stale .sf-lookup-option-caption {
+    color: var(--sf-on-surface-disabled);
+  }
+  /* The create row (C139 (2)): last, the add icon in the picture's place,
+     parted from the rows above by the menu's separator. */
+  .sf-lookup .sf-lookup-divider {
+    flex: none;
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    margin-top: var(--sf-a4);
+    margin-bottom: var(--sf-a4);
+    margin-block: var(--sf-a4);
+    background-color: var(--sf-outline-variant);
+  }
+  .sf-lookup .sf-lookup-option > .sf-lookup-icon,
+  .sf-lookup .sf-lookup-frame > .sf-lookup-icon {
+    display: inline-flex;
+    --sf-icon--font-size: var(--sf-lookup--line-height);
+    --sf-icon--width: var(--sf-lookup--line-height);
+    --sf-icon--height: var(--sf-lookup--line-height);
+    --sf-icon--color: var(--sf-on-surface-variant);
+  }
+  /* A single chosen value's picture (C139 (5)): the row's, the field's text
+     line high, --sf-space-1/2 before the name (C105 H2: 12, compact and phone
+     8), the frame's own gap counted in; it stands at the plain inset, as the
+     first chip does. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture{
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture{
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture:where(:dir(ltr)){
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture{
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture{
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture:where(:dir(rtl)){
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-value-picture {
+    --sf-avatar--height: var(--sf-lookup--line-height);
+    --sf-avatar--width: var(--sf-lookup--line-height);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-lookup--line-height) / 2));
+    --sf-avatar--line-height: var(--sf-lookup--line-height);
+    -webkit-margin-end: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+            margin-inline-end: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  /* sf-icon's host is display: contents: its margin is its glyph's. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon{
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon{
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon:where(:dir(ltr)){
+    margin-right: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon{
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon{
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon:where(:dir(rtl)){
+    margin-left: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  .sf-lookup .sf-lookup-frame > sf-icon.sf-lookup-value-picture > .sf-icon {
+    -webkit-margin-end: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+            margin-inline-end: calc(var(--sf-space-1\/2) - var(--sf-space-1\/4));
+  }
+  /* The chip the arrows stand on (C139 (6)): the focus ring round it, the
+     search box keeping the focus. */
+  .sf-lookup .sf-lookup-chip.sf-lookup-chip--active > .sf-tag {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   /* A row's picture is the field's text line, as the chip's on the field's line
      is (the geometry standard: every picture of a size is its line; LK-06): 24
@@ -454,11 +785,17 @@
   }
   .sf-lookup .sf-lookup-option:hover {
     background-color: var(--sf-surface-state-hover);
+    /* A translucent fill, as a menu's row (C43 D3, D4): the badge on the
+       option's line keeps its own tone, hovered or chosen. */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-surface-state-hover);
   }
   .sf-lookup .sf-lookup-option.sf-lookup-option--chosen {
     background-color: var(--sf-primary-container);
     color: var(--sf-on-primary-container);
     --sf-on-surface-variant: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container);
   }
   /* The active row is where Enter chooses: the focus ring, drawn inside it. */
   .sf-lookup .sf-lookup-option.sf-lookup-option--active {
@@ -504,10 +841,21 @@
     min-width: 0;
     min-inline-size: 0;
   }
+  /* The line is drawn after the field has waited sf-spinner's delay itself
+     (SEARCH_LINE_DELAY, C130 (8)): its spinner shows with it, not a delay later. */
+  .sf-lookup .sf-lookup-spinner {
+    --sf-loader--delay: 0s;
+  }
   .sf-lookup .sf-lookup-state:has(.sf-lookup-state-text) {
     padding-top: var(--sf-lookup--row-padding-block);
     padding-bottom: var(--sf-lookup--row-padding-block);
     padding-block: var(--sf-lookup--row-padding-block);
+    /* A line is a row of the list (C05: a row is a control of the lookup's
+       size), 40 at size 1 on a desktop, its text centred in it; it was its text
+       line and padding, 28, and 52 while searching, with the spinner's own label
+       under the spinner (LS-16). */
+    min-height: var(--sf-lookup--row-height);
+    min-block-size: var(--sf-lookup--row-height);
   }
   .sf-lookup .sf-lookup-state.sf-lookup-state--error,
   .sf-lookup .sf-lookup-state.sf-lookup-state--refusal {
@@ -536,6 +884,37 @@
   }
 }
 @layer sf.states {
+  /* The chip's remove box (sf-tag draws an inline tag's box its line high and
+     wide): the chip high and no wider than --sf-c2, so the cross keeps its
+     place at the chip's end and the target is at least --sf-c2 square (the
+     tag's ::after reaches past a box under it: chips of 20). It was the line
+     square, 20 x 20 on a phone (LS-3). The cross is the small step the
+     chip's size takes (C132); sf-tag sets its own in this layer, by size. */
+  .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline {
+    --sf-tag--close-size: var(--sf-lookup--chip-cross);
+  }
+  .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline > sf-button-close > .sf-icon-button.sf-icon-button--close {
+    height: var(--sf-lookup--chip-height);
+    block-size: var(--sf-lookup--chip-height);
+    width: min(var(--sf-lookup--chip-height), var(--sf-c2));
+    inline-size: min(var(--sf-lookup--chip-height), var(--sf-c2));
+  }
+  .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline > sf-close > .sf-icon-button.sf-icon-button--close {
+    height: var(--sf-lookup--chip-height);
+    block-size: var(--sf-lookup--chip-height);
+    width: min(var(--sf-lookup--chip-height), var(--sf-c2));
+    inline-size: min(var(--sf-lookup--chip-height), var(--sf-c2));
+  }
+  /* The avatar in a chip is the chip less --sf-space-1/4 above and below
+     (C58): 24 in a 32 chip. sf-tag draws an inline tag's avatar its line
+     high, which was the chip (LS-2). */
+  .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline > .sf-avatar {
+    --sf-lookup--chip-avatar: calc(var(--sf-lookup--chip-height) - 2 * var(--sf-space-1\/4));
+    --sf-avatar--height: var(--sf-lookup--chip-avatar);
+    --sf-avatar--width: var(--sf-lookup--chip-avatar);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-lookup--chip-avatar) / 2));
+    --sf-avatar--line-height: var(--sf-lookup--chip-avatar);
+  }
   @media (prefers-reduced-motion: reduce) {
     .sf-lookup .sf-lookup-frame {
       transition-duration: 0s;
@@ -555,6 +934,530 @@
     }
     .sf-lookup .sf-lookup-option.sf-lookup-option--active {
       outline: var(--sf-px) solid Highlight;
+    }
+  }
+}
+/* C77 (owner 2026-11-11): the value inset of sf-input. With no chip in the
+   frame the search text starts --sf-space-1/2, --sf-space-1 or --sf-space-2
+   from the outer edge, the border counted inside it (size 1/2 keeps 12 on a
+   phone), plus half of what a rounder corner adds over the control radius;
+   the clear at the end stands at the plain inset. Chips keep their place
+   (C76): with a chip in the frame only their corner follows a corner rounder
+   than the control radius, the field's corner as drawn less the chip's inset
+   (--sf-space-1/4), so the two stay concentric; at the control radius or
+   less a chip keeps the field's own. */
+@layer sf.components {
+  .sf-lookup {
+    --sf-field-action--inset: var(--sf-lookup--inset);
+    --sf-lookup--inset: var(--sf-space-1);
+    --sf-lookup--line-radius: min(var(--sf-lookup--radius), var(--sf-ui-1--control-height) / 2);
+    --sf-lookup--value-inset: calc(var(--sf-lookup--inset) + max(calc(var(--sf-px) * 0), var(--sf-lookup--line-radius) - var(--sf-radius-1\/2)) / 2);
+  }
+  /* Each step's inset is sf-input's (component/inputs field-ladder.inset,
+     C77): 1/3 and 1/2 never below 12 (--sf-b2), 1 = 16, 2 = 20, 3 = 24;
+     compact 12 / 12 / 12 / 16 / 20 (intent acceptance 2026-11-12 keeps
+     compact 2 at 16); on a phone every step 12. The outer steps stood at the
+     step's padding plus the border plus the text step (19 / 37), and a phone
+     2 at 16, until the text inputs study (TI-2, TI-3). */
+  .sf-lookup.sf-lookup--size-1\/3 {
+    --sf-lookup--inset: max(var(--sf-space-1\/2), var(--sf-b2));
+    --sf-lookup--line-radius: min(var(--sf-lookup--radius), var(--sf-ui-1\/3--control-height) / 2);
+  }
+  .sf-lookup.sf-lookup--size-1\/2 {
+    --sf-lookup--inset: max(var(--sf-space-1\/2), var(--sf-b2));
+    --sf-lookup--line-radius: min(var(--sf-lookup--radius), var(--sf-ui-1\/2--control-height) / 2);
+  }
+  .sf-lookup.sf-lookup--size-2 {
+    --sf-lookup--inset: var(--sf-space-1);
+    --sf-lookup--line-radius: min(var(--sf-lookup--radius), var(--sf-ui-2--control-height) / 2);
+  }
+  @media (min-width: 60rem) {
+    .sf-lookup.sf-lookup--size-2 {
+      --sf-lookup--inset: var(--sf-space-2);
+    }
+  }
+  .sf-lookup.sf-lookup--size-3 {
+    --sf-lookup--inset: var(--sf-space-1);
+    --sf-lookup--line-radius: min(var(--sf-lookup--radius), var(--sf-ui-3--control-height) / 2);
+  }
+  @media (min-width: 60rem) {
+    .sf-lookup.sf-lookup--size-3 {
+      --sf-lookup--inset: var(--sf-space-3);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:where(:dir(ltr)){
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:where(:dir(rtl)){
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:where(:dir(ltr)){
+    padding-right: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:where(:dir(rtl)){
+    padding-left: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame {
+    -webkit-padding-start: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    -webkit-padding-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+            padding-inline-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+    -webkit-padding-end: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-lookup--value-inset) - var(--sf-px));
+    -webkit-padding-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+            padding-inline-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--value-inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear):where(:dir(ltr)){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear):where(:dir(rtl)){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-button-close, > .sf-lookup-clear) {
+    -webkit-padding-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+    -webkit-padding-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+            padding-inline-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear):where(:dir(ltr)){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear):where(:dir(rtl)){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-frame:has(> sf-close, > .sf-lookup-clear) {
+    -webkit-padding-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+    -webkit-padding-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+            padding-inline-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input{
+    padding-left: calc(var(--sf-px) * 0);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input{
+    padding-left: calc(var(--sf-px) * 0);
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input:where(:dir(ltr)){
+    padding-left: calc(var(--sf-px) * 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input{
+    padding-right: calc(var(--sf-px) * 0);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input{
+    padding-right: calc(var(--sf-px) * 0);
+    }
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input:where(:dir(rtl)){
+    padding-right: calc(var(--sf-px) * 0);
+  }
+  .sf-lookup:not(:has(.sf-lookup-chip)) .sf-lookup-input {
+    -webkit-padding-start: calc(var(--sf-px) * 0);
+            padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  /* With chips the first tag is the picture: it stands at the plain inset,
+     as an icon does. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame:where(:dir(ltr)){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame:where(:dir(rtl)){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame:where(:dir(ltr)){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame:where(:dir(rtl)){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame {
+    -webkit-padding-start: calc(var(--sf-lookup--inset) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-lookup--inset) - var(--sf-px));
+    -webkit-padding-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+            padding-inline-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    -webkit-padding-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-lookup--inset) - var(--sf-px));
+    -webkit-padding-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+            padding-inline-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  /* The list's rows keep the field's text edge (section 3): a rounder field
+     moves its value in by half of what its corner adds, and so do the rows. */
+  .sf-lookup {
+    --sf-lookup--row-padding-inline: calc(var(--sf-space-1\/2) + max(calc(var(--sf-px) * 0), var(--sf-lookup--line-radius) - var(--sf-radius-1\/2)) / 2);
+  }
+  .sf-lookup .sf-lookup-chip {
+    /* The tag's own corner variables, not its public one: a page's
+       --sf-tag-radius still wins. */
+    --sf-lookup--chip-radius: var(--sf-tag-radius, min(var(--sf-lookup--radius), max(var(--sf-radius-1\/2), var(--sf-lookup--line-radius) - var(--sf-space-1\/4))));
+    --sf-tag--border-top-left-radius: var(--sf-lookup--chip-radius);
+    --sf-tag--border-top-right-radius: var(--sf-lookup--chip-radius);
+    --sf-tag--border-bottom-left-radius: var(--sf-lookup--chip-radius);
+    --sf-tag--border-bottom-right-radius: var(--sf-lookup--chip-radius);
+  }
+}
+/* C139 (5): a single value's picture is the frame's first thing, as a chip
+   is: it stands at the plain inset. */
+@layer sf.components {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame{
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame:where(:dir(ltr)){
+    padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame{
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+    }
+  }
+  .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame:where(:dir(rtl)){
+    padding-right: calc(var(--sf-lookup--inset) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  .sf-lookup:has(.sf-lookup-value-picture) .sf-lookup-frame {
+    -webkit-padding-start: calc(var(--sf-lookup--inset) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-lookup--inset) - var(--sf-px));
+    -webkit-padding-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+            padding-inline-start: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+}
+/* C139 (7): under lg the list is a sheet over the page, sf-search's sheet on
+   a phone: the whole viewport on the popup surface, the search on top with
+   the back arrow («Готово») at its start and a hairline under it, the rows
+   below at the panel's inset. The panel is already in the top layer; the
+   shared layer stack holds the page and Tab. */
+@layer sf.components {
+  .sf-lookup.sf-lookup--open .sf-lookup-panel.sf-lookup-panel--sheet {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    width: auto;
+    inline-size: auto;
+    height: auto;
+    block-size: auto;
+    max-width: none;
+    max-inline-size: none;
+    max-height: none;
+    max-block-size: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    visibility: visible;
+  }
+  .sf-lookup .sf-lookup-panel--sheet > .sf-lookup-list {
+    margin-left: var(--sf-lookup--panel-padding);
+    margin-right: var(--sf-lookup--panel-padding);
+    margin-inline: var(--sf-lookup--panel-padding);
+  }
+  .sf-lookup .sf-lookup-panel--sheet > .sf-lookup-state {
+    margin-left: var(--sf-lookup--panel-padding);
+    margin-right: var(--sf-lookup--panel-padding);
+    margin-inline: var(--sf-lookup--panel-padding);
+  }
+  .sf-lookup .sf-lookup-panel--sheet > .sf-lookup-actions {
+    margin-left: var(--sf-lookup--panel-padding);
+    margin-right: var(--sf-lookup--panel-padding);
+    margin-inline: var(--sf-lookup--panel-padding);
+  }
+  .sf-lookup .sf-lookup-panel--sheet > .sf-lookup-list {
+    margin-top: var(--sf-lookup--panel-padding);
+    -webkit-margin-before: var(--sf-lookup--panel-padding);
+            margin-block-start: var(--sf-lookup--panel-padding);
+  }
+  .sf-lookup .sf-lookup-sheet-head {
+    position: sticky;
+    top: 0;
+    inset-block-start: 0;
+    z-index: 1;
+    flex: none;
+    gap: var(--sf-space-1\/2);
+    padding: var(--sf-space-1\/2);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+    background-color: var(--sf-surface-popup);
+    background-color: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
+  }
+  .sf-lookup .sf-lookup-sheet-head > .sf-lookup-frame {
+    flex: 1 1 auto;
+    width: auto;
+    inline-size: auto;
+  }
+}
+/* A row is a touch target of at least 44px under a coarse pointer, as a
+   menu's row is (simai/ui-source#25), and a caption row the menu's 60 there
+   (C49, LS-14): the touch step and the caption's line. */
+@media (pointer: coarse) {
+  @layer sf.states {
+    .sf-lookup {
+      --sf-lookup--caption-row: calc(max(var(--sf-ui-1\/2--control-height), var(--sf-d1)) + var(--sf-text-height-1\/3));
+    }
+    .sf-lookup .sf-lookup-option:not(.sf-lookup-option--caption) {
+      min-height: max(var(--sf-lookup--row-height), var(--sf-d1));
+      min-block-size: max(var(--sf-lookup--row-height), var(--sf-d1));
+    }
+  }
+}
+/* C123: the field layer's action rules (inputs/scss/field-action.scss). */
+@layer sf.components {
+  .sf-field-action {
+    --sf-field-action--ink: var(--sf-on-surface-variant);
+    --sf-field-action--glyph-size: var(--sf-field-action--glyph, var(--sf-text-height-1));
+    --sf-field-action--side: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 4);
+    --sf-field-action--hit-block: max(calc(var(--sf-field-action--height, var(--sf-ui-1--control-height)) - 2 * var(--sf-px)), var(--sf-c2));
+    --sf-field-action--hit-inline: max(calc(var(--sf-field-action--glyph-size) + 2 * var(--sf-field-action--side)), var(--sf-c2));
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--sf-field-action--hit-block);
+    block-size: var(--sf-field-action--hit-block);
+    width: var(--sf-field-action--hit-inline);
+    inline-size: var(--sf-field-action--hit-inline);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--sf-field-action--ink);
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sf-field-action[hidden] {
+    display: none;
+  }
+  .sf-field-action .sf-icon {
+    --sf-icon--font-size: var(--sf-field-action--glyph-size);
+    --sf-icon--height: var(--sf-field-action--glyph-size);
+    --sf-icon--width: var(--sf-field-action--glyph-size);
+    --sf-icon--color: var(--sf-field-action--ink);
+    color: var(--sf-field-action--ink);
+    border-radius: var(--sf-radius--ui);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child,html:not([dir="rtl"])
+  .sf-lookup-frame > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child,html:not([dir="rtl"])
+  .sf-lookup-frame > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(ltr)),
+  .sf-lookup-frame > :last-child .sf-field-action:where(:dir(ltr)){
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child,[dir="rtl"]
+  .sf-lookup-frame > :last-child .sf-field-action{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child,[dir="rtl"]
+  .sf-lookup-frame > :last-child .sf-field-action{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(rtl)),
+  .sf-lookup-frame > :last-child .sf-field-action:where(:dir(rtl)){
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  .sf-lookup-frame > .sf-field-action:last-child,
+  .sf-lookup-frame > :last-child .sf-field-action {
+    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+}
+@layer sf.states {
+  .sf-field-action:not(:disabled):not([aria-disabled=true]):hover {
+    --sf-field-action--ink: var(--sf-on-surface);
+  }
+  .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
+    --sf-field-action--ink: var(--sf-on-surface);
+  }
+  .sf-field-action:disabled {
+    --sf-field-action--ink: var(--sf-on-surface-disabled);
+    cursor: default;
+  }
+  .sf-field-action[aria-disabled=true] {
+    --sf-field-action--ink: var(--sf-on-surface-disabled);
+    cursor: default;
+  }
+  .sf-field-action.focus-visible {
+    outline: none !important;
+  }
+  .sf-field-action:focus-visible {
+    outline: none !important;
+  }
+  .sf-field-action.focus-visible .sf-icon {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-field-action:focus-visible .sf-icon {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  @media (forced-colors: active) {
+    .sf-field-action.focus-visible .sf-icon {
+      outline-color: Highlight;
+    }
+    .sf-field-action:focus-visible .sf-icon {
+      outline-color: Highlight;
     }
   }
 }

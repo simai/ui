@@ -113,11 +113,13 @@ function syncFieldContract(root, control, {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -126,6 +128,9 @@ __webpack_require__.r(__webpack_exports__);
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -164,15 +169,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -632,7 +649,8 @@ async function bindMask(root, textarea) {
 }
 
 function bindTextarea(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.retireFieldSizeClass)(root, 'sf-textarea');
+  // The textarea stands on the field ladder (field-size.js): 1/3 and 3 are
+  // its own steps, no class to move.
   if (!root || root.dataset[TEXTAREA_BOUND_FLAG] === '1') return;
   const textarea = getTextareaNode(root);
   if (!textarea) return;
@@ -793,7 +811,7 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       maxRows
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
-    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(size, 'sf-textarea');
+    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(size);
     const normalizedVariant = boundedValue(type, TEXTAREA_VARIANTS, 'bordered');
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;

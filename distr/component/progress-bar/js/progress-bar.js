@@ -15,6 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("06e8cd089f28");
+
 
 
 const PROGRESS_BAR_SELECTOR = '.sf-progress-bar';
@@ -34,16 +36,41 @@ function normalizeValue(value) {
   }
 
   return Math.max(0, Math.min(100, parsed));
-}
+} // The text stands over the bar (top: the name at the start, the value at the
+// end) or at the end of its row (inline-end), or is not shown (owner decision
+// C131 (4)). bottom and right are the former words for top and inline-end,
+// read until 2027-01-01 (journal record value-progress-text-position).
+
+
+const TEXT_POSITIONS = ['none', 'top', 'inline-end'];
+const FORMER_TEXT_POSITIONS = {
+  bottom: 'top',
+  right: 'inline-end'
+};
 
 function normalizeTextPosition(value, fallback = 'none') {
   const normalized = String(value || fallback).toLowerCase();
-  return ['none', 'right', 'inline-end', 'bottom'].includes(normalized) ? normalized : fallback;
-} // The shared status words. `primary` was the old word for no status: it has no
-// colour of its own and draws the default, as before; `info` was turned into it.
+  const named = FORMER_TEXT_POSITIONS[normalized] ?? normalized;
+
+  if (named !== normalized) {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: 'progress-bar',
+      kind: 'value',
+      attribute: 'data-position',
+      from: normalized,
+      to: named,
+      since: '2026-11-13',
+      remove_after: '2027-01-01'
+    });
+  }
+
+  return TEXT_POSITIONS.includes(named) ? named : fallback;
+} // The shared status words (owner decision C131 (1)): no status draws the
+// theme's primary and carries no class; neutral is grey, as in sf-dot and
+// sf-badge. `primary` is the former word for no status.
 
 
-const TONES = ['info', 'success', 'warning', 'error'];
+const TONES = ['neutral', 'info', 'success', 'warning', 'error'];
 
 function normalizeTone(value) {
   const normalized = String(value || '').toLowerCase();
@@ -58,6 +85,10 @@ function getTextNode(root) {
   return root?.querySelector?.('.sf-progress-bar-text') || null;
 }
 
+function getHeadNode(root) {
+  return root?.querySelector?.(':scope > .sf-progress-bar-head') || null;
+}
+
 function getMainNode(root) {
   return root?.querySelector?.('.sf-progress-bar-main') || null;
 }
@@ -67,11 +98,11 @@ function detectTextPosition(root) {
     return 'none';
   }
 
-  if (root.classList.contains('flex-col')) {
-    return 'bottom';
+  if (getHeadNode(root) || root.classList.contains('flex-col')) {
+    return 'top';
   }
 
-  return 'right';
+  return 'inline-end';
 }
 
 function ensureTextNode(root) {
@@ -87,30 +118,38 @@ function syncRootLayout(root, textPosition = 'none') {
   root.classList.add('sf-progress-bar', 'flex');
   root.classList.remove('flex-col', 'flex-row', 'items-cross-end', 'items-cross-center');
 
-  if (textPosition === 'bottom') {
-    root.classList.add('flex-col', 'items-cross-end');
+  if (textPosition === 'top') {
+    root.classList.add('flex-col');
     return;
   }
 
-  if (textPosition === 'right' || textPosition === 'inline-end') {
+  if (textPosition === 'inline-end') {
     root.classList.add('flex-row', 'items-cross-center');
   }
 } // Indeterminate (C34): the size of the work is not known, so the bar has no
 // value to say: aria-valuenow is left out (WAI-ARIA progressbar), and the
 // value text, when the page gives one, says what is going on.
+// A meter always has a value, so it is never indeterminate.
 
 
 function isIndeterminate(root) {
+  if (root.dataset.meter === 'true') return false;
   return root.classList.contains('sf-progress-bar--indeterminate') || root.dataset.indeterminate === 'true';
 } // Paused (C34): the work stands still, so an indeterminate segment stops.
 
 
 function isPaused(root) {
   return root.classList.contains('sf-progress-bar--paused') || root.dataset.paused === 'true';
+} // Meter (owner decision C131 (7)): an amount within a known range (a quota
+// used), not a task's progress: role meter. A meter always has a value.
+
+
+function isMeter(root) {
+  return root.dataset.meter === 'true';
 }
 
 function syncProgressAccessibility(root, value) {
-  root.setAttribute('role', 'progressbar');
+  root.setAttribute('role', isMeter(root) ? 'meter' : 'progressbar');
   root.setAttribute('aria-valuemin', '0');
   root.setAttribute('aria-valuemax', '100');
   if (isIndeterminate(root)) root.removeAttribute('aria-valuenow');else root.setAttribute('aria-valuenow', String(value));
@@ -127,16 +166,13 @@ function syncProgressAccessibility(root, value) {
   } else {
     root.removeAttribute('aria-valuetext');
   }
-} // The template writes sf-progress-bar--neutral for no status (it draws
-// nothing of its own); a status it changes to takes it away, so no
-// --neutral stays beside the new status class.
+} // One status class at most; no status has none.
 
 
 function syncTone(root, tone) {
   ['primary', ...TONES].forEach(name => {
     root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
   });
-  if (tone) root.classList.remove('sf-progress-bar--neutral');
   if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
 
@@ -156,7 +192,54 @@ function renderProgressBar(root) {
   syncProgressAccessibility(root, value);
   if (indeterminate) progress.style.removeProperty('width');else progress.style.width = `${value}%`;
   root.dataset.value = String(value);
-  root.dataset.position = textPosition;
+  root.dataset.position = textPosition; // Top: one line over the bar, the name at the start and the value at the
+  // end. The line is a picture of what the role already says (name and
+  // value), so it is hidden from the accessibility tree.
+
+  if (textPosition === 'top') {
+    let head = getHeadNode(root);
+
+    if (!head) {
+      head = document.createElement('div');
+      head.className = 'sf-progress-bar-head';
+      root.insertBefore(head, main);
+    }
+
+    head.setAttribute('aria-hidden', 'true');
+    let labelNode = head.querySelector('.sf-progress-bar-label');
+    const label = root.dataset.label || '';
+
+    if (label) {
+      if (!labelNode) {
+        labelNode = document.createElement('span');
+        labelNode.className = 'sf-progress-bar-label';
+        head.prepend(labelNode);
+      }
+
+      if (labelNode.textContent !== label) labelNode.textContent = label;
+    } else if (labelNode) {
+      labelNode.remove();
+    }
+
+    let textNode = head.querySelector('.sf-progress-bar-text');
+
+    if (indeterminate) {
+      textNode?.remove();
+    } else {
+      if (!textNode) {
+        textNode = getTextNode(root) || document.createElement('span');
+        textNode.className = 'sf-progress-bar-text';
+        head.append(textNode);
+      }
+
+      if (textNode.textContent !== `${value}%`) textNode.textContent = `${value}%`;
+    }
+
+    root.querySelectorAll(':scope > .sf-progress-bar-text').forEach(node => node.remove());
+    return true;
+  }
+
+  getHeadNode(root)?.remove();
 
   if (textPosition === 'none' || indeterminate) {
     const textNode = getTextNode(root);
@@ -169,12 +252,8 @@ function renderProgressBar(root) {
   }
 
   const textNode = ensureTextNode(root);
-  textNode.textContent = `${value}%`;
-
-  if (textPosition === 'bottom' && textNode.parentElement !== root) {
-    root.append(textNode);
-  }
-
+  if (textNode.textContent !== `${value}%`) textNode.textContent = `${value}%`;
+  textNode.setAttribute('aria-hidden', 'true');
   return true;
 }
 
@@ -233,6 +312,10 @@ function setProgressBarState(target, state = {}) {
     root.classList.toggle('sf-progress-bar--indeterminate', Boolean(state.indeterminate));
   }
 
+  if (Object.prototype.hasOwnProperty.call(state, 'meter')) {
+    if (state.meter) root.dataset.meter = 'true';else delete root.dataset.meter;
+  }
+
   if (Object.prototype.hasOwnProperty.call(state, 'paused')) {
     if (state.paused) root.dataset.paused = 'true';else delete root.dataset.paused;
     root.classList.toggle('sf-progress-bar--paused', Boolean(state.paused));
@@ -262,7 +345,8 @@ function getProgressBarState(target) {
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
     indeterminate: isIndeterminate(root),
-    paused: isPaused(root)
+    paused: isPaused(root),
+    meter: isMeter(root)
   };
 }
 
@@ -277,11 +361,12 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       value = 0,
       textPosition = 'none',
       status,
-      tone = 'primary',
+      tone = '',
       label = '',
       valueText = '',
       indeterminate = false,
-      paused = false
+      paused = false,
+      meter = false
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const root = document.createElement('div');
@@ -303,6 +388,7 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     if (indeterminate) root.dataset.indeterminate = 'true';
     if (paused) root.dataset.paused = 'true';
+    if (meter) root.dataset.meter = 'true';
     const main = document.createElement('div');
     main.className = 'sf-progress-bar-main';
     const progress = document.createElement('div');
@@ -521,6 +607,125 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
 }
 
 /***/ },

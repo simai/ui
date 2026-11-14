@@ -324,8 +324,9 @@
     --sf-surface-underlay: initial;
     /* The row's own translucent fill (C43 D3, D4): declared with the underlay
        by mix sf-place-fill on a selected, open, current or hovered row, and
-       read only with it (the anchored badge's ring). Everywhere else it is
-       initial, as the underlay is, so the page declares the role a component
+       read on its own by the anchored badge's ring: every place takes it
+       back (initial), the soft and glass ones too (C43 later, 2026-11-12).
+       Everywhere else it is initial, so the page declares the role a component
        sheet reads (pair next 2 integration: it was declared in component
        sheets only, which the declared-tokens contract reads as undeclared). */
     --sf-surface-place-fill: initial;
@@ -380,8 +381,8 @@
     /* A step above the strongest plate, and not because the ladder asks: a
        plate sits on the page, a veil covers it. At 24 the two were the same
        colour, and the backdrop of a modal was as strong as a pressed card
-       (owner, 2026-10-08). With the plate family at 8/12/16 (C41, owner
-       2026-11-10) the strong step is 24, still above the pressed plate. */
+       (owner, 2026-10-08). With the plate family at 12/16/20 (C113, owner
+       2026-11-13) the strong step is 24, still above the pressed plate. */
     --sf-surface-container-strong: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-inverse: light-dark(var(--sf-neutral-20), var(--sf-neutral-90));
     /* The inverse surface under a pointer: the same five-tone step the other
@@ -422,25 +423,45 @@
        plates with a middle grey while every other translucent surface
        lightened with a near-white -- two tones doing one job.
 
-       The neutral fill family is 8, 12, 16 and 24 (strong), the same in both
-       themes (C41, owner 2026-11-10; research 2026-11-10-container-weight.md).
-       At 16 the plate measured -7.6 lightness on a white page and +16 on the
-       dark one, heavier than the tinted containers beside it and than the
-       neutral fills of the systems compared; 8 is one step darker than the
-       place it stands on, on any place (light #f4f4f5, dark #202226 on the
-       page). It stays translucent for that reason.
-       8 is also the select state's step. That overlap is accepted: a state is
-       drawn over a plate, not instead of it, and a chosen menu row is not grey
-       but primary-container (C23). The former 16 (2026-10-08) kept a plate
-       apart from a press at 12; the press is still a step above the plate.
+       The neutral fill takes the first steps of the fill family, 12, 16 and
+       20, and 24 (strong), the same in both themes (C113, owner 2026-11-13;
+       research 2026-11-12-tonal-buttons.md; was 8/12/16 since C41). Two
+       plates weigh the same when they differ from the place by the same
+       lightness, not when they share a percent: in the light theme grey 50
+       and blue 50 are equally dark, so the neutral needs the coloured
+       containers' 12 (plate 1.16:1 on the page against 1.10 at 8; primary
+       1.18). In the dark theme the neutral is laid with grey 90, which
+       lightens far more per percent than a 50 tone, so it reaches the
+       coloured containers' weight at 12 where they need 24: the "+12 dark"
+       of the tinted containers is not applied to it (1.31:1 on the page,
+       primary 1.27). It stays translucent, so on a coloured place it takes
+       that place's hue.
+       12 is also the pressed state's step. A state is drawn over a plate,
+       not instead of it, and a chosen menu row is not grey but
+       primary-container (C23); the pressed plate (20) is above every state.
        The tinted containers keep their steps (12-20 light, 24-32 dark). */
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-fixed: var(--sf-neutral-10);
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    /* The icon role (C107, owner 2026-11-12, replacing the three-role rule of
+       2026-10-08): a neutral glyph inside a control -- a button, a segment, a
+       tab, a header tool, and an icon button with no text -- is half a step
+       paler than its label, to make up for the glyph's size and filled areas
+       (R192; research 2026-11-12-icon-colour.md). Light neutral-25 between the
+       label's 10 and the variant's 40; dark neutral-80, the popup variant's
+       tone. Over the surfaces 0 to 3, a hovered plate and a selected one it
+       measures 9.23 to 11.17:1 light and 7.49 to 11.10:1 dark, over WCAG
+       1.4.11's 3:1 everywhere. A row's leading icon (list, menu, tree, field,
+       tag, crumbs, toast, file row) is --sf-on-surface-variant; a hovered or
+       pressed control's icon takes the label's colour; painted, selected,
+       status and disabled glyphs keep their own roles. A coloured place and
+       glass have no half step on the alpha scale: there the role is the
+       place's ink (core mix/_mix__places.scss, _sf_css__surface_places.scss). */
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     /* Dark tone 70 since C43 (owner 2026-11-10, palette steps research): tone
        60 gave Lc 42 on the page against Lc 82 for the light pair, and a quiet
        key (its fill an 8 % of this ink) 4.25:1 on a card. Light unchanged. */
@@ -617,7 +638,11 @@
        Nothing is found by it, so it is not held to 1.4.11: 1.34:1 and 1.92:1. */
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-secondary-outline: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    /* The plate of a control nobody can use: the state family's 8, a step
+       under the lightest working plate (12), so a disabled tonal button is
+       lighter than one at rest, never heavier (C113 item 3, TB-2; it was 12
+       over a resting plate of 8). */
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     /* The boundary of a control nobody can use, and the one role whose whole
        job is to be weaker than another. It carried the same value as
@@ -664,6 +689,10 @@
        (mix/_mix__shadow.scss). */
     --sf-shadow-raised: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
     --sf-shadow-overlay: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    /* The overlay shadow as a filter (C59): the same two layers drawn over a
+       surface's whole painted shape, so an arrow beside a popover carries the
+       panel's shadow (a box-shadow is drawn around the box only). */
+    --sf-shadow-overlay-filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
     --sf-shadow-modal: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
     /* Высота — это две вещи сразу: тень под элементом и поверхность под ним.
        В светлой теме работает тень, и поднятая поверхность остаётся обычной.
@@ -802,7 +831,12 @@
     --sf-surface-place-solid: initial;
     --sf-surface-place-ground: var(--sf-black);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-white--alfa-80);
+    --sf-place--ink: var(--sf-on-surface-media);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-surface-media);
+    --sf-on-surface-icon: var(--sf-on-surface-media);
     --sf-on-surface-hover: var(--sf-on-surface-media);
     --sf-on-surface-active: var(--sf-on-surface-media);
     --sf-on-surface-variant: var(--sf-white--alfa-80);
@@ -810,13 +844,13 @@
     --sf-surface-state-hover: var(--sf-white--alfa-4);
     --sf-surface-state-select: var(--sf-white--alfa-8);
     --sf-surface-state-active: var(--sf-white--alfa-12);
-    --sf-surface-container: var(--sf-white--alfa-8);
-    --sf-surface-container-hover: var(--sf-white--alfa-12);
-    --sf-surface-container-active: var(--sf-white--alfa-16);
+    --sf-surface-container: var(--sf-white--alfa-12);
+    --sf-surface-container-hover: var(--sf-white--alfa-16);
+    --sf-surface-container-active: var(--sf-white--alfa-20);
     --sf-outline: var(--sf-white--alfa-64);
     --sf-outline-variant: var(--sf-white--alfa-24);
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: var(--sf-white--alfa-12);
+    --sf-surface-disabled: var(--sf-white--alfa-8);
     --sf-on-surface-disabled: var(--sf-white--alfa-64);
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -825,11 +859,41 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-place--outer-primary: var(--sf-primary);
+    --sf-place--outer-primary-hover: var(--sf-primary-hover);
+    --sf-place--outer-primary-active: var(--sf-primary-active);
+    --sf-place--outer-on-primary: var(--sf-on-primary);
+    --sf-place--outer-primary-container: var(--sf-primary-container);
+    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
+    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
+    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
+  }
+  .sf-surface-media > * {
+    --sf-primary: var(--sf-white);
+    --sf-primary-hover: var(--sf-neutral-95);
+    --sf-primary-active: var(--sf-neutral-90);
+    --sf-on-primary: var(--sf-black);
+    --sf-primary-container: var(--sf-white--alfa-12);
+    --sf-primary-container-hover: var(--sf-white--alfa-16);
+    --sf-primary-container-active: var(--sf-white--alfa-20);
+    --sf-on-primary-container: var(--sf-white);
+    --sf-link: var(--sf-white);
+    --sf-link-hover: var(--sf-neutral-95);
+    --sf-link-active: var(--sf-neutral-90);
+    --sf-link-visited: var(--sf-white--alfa-80);
+    --sf-focus: var(--sf-white);
+    --sf-focus--color: var(--sf-focus);
   }
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1105,6 +1169,64 @@
   }
 }
 @layer sf.base {
+  :root {
+    --sf-micro--point-1\/4: 0.375rem;
+    --sf-micro--point-1\/4: var(--sf-a6);
+    --sf-micro--point-1\/3: 0.375rem;
+    --sf-micro--point-1\/3: var(--sf-a6);
+    --sf-micro--point-1\/2: 0.5rem;
+    --sf-micro--point-1\/2: var(--sf-a8);
+    --sf-micro--point-1: var(--sf-b2);
+    --sf-micro--point-2: var(--sf-b2);
+    --sf-micro--point-3: var(--sf-b6);
+    --sf-micro--count-1: var(--sf-b6);
+    --sf-micro--count-2: var(--sf-b6);
+    --sf-micro--count-3: var(--sf-b6);
+    --sf-micro--cross-1\/3: 0.5rem;
+    --sf-micro--cross-1\/3: var(--sf-a8);
+    --sf-micro--cross-1\/2: 0.5rem;
+    --sf-micro--cross-1\/2: var(--sf-a8);
+    --sf-micro--cross-1: var(--sf-b2);
+    --sf-micro--cross-2: var(--sf-b2);
+    --sf-micro--cross-3: var(--sf-b2);
+    --sf-micro--badge-1\/4: 0.5rem;
+    --sf-micro--badge-1\/4: var(--sf-a8);
+    --sf-micro--badge-1\/3: 0.5rem;
+    --sf-micro--badge-1\/3: var(--sf-a8);
+    --sf-micro--badge-1\/2: 0.75rem;
+    --sf-micro--badge-1\/2: var(--sf-b2);
+    --sf-micro--badge-1: var(--sf-b2);
+    --sf-micro--badge-2: var(--sf-b6);
+    --sf-micro--badge-3: var(--sf-b6);
+    --sf-micro--dot-1\/3: 0.375rem;
+    --sf-micro--dot-1\/3: var(--sf-a6);
+    --sf-micro--dot-1\/2: 0.375rem;
+    --sf-micro--dot-1\/2: var(--sf-a6);
+    --sf-micro--dot-1: var(--sf-a8);
+    --sf-micro--dot-2: var(--sf-a8);
+    --sf-micro--dot-3: var(--sf-b2);
+    --sf-micro--ring-1\/4: 0.0625rem;
+    --sf-micro--ring-1\/4: var(--sf-a1);
+    --sf-micro--ring-1\/3: 0.0625rem;
+    --sf-micro--ring-1\/3: var(--sf-a1);
+    --sf-micro--ring-1\/2: 0.125rem;
+    --sf-micro--ring-1\/2: var(--sf-a2);
+    --sf-micro--ring-1: var(--sf-a2);
+    --sf-micro--ring-2: var(--sf-a2);
+    --sf-micro--ring-3: var(--sf-a2);
+    --sf-micro--tick: var(--sf-a4);
+  }
+  @media (min-width: 60rem) {
+    :root:not([data-sf-density=compact]),
+    [data-sf-density=normal] {
+      --sf-micro--cross-3: var(--sf-b6);
+    }
+    [data-sf-density=compact]:not(:root) {
+      --sf-micro--cross-3: var(--sf-b2);
+    }
+  }
+}
+@layer sf.base {
   :root,
   ::after,
   ::before {
@@ -1146,9 +1268,8 @@
     --sf-transparent-for-focus: var(--sf-transparent);
     --sf-white: #ffffff;
     /* Glass over media draws its ink from white on the alpha scale (C16,
-       .sf-surface-media): states 4/8/12, fill 8/12/16 (C41), line 24,
-       boundary 64, dim ink 80. White at 20 is read by nothing since C41 and
-       kept for pages that wrote it (token-aliases.v1.json primitives_kept). */
+       .sf-surface-media): states 4/8/12, fill 12/16/20 (C113), disabled
+       plate 8, line 24, boundary 64, dim ink 80. */
     --sf-white--alfa-4: rgba(255,255,255,0.03922);
     --sf-white--alfa-8: rgba(255,255,255,0.07843);
     --sf-white--alfa-12: rgba(255,255,255,0.12157);
@@ -1181,8 +1302,8 @@
     --sf-neutral-90--alfa-12: rgba(227,226,231,0.12157);
     /* The plate steps in the dark theme. The plate used to be mixed from
        neutral-50 there, a middle grey, while everything else translucent was
-       mixed from this near-white (owner, 2026-10-08). Since C41 the plate is
-       8/12/16 and the strong step 24; 20 and 32 are kept, read by nothing. */
+       mixed from this near-white (owner, 2026-10-08). Since C113 the plate is
+       12/16/20 and the strong step 24; 32 is kept, read by nothing. */
     --sf-neutral-90--alfa-16: rgba(227,226,231,0.16078);
     --sf-neutral-90--alfa-20: rgba(227,226,231,0.2);
     --sf-neutral-90--alfa-24: rgba(227,226,231,0.23922);
@@ -1209,10 +1330,10 @@
     --sf-neutral-50--alfa-16: rgba(118,119,124,0.16078);
     --sf-neutral-50--alfa-20: rgba(118,119,124,0.2);
     --sf-neutral-50--alfa-24: rgba(118,119,124,0.23922);
-    /* The former strong step (32) and the former plate hover (20): since C41
-       (owner 2026-11-10) the neutral fill is 8/12/16 and the strong step 24,
-       so nothing in the Framework reads 20 or 32 on neutral-50 or neutral-90.
-       Kept for pages that wrote them (token-aliases.v1.json primitives_kept). */
+    /* The former strong step (32): since C41 (owner 2026-11-10) the strong
+       step is 24, and since C113 (owner 2026-11-13) the neutral fill 12/16/20,
+       so nothing in the Framework reads 32 on neutral-50 or neutral-90. Kept
+       for pages that wrote it (token-aliases.v1.json primitives_kept). */
     --sf-neutral-50--alfa-32: rgba(118,119,124,0.32157);
     /* The ink family of the scale (48, 64, 80): marks drawn with the neutral
        rather than washes laid under something. neutral-50 over white measures
@@ -2469,8 +2590,8 @@ body {
 }
 @layer sf.base {
   :root {
-    --sf-icon-size-1\/4: 0.625rem;
-    --sf-icon-size-1\/4: var(--sf-b0);
+    --sf-icon-size-1\/4: 0.75rem;
+    --sf-icon-size-1\/4: var(--sf-b2);
     --sf-icon-size-1\/3: 0.75rem;
     --sf-icon-size-1\/3: var(--sf-b2);
     --sf-icon-size-1\/2: 0.875rem;
@@ -2486,7 +2607,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2583,7 +2704,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2662,7 +2783,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2679,6 +2800,7 @@ body {
     --sf-title--height-10: var(--sf-d2);
     --sf-title--height-11: var(--sf-d3);
     --sf-title--height-12: var(--sf-d4);
+    --sf-title--height-card: var(--sf-c0);
     --sf-title-height-1: var(--sf-title--height-1);
     --sf-title-height-2: var(--sf-title--height-2);
     --sf-title-height-3: var(--sf-title--height-3);
@@ -2706,6 +2828,7 @@ body {
       --sf-title--height-10: var(--sf-d9);
       --sf-title--height-11: var(--sf-e0);
       --sf-title--height-12: var(--sf-e2);
+      --sf-title--height-card: var(--sf-c2);
       --sf-title-height-1: var(--sf-title--height-1);
       --sf-title-height-2: var(--sf-title--height-2);
       --sf-title-height-3: var(--sf-title--height-3);
@@ -2723,7 +2846,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2835,7 +2958,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2862,7 +2985,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2889,7 +3012,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2916,7 +3039,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2943,7 +3066,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
+ * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3607,15 +3730,15 @@ body {
 /*
  * Generated by scripts/generate-density.mjs from the ladder files in
  * src/core/figma_variables (desktop blocks). Do not edit by hand.
- * source-sha256: f91233c3b95da9e04642c8b49dcb57ef1c9ed638e4d14d3711fc30e4a719145f
+ * source-sha256: a8194c87264cf09c3fef5373b37b5e7fde765fac16197c7f7d993c547f6482c2
  *
  * Density (owner decision C22): data-sf-density="compact" on the root or on
  * a container moves every component one ladder step down -- height, padding,
  * gap, icon and text together. Each step variable holds the value of the step
- * below; components read their steps as always. An element with an explicit
- * size (a page's size attribute) takes the normal ladder back under it;
- * data-sf-density="normal" does the same for a region. Desktop only: below
- * 60rem the phone ladder already is the dense one.
+ * below; components read their steps as always, an explicit size too (C79: a
+ * size is a step on the region's ladder). data-sf-density="normal" takes the
+ * normal ladder back for an element or a region. Desktop only: below 60rem
+ * the phone ladder already is the dense one.
  *
  * The popup widths (C32) follow the text: normal x 14/16, rounded up to the
  * next step of the size scale.
@@ -3753,7 +3876,6 @@ body {
       --sf-text--size: var(--sf-text--size-1);
       --sf-text--height: var(--sf-text--height-1);
     }
-    [data-sf-density=compact] :not(input):not(select):not(textarea)[size]:not([data-sf-size-relative]):not([data-sf-size-scale]):not([data-sf-static] *),
     [data-sf-density=normal] {
       --sf-text--size-1\/3: 0.75rem;
       --sf-text--size-1\/3: var(--sf-b2);
@@ -3875,11 +3997,8 @@ body {
       --sf-text--height: var(--sf-text--height-1);
     }
     /* On <html> the variables only, which body reads: a font-size on the
-       root element would move rem, and with it every step of the ladder.
-       An explicit size takes the normal body text back too, for the text a
-       component inherits rather than sizes. */
+       root element would move rem, and with it every step of the ladder. */
     [data-sf-density=compact]:not(:root),
-    [data-sf-density=compact] :not(input):not(select):not(textarea)[size]:not([data-sf-size-relative]):not([data-sf-size-scale]):not([data-sf-static] *),
     [data-sf-density=normal]:not(:root) {
       font-size: var(--sf-text--size);
       line-height: var(--sf-text--height);
@@ -5152,6 +5271,17 @@ body {
 }
 /* One bar centred in each row of the given height, as wide as the share. */
 @layer sf.base {
+  /* The skeleton's fill, one rule (owner decision C130 (4), SK-05): an
+     sf-skeleton, a first-paint bar or fill, a box held for a Smart element
+     and a region on its way all draw the neutral fill of their place,
+     --sf-surface-container -- the grey plate's rest step, 12 % in both themes
+     with C113 -- and pulse with sf-placeholder-pulse below. A place that
+     redefines the fill (a dark plate, a tinted place) moves every skeleton
+     in it. */
+  :where(.sf-skeleton, .sf-first-paint-bar, .sf-first-paint-fill, [data-sf-region-loading]),
+  :where([data-sf-skeleton]):not(:defined) {
+    --sf-skeleton-base: var(--sf-surface-container);
+  }
   /* The box before the code (owner, 2026-10-15, rule 5; the box rule of
      2026-10-28, stand 25 D1/D4). A Smart element whose code has not arrived
      yet keeps the box the page gave it, and core draws no shape of its own in
@@ -5173,11 +5303,17 @@ body {
      The shape still names the kind for a manifest and a page; the room is the
      page's (it knows the loaded box) or the printed first paint's. */
   :where([data-sf-skeleton]):not(:defined):not(:has(> [data-sf-static])) {
-    --sf-skeleton-base: var(--sf-surface-container);
     --sf-skeleton-line: var(--sf-text-height-1);
-    --sf-skeleton-bar: var(--sf-text-size-1);
+    /* A text bar is as tall as the capitals (owner decision C136 (1)): see
+       .sf-first-paint-bar below. */
+    --sf-skeleton-bar: calc(var(--sf-text-size-1) * 0.727);
     display: block;
     background-repeat: no-repeat;
+  }
+  @supports (block-size: round(nearest, 1em, 1em)) {
+    :where([data-sf-skeleton]):not(:defined):not(:has(> [data-sf-static])) {
+      --sf-skeleton-bar: round(nearest, calc(var(--sf-text-size-1) * 0.727), var(--sf-a2));
+    }
   }
   :where([data-sf-skeleton=rows]):not(:defined):not(:has(> [data-sf-static])),
   :where([data-sf-skeleton=record]):not(:defined):not(:has(> [data-sf-static])),
@@ -5230,44 +5366,704 @@ body {
 }
 @layer sf.base {
   /* sf-language before it draws (Docara, 2026-11-07: the header tools moved
-     left by 40 px when the trigger appeared). The element knows its box before
-     its code does, from its attributes alone: one control of its size step
-     high (size, default 1), and for the menu and search looks -- an icon button
-     -- as wide as high. So until it marks its look (data-look, set as it draws)
-     it holds that box itself, and a page needs no placeholder of its own. The
-     switch (mode inline, or auto, whose look depends on how many languages it
-     is given) holds its height only: its width is its labels'. Static markup
-     printed inside (data-sf-static) is its own box, so nothing is reserved
-     then. Here, not in a sheet of the component's, because the element has no
-     sheet and core.css is the one sheet a page links before any code. */
-  :where(sf-language:not([data-look])) {
+     left by 40 px when the trigger appeared; C142, 2026-11-14: they moved by
+     63-78 px once the trigger became «RU ▾»). The element knows its box before
+     its code does, from its attributes alone, so until it marks its look
+     (data-look, set as it draws) it holds that box itself, and a page needs no
+     placeholder of its own:
+
+     - auto, menu and search (the default): the trigger, an sf-button of the
+       element's size (size, default 1) -- its side padding, the translate
+       glyph, the code with its text space on both sides, the expand_more
+       glyph. Each part is the button ladder's variable of that size; the code
+       stands in a slot one text line wide (below), so the drawn trigger is
+       as wide as the box held for it whatever language is chosen;
+     - inline: the track, one control of its size high; its width is its
+       labels', which no attribute gives;
+     - field: the field, its label line above it, the label's gap and one
+       control of the field's size (1/3 draws 1/2, 3 draws 2), as wide as its
+       container;
+     - one language (a languages list without a separator, no island) draws
+       nothing, so nothing is held.
+
+     Static markup printed inside (data-sf-static) is its own box, so nothing
+     is reserved then. Here, not in a sheet of the component's, because the
+     element has no sheet and core.css is the one sheet a page links before
+     any code. */
+  :where(sf-language) {
     --sf-language--box: var(--sf-ui-1--control-height);
+    --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-1--space-x));
+    --sf-language--text-x: var(--sf-ui-1--text-space-x);
+    --sf-language--line: var(--sf-text-height-1);
+    --sf-language--field-label: var(--sf-text-height-1\/2);
+    --sf-language--field: var(--sf-ui-1--control-height);
+    /* side padding, glyph, text space, code slot, text space, glyph, side padding */
+    --sf-language--trigger: calc(2 * var(--sf-language--space-x) + 2 * var(--sf-language--text-x) + 3 * var(--sf-language--line));
+    --sf-language--field-box: calc(var(--sf-language--field-label) + var(--sf-space-1\/4) + var(--sf-language--field));
   }
-  :where(sf-language[size="1/3"]:not([data-look])) {
+  :where(sf-language[size="1/3"]) {
     --sf-language--box: var(--sf-ui-1\/3--control-height);
+    --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-1\/3--space-x));
+    --sf-language--text-x: var(--sf-ui-1\/3--text-space-x);
+    --sf-language--line: var(--sf-text-height-1\/3);
+    --sf-language--field-label: var(--sf-text-height-1\/3);
+    --sf-language--field: var(--sf-ui-1\/2--control-height);
   }
-  :where(sf-language[size="1/2"]:not([data-look])) {
+  :where(sf-language[size="1/2"]) {
     --sf-language--box: var(--sf-ui-1\/2--control-height);
+    --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-1\/2--space-x));
+    --sf-language--text-x: var(--sf-ui-1\/2--text-space-x);
+    --sf-language--line: var(--sf-text-height-1\/2);
+    --sf-language--field-label: var(--sf-text-height-1\/3);
+    --sf-language--field: var(--sf-ui-1\/2--control-height);
   }
-  :where(sf-language[size="2"]:not([data-look])) {
+  :where(sf-language[size="2"]) {
     --sf-language--box: var(--sf-ui-2--control-height);
+    --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-2--space-x));
+    --sf-language--text-x: var(--sf-ui-2--text-space-x);
+    --sf-language--line: var(--sf-text-height-2);
+    --sf-language--field-label: var(--sf-text-height-1);
+    --sf-language--field: var(--sf-ui-2--control-height);
   }
-  :where(sf-language[size="3"]:not([data-look])) {
+  :where(sf-language[size="3"]) {
     --sf-language--box: var(--sf-ui-3--control-height);
+    --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-3--space-x));
+    --sf-language--text-x: var(--sf-ui-3--text-space-x);
+    --sf-language--line: var(--sf-text-height-3);
+    --sf-language--field-label: var(--sf-text-height-1);
+    --sf-language--field: var(--sf-ui-2--control-height);
   }
   :where(sf-language:not([data-look])):not(:has(> [data-sf-static])) {
     display: inline-block;
     vertical-align: middle;
     height: var(--sf-language--box);
     block-size: var(--sf-language--box);
+    width: var(--sf-language--trigger);
+    inline-size: var(--sf-language--trigger);
   }
-  :where(sf-language[mode=menu]:not([data-look])):not(:has(> [data-sf-static])) {
-    width: var(--sf-language--box);
-    inline-size: var(--sf-language--box);
+  :where(sf-language[mode=inline]:not([data-look])):not(:has(> [data-sf-static])) {
+    width: auto;
+    inline-size: auto;
   }
-  :where(sf-language[mode=search]:not([data-look])):not(:has(> [data-sf-static])) {
-    width: var(--sf-language--box);
-    inline-size: var(--sf-language--box);
+  :where(sf-language[mode=field]:not([data-look])):not(:has(> [data-sf-static])) {
+    display: block;
+    width: auto;
+    inline-size: auto;
+    height: var(--sf-language--field-box);
+    block-size: var(--sf-language--field-box);
+  }
+  /* Drawn, the element is its parts (display: contents); a part whose own
+     code has not come yet (sf-dropdown is fetched on its own) holds the same
+     box until it draws, or the row closed up for a frame between the two. */
+  :where(sf-language .sf-language-parts > sf-button:not(:defined)) {
+    display: inline-block;
+    vertical-align: middle;
+    height: var(--sf-language--box);
+    block-size: var(--sf-language--box);
+    width: var(--sf-language--trigger);
+    inline-size: var(--sf-language--trigger);
+  }
+  :where(sf-language .sf-language-parts > sf-segmented:not(:defined)) {
+    display: inline-block;
+    vertical-align: middle;
+    height: var(--sf-language--box);
+    block-size: var(--sf-language--box);
+  }
+  :where(sf-language .sf-language-parts > sf-button-group:not(:defined)) {
+    display: inline-block;
+    vertical-align: middle;
+    height: var(--sf-language--box);
+    block-size: var(--sf-language--box);
+  }
+  :where(sf-language .sf-language-parts > sf-dropdown:not(:defined)) {
+    display: block;
+    height: var(--sf-language--field-box);
+    block-size: var(--sf-language--field-box);
+  }
+  :where(sf-language[languages]:not([languages*=" "]):not([languages*=","]):not([languages*=";"]):not([data-look])):not(:has(> [data-sf-static], > script)) {
+    display: none;
+  }
+  /* The code's slot in the trigger: one text line of the size wide (a code
+     of two capitals is a little narrower), the code in its middle. Every code
+     of the list already stands in the same grid cell, so the trigger keeps
+     its width whatever is chosen; the slot makes that width the one held
+     above. A wider code (PT-BR) widens the slot. */
+  :where(sf-language .sf-language-code) {
+    min-width: var(--sf-language--line);
+    min-inline-size: var(--sf-language--line);
+    justify-items: center;
+  }
+  /* sf-input before it draws (first-paint study R222, pilot of «box from
+     attributes»: a bare <sf-input> had no box until its code arrived, and the
+     field then pushed the page down by up to 88 px). Its box is known from its
+     attributes alone, from the same ladder its sheet draws with: the field is
+     one control of its size step high and as wide as its container; a label
+     above it and a message below it (a hint, or an error message when it is
+     invalid) are each one line of the text a step below the size, after the
+     field's gap. Until the element is defined it holds that box itself.
+     Static markup printed inside (data-sf-static) is its own box, so nothing
+     is reserved then; a hidden field (appearance="hidden") has no box. A hint
+     that wraps is the one thing the attributes cannot tell. */
+  :where(sf-input:not(:defined)) {
+    --sf-input--box-control: var(--sf-ui-1--control-height);
+    --sf-input--box-line: var(--sf-text-height-1\/2);
+    --sf-input--box-gap: var(--sf-input--gap, var(--sf-space-1\/4));
+    --sf-input--box-label: 0;
+    --sf-input--box-message: 0;
+  }
+  :where(sf-input[size="1/3"]:not(:defined)) {
+    --sf-input--box-control: var(--sf-ui-1\/3--control-height);
+    --sf-input--box-line: var(--sf-text-height-1\/4);
+  }
+  :where(sf-input[size="1/2"]:not(:defined)) {
+    --sf-input--box-control: var(--sf-ui-1\/2--control-height);
+    --sf-input--box-line: var(--sf-text-height-1\/3);
+  }
+  :where(sf-input[size="2"]:not(:defined)) {
+    --sf-input--box-control: var(--sf-ui-2--control-height);
+    --sf-input--box-line: var(--sf-text-height-1);
+  }
+  :where(sf-input[size="3"]:not(:defined)) {
+    --sf-input--box-control: var(--sf-ui-3--control-height);
+    --sf-input--box-line: var(--sf-text-height-2);
+  }
+  :where(sf-input[label]:not([label=""]):not(:defined)) {
+    --sf-input--box-label: 1;
+  }
+  :where(sf-input[hint]:not([hint=""]):not(.does-not-exist):not(:defined)) {
+    --sf-input--box-message: 1;
+  }
+  :where(sf-input[invalid][error-message]:not([error-message=""]):not(:defined)) {
+    --sf-input--box-message: 1;
+  }
+  :where(sf-input:not(:defined):not([appearance=hidden])):not(:has(> [data-sf-static])) {
+    display: block;
+    height: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
+    block-size: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
+  }
+  /* sf-tag before it draws (tags study TG-15: a bare tag was 0 px for 120-140
+     ms, then the whole tag, and the line it stood in jumped). Its box is known
+     from its attributes, on the ladder the tag sheet draws with: one control of
+     its size high (a status that is neither pressed nor removed is the tonal
+     badge, 24), its label one line of the size's text, written from the `text`
+     attribute, between the size's edges (C76); a check square or a picture
+     before it (tag - 8, C58) and a cross after it (C132) at the part gap
+     (C69). At most 20rem and its container, as the tag. Static markup printed
+     inside (data-sf-static) is its own box, so nothing is reserved then. A
+     label given in a slot, a count and the compact edges are what the
+     attributes cannot tell. */
+  :where(sf-tag:not(:defined)) {
+    --sf-tag--box-control: var(--sf-ui-1\/2--control-height);
+    --sf-tag--box-text: var(--sf-text-size-1\/2);
+    --sf-tag--box-edge: var(--sf-b2);
+    --sf-tag--box-gap: var(--sf-ui-1\/2--text-space-x);
+    --sf-tag--box-cross: var(--sf-micro--cross-1\/2);
+    --sf-tag--box-lead: var(--sf-text-height-1\/2);
+    --sf-tag--box-line: var(--sf-text-height-1\/2);
+    --sf-tag--box-lead-on: 1;
+    --sf-tag--box-cross-on: 0;
+  }
+  :where(sf-tag[size="1/3"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-ui-1\/3--control-height);
+    --sf-tag--box-text: var(--sf-text-size-1\/3);
+    --sf-tag--box-edge: var(--sf-a8);
+    --sf-tag--box-gap: var(--sf-ui-1\/3--text-space-x);
+    --sf-tag--box-cross: var(--sf-micro--cross-1\/3);
+    --sf-tag--box-lead: var(--sf-text-height-1\/3);
+    --sf-tag--box-line: var(--sf-text-height-1\/3);
+  }
+  :where(sf-tag[size="1"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-ui-1--control-height);
+    --sf-tag--box-text: var(--sf-text-size-1);
+    --sf-tag--box-edge: var(--sf-b6);
+    --sf-tag--box-gap: var(--sf-ui-1--text-space-x);
+    --sf-tag--box-cross: var(--sf-micro--cross-1);
+    --sf-tag--box-lead: var(--sf-text-height-1);
+    --sf-tag--box-line: var(--sf-text-height-1);
+  }
+  :where(sf-tag[size="2"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-ui-2--control-height);
+    --sf-tag--box-text: var(--sf-text-size-2);
+    --sf-tag--box-edge: var(--sf-c0);
+    --sf-tag--box-gap: var(--sf-ui-2--text-space-x);
+    --sf-tag--box-cross: var(--sf-micro--cross-2);
+    --sf-tag--box-lead: var(--sf-text-height-2);
+    --sf-tag--box-line: var(--sf-text-height-2);
+  }
+  :where(sf-tag[size="3"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-ui-3--control-height);
+    --sf-tag--box-text: var(--sf-text-size-3);
+    --sf-tag--box-edge: var(--sf-ui-3--space-x);
+    --sf-tag--box-gap: var(--sf-ui-3--text-space-x);
+    --sf-tag--box-cross: var(--sf-micro--cross-3);
+    --sf-tag--box-lead: var(--sf-text-height-3);
+    --sf-tag--box-line: var(--sf-text-height-3);
+  }
+  /* A picture is the tag less 4 above and below; a plain label has none. */
+  :where(sf-tag[kind=icon]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[kind=avatar]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[kind=color]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[type=icon]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[type=avatar]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[type=color]:not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[kind=default]:not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[kind=quantity]:not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[type=default]:not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[type=quantity]:not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[closable]:not([closable=false]):not(:defined)) {
+    --sf-tag--box-cross-on: 1;
+  }
+  :where(sf-tag[closable=false]:not(:defined)) {
+    --sf-tag--box-cross-on: 0;
+  }
+  /* A compact region on a desktop moves each edge one step down, as the tag
+     sheet does (C76): 8 / 8 / 12 / 16 at 1/3, 1/2, 1, 2. */
+  @media (min-width: 60rem) {
+    :where([data-sf-density=compact] sf-tag:not(:defined):not([data-sf-density=normal] *)) {
+      --sf-tag--box-edge: var(--sf-a8);
+    }
+    :where([data-sf-density=compact] sf-tag[size="1"]:not(:defined):not([data-sf-density=normal] *)) {
+      --sf-tag--box-edge: var(--sf-b2);
+    }
+    :where([data-sf-density=compact] sf-tag[size="2"]:not(:defined):not([data-sf-density=normal] *)) {
+      --sf-tag--box-edge: var(--sf-b6);
+    }
+  }
+  /* On a text line (line="..."): the tag is that line high, one size down, with
+     the small inline step at its ends and its picture the line (LK-06). */
+  :where(sf-tag[line]:not([line=""]):not(:defined)) {
+    --sf-tag--box-edge: var(--sf-space-1\/3);
+    --sf-tag--box-gap: var(--sf-space-1\/3);
+  }
+  :where(sf-tag[line="1/2"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-text-height-1\/2);
+    --sf-tag--box-line: var(--sf-text-height-1\/2);
+    --sf-tag--box-text: var(--sf-text-size-1\/3);
+    --sf-tag--box-lead: var(--sf-text-height-1\/2);
+  }
+  :where(sf-tag[line="1"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-text-height-1);
+    --sf-tag--box-line: var(--sf-text-height-1);
+    --sf-tag--box-text: var(--sf-text-size-1\/2);
+    --sf-tag--box-lead: var(--sf-text-height-1);
+  }
+  :where(sf-tag[line="2"]:not(:defined)) {
+    --sf-tag--box-control: var(--sf-text-height-2);
+    --sf-tag--box-line: var(--sf-text-height-2);
+    --sf-tag--box-text: var(--sf-text-size-1);
+    --sf-tag--box-lead: var(--sf-text-height-2);
+  }
+  /* A status that is neither pressed nor removed is the tonal badge (C140 (6)). */
+  :where(sf-tag[status]:not([status=""]):not([interactive]):not([closable]):not(:defined)) {
+    --sf-tag--box-control: var(--sf-c2);
+    --sf-tag--box-text: var(--sf-text-size-1\/3);
+    --sf-tag--box-line: var(--sf-text-height-1\/3);
+    --sf-tag--box-edge: var(--sf-a8);
+    --sf-tag--box-lead-on: 0;
+    --sf-tag--box-cross-on: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    }
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    }
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    }
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    }
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline-block;
+    box-sizing: border-box;
+    height: var(--sf-tag--box-control);
+    block-size: var(--sf-tag--box-control);
+    /* The label's line in the middle, so the box stands on the line by the
+       label's baseline, as the drawn tag does. */
+    padding-top: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
+    padding-bottom: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
+    padding-block: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
+    max-width: min(20rem, 100%);
+    max-inline-size: min(20rem, 100%);
+    max-width: min(20rem, 100%);
+    max-width: min(var(--sf-g0), 100%);
+    max-inline-size: min(var(--sf-g0), 100%);
+    -webkit-padding-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+            padding-inline-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    -webkit-padding-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+            padding-inline-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+  }
+  :where(sf-tag:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(text);
+    display: block;
+    font-size: var(--sf-tag--box-text);
+    line-height: var(--sf-tag--box-line);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* sf-accordion before it draws (accordion study AC-9: a bare tag was 0 px
+     until its code arrived, then 304; <details> written inside were the
+     browser's own, 88, then 220 in the accordion's look). What the attributes
+     and the markup tell is held from core.css, the one sheet a page links
+     before any code, on the ladder the class sheet draws with:
+
+     - the element is a column of sections, --sf-space-2 apart (flush ones
+       meet), so it is never shorter than one closed header of its size:
+       --sf-ui-<S>--control-height, the roomy default --sf-ui-3--control-height;
+       a page that knows the loaded box still declares it
+       (--sf-skeleton-block-size);
+     - each <details> written inside is a section already: its summary the
+       header (a control height, the size's line and text, the header's inset),
+       its other nodes the content, the header's inset from every edge. So the
+       box the element draws over them is the box they held.
+
+     Sections given as data (items) cannot be counted by a sheet; for them a
+     host prints the first paint (standard §5.4). Static markup printed inside
+     (data-sf-static) is its own box, so nothing is reserved then. */
+  :where(sf-accordion:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-3--control-height);
+    --sf-accordion--box-inset: var(--sf-space-3);
+    --sf-accordion--box-text: var(--sf-text--size);
+    --sf-accordion--box-line: var(--sf-text--height);
+    --sf-accordion--box-gap: var(--sf-space-2);
+  }
+  :where(sf-accordion[size="1/3"]:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-1\/3--control-height);
+    --sf-accordion--box-inset: var(--sf-ui-1\/3--space-x);
+    --sf-accordion--box-text: var(--sf-text-size-1\/3);
+    --sf-accordion--box-line: var(--sf-text-height-1\/3);
+  }
+  :where(sf-accordion[size="1/2"]:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-1\/2--control-height);
+    --sf-accordion--box-inset: max(var(--sf-space-1\/2), var(--sf-b2));
+    --sf-accordion--box-text: var(--sf-text-size-1\/2);
+    --sf-accordion--box-line: var(--sf-text-height-1\/2);
+  }
+  :where(sf-accordion[size="1"]:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-1--control-height);
+    --sf-accordion--box-inset: var(--sf-space-1);
+    --sf-accordion--box-text: var(--sf-text-size-1);
+    --sf-accordion--box-line: var(--sf-text-height-1);
+  }
+  :where(sf-accordion[size="2"]:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-2--control-height);
+    --sf-accordion--box-inset: var(--sf-space-2);
+    --sf-accordion--box-text: var(--sf-text-size-2);
+    --sf-accordion--box-line: var(--sf-text-height-2);
+  }
+  :where(sf-accordion[size="3"]:not(:defined)) {
+    --sf-accordion--box-header: var(--sf-ui-3--control-height);
+    --sf-accordion--box-inset: var(--sf-ui-3--space-x);
+    --sf-accordion--box-text: var(--sf-text-size-3);
+    --sf-accordion--box-line: var(--sf-text-height-3);
+  }
+  :where(sf-accordion[appearance=flush]:not(:defined)) {
+    --sf-accordion--box-gap: calc(var(--sf-px) * 0);
+  }
+  :where(sf-accordion:not(:defined)):not(:has(> [data-sf-static])) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-accordion--box-gap);
+    min-height: max(calc(1px * 0), var(--sf-accordion--box-header));
+    min-block-size: max(calc(1px * 0), var(--sf-accordion--box-header));
+    min-height: max(calc(1px * 0), var(--sf-accordion--box-header));
+    min-height: max(var(--sf-skeleton-block-size, calc(var(--sf-px) * 0)), var(--sf-accordion--box-header));
+    min-block-size: max(var(--sf-skeleton-block-size, calc(var(--sf-px) * 0)), var(--sf-accordion--box-header));
+    font-size: var(--sf-accordion--box-text);
+    line-height: var(--sf-accordion--box-line);
+  }
+  :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details) {
+    margin: 0;
+    padding: 0 var(--sf-accordion--box-inset);
+  }
+  :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details[open]) {
+    padding-bottom: var(--sf-accordion--box-inset);
+    -webkit-padding-after: var(--sf-accordion--box-inset);
+            padding-block-end: var(--sf-accordion--box-inset);
+  }
+  :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details > summary) {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: var(--sf-accordion--box-header);
+    min-block-size: var(--sf-accordion--box-header);
+    margin-left: calc(var(--sf-accordion--box-inset) * -1);
+    margin-right: calc(var(--sf-accordion--box-inset) * -1);
+    margin-inline: calc(var(--sf-accordion--box-inset) * -1);
+    padding: max(1px * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
+    padding: max(var(--sf-px) * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
+    font-weight: var(--sf-font-weight-medium);
+    list-style: none;
+  }
+  :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details[open] > summary) {
+    margin-bottom: var(--sf-accordion--box-inset);
+    -webkit-margin-after: var(--sf-accordion--box-inset);
+            margin-block-end: var(--sf-accordion--box-inset);
+  }
+  /* sf-reference-link before it draws (RL-18: a bare tag was 0 px for about
+     100 ms, then the 56 px card pushed the page down). Its box is known from its
+     attributes alone, from the same ladder its sheet draws with: as wide as its
+     container; a card one control of size 3 high; a size one control of that
+     step; a line, or plain, one line of the text of its step. On a phone a card
+     stacks: the label line, the card's gap and the route line when there is a
+     route, the card's --sf-space-1 above and below and its border. Static markup
+     printed inside (data-sf-static) is its own box, so nothing is reserved then.
+     A label that wraps in a card is the one thing the attributes cannot tell. */
+  :where(sf-reference-link:not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-3--control-height);
+    --sf-reference-link--box-line: var(--sf-text-height-1);
+    --sf-reference-link--box-pad: calc(2 * var(--sf-space-1) + 2 * var(--sf-px));
+    --sf-reference-link--box-route: 0;
+  }
+  :where(sf-reference-link[size]:not([size=""]):not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-1--control-height);
+  }
+  :where(sf-reference-link[size="1/2"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-reference-link[size="1/3"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-reference-link[size="2"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-2--control-height);
+  }
+  :where(sf-reference-link[size="3"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-ui-2--control-height);
+  }
+  :where(sf-reference-link[appearance=plain]:not([size]):not(:defined)),
+  :where(sf-reference-link[appearance=plain][size=""]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-1);
+    --sf-reference-link--box-pad: calc(var(--sf-px) * 0);
+  }
+  :where(sf-reference-link[appearance=plain][size]:not([size=""]):not(:defined)) {
+    --sf-reference-link--box: calc(var(--sf-ui-1--control-height) - 2 * var(--sf-px));
+  }
+  :where(sf-reference-link[appearance=plain][size="1/2"]:not(:defined)) {
+    --sf-reference-link--box: calc(var(--sf-ui-1\/2--control-height) - 2 * var(--sf-px));
+  }
+  :where(sf-reference-link[appearance=plain][size="1/3"]:not(:defined)) {
+    --sf-reference-link--box: calc(var(--sf-ui-1\/2--control-height) - 2 * var(--sf-px));
+  }
+  :where(sf-reference-link[appearance=plain][size="2"]:not(:defined)) {
+    --sf-reference-link--box: calc(var(--sf-ui-2--control-height) - 2 * var(--sf-px));
+  }
+  :where(sf-reference-link[appearance=plain][size="3"]:not(:defined)) {
+    --sf-reference-link--box: calc(var(--sf-ui-2--control-height) - 2 * var(--sf-px));
+  }
+  :where(sf-reference-link[line]:not([line=""]):not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-1);
+  }
+  :where(sf-reference-link[line][line="1/2"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-1\/2);
+  }
+  :where(sf-reference-link[line][line="1/3"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-1\/2);
+  }
+  :where(sf-reference-link[line][line="2"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-2);
+  }
+  :where(sf-reference-link[line][line="3"]:not(:defined)) {
+    --sf-reference-link--box: var(--sf-text-height-2);
+  }
+  :where(sf-reference-link[text]:not([text=""]):not(:defined)) {
+    --sf-reference-link--box-route: 1;
+  }
+  :where(sf-reference-link:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    height: var(--sf-reference-link--box);
+    block-size: var(--sf-reference-link--box);
+  }
+  @media (max-width: 31.999rem) {
+    :where(sf-reference-link:not(:defined):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
+      height: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
+      block-size: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
+    }
+  }
+  /* sf-file-preview before it draws (file preview study FP-15: the host was
+     0 px for about 100 ms, then 48, and the list under it jumped). Its row is
+     known from its attributes and the ladder its sheet draws with: the holder,
+     a size 2 control high (48 on a desktop, 44 on a phone); on a fill
+     (surface) a size 3 control; compact is the small tile alone. A name long
+     enough to wrap is the one thing the attributes cannot tell. */
+  :where(sf-file-preview:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    height: var(--sf-ui-2--control-height);
+    block-size: var(--sf-ui-2--control-height);
+    height: var(--sf-ui-2--control-height);
+    height: var(--sf-file-preview-holder-size, var(--sf-ui-2--control-height));
+    block-size: var(--sf-file-preview-holder-size, var(--sf-ui-2--control-height));
+  }
+  :where(sf-file-preview[surface]:not([surface=false]):not(:defined)):not(:has(> [data-sf-static])) {
+    height: var(--sf-ui-3--control-height);
+    block-size: var(--sf-ui-3--control-height);
+  }
+  :where(sf-file-preview[compact]:not([compact=false]):not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    inline-size: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    width: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    width: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+    inline-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+    height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    block-size: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
+    height: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+    block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+  }
+  /* sf-avatar before it draws (avatar study AV-5, 2026-11-14: the host drew
+     nothing for 123-151 ms, then a 40 px circle pushed its row). Its box is
+     known from its attributes alone, on the ladder the avatars sheet draws
+     with: the default template is a circle of its size step (16 at 1/4; 1/3
+     and 1/2 a step of the phone's ladder below 60rem and the desktop's above;
+     1 to 3 a control height, compact moving with the region's tokens), or the
+     text line of a form size with line; the label template holds its
+     height (below), its width being its text's. Only the box: nothing is
+     drawn in it, so a photo that arrives is not preceded by a plate it does
+     not have. The card template's box is its container's. Static markup
+     printed inside (data-sf-static) is its own box. Here, not in the avatars
+     sheet, because core.css is the one sheet a page links before any code. */
+  :where(sf-avatar:not(:defined)) {
+    --sf-avatar--box: var(--sf-ui-1--control-height);
+  }
+  :where(sf-avatar[size="1/4"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-b6);
+  }
+  :where(sf-avatar[size="1/3"]:not(:defined)) {
+    --sf-avatar--box: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-low));
+  }
+  :where(sf-avatar[size="1/2"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-avatar[size="2"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-ui-2--control-height);
+  }
+  :where(sf-avatar[size="3"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-ui-3--control-height);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-avatar[size="1/3"]:not(:defined)) {
+      --sf-avatar--box: var(--sf-icon-size-3);
+    }
+    :where(sf-avatar[size="1/2"]:not(:defined)) {
+      --sf-avatar--box: calc(var(--sf-text-height-1\/2) + var(--sf-space-1\/2));
+    }
+  }
+  :where(sf-avatar[line="1/2"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-text-height-1\/2);
+  }
+  :where(sf-avatar[line="1"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-text-height-1);
+  }
+  :where(sf-avatar[line="2"]:not(:defined)) {
+    --sf-avatar--box: var(--sf-text-height-2);
+  }
+  :where(sf-avatar:not([template]):not(:defined), sf-avatar[template=""]:not(:defined), sf-avatar[template=default]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+    width: var(--sf-avatar--box);
+    inline-size: var(--sf-avatar--box);
+    height: var(--sf-avatar--box);
+    block-size: var(--sf-avatar--box);
+  }
+  /* The label template: the avatar beside its heading and description, each one
+     text line of the size step (the avatars sheet's label group), so the box is
+     the taller of the avatar and those lines. A heading that wraps is the one
+     thing the attributes cannot tell. */
+  :where(sf-avatar[template=label]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-1);
+    --sf-avatar--box-heading: 0;
+    --sf-avatar--box-description: 0;
+  }
+  :where(sf-avatar[template=label][size="1/4"]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-1\/4);
+  }
+  :where(sf-avatar[template=label][size="1/3"]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-1\/3);
+  }
+  :where(sf-avatar[template=label][size="1/2"]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-1\/2);
+  }
+  :where(sf-avatar[template=label][size="2"]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-2);
+  }
+  :where(sf-avatar[template=label][size="3"]:not(:defined)) {
+    --sf-avatar--box-line: var(--sf-text-height-3);
+  }
+  :where(sf-avatar[template=label][heading]:not([heading=""]):not(:defined)) {
+    --sf-avatar--box-heading: 1;
+  }
+  :where(sf-avatar[template=label][title]:not([title=""]):not(:defined)) {
+    --sf-avatar--box-heading: 1;
+  }
+  :where(sf-avatar[template=label][description]:not([description=""]):not(:defined)) {
+    --sf-avatar--box-description: 1;
+  }
+  :where(sf-avatar[template=label]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    min-height: max(var(--sf-avatar--box), (var(--sf-avatar--box-heading) + var(--sf-avatar--box-description)) * var(--sf-avatar--box-line));
+    min-block-size: max(var(--sf-avatar--box), (var(--sf-avatar--box-heading) + var(--sf-avatar--box-description)) * var(--sf-avatar--box-line));
   }
   /* Its menu waits for its own code in the parts the element drew: an empty
      undefined sf-menu-context would stand in the row as one more item, a gap
@@ -5278,6 +6074,165 @@ body {
   :where(sf-language .sf-language-parts > sf-context-menu[popup]:not(:defined)) {
     display: none;
   }
+  /* sf-slider before it draws (decision C143 (8)). Its slides are the page's
+     children, so before the code they stood one under another: five pictures
+     1907 px high at 1440, then 381 when the slider drew (CLS 0.47). The
+     element knows its frame from its attributes alone, so it holds it here
+     (core.css is the one sheet a page links before any code; the slider's own
+     sheet comes with it): a picture slider is the box of its ratio (16/9 by
+     default, ratio="auto" none) showing its first slide; a card slider
+     (root-class sf-slider--content) lays its cards in a row as it will, 1.15
+     in view on a phone and 2.2 from the sm step, and keeps room for the
+     controls row under them. A printed first paint (data-sf-static) is its
+     own box. */
+  :where(sf-slider:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    overflow: hidden;
+    box-sizing: content-box;
+  }
+  :where(sf-slider:not(:defined):not([root-class~=sf-slider--content]):not([ratio=auto])):not(:has(> [data-sf-static])) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-slider:not(:defined)[ratio="4/3"]):not(:has(> [data-sf-static])) {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-slider:not(:defined)[ratio="3/2"]):not(:has(> [data-sf-static])) {
+    aspect-ratio: 3/2;
+  }
+  :where(sf-slider:not(:defined)[ratio="1/1"]):not(:has(> [data-sf-static])) {
+    aspect-ratio: 1/1;
+  }
+  :where(sf-slider:not(:defined)[ratio="21/9"]):not(:has(> [data-sf-static])) {
+    aspect-ratio: 21/9;
+  }
+  :where(sf-slider:not(:defined):not([root-class~=sf-slider--content]):not([ratio=auto])):not(:has(> [data-sf-static])) > * {
+    height: 100%;
+    block-size: 100%;
+  }
+  :where(sf-slider:not(:defined):not([root-class~=sf-slider--content])):not(:has(> [data-sf-static])) > :not(:first-child) {
+    display: none;
+  }
+  :where(sf-slider:not(:defined)[root-class~=sf-slider--content]):not(:has(> [data-sf-static])) {
+    --sf-slider--peek: 1.15;
+    display: flex;
+    gap: var(--sf-space-1\/2);
+  }
+  @media (min-width: 32rem) {
+    :where(sf-slider:not(:defined)[root-class~=sf-slider--content]):not(:has(> [data-sf-static])) {
+      --sf-slider--peek: 2.2;
+    }
+  }
+  :where(sf-slider:not(:defined)[root-class~=sf-slider--content]):not(:has(> [data-sf-static])) > * {
+    flex: 0 0 calc((100% - (var(--sf-slider--peek) - 1) * var(--sf-space-1\/2)) / var(--sf-slider--peek));
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  :where(sf-slider:not(:defined)[root-class~=sf-slider--content]:not([arrows=false][dots=false])):not(:has(> [data-sf-static])) {
+    padding-bottom: calc(var(--sf-space-1) + var(--sf-ui-1--control-height));
+    -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-ui-1--control-height));
+            padding-block-end: calc(var(--sf-space-1) + var(--sf-ui-1--control-height));
+  }
+  :where(sf-slider:not(:defined)[thumbs]:not([thumbs=false])):not(:has(> [data-sf-static])) {
+    padding-bottom: calc(var(--sf-space-1) + 3rem);
+    -webkit-padding-after: calc(var(--sf-space-1) + 3rem);
+            padding-block-end: calc(var(--sf-space-1) + 3rem);
+    padding-bottom: calc(var(--sf-space-1) + 3rem);
+    padding-bottom: calc(var(--sf-space-1) + var(--sf-d2));
+    -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-d2));
+            padding-block-end: calc(var(--sf-space-1) + var(--sf-d2));
+  }
+  /* sf-gallery before it draws (GL-7, decision C143 (8)). Its pictures are the
+     page's children, so before the code they stood one under another: six
+     pictures 4400 px high, then 0 while the slider measured, then 1081. The
+     element knows its frame from its markup alone, so it holds it here: the
+     first picture, whole (contain), in the gallery's ratio -- its own width and
+     height attributes when ratio is auto (the default), else the ratio the
+     page wrote, else 16/9 -- with its caption small and muted under it, and
+     room for the thumbnails under that (thumbs is on by default). The gallery
+     draws the same box (--sf-gallery--ratio), so the first frame is the final
+     one. A lightbox-only gallery shows nothing on the page. */
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+  }
+  :where(sf-gallery:not(:defined):not([thumbs=false])):not(:has(> [data-sf-static])) {
+    padding-bottom: calc(var(--sf-space-1) + 3rem);
+    -webkit-padding-after: calc(var(--sf-space-1) + 3rem);
+            padding-block-end: calc(var(--sf-space-1) + 3rem);
+    padding-bottom: calc(var(--sf-space-1) + 3rem);
+    padding-bottom: calc(var(--sf-space-1) + var(--sf-d2));
+    -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-d2));
+            padding-block-end: calc(var(--sf-space-1) + var(--sf-d2));
+  }
+  :where(sf-gallery:not(:defined)[inline=false]:not([lightbox=false])):not(:has(> [data-sf-static])) {
+    display: none;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :not(:first-child) {
+    display: none;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    margin: 0;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img:first-child {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: auto;
+    block-size: auto;
+    -o-object-fit: contain;
+       object-fit: contain;
+  }
+  :where(sf-gallery:not(:defined):not([ratio])):not(:has(> [data-sf-static])) > :first-child :where(img:not([width][height])) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery[ratio=auto]:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(img:not([width][height])) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery:not(:defined):not([ratio])):not(:has(> [data-sf-static])) > img:first-child:not([width][height]) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery[ratio=auto]:not(:defined)):not(:has(> [data-sf-static])) > img:first-child:not([width][height]) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery:not(:defined)[ratio="16/9"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="16/9"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery:not(:defined)[ratio="4/3"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="4/3"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery:not(:defined)[ratio="3/2"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="3/2"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 3/2;
+  }
+  :where(sf-gallery:not(:defined)[ratio="1/1"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="1/1"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 1/1;
+  }
+  :where(sf-gallery:not(:defined)[ratio="21/9"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="21/9"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 21/9;
+  }
+  :where(sf-gallery:not(:defined)[ratio="3/4"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="3/4"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 3/4;
+  }
+  :where(sf-gallery:not(:defined)[ratio="2/3"]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[ratio="2/3"]):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 2/3;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(figcaption) {
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+    margin-top: var(--sf-space-1\/4);
+    -webkit-margin-before: var(--sf-space-1\/4);
+            margin-block-start: var(--sf-space-1\/4);
+  }
 }
 @layer sf.base {
   /* A region on its way (region navigation, 2026-10-15): the content that is
@@ -5285,14 +6240,20 @@ body {
      rows -- in that region only; the shell around it stays as it is. The
      region keeps its size, so nothing below it moves while the answer comes. */
   [data-sf-region-loading] {
-    --sf-skeleton-base: var(--sf-surface-container);
     --sf-skeleton-row: calc(var(--sf-text-height-1) + 2 * var(--sf-space-1));
+    /* The rows' bars are as tall as the capitals (C136 (1)). */
+    --sf-skeleton-row-bar: calc(var(--sf-text-size-1) * 0.727);
     background-repeat: no-repeat;
-    background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2) calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2) var(--sf-skeleton-row)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2) calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2) var(--sf-skeleton-row));
+    background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-skeleton-row-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-skeleton-row-bar)) / 2) calc((var(--sf-skeleton-row) + var(--sf-skeleton-row-bar)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-skeleton-row-bar)) / 2) var(--sf-skeleton-row)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-skeleton-row-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-skeleton-row-bar)) / 2) calc((var(--sf-skeleton-row) + var(--sf-skeleton-row-bar)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-skeleton-row-bar)) / 2) var(--sf-skeleton-row));
     background-size: 30% var(--sf-text-height-3), 35% 100%, 25% 100%;
     background-position: var(--sf-space-1) var(--sf-space-1), var(--sf-space-1) calc(var(--sf-space-3) + var(--sf-text-height-2)), 55% calc(var(--sf-space-3) + var(--sf-text-height-2));
     -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
+  }
+  @supports (block-size: round(nearest, 1em, 1em)) {
+    [data-sf-region-loading] {
+      --sf-skeleton-row-bar: round(nearest, calc(var(--sf-text-size-1) * 0.727), var(--sf-a2));
+    }
   }
   [data-sf-region-loading] > * {
     visibility: hidden;
@@ -5312,19 +6273,51 @@ body {
      in its first render. Here because a component's own sheet may come with its
      code, too late for the first paint.
 
-     - A skeleton's text is a bar of the same text size: the text stays in the
-       run, transparent, so the bar is exactly as long as the line it stands
-       for; an image is a fill of its own box.
+     - A skeleton's text is a bar: the text stays in the run, transparent, so
+       the bar is exactly as long as the line it stands for; an image is a fill
+       of its own box.
+     - The bar is as tall as the capitals, rounded to an even pixel, and stands
+       in the middle of the line (owner decision C136 (1)): 0.727 em, Inter's
+       capital height (1490 / 2048), so 8 / 10 / 12 / 14 / 18 / 26 px on text of
+       12 / 14 / 16 / 20 / 24 / 36 px -- one value per text size, computed, not
+       read from the face in the browser (1cap and 1ex move with the fallback
+       face). The line box and the block do not change: the run keeps its font
+       and line, only the painted band is thinner than the glyph box (1.211 em
+       in Inter) it used to fill. The band is cut by a mask in the middle of
+       the glyph box, which is the middle of the line (equal half-leading), so
+       it is drawn the same in each line of a wrapped run
+       (box-decoration-break: clone).
+     - Its ends are the control radius, --sf-radius--ui (C136 (2)), on every
+       bar, wrapped lines too: four corner dots and two crossing bands, so the
+       translucent fill never doubles where they meet. A body bar (8 px) is a
+       full pill.
      - A page child the element takes into its markup (a slot, a tree's items,
        a closed window's content) is printed after the static markup as
        data-sf-held and kept out of view until the element has drawn: the
        picture already shows it, or the element does not show it yet. */
   .sf-first-paint-bar {
+    --sf-first-paint-bar--height: calc(0.727em);
+    --sf-first-paint-bar--end: min(var(--sf-radius--ui), calc(var(--sf-first-paint-bar--height) / 2));
+    --sf-first-paint-bar--top: calc(0.6055em - var(--sf-first-paint-bar--height) / 2);
+    /* The mask reads only the alpha of these images: black is opaque, not a
+       colour that is painted. */
+    --sf-first-paint-bar--mask-dot: radial-gradient(circle closest-side, black 98%, transparent);
+    --sf-first-paint-bar--mask-band: linear-gradient(black, black);
     color: transparent !important;
-    background-color: var(--sf-surface-container);
-    border-radius: var(--sf-radius--ui);
+    background-color: var(--sf-skeleton-base);
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
+    /* Longhands, not the mask shorthand: the shorthand's position / size slash
+       would sit after a token in the built sheet (declared-tokens test). The
+       layers, in order: four corner dots, then the two crossing bands. */
+    -webkit-mask-image: var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-band), var(--sf-first-paint-bar--mask-band);
+    -webkit-mask-position: 0 var(--sf-first-paint-bar--top), 100% var(--sf-first-paint-bar--top), 0 calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end)), 100% calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end)), var(--sf-first-paint-bar--end) var(--sf-first-paint-bar--top), 0 calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--end));
+    -webkit-mask-size: calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(100% - 2 * var(--sf-first-paint-bar--end)) var(--sf-first-paint-bar--height), 100% calc(var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end));
+    -webkit-mask-repeat: no-repeat;
+    mask-image: var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-dot), var(--sf-first-paint-bar--mask-band), var(--sf-first-paint-bar--mask-band);
+    mask-position: 0 var(--sf-first-paint-bar--top), 100% var(--sf-first-paint-bar--top), 0 calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end)), 100% calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end)), var(--sf-first-paint-bar--end) var(--sf-first-paint-bar--top), 0 calc(var(--sf-first-paint-bar--top) + var(--sf-first-paint-bar--end));
+    mask-size: calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(2 * var(--sf-first-paint-bar--end)) calc(2 * var(--sf-first-paint-bar--end)), calc(100% - 2 * var(--sf-first-paint-bar--end)) var(--sf-first-paint-bar--height), 100% calc(var(--sf-first-paint-bar--height) - 2 * var(--sf-first-paint-bar--end));
+    mask-repeat: no-repeat;
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
@@ -5332,8 +6325,13 @@ body {
     -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
+  @supports (block-size: round(nearest, 1em, 1em)) {
+    .sf-first-paint-bar {
+      --sf-first-paint-bar--height: round(nearest, 0.727em, var(--sf-a2));
+    }
+  }
   .sf-first-paint-fill {
-    background-color: var(--sf-surface-container);
+    background-color: var(--sf-skeleton-base);
   }
   :where(:not(:defined), :has(> [data-sf-static])) > [data-sf-held] {
     display: none !important;
@@ -5345,9 +6343,271 @@ body {
     }
   }
 }
+@layer sf.base {
+  /* sf-list-item before it draws (list item study LI-6, 2026-11-14: a column of
+     rows was 0 px for about 190 ms, then 560 at once, and everything under it
+     jumped). A row is known from its attributes alone, on the ladder its sheet
+     (the dropdown component's list-item rules) draws with: one control of its
+     size step high; with `supporting`, the caption row -- the next step's
+     control, never under one control of step 1/2 and the caption's line (C49:
+     48, compact 44, 60 under a finger); its text at the row's inset (C77), after
+     the picture's place when it has one (an icon, an avatar, a box: the row's
+     line and the H2 step, C105), after the handle's place in an sf-sortable
+     list, and after a picture's place when it is a text row among rows with
+     one. The title and the caption are the host's text and supporting
+     attributes, one line each, so the words are there from the first frame
+     (the words are visible although core keeps the undefined host itself
+     hidden, pending-tags.js: they are what the host has to show); the
+     picture, the divider and the trailing part come with the code. Not
+     inside sf-dropdown, whose rows are its options and are not drawn as rows
+     of the page. Static markup printed inside (data-sf-static) is its own box. */
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined)) {
+    --sf-list-item--box-control: var(--sf-ui-1--control-height);
+    --sf-list-item--box-next: var(--sf-ui-2--control-height);
+    --sf-list-item--box-line: var(--sf-text-height-1);
+    --sf-list-item--box-size: var(--sf-text-size-1);
+    --sf-list-item--box-caption-line: var(--sf-text-height-1\/2);
+    --sf-list-item--box-caption-size: var(--sf-text-size-1\/2);
+    --sf-list-item--box-inset: var(--sf-space-1);
+    --sf-list-item--box-caption-step: var(--sf-ui-1\/2--control-height);
+    --sf-list-item--box-two-line: max(var(--sf-list-item--box-next), calc(var(--sf-list-item--box-caption-step) + var(--sf-text-height-1\/3)));
+    --sf-list-item--box-picture: 0px;
+    --sf-list-item--box-handle: 0px;
+  }
+  :where(:not(sf-dropdown) > sf-list-item[size="1/3"]:not(:defined)) {
+    --sf-list-item--box-control: var(--sf-ui-1\/3--control-height);
+    --sf-list-item--box-next: var(--sf-ui-1\/2--control-height);
+    --sf-list-item--box-line: var(--sf-text-height-1\/3);
+    --sf-list-item--box-size: var(--sf-text-size-1\/3);
+    --sf-list-item--box-caption-line: var(--sf-text-height-1\/3);
+    --sf-list-item--box-caption-size: var(--sf-text-size-1\/3);
+    --sf-list-item--box-inset: var(--sf-ui-1\/3--space-x);
+    --sf-list-item--box-two-line: var(--sf-list-item--box-next);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[size="1/2"]:not(:defined)) {
+    --sf-list-item--box-control: var(--sf-ui-1\/2--control-height);
+    --sf-list-item--box-next: var(--sf-ui-1--control-height);
+    --sf-list-item--box-line: var(--sf-text-height-1\/2);
+    --sf-list-item--box-size: var(--sf-text-size-1\/2);
+    --sf-list-item--box-caption-line: var(--sf-text-height-1\/3);
+    --sf-list-item--box-caption-size: var(--sf-text-size-1\/3);
+    --sf-list-item--box-inset: max(var(--sf-space-1\/2), var(--sf-b2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[size="2"]:not(:defined)) {
+    --sf-list-item--box-control: var(--sf-ui-2--control-height);
+    --sf-list-item--box-next: var(--sf-ui-3--control-height);
+    --sf-list-item--box-line: var(--sf-text-height-2);
+    --sf-list-item--box-size: var(--sf-text-size-2);
+    --sf-list-item--box-caption-line: var(--sf-text-height-1);
+    --sf-list-item--box-caption-size: var(--sf-text-size-1);
+    --sf-list-item--box-inset: var(--sf-space-2);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[size="3"]:not(:defined)) {
+    --sf-list-item--box-control: var(--sf-ui-3--control-height);
+    --sf-list-item--box-next: var(--sf-ui-3--control-height);
+    --sf-list-item--box-line: var(--sf-text-height-3);
+    --sf-list-item--box-size: var(--sf-text-size-3);
+    --sf-list-item--box-caption-line: var(--sf-text-height-2);
+    --sf-list-item--box-caption-size: var(--sf-text-size-2);
+    --sf-list-item--box-inset: var(--sf-ui-3--space-x);
+  }
+  @media (pointer: coarse) {
+    :where(:not(sf-dropdown) > sf-list-item:not(:defined)) {
+      --sf-list-item--box-caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
+    }
+  }
+  :where(:not(sf-dropdown) > sf-list-item[kind=icon]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[kind=avatar]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[kind=checkbox]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[type=icon]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[type=avatar]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[type=checkbox]:not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
+  }
+  :where(:not(sf-dropdown) > sf-list-item[sortable-item]:not([sortable-item=""]):not(:defined)) {
+    --sf-list-item--box-handle: var(--sf-list-item--box-line);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[pinned]:not(.does-not-exist):not(:defined)) {
+    --sf-list-item--box-handle: var(--sf-list-item--box-line);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: var(--sf-list-item--box-inset);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: var(--sf-list-item--box-inset);
+    }
+  }
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+    padding-right: var(--sf-list-item--box-inset);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: var(--sf-list-item--box-inset);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: var(--sf-list-item--box-inset);
+    }
+  }
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
+    padding-left: var(--sf-list-item--box-inset);
+  }
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--sf-list-item--box-control);
+    block-size: var(--sf-list-item--box-control);
+    min-width: 0;
+    min-inline-size: 0;
+    padding-inline: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture)) var(--sf-list-item--box-inset);
+    color: var(--sf-on-surface);
+    color: var(--sf-list-item-color, var(--sf-on-surface));
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-list-item--box-size);
+    line-height: var(--sf-list-item--box-line);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[supporting]:not([supporting=""]):not(:defined)):not(:has(> [data-sf-static])) {
+    height: var(--sf-list-item--box-two-line);
+    block-size: var(--sf-list-item--box-two-line);
+  }
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(text);
+    overflow: hidden;
+    visibility: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(:not(sf-dropdown) > sf-list-item[supporting]:not([supporting=""]):not(:defined)):not(:has(> [data-sf-static]))::after {
+    content: attr(supporting);
+    overflow: hidden;
+    visibility: visible;
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
+    font-size: var(--sf-list-item--box-caption-size);
+    line-height: var(--sf-list-item--box-caption-line);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* The row's parts written in the host (a trailing «⋯», a leading picture) are
+     placed by the row's code; until then they would stand under the words. */
+  :where(:not(sf-dropdown) > sf-list-item:not(:defined):not(:has(> [data-sf-static])) > [slot]) {
+    display: none;
+  }
+}
 @media (hover: none) and (pointer: coarse) {
   @media not all and (min-width: 60rem) {
     @layer sf.states {
+      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]) {
+        font-size: 16px;
+      }
+      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) textarea:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+        font-size: 16px;
+      }
+      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) select:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+        font-size: 16px;
+      }
       input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]):not([class*="--size-3"]):not([class*="--size-3"] *),
       textarea:not([class*="--size-3"]):not([class*="--size-3"] *),
       select:not([class*="--size-3"]):not([class*="--size-3"] *) {

@@ -67,12 +67,18 @@ class Skeleton extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     const typeValue = type === 'icon' ? 'icon' : null;
     const widths = normalizeList(width, ['100%']);
     const heights = normalizeList(height);
-    const perItemAttrs = parseItemAttrs(items);
+    const perItemAttrs = parseItemAttrs(items); // A shape with no size of its own is the square box of its step (owner
+    // decision C130 (1)); the sheet sizes it, so no width is written.
+
+    const box = typeValue !== 'icon' && ['circle', 'square', 'rounded'].includes(variantValue) && !widths.some(value => {
+      const r = resolveSize(value);
+      return r && r !== '100%';
+    }) && !heights.some(value => resolveSize(value));
     this.container = document.createElement('div');
     this.container.classList.add('sf-skeleton', 'flex');
     this.container.setAttribute('aria-hidden', 'true');
 
-    if (typeValue !== 'icon') {
+    if (typeValue !== 'icon' && !box) {
       this.container.classList.add('flex-1');
 
       if (widths.length) {
@@ -106,7 +112,7 @@ class Skeleton extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       const resolvedWidth = widths[i % widths.length] || '';
       const resolvedHeight = heights[i % heights.length] || '';
 
-      if (typeValue !== 'icon') {
+      if (typeValue !== 'icon' && !box) {
         item.style.inlineSize = resolveSize(resolvedWidth || '100%');
 
         if (resolvedHeight) {

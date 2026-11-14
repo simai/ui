@@ -45,7 +45,9 @@ function createDropdownInteraction(root, adapter) {
   let popup = null,
       pending = null,
       frame = null,
-      released = false;
+      released = false,
+      typed = '',
+      typedAt = 0;
   const assigned = new WeakMap();
 
   const own = (node, name, value) => {
@@ -79,7 +81,10 @@ function createDropdownInteraction(root, adapter) {
 
   const contains = node => node && (root.contains(node) || adapter.getList()?.contains(node));
 
-  const text = item => item.querySelector('.sf-list-item-container, .sf-avatar-label-group-title, .sf-tag-container')?.textContent?.trim() || item.dataset.value || '';
+  const text = item => item.querySelector('.sf-list-item-container, .sf-avatar-label-group-title, .sf-tag-container')?.textContent?.trim() || item.dataset.value || ''; // The focused option is brought into view at once and only as far as it
+  // needs: a smooth page scroll would leave it out of view while the next key
+  // already moves on.
+
 
   const focus = node => {
     if (node && !node.disabled) {
@@ -88,9 +93,55 @@ function createDropdownInteraction(root, adapter) {
       });
       node.scrollIntoView({
         block: 'nearest',
-        inline: 'nearest'
+        inline: 'nearest',
+        behavior: 'instant'
       });
     }
+  }; // PageDown/PageUp move by what the rows' scroll area shows: to the last
+  // option that still fits one viewful away, at least one option.
+
+
+  const scroller = node => {
+    for (let e = node?.parentElement; e && e !== document.body; e = e.parentElement) {
+      const y = getComputedStyle(e).overflowY;
+      if ((y === 'auto' || y === 'scroll') && e.scrollHeight > e.clientHeight) return e;
+    }
+
+    return null;
+  };
+
+  const page = (options, index, step) => {
+    const from = options[index],
+          box = scroller(from);
+    if (!from || !box) return step > 0 ? options.length - 1 : 0;
+    const top = from.getBoundingClientRect().top,
+          span = box.clientHeight;
+    let next = Math.max(0, Math.min(options.length - 1, index + step));
+
+    for (let i = next + step; i >= 0 && i < options.length; i += step) {
+      const r = options[i].getBoundingClientRect();
+      if ((step > 0 ? r.bottom - top : top + from.offsetHeight - r.top) > span) break;
+      next = i;
+    }
+
+    return next;
+  }; // Type-ahead: printable keys typed within half a second form a prefix; the
+  // same letter again walks the options that start with it.
+
+
+  const typeahead = (key, option) => {
+    const now = Date.now();
+    typed = now - typedAt > 500 ? key : typed + key;
+    typedAt = now;
+    const options = available(),
+          query = typed.toLocaleLowerCase();
+    const repeat = [...query].every(c => c === query[0]);
+    const start = Math.max(0, options.indexOf(option));
+    const order = [...options.slice(start + 1), ...options.slice(0, start + 1)];
+
+    const starts = item => text(item).toLocaleLowerCase().startsWith(query);
+
+    return (query.length > 1 ? [options[start], ...order].find(starts) : null) || order.find(item => text(item).toLocaleLowerCase().startsWith(repeat ? query[0] : query));
   };
 
   const resolvePending = () => {
@@ -155,6 +206,15 @@ function createDropdownInteraction(root, adapter) {
     } else if (option && inPopup && ['Home', 'End'].includes(event.key)) {
       const options = available();
       focus(event.key === 'Home' ? options[0] : options.at(-1));
+      handled = true;
+    } else if (option && inPopup && ['PageDown', 'PageUp'].includes(event.key)) {
+      const options = available(),
+            index = Math.max(0, options.indexOf(option));
+      focus(options[page(options, index, event.key === 'PageUp' ? -1 : 1)]);
+      handled = true;
+    } else if (option && inPopup && event.key.length === 1 && (event.key !== ' ' || typed && Date.now() - typedAt <= 500)) {
+      const found = typeahead(event.key, option);
+      if (found) focus(found);
       handled = true;
     } else if (option && inPopup && ['Enter', ' '].includes(event.key)) {
       if (available().includes(option)) {
@@ -315,19 +375,21 @@ const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // From size 1 up the 
 // field's own text. Size 1/2 does not (one pixel would be left), so its tag
 // goes one size down onto the field line, rendered inline: its label is one
 // text step down and it takes no block padding.
+// The tag's height is its low step (C27; the tag's spacing-compact before,
+// journal class-tag-spacing-to-height).
 
 const FIELD_TAG = Object.freeze({
   "1/2": {
     size: "1/3",
-    spacing: ""
+    height: ""
   },
   "1": {
     size: "1",
-    spacing: "compact"
+    height: "low"
   },
   "2": {
     size: "2",
-    spacing: "compact"
+    height: "low"
   }
 });
 
@@ -408,7 +470,7 @@ function getHiddenInput(root) {
 }
 
 function getToggleIcon(root) {
-  return root.querySelector(".sf-dropdown-field .sf-icon-button .sf-icon");
+  return root.querySelector(".sf-dropdown-field :is(.sf-icon-button, .sf-field-action) .sf-icon");
 }
 
 function getListWrap(root) {
@@ -448,7 +510,9 @@ function ensurePortalList(root) {
   }
 
   if (!root.__sfDropdownPortalOnViewportChange) {
-    root.__sfDropdownPortalOnViewportChange = () => {
+    root.__sfDropdownPortalOnViewportChange = event => {
+      // The list's own scroll moves nothing (owner R171).
+      if ((0,_portal__WEBPACK_IMPORTED_MODULE_2__.scrolledInside)(getList(root), event)) return;
       if (root.classList.contains('sf-dropdown--open')) positionPortalList(root);
     };
   }
@@ -534,7 +598,7 @@ function createTagNode(root, item) {
   const size = root.className.match(/sf-dropdown--size-([^\s]+)/)?.[1] || "1";
   const fieldTag = FIELD_TAG[size] || FIELD_TAG["1"];
   const tagSize = fieldTag.size;
-  const tagSpacing = fieldTag.spacing ? ` spacing-${fieldTag.spacing}` : "";
+  const tagSpacing = fieldTag.height ? ` sf-tag--height-${fieldTag.height}` : "";
   const isIconItem = item.classList.contains("sf-list-item--icon");
   const isAvatarItem = item.classList.contains("sf-list-item--avatar");
   const isColorItem = item.classList.contains("sf-list-item--color");
@@ -777,7 +841,7 @@ function syncDisabledState(root) {
   const field = getField(root);
   const triggerInput = getTriggerInput(root);
   const searchInput = getSearchInput(root);
-  const toggleButton = root.querySelector(".sf-dropdown-field .sf-icon-button");
+  const toggleButton = root.querySelector(".sf-dropdown-field > :is(.sf-icon-button, .sf-field-action)");
   root.removeAttribute("aria-disabled"); // A native button trigger says it is disabled through its own attribute.
   // When the field itself is the trigger it carries role="button" and has no
   // such attribute, so the state has to be said in ARIA.
@@ -1194,8 +1258,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   alignDropdownInPlace: () => (/* binding */ alignDropdownInPlace),
 /* harmony export */   closeDropdownPortal: () => (/* binding */ closeDropdownPortal),
+/* harmony export */   fitDropdownInPlace: () => (/* binding */ fitDropdownInPlace),
 /* harmony export */   openDropdownPortal: () => (/* binding */ openDropdownPortal),
 /* harmony export */   positionDropdownPortal: () => (/* binding */ positionDropdownPortal),
+/* harmony export */   scrolledInside: () => (/* binding */ scrolledInside),
 /* harmony export */   triggerOf: () => (/* binding */ triggerOf)
 /* harmony export */ });
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2e9112dbdda9");
@@ -1245,6 +1311,7 @@ function triggerOf(root) {
 function alignDropdownInPlace(list) {
   if (!list || list.hidden || list.hasAttribute('data-sf-portal')) {
     list?.removeAttribute('data-sf-align');
+    list?.style.removeProperty(ROOM);
     return;
   }
 
@@ -1252,6 +1319,7 @@ function alignDropdownInPlace(list) {
   const rect = list.getBoundingClientRect();
   const field = (list.offsetParent ?? list.parentElement)?.getBoundingClientRect();
   if (!field || !rect.width) return;
+  fitDropdownInPlace(list, rect);
   const rtl = getComputedStyle(list).direction === 'rtl';
   const screen = document.documentElement.clientWidth;
   const over = rtl ? rect.left < 0 : rect.right > screen; // Hung from the end it must fit better: the room on the other side of the
@@ -1259,6 +1327,48 @@ function alignDropdownInPlace(list) {
 
   const room = rtl ? screen - field.left : field.right;
   if (over && room > (rtl ? field.right : screen - field.left)) list.setAttribute('data-sf-align', 'end');
+} // The height an anchored list is given, for a list in place. Anchored, a list
+// takes the room the screen has on the side it opens to (below, or above when
+// that side has more), less the panel's edge padding, and scrolls its rows
+// beyond that (SF.Position fitHeight). In place it had no cap at all: sixty
+// options made a list 2.4k px tall that pushed the page, and the wheel over it
+// scrolled the page (R171 follow-up, 2026-11-12). In place the list cannot
+// flip, so it takes the larger of the two rooms the anchored list chooses
+// from: opened near the screen's bottom it is as tall as the anchored list
+// would be above, and a page scroll brings the whole of it into view. A list
+// short of its room by less than the padding takes its whole height, as
+// anchored (R018). The stylesheet reads the value (--sf-dropdown-available-
+// block-size) and caps a list the script never measured by the screen.
+
+const ROOM = '--sf-dropdown-available-block-size';
+const OFFSET = 'var(--sf-space-1\\/4)';
+const PADDING = 'var(--sf-space-1\\/2)';
+function fitDropdownInPlace(list, rect = list.getBoundingClientRect()) {
+  const root = list.closest('.sf-dropdown');
+  const trigger = (triggerOf(root) ?? root ?? list.parentElement)?.getBoundingClientRect();
+  if (!trigger) return null;
+  const context = list.parentElement;
+  const padding = position().resolveLength(PADDING, context);
+  const offset = position().resolveLength(OFFSET, context);
+  const screen = document.documentElement.clientHeight;
+  const below = screen - padding - rect.top;
+  const above = trigger.top - offset - padding;
+  const room = Math.max(0, below, above); // The whole list: its box plus what its rows' area hides under a cap.
+
+  const wrap = list.querySelector('.sf-list-container-wrap');
+  const hidden = wrap ? Math.max(0, wrap.scrollHeight - wrap.clientHeight) : 0;
+  const whole = Math.ceil(rect.height + hidden);
+  const cap = whole > room && whole <= room + padding ? whole : room;
+  list.style.setProperty(ROOM, `${Math.floor(cap)}px`);
+  return cap;
+} // A scroll that happened inside the list itself (its rows' scroll area): the
+// field did not move, so the panel stays where it is. Repositioning for it
+// interrupted the wheel on every step (owner R171, 2026-11-12).
+
+function scrolledInside(list, event) {
+  if (event?.type !== 'scroll' || !list) return false;
+  const target = event.composedPath?.()[0] ?? event.target;
+  return target instanceof Node && list.contains(target);
 }
 function positionDropdownPortal(root, list) {
   const state = portals.get(list);
@@ -1302,9 +1412,21 @@ function positionDropdownPortal(root, list) {
         root.classList.toggle('sf-dropdown--drop-down', !up);
       }
     });
-  }
+  } // A panel the viewport made shorter keeps its rows' scroll but may now end
+  // above the option the keyboard is on: that option is brought back into view.
 
-  state.anchor.update();
+
+  state.anchor.update().then(() => {
+    const active = document.activeElement;
+
+    if (!list.hidden && active?.classList?.contains('sf-list-item') && list.contains(active)) {
+      active.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
+        behavior: 'instant'
+      });
+    }
+  });
   state.scrollbar?.mark();
   return true;
 }
@@ -1438,11 +1560,13 @@ function closeDropdownPortal(list) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -1451,6 +1575,9 @@ __webpack_require__.r(__webpack_exports__);
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -1489,15 +1616,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -2443,14 +2582,14 @@ const THEMES = ['theme-dark', 'theme-light'];
  * longer different is taken back, so a host moved to another area takes that
  * area's values.
  */
-// The density a host stands in (C22; core/js/density.js says the same): the
-// nearest region's, or "normal" under an explicit size. Written here, not
-// imported: this module is loaded on its own (shared runtime, tests).
+// The density a host stands in (C22, C79; core/js/density.js says the same):
+// the nearest region's -- an explicit size follows its region since C79.
+// Written here, not imported: this module is loaded on its own (shared
+// runtime, tests).
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -2975,9 +3114,15 @@ function inTopLayer(element) {
 // the host's variables, theme, lang, dir and density by plain inheritance --
 // what a body portal has to carry by hand (carryLayerOrigin). A surface the
 // component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
-// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
-// layer is left as it is; a browser without popovers keeps the fixed panel in
-// place, placed against its containing block.
+// sf-input-lookup, dropdown lists) is left as it is; a browser without
+// popovers keeps the fixed panel in place, placed against its containing block.
+//
+// A surface inside another top-layer surface -- a tooltip, a dropdown or a
+// nested popover in an open sf-popover, a modal dialog -- is lifted too, and
+// so stands above its parent. Left inside it, it was a fixed box in the
+// parent's stacking context, painted under the parent's later content: a
+// tooltip in an open popover hid under the next field's label (C59 S1
+// acceptance D1). Shown after its parent, it is drawn over it.
 //
 // The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
 // and CanvasText, overflow auto) is taken back by a rule of no specificity in
@@ -3012,11 +3157,7 @@ function adoptLiftedRule(floating) {
 
 function liftable(floating) {
   if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
-  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
-
-  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
-
-  return true;
+  return !floating.hasAttribute('popover') && !inTopLayer(floating);
 }
 /** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
 
@@ -3047,6 +3188,38 @@ function liftToTopLayer(floating) {
       floating.removeAttribute(LIFTED);
     }
   };
+} // The scroll positions inside a floating surface (the surface itself and every
+// box in it that is scrolled), to be put back after a measurement that lifted
+// its height cap. Only boxes away from their start are kept.
+
+function scrollOffsets(floating) {
+  const found = [];
+
+  const keep = element => {
+    if (element.scrollTop || element.scrollLeft) found.push([element, element.scrollTop, element.scrollLeft]);
+  };
+
+  keep(floating);
+
+  for (const element of floating.querySelectorAll('*')) keep(element);
+
+  return found;
+} // Put back at once: the Framework sheet makes every box scroll smoothly
+// (* {scroll-behavior: smooth}, core scroll), and an assigned scrollTop glided
+// from the start the measurement threw it to. After a page scroll the list ran
+// 0 -> 800 over half a second and read 784 when the probe looked; a reposition
+// during the glide kept the value it had reached (R171 follow-up, 2026-11-12).
+
+
+function restoreScrollOffsets(found) {
+  for (const [element, top, left] of found) {
+    if (!element.isConnected) continue;
+    if (element.scrollTop !== top || element.scrollLeft !== left) element.scrollTo({
+      top,
+      left,
+      behavior: 'instant'
+    });
+  }
 }
 
 function fixedContainingBlock(element) {
@@ -3086,6 +3259,19 @@ function anchorReference(element) {
     }
 
   };
+} // data-sf-density on the root or on a region restates the space tokens; one
+// attribute filter, so nothing else on the page wakes it.
+
+function watchDensity(doc, run) {
+  const view = doc?.defaultView;
+  if (typeof view?.MutationObserver !== 'function') return () => {};
+  const observer = new view.MutationObserver(() => run());
+  observer.observe(doc.documentElement, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['data-sf-density']
+  });
+  return () => observer.disconnect();
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -3098,6 +3284,7 @@ function anchorReference(element) {
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
+
 
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
@@ -3168,14 +3355,21 @@ function anchor(reference, floating, options = {}) {
   //   content does not change by scrolling; when it does, its size changes
   //   and that is a full fit), and max-height is not reset to read it.
   // - Inline styles and data-sf-side are written only when they change.
+  // A density change (data-sf-density on the root or a region) restates
+  // the space tokens without resizing the window, and the gap stayed the old
+  // one until the panel was opened again (C59 S1 acceptance M1). The key also
+  // carries the computed values of the tokens the lengths are written with: a
+  // read of a clean style, no probe and no restyle.
 
+  const tokens = [...new Set([settings.offset, settings.padding, settings.alignmentOffset].filter(value => typeof value === 'string').flatMap(value => [...value.matchAll(/var\(\s*(--(?:\\.|[^\s,)\\])+)/gu)].map(match => match[1].replace(/\\(.)/gu, '$1'))))];
   let lengths = null;
 
   const lengthsNow = () => {
-    const key = `${window.innerWidth}x${window.innerHeight}`;
+    const context = reference.parentElement;
+    const values = tokens.length && context?.isConnected ? tokens.map(name => getComputedStyle(context).getPropertyValue(name).trim()).join('|') : '';
+    const key = `${window.innerWidth}x${window.innerHeight}|${values}`;
 
     if (!lengths || lengths.key !== key) {
-      const context = reference.parentElement;
       lengths = {
         key,
         gap: resolveLength(settings.offset, context),
@@ -3194,6 +3388,32 @@ function anchor(reference, floating, options = {}) {
   };
 
   const run = async full => {
+    // Measuring the natural height takes the cap off for a moment: a list
+    // that scrolls inside the panel stops overflowing, and the browser puts
+    // its scroll back to the start. Every reposition that measured -- one per
+    // wheel step for a dropdown that follows the page's scroll in capture --
+    // threw the list back to its top, so it never moved and shook in place
+    // (owner R171, 2026-11-12), and a list scrolled to a keyboard-focused
+    // option jumped back to its first row (keyboard reveal). Only a fit that
+    // takes the cap off (a full fit, or the first) can clamp the scroll; a
+    // light fit keeps the cap and needs nothing put back. What was scrolled
+    // is put back once the cap is, and before onPosition, so a component that
+    // scrolls there has the last word.
+    let scrolled = settings.fitHeight && (full || !measures) ? scrollOffsets(floating) : null;
+
+    const putBack = () => {
+      if (scrolled) restoreScrollOffsets(scrolled);
+      scrolled = null;
+    };
+
+    try {
+      return await place(full, putBack);
+    } finally {
+      putBack();
+    }
+  };
+
+  const place = async (full, putBack) => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
@@ -3318,6 +3538,7 @@ function anchor(reference, floating, options = {}) {
 
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
     if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
+    putBack();
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -3376,7 +3597,8 @@ function anchor(reference, floating, options = {}) {
   (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
     ancestorResize: false,
     elementResize: false
-  })] : [];
+  }), // A density switch that moves no box still restates the gap: a full fit.
+  ...(tokens.length ? [watchDensity(floating.ownerDocument, controller.update)] : [])] : [];
   armed = true;
 
   controller.stop = () => {

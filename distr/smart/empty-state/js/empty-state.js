@@ -20,10 +20,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 // sf-empty-state: what a list, a panel or a page says when it has nothing to
-// show (owner-approved assignment, 2026-10-14). One component for the four
-// reasons -- nothing yet, nothing found, no access, could not load -- each
-// with its icon, a title that is a real heading at the page's level, a
-// sentence and what the person can do next.
+// show (owner-approved assignment, 2026-10-14). One component for the
+// reasons -- nothing yet, the first time, nothing found, no access, could not
+// load, no connection, being prepared (owner decision C120) -- each with its
+// icon, a title that is a real heading at the page's level, a sentence and
+// what the person can do next.
 
 
 
@@ -45,19 +46,36 @@ const EmptyStateElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
-});
+}); // The icon rule (owner decision C120): an empty place shows the icon of its
+// section (the icon setting; inbox without one), the first time in the
+// primary role; nothing found is search_off (filter_alt_off by filters, passed
+// as the icon); a problem is its own glyph in its tone -- error in the error
+// role, lock and cloud_off in the warning role. processing draws a spinner in
+// the same circle instead of a glyph, or with a known share (value) an
+// sf-progress-ring of the circle's size with the percentage.
+
 const ICONS = {
   'no-data': 'inbox',
+  'first-use': 'inbox',
   'nothing-found': 'search_off',
   'no-access': 'lock',
-  error: 'error'
+  error: 'error',
+  offline: 'cloud_off',
+  processing: ''
 };
 const TONES = {
   'no-data': 'neutral',
+  'first-use': 'primary',
   'nothing-found': 'neutral',
   'no-access': 'warning',
-  error: 'error'
-};
+  error: 'error',
+  offline: 'warning',
+  processing: 'neutral'
+}; // The reasons that say themselves politely under live auto: what the person
+// asked for did not come (nothing found, error, offline), and work that
+// started (processing).
+
+const SPOKEN = new Set(['nothing-found', 'error', 'offline', 'processing']);
 
 class SfEmptyState extends EmptyStateElement {
   static get props() {
@@ -66,6 +84,24 @@ class SfEmptyState extends EmptyStateElement {
         default: ''
       }
     };
+  } // offline retries by itself when the network comes back: the window's
+  // online event sends action {id: retry, auto: true} to the host, which does
+  // the loading. The element makes no request of its own.
+
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (!this.__sfOnline) this.__sfOnline = () => {
+      if (this.kind === 'offline') this.act('retry', {
+        auto: true
+      });
+    };
+    globalThis.addEventListener?.('online', this.__sfOnline);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.__sfOnline) globalThis.removeEventListener?.('online', this.__sfOnline);
   } // [{id, text, appearance}]: drawn at the component's size; each sends
   // sf-empty-state-action {id}. Unset is null, so an error offers «Повторить».
 
@@ -100,36 +136,54 @@ class SfEmptyState extends EmptyStateElement {
 
   set headingLevel(value) {
     if (value === null || value === undefined || value === '') this.removeAttribute('heading-level');else this.setAttribute('heading-level', String(value));
-  } // auto: nothing-found and error are a polite status, the others say
-  // nothing; alert: an error the person caused, such as a search that failed
-  // as they typed; off: the host announces it itself.
+  } // auto: nothing-found, error, offline and processing are a polite status,
+  // the others say nothing; alert: an error the person caused, such as a
+  // search that failed as they typed; off: the host announces it itself.
 
 
   liveRole() {
     if (this.live === 'off') return null;
     if (this.live === 'alert') return 'alert';
-    return this.kind === 'nothing-found' || this.kind === 'error' ? 'status' : null;
+    return SPOKEN.has(this.kind) ? 'status' : null;
   }
 
   words(key) {
     return this.sfWord(key);
-  } // The actions to draw: the host's, or «Повторить» for an error that has none.
+  } // The actions to draw: the host's, or the reason's own when it has none --
+  // «Повторить» for an error and offline, the primary «Создать» for the first
+  // time. processing offers nothing: the work goes on without the person.
 
 
   resolvedActions() {
     const actions = this.actions;
     if (actions) return actions;
     if (this.hasSlotContent?.('actions')) return [];
-    return this.kind === 'error' ? [{
+    if (this.kind === 'error' || this.kind === 'offline') return [{
       id: 'retry',
       text: this.words('retry'),
       appearance: 'outline'
-    }] : [];
+    }];
+    if (this.kind === 'first-use') return [{
+      id: 'create',
+      text: this.words('create'),
+      appearance: 'default'
+    }];
+    return [];
+  } // The share done of a processing job, a whole per cent 0..100, or null
+  // while it is unknown (no value): then the spinner turns instead.
+
+
+  share() {
+    const raw = this.value;
+    if (raw === null || raw === undefined || raw === '') return null;
+    const number = Number(raw);
+    return Number.isFinite(number) ? Math.round(Math.max(0, Math.min(100, number))) : null;
   }
 
-  act(id) {
+  act(id, more = {}) {
     this.sfEmit('action', {
-      id: String(id)
+      id: String(id),
+      ...more
     });
   }
 
@@ -140,8 +194,12 @@ class SfEmptyState extends EmptyStateElement {
       kind,
       size: this.size,
       headingLevel: this.headingLevel,
-      shownIcon: this.icon || ICONS[kind],
-      tone: TONES[kind],
+      shownIcon: kind === 'processing' ? '' : this.icon || ICONS[kind] || ICONS['no-data'],
+      processing: kind === 'processing',
+      // processing with a known share (value 0..100): the ring in the circle.
+      share: kind === 'processing' ? this.share() : null,
+      shareLabel: this.words('processing-share'),
+      tone: TONES[kind] ?? 'neutral',
       shownTitle: this.heading || this.words(`${kind}-title`),
       shownText: this.text || this.words(`${kind}-text`),
       resolvedActions: this.resolvedActions(),
@@ -192,9 +250,29 @@ const BUTTON_SIZE = {
   '1/2': '1/2',
   1: '1',
   2: '1'
-}; // The inline form: one line, the icon at the text's size, the words and the
+}; // The glyph of the icon place, or for processing a spinner in the same place
+// (owner decision C120): the circle, its tone and its size stay. The spinner
+// takes the featured icon's size step, whose diameter is the glyph's (both
+// read --sf-text-height-<step>), and the glyph's ink as its current colour.
+// Its label is empty, so it is hidden from a screen reader: the state's own
+// status says the words. With a known share (value) the block form draws an
+// sf-progress-ring instead (owner decision C120 (2)): the ring is the circle's
+// own box at the same size step, the percentage in the middle, and it is the
+// one part of the icon place a reader meets -- a progressbar named «Готово»,
+// whose value is said with the status when it appears and then only on
+// request (a value change is an attribute, not new words in the region).
+
+function renderGlyph(context, step) {
+  if (context.share !== null && context.share !== undefined) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-ring class="sf-empty-state-ring" size=${step} value=${String(context.share)} show-text
+                 label=${context.shareLabel}></sf-progress-ring>`;
+  }
+
+  return context.processing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-spinner class="sf-empty-state-spinner" size=${step} label=""></sf-spinner>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon">${context.shownIcon}</i>`;
+} // The inline form: one line, the icon at the text's size, the words and the
 // first action as a link. No heading, so a list inside a menu or a dropdown
 // gains no outline entry and no item.
+
 
 function renderInline(context) {
   const size = context.size === '1' ? '1' : '1-2';
@@ -202,7 +280,11 @@ function renderInline(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${['sf-empty-state', 'sf-empty-state--inline', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.rootClass].filter(Boolean).join(' ')}
          role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-      <i class="sf-icon sf-empty-state-icon" aria-hidden="true">${context.shownIcon}</i>
+      ${context.processing // The line's text height: the spinner step of the line's size. The
+  // inline form has no circle, so a known share keeps the spinner.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-empty-state-icon" aria-hidden="true">${renderGlyph({ ...context,
+    share: null
+  }, size === '1' ? '1' : '1/2')}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-empty-state-icon" aria-hidden="true">${context.shownIcon}</i>`}
       <span class="sf-empty-state-line">${context.shownLine}</span>
       ${action // The link is one size below the line (1.0.x: size 1 with compact
   // spacing): density no longer changes a button's height (C01), so the
@@ -220,11 +302,12 @@ function renderEmptyStateTemplate(context) {
   const size = String(context.size).replace('/', '-');
   const actions = context.resolvedActions ?? [];
   const slotted = context.component?.hasSlotContent?.('actions') ? context.component.getSlotContent('actions') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const ring = context.share !== null && context.share !== undefined;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${['sf-empty-state', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.rootClass].filter(Boolean).join(' ')}
+    <div class=${['sf-empty-state', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.expressive ? 'sf-empty-state--expressive' : '', context.rootClass].filter(Boolean).join(' ')}
          role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-      <span class=${`sf-featured-icon sf-featured-icon--size-${ICON_SIZE[context.size] ?? '2'} sf-featured-icon--${context.tone} sf-featured-icon--soft sf-empty-state-icon`}
-            aria-hidden="true"><i class="sf-icon">${context.shownIcon}</i></span>
+      <span class=${`sf-featured-icon sf-featured-icon--size-${ICON_SIZE[context.size] ?? '2'} sf-featured-icon--${context.tone} sf-featured-icon--soft sf-empty-state-icon${ring ? ' sf-empty-state-icon--ring' : ''}`}
+            aria-hidden=${ring ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}>${renderGlyph(context, ICON_SIZE[context.size] ?? '2')}</span>
       ${(0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class="sf-empty-state-title">${context.shownTitle}</${tag}>`}
       ${context.shownText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-empty-state-text">${context.shownText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${actions.length || slotted !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-empty-state-actions">
@@ -350,21 +433,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.1.11","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","nothing-found","no-access","error"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.4.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "d5a87cc95e86"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Empty state","runtime":{"error-text":"Try again","error-title":"Could not load","no-access-text":"Ask an administrator for access","no-access-title":"No access","no-data-text":"They will appear here once added","no-data-title":"No records yet","nothing-found-text":"Try another query or other filters","nothing-found-title":"Nothing found","retry":"Try again"},"events":{"action":{"label":"Do the empty state\'s action"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Empty state","runtime":{"create":"Create","error-text":"Try again","error-title":"Could not load","first-use-text":"Create the first record and it will appear here","first-use-title":"Nothing here yet","no-access-text":"Ask an administrator for access","no-access-title":"No access","no-data-text":"They will appear here once added","no-data-title":"No records yet","nothing-found-text":"Try another query or other filters","nothing-found-title":"Nothing found","offline-text":"Check your connection; we will try again once it is back","offline-title":"No connection","processing-share":"Done","processing-text":"This may take a few minutes. The result will appear here; you can close the page","processing-title":"Being prepared","retry":"Try again"},"events":{"action":{"label":"Do the empty state\'s action"}}}');
 
 /***/ },
 
 /***/ "13d97237b26f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пустое состояние","runtime":{"error-text":"Попробуйте ещё раз","error-title":"Не удалось загрузить","no-access-text":"Обратитесь к администратору","no-access-title":"Нет доступа","no-data-text":"Они появятся здесь, когда их добавят","no-data-title":"Записей пока нет","nothing-found-text":"Попробуйте изменить запрос или фильтры","nothing-found-title":"Ничего не найдено","retry":"Повторить"},"events":{"action":{"label":"Выполнить действие пустого состояния"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Пустое состояние","runtime":{"create":"Создать","error-text":"Попробуйте ещё раз","error-title":"Не удалось загрузить","first-use-text":"Создайте первую запись — она появится здесь","first-use-title":"Здесь пока пусто","no-access-text":"Обратитесь к администратору","no-access-title":"Нет доступа","no-data-text":"Они появятся здесь, когда их добавят","no-data-title":"Записей пока нет","nothing-found-text":"Попробуйте изменить запрос или фильтры","nothing-found-title":"Ничего не найдено","offline-text":"Проверьте подключение — повторим сами, когда сеть вернётся","offline-title":"Нет связи","processing-share":"Готово","processing-text":"Это может занять несколько минут. Результат появится здесь — страницу можно закрыть","processing-title":"Готовится","retry":"Повторить"},"events":{"action":{"label":"Выполнить действие пустого состояния"}}}');
 
 /***/ }
 

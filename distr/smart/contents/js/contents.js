@@ -88,6 +88,285 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
+}
+
+/***/ },
+
 /***/ "fea62563f6ac"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -101,23 +380,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("cd89fc8cb241");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("98e539eba4a2");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c7309b7d2b47");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8555c8fedc29");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("39f7a04bb258");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("cd89fc8cb241");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("98e539eba4a2");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8e187cb370e4");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c7309b7d2b47");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8555c8fedc29");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("39f7a04bb258");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 // sf-contents: the table of contents of one page («Оглавление») -- its
 // sections as in-page links, the current one marked while the page scrolls.
 //
-// One list, four views (the sheet's): a side column with the current
-// section's bar, a compact button with the reading progress that opens the
-// list, strokes at the edge with the names on hover and focus, and a sticky
-// row of anchor tabs; auto is the column on a wide screen and the compact
-// button below the collapse step, by a media rule, so the printed markup is
+// One list, four views (the stylesheet's): a side column with the current
+// section's bar, the sheet -- a button with the reading progress that opens
+// the list -- strokes at the edge with the names on hover and focus, and a
+// sticky row of anchor tabs; auto is the column on a wide screen and the sheet
+// below the collapse step, by a media rule, so the printed markup is
 // right before this code arrives.
 //
 // The sections are the items a server gives (the JSON island, or the
@@ -142,21 +424,37 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // A chosen section holds the answer while its scroll moves -- each scroll
+
+
+
+ // The values of hash (CT-10): choose writes the address when a section is
+// chosen, scroll also while the page scrolls, false never. true and an empty
+// attribute, the boolean of 1.4, read as the default.
+
+const HASH_MODES = ['choose', 'scroll', 'false']; // The statuses an entry may carry (C95 point 6, CT-07); error also sends a
+// chosen entry to the first invalid field of its section.
+
+const STATUSES = ['error', 'warning', 'success']; // A field that says it is invalid: a Framework field's invalid setting, an
+// aria-invalid control, a control the browser found invalid after the person
+// touched it.
+
+const INVALID = '[invalid]:not([invalid="false"]), [aria-invalid="true"], :user-invalid'; // A chosen section holds the answer while its scroll moves -- each scroll
 // event extends the hold by this long, so a long smooth scroll keeps it and a
 // section already in place lets it go at once -- and, once the scroll ended,
 // while the section is in view and the person has not scrolled again: a
 // section near the end of the page that cannot reach the top stays chosen.
 
 const HOLD_MS = 300;
-let sequence = 0;
-const ContentsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+let sequence = 0; // layout compact is a dated value alias of sheet (aliases.json, C134).
+
+const ContentsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru',
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   actions: {
     refresh() {
       this.collect();
@@ -221,6 +519,7 @@ class SfContents extends ContentsElement {
     this._scroller = null;
     this._frame = 0;
     this._revealCurrent = false;
+    this._focusCurrent = false;
 
     this._onMedia = () => this.syncCompact();
 
@@ -246,6 +545,22 @@ class SfContents extends ContentsElement {
     };
 
     this._onReady = () => this.collect();
+
+    this._lastPointer = '';
+
+    this._onPointer = event => {
+      this._lastPointer = event.pointerType || '';
+    };
+
+    this._overflowed = [];
+    this._overflowFrame = 0;
+    this._resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(() => this.layoutOverflowNow()) : null;
+  } // The mode of the address (CT-10); the boolean of 1.4 reads as choose.
+
+
+  get hashMode() {
+    const value = this.getAttribute('hash');
+    return HASH_MODES.includes(value) ? value : 'choose';
   } // The read-only value current (component.json values).
 
 
@@ -261,10 +576,13 @@ class SfContents extends ContentsElement {
   set items(value) {
     super.items = value;
     if (this._isMounted) this.collect();
-  }
+  } // The sheet view is showing: layout sheet, or auto below the collapse step.
+  // (The getter and the host state data-compact keep their names: they are
+  // not the setting's value.)
+
 
   get compact() {
-    if (this.layout === 'compact') return true;
+    if (this.layout === 'sheet') return true;
     if (this.layout !== 'auto') return false;
     return this._media ? !this._media.matches : false;
   } // The links written inside the element are its items (the default slot):
@@ -280,11 +598,14 @@ class SfContents extends ContentsElement {
       this._childItems = links.map(link => ({
         id: decodeURIComponent(link.getAttribute('href').slice(1)),
         text: link.textContent.replace(/\s+/gu, ' ').trim(),
-        level: Number(link.dataset.level || link.getAttribute('aria-level')) || 2
+        level: Number(link.dataset.level || link.getAttribute('aria-level')) || 2,
+        count: Number(link.dataset.count) || 0,
+        status: link.dataset.status || ''
       })).filter(item => item.id);
       nodes.forEach(node => node.remove());
     }
 
+    this.addEventListener('pointerdown', this._onPointer, true);
     this.watchMedia();
     this.collect();
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', this._onReady, {
@@ -298,6 +619,19 @@ class SfContents extends ContentsElement {
     this._media = null;
     document.removeEventListener('DOMContentLoaded', this._onReady);
     document.removeEventListener('pointerdown', this._onOutside, true);
+    this.removeEventListener('pointerdown', this._onPointer, true);
+    this._resizeObserver?.disconnect();
+    this._observedRow = null;
+    this._observedTrigger = null;
+    if (this._fontsListener) globalThis.document?.fonts?.removeEventListener?.('loadingdone', this._fontsListener);
+    this._fontsListener = null;
+    if (this._overflowFrame) globalThis.cancelAnimationFrame?.(this._overflowFrame);
+    this._overflowFrame = 0;
+    this._moreMenu?.close?.({
+      restoreFocus: false
+    });
+    this._moreMenu?.remove?.();
+    this._moreMenu = null;
     this.isOpen = false;
     super.onDisconnected?.();
   }
@@ -306,7 +640,11 @@ class SfContents extends ContentsElement {
     super.attributeChangedCallback(name, oldValue, newValue);
     if (oldValue === newValue || !this._isMounted) return;
     if (name === 'layout' || name === 'collapse') this.watchMedia();
+    if (name === 'layout' && this.isOpen && !this.canOpen) this.closeList({
+      restoreFocus: false
+    });
     if (name === 'target' || name === 'levels') this.collect();
+    if (name === 'expand') this.requestComponentUpdate('expand');
   }
 
   watchMedia() {
@@ -322,7 +660,7 @@ class SfContents extends ContentsElement {
 
   syncCompact() {
     this.sfHostState('data-compact', this.compact);
-    if (!this.compact && this.isOpen) this.closeList({
+    if (!this.canOpen && this.isOpen) this.closeList({
       restoreFocus: false
     });
     this.requestComponentUpdate('compact');
@@ -352,7 +690,9 @@ class SfContents extends ContentsElement {
     const given = (Array.isArray(this.items) && this.items.length ? this.items : this._childItems).filter(item => item && item.id).map(item => ({
       id: String(item.id),
       text: String(item.text ?? item.label ?? item.id),
-      level: Number(item.level) || 2
+      level: Number(item.level) || 2,
+      count: Number(item.count) || 0,
+      status: STATUSES.includes(item.status) ? item.status : ''
     }));
     let sections;
 
@@ -388,7 +728,10 @@ class SfContents extends ContentsElement {
       }).filter(section => section.text);
     }
 
-    this._sections = sections;
+    this._sections = sections; // Fewer than two sections say nothing the page does not (CT-03, C95
+    // point 5): the host says so and the sheet draws nothing.
+
+    this.sfHostState('data-empty', sections.length < 2);
     this.startSpy();
     this.spy({
       emit: false
@@ -513,11 +856,13 @@ class SfContents extends ContentsElement {
     this._progress = progress; // The line follows every frame without a redraw of the list.
 
     this.querySelector(':scope .sf-contents-progress-value')?.style.setProperty('--sf-contents--progress', String(progress));
-  }
+  } // via: scroll (the spy) or choose (a section chosen). The address follows a
+  // scroll only with hash="scroll" (CT-10).
+
 
   setCurrent(id, {
     emit = true,
-    hash = true
+    via = 'scroll'
   } = {}) {
     const previous = this._current;
     const first = !this._answered;
@@ -527,25 +872,88 @@ class SfContents extends ContentsElement {
     this._revealCurrent = true;
     this.requestComponentUpdate('current');
     if (first || !emit || !id) return;
-
-    if (hash && this.hash && globalThis.location?.hash !== `#${id}`) {
-      try {
-        globalThis.history?.replaceState(globalThis.history.state, '', `#${encodeURIComponent(id)}`);
-      } catch {// A sandboxed frame may refuse; the address is a convenience.
-      }
-    }
-
+    if (via === 'scroll' && this.hashMode === 'scroll') this.writeHash(id);
     this.sfEmit('change', {
       id,
       previous: previous || null
     });
+  } // #id in the address, with replaceState: no history entry.
+
+
+  writeHash(id) {
+    if (!id || this.hashMode === 'false' || globalThis.location?.hash === `#${encodeURIComponent(id)}`) return;
+
+    try {
+      globalThis.history?.replaceState(globalThis.history.state, '', `#${encodeURIComponent(id)}`);
+    } catch {// A sandboxed frame may refuse; the address is a convenience.
+    }
   } // A link chosen: its section, smoothly unless the person asked for less
   // motion, focus there, the address and the answer at once.
 
 
   choose(event, id) {
-    if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; // The rail where nothing hovers (CT-04): the first tap on a stroke shows
+    // the names, as the hover does; a tap on a shown name goes there. A
+    // keyboard's Enter (no pointer) goes at once: focus already shows them.
 
+    if (this.layout === 'rail' && !this.isOpen && this._lastPointer === 'touch' && !this.hovers()) {
+      event.preventDefault();
+      this._lastPointer = '';
+      this.openList();
+      return;
+    }
+
+    this._lastPointer = '';
+    this.jumpTo(id, event);
+  } // The first invalid field of a section: after its element (or inside it)
+  // and before the next section's.
+
+
+  firstInvalid(section) {
+    const at = this._sections.indexOf(section);
+
+    const start = section.element;
+    const end = this._sections.slice(at + 1).find(one => one.element)?.element ?? null;
+    const scope = this.targetElement() ?? document.body;
+    let fields;
+
+    try {
+      fields = Array.from(scope.querySelectorAll(INVALID));
+    } catch {
+      // A browser without :user-invalid.
+      fields = Array.from(scope.querySelectorAll(INVALID.replace(/, :user-invalid$/u, '')));
+    }
+
+    const after = node => start === node || start.contains(node) || Boolean(start.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    const before = node => !end || Boolean(node.compareDocumentPosition(end) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    return fields.find(node => !this.contains(node) && after(node) && before(node) // A field inside a Framework field is the field's own control: the outer one is focused.
+    && !fields.some(outer => outer !== node && outer.contains(node))) ?? null;
+  } // An entry's accessible name with its mark (C95 point 6): «Контакты: 2
+  // ошибки», «Оплата: есть предупреждения», «Доставка: 3».
+
+
+  markedName(text, {
+    count = 0,
+    status = ''
+  } = {}) {
+    if (status && count) return `${text}: ${this.sfWord(`count-${status}`, {
+      count
+    })}`;
+    if (status) return `${text}: ${this.sfWord(`status-${status}`)}`;
+    return `${text}: ${count}`;
+  } // The device has no hover: a touch screen, where :hover never comes.
+
+
+  hovers() {
+    return globalThis.matchMedia?.('(hover: hover)').matches === true;
+  } // The section of id: scrolled to, focused, current, in the address. A
+  // section marked error goes to its first invalid field instead of its
+  // heading (C95 point 6, CT-07), centred, the field focused.
+
+
+  jumpTo(id, event = null) {
     const section = this._sections.find(one => one.id === id);
 
     const element = section?.element ?? document.getElementById(id);
@@ -553,14 +961,33 @@ class SfContents extends ContentsElement {
       restoreFocus: false
     });
     if (!element) return;
-    event.preventDefault();
+    event?.preventDefault();
     this._hold = {
       id,
       until: Date.now() + HOLD_MS
-    }; // instant, not auto: auto is the page's scroll-behavior, which may be smooth.
+    };
+    const field = section?.status === 'error' ? this.firstInvalid(section) : null; // instant, not auto: auto is the page's scroll-behavior, which may be smooth.
+
+    const behavior = reducedMotion() ? 'instant' : 'smooth';
+
+    if (field) {
+      field.scrollIntoView({
+        behavior,
+        block: 'center'
+      });
+      field.focus({
+        preventScroll: true
+      });
+      this.setCurrent(id, {
+        emit: true,
+        via: 'choose'
+      });
+      this.writeHash(id);
+      return;
+    }
 
     element.scrollIntoView({
-      behavior: reducedMotion() ? 'instant' : 'smooth',
+      behavior,
       block: 'start'
     });
     if (!element.matches('a[href], button, input, select, textarea, [tabindex]')) element.setAttribute('tabindex', '-1');
@@ -568,19 +995,46 @@ class SfContents extends ContentsElement {
       preventScroll: true
     });
     this.setCurrent(id, {
-      emit: true
+      emit: true,
+      via: 'choose'
     });
-  } // The action toggle opens the compact view's list.
+    this.writeHash(id);
+  } // The sheet view's list, or the rail's names (CT-04), can open.
+
+
+  get canOpen() {
+    return this.compact || this.layout === 'rail';
+  } // The action toggle opens the sheet view's list, and in the rail shows
+  // the names.
 
 
   openList() {
     if (this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
-    if (!this.compact) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('not-compact');
+    if (!this.canOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('not-compact');
     this.isOpen = true;
     this.sfHostState('data-open', true);
     document.addEventListener('pointerdown', this._onOutside, true);
-    this.requestComponentUpdate('open');
+    this.requestComponentUpdate('open'); // The sheet's list (a bottom sheet on a phone) opens on the current
+    // entry: focus goes to its link, so the keyboard and a screen reader start
+    // where the reader is (C95 point 4, CT-08). The rail keeps focus.
+
+    if (this.compact) this._focusCurrent = true;
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+  }
+
+  focusCurrent() {
+    if (!this.isOpen || !this.compact) return;
+    const list = this.querySelector(':scope .sf-contents-list');
+    const link = list?.querySelector('[aria-current="location"]') ?? list?.querySelector('.sf-contents-link');
+    link?.focus({
+      preventScroll: true
+    }); // The current entry in view inside the list, never the page.
+
+    if (link && list && list.scrollHeight > list.clientHeight) {
+      const box = list.getBoundingClientRect();
+      const at = link.getBoundingClientRect();
+      if (at.top < box.top || at.bottom > box.bottom) list.scrollTop += at.top - box.top - (box.height - at.height) / 2;
+    }
   }
 
   closeList({
@@ -591,7 +1045,7 @@ class SfContents extends ContentsElement {
     this.sfHostState('data-open', false);
     document.removeEventListener('pointerdown', this._onOutside, true);
     this.requestComponentUpdate('close');
-    if (restoreFocus) this.toggleButton()?.focus({
+    if (restoreFocus && this.compact) this.toggleButton()?.focus({
       preventScroll: true
     });
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
@@ -608,19 +1062,30 @@ class SfContents extends ContentsElement {
     this.closeList({
       restoreFocus: true
     });
-  } // The compact button is what the host's focus() reaches in the compact
+  } // The sheet's button is what the host's focus() reaches in the sheet
   // view (the host is display: contents and has no box).
 
 
   focusDelegate() {
     return this.compact ? this.toggleButton() : this.querySelector(':scope .sf-contents-link');
-  } // The bar keeps the current tab in view by scrolling itself, never the page.
+  } // The bar keeps the current tab in view by scrolling itself, never the page;
+  // with overflow more it is laid out instead, the current tab in the row.
 
 
   afterRender(changed) {
     const result = super.afterRender?.(changed);
 
-    if (this._revealCurrent && this.layout === 'bar') {
+    if (this._focusCurrent) {
+      this._focusCurrent = false;
+      this.focusCurrent();
+    }
+
+    this.watchRow();
+
+    if (this.overflowsToMore()) {
+      this._revealCurrent = false;
+      this.layoutOverflow();
+    } else if (this._revealCurrent && this.layout === 'bar') {
       this._revealCurrent = false;
       const list = this.querySelector(':scope .sf-contents-list');
       const link = list?.querySelector('[aria-current="location"]');
@@ -638,6 +1103,122 @@ class SfContents extends ContentsElement {
     }
 
     return result;
+  } // ─── «Ещё (n)» of the bar (CT-05) ───────────────────────────────────────
+
+
+  overflowsToMore() {
+    return this.layout === 'bar' && this.overflow !== 'scroll';
+  }
+
+  row() {
+    return this.querySelector(':scope .sf-contents-list');
+  }
+
+  trigger() {
+    return this.querySelector(':scope .sf-contents-more');
+  } // The row and the trigger's button are watched: a resize lays the row out
+  // in the observer's callback, before the paint; a font arriving later too.
+
+
+  watchRow() {
+    if (!this._resizeObserver) return;
+    const row = this.overflowsToMore() ? this.row() : null;
+    const button = row ? this.trigger()?.querySelector(':scope > button') : null;
+
+    if (row !== this._observedRow) {
+      if (this._observedRow) this._resizeObserver.unobserve(this._observedRow);
+      if (row) this._resizeObserver.observe(row);
+      this._observedRow = row;
+    }
+
+    if (button !== this._observedTrigger) {
+      if (this._observedTrigger) this._resizeObserver.unobserve(this._observedTrigger);
+      if (button) this._resizeObserver.observe(button);
+      this._observedTrigger = button;
+    }
+
+    if (row && !this._fontsListener && globalThis.document?.fonts?.addEventListener) {
+      this._fontsListener = () => this.scheduleOverflow();
+
+      document.fonts.addEventListener('loadingdone', this._fontsListener);
+    }
+  }
+
+  scheduleOverflow() {
+    if (this._overflowFrame || typeof globalThis.requestAnimationFrame !== 'function') return;
+    this._overflowFrame = globalThis.requestAnimationFrame(() => {
+      this._overflowFrame = 0;
+      this.layoutOverflow();
+    });
+  }
+
+  layoutOverflowNow() {
+    if (this._overflowFrame) globalThis.cancelAnimationFrame?.(this._overflowFrame);
+    this._overflowFrame = 0;
+    this.layoutOverflow();
+  } // The sections in their order up to the first that does not fit, the
+  // current one always kept; the rest whole in «Ещё (n)» (core/js/overflow-row.js).
+
+
+  layoutOverflow() {
+    const row = this.row();
+    const nav = row?.parentElement;
+    if (!row || !nav) return;
+    const items = Array.from(row.children);
+
+    for (const item of items) item.classList.remove('sf-contents-overflowed', 'sf-contents-squeezed');
+
+    this._overflowed = [];
+    nav.removeAttribute('data-more');
+    if (!this.overflowsToMore() || items.length < 2) return;
+    const widths = items.map(item => item.getBoundingClientRect().width);
+    const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+    if (!(0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.fitInOrder)(widths, gap, (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.rowRoom)(row))) return;
+    nav.setAttribute('data-more', '');
+    const current = items.findIndex(item => item.querySelector('[aria-current="location"]'));
+    const more = this.trigger();
+
+    const label = count => `${this.sfWord('more')} (${count})`;
+
+    const {
+      kept,
+      squeezed
+    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.fitBesideMore)({
+      widths,
+      gap,
+      room: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.rowRoom)(row),
+      current,
+      must: current >= 0 ? [current] : [],
+      extra: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.triggerExtra)(more?.querySelector(':scope > button .sf-button-text-container'), label)
+    });
+    items.forEach((item, at) => {
+      if (!kept.includes(at)) item.classList.add('sf-contents-overflowed');
+    });
+    if (squeezed >= 0) items[squeezed].classList.add('sf-contents-squeezed');
+    this._overflowed = items.map((_, at) => at).filter(at => !kept.includes(at)).map(at => this._sections[at]?.id).filter(Boolean);
+
+    if (more) {
+      const text = label(this._overflowed.length);
+      if (more.getAttribute('text') !== text) more.setAttribute('text', text);
+      more.setAttribute('aria-label', text);
+    }
+  } // «Ещё (n)»: the standard menu of the sections it holds; one chosen goes
+  // there as its link would.
+
+
+  async openMore(anchor) {
+    const entries = this._overflowed.map(id => this._sections.find(section => section.id === id)).filter(Boolean).map(section => ({
+      id: section.id,
+      text: section.text
+    }));
+
+    if (!entries.length) return;
+    const menu = await (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.standardMenu)(this, '_moreMenu', id => this.jumpTo(String(id)));
+    menu.setAttribute('aria-label', this.sfWord('more'));
+    menu.setAttribute('size', this.size === '1' ? '1' : '1/2');
+    (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_4__.followDensity)(menu, this);
+    menu.entries = entries;
+    menu.toggleFor(anchor?.querySelector?.(':scope > button') ?? anchor);
   }
 
   templateContext() {
@@ -651,14 +1232,23 @@ class SfContents extends ContentsElement {
       open: this.isOpen,
       compact: this.compact,
       label: this.label,
+      headingLevel: this.headingLevel,
+      overflow: this.overflow,
+      line: this.line,
+      expand: this.expand,
+      moreText: this.sfWord('more'),
       sections: this._sections.map(({
         id,
         text,
-        level
+        level,
+        count,
+        status
       }) => ({
         id,
         text,
-        level
+        level,
+        count,
+        status
       })),
       current: this._current,
       progress: this._progress,
@@ -667,7 +1257,7 @@ class SfContents extends ContentsElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderContentsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderContentsTemplate)(this.templateContext());
   }
 
 }
@@ -685,6 +1275,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   currentBranch: () => (/* binding */ currentBranch),
 /* harmony export */   renderContentsTemplate: () => (/* binding */ renderContentsTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
@@ -693,13 +1284,53 @@ var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
  // One list drawn four ways. The root is a <nav> named by the label: a heading
-// line, the compact view's button and progress line, and an ordered list of
+// line, the sheet view's button and progress line, and an ordered list of
 // in-page links, the current one aria-current="location". Which parts show is
-// the sheet's (scss/): column shows the heading and the list; compact the
+// the stylesheet's (scss/): column shows the heading and the list; sheet the
 // button and the progress, and the list as a raised panel while open; rail the
-// list as strokes; bar the list as a row. layout auto is column or compact by a
+// list as strokes; bar the list as a row. layout auto is column or sheet by a
 // media rule, so the printed markup is right before the script arrives.
+//
+// The heading is a heading (role heading at heading-level) that names the
+// navigation (aria-labelledby): shown in the column, hidden in the other
+// layouts, where it still names the landmark (CT-09). The bar with overflow
+// more ends in «Ещё (n)», which the element lays out (CT-05).
+//
+// C95 (owner, 2026-11-12): line says who draws the line -- the element (own),
+// its host's divider (edge) or nobody (none); expand current folds the deeper
+// entries outside the current branch; an entry with a count or a status
+// carries a badge on the line of its text (sf-badge line="text") and says it
+// in its name; the sheet view's veil stands behind the open list, which is a
+// bottom sheet on a phone. The badge is tonal whatever it says (owner decision
+// C140; C96 (6): an error in a label stays tonal red): the status mark drew
+// the filled look, which is the attention count's alone.
 
+const STATUSES = ['error', 'warning', 'success'];
+const STATUS_ICONS = {
+  error: 'error',
+  warning: 'warning',
+  success: 'check_circle'
+}; // The entries of the current branch: the top-level entry at or before the
+// current one, and every deeper entry under it. Without a current entry, the
+// first branch.
+
+function currentBranch(sections, current) {
+  const depthOf = section => section.level - Math.min(...sections.map(one => one.level));
+
+  const at = Math.max(0, sections.findIndex(section => section.id === current));
+  let start = at;
+
+  while (start > 0 && depthOf(sections[start]) > 0) start -= 1;
+
+  const open = new Set();
+
+  for (let index = start; index < sections.length; index += 1) {
+    if (index > start && depthOf(sections[index]) === 0) break;
+    open.add(sections[index].id);
+  }
+
+  return open;
+}
 function renderContentsTemplate(context) {
   const {
     component,
@@ -716,12 +1347,26 @@ function renderContentsTemplate(context) {
     progress,
     rootClass
   } = context;
+  const labelId = `${id}-label`;
+  const level = Math.min(6, Math.max(2, Math.round(Number(context.headingLevel)) || 2));
+  const more = layout === 'bar' && context.overflow !== 'scroll';
   const listId = `${id}-list`;
   const currentSection = sections.find(section => section.id === current) ?? sections[0];
   const currentText = currentSection?.text ?? '';
   const top = sections.reduce((lowest, section) => Math.min(lowest, section.level), Infinity);
-  const classes = ['sf-contents', `sf-contents--layout-${layout}`, layout === 'auto' ? `sf-contents--collapse-${collapse}` : '', `sf-contents--size-${size === '1' ? '1' : 'half'}`, sticky ? 'sf-contents--sticky' : '', open ? 'sf-contents--open' : '', rootClass].filter(Boolean).join(' ');
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<nav class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${label}
+  const line = ['edge', 'none'].includes(context.line) ? context.line : 'own';
+  const folding = context.expand === 'current';
+  const branch = folding ? currentBranch(sections, current) : null;
+
+  const statusOf = section => STATUSES.includes(section.status) ? section.status : '';
+
+  const countOf = section => Number.isFinite(section.count) && section.count > 0 ? Math.round(section.count) : 0;
+
+  const classes = ['sf-contents', `sf-contents--layout-${layout}`, // The sheet writes its former class beside its own until 2027-01-01, so a
+  // page selector that reached sf-contents--layout-compact still does (C134;
+  // journal value-contents-layout-compact-to-sheet).
+  layout === 'sheet' ? 'sf-contents--layout-compact' : '', layout === 'auto' ? `sf-contents--collapse-${collapse}` : '', `sf-contents--size-${size === '1' ? '1' : 'half'}`, sticky ? 'sf-contents--sticky' : '', open ? 'sf-contents--open' : '', more ? 'sf-contents--overflow-more' : '', line !== 'own' ? `sf-contents--line-${line}` : '', folding ? 'sf-contents--expand-current' : '', rootClass].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<nav class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-labelledby=${labelId}
       @keydown=${event => component.onKeydown(event)}>
     <div class="sf-contents-head">
       <sf-button class="sf-contents-toggle" appearance="outline" scheme="on-surface" size=${size}
@@ -732,13 +1377,35 @@ function renderContentsTemplate(context) {
       <span class="sf-contents-progress" aria-hidden="true"><span class="sf-contents-progress-value"
         style=${`--sf-contents--progress: ${progress}`}></span></span>
     </div>
-    <span class="sf-contents-label" aria-hidden="true">${label}</span>
+    <div class="sf-contents-label" id=${labelId} role="heading" aria-level=${String(level)}>${label}</div>
+    <span class="sf-contents-veil" aria-hidden="true" @click=${() => component.closeList({
+    restoreFocus: true
+  })}></span>
     <ol class="sf-contents-list" id=${listId} role="list">
-      ${sections.map(section => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-contents-item" data-depth=${Math.max(0, section.level - (Number.isFinite(top) ? top : section.level))}>
-        <a class="sf-contents-link" href=${`#${section.id}`} aria-current=${section.id === current ? 'location' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-          @click=${event => component.choose(event, section.id)}><span class="sf-contents-mark" aria-hidden="true"></span><span class="sf-contents-text">${section.text}</span></a>
-      </li>`)}
+      ${sections.map(section => {
+    const depth = Math.max(0, section.level - (Number.isFinite(top) ? top : section.level));
+    const status = statusOf(section);
+    const count = countOf(section);
+    const marked = status || count;
+    const folded = branch && depth > 0 && !branch.has(section.id);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class=${folded ? 'sf-contents-item sf-contents-folded' : 'sf-contents-item'} data-depth=${depth}>
+        <a class=${marked ? 'sf-contents-link sf-contents-link--marked' : 'sf-contents-link'} href=${`#${section.id}`}
+          aria-current=${section.id === current ? 'location' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          aria-label=${marked ? component.markedName(section.text, {
+      count,
+      status
+    }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          data-status=${status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          @click=${event => component.choose(event, section.id)}><span class="sf-contents-mark" aria-hidden="true"></span><span class="sf-contents-text">${section.text}</span>${marked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-contents-count" line="text"
+            status=${status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} appearance="tonal" text=${count ? String(count) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            icon=${!count && status ? STATUS_ICONS[status] : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon-only=${!count && status ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-hidden="true"></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</a>
+      </li>`;
+  })}
     </ol>
+    ${more ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-contents-more" appearance="ghost" scheme="on-surface" size=${size}
+      icon-end="expand_more" text=${context.moreText} aria-haspopup="menu"
+      @click=${event => component.openMore(event.currentTarget)}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </nav>`;
 }
 __webpack_async_result__();
@@ -776,24 +1443,31 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "8e187cb370e4"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-contents for the shim (core/js/aliases.js, standard §16 item 20).","component":"sf-contents","since":"2026-11-13","remove_after":"2027-01-01","aliases":[{"from":"compact","to":"sheet","kind":"value","setting":"layout","component":"sf-contents","since":"2026-11-13","remove_after":"2027-01-01","section":"§16 item 20","note":"owner decision C134 (control/research/2026-11-13-navigation-density.md D5, Q1): the word compact means density only; the button view is layout sheet and writes the class sf-contents--layout-sheet beside its former sf-contents--layout-compact until the date"}]}');
+
+/***/ },
+
 /***/ "98e539eba4a2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.4.3","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","compact","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"hash":{"type":"boolean","default":true},"label":{"type":"string","default-from":"runtime.label"}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.7.1","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 
 /***/ "c7309b7d2b47"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Contents","runtime":{"label":"On this page"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Contents","runtime":{"label":"On this page","more":"More","count-error":{"one":"{n} error","other":"{n} errors"},"count-warning":{"one":"{n} warning","other":"{n} warnings"},"count-success":{"one":"{n}, done","other":"{n}, done"},"status-error":"has errors","status-warning":"has warnings","status-success":"done"}}');
 
 /***/ },
 
 /***/ "8555c8fedc29"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Оглавление","runtime":{"label":"На этой странице"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Оглавление","runtime":{"label":"На этой странице","more":"Ещё","count-error":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"count-warning":{"one":"{n} предупреждение","few":"{n} предупреждения","many":"{n} предупреждений","other":"{n} предупреждения"},"count-success":{"one":"{n}, готово","few":"{n}, готово","many":"{n}, готово","other":"{n}, готово"},"status-error":"есть ошибки","status-warning":"есть предупреждения","status-success":"готово"}}');
 
 /***/ }
 

@@ -2273,9 +2273,15 @@ function inTopLayer(element) {
 // the host's variables, theme, lang, dir and density by plain inheritance --
 // what a body portal has to carry by hand (carryLayerOrigin). A surface the
 // component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
-// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
-// layer is left as it is; a browser without popovers keeps the fixed panel in
-// place, placed against its containing block.
+// sf-input-lookup, dropdown lists) is left as it is; a browser without
+// popovers keeps the fixed panel in place, placed against its containing block.
+//
+// A surface inside another top-layer surface -- a tooltip, a dropdown or a
+// nested popover in an open sf-popover, a modal dialog -- is lifted too, and
+// so stands above its parent. Left inside it, it was a fixed box in the
+// parent's stacking context, painted under the parent's later content: a
+// tooltip in an open popover hid under the next field's label (C59 S1
+// acceptance D1). Shown after its parent, it is drawn over it.
 //
 // The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
 // and CanvasText, overflow auto) is taken back by a rule of no specificity in
@@ -2310,11 +2316,7 @@ function adoptLiftedRule(floating) {
 
 function liftable(floating) {
   if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
-  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
-
-  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
-
-  return true;
+  return !floating.hasAttribute('popover') && !inTopLayer(floating);
 }
 /** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
 
@@ -2345,6 +2347,38 @@ function liftToTopLayer(floating) {
       floating.removeAttribute(LIFTED);
     }
   };
+} // The scroll positions inside a floating surface (the surface itself and every
+// box in it that is scrolled), to be put back after a measurement that lifted
+// its height cap. Only boxes away from their start are kept.
+
+function scrollOffsets(floating) {
+  const found = [];
+
+  const keep = element => {
+    if (element.scrollTop || element.scrollLeft) found.push([element, element.scrollTop, element.scrollLeft]);
+  };
+
+  keep(floating);
+
+  for (const element of floating.querySelectorAll('*')) keep(element);
+
+  return found;
+} // Put back at once: the Framework sheet makes every box scroll smoothly
+// (* {scroll-behavior: smooth}, core scroll), and an assigned scrollTop glided
+// from the start the measurement threw it to. After a page scroll the list ran
+// 0 -> 800 over half a second and read 784 when the probe looked; a reposition
+// during the glide kept the value it had reached (R171 follow-up, 2026-11-12).
+
+
+function restoreScrollOffsets(found) {
+  for (const [element, top, left] of found) {
+    if (!element.isConnected) continue;
+    if (element.scrollTop !== top || element.scrollLeft !== left) element.scrollTo({
+      top,
+      left,
+      behavior: 'instant'
+    });
+  }
 }
 
 function fixedContainingBlock(element) {
@@ -2384,6 +2418,19 @@ function anchorReference(element) {
     }
 
   };
+} // data-sf-density on the root or on a region restates the space tokens; one
+// attribute filter, so nothing else on the page wakes it.
+
+function watchDensity(doc, run) {
+  const view = doc?.defaultView;
+  if (typeof view?.MutationObserver !== 'function') return () => {};
+  const observer = new view.MutationObserver(() => run());
+  observer.observe(doc.documentElement, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['data-sf-density']
+  });
+  return () => observer.disconnect();
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -2396,6 +2443,7 @@ function anchorReference(element) {
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
+
 
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
@@ -2466,14 +2514,21 @@ function anchor(reference, floating, options = {}) {
   //   content does not change by scrolling; when it does, its size changes
   //   and that is a full fit), and max-height is not reset to read it.
   // - Inline styles and data-sf-side are written only when they change.
+  // A density change (data-sf-density on the root or a region) restates
+  // the space tokens without resizing the window, and the gap stayed the old
+  // one until the panel was opened again (C59 S1 acceptance M1). The key also
+  // carries the computed values of the tokens the lengths are written with: a
+  // read of a clean style, no probe and no restyle.
 
+  const tokens = [...new Set([settings.offset, settings.padding, settings.alignmentOffset].filter(value => typeof value === 'string').flatMap(value => [...value.matchAll(/var\(\s*(--(?:\\.|[^\s,)\\])+)/gu)].map(match => match[1].replace(/\\(.)/gu, '$1'))))];
   let lengths = null;
 
   const lengthsNow = () => {
-    const key = `${window.innerWidth}x${window.innerHeight}`;
+    const context = reference.parentElement;
+    const values = tokens.length && context?.isConnected ? tokens.map(name => getComputedStyle(context).getPropertyValue(name).trim()).join('|') : '';
+    const key = `${window.innerWidth}x${window.innerHeight}|${values}`;
 
     if (!lengths || lengths.key !== key) {
-      const context = reference.parentElement;
       lengths = {
         key,
         gap: resolveLength(settings.offset, context),
@@ -2492,6 +2547,32 @@ function anchor(reference, floating, options = {}) {
   };
 
   const run = async full => {
+    // Measuring the natural height takes the cap off for a moment: a list
+    // that scrolls inside the panel stops overflowing, and the browser puts
+    // its scroll back to the start. Every reposition that measured -- one per
+    // wheel step for a dropdown that follows the page's scroll in capture --
+    // threw the list back to its top, so it never moved and shook in place
+    // (owner R171, 2026-11-12), and a list scrolled to a keyboard-focused
+    // option jumped back to its first row (keyboard reveal). Only a fit that
+    // takes the cap off (a full fit, or the first) can clamp the scroll; a
+    // light fit keeps the cap and needs nothing put back. What was scrolled
+    // is put back once the cap is, and before onPosition, so a component that
+    // scrolls there has the last word.
+    let scrolled = settings.fitHeight && (full || !measures) ? scrollOffsets(floating) : null;
+
+    const putBack = () => {
+      if (scrolled) restoreScrollOffsets(scrolled);
+      scrolled = null;
+    };
+
+    try {
+      return await place(full, putBack);
+    } finally {
+      putBack();
+    }
+  };
+
+  const place = async (full, putBack) => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
@@ -2616,6 +2697,7 @@ function anchor(reference, floating, options = {}) {
 
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
     if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
+    putBack();
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -2674,7 +2756,8 @@ function anchor(reference, floating, options = {}) {
   (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
     ancestorResize: false,
     elementResize: false
-  })] : [];
+  }), // A density switch that moves no box still restates the gap: a full fit.
+  ...(tokens.length ? [watchDensity(floating.ownerDocument, controller.update)] : [])] : [];
   armed = true;
 
   controller.stop = () => {

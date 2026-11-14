@@ -22,9 +22,52 @@
     color: inherit;
     color: var(--sf-page-header-heading-color, inherit);
   }
+  /* The actions are buttons of one group: 8 apart (C105 H5, --sf-space-1/3);
+     the line keeps 16 between the heading and the actions (H6, the line's gap).
+     A row of actions wider than the page wraps onto further rows of its own
+     instead of pushing the page sideways (OV-2: four actions took 507 px of a
+     358 px line at 390 and the page scrolled 133 px); min-inline-size 0 lets
+     the row, on a line of its own, be no wider than that line. Wrapping is the
+     fix until the shared «Ещё» for action rows is decided. */
   .sf-page-header-actions {
-    gap: var(--sf-space-1\/2);
-    gap: var(--sf-page-header-actions-gap, var(--sf-space-1\/2));
+    flex-wrap: wrap;
+    min-width: 0;
+    min-inline-size: 0;
+    gap: var(--sf-space-1\/3);
+    gap: var(--sf-page-header-actions-gap, var(--sf-space-1\/3));
+  }
+  /* The decorative level (owner decisions C91 level 2 and C65 round 2, R164,
+     variant C): a tinted head. Primary tone 50 at 16 (dark 24, the fill steps)
+     fading down to nothing by the head's foot -- never past a fixed length, so a
+     head that wraps tall has no long coloured tail -- in a padded, rounded
+     field. A head narrower than the g5 step (30rem, R164 variant C) takes no tint: on a narrow
+     column the colour adds nothing and the words decide. Off unless the
+     expressive setting or data-sf-style="expressive" above it says so; the
+     nearest data-sf-style wins, strict being the default. The switch is a number
+     the padding and the image's size multiply, so off is today's head exactly. */
+  :where([data-sf-style=expressive]) {
+    --sf-style--expressive: 1;
+  }
+  :where([data-sf-style=strict]) {
+    --sf-style--expressive: 0;
+  }
+  .sf-page-header.sf-page-header--expressive {
+    --sf-style--expressive: 1;
+  }
+  .sf-page-header {
+    --sf-page-header--on: var(--sf-style--expressive, 0);
+    padding: calc(var(--sf-space-1) * var(--sf-page-header--on)) calc(var(--sf-space-1) * var(--sf-page-header--on)) calc(var(--sf-space-2) * var(--sf-page-header--on));
+    border-radius: var(--sf-radius--surface);
+    background-image: linear-gradient(180deg in oklab, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-24)) 0, transparent min(100%, var(--sf-space-4) * 6));
+    background-repeat: no-repeat;
+    /* No tint under the g5 step: the image is as wide as the head past it, and
+       nothing below it; off, it has no size at all. */
+    background-size: calc(clamp(0px, (100% - var(--sf-g5)) * 1000, 100%) * var(--sf-page-header--on)) 100%;
+  }
+  @media (forced-colors: active) {
+    .sf-page-header {
+      background-image: none;
+    }
   }
   /* The icon button's schemes set the glyph's ink on its button, so the
      favourite's colour is given to the glyph itself. */

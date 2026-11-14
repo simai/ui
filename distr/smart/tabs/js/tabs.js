@@ -2,6 +2,92 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "1412c5875b4d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -18,14 +104,15 @@ __webpack_require__.r(__webpack_exports__);
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
 // root or on a container moves every component one ladder step down; the CSS
 // does it (core/scss/_sf_css__density.scss): each step variable holds the step
-// below, and an element with an explicit size takes the normal ladder back.
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
 //
-// "Explicit" is a size the page gave. A size a component's template gives an
-// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
-// relative to the component's own size: under a compact sf-input its button
-// has to come down with it, not stand at the normal ladder. Those are marked
-// data-sf-size-relative here, once the component has drawn; the CSS leaves
-// them in the region's ladder.
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
 //
 // What a component holds of the page's own (captured slot content, children
 // left in place) keeps its size explicit. The store is on the shared global:
@@ -99,16 +186,183 @@ function followDensity(element, from) {
   const density = densityOf(from);
   if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
   return element;
-} // The density an element stands in: the nearest region's, or "normal" under an
-// explicit size (where the ladder is the normal one again); null outside any.
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
 }
 
 /***/ },
@@ -513,17 +767,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1412c5875b4d");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("795a53b0bbe9");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("84d032c55810");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("51b106697124");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("33cd7c3c3aca");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("90473944857f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("795a53b0bbe9");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("84d032c55810");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("51b106697124");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("33cd7c3c3aca");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("90473944857f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__);
+
+
+
 
 
 
@@ -540,14 +801,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // actions answer outcomes, and the old event name sf-tab-change is a dated
 // alias of sf-tabs-change.
 
-const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
   // setData(data, reason) and setPanels(panels, reason) take their fields in
   // order; the runtime gives them the object form of §4.4 as well.
   positional: ['set-data', 'set-panels']
@@ -556,13 +817,35 @@ const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.el
 
 const isPagePanel = node => node?.nodeType === 1 && node.getAttribute('role') === 'tabpanel' && !node.hasAttribute('slot') && !node.hasAttribute('data-sf-static');
 
-const OVERFLOWS = ['scroll', 'wrap', 'more']; // Which item a tab in the list draws. An sf-button moves its data attributes
+const OVERFLOWS = ['scroll', 'wrap', 'more']; // fit (owner decision C96 item 7): the tabs share the row equally -- auto on
+// a phone when two to four fit, always, or never.
+
+const FITS = ['auto', 'always', 'never']; // The looks of sf-tabs 1.3.0 (owner decision C96 item 1): the line (the
+// default) and the plate (pills); vertical is the menu column. The filled
+// look without a type, full and the scheme fills are retired.
+
+const RETIRED = {
+  since: '2026-11-12',
+  remove_after: '2027-01-01'
+}; // A field that says it is wrong, inside a panel (goToError).
+
+const INVALID = '[aria-invalid="true"], [invalid]:not([invalid="false"]), :invalid'; // What takes the focus inside a panel: a panel holding one is not a tab stop
+// of its own (APG tabs; R184 T8).
+
+const FOCUSABLE = ['a[href]', 'area[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', 'iframe', 'audio[controls]', 'video[controls]', 'summary', '[contenteditable]:not([contenteditable="false"])', '[tabindex]:not([tabindex="-1"])'].join(', '); // Which item a tab in the list draws. An sf-button moves its data attributes
 // to the button inside it, so the index is read wherever it landed.
 
 function tabIndexOf(element) {
   const own = element?.dataset?.sfTabIndex ?? element?.querySelector?.(':scope > [data-sf-tab-index]')?.dataset?.sfTabIndex;
   const index = Number(own);
   return own !== undefined && Number.isInteger(index) ? index : null;
+} // The drawn box of a tab: the button inside an sf-button or sf-button-icon,
+// or the tab itself. The row measures it and the resize observer watches it,
+// the same element both times.
+
+
+function tabBox(host) {
+  return host.matches('sf-button') || (0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.isTag)(host, 'sf-button-icon') ? host.querySelector(':scope > .sf-button, :scope > .sf-icon-button, :scope > button') : host;
 }
 
 function parseItems(items = '') {
@@ -680,14 +963,33 @@ class SfTabs extends TabsElement {
       topPosition: {
         default: 'start'
       },
-      // scroll (the default), wrap, or more: what does not fit goes into
-      // «Ещё» (owner, 2026-10-14).
+      // more (the default since 1.2.0, owner decision C54, 2026-11-11): what
+      // does not fit goes into «Ещё (n)» whole; scroll keeps the former
+      // scrolling row, wrap wraps the rows.
       overflow: {
-        default: 'scroll'
+        default: 'more'
+      },
+      fit: {
+        default: 'auto'
       },
       // A gear at the end of the tabs: the person orders and hides them; the
       // host keeps the choice (sf-tabs-settings-change, setSettings).
       configurable: {
+        type: Boolean,
+        default: false
+      },
+      // A panel is drawn when its tab is first opened, and kept (R184 T8).
+      lazy: {
+        type: Boolean,
+        default: false
+      },
+      // The address keeps the selected tab (#<id>): Back and links work (R184 T10).
+      hash: {
+        type: Boolean,
+        default: false
+      },
+      // The tab row stays in sight while the panel scrolls.
+      sticky: {
         type: Boolean,
         default: false
       },
@@ -729,12 +1031,35 @@ class SfTabs extends TabsElement {
     this._settings = {
       order: [],
       hidden: []
-    };
-    this._resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(() => this.scheduleOverflow()) : null;
+    }; // The entries whose panel was drawn once (lazy): kept drawn.
+
+    this._openedPanels = new Set(); // The page's panels that came with a tabindex of their own: left as they are.
+
+    this._authoredPanelFocus = new WeakSet(); // A change of the row's box or of a tab's box is laid out in the
+    // observer's own callback, which runs after the browser's layout and
+    // before it paints: the row is never painted as it stood before the
+    // change. Laid out a frame later, the first frame of every row showed all
+    // its tabs clipped (C54 D3): the Smart base defines its elements in a
+    // frame callback, so the tabs and their buttons are drawn in one, and a
+    // layout asked for from there came a frame later, after a paint. The
+    // trigger's own resize -- «Ещё (n)» drawing its new count, which the
+    // layout already took into account (D2) -- is laid out a frame later as
+    // before: laid out in the callback too, every pass of a large page ran
+    // before its first paint (470 rows at 390: painted after 24 s, not 11 s).
+
+    this._resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(entries => this.onResize(entries)) : null;
     this.addEventListener('sf-after-render', event => {
       // Built-in Smart buttons can finish rendering after their owning Tabs.
       if (event.target !== this && event.target.parentElement === this.tabList) {
-        this.syncTabSemantics();
+        this.syncTabSemantics(); // A tab drawn after the row was laid out has its width only now; its
+        // box is watched, so the observer lays the row out before the paint.
+
+        this.observeTabBoxes();
+        this.scheduleOverflow();
+      } else if (event.target !== this && event.target.closest?.('[data-sf-tab-panel]')?.closest('sf-tabs') === this) {
+        // A part in a panel drawn after the tabs: its field may be what takes
+        // the focus there.
+        this.schedulePanelFocus();
       }
     });
   } // type is optional (component.json): absent is no type, not the first value.
@@ -749,7 +1074,8 @@ class SfTabs extends TabsElement {
   }
 
   get tabList() {
-    return this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > [role="tablist"]');
+    // The row: a tablist, or the nav of a strip of links (R184 T4).
+    return this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > .sf-tabs-top');
   } // The tab of each item, by the item's index: the tabs are drawn in the
   // person's order, and a hidden one is not drawn at all.
 
@@ -758,7 +1084,8 @@ class SfTabs extends TabsElement {
     const targets = [];
 
     for (const element of Array.from(this.tabList?.children || [])) {
-      const target = element.matches('sf-button') || (0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.isTag)(element, 'sf-button-icon') ? element.querySelector(':scope > button') : element.matches('[role="tab"]') ? element : null;
+      // An icon link of a strip of links is drawn by the tabs themselves (T4).
+      const target = element.matches('sf-button') || (0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.isTag)(element, 'sf-button-icon') ? element.querySelector(':scope > button, :scope > a') : element.matches('[role="tab"], a.sf-icon-button') ? element : null;
       const index = tabIndexOf(element);
       if (Number.isInteger(index)) targets[index] = target;
     }
@@ -767,27 +1094,195 @@ class SfTabs extends TabsElement {
   }
 
   afterRender(callback) {
-    if (typeof callback === 'function') return super.afterRender(callback);
-    this.syncTabSemantics(); // The box that has a size: sf-tabs is display:contents, so observing the
+    if (typeof callback === 'function') return super.afterRender(callback); // With hash, the first drawing opens the tab the address names.
+
+    if (!this._addressRead) {
+      this._addressRead = true;
+      this.readAddress({
+        person: false
+      });
+    }
+
+    this.syncTabSemantics();
+    this.syncPanelFocus(); // The box that has a size: sf-tabs is display:contents, so observing the
     // element itself never fired and «Ещё» was laid out once, wrong after any
     // resize (docs trial 4, 2026-10-15).
 
     const container = this.tabList?.parentElement;
 
     if (this._resizeObserver && container && this._observed !== container) {
+      // disconnect() lets every box go: the trigger and the tabs are watched
+      // again below.
       this._resizeObserver.disconnect();
+
+      this._observedTrigger = null;
+      this._observedTabs = null;
 
       this._resizeObserver.observe(container);
 
       this._observed = container;
+    } // «Ещё (n)» changes its width with its count after the row was laid out
+    // (its sf-button draws the new text later), and the room it takes is the
+    // tabs' room: the last tab stood clipped under overflow-x: clip (C54
+    // defect, «Архив» in the filled look at 640 px). Its button is watched as
+    // well, so the row is laid out again with the trigger's real width.
+
+
+    const trigger = this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > .sf-tabs-more > button');
+
+    if (this._resizeObserver && trigger && this._observedTrigger !== trigger) {
+      if (this._observedTrigger) this._resizeObserver.unobserve(this._observedTrigger);
+
+      this._resizeObserver.observe(trigger);
+
+      this._observedTrigger = trigger;
+    } // A tab's own box: a sheet or a text face arriving later widens the tabs
+    // without resizing the row, and the observer lays the row out again before
+    // that frame is painted.
+
+
+    this.observeTabBoxes(); // The text face arriving later widens every tab without resizing the box.
+
+    if (!this._fontsListener && globalThis.document?.fonts?.addEventListener) {
+      this._fontsListener = () => this.scheduleOverflow();
+
+      document.fonts.addEventListener('loadingdone', this._fontsListener);
     }
 
     this.scheduleOverflow();
+  } // The drawn box of each tab (its button, or the tab itself), each watched
+  // once; a box gone from the row is let go.
+
+
+  observeTabBoxes() {
+    if (!this._resizeObserver) return;
+    const boxes = new Set();
+
+    for (const element of Array.from(this.tabList?.children || [])) {
+      if (!Number.isInteger(tabIndexOf(element))) continue;
+      const box = tabBox(element);
+      if (box) boxes.add(box);
+    }
+
+    this._observedTabs ??= new Set();
+
+    for (const box of this._observedTabs) {
+      if (!boxes.has(box)) {
+        this._resizeObserver.unobserve(box);
+
+        this._observedTabs.delete(box);
+      }
+    }
+
+    for (const box of boxes) {
+      if (!this._observedTabs.has(box)) {
+        this._resizeObserver.observe(box, {
+          box: 'border-box'
+        });
+
+        this._observedTabs.add(box);
+      }
+    }
+  } // The width each tab box is left at by the last layout: none for a tab put
+  // in «Ещё», its measured width for one kept in the row. A shortened tab has
+  // none to expect.
+
+
+  expectTabSizes(hosts, widths, kept) {
+    const expected = new WeakMap();
+    hosts.forEach((host, at) => {
+      const box = tabBox(host);
+      if (!box || host.classList.contains('sf-tabs-squeezed')) return;
+      expected.set(box, kept && !kept.includes(at) ? 0 : widths[at]);
+    });
+    this._expectedTabSizes = expected;
+  } // The trigger's own resize (its new count, «Ещё (7)») is laid out a frame
+  // later, unless the row now stands past its room: then a tab would be
+  // painted clipped for that frame (2 rows of 470 at 390), and it is laid out
+  // now. The row was just laid out, so reading its widths costs nothing.
+
+
+  onResize(entries) {
+    if (this.onlyOwnSizes(entries)) return;
+    const later = entries.every(entry => entry.target === this._observedTrigger || this.ownSize(entry));
+    if (later && !this.rowOverflows()) this.scheduleOverflow();else this.layoutOverflowNow();
+  }
+
+  rowOverflows() {
+    const list = this.tabList;
+    return Boolean(list) && list.scrollWidth > list.clientWidth;
+  } // The observer's report of the layout's own work -- tabs it hid or showed
+  // again, at the widths it left them -- is not a change to lay out again:
+  // laid out for it, every row was laid out twice for each resize and the
+  // 470-row page took twice as long to settle (C54 D3, cost.mjs: 27 s, base
+  // 12 s, at 1440).
+
+
+  onlyOwnSizes(entries) {
+    const expected = this._expectedTabSizes;
+    if (!expected) return false;
+    return entries.every(entry => this.ownSize(entry));
+  }
+
+  ownSize(entry) {
+    const expected = this._expectedTabSizes;
+    if (!expected?.has(entry.target)) return false;
+    const size = entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+    return Math.abs(size - expected.get(entry.target)) <= 0.5;
+  }
+
+  connectedCallback() {
+    // The phone's width (core/js/breakpoints, md): vertical tabs become a row
+    // with «Ещё», and fit auto shares the row (C96 items 5 and 7).
+    if (!this._narrowMedia) {
+      this._narrowMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.breakpointMedia)('md', {
+        below: true
+      });
+      this._narrow = this._narrowMedia?.matches === true;
+
+      this._onNarrow = () => {
+        const narrow = this._narrowMedia?.matches === true;
+        if (narrow === this._narrow) return;
+        this._narrow = narrow;
+        this.requestComponentUpdate('narrow');
+      };
+
+      this._narrowMedia?.addEventListener?.('change', this._onNarrow);
+    }
+
+    super.connectedCallback?.(); // The address is read again when it changes (Back, Forward, a link to
+    // #<id> on the page); the listener answers only with hash on.
+
+    if (!this._addressListener) {
+      this._addressListener = () => this.readAddress({
+        person: true
+      });
+
+      globalThis.addEventListener?.('hashchange', this._addressListener);
+      globalThis.addEventListener?.('popstate', this._addressListener);
+    }
   }
 
   disconnectedCallback() {
+    this._narrowMedia?.removeEventListener?.('change', this._onNarrow);
+    this._narrowMedia = null;
+
+    if (this._addressListener) {
+      globalThis.removeEventListener?.('hashchange', this._addressListener);
+      globalThis.removeEventListener?.('popstate', this._addressListener);
+      this._addressListener = null;
+    }
+
     this._resizeObserver?.disconnect();
     this._observed = null;
+    this._observedTrigger = null;
+    this._observedTabs = null;
+
+    if (this._fontsListener) {
+      document.fonts?.removeEventListener?.('loadingdone', this._fontsListener);
+      this._fontsListener = null;
+    }
+
     this._panelObserver?.disconnect();
     this._moreMenu?.close?.({
       restoreFocus: false
@@ -825,6 +1320,7 @@ class SfTabs extends TabsElement {
   captureSlotTemplates() {
     const first = !this._slotTemplatesCaptured;
     super.captureSlotTemplates();
+    if (first) this.notePanelSlots();
 
     if (first) {
       this.capturePagePanels();
@@ -841,12 +1337,33 @@ class SfTabs extends TabsElement {
     this._panelObserver?.observe(this, {
       childList: true
     });
+  } // A panel slot whose host carried only its slot attribute -- <p
+  // slot="panel-0"> -- gives the panel its children, and the host is dropped
+  // (the base unwraps it). The panel the content goes into carries that slot
+  // name instead, so a page that finds its panel by [slot="panel-0"] after the
+  // drawing still finds it (R184 T15: it got null). A host the content keeps
+  // (one with other attributes) carries its own slot attribute.
+
+
+  notePanelSlots() {
+    this._unwrappedPanelSlots = new Set();
+
+    for (const [name, nodes] of this._liveSlotNodes ?? []) {
+      if (!/^panel-\d+$/u.test(name)) continue;
+      if (!nodes.some(node => node?.nodeType === 1 && node.getAttribute('slot') === name)) this._unwrappedPanelSlots.add(name);
+    }
+  } // The slot name a panel carries (see notePanelSlots), or none.
+
+
+  panelSlotOf(item) {
+    return this._unwrappedPanelSlots?.has(item.slotName) && this.hasSlotContent?.(item.slotName) ? item.slotName : null;
   }
 
   capturePagePanels() {
     const found = Array.from(this.children).filter(isPagePanel);
 
     for (const panel of found) {
+      if (panel.hasAttribute('tabindex')) this._authoredPanelFocus.add(panel);
       panel.remove();
 
       this._pagePanels.push(panel);
@@ -879,9 +1396,23 @@ class SfTabs extends TabsElement {
 
   menuSize() {
     return (this.getAttribute('size') ?? '1') === '1/2' ? '1/2' : '1';
+  } // Every item an address: the row is a strip of links -- a <nav> of <a>,
+  // the current one aria-current="page" -- not a tablist (owner decision C96
+  // item 8; R184 T4: a tab with href was a role=tab button that promised a
+  // panel and had no link to open in a new tab).
+
+
+  get links() {
+    const items = this.computedItems;
+    return items.length > 0 && items.every(item => item.href);
   }
 
   syncTabSemantics() {
+    if (this.links) {
+      this.syncLinkSemantics();
+      return;
+    }
+
     const items = this.computedItems;
     const shown = new Set(this.displayItems.map(item => item.index));
     const tabStop = items.find(item => item.selected && !item.disabled && shown.has(item.index)) || items.find(item => !item.disabled && shown.has(item.index));
@@ -911,11 +1442,32 @@ class SfTabs extends TabsElement {
 
       tab.tabIndex = item === tabStop ? 0 : -1;
     });
+  } // A strip of links: no tab roles and no roving tab stop; the current link
+  // says aria-current="page". A disabled link is sf-button's: no href,
+  // aria-disabled.
+
+
+  syncLinkSemantics() {
+    const items = this.computedItems;
+    this.tabTargets.forEach((link, index) => {
+      const item = items[index];
+      if (!link || !item) return;
+
+      for (const name of ['role', 'aria-controls', 'aria-selected', 'aria-labelledby', 'tabindex']) {
+        if (name === 'role' && link.getAttribute('role') === 'link') continue;
+        link.removeAttribute(name);
+      }
+
+      if (link.localName !== 'a') link.removeAttribute('aria-disabled');
+      if (item.disabled) link.setAttribute('aria-disabled', 'true');
+      if (item.selected) link.setAttribute('aria-current', 'page');else link.removeAttribute('aria-current');
+      if (!link.querySelector(':scope > .sf-button-text-container') && item.label) link.setAttribute('aria-label', item.label);
+    });
   }
 
   ownedTab(event) {
     const tab = event.target?.closest?.('[data-sf-tab-index]');
-    if (!(tab instanceof HTMLElement) || tab.closest('sf-tabs') !== this || tab.closest('[role="tablist"]') !== this.tabList) return null;
+    if (!(tab instanceof HTMLElement) || tab.closest('sf-tabs') !== this || tab.closest('.sf-tabs-top') !== this.tabList) return null;
     return this.tabTargets.includes(tab) ? tab : null;
   }
 
@@ -1029,14 +1581,28 @@ class SfTabs extends TabsElement {
       length: this.tabCount
     }).map((_, index) => {
       const item = items[index] || {};
+      const own = String(item.id ?? item.key ?? index);
+      const errors = Number(this._errors?.has(own) ? this._errors.get(own) : item.errors);
       return { ...item,
-        label: item.label || `Tab ${index + 1}`,
+        // A tab without a label is named in the page's language (R184 T14:
+        // the English «Tab N» on every page).
+        label: item.label || this.sfWord('tab', {
+          vars: {
+            n: index + 1
+          }
+        }),
         // The entry's id (§16 item 42); key is its old name.
         key: String(item.id ?? item.key ?? index),
+        // The errors in the tab's panel (C96 item 6): a count on the tab, said
+        // with its name.
+        errors: Number.isFinite(errors) && errors > 0 ? Math.floor(errors) : 0,
         pinned: Boolean(item.pinned),
         count: item.count ?? null,
         href: item.href || '',
         disabled: Boolean(item.disabled),
+        // A short text in a tooltip on the tab; for a disabled one, why it is
+        // off (R184 T9).
+        hint: item.hint ? String(item.hint) : '',
         icon: item.icon || '',
         iconStart: item.iconStart ?? (item.iconLeft || item.icon || ''),
         iconEnd: item.iconEnd ?? (item.iconRight || ''),
@@ -1078,15 +1644,175 @@ class SfTabs extends TabsElement {
 
   set selected(value) {
     if (value === null || value === undefined || value === '') this.removeAttribute('selected');else this.setAttribute('selected', String(value));
+  } // The look drawn (C96 item 1): line unless pills or vertical; vertical on a
+  // phone is the line with «Ещё» (item 5). type="full" is the line with fit
+  // always; no type and the scheme fills draw the line.
+
+
+  get look() {
+    const type = this.getAttribute('type');
+    if (type === 'pills') return 'pills';
+    if (type === 'vertical') return this._narrow ? 'underline' : 'vertical';
+    return 'underline';
+  }
+
+  get fit() {
+    const value = this.getAttribute('fit');
+    if (FITS.includes(value)) return value;
+    return this.getAttribute('type') === 'full' ? 'always' : 'auto';
+  } // The retired looks, each noted once per element (SF.deprecations).
+
+
+  noteRetiredLooks() {
+    const type = this.getAttribute('type');
+    const scheme = this.getAttribute('scheme');
+    const notes = [];
+    if (type === 'full') notes.push({
+      attribute: 'type',
+      from: 'full',
+      to: 'underline'
+    });
+    if (scheme === 'outline' || scheme === 'link') notes.push({
+      attribute: 'scheme',
+      from: scheme,
+      to: null
+    });
+    this._retiredNoted ??= new Set();
+
+    for (const note of notes) {
+      const key = `${note.attribute}=${note.from}`;
+      if (this._retiredNoted.has(key)) continue;
+
+      this._retiredNoted.add(key);
+
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+        component: 'sf-tabs',
+        tag: 'sf-tabs',
+        kind: 'value',
+        ...note,
+        ...RETIRED
+      });
+    }
+  } // fit: the tabs share the row equally (C96 item 7).
+
+
+  fitsEqually(count) {
+    const fit = this.fit;
+    if (fit === 'never' || this.look === 'vertical') return false;
+    return fit === 'always' ? count > 1 : Boolean(this._narrow) && count >= 2 && count <= 4;
   }
 
   get overflow() {
     const value = this.getAttribute('overflow');
-    return OVERFLOWS.includes(value) ? value : 'scroll';
+    return OVERFLOWS.includes(value) ? value : 'more';
   }
 
   get configurable() {
     return this.getBooleanAttr('configurable', false);
+  }
+
+  get lazy() {
+    return this.getBooleanAttr('lazy', false);
+  }
+
+  get hash() {
+    return this.getBooleanAttr('hash', false);
+  }
+
+  get sticky() {
+    return this.getBooleanAttr('sticky', false);
+  } // ─── the address (hash) ────────────────────────────────────────────────────
+  // The tab the address names: #<id> of an item, or #<id> of an element
+  // inside one of the panels (a link to a section of a closed tab opens it).
+
+
+  addressedIndex() {
+    const raw = globalThis.location?.hash?.slice(1);
+    if (!raw) return null;
+    let id = raw;
+
+    try {
+      id = decodeURIComponent(raw);
+    } catch {
+      /* the hash as written */
+    }
+
+    const items = this.computedItems;
+    const at = items.findIndex(item => item.key === id);
+    if (at >= 0) return at;
+    const target = globalThis.document?.getElementById?.(id);
+    const panel = target?.closest?.('[data-sf-tab-panel]');
+    if (panel && panel.closest('sf-tabs') === this) return Number(panel.dataset.sfTabPanel);
+    return null;
+  } // On the first drawing the address selects without a change (as the
+  // selected attribute does); Back, Forward and a #link are the person's.
+
+
+  readAddress({
+    person
+  }) {
+    if (!this.hash || this.links) return;
+    const index = this.addressedIndex();
+    if (index === null || index === this.activeIndex) return;
+    this.selectTab(index, {
+      person,
+      fromAddress: true
+    });
+  } // A tab the person chose is a new entry of the history, so Back returns
+  // to the previous tab; the path and the query stay.
+
+
+  writeAddress(item) {
+    if (!this.hash || this.links || !globalThis.history?.pushState || !globalThis.location) return;
+    const next = `#${encodeURIComponent(item.key)}`;
+    if (globalThis.location.hash === next) return;
+    globalThis.history.pushState(globalThis.history.state, '', `${globalThis.location.pathname}${globalThis.location.search}${next}`);
+  } // ─── the panels: drawn when opened (lazy), a tab stop when nothing in them is
+  // A panel is drawn unless lazy and never opened; the open one is drawn.
+
+
+  panelDrawn(item) {
+    return !this.lazy || item.selected || this._openedPanels.has(item.key);
+  } // A panel is a tab stop of its own only when nothing in it takes the focus
+  // (APG tabs; R184 T8: every panel was, even one that starts with a field).
+  // A page's panel written with a tabindex keeps it.
+
+
+  syncPanelFocus() {
+    const links = this.links;
+
+    for (const panel of this.drawnPanels()) {
+      if (this._authoredPanelFocus.has(panel)) continue;
+      if (links || panel.querySelector(FOCUSABLE)) panel.removeAttribute('tabindex');else panel.setAttribute('tabindex', '0');
+    }
+  }
+
+  schedulePanelFocus() {
+    if (this._panelFocusQueued) return;
+    this._panelFocusQueued = true;
+    queueMicrotask(() => {
+      this._panelFocusQueued = false;
+      this.syncPanelFocus();
+    });
+  } // callback() once the panel of this item is drawn: now, or after the
+  // drawing that draws a lazy panel opened for the first time.
+
+
+  whenPanelDrawn(item, callback) {
+    if (this.panelDrawn({ ...item,
+      selected: false
+    })) {
+      callback();
+      return;
+    }
+
+    const drawn = event => {
+      if (event.target !== this) return;
+      this.removeEventListener('sf-after-render', drawn);
+      callback();
+    };
+
+    this.addEventListener('sf-after-render', drawn);
   } // ─── the person's arrangement ─────────────────────────────────────────────
   // {order: [keys], hidden: [keys]}, kept by the host. A key the items no
   // longer have is ignored; an item the order does not name follows, visible,
@@ -1174,6 +1900,17 @@ class SfTabs extends TabsElement {
       this._overflowFrame = 0;
       this.layoutOverflow();
     });
+  } // Now, in place of the frame asked for: from the resize observer, whose
+  // callback runs before the paint.
+
+
+  layoutOverflowNow() {
+    if (this._overflowFrame) {
+      cancelAnimationFrame(this._overflowFrame);
+      this._overflowFrame = 0;
+    }
+
+    this.layoutOverflow();
   }
 
   layoutOverflow() {
@@ -1182,86 +1919,158 @@ class SfTabs extends TabsElement {
     if (!list) return;
     const hosts = Array.from(list.children).filter(element => Number.isInteger(tabIndexOf(element)));
 
-    for (const host of hosts) host.classList.remove('sf-tabs-overflowed');
+    for (const host of hosts) host.classList.remove('sf-tabs-overflowed', 'sf-tabs-squeezed');
 
     this._overflowed = [];
-    const container = list.parentElement;
+    const container = list.parentElement; // The tabs are measured at their own widths; fit shares the row after.
+
+    container?.removeAttribute('data-sf-tabs-fit');
 
     const showMore = shown => {
       if (shown) container?.setAttribute('data-sf-tabs-more', '');else container?.removeAttribute('data-sf-tabs-more');
     };
 
-    if (this.overflow !== 'more' || this.getAttribute('type') === 'vertical') {
+    if (this.overflow !== 'more' || this.look === 'vertical') {
       showMore(false);
+      this._expectedTabSizes = null;
       return;
     }
 
-    const width = host => {
-      const box = host.matches('sf-button') || (0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.isTag)(host, 'sf-button-icon') ? host.querySelector(':scope > .sf-button, :scope > .sf-icon-button, :scope > button') : host;
-      return box?.getBoundingClientRect().width ?? 0;
-    };
+    const width = host => tabBox(host)?.getBoundingClientRect().width ?? 0;
 
     const widths = hosts.map(width);
-    const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+    const gap = parseFloat(getComputedStyle(list).columnGap) || 0; // The row's arithmetic is the shared row engine (core/js/overflow-row.js,
+    // taken out of these tabs for sf-contents' bar): the tabs in their order
+    // up to the first that does not fit, each whole in the row or in «Ещё»
+    // (owner decision C54); the room is the row's content box in fractional
+    // pixels (rowRoom: clientWidth is a whole pixel, C54 return).
 
-    const fits = available => {
-      const kept = [];
-      let used = 0;
-      hosts.forEach((host, at) => {
-        const next = used + (kept.length ? gap : 0) + widths[at];
-
-        if (next <= available + 0.5) {
-          kept.push(at);
-          used = next;
-        }
-      });
-      return kept.length === hosts.length ? null : kept;
-    };
+    const room = () => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.rowRoom)(list);
 
     showMore(false);
-    let kept = fits(list.clientWidth);
+    this.syncMoreErrors(more, 0);
+    let kept = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(widths, gap, room()); // A shared row gives the first and the last tab back the padding of their
+    // outer edges, which a row of their own widths leaves off (owner decision
+    // C99, TS-5 and TS-7): the tabs share the row only when they fit with it.
+
+    const edgesBack = () => {
+      const first = tabBox(hosts[0]);
+      const last = tabBox(hosts[hosts.length - 1]);
+      if (!first || !last || first === last) return 0;
+      const start = getComputedStyle(first);
+      const end = getComputedStyle(last);
+
+      const back = (style, outer, inner) => Math.max(0, (parseFloat(style[inner]) || 0) - (parseFloat(style[outer]) || 0));
+
+      return back(start, 'paddingInlineStart', 'paddingInlineEnd') + back(end, 'paddingInlineEnd', 'paddingInlineStart');
+    };
+
+    if (!kept && this.fitsEqually(hosts.length) && !(0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(widths, gap, room() - edgesBack())) {
+      // Every tab fits: they share the row, each at least its own width. The
+      // shared widths are what the observer will report, not a change.
+      container?.setAttribute('data-sf-tabs-fit', '');
+      this.expectTabSizes(hosts, hosts.map(width), null);
+    } else if (!kept) this.expectTabSizes(hosts, widths, null);
 
     if (kept) {
       showMore(true);
-      kept = fits(list.clientWidth) ?? hosts.map((_, at) => at); // The pinned tabs and the active one always stay in the row: the last
-      // kept tabs that are neither give way to them. (Only the active one did:
-      // at 375px a pinned first tab went into «Ещё» beside an active one,
-      // docs trial 5.)
+      const items = this.computedItems; // The pinned tabs and the current one always stay in the row (docs
+      // trial 5; the C54 return D1: a pinned tab gives way to the current one,
+      // the last pinned first).
 
-      const items = this.computedItems;
       const must = hosts.map((host, at) => at).filter(at => {
         const index = tabIndexOf(hosts[at]);
         return index === this.activeIndex || items[index]?.pinned === true;
       });
-      const missing = must.filter(at => !kept.includes(at));
+      const current = hosts.findIndex(host => tabIndexOf(host) === this.activeIndex); // «Ещё (n)» draws its new count a task later, and the digits are not of
+      // one width (C54 return D2): the room is taken with the width the
+      // trigger will have with the count it gets, measured in its text face.
 
-      if (missing.length) {
-        const span = indices => indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+      const label = count => `${this.text('more')} (${count})`;
 
-        const next = [...kept, ...missing];
+      const textBox = more?.querySelector(':scope > button .sf-button-text-container');
 
-        while (span(next) > list.clientWidth + 0.5) {
-          const dropAt = next.slice().reverse().find(at => !must.includes(at));
-          if (dropAt === undefined) break;
-          next.splice(next.indexOf(dropAt), 1);
-        }
+      const place = () => {
+        const laid = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitBesideMore)({
+          widths,
+          gap,
+          room: room(),
+          must,
+          current,
+          extra: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.triggerExtra)(textBox, label)
+        });
+        this._overflowed = hosts.filter((_, at) => !laid.kept.includes(at)).map(host => tabIndexOf(host));
+        return laid;
+      };
 
-        kept = next.sort((a, b) => a - b);
+      let laid = place(); // The errors of the tabs «Ещё» holds are summed on it (owner decision
+      // C96 item 6): a badge after its label widens the trigger, so the row
+      // is laid out once more with it drawn, in the same task -- the observer
+      // sees one layout, not an echo. Less room only moves more tabs into
+      // «Ещё», so the sum stays above 0 and a third pass is not needed.
+
+      if (this.syncMoreErrors(more, this.errorsOf(this._overflowed))) {
+        laid = place();
+        this.syncMoreErrors(more, this.errorsOf(this._overflowed));
       }
 
+      kept = laid.kept; // The current tab alone is wider than the row: it alone may be
+      // shortened, with an ellipsis; every other tab is whole or in «Ещё».
+
+      if (laid.squeezed >= 0) hosts[laid.squeezed].classList.add('sf-tabs-squeezed');
       hosts.forEach((host, at) => {
         // A class, not a data attribute: sf-button moves its data attributes
         // to the button inside it, and only class and style stay on the host.
         if (!kept.includes(at)) host.classList.add('sf-tabs-overflowed');
       });
-      this._overflowed = hosts.filter((_, at) => !kept.includes(at)).map(host => tabIndexOf(host));
+      this.expectTabSizes(hosts, widths, kept);
 
       if (more) {
-        const label = `${this.text('more')} (${this._overflowed.length})`;
-        more.setAttribute('text', label);
-        more.setAttribute('aria-label', label);
+        const text = label(this._overflowed.length);
+        const errors = this.errorsOf(this._overflowed);
+        more.setAttribute('text', text); // The badge is aria-hidden: the name says the errors, as a tab does
+        // («Ещё (3), 2 ошибки»).
+
+        more.setAttribute('aria-label', errors ? `${text}, ${this.errorWords(errors)}` : text);
       }
     }
+  } // The errors of some tabs, by index: what «Ещё» sums.
+
+
+  errorsOf(indices = []) {
+    const items = this.computedItems;
+    return indices.reduce((sum, index) => sum + (items[index]?.errors || 0), 0);
+  } // The errors badge after the «Ещё» label (C96 item 6): the class form of
+  // sf-badge line="text" (component.badges, C95 point 6), so it is drawn and
+  // measured at once. Written into the trigger's button, after its text box,
+  // outside the button's own drawn parts. Says whether its width changed.
+
+
+  syncMoreErrors(more, errors) {
+    const button = more?.querySelector(':scope > button');
+    if (!button) return false;
+    let badge = button.querySelector(':scope > .sf-tabs-more-errors');
+    const before = badge ? badge.getBoundingClientRect().width : 0;
+
+    if (!errors) {
+      badge?.remove();
+      return before > 0;
+    }
+
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.setAttribute('aria-hidden', 'true');
+      badge.append(document.createElement('span'));
+      badge.firstChild.className = 'sf-badge-text-container flex items-center';
+      badge.firstChild.append(document.createElement('span'));
+      badge.firstChild.firstChild.className = 'sf-badge-text';
+      const text = button.querySelector(':scope > .sf-button-text-container');
+      if (text) text.after(badge);else button.append(badge);
+    }
+
+    badge.className = `${(0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.errorBadgeClasses)(errors)} sf-tabs-more-errors`;
+    badge.querySelector('.sf-badge-text').textContent = String(errors);
+    return badge.getBoundingClientRect().width !== before;
   }
 
   async openMore(anchor) {
@@ -1282,19 +2091,11 @@ class SfTabs extends TabsElement {
     (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.followDensity)(menu, this);
     menu.entries = entries;
     menu.toggleFor(anchor);
-  }
+  } // The standard menu «Ещё» and the settings open (core/js/overflow-row.js).
 
-  async standardMenu(field, select) {
-    // The standard menu is a relation of the tabs fetched when first used
-    // (SF.Loader.ensure: asked for, waited for up to 3 s, never thrown).
-    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
-    if (this[field]?.isConnected) return this[field];
-    const menu = document.createElement('sf-menu-context');
-    menu.setAttribute('popup', '');
-    menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
-    (this.closest('dialog[open]') || document.body).append(menu);
-    this[field] = menu;
-    return menu;
+
+  standardMenu(field, select) {
+    return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.standardMenu)(this, field, select);
   } // A tab chosen anywhere -- its own button, «Ещё» -- is activated the same
   // way; a tab that is a link goes to its address.
 
@@ -1303,7 +2104,15 @@ class SfTabs extends TabsElement {
     person = true
   } = {}) {
     const item = this.computedItems[index];
-    if (!item || item.disabled) return;
+    if (!item || item.disabled) return; // A link of the strip pressed by the person: the browser follows it (and
+    // opens it in a new tab with a modifier); the strip only marks it current.
+
+    if (item.href && event?.target?.closest?.('a[href]') && this.links) {
+      if (!(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) this.selectTab(index, {
+        person
+      });
+      return;
+    }
 
     if (item.href) {
       if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1)) {
@@ -1413,14 +2222,27 @@ class SfTabs extends TabsElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    this.noteRetiredLooks(); // The open panel is drawn now and kept drawn (lazy).
+
+    const open = this.computedItems[this.activeIndex];
+    if (open) this._openedPanels.add(open.key);
     return this.createTemplateContext({ ...props,
       component: this,
       tabsId: this.tabsId,
       pagePanel: (item, index) => this.pagePanelFor(item, index),
+      panelSlot: item => this.panelSlotOf(item),
+      panelDrawn: item => this.panelDrawn(item),
       activeIndex: this.activeIndex,
       displayItems: this.displayItems,
       overflow: this.overflow,
       configurable: this.configurable,
+      links: this.links,
+      sticky: this.sticky,
+      look: this.look,
+      // The scheme fills are retired (C96 item 1): the tabs' buttons take one
+      // look, and the tabs' sheet draws line, plate or column on it.
+      scheme: 'default',
+      errorWords: count => this.errorWords(count),
       moreText: this.text('more'),
       customizeText: this.text('customize'),
       rootClass: this.getRootClass(),
@@ -1430,7 +2252,7 @@ class SfTabs extends TabsElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderTabsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.renderTabsTemplate)(this.templateContext());
   }
 
   get state() {
@@ -1497,6 +2319,48 @@ class SfTabs extends TabsElement {
       this.setAttribute(attr, value === true ? '' : String(value));
     });
     return this;
+  } // The errors in each panel, by entry id ({profile: 0, access: 2}): the
+  // tabs show the count and say it with the tab's name (C96 item 6). An id
+  // not given keeps the item's own errors.
+
+
+  setErrors(errors = {}) {
+    this._errors = new Map(Object.entries(errors && typeof errors === 'object' ? errors : {}).map(([key, value]) => [String(key), Number(value) || 0]));
+    this.requestComponentUpdate('errors');
+    return this;
+  } // The action go-to-error (C96 item 6): opens the first tab, in the order
+  // the tabs stand, with an error and focuses the first wrong field in its
+  // panel, as a form's Save does after a failed check. Not reported (§8).
+
+
+  goToError() {
+    const target = this.arrangedItems.find(item => item.errors > 0 && !item.disabled);
+    if (!target) return {
+      outcome: 'refused',
+      reason: 'no-errors'
+    };
+    if (target.index !== this.activeIndex) this.selectTab(target.index, {
+      person: false
+    });
+    this.whenPanelDrawn(target, () => {
+      const panel = this.drawnPanels().find(one => Number(one.dataset.sfTabPanel) === target.index);
+      const field = panel?.querySelector(INVALID);
+      if (!field) return;
+      const own = field.matches('input, select, textarea, button, [tabindex], [contenteditable]') ? field : field.querySelector('input, select, textarea, [contenteditable], [tabindex]:not([tabindex="-1"])');
+      (own ?? field).focus?.();
+    });
+    return {
+      outcome: 'applied'
+    };
+  }
+
+  errorWords(count) {
+    return this.sfWord('errors', {
+      count,
+      vars: {
+        n: count
+      }
+    });
   } // The action go-to {index} (§4.4): selects the tab and answers an outcome.
   // It reports nothing: `change` is what a person did (§8).
 
@@ -1508,7 +2372,8 @@ class SfTabs extends TabsElement {
   }
 
   selectTab(index, {
-    person = false
+    person = false,
+    fromAddress = false
   } = {}) {
     const items = this.computedItems;
     const requested = (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__.toNumber)(index, Number.NaN);
@@ -1531,21 +2396,53 @@ class SfTabs extends TabsElement {
     };
     const previous = this.activeIndex; // The attribute the page uses keeps being the one written.
 
-    if (this.hasAttribute('selected')) this.setAttribute('selected', item.key);else this.setAttribute('active-index', String(requested));
+    if (this.hasAttribute('selected')) this.setAttribute('selected', item.key);else this.setAttribute('active-index', String(requested)); // The page sees the new selection in the change's handler: the tabs say
+    // aria-selected and the panels are shown or hidden now, not at the next
+    // drawing (R184 T12: in the handler the previous tab was still selected
+    // and the new panel hidden, so a field in it could not take the focus).
+
+    this.showSelection();
+    if (person && !fromAddress) this.writeAddress(item);
 
     if (person) {
-      this.sfEmit('change', {
+      const detail = {
         selected: item.key,
         previous,
         current: requested,
         item,
         items
-      });
+      }; // A lazy panel opened for the first time is drawn first.
+
+      this.whenPanelDrawn(item, () => this.sfEmit('change', detail));
     }
 
     return {
       outcome: 'applied'
     };
+  } // The selection written on the drawn tabs and panels at once; the next
+  // drawing writes the same.
+
+
+  showSelection() {
+    this.syncTabSemantics();
+    const active = this.activeIndex;
+
+    for (const host of Array.from(this.tabList?.children || [])) {
+      const index = tabIndexOf(host);
+      if (!Number.isInteger(index)) continue;
+      const box = tabBox(host);
+      box?.classList?.toggle('selected', index === active);
+    }
+
+    for (const panel of this.drawnPanels()) {
+      const selected = Number(panel.dataset.sfTabPanel) === active;
+      panel.hidden = !selected;
+      panel.classList.toggle('selected', selected);
+    }
+  }
+
+  drawnPanels() {
+    return Array.from(this.querySelectorAll(':scope > .sf-tabs > .sf-tabs-main-container > [data-sf-tab-panel]'));
   } // The old name keeps its old detail (§16.20 split row): the element and its
   // template were in it.
 
@@ -1588,8 +2485,13 @@ class SfTabs extends TabsElement {
 
   focusTab(index) {
     const target = this.tabTargets[index];
-    if (!target) return;
-    if (this.manualActivation) for (const tab of this.tabTargets) if (tab) tab.tabIndex = tab === target ? 0 : -1;
+    if (!target) return; // A disabled tab with the focus holds the tab stop too, so Tab leaves the
+    // row from it rather than landing on the selected tab after it.
+
+    if (this.manualActivation || this.computedItems[index]?.disabled) {
+      for (const tab of this.tabTargets) if (tab) tab.tabIndex = tab === target ? 0 : -1;
+    }
+
     target.focus();
   } // «Ещё», when it stands: the arrows reach it after the last tab in the row
   // and leave it back to the tabs (docs trial 5: only Tab reached it).
@@ -1605,7 +2507,9 @@ class SfTabs extends TabsElement {
   }
 
   handleRootKeyDown = event => {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return; // A strip of links is walked with Tab and followed with Enter, as links are.
+
+    if (this.links) return;
     const more = this.moreTarget;
 
     if (more && (event.target === more || more.contains(event.target)) && this.tabList.getAttribute('aria-orientation') !== 'vertical') {
@@ -1614,7 +2518,7 @@ class SfTabs extends TabsElement {
       const forward = event.key === (rtl ? 'ArrowLeft' : 'ArrowRight') || event.key === 'Home';
       if (!back && !forward) return;
       const overflowed = new Set(this._overflowed ?? []);
-      const shown = this.displayItems.filter(item => !item.disabled && !overflowed.has(item.index));
+      const shown = this.displayItems.filter(item => !overflowed.has(item.index));
       const target = back ? shown[shown.length - 1] : shown[0];
       if (!target) return;
       event.preventDefault();
@@ -1644,10 +2548,11 @@ class SfTabs extends TabsElement {
 
     let direction = event.key === arrows[0] ? -1 : 1;
     if (!vertical && getComputedStyle(this.tabList).direction === 'rtl') direction *= -1; // The arrows walk the tabs in the order they stand, past the ones in
-    // «Ещё» and the hidden ones.
+    // «Ещё» and the hidden ones. A disabled tab is reached and selects
+    // nothing (R184 T9), so the person hears it and its hint.
 
     const overflowed = new Set(this._overflowed ?? []);
-    const enabledItems = this.displayItems.filter(item => !item.disabled && !overflowed.has(item.index));
+    const enabledItems = this.displayItems.filter(item => !overflowed.has(item.index));
 
     if (!enabledItems.length) {
       return;
@@ -1683,6 +2588,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   errorBadgeClasses: () => (/* binding */ errorBadgeClasses),
 /* harmony export */   renderTabsTemplate: () => (/* binding */ renderTabsTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
@@ -1710,8 +2616,9 @@ function renderComponent(component, owner) {
 
 function placePagePanel(panel, item, context) {
   panel.id ||= `${context.tabsId}--panel-${item.index}`;
-  panel.setAttribute('aria-labelledby', `${context.tabsId}--tab-${item.index}`);
-  if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '0');
+  panel.setAttribute('aria-labelledby', `${context.tabsId}--tab-${item.index}`); // Its tabindex is the tabs' to decide after the drawing (syncPanelFocus):
+  // 0 only when nothing in it takes the focus.
+
   panel.setAttribute('data-sf-tab-panel', String(item.index));
   panel.classList.add('sf-tabs-main-tab');
   panel.classList.toggle('selected', Boolean(item.selected));
@@ -1721,24 +2628,92 @@ function placePagePanel(panel, item, context) {
 
 function renderPanel(item, context) {
   const pagePanel = context.pagePanel?.(item, item.index);
-  if (pagePanel) return placePagePanel(pagePanel, item, context);
-  const panelContent = context.component?.hasSlotContent?.(item.slotName) ? context.component.getSlotContent(item.slotName) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const dataContent = item.panel?.component ? renderComponent(item.panel.component, context.component) : typeof item.panel?.text !== 'undefined' ? item.panel.text : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (pagePanel) return placePagePanel(pagePanel, item, context); // lazy: a panel never opened is drawn empty (its id stays, for the tab's
+  // aria-controls) and filled when its tab is first opened.
+
+  const drawn = context.panelDrawn ? context.panelDrawn(item) : true;
+  const panelContent = drawn && context.component?.hasSlotContent?.(item.slotName) ? context.component.getSlotContent(item.slotName) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const dataContent = !drawn ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : item.panel?.component ? renderComponent(item.panel.component, context.component) : typeof item.panel?.text !== 'undefined' ? item.panel.text : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // Beside a strip of links a panel is the current page's content, not a
+  // tabpanel: no tab names it.
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${joinClasses('sf-tabs-main-tab', item.selected ? 'selected' : '', context.panelClass)}
-      role="tabpanel"
+      role=${context.links ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'tabpanel'}
       id=${`${context.tabsId}--panel-${item.index}`}
-      aria-labelledby=${`${context.tabsId}--tab-${item.index}`}
-      tabindex="0"
+      aria-labelledby=${context.links ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : `${context.tabsId}--tab-${item.index}`}
       data-sf-tab-panel=${String(item.index)}
       data-entry=${item.key}
+      slot=${context.panelSlot?.(item) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?hidden=${!item.selected}
     >
       ${panelContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? dataContent : panelContent}
     </div>
   `;
+} // A disabled tab stays focusable and says aria-disabled (R184 T9: a native
+// disabled button could not be reached, so nobody learnt why it was off). It
+// is not the native disabled: the tabs' sheet gives the class the disabled
+// look, and a press on it selects nothing. A disabled link of a strip of
+// links is sf-button's disabled link: no href, aria-disabled.
+
+
+function tabClasses(item) {
+  return joinClasses(item.selected ? 'selected' : '', item.disabled ? 'disabled' : '');
+} // The tooltip of a tab with a hint -- for a disabled tab, why it is off: the
+// Framework's plain tooltip (component.tooltip), named by the tab's
+// data-tooltip, which the tooltip makes the tab's description.
+
+
+function hintId(item, context) {
+  return `${context.tabsId}--hint-${item.index}`;
 }
+
+function renderHint(item, context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${hintId(item, context)} class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-tabs-hint"
+      hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${item.hint}</span></span></span>`;
+} // The errors of a tab's panel, or of the tabs «Ещё» holds (owner decision C96
+// item 6): a badge on the line of the label (rule C95 point 6), sf-badge
+// line="text" in its class form (component.badges): drawn with the tab, so the
+// row measures its width at once, and no element to wait for. Tonal: the
+// error container, as the count stood before.
+
+
+function errorBadgeClasses(errors) {
+  return joinClasses('sf-badge sf-badge--tonal sf-badge--error sf-badge--size-1/3 sf-badge--line-text', [...String(errors)].length === 1 ? 'sf-badge--figure' : '', 'inline-flex flex-row flex-nowrap justify-center items-center');
+}
+
+function renderErrorBadge(errors, className) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`${errorBadgeClasses(errors)} ${className}`} aria-hidden="true"><span
+      class="sf-badge-text-container flex items-center"><span class="sf-badge-text">${String(errors)}</span></span></span>`;
+} // An icon tab of a strip of links (R184 T4, C96 item 8): sf-button-icon has no
+// address, so the link is drawn in the icon button's class form, an <a> with
+// the same classes, size and line; named by the item's label, the current one
+// aria-current="page". A disabled link has no href and says aria-disabled.
+
+
+function renderIconLink(item, context) {
+  const size = context.size || '1';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+      class=${joinClasses('sf-icon-button', `sf-icon-button--size-${size}`, 'sf-icon-button--icon', 'sf-icon-button--default', `sf-icon-button--${context.scheme || 'primary'}`, 'flex', 'items-cross-center', tabClasses(item))}
+      href=${item.disabled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : item.href}
+      aria-label=${item.label}
+      aria-current=${item.selected ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-disabled=${item.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-sf-tab-index=${String(item.index)}
+      data-tab-label=${item.label}
+      data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ><sf-icon root-class="pointer-event-none" icon=${item.iconStart || item.icon || item.iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      weight="400" aria-hidden="true"></sf-icon></a>`;
+} // A tab is marked data-sf-tab-index only (R193 DP-11): the unprefixed
+// data-tab, its former name, was written for one minor (1.2.x) and is not
+// written from 1.3.0 -- a page selector [data-tab] caught these buttons.
+// The tab buttons are asked on their own axes (BT-1, C15): appearance="default"
+// scheme="primary". sf-tabs draws one look per type whatever its retired scheme
+// (owner decision C96 item 1), so the look is not taken from scheme. Before,
+// the template wrote appearance="primary" scheme=<the tabs scheme>, two values
+// outside sf-button's lists, and every tab fell back to default primary --
+// the same classes it draws now.
+
 
 function renderTab(item, context) {
   const tabContent = context.component?.hasSlotContent?.(item.tabSlotName) ? context.component.getSlotContent(item.tabSlotName) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -1747,7 +2722,6 @@ function renderTab(item, context) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <span
         data-sf-tab-index=${String(item.index)}
-        data-tab=${String(item.index)}
         role="tab"
         aria-label=${item.label}
         aria-selected=${item.selected ? 'true' : 'false'}
@@ -1763,51 +2737,98 @@ function renderTab(item, context) {
         </span>
       </span>
     `;
-  } // A count after the label, when the item has one; the tab's own slot wins.
+  } // The label, a count after it when the item has one, and the errors of its
+  // panel (C96 item 6: the count on the error colours, said with the name --
+  // «Доступ, 2 ошибки»); the tab's own slot wins. The name keeps the width
+  // of its medium face, so selecting a tab, whose label alone is medium
+  // (C96 item 3), moves nothing (sf-tabs-name, data-text).
 
 
-  const counted = tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && item.count !== null && item.count !== undefined && item.count !== '' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-tabs-label">${item.label}<span class="sf-tabs-count">${String(item.count)}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const hasCount = item.count !== null && item.count !== undefined && item.count !== '';
+  const counted = tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-tabs-label"><span class="sf-tabs-name" data-text=${item.label}>${item.label}</span>${hasCount ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tabs-count">${String(item.count)}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${item.errors ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderErrorBadge(item.errors, 'sf-tabs-errors')}<span class="sf-tabs-said">, ${context.errorWords?.(item.errors) ?? item.errors}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // A vertical tab's label starts at the start (owner decisions C96 item 5,
+  // C99): sf-button centres its label unless told otherwise (text-center).
+
+  const vertical = (context.look ?? context.type) === 'vertical';
 
   if (context.variant !== 'icons') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <sf-button
-                  appearance="primary"
+                  appearance="default"
                   size=${context.size}
-                  scheme=${context.scheme}
+                  scheme="primary"
+                  text-position=${vertical ? 'start' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  href=${context.links ? item.href : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  ?disabled=${Boolean(context.links && item.disabled)}
                   text=${item.label}
                   icon=${item.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   icon-start=${item.iconLeft || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   icon-end=${item.iconRight || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                  root-class=${joinClasses(item.selected ? 'selected' : '')}
+                  root-class=${tabClasses(item)}
                   data-sf-tab-index=${String(item.index)}
-                  data-tab=${String(item.index)}
-                  ?disabled=${item.disabled}
+                  data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           >
               ${tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? counted : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text">${tabContent}</span>`}
           </sf-button>
       `;
+  } else if (context.links) {
+    return renderIconLink(item, context);
   } else {
+    // An icon tab draws the item's icon however it was given: icon, or the
+    // icon-start / icon-end of the "label::icon-start=home" form, which the
+    // parser keeps as iconStart (R184 T3: the docs example drew the
+    // button-icon default `add` on every tab).
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <sf-button-icon
-                  appearance="primary"
+                  appearance="default"
                   size=${context.size}
-                  scheme=${context.scheme}
-                  icon=${item.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  scheme="primary"
+                  icon=${item.iconStart || item.icon || item.iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   data-tab-label=${item.label}
-                  root-class=${joinClasses(item.selected ? 'selected' : '')}
+                  root-class=${tabClasses(item)}
                   data-sf-tab-index=${String(item.index)}
-                  data-tab=${String(item.index)}
-                  ?disabled=${item.disabled}
+                  data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           >
           </sf-button-icon>
       `;
   }
 }
 
+function topClasses(context) {
+  return joinClasses(`sf-tabs-top flex content-main-${context.topPosition}`, (context.look ?? context.type) === 'vertical' ? 'flex-col' : '', context.topClass);
+}
+
+function renderTabs(context) {
+  return (0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.displayItems ?? context.items, // Keyed by the tab, so a reordered tab keeps its own button: by
+  // position, the buttons kept their old labels and counts while the
+  // hosts' text was already the new one (docs trial 4).
+  item => item.key ?? item.index, item => renderTab(item, context));
+} // Every item an address (sf-tabs 1.3.0, owner decision C96 item 8): a <nav>
+// of links with the same look, the current one aria-current="page"; no
+// tablist, no arrows, no panels named by tabs.
+
+
+function renderLinkRow(context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<nav
+          class=${topClasses(context)}
+          aria-label=${context.component?.getAttribute('aria-label') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          aria-labelledby=${context.component?.getAttribute('aria-labelledby') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >
+          ${renderTabs(context)}
+        </nav>`;
+} // A strip of links draws its panel row only when a panel has content.
+
+
+function hasPanelContent(context) {
+  return context.items.some(item => context.pagePanel?.(item, item.index) || context.component?.hasSlotContent?.(item.slotName) || item.panel?.component || typeof item.panel?.text !== 'undefined');
+}
+
 function renderTabsTemplate(context) {
-  const vertical = context.type === 'vertical';
+  // The look drawn (C96 item 1): line, plate (pills) or the menu column
+  // (vertical); a custom template still reads context.type.
+  const look = context.look ?? context.type;
+  const vertical = look === 'vertical';
   const sizeClass = `sf-tabs--size-${String(context.size || '1').replace('/', '-')}`;
-  const rootClasses = joinClasses('sf-tabs', sizeClass, context.overflow && context.overflow !== 'scroll' ? `sf-tabs--overflow-${context.overflow}` : '', context.type ? `sf-tabs--${context.type}` : '', vertical ? 'sf-tabs--vertical flex' : 'flex flex-col', context.rootClass);
+  const rootClasses = joinClasses('sf-tabs', sizeClass, context.overflow && context.overflow !== 'scroll' ? `sf-tabs--overflow-${context.overflow}` : '', look ? `sf-tabs--${look}` : '', vertical ? 'sf-tabs--vertical flex' : 'flex flex-col', context.links ? 'sf-tabs--links' : '', context.sticky ? 'sf-tabs--sticky' : '', context.rootClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses}
@@ -1816,28 +2837,26 @@ function renderTabsTemplate(context) {
       role="group"
     >
       <div class=${joinClasses('sf-tabs-top-container', context.overflow === 'more' || context.configurable ? 'sf-tabs-top-container--tools' : '')}>
-        <div
-          class=${joinClasses(`sf-tabs-top flex content-main-${context.topPosition}`, context.type === 'vertical' ? 'flex-col' : '', context.topClass)}
+        ${context.links ? renderLinkRow(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
+          class=${topClasses(context)}
           role="tablist"
           aria-label=${context.component?.getAttribute('aria-label') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           aria-labelledby=${context.component?.getAttribute('aria-labelledby') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           aria-orientation=${vertical ? 'vertical' : 'horizontal'}
         >
-          ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.displayItems ?? context.items, // Keyed by the tab, so a reordered tab keeps its own button: by
-  // position, the buttons kept their old labels and counts while the
-  // hosts' text was already the new one (docs trial 4).
-  item => item.key ?? item.index, item => renderTab(item, context))}
-        </div>
+          ${renderTabs(context)}
+        </div>`}
         ${context.overflow === 'more' && !vertical ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-tabs-more" appearance="ghost" scheme="on-surface" size=${context.size}
                             icon-end="expand_more" text=${context.moreText} aria-haspopup="menu"></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${(context.displayItems ?? context.items).filter(item => item.hint).map(item => renderHint(item, context))}
         ${context.configurable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-tabs-settings" appearance="ghost" scheme="on-surface" size=${context.size}
                                  icon="tune" aria-label=${context.customizeText} title=${context.customizeText}
                                  aria-haspopup="dialog"></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
 
-      <div class="sf-tabs-main-container">
+      ${context.links && !hasPanelContent(context) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-tabs-main-container">
         ${context.items.map(item => renderPanel(item, context))}
-      </div>
+      </div>`}
     </div>
   `;
 }
@@ -1898,28 +2917,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "51b106697124"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-tabs","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-tab-change","to":"sf-tabs-change","kind":"event","component":"sf-tabs","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, §16 item 42","note":"the old detail adds component, tagName and template, which §8 takes out of the new one: the element\'s detail adapter makes it"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-tabs","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-tab-change","to":"sf-tabs-change","kind":"event","component":"sf-tabs","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, §16 item 42","note":"the old detail adds component, tagName and template, which §8 takes out of the new one: the element\'s detail adapter makes it"},{"from":"data-tab","to":"data-sf-tab-index","kind":"attribute","component":"sf-tabs","since":"2026-11-12","remove_after":"2027-01-01","mode":"retired","section":"§3.1 (a name the component writes carries its prefix); R193 DP-11","note":"written beside data-sf-tab-index on each tab for one minor (1.2.x) and dropped in 1.3.0: a page selector [data-tab] caught the tabs\' own buttons (the dropdown-panels prototype hid tab 0 with pane 0); read data-sf-tab-index"}]}');
 
 /***/ },
 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.1.17","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"scroll"},"configurable":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.1","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "33cd7c3c3aca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Tabs","events":{"settings-change":{"label":"Tabs arranged"},"settings-reset":{"label":"Tabs reset"}},"runtime":{"customize":"Customize tabs","more":"More","moved":"Moved","pinned":"Always shown","reset":"Reset","visible":"Shown"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Tabs","events":{"settings-change":{"label":"Tabs arranged"},"settings-reset":{"label":"Tabs reset"}},"runtime":{"customize":"Customize tabs","errors":{"one":"{n} error","other":"{n} errors"},"more":"More","moved":"Moved","pinned":"Always shown","reset":"Reset","tab":"Tab {n}","visible":"Shown"}}');
 
 /***/ },
 
 /***/ "90473944857f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Вкладки","events":{"settings-change":{"label":"Вкладки настроены"},"settings-reset":{"label":"Вкладки сброшены"}},"runtime":{"customize":"Настроить вкладки","more":"Ещё","moved":"Перемещено","pinned":"Всегда на месте","reset":"Сбросить","visible":"Показывать"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Вкладки","events":{"settings-change":{"label":"Вкладки настроены"},"settings-reset":{"label":"Вкладки сброшены"}},"runtime":{"customize":"Настроить вкладки","errors":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"more":"Ещё","moved":"Перемещено","pinned":"Всегда на месте","reset":"Сбросить","tab":"Вкладка {n}","visible":"Показывать"}}');
 
 /***/ }
 

@@ -192,8 +192,8 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-1 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-1 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-1 .sf-list-item-container {
-    --sf-list-item-container--padding-inline-end: var(--sf-ui-1--text-space-x);
-    --sf-list-item-container--padding-inline-start: var(--sf-ui-1--text-space-x);
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--padding-inline-start: 0;
     --sf-list-item-container--font-size: var(--sf-text-size-1);
     --sf-list-item-container--line-height: var(--sf-text-height-1);
   }
@@ -231,8 +231,8 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-2 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-2 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-2 .sf-list-item-container {
-    --sf-list-item-container--padding-inline-end: var(--sf-ui-2--text-space-x);
-    --sf-list-item-container--padding-inline-start: var(--sf-ui-2--text-space-x);
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--padding-inline-start: 0;
     --sf-list-item-container--font-size: var(--sf-text-size-2);
     --sf-list-item-container--line-height: var(--sf-text-height-2);
   }
@@ -255,8 +255,8 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-3 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-3 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-3 .sf-list-item-container {
-    --sf-list-item-container--padding-inline-end: var(--sf-ui-3--text-space-x);
-    --sf-list-item-container--padding-inline-start: var(--sf-ui-3--text-space-x);
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--padding-inline-start: 0;
     --sf-list-item-container--font-size: var(--sf-text-size-3);
     --sf-list-item-container--line-height: var(--sf-text-height-3);
   }
@@ -283,8 +283,8 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-1\/2 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-1\/2 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-1\/2 .sf-list-item-container {
-    --sf-list-item-container--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
-    --sf-list-item-container--padding-inline-start: var(--sf-ui-1\/2--text-space-x);
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--padding-inline-start: 0;
     --sf-list-item-container--font-size: var(--sf-text-size-1\/2);
     --sf-list-item-container--line-height: var(--sf-text-height-1\/2);
   }
@@ -312,8 +312,8 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-list-item.sf-list-item--checkbox.sf-list-item--size-1\/3 .sf-list-item-container, .sf-list-item.sf-list-item--text.sf-list-item--size-1\/3 .sf-list-item-container, .sf-list-item.sf-list-item--icon.sf-list-item--size-1\/3 .sf-list-item-container {
-    --sf-list-item-container--padding-inline-end: var(--sf-ui-1\/3--text-space-x);
-    --sf-list-item-container--padding-inline-start: var(--sf-ui-1\/3--text-space-x);
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--padding-inline-start: 0;
     --sf-list-item-container--font-size: var(--sf-text-size-1\/3);
     --sf-list-item-container--line-height: var(--sf-text-height-1\/3);
   }
@@ -409,10 +409,77 @@
     pointer-events: none;
     flex-shrink: 0;
   }
+  /* A row's picture and its text (owner C105, role H2; R191 HS-1, HS-5): the
+     picture stands --sf-space-1/2 before the text -- 12, 8 in a compact region
+     and on a phone -- at every size, and the text block keeps no start inset of
+     its own after it. The step was the layout class gap-2 of the template
+     (--sf-space-2, 20) plus the text block's --sf-ui-<S>--text-space-x: 28 at
+     size 1. The same step stands before a row's trailing part (an avatar or a
+     colour row's mark). After the size rules above, which set the text block's
+     inset at the same weight. */
+  .sf-list-item.sf-list-item--icon .sf-list-item-wrap {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
+  }
+  .sf-list-item.sf-list-item--checkbox .sf-list-item-wrap {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
+  }
+  .sf-list-item.sf-list-item--avatar .sf-list-item-wrap {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
+  }
+  .sf-list-item.sf-list-item--color .sf-list-item-wrap {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
+  }
+  .sf-list-item.sf-list-item--icon .sf-list-item-wrap .sf-list-item-container {
+    --sf-list-item-container--padding-inline-start: 0;
+  }
+  .sf-list-item.sf-list-item--checkbox .sf-list-item-wrap .sf-list-item-container {
+    --sf-list-item-container--padding-inline-start: 0;
+  }
   @media (prefers-reduced-motion: reduce) {
     .sf-list-item {
       transition-duration: 0s;
     }
+  }
+  /* C77 (owner 2026-11-11, prototypes/field-inset.html): a row's text without
+     a picture starts at the size's inset from the row's edge -- --sf-space-1/2,
+     --sf-space-1 or --sf-space-2: 12 / 16 / 20 at 1/2, 1, 2; 12 / 12 / 16 in a
+     compact region and on a phone, size 1/2 never below 12 (--sf-b2) -- and a
+     row's picture stands at the same place, its C105 H2 step after it. The text
+     block keeps no --sf-ui-<S>--text-space-x of its own at either end (the size
+     rules above): a text-only row stood 21 / 24 / 30 from its edge (compact
+     18 / 21 / 24, phone 18 / 20 / 26; docs precheck smart content LI-02). The
+     same inset as sf-dropdown's value and options and sf-list's rows. Sizes 1/3
+     and 3, which C77 does not name, keep the size's space-x. A list or a
+     dropdown that sets the row's inset itself still wins (sf-list's frame rule,
+     the dropdown's states-layer rule). */
+  .sf-list-item.sf-list-item--size-1\/2 {
+    --sf-list-item--inset: max(var(--sf-space-1\/2), var(--sf-b2));
+  }
+  .sf-list-item.sf-list-item--size-1 {
+    --sf-list-item--inset: var(--sf-space-1);
+  }
+  .sf-list-item.sf-list-item--size-2 {
+    --sf-list-item--inset: var(--sf-space-2);
+  }
+  .sf-list-item.sf-list-item--size-1\/2 {
+    --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
+    --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
+  }
+  .sf-list-item.sf-list-item--size-1 {
+    --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
+    --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
+  }
+  .sf-list-item.sf-list-item--size-2 {
+    --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
+    --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
   }
 }
 @layer sf.states {
@@ -446,45 +513,45 @@
     --sf-tag--block: 0;
     --sf-tag--inline-start: 0;
     --sf-tag--inline-end: 0;
-    --sf-tag--label-start: var(--sf-ui-1\/3--text-space-x);
+    --sf-tag--label-start: 0;
     --sf-tag--label-end: var(--sf-ui-1\/3--text-space-x);
-    gap: 0;
+    gap: var(--sf-space-1\/2);
   }
   .sf-list-item.sf-list-item--color.sf-list-item--size-1\/2 .sf-tag.sf-tag {
     --sf-tag--background-color: transparent;
     --sf-tag--block: 0;
     --sf-tag--inline-start: 0;
     --sf-tag--inline-end: 0;
-    --sf-tag--label-start: var(--sf-ui-1\/2--text-space-x);
+    --sf-tag--label-start: 0;
     --sf-tag--label-end: var(--sf-ui-1\/2--text-space-x);
-    gap: 0;
+    gap: var(--sf-space-1\/2);
   }
   .sf-list-item.sf-list-item--color.sf-list-item--size-1 .sf-tag.sf-tag {
     --sf-tag--background-color: transparent;
     --sf-tag--block: 0;
     --sf-tag--inline-start: 0;
     --sf-tag--inline-end: 0;
-    --sf-tag--label-start: var(--sf-ui-1--text-space-x);
+    --sf-tag--label-start: 0;
     --sf-tag--label-end: var(--sf-ui-1--text-space-x);
-    gap: 0;
+    gap: var(--sf-space-1\/2);
   }
   .sf-list-item.sf-list-item--color.sf-list-item--size-2 .sf-tag.sf-tag {
     --sf-tag--background-color: transparent;
     --sf-tag--block: 0;
     --sf-tag--inline-start: 0;
     --sf-tag--inline-end: 0;
-    --sf-tag--label-start: var(--sf-ui-2--text-space-x);
+    --sf-tag--label-start: 0;
     --sf-tag--label-end: var(--sf-ui-2--text-space-x);
-    gap: 0;
+    gap: var(--sf-space-1\/2);
   }
   .sf-list-item.sf-list-item--color.sf-list-item--size-3 .sf-tag.sf-tag {
     --sf-tag--background-color: transparent;
     --sf-tag--block: 0;
     --sf-tag--inline-start: 0;
     --sf-tag--inline-end: 0;
-    --sf-tag--label-start: var(--sf-ui-3--text-space-x);
+    --sf-tag--label-start: 0;
     --sf-tag--label-end: var(--sf-ui-3--text-space-x);
-    gap: 0;
+    gap: var(--sf-space-1\/2);
   }
 }
 @layer sf.states {
@@ -520,6 +587,21 @@
     --sf-avatar--width: var(--sf-text-height-3);
     --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-text-height-3) / 2));
     --sf-avatar--line-height: var(--sf-text-height-3);
+  }
+}
+/* A row's text starts at one place whatever its picture (docs precheck smart
+   content LI-02): the avatar's label and the colour mark's text stand the row's
+   own gap from the picture, as an icon row's and a checkbox row's do -- the
+   C105 H2 step, --sf-space-1/2 (12; 8 compact and on a phone). The colour
+   row's text stood 0 from its dot. The colour row's gap is set with its other
+   tag resets in the states layer above (its gap 0 there outranked a gap set
+   here; acceptance 2026-11-11 D3), and its label loses the tag's own start
+   space, so the text stands one gap from the dot as an icon row's does. */
+@layer sf.components {
+  .sf-list-item.sf-list-item--avatar .sf-avatar-label-group {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
   }
 }
 /* The general list row (simai/ui-source#18, #29; ui-mail F3): the same row as
@@ -566,6 +648,104 @@
     --sf-list-item-supporting--font-size: var(--sf-text-size-2);
     --sf-list-item-supporting--line-height: var(--sf-text-height-2);
   }
+  /* A two-line row is a step of the height ladder (docs precheck smart content
+     LI-03, LS-02; the answer of C31): the next size's control height -- 48 at
+     size 1 on a desktop, 44 on a phone; 40 at 1/2, 56 at 2 -- with the two lines
+     centred in it. It was the one-line row plus a line, 60 and 72 on a desktop.
+     Size 3 has no step above it and keeps its padding at zero over the lines.
+     Doubled class: the one-line block padding of sizes 1/2 and 1/3 (three
+     classes, four when disabled) outranked these rules, so a two-line 1/2 row
+     was its own padding over the lines -- 48 on a desktop, the same as size 1,
+     and 44 against size 1's 40 in a compact region (intent acceptance
+     2026-11-13, content-5). Now 40 / 48 / 56 at 1/2, 1, 2 (compact 32 / 40 /
+     48, phone 36 / 44 / 52), each the next size's control height. */
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/3 {
+    --sf-list-item--two-line-block: max(calc(var(--sf-px) * 0), calc((var(--sf-ui-1\/2--control-height) - var(--sf-text-height-1\/3) - var(--sf-list-item-supporting--line-height)) / 2));
+    --sf-list-item--padding-top: var(--sf-list-item--two-line-block);
+    --sf-list-item--padding-bottom: var(--sf-list-item--two-line-block);
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/2 {
+    --sf-list-item--two-line-block: max(calc(var(--sf-px) * 0), calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1\/2) - var(--sf-list-item-supporting--line-height)) / 2));
+    --sf-list-item--padding-top: var(--sf-list-item--two-line-block);
+    --sf-list-item--padding-bottom: var(--sf-list-item--two-line-block);
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1 {
+    --sf-list-item--two-line-block: max(calc(var(--sf-px) * 0), calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1) - var(--sf-list-item-supporting--line-height)) / 2));
+    --sf-list-item--padding-top: var(--sf-list-item--two-line-block);
+    --sf-list-item--padding-bottom: var(--sf-list-item--two-line-block);
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-2 {
+    --sf-list-item--two-line-block: max(calc(var(--sf-px) * 0), calc((var(--sf-ui-3--control-height) - var(--sf-text-height-2) - var(--sf-list-item-supporting--line-height)) / 2));
+    --sf-list-item--padding-top: var(--sf-list-item--two-line-block);
+    --sf-list-item--padding-bottom: var(--sf-list-item--two-line-block);
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-3 {
+    --sf-list-item--two-line-block: max(calc(var(--sf-px) * 0), calc((var(--sf-ui-3--control-height) - var(--sf-text-height-3) - var(--sf-list-item-supporting--line-height)) / 2));
+    --sf-list-item--padding-top: var(--sf-list-item--two-line-block);
+    --sf-list-item--padding-bottom: var(--sf-list-item--two-line-block);
+  }
+  /* A row with a caption is never lower than a menu row with a caption (owner
+     decision C49; list item study LI-1, dispatcher ruling 2026-11-14): one
+     control of step 1/2 and the caption's line under it -- 48 = 32 + 16 on a
+     desktop, 44 = 28 + 16 in a compact region, 60 = 44 + 16 under a finger,
+     where the step is the touch target (--sf-d1), as sf-menu-context's caption
+     rows are. A taller step keeps the next size's control height above
+     (56 at size 2). Group build 3 drew size 1 at 48 / compact 40 / phone 44 and
+     size 1/2 at 36 on a phone, under the 44 a finger needs. Every term is a
+     token of the ladder; the two lines stand centred in the row. Size 1/3 has
+     no caption step under it and keeps its own. */
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/2 {
+    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
+    align-items: center;
+    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1 {
+    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
+    align-items: center;
+    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-2 {
+    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
+    align-items: center;
+    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+  }
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-3 {
+    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
+    align-items: center;
+    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
+  }
+  @media (pointer: coarse) {
+    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/2 {
+      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
+    }
+    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1 {
+      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
+    }
+    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-2 {
+      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
+    }
+    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-3 {
+      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
+    }
+  }
+  /* Where the two lines fill the step (size 1/2 in a compact region: 16 + 16
+     in a 32 row) the bottom padding has nothing to give the divider back from,
+     and the row stood a pixel off the ladder (33). The lines then give it back:
+     the wrap ends the divider's width early, inside the supporting line's
+     leading, so the row is the step's height with its divider inside (C01). */
+  .sf-list-item--two-line .sf-list-item-wrap {
+    margin-bottom: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
+    -webkit-margin-after: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
+            margin-block-end: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
+    margin-bottom: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
+    margin-bottom: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
+    -webkit-margin-after: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
+            margin-block-end: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
+  }
   .sf-list-item.disabled .sf-list-item-supporting {
     color: var(--sf-on-surface-disabled);
   }
@@ -606,6 +786,275 @@
   }
   .sf-list-item--size-3 {
     --sf-list-item-handle--size: var(--sf-text-height-3);
+  }
+  /* The picture place of a row: an icon or an avatar takes the row's line. */
+  .sf-list-item--size-1\/3 {
+    --sf-list-item--picture: var(--sf-text-height-1\/3);
+  }
+  .sf-list-item--size-1\/2 {
+    --sf-list-item--picture: var(--sf-text-height-1\/2);
+  }
+  .sf-list-item--size-1 {
+    --sf-list-item--picture: var(--sf-text-height-1);
+  }
+  .sf-list-item--size-2 {
+    --sf-list-item--picture: var(--sf-text-height-2);
+  }
+  .sf-list-item--size-3 {
+    --sf-list-item--picture: var(--sf-text-height-3);
+  }
+  /* A row without a picture among rows with one keeps the picture's place
+     (owner decision C105; list item study LI-17): its text starts where its
+     neighbours' text does, the picture's line and the H2 step after it. A
+     pinned text row of an sf-sortable list started its text at 40 beside icon
+     rows at 76. The list is the row's own: sf-sortable, a list or listbox role,
+     or sf-list's body; a dropdown's options keep their own layout. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+    }
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
+  }
+  /* A row's text block takes the row's free width, so its trailing part -- a
+     «⋯», a count, a time -- stands at the row's end edge, not right after the
+     text (list item study LI-16: 211 px from the end of a 384 row). An option
+     keeps its layout: its mark already stands at the end. */
+  .sf-list-item:not([role=option]) > .sf-list-item-wrap > .sf-list-item-container {
+    flex: 1 1 auto;
+  }
+  /* An avatar row's text block (list item study LI-5): the title and its
+     supporting line, as an icon row's, on the row's text steps and inks. */
+  .sf-list-item.sf-list-item--avatar .sf-list-item-container {
+    --sf-list-item-container--padding-inline-start: 0;
+    --sf-list-item-container--padding-inline-end: 0;
+    --sf-list-item-container--font-family: var(--sf-text--family);
+    --sf-list-item-container--font-weight: var(--sf-font-weight-regular);
+    --sf-list-item-container--color: var(--sf-list-item-color, var(--sf-on-surface));
+  }
+  .sf-list-item.sf-list-item--avatar.sf-list-item--size-1\/3 .sf-list-item-container {
+    --sf-list-item-container--font-size: var(--sf-text-size-1\/3);
+    --sf-list-item-container--line-height: var(--sf-text-height-1\/3);
+  }
+  .sf-list-item.sf-list-item--avatar.sf-list-item--size-1\/2 .sf-list-item-container {
+    --sf-list-item-container--font-size: var(--sf-text-size-1\/2);
+    --sf-list-item-container--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-list-item.sf-list-item--avatar.sf-list-item--size-1 .sf-list-item-container {
+    --sf-list-item-container--font-size: var(--sf-text-size-1);
+    --sf-list-item-container--line-height: var(--sf-text-height-1);
+  }
+  .sf-list-item.sf-list-item--avatar.sf-list-item--size-2 .sf-list-item-container {
+    --sf-list-item-container--font-size: var(--sf-text-size-2);
+    --sf-list-item-container--line-height: var(--sf-text-height-2);
+  }
+  .sf-list-item.sf-list-item--avatar.sf-list-item--size-3 .sf-list-item-container {
+    --sf-list-item-container--font-size: var(--sf-text-size-3);
+    --sf-list-item-container--line-height: var(--sf-text-height-3);
+  }
+  .sf-list-item.disabled.sf-list-item--avatar .sf-list-item-container {
+    --sf-list-item-container--color: var(--sf-on-surface-disabled);
   }
   .sf-list-item-handle .sf-icon {
     color: var(--sf-icon--color);
@@ -1063,22 +1512,27 @@
     --sf-surface-place: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
     --sf-surface-place-ground: var(--sf-dropdown-list-background-color, var(--sf-surface-popup));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1106,12 +1560,14 @@
        the open modifiers altogether -- so the list never had a shadow. */
     --sf-list--box-shadow: var(--sf-shadow-overlay);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-dropdown .sf-list,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list--menu {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-list--menu {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-dropdown .sf-list,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-list--menu {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-dropdown .sf-list,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-list--menu {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1123,6 +1579,25 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-dropdown .sf-list,
+  :where(.sf-surface-media) .sf-list--menu {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-dropdown .sf-list,
   :where(.bg-surface-4) .sf-list--menu {
@@ -1250,7 +1725,7 @@
     padding-inline: var(--sf-list--padding-left) var(--sf-list--padding-right);
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
-    --sf-list--track: calc(2 * var(--sf-list--padding-right) + var(--sf-space-1\/4));
+    --sf-list--track: calc(2 * var(--sf-list--padding-right) + var(--sf-scroll-thumb-width));
   }
   .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar,
   .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar {
@@ -1593,8 +2068,14 @@
 @layer sf.components {
   .sf-list-container--grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-columns: repeat(var(--sf-list-container--columns, 6), minmax(0, 1fr));
+    /* Every column is one cell wide, and a cell is as tall as a field of the
+       dropdown's size (owner, 2026-10-14). Stretched to the list, four columns
+       under a 32rem field made cells of 125 px, two rows in a grid sized for
+       six. Under a field wider than its columns the grid stands at the start;
+       the list itself stays as wide as the field (C32). */
+    grid-template-columns: repeat(6, var(--sf-ui-1--control-height));
+    grid-template-columns: repeat(var(--sf-list-container--columns, 6), var(--sf-list--cell, var(--sf-ui-1--control-height)));
+    justify-content: start;
     grid-gap: var(--sf-px);
     gap: var(--sf-px);
     /* A grid asks for the width its columns need: the list otherwise takes the
@@ -1682,10 +2163,6 @@
     inline-size: 0;
     min-width: 100%;
     min-inline-size: 100%;
-  }
-  .sf-list--free-width .sf-list-container--grid {
-    grid-template-columns: repeat(6, var(--sf-ui-1--control-height));
-    grid-template-columns: repeat(var(--sf-list-container--columns, 6), var(--sf-list--cell, var(--sf-ui-1--control-height)));
   }
 }
 @layer sf.components {
@@ -2242,7 +2719,7 @@
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-transparent-for-focus));
     /* The filled field's bottom line (C52, owner 2026-11-10; as sf-input): the
-       fill at 8 % (C41) is 1.10 to 1.23 from its place. Focus and an open list
+       fill at 12 % (C113) is 1.15 to 1.39 from its place. Focus and an open list
        colour the border --sf-outline, the line's own colour; hover keeps it. */
     --sf-dropdown-field--line-color: var(--sf-dropdown-border-color, var(--sf-outline));
   }
@@ -2429,7 +2906,7 @@
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-dropdown.sf-dropdown--tag .sf-dropdown-tag-container {
-    --sf-dropdown-tag-container--gap: var(--sf-space-1\/3);
+    --sf-dropdown-tag-container--gap: var(--sf-space-1\/4); /* tags, C105 H5 */
   }
 }
 /* A filled field reads as a field only by its fill, so while someone is typing
@@ -2715,6 +3192,15 @@
   .sf-dropdown .sf-dropdown-tag-container .sf-tag > .sf-tag-color-icon {
     flex-shrink: 0;
   }
+  /* The chevron is a service mark inside a field (C107 (3), owner 2026-11-12;
+     IC-3): --sf-on-surface-variant, as the field's own icons beside it. It is
+     an sf-icon-button of the on-surface scheme, whose icon is the control role
+     (--sf-on-surface-icon); here, more specific, the field's mark. Under a
+     pointer it takes --sf-on-surface with every neutral icon button. The class
+     markup keeps this; sf-dropdown draws the field action below (C123). */
+  .sf-dropdown .sf-dropdown-field > .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--icon {
+    --sf-icon--color: var(--sf-on-surface-variant);
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button{
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
@@ -2773,6 +3259,57 @@
     inset-inline-end: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
     position: absolute;
   }
+  /* C123 (3) (owner 2026-11-13; prototypes/field-icon-actions.html#q-chevron):
+     the chevron is the field's indicator, the field layer's action
+     (inputs/scss/field-action.scss): no plate in any state, the leading
+     picture's size (24 / 20 / 28 at 1, 1/2, 2), the field's inner height. Its
+     glyph ends on the field's padding (the inset), where an option's check ends
+     in the open list: the last action gives back the quarter inset its hit area
+     stands out, as a margin, so the inset is the padding itself. The whole
+     field opens the list, so the glyph takes the text's ink while the field is
+     under the pointer, and the field's ring is its focus ring: the glyph draws
+     none of its own. The value keeps half an inset before the glyph. */
+  .sf-dropdown {
+    --sf-field-action--inset: var(--sf-dropdown--inset);
+    --sf-field-action--glyph: var(--sf-text-height-1);
+    --sf-field-action--height: var(--sf-ui-1--control-height);
+  }
+  .sf-dropdown.sf-dropdown--size-1\/2 {
+    --sf-field-action--glyph: var(--sf-text-height-1\/2);
+    --sf-field-action--height: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-dropdown.sf-dropdown--size-2 {
+    --sf-field-action--glyph: var(--sf-text-height-2);
+    --sf-field-action--height: var(--sf-ui-2--control-height);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-action{
+    right: var(--sf-dropdown-field--padding-inline-end);
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-action{
+    right: var(--sf-dropdown-field--padding-inline-end);
+    }
+  }
+  .sf-dropdown .sf-dropdown-field > .sf-field-action:where(:dir(ltr)){
+    right: var(--sf-dropdown-field--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-action{
+    left: var(--sf-dropdown-field--padding-inline-end);
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-action{
+    left: var(--sf-dropdown-field--padding-inline-end);
+    }
+  }
+  .sf-dropdown .sf-dropdown-field > .sf-field-action:where(:dir(rtl)){
+    left: var(--sf-dropdown-field--padding-inline-end);
+  }
+  .sf-dropdown .sf-dropdown-field > .sf-field-action {
+    inset-inline-end: var(--sf-dropdown-field--padding-inline-end);
+  }
+  .sf-dropdown.sf-dropdown--text .sf-dropdown-field:has(> .sf-field-action) > input:not([type=hidden]) {
+    --sf-dropdown-input--padding-inline-end: calc(var(--sf-field-action--glyph) + var(--sf-field-action--inset) / 2);
+  }
   .sf-dropdown.sf-dropdown--tag > .sf-dropdown-field > button {
     position: static;
     flex-shrink: 0;
@@ -2792,6 +3329,19 @@
     min-width: 0;
     min-inline-size: 0;
     padding: 0;
+  }
+  /* C123: in a field of tags the chevron is the field action, in flow beside
+     them: its hit area the field action's width and never under 24 high, its
+     box no taller than the field's text line (the margins give the rest back),
+     so a field holding tags stays as tall as one holding text. */
+  .sf-dropdown.sf-dropdown--tag > .sf-dropdown-field > button.sf-field-action {
+    width: var(--sf-field-action--hit-inline);
+    inline-size: var(--sf-field-action--hit-inline);
+    height: max(var(--sf-dropdown-tag-line--box), var(--sf-c2));
+    block-size: max(var(--sf-dropdown-tag-line--box), var(--sf-c2));
+    margin-top: calc((var(--sf-dropdown-tag-line--box) - max(var(--sf-dropdown-tag-line--box), var(--sf-c2))) / 2);
+    margin-bottom: calc((var(--sf-dropdown-tag-line--box) - max(var(--sf-dropdown-tag-line--box), var(--sf-c2))) / 2);
+    margin-block: calc((var(--sf-dropdown-tag-line--box) - max(var(--sf-dropdown-tag-line--box), var(--sf-c2))) / 2);
   }
   .sf-dropdown .sf-list {
     left: 0;
@@ -2901,6 +3451,25 @@
   .sf-list[data-sf-portal]:not(.sf-list--free-width) {
     max-width: var(--sf-popup-list-max-width);
     max-inline-size: var(--sf-popup-list-max-width);
+  }
+  /* A list in place has the anchored list's height (R171 follow-up,
+     2026-11-12): the room the screen gives it, less the panel's edge padding,
+     which the dropdown measures on opening (--sf-dropdown-available-block-size,
+     component/dropdown/portal.js); unmeasured, the screen less that padding on
+     both sides. Only the rows scroll, as anchored (C06); the scrollbar is the
+     shared panel's (C106). Without a cap sixty options stood 2.4k px tall and
+     the wheel scrolled the page. */
+  .sf-dropdown .sf-list:not([data-sf-portal]) {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 2 * var(--sf-space-1\/2));
+    max-block-size: calc(100dvh - 2 * var(--sf-space-1\/2));
+    max-height: calc(100dvh - 2 * var(--sf-space-1\/2));
+    max-height: var(--sf-dropdown-available-block-size, calc(100dvh - 2 * var(--sf-space-1\/2)));
+    max-block-size: var(--sf-dropdown-available-block-size, calc(100dvh - 2 * var(--sf-space-1\/2)));
+  }
+  .sf-dropdown .sf-list:not([data-sf-portal]) > .sf-list-container-wrap {
+    overflow-y: auto;
   }
   .sf-dropdown .sf-list:has(.sf-list-container--grid),
   .sf-list[data-sf-portal]:has(.sf-list-container--grid) {
@@ -3021,113 +3590,172 @@
     max-height: var(--sf-dropdown-tag-line--box);
     max-block-size: var(--sf-dropdown-tag-line--box);
   }
-  /* The label follows the picture at the size's text step, the step an option
-     label keeps from its picture, so the value and the option label start on
-     one axis. The step is the picture's margin alone: the field's own gap would
-     add 4px that the option does not have. */
+  /* The label follows the picture at the row step (owner C105, role H2:
+     --sf-space-1/2 -- 12, 8 in a compact region and on a phone -- at every
+     size), the step an option label keeps from its picture, so the value and
+     the option label start on one axis. The step is the picture's margin alone:
+     the field's own gap would add 4px that the option does not have. It was the
+     size's text step (--sf-ui-<S>--text-space-x, H1): 7, 8, 10. */
   .sf-dropdown .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
     -webkit-column-gap: 0;
        -moz-column-gap: 0;
             column-gap: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-1\/2--text-space-x);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-1\/2--text-space-x);
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)),
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
+    margin-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
+    margin-left: var(--sf-space-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
+    margin-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
+    margin-left: var(--sf-space-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
+    margin-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
+    margin-left: var(--sf-space-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
+    }
+  }
   .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-ui-1\/2--text-space-x);
+    margin-right: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-1\/2--text-space-x);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-1\/2--text-space-x);
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)),
   .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-ui-1\/2--text-space-x);
+    margin-left: var(--sf-space-1\/2);
   }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual,
   .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-ui-1\/2--text-space-x);
-            margin-inline-end: var(--sf-ui-1\/2--text-space-x);
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-1--text-space-x);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-1--text-space-x);
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)),
   .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-ui-1--text-space-x);
+    margin-right: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-1--text-space-x);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-1--text-space-x);
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)),
   .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-ui-1--text-space-x);
+    margin-left: var(--sf-space-1\/2);
   }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual,
   .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-ui-1--text-space-x);
-            margin-inline-end: var(--sf-ui-1--text-space-x);
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-2--text-space-x);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual,html:not([dir="rtl"])
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-ui-2--text-space-x);
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-right: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)),
   .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-ui-2--text-space-x);
+    margin-right: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-2--text-space-x);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
   }
   @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual,[dir="rtl"]
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-ui-2--text-space-x);
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
+    margin-left: var(--sf-space-1\/2);
     }
   }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)),
   .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-ui-2--text-space-x);
+    margin-left: var(--sf-space-1\/2);
   }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual,
   .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-ui-2--text-space-x);
-            margin-inline-end: var(--sf-ui-2--text-space-x);
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
   }
   /* A flag keeps its proportions at the optical size of an icon on the same
      line: three quarters of it, as an icon's glyph fills about three quarters of
@@ -3290,5 +3918,236 @@
       outline: var(--sf-focus-outline-width) solid Highlight;
       outline-offset: calc(-1 * var(--sf-focus-outline-width));
     }
+  }
+}
+/* C77 (owner 2026-11-11): the value inset of sf-input. The chosen value
+   starts --sf-space-1/2, --sf-space-1 or --sf-space-2 from the field's outer
+   edge, the border counted inside it (size 1/2 keeps 12 on a phone), plus half
+   of what a rounder corner adds over the control radius; the input adds no
+   picture-to-label step of its own. A picture before the value and the chevron
+   stand at the plain inset. The tag field keeps its own inset (C76); its tags follow the corner. */
+@layer sf.components {
+  .sf-dropdown {
+    --sf-dropdown--inset: var(--sf-space-1);
+    --sf-dropdown--line-radius: min(var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))), var(--sf-ui-1--control-height) / 2);
+    --sf-dropdown--value-inset: calc(var(--sf-dropdown--inset) + max(calc(var(--sf-px) * 0), var(--sf-dropdown--line-radius) - var(--sf-radius-1\/2)) / 2);
+  }
+  /* Size 2 is 20 on a desktop and 16 in a compact region (intent acceptance
+     2026-11-12); on a phone every size is 12 (C77 «телефон 12»), as
+     sf-input's field ladder (text inputs TI-2): --sf-space-1 is 12 there, and
+     --sf-space-2 kept a phone size 2 at 16. */
+  .sf-dropdown.sf-dropdown--size-2 {
+    --sf-dropdown--inset: var(--sf-space-1);
+    --sf-dropdown--line-radius: min(var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))), var(--sf-ui-2--control-height) / 2);
+  }
+  @media (min-width: 60rem) {
+    .sf-dropdown.sf-dropdown--size-2 {
+      --sf-dropdown--inset: var(--sf-space-2);
+    }
+  }
+  /* Size 1/2 never goes below 12 (--sf-b2): on a phone, and in a compact
+     region, where C79 brings it down a step to 28 and --sf-space-1/2 is 8.
+     The inset follows the field's step with that floor: compact 1/2 and 1
+     are 12, compact 2 (40) keeps 16 (intent acceptance 2026-11-12). */
+  .sf-dropdown.sf-dropdown--size-1\/2 {
+    --sf-dropdown--inset: max(var(--sf-space-1\/2), var(--sf-b2));
+    --sf-dropdown--line-radius: min(var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))), var(--sf-ui-1\/2--control-height) / 2);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1 .sf-dropdown-field {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
+    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2 .sf-dropdown-field {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
+    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2 .sf-dropdown-field {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
+    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
+    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1.sf-dropdown--outlined .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1.sf-dropdown--filled .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2.sf-dropdown--outlined .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2.sf-dropdown--filled .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2.sf-dropdown--outlined .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2.sf-dropdown--filled .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
+  }
+  /* A tag inside the field follows its corner, 4 less (at least --sf-radius-1/2,
+     4), so a pill field holds pill-ended tags at an even gap; a page's
+     --sf-tag-radius still wins. */
+  .sf-dropdown .sf-dropdown-tag-container {
+    --sf-dropdown--tag-radius: var(--sf-tag-radius, max(var(--sf-radius-1\/2), var(--sf-dropdown--line-radius) - var(--sf-space-1\/4)));
+    --sf-tag--border-top-left-radius: var(--sf-dropdown--tag-radius);
+    --sf-tag--border-top-right-radius: var(--sf-dropdown--tag-radius);
+    --sf-tag--border-bottom-left-radius: var(--sf-dropdown--tag-radius);
+    --sf-tag--border-bottom-right-radius: var(--sf-dropdown--tag-radius);
+  }
+}
+/* C77, section 3: an option's text keeps the field's value edge at every
+   size (R191 HS-8): the row stands on the panel's plate, --sf-space-1/4 in,
+   so its padding is the field's inset less the plate -- 12 / 16 / 20 from the
+   panel's edge at 1/2, 1, 2 (it was --sf-space-1/2 at every size, 16). A
+   rounder field moves its value in by half of what its corner adds over the
+   control radius; its options move by the same amount. Doubled class: the
+   R029 rule above sets the same variable in this layer. */
+@layer sf.states {
+  .sf-dropdown.sf-dropdown .sf-list .sf-list-item {
+    --sf-list-item--padding-inline-start: calc(var(--sf-dropdown--inset, var(--sf-space-1)) - var(--sf-space-1\/4) + max(calc(var(--sf-px) * 0), var(--sf-dropdown--line-radius, var(--sf-radius-1\/2)) - var(--sf-radius-1\/2)) / 2);
+  }
+}
+/* C123: the field layer's action rules, for the class markup's chevron and
+   sf-dropdown's alike (the inputs sheet carries the same rules). */
+@layer sf.components {
+  .sf-field-action {
+    --sf-field-action--ink: var(--sf-on-surface-variant);
+    --sf-field-action--glyph-size: var(--sf-field-action--glyph, var(--sf-text-height-1));
+    --sf-field-action--side: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 4);
+    --sf-field-action--hit-block: max(calc(var(--sf-field-action--height, var(--sf-ui-1--control-height)) - 2 * var(--sf-px)), var(--sf-c2));
+    --sf-field-action--hit-inline: max(calc(var(--sf-field-action--glyph-size) + 2 * var(--sf-field-action--side)), var(--sf-c2));
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--sf-field-action--hit-block);
+    block-size: var(--sf-field-action--hit-block);
+    width: var(--sf-field-action--hit-inline);
+    inline-size: var(--sf-field-action--hit-inline);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--sf-field-action--ink);
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sf-field-action[hidden] {
+    display: none;
+  }
+  .sf-field-action .sf-icon {
+    --sf-icon--font-size: var(--sf-field-action--glyph-size);
+    --sf-icon--height: var(--sf-field-action--glyph-size);
+    --sf-icon--width: var(--sf-field-action--glyph-size);
+    --sf-icon--color: var(--sf-field-action--ink);
+    color: var(--sf-field-action--ink);
+    border-radius: var(--sf-radius--ui);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:last-child,html:not([dir="rtl"])
+  .sf-dropdown-field > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:last-child,html:not([dir="rtl"])
+  .sf-dropdown-field > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
+  .sf-dropdown-field > .sf-field-action:last-child:where(:dir(ltr)),
+  .sf-dropdown-field > :last-child .sf-field-action:where(:dir(ltr)){
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > .sf-field-action:last-child,[dir="rtl"]
+  .sf-dropdown-field > :last-child .sf-field-action{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown-field > .sf-field-action:last-child,[dir="rtl"]
+  .sf-dropdown-field > :last-child .sf-field-action{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
+  .sf-dropdown-field > .sf-field-action:last-child:where(:dir(rtl)),
+  .sf-dropdown-field > :last-child .sf-field-action:where(:dir(rtl)){
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  .sf-dropdown-field > .sf-field-action:last-child,
+  .sf-dropdown-field > :last-child .sf-field-action {
+    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+}
+@layer sf.states {
+  .sf-field-action:not(:disabled):not([aria-disabled=true]):hover {
+    --sf-field-action--ink: var(--sf-on-surface);
+  }
+  .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
+    --sf-field-action--ink: var(--sf-on-surface);
+  }
+  .sf-field-action:disabled {
+    --sf-field-action--ink: var(--sf-on-surface-disabled);
+    cursor: default;
+  }
+  .sf-field-action[aria-disabled=true] {
+    --sf-field-action--ink: var(--sf-on-surface-disabled);
+    cursor: default;
+  }
+  .sf-field-action.focus-visible {
+    outline: none !important;
+  }
+  .sf-field-action:focus-visible {
+    outline: none !important;
+  }
+  .sf-field-action.focus-visible .sf-icon {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-field-action:focus-visible .sf-icon {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  @media (forced-colors: active) {
+    .sf-field-action.focus-visible .sf-icon {
+      outline-color: Highlight;
+    }
+    .sf-field-action:focus-visible .sf-icon {
+      outline-color: Highlight;
+    }
+  }
+}
+@layer sf.states {
+  /* The whole field is the target: under the pointer the chevron takes the
+     text's ink with it (C107 (4)). */
+  .sf-dropdown .sf-dropdown-field:hover > .sf-field-action:not(:disabled) {
+    --sf-field-action--ink: var(--sf-on-surface);
+  }
+  /* The field's ring is the indicator's: the glyph draws none of its own. */
+  .sf-dropdown .sf-dropdown-field > .sf-field-action--indicator.focus-visible .sf-icon {
+    outline: none;
+  }
+  .sf-dropdown .sf-dropdown-field > .sf-field-action--indicator:focus-visible .sf-icon {
+    outline: none;
+  }
+  /* A disabled filled field of text shows no chevron, as before (the class
+     markup's rule above). */
+  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-field-action {
+    --sf-field-action--ink: transparent;
   }
 }

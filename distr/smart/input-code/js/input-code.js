@@ -121,11 +121,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -138,6 +140,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -176,15 +181,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -208,6 +225,7 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -295,12 +313,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -318,6 +338,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -416,6 +441,71 @@ const FormField = Base => class extends Base {
   formStateRestoreCallback(state) {
     if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
     this.sfSyncFormState();
+  }
+
+};
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
@@ -528,7 +618,13 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
 
     this._focusValue = null;
     this._changeSent = false;
-    this._form = null;
+    this._form = null; // The cell a mouse drag started on, or -1, and whether the click that
+    // ends a mouse press is already handled (K2).
+
+    this._dragFrom = -1;
+    this._mousePressed = false; // The cell the mouse is over, or -1 (K4).
+
+    this._hover = -1;
     this.addEventListener('beforeinput', this.onBeforeInput);
     this.addEventListener('input', this.onInput, true);
     this.addEventListener('paste', this.onPaste);
@@ -540,6 +636,13 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
     this.addEventListener('select', this.onCaret);
     this.addEventListener('selectionchange', this.onCaret);
     this.addEventListener('keyup', this.onCaret);
+    this.addEventListener('pointerdown', this.onPointerDown);
+    this.addEventListener('pointermove', this.onPointerMove);
+    this.addEventListener('pointerup', this.onPointerUp);
+    this.addEventListener('pointercancel', this.onPointerUp);
+    this.addEventListener('pointerleave', this.onPointerLeave);
+    this.addEventListener('dblclick', this.onDoubleClick);
+    this.addEventListener('copy', this.onCopy);
   }
 
   get length() {
@@ -548,10 +651,39 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
 
   get mode() {
     return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeMode)(this.getAttribute('mode'));
+  } // An own alphabet (C82): only these characters are kept; set, it takes the
+  // place of the mode.
+
+
+  get charset() {
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeCharset)(this.getAttribute('charset'));
+  } // Cells per group, a separator between the groups (C82: 3 + 3, 4 + 4), or 0.
+
+
+  get groups() {
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeGroups)(this.getAttribute('groups'), this.length);
+  } // What the code is made of: the mode, the alphabet and whether letters
+  // become capitals (C82), as code.mjs reads it.
+  // (The setting is copied in by member, not as an object key: the loader
+  // reads a bare word of this file as a utility class, and the bare
+  // `uppercase` asked for utility.font-transform.)
+
+
+  get kind() {
+    const settings = {
+      mode: this.mode,
+      charset: this.charset
+    };
+    settings.uppercase = this.uppercase;
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeKind)(settings);
+  }
+
+  get numeric() {
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeInputMode)(this.kind) === 'numeric';
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-code');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.ladderSize)(this.getAttribute('size'));
   }
 
   get ariaLabel() {
@@ -561,14 +693,14 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
 
   get value() {
     const input = this.getInputElement();
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input ? input.value : this.getAttribute('value') ?? this.defaultValue, this.mode, this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input ? input.value : this.getAttribute('value') ?? this.defaultValue, this.kind, this.length);
   } // Setting the value writes the field and its cells, as the native input's
   // own value does: no input, change or complete event, which are the
   // person's.
 
 
   set value(next) {
-    const value = next === null || next === undefined ? '' : (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(next, this.mode, this.length);
+    const value = next === null || next === undefined ? '' : (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(next, this.kind, this.length);
     if (next === null || next === undefined) this.removeAttribute('value');else this.setAttribute('value', value);
     const input = this.getInputElement();
     if (input && input.value !== value) input.value = value;
@@ -605,7 +737,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
 
 
   positionText(cell) {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.positionWords)(this.text(this.mode === 'numeric' ? 'digit' : 'character'), cell, this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.positionWords)(this.text(this.numeric ? 'digit' : 'character'), cell, this.length);
   }
 
   ownInput(target) {
@@ -625,7 +757,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
       end: input.selectionEnd ?? 0
     }; // A typed character the mode does not keep is not written at all.
 
-    if (event.inputType === 'insertText' && typeof event.data === 'string' && event.data.length > 0 && (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(event.data, this.mode, this.length) === '') {
+    if (event.inputType === 'insertText' && typeof event.data === 'string' && event.data.length > 0 && (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(event.data, this.kind, this.length) === '') {
       event.preventDefault();
     }
   }; // Every edit, read after the browser applied it and set right: the value
@@ -646,7 +778,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
       data: event.data ?? null,
       inputType: event.inputType || '',
       selection: this._selection,
-      mode: this.mode,
+      mode: this.kind,
       length: this.length
     });
     this._selection = null;
@@ -670,7 +802,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
       text,
       start: input.selectionStart ?? 0,
       end: input.selectionEnd ?? 0,
-      mode: this.mode,
+      mode: this.kind,
       length: this.length
     });
     if (!next || next.value === input.value) return;
@@ -693,6 +825,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
       this._writingValue = false;
     }
 
+    this.markCell();
     this.syncCells();
 
     if (value.length === this.length) {
@@ -709,38 +842,67 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
     } else {
       this._completed = '';
     }
-  } // The keys are the field's own: Backspace clears the cell before the caret
-  // and steps back, Delete clears the one after it, the arrows move between
-  // the cells. Home and End go to the first cell and past the last character
-  // on every platform: a Mac field leaves them to the page, and scrolls. The
-  // caret's cell is read once the key has done its work.
+  } // The keys are the field's own: Backspace clears the marked cell, or the
+  // one before a bare caret, and steps back; Delete clears the marked cell;
+  // the arrows move a cell at a time (a native arrow only collapses the
+  // one-cell mark, and the mark would come back on the same cell), Shift
+  // with them grows the selection by a cell. Home and End go to the first
+  // cell and past the last character on every platform: a Mac field leaves
+  // them to the page, and scrolls. The caret's cell is read once the key has
+  // done its work.
 
 
   onKeydown = event => {
     const input = this.ownInput(event.target);
     if (!input) return;
+    const plain = !event.altKey && !event.ctrlKey && !event.metaKey;
+    const start = input.selectionStart ?? 0;
+    const end = input.selectionEnd ?? start;
+    const length = input.value.length;
 
-    if ((event.key === 'Home' || event.key === 'End') && !event.altKey && !event.ctrlKey && !event.metaKey) {
+    if ((event.key === 'Home' || event.key === 'End') && plain) {
       event.preventDefault();
-      const at = event.key === 'Home' ? 0 : input.value.length;
-      if (event.shiftKey) input.setSelectionRange(Math.min(at, input.selectionStart ?? 0), Math.max(at, input.selectionEnd ?? 0));else input.setSelectionRange(at, at);
+      const at = event.key === 'Home' ? 0 : length;
+      if (event.shiftKey) input.setSelectionRange(Math.min(at, start), Math.max(at, end), at < start ? 'backward' : 'forward');else input.setSelectionRange(at, at);
+    } else if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && plain) {
+      event.preventDefault();
+      const back = event.key === 'ArrowLeft';
+
+      if (event.shiftKey) {
+        if (back) input.setSelectionRange(Math.max(0, start - 1), end, 'backward');else input.setSelectionRange(start, Math.min(length, end + 1), 'forward');
+      } else {
+        const at = back ? Math.max(0, start - 1) : Math.min(length, start + 1);
+        input.setSelectionRange(at, at);
+      }
+
+      this.onCaret();
     }
 
     setTimeout(this.onCaret, 0);
-  }; // A click lands in the cell under the pointer: the input lies transparent
-  // over the cells and its own caret position knows nothing of them.
+  }; // The cell under a point: the input lies transparent over the cells and its
+  // own caret position knows nothing of them.
+
+  cellAt(x) {
+    const cells = this.cells();
+    const index = cells.findIndex(cell => x < cell.getBoundingClientRect().right);
+    return index === -1 ? cells.length - 1 : Math.max(index, 0);
+  } // A tap or a click lands in the cell under the pointer. A mouse press has
+  // placed the caret already (onPointerDown), and its click must not collapse
+  // what a drag or a double click selected (K2: the click reset a drag of
+  // cells 2-5 to a caret at 4); a selection of more than one cell is kept.
+
 
   onClick = event => {
     const input = this.ownInput(event.target);
     if (!input || input.disabled) return;
-    const cells = this.cells();
-    const x = event.clientX;
-    let index = cells.findIndex(cell => {
-      const box = cell.getBoundingClientRect();
-      return x < box.right;
-    });
-    if (index === -1) index = cells.length - 1;
-    const at = Math.min(Math.max(index, 0), input.value.length);
+
+    if (this._mousePressed) {
+      this._mousePressed = false;
+      return;
+    }
+
+    if ((input.selectionEnd ?? 0) - (input.selectionStart ?? 0) > 1) return;
+    const at = Math.min(this.cellAt(event.clientX), input.value.length);
     input.setSelectionRange(at, at);
     this.onCaret();
   };
@@ -765,11 +927,118 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
     }));
     this._focusValue = null;
     this._changeSent = false;
+    input.closest('.sf-verification')?.classList.remove('sf-verification--pointer-focus');
+    this.syncCells(); // While focusout runs the input may still be the active element.
+
+    setTimeout(this.onCaret, 0);
+  }; // A press on the field: its focus is the pointer's, so the sheet draws no
+  // ring on the active cell, only its primary border, until the focus leaves
+  // (K1, as sf-input's .sf-input--pointer-focus).
+  // A mouse selects by cells (K2): a press puts the caret in the cell under
+  // it, a drag selects the cells it crosses, a double click the whole code.
+  // The browser's own selection would follow the transparent input's text,
+  // not the cells. A touch is left to the browser (its caret, long-press menu
+  // and paste), then the click puts the caret in the cell.
+
+  onPointerDown = event => {
+    const input = this.ownInput(event.target);
+    if (!input) return;
+    input.closest('.sf-verification')?.classList.add('sf-verification--pointer-focus');
+    this._mousePressed = false;
+    if (event.pointerType !== 'mouse' || event.button !== 0 || input.disabled) return;
+    event.preventDefault();
+    this._mousePressed = true;
+    if (input.ownerDocument?.activeElement !== input) input.focus({
+      preventScroll: true
+    });
+    const at = Math.min(this.cellAt(event.clientX), input.value.length);
+    this._dragFrom = -1;
+    input.setSelectionRange(at, at);
+    this.markCell();
+    this._dragFrom = at;
+
+    try {
+      input.setPointerCapture(event.pointerId);
+    } catch {
+      /* a synthetic press */
+    }
+
     this.syncCells();
+  }; // A double click selects the whole code, as a word in a field.
+
+  onDoubleClick = event => {
+    const input = this.ownInput(event.target);
+    if (!input || input.disabled) return;
+    this._dragFrom = -1;
+    input.setSelectionRange(0, input.value.length, 'forward');
+    this.syncCells();
+  }; // The pointer marks the one cell it is over (K4: the whole group lit up on
+  // hover, and hid the current cell's mark); a drag selects.
+
+  onPointerMove = event => {
+    const input = this.ownInput(event.target);
+    if (!input) return;
+    const at = this.cellAt(event.clientX);
+
+    if (event.pointerType === 'mouse') {
+      const hover = input.disabled ? -1 : at;
+
+      if (hover !== this._hover) {
+        this._hover = hover;
+        this.syncCells();
+      }
+    }
+
+    if (this._dragFrom < 0 || !(event.buttons & 1)) return;
+    const from = Math.min(this._dragFrom, at);
+    const to = Math.min(Math.max(this._dragFrom, at) + 1, input.value.length);
+
+    if (to > from && (input.selectionStart !== from || input.selectionEnd !== to)) {
+      input.setSelectionRange(from, to, at < this._dragFrom ? 'backward' : 'forward');
+      this.syncCells();
+    }
+  };
+  onPointerLeave = () => {
+    if (this._hover === -1) return;
+    this._hover = -1;
+    this.syncCells();
+  };
+  onPointerUp = () => {
+    if (this._dragFrom < 0) return;
+    this._dragFrom = -1;
+    this.onCaret();
+  }; // Copy gives the code that is selected, never a masked one (K2).
+
+  onCopy = event => {
+    const input = this.ownInput(event.target);
+    if (!input) return;
+
+    if (this.mask) {
+      event.preventDefault();
+      return;
+    }
+
+    const start = input.selectionStart ?? 0;
+    const end = input.selectionEnd ?? start;
+    if (end <= start || !event.clipboardData) return;
+    event.preventDefault();
+    event.clipboardData.setData('text/plain', input.value.slice(start, end));
   };
   onCaret = () => {
+    this.markCell();
     this.syncCells();
-  };
+  }; // A bare caret inside the code becomes a one-cell selection (input-otp's
+  // rule): what is marked is what typing replaces and Backspace or Delete
+  // clears (K3). A caret after the last character stays bare: the next
+  // character goes there.
+
+  markCell() {
+    const input = this.getInputElement();
+    if (!input || input.ownerDocument?.activeElement !== input || this._dragFrom >= 0) return;
+    const start = input.selectionStart;
+    if (start === null || start !== input.selectionEnd || start >= input.value.length) return;
+    input.setSelectionRange(start, start + 1, 'forward');
+  }
 
   cells() {
     return Array.from(this.querySelectorAll(':scope .sf-verification-cell'));
@@ -782,27 +1051,58 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
     const at = focused ? input.selectionStart ?? input.value.length : input?.value.length ?? 0;
     return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.currentCell)(at, this.length);
   } // The cells show the code (or a dot for each character when masked), the
-  // filled ones `active`, the caret's `current`; the position line says the
-  // caret's cell, spoken once each time it moves.
+  // filled ones `active`, the caret's `current` -- only while the field has
+  // the focus: a field at rest marked the next cell and looked focused (K6);
+  // the sheet gates it on focus too. A bare caret is drawn in its cell
+  // (`caret`; `caret-end` after the last character of a whole code, K3): the
+  // input itself is transparent. A selection of more than one cell paints
+  // its cells `selected` (K2). The position line says the caret's cell,
+  // spoken once each time it moves.
 
 
   syncCells() {
     const input = this.getInputElement();
     if (!input) return;
     const value = input.value;
+    const focused = input.ownerDocument?.activeElement === input;
+    const start = input.selectionStart ?? value.length;
+    const end = input.selectionEnd ?? start;
+    const one = end - start <= 1;
     const current = this.caretCell(input);
+    const bare = focused && start === end && !this.readonly;
     this.cells().forEach((cell, index) => {
       const character = value[index] || '';
       const shown = character && this.mask ? _code_mjs__WEBPACK_IMPORTED_MODULE_10__.MASK_GLYPH : character;
       if (cell.textContent !== shown) cell.textContent = shown;
       cell.classList.toggle('active', index < value.length);
-      cell.classList.toggle('current', index === current);
+      cell.classList.toggle('current', focused && one && index === current);
+      const selected = focused && !one && index >= start && index < end;
+      cell.classList.toggle('selected', selected); // Hover marks one cell, never over the current cell's mark or a
+      // selection (K4).
+
+      cell.classList.toggle('hover', index === this._hover && !selected && !(focused && one && index === current));
+      cell.classList.toggle('caret', bare && index === current);
+      cell.classList.toggle('caret-end', bare && index === current && start >= this.length);
     }); // A live line: a screen reader says it each time the caret changes cell,
     // and reads it with the field when the field takes focus.
 
     const position = this.querySelector(':scope .sf-code-input-position');
     const words = this.positionText(current);
     if (position && position.textContent !== words) position.textContent = words;
+  } // A code that is not whole is too short. The inner input carries no
+  // pattern: its mismatch was the browser's English tooltip over the cells
+  // («Please match the requested format.», K5), and the characters are already
+  // kept to the mode. The host says it through ElementInternals, in the page's
+  // words; a custom error and an empty required field come first, as before.
+
+
+  sfSyncValidity() {
+    const input = this.getInputElement();
+    const value = input?.value ?? '';
+    const short = Boolean(input) && !input.disabled && value.length > 0 && value.length < this.length;
+    (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.syncFieldValidity)(this, input, short ? {
+      tooShort: this.text('too-short')
+    } : {});
   }
 
   onFormReset = () => {
@@ -850,8 +1150,8 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
     // native input starts from is that code cleaned to the mode and length,
     // under its own name, so a template never reads a resolved prop changed.
 
-    const defaultCode = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.defaultValue, this.mode, this.length);
-    const value = hasControlledValue ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.getAttribute('value'), this.mode, this.length) : input ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input.value, this.mode, this.length) : defaultCode;
+    const defaultCode = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.defaultValue, this.kind, this.length);
+    const value = hasControlledValue ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.getAttribute('value'), this.kind, this.length) : input ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input.value, this.kind, this.length) : defaultCode;
     return this.createTemplateContext({ ...props,
       component,
       // The field's ids come from its instance path (§7.1.1, #41).
@@ -874,8 +1174,15 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Fo
       mode: this.mode,
       length: this.length,
       mask: this.mask,
-      inputMode: (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeInputMode)(this.mode),
-      pattern: (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codePattern)(this.mode, this.length),
+      inputMode: (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeInputMode)(this.kind),
+      // Letters become capitals: the keyboard offers them (C82). Not named
+      // after the setting: the loader reads template words as utility classes.
+      capitals: this.kind.uppercase,
+      groups: this.groups,
+      // The cells a group separator follows (C82).
+      separators: Array.from({
+        length: this.length
+      }, (_, index) => index).filter(index => (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.separatorAfter)(index, this.groups, this.length)),
       ariaLabel: this.ariaLabel,
       groupLabel: this.ariaLabel || this.text('group'),
       messageContent: messageIsError ? errorContent : hint,
@@ -966,7 +1273,9 @@ function renderCodeInputTemplate(context) {
     length,
     mask,
     inputMode,
-    pattern,
+    capitals,
+    groups,
+    separators = [],
     ariaLabel,
     groupLabel,
     messageContent,
@@ -974,10 +1283,22 @@ function renderCodeInputTemplate(context) {
   } = context;
   const labelId = `${id}--label`;
   const positionId = `${id}--position`;
-  const describedBy = [positionId, messageContent ? field.messageId : ''].filter(Boolean).join(' ');
-  const cells = Array.from({
-    length
-  }, (_, index) => index);
+  const describedBy = [positionId, messageContent ? field.messageId : ''].filter(Boolean).join(' '); // The cells, with a separator after each group (C82: 3 + 3, 4 + 4): a
+  // picture only, aria-hidden with the cells, never in the value or a copy.
+
+  const parts = [];
+
+  for (let index = 0; index < length; index += 1) {
+    parts.push({
+      key: `cell-${index}`,
+      separator: false
+    });
+    if (separators.includes(index)) parts.push({
+      key: `separator-${index}`,
+      separator: true
+    });
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${joinClasses('sf-verification-form', `sf-verification-form--size-${size}`, filled ? 'sf-verification-form--filled' : '', field.invalid ? 'error' : '', 'sf-code-input', context.rootClass)}
@@ -987,6 +1308,7 @@ function renderCodeInputTemplate(context) {
       aria-label=${hasLabel ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : groupLabel}
       data-length=${String(length)}
       data-mode=${mode}
+      data-groups=${groups ? String(groups) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-sf-verification-owner="smart"
     >
       ${hasLabel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-verification-form-label" id=${labelId} for=${field.controlId}>${labelContent}${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-code-input-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</label>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -997,11 +1319,10 @@ function renderCodeInputTemplate(context) {
           type=${mask ? 'password' : 'text'}
           inputmode=${inputMode}
           autocomplete="one-time-code"
-          autocapitalize="off"
+          autocapitalize=${capitals ? 'characters' : 'off'}
           autocorrect="off"
           spellcheck="false"
           dir="ltr"
-          pattern=${pattern}
           name=${controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           .defaultValue=${defaultCode}
           .value=${(0,lit_directives_live_js__WEBPACK_IMPORTED_MODULE_1__.live)(value)}
@@ -1013,7 +1334,7 @@ function renderCodeInputTemplate(context) {
           aria-describedby=${describedBy}
           aria-errormessage=${messageIsError ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         />
-        <span class="sf-verification-cells" aria-hidden="true">${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__.repeat)(cells, index => index, () => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-verification-cell"></span>`)}</span>
+        <span class="sf-verification-cells" aria-hidden="true">${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__.repeat)(parts, part => part.key, part => part.separator ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-verification-separator"></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-verification-cell"></span>`)}</span>
       </div>
       ${messageContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-verification-form-hint" id=${field.messageId}
                      data-field-message=${messageIsError ? 'error' : 'hint'}>${messageContent}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1192,6 +1513,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CODE_GROUPS_MAX: () => (/* binding */ CODE_GROUPS_MAX),
 /* harmony export */   CODE_INPUT_TEXT: () => (/* binding */ CODE_INPUT_TEXT),
 /* harmony export */   CODE_LENGTH_DEFAULT: () => (/* binding */ CODE_LENGTH_DEFAULT),
 /* harmony export */   CODE_LENGTH_MAX: () => (/* binding */ CODE_LENGTH_MAX),
@@ -1199,13 +1521,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MASK_GLYPH: () => (/* binding */ MASK_GLYPH),
 /* harmony export */   applyEdit: () => (/* binding */ applyEdit),
 /* harmony export */   applyPaste: () => (/* binding */ applyPaste),
+/* harmony export */   codeCharset: () => (/* binding */ codeCharset),
+/* harmony export */   codeGroups: () => (/* binding */ codeGroups),
 /* harmony export */   codeInputMode: () => (/* binding */ codeInputMode),
+/* harmony export */   codeKind: () => (/* binding */ codeKind),
 /* harmony export */   codeLength: () => (/* binding */ codeLength),
 /* harmony export */   codeMode: () => (/* binding */ codeMode),
-/* harmony export */   codePattern: () => (/* binding */ codePattern),
 /* harmony export */   currentCell: () => (/* binding */ currentCell),
+/* harmony export */   keepCharacters: () => (/* binding */ keepCharacters),
 /* harmony export */   normaliseCode: () => (/* binding */ normaliseCode),
-/* harmony export */   positionWords: () => (/* binding */ positionWords)
+/* harmony export */   positionWords: () => (/* binding */ positionWords),
+/* harmony export */   separatorAfter: () => (/* binding */ separatorAfter)
 /* harmony export */ });
 // The parts of sf-input-code that are about the code, not the page: which
 // characters a mode keeps, how long a code is, what an edit makes of the value
@@ -1225,15 +1551,52 @@ const MODE_FILTER = {
   numeric: /[^0-9]/gu,
   alphanumeric: /[^A-Za-z0-9]/gu,
 };
-
-const MODE_PATTERN = {
-  numeric: '[0-9]',
-  alphanumeric: '[A-Za-z0-9]',
-};
+// The cells per group a separator is drawn between (C82: 3 + 3, 4 + 4).
+const CODE_GROUPS_MAX = 6;
 
 function codeMode(value) {
-  const mode = String(value ?? '').trim().toLowerCase();
+  const raw = value && typeof value === 'object' ? value.mode : value;
+  const mode = String(raw ?? '').trim().toLowerCase();
   return CODE_MODES.includes(mode) ? mode : 'numeric';
+}
+
+// An own alphabet (owner C82, for example Steam Guard's
+// 23456789BCDFGHJKMNPQRTVWXY, without 0 O 1 I): each character once, no
+// spaces, as written. Empty when there is none.
+function codeCharset(value) {
+  return [...new Set([...String(value ?? '')].filter((character) => !/\s/u.test(character)))].join('');
+}
+
+// What a code is made of, from the settings: {mode, charset, uppercase}. A
+// mode string alone is a kind without an alphabet or capitals. The charset,
+// when there is one, takes the place of the mode; uppercase turns letters
+// into capitals before the characters are kept.
+function codeKind(value = 'numeric') {
+  if (value && typeof value === 'object') {
+    return {mode: codeMode(value.mode), charset: codeCharset(value.charset), uppercase: Boolean(value.uppercase)};
+  }
+  return {mode: codeMode(value), charset: '', uppercase: false};
+}
+
+// Only the characters the kind keeps, in order.
+function keepCharacters(text, kind = 'numeric') {
+  const {mode, charset, uppercase} = codeKind(kind);
+  const source = uppercase ? String(text ?? '').toUpperCase() : String(text ?? '');
+  if (charset) return [...source].filter((character) => charset.includes(character)).join('');
+  return source.replace(MODE_FILTER[mode], '');
+}
+
+// Cells per group, or 0 for none: a group is two cells or more and shorter
+// than the code, so a separator always has cells on both sides.
+function codeGroups(value, length = CODE_LENGTH_DEFAULT) {
+  const groups = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(groups) || groups < 2 || groups > CODE_GROUPS_MAX) return 0;
+  return groups < codeLength(length) ? groups : 0;
+}
+
+// Whether a separator follows the cell: the end of a group, not the code.
+function separatorAfter(index, groups, length) {
+  return groups > 0 && index + 1 < codeLength(length) && (index + 1) % groups === 0;
 }
 
 function codeLength(value) {
@@ -1245,18 +1608,15 @@ function codeLength(value) {
 // Only the characters the mode keeps, no longer than the code: what typing,
 // pasting and autofill leave in the field.
 function normaliseCode(value, mode = 'numeric', length = CODE_LENGTH_DEFAULT) {
-  return String(value ?? '').replace(MODE_FILTER[codeMode(mode)], '').slice(0, codeLength(length));
+  return keepCharacters(value, mode).slice(0, codeLength(length));
 }
 
-// The native constraint the field carries: exactly `length` characters of the
-// mode, so a required code that is not whole is invalid as the form sees it.
-function codePattern(mode, length) {
-  return `${MODE_PATTERN[codeMode(mode)]}{${codeLength(length)}}`;
-}
-
-// What the keyboard offers: digits for a numeric code, letters otherwise.
+// What the keyboard offers: digits for a numeric code or an alphabet of
+// digits only, letters otherwise.
 function codeInputMode(mode) {
-  return codeMode(mode) === 'numeric' ? 'numeric' : 'text';
+  const {mode: base, charset} = codeKind(mode);
+  if (charset) return /^[0-9]+$/u.test(charset) ? 'numeric' : 'text';
+  return base === 'numeric' ? 'numeric' : 'text';
 }
 
 // The cell the next character goes to: the caret's, never past the last cell.
@@ -1265,6 +1625,8 @@ function currentCell(caret, length) {
   return Math.max(0, Math.min(at, codeLength(length) - 1));
 }
 
+// `mode` below is a mode string or a kind ({mode, charset, uppercase}).
+//
 // One edit the person made, as the field sees it after the browser applied it:
 // `previous` is the code before, `raw` the field's text now, `caret` where the
 // browser left the caret and `data` what was inserted (InputEvent.data).
@@ -1286,7 +1648,7 @@ function applyEdit({previous = '', raw = '', caret = 0, data = null, inputType =
   const size = codeLength(length);
   const kept = normaliseCode(previous, mode, size);
   const typed = data === null || data === undefined ? null : String(data);
-  const inserted = typed === null ? '' : typed.replace(MODE_FILTER[codeMode(mode)], '');
+  const inserted = typed === null ? '' : keepCharacters(typed, mode);
 
   if (inserted.length >= size) {
     const value = inserted.slice(0, size);
@@ -1319,7 +1681,7 @@ function applyEdit({previous = '', raw = '', caret = 0, data = null, inputType =
 // null when the text holds nothing the mode keeps.
 function applyPaste({previous = '', text = '', start = 0, end = start, mode = 'numeric', length = CODE_LENGTH_DEFAULT}) {
   const size = codeLength(length);
-  const pasted = String(text ?? '').replace(MODE_FILTER[codeMode(mode)], '');
+  const pasted = keepCharacters(text, mode);
   if (!pasted) return null;
   if (pasted.length >= size) {
     const value = pasted.slice(0, size);
@@ -1340,11 +1702,13 @@ const CODE_INPUT_TEXT = {
     digit: 'digit {n} of {m}',
     character: 'character {n} of {m}',
     group: 'Code',
+    'too-short': 'Enter the whole code',
   },
   ru: {
     digit: 'цифра {n} из {m}',
     character: 'символ {n} из {m}',
     group: 'Код',
+    'too-short': 'Введите код целиком',
   },
 };
 
@@ -1365,21 +1729,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a4a487df7872"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.2.2","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","pattern-mismatch","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.4.0","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "e01f2016b34a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Code input","runtime":{"character":"character {n} of {m}","digit":"digit {n} of {m}","group":"Code"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Code input","runtime":{"character":"character {n} of {m}","digit":"digit {n} of {m}","group":"Code","too-short":"Enter the whole code"}}');
 
 /***/ },
 
 /***/ "8498c2b6b41c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Код подтверждения","runtime":{"character":"символ {n} из {m}","digit":"цифра {n} из {m}","group":"Код"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Код подтверждения","runtime":{"character":"символ {n} из {m}","digit":"цифра {n} из {m}","group":"Код","too-short":"Введите код целиком"}}');
 
 /***/ }
 

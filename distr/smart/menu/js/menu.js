@@ -352,7 +352,15 @@ class SfSmartMenu extends MenuElement {
       const narrow = this._narrowMedia?.matches === true;
       if (narrow === this._narrow) return;
       this._narrow = narrow;
-      if (this.collapse === 'narrow') this.requestComponentUpdate('narrow');
+      if (this.collapse === 'narrow') this.requestComponentUpdate('narrow'); // A row's deeper levels open in place below md and to the side above
+      // it: the open chain is placed again for the width it now has.
+      else if (this.flyouts) this.syncAnchors(); // The default row (collapse auto, overflow collapse) is «Ещё» above md
+      // and the «Меню» button below it: crossing md it is measured anew.
+
+      if (this.collapseOnPhone) {
+        this._autoCollapsed = false;
+        this.requestComponentUpdate('narrow');
+      }
     };
 
     this._narrowMedia?.addEventListener?.('change', this._onNarrow); // The words of a row change their width when the font arrives: «Ещё» is
@@ -409,7 +417,15 @@ class SfSmartMenu extends MenuElement {
 
 
   get moreActive() {
-    return this.overflow === 'more' && this.flyouts;
+    return (this.overflow === 'more' || this.collapseOnPhone && !this._narrow) && this.flyouts;
+  } // The default row (collapse auto, overflow collapse; C30, OV-4): above md
+  // the items that do not fit leave for «Ещё» as with overflow more, the ones
+  // that fit stay; below md (a phone) the whole row that does not fit becomes
+  // the «Меню» button, as before.
+
+
+  get collapseOnPhone() {
+    return this.collapse === 'auto' && this.overflow === 'collapse' && this.horizontal;
   } // The tree the open panels, the current path and the keys walk: the items,
   // or -- in a row with overflow more -- the row's items with the ones that
   // left it under «Ещё».
@@ -447,7 +463,7 @@ class SfSmartMenu extends MenuElement {
     return this.moreActive ? [...this._overflowHidden] : [];
   } // orientation, appearance, collapse, current-from-location and the words are
   // the manifest's accessors (attribute and property).
-  // The documentation tree and the compact rail are columns; the default and
+  // The documentation tree and the rail are columns; the default and
   // the navigation can be a row.
 
 
@@ -459,18 +475,18 @@ class SfSmartMenu extends MenuElement {
   get collapsed() {
     if (this.collapse === 'always') return true;
     if (this.collapse === 'narrow') return this._narrow;
-    return this.collapse === 'auto' && this.overflow === 'collapse' && this.horizontal && this._autoCollapsed;
+    return this.collapseOnPhone && this._narrow && this._autoCollapsed;
   } // Branches open as panels beside the row: a row that is shown as a row.
 
 
   get flyouts() {
     return this.horizontal && !this.collapsed;
-  } // Groups are drawn with their headings in a column; a row and the compact
+  } // Groups are drawn with their headings in a column; a row and the
   // rail draw their items in the group's place.
 
 
   get groupsDrawn() {
-    return !this.flyouts && this.appearance !== 'compact';
+    return !this.flyouts && this.appearance !== 'rail';
   }
 
   get panelOpen() {
@@ -533,7 +549,8 @@ class SfSmartMenu extends MenuElement {
   // that is not above it, closing one closes the panels inside it. A column's
   // groups open and close each on its own. A disabled branch is not opened or
   // closed by the person. Answers an outcome: applied, or refused with
-  // unknown (no such branch), compact (no groups), disabled or already.
+  // unknown (no such branch), compact (the rail: no groups; the reason keeps
+  // its name, an outcome is not an attribute value), disabled or already.
 
 
   setOpen(id, open, source = 'method') {
@@ -542,7 +559,7 @@ class SfSmartMenu extends MenuElement {
       outcome: 'refused',
       reason: 'unknown'
     };
-    if (this.appearance === 'compact') return {
+    if (this.appearance === 'rail') return {
       outcome: 'refused',
       reason: 'compact'
     }; // A group that is not collapsible, or a group a row does not draw, stays
@@ -1026,7 +1043,7 @@ class SfSmartMenu extends MenuElement {
 
 
   get searchActive() {
-    return Boolean(this.search) && !this.flyouts && this.appearance !== 'compact';
+    return Boolean(this.search) && !this.flyouts && this.appearance !== 'rail';
   }
 
   get searchQuery() {
@@ -1217,16 +1234,31 @@ class SfSmartMenu extends MenuElement {
   } // A row's panels are placed by the Framework's geometry, as the class menu
   // places them: the first level below its item, deeper ones to the inline
   // end; both flip and shift inside the viewport instead of overflowing it.
+  // Below md (a phone, R179) a row has no room for side panels: the levels
+  // under the first panel open in place inside it, as a column's do (C30:
+  // the phone's tree, no drill-in), so nothing stands outside the viewport
+  // or over its own chain.
 
 
   syncAnchors() {
     const wanted = new Set();
+    const inPlace = this._narrow;
 
     if (this.flyouts) {
       for (const id of this.openIds) {
         const row = this.querySelector(`[data-sf-menu-item="${CSS.escape(id)}"]`);
         const submenu = row?.querySelector(':scope > ul.sf-menu, :scope > .sf-menu-region');
         if (!submenu || submenu.hidden) continue;
+        const side = row.dataset.sfMenuLevel !== '1' && !submenu.matches('.sf-menu-region');
+
+        if (side && inPlace) {
+          if (this._anchors.has(submenu)) this.releaseAnchor(submenu);
+          submenu.setAttribute('data-sf-menu-in-place', '');
+          delete submenu.dataset.sfSide;
+          continue;
+        }
+
+        submenu.removeAttribute('data-sf-menu-in-place');
         wanted.add(submenu);
 
         const current = this._anchors.get(submenu);
@@ -1320,6 +1352,10 @@ class SfSmartMenu extends MenuElement {
     }
 
     for (const submenu of [...this._anchors.keys()]) if (!wanted.has(submenu)) this.releaseAnchor(submenu);
+
+    if (!inPlace || !this.flyouts) {
+      for (const submenu of this.querySelectorAll('ul.sf-menu[data-sf-menu-in-place]')) submenu.removeAttribute('data-sf-menu-in-place');
+    }
   }
 
   releaseAnchor(submenu) {
@@ -1364,7 +1400,7 @@ class SfSmartMenu extends MenuElement {
 
     if (this._overflowHidden.length) this.setOverflowHidden([]);
 
-    if (this.collapse !== 'auto' || this.overflow !== 'collapse' || !this.horizontal) {
+    if (!this.collapseOnPhone || !this._narrow) {
       if (this._autoCollapsed) {
         this._autoCollapsed = false;
         this.requestComponentUpdate('collapse');
@@ -1519,7 +1555,7 @@ class SfSmartMenu extends MenuElement {
       flyouts: this.flyouts,
       collapsed: this.collapsed,
       panelOpen: this.panelOpen,
-      compact: this.appearance === 'compact',
+      rail: this.appearance === 'rail',
       appearance: this.appearance,
       label: this.getAttribute('aria-label') || this.getProp('label') || this._childLabel,
       toggleLabel: this.getAttribute('toggle-label') || this.sfWord('toggle-label'),
@@ -1593,13 +1629,20 @@ function branchGlyph(context, level, open) {
   return open ? 'keyboard_arrow_down' : 'chevron_right';
 } // A count is the class counter: a .sf-badge with data-count, which the badges
 // runtime caps at 99+, hides at 0 and names after the label. Any other badge
-// is a short label in the same place.
+// is a short label in the same place. Each names its look (owner decision C140
+// (3)): a count is a quantity, grey tonal, unless the item's status is error --
+// then it is the attention count, the one filled look, red; a label is grey
+// tonal. Both drew the badge without a look, the dark grey fill. In the rail
+// the count sits on the icon as an anchored badge, red, as before.
 
+
+const ATTENTION = 'sf-badge--main sf-badge--error';
+const QUANTITY = 'sf-badge--tonal sf-badge--neutral';
 
 function renderBadge(item) {
   if (!item.badge) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const count = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_2__.badgeCount)(item.badge);
-  return count !== null ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge" data-count=${count}></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge sf-badge--tight">${item.badge}</span>`;
+  return count !== null ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-badge ${item.status === 'error' ? ATTENTION : QUANTITY}`} data-count=${count}></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge sf-badge--tonal sf-badge--neutral sf-badge--tight">${item.badge}</span>`;
 } // An item's status: the class dot of its tone at the row's end, before the
 // counter, and its word in the link's name («Адрес, внимание»), out of sight.
 
@@ -1729,8 +1772,8 @@ function renderRegion(context, item, open, submenuId) {
 }
 
 function renderItem(context, item, level) {
-  // A compact rail opens no branch: its rows are the first level alone.
-  const branch = item.children.length > 0 && !context.compact; // A first-level item of a row that went to «Ещё»: its placeholder.
+  // The rail opens no branch: its rows are the first level alone.
+  const branch = item.children.length > 0 && !context.rail; // A first-level item of a row that went to «Ещё»: its placeholder.
 
   if (level === 1 && context.hidden.has(item.id)) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1820,7 +1863,10 @@ function renderSearch(context) {
 
 
 function renderMenuTemplate(context) {
-  const listClasses = joinClasses('sf-menu', context.flyouts ? 'sf-menu--horizontal' : '', context.appearance !== 'default' ? `sf-menu--${context.appearance}` : '', // The row's current section: a line on the header's edge (default) or,
+  const listClasses = joinClasses('sf-menu', context.flyouts ? 'sf-menu--horizontal' : '', context.appearance !== 'default' ? `sf-menu--${context.appearance}` : '', // The rail writes its former class beside its own until 2027-01-01, so a
+  // page selector that reached sf-menu--compact still does (C134; journal
+  // class-menu-compact-to-rail).
+  context.appearance === 'rail' ? 'sf-menu--compact' : '', // The row's current section: a line on the header's edge (default) or,
   // with indicator fill, the C23 plate (C30).
   context.flyouts && context.indicator === 'fill' ? 'sf-menu--indicator-fill' : '', // A column with a border of its own: the path's line lies on it (R072 e).
   !context.flyouts && context.bordered ? 'sf-menu--bordered' : '');
@@ -1956,11 +2002,12 @@ __webpack_require__.r(__webpack_exports__);
 // header (sf-menu--horizontal, the first level only).
 const MENU_ORIENTATIONS = Object.freeze(['vertical', 'horizontal']);
 // The class menu's presentations by name: default, the documentation tree
-// (sf-menu--documentation-tree), the compact rail (sf-menu--compact) and the
+// (sf-menu--documentation-tree), the rail (sf-menu--rail; appearance compact
+// and the class sf-menu--compact are its dated aliases until 2027-01-01) and the
 // header navigation (sf-menu--navigation). The tree and the rail are columns:
 // with them the menu is vertical. The navigation is a row or a column, as
 // orientation says, like the default.
-const MENU_APPEARANCES = Object.freeze(['default', 'documentation-tree', 'compact', 'navigation']);
+const MENU_APPEARANCES = Object.freeze(['default', 'documentation-tree', 'rail', 'navigation']);
 // The presentations that can stand in a row.
 const ROW_APPEARANCES = Object.freeze(['default', 'navigation']);
 // When a row of links that does not fit becomes a button that opens them as a
@@ -2161,13 +2208,25 @@ function currentItemId(items, {current = '', pathname = '', hash = '', base = ''
   return flagged;
 }
 
-// Which branches are open: what the person or the host set, else -- in a
-// column -- what the item says, and the branches above the current page, so
-// it can be seen. A row's panels open only when asked: none is open when the
-// page starts. A group that cannot be collapsed is always open; a row draws
-// no group (its items stand in the row), so none is open there.
+// Which branches are open: what the person or the host set, else what the
+// item says -- in a column also the branches above the current page, so it
+// can be seen. A row's panels are one chain, so there an item's open flag
+// opens the first flagged branch of the row and, inside its panel, the first
+// flagged branch of each level (owner remark 2026-11-11: «Каталог» with
+// open: true drew no panel); the current page alone opens nothing in a row.
+// A group that cannot be collapsed is always open; a row draws no group (its
+// items stand in the row), so none is open there.
 function openBranches(items, overrides = new Map(), currentId = null, inColumn = true) {
   const reveal = new Set(inColumn && currentId ? pathTo(items, currentId) || [] : []);
+  const rowChain = new Set();
+  if (!inColumn) {
+    for (let level = withoutGroups(items); level.length;) {
+      const flagged = level.find((item) => item.open && item.children.length && !item.disabled);
+      if (!flagged) break;
+      rowChain.add(flagged.id);
+      level = flagged.children;
+    }
+  }
   const open = new Set();
   walkItems(items, (item) => {
     if (!item.children.length) return;
@@ -2175,7 +2234,7 @@ function openBranches(items, overrides = new Map(), currentId = null, inColumn =
       if (inColumn) open.add(item.id);
       return;
     }
-    const fallback = inColumn && (item.open || reveal.has(item.id));
+    const fallback = inColumn ? Boolean(item.open || reveal.has(item.id)) : rowChain.has(item.id);
     const state = overrides.has(item.id) ? overrides.get(item.id) : fallback;
     if (state) open.add(item.id);
   });
@@ -2243,7 +2302,7 @@ function itemsFromList(list) {
     });
 }
 
-// The items as a row or a compact rail draws them: a group gives its items
+// The items as a row or the rail draws them: a group gives its items
 // to the first level, in its place, and draws no heading.
 function withoutGroups(items) {
   return items.flatMap((item) => (item.group ? item.children : [item]));
@@ -2339,14 +2398,14 @@ function filterItems(items, query) {
 /***/ "97168578e30d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-menu:navigate","to":"sf-menu-navigate","kind":"event","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":true,"section":"§8, §16 item 6, vocabulary §5.1","note":"{id, href, item} is data only; one cancel for both names"},{"from":"sf-menu:toggle","to":"sf-menu-toggle","kind":"event","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, §16 item 6","note":"{id, open, source, item} is data only"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-menu:navigate","to":"sf-menu-navigate","kind":"event","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":true,"section":"§8, §16 item 6, vocabulary §5.1","note":"{id, href, item} is data only; one cancel for both names"},{"from":"sf-menu:toggle","to":"sf-menu-toggle","kind":"event","component":"sf-menu","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"section":"§8, §16 item 6","note":"{id, open, source, item} is data only"},{"from":"compact","to":"rail","kind":"value","setting":"appearance","component":"sf-menu","since":"2026-11-13","remove_after":"2027-01-01","section":"§16 item 20","note":"owner decision C134 (control/research/2026-11-13-navigation-density.md D5, Q1): the word compact means density only; the icon rail is appearance rail and draws the class sf-menu--rail (sf-menu--compact is the class\'s dated alias, journal class-menu-compact-to-rail)"}]}');
 
 /***/ },
 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.6.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","compact","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.9.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

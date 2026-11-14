@@ -285,8 +285,10 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   word visually hidden (never on an empty value); a copy button and the
 //   item's action after it; a hint under it.
 // - With no items: nothing at all.
-// The rung below the list's: the hint, a stacked label, the copy button,
-// the actions, the help mark.
+// The rung below the list's: the hint, a stacked label, the help mark. The
+// copy button and the actions -- an item's beside its value, a section's
+// beside its heading -- stand on the line's own rung (C103: one line, one
+// step -- text 1, button size 1).
 
 const BELOW = {
   '1/2': '1/3',
@@ -312,7 +314,7 @@ function action(context, item) {
     size
   } = context;
   const look = {
-    size: BELOW[size],
+    size,
     appearance: 'ghost',
     scheme: 'primary'
   };
@@ -354,7 +356,7 @@ function row(context, item) {
       <span class="sf-list-description-line">
         ${item.status ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${`sf-icon sf-list-description-icon sf-list-description-icon--${item.status}`} aria-hidden="true">${icons[item.status]}</i><span class="sr-only">${item.statusWord}: </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${shown(context, item)}
-        ${item.copy ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-copy class="sf-list-description-copy" size=${BELOW[size]} appearance="ghost"
+        ${item.copy ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-copy class="sf-list-description-copy" size=${size} appearance="ghost"
           value=${item.value} label=${item.copyLabel}></sf-button-copy>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${action(context, item)}
       </span>
@@ -441,7 +443,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "7c0ab7bd0a28"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.1.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.1.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

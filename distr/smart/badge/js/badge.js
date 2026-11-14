@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
 /* harmony export */ });
 const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
@@ -25,8 +27,11 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']);
-const DEFAULT_BADGE_TYPE = 'main';
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
 const DEFAULT_BADGE_SCHEME = 'neutral';
 const DEFAULT_BADGE_SIZE = '1/3';
 
@@ -41,12 +46,31 @@ function canonicalBadgeScheme(value) {
   const name = String(value ?? '').trim().toLowerCase();
   const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
   return BADGE_SCHEMES.includes(canonical) ? canonical : '';
-}
-const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => !(scheme === 'on-surface' && type === 'tonal')).flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
   type,
   scheme,
   size
-})))));
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
 function normalizeBadgeContract({
   type,
   scheme,
@@ -54,10 +78,12 @@ function normalizeBadgeContract({
 } = {}) {
   let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
   const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
-  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE);
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
 
-  if (normalizedType === 'tonal' && normalizedScheme === 'on-surface') {
-    normalizedType = 'main';
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
   }
 
   return {
@@ -75,11 +101,13 @@ function normalizeBadgeContract({
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -92,6 +120,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -130,15 +161,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -384,15 +427,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _component_badges_js_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a2a9d3c2841e");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ead34405591f");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("55155acfa4cc");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2643258a0104");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f6a7c3a64b57");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("94f01354b3f6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ead34405591f");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("55155acfa4cc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2643258a0104");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f6a7c3a64b57");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("94f01354b3f6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__);
+
 
 
 
@@ -482,14 +528,14 @@ function resolveBadgeStatus(element, raw, fallback) {
 // (journal attribute-badge-scheme-to-status), and scheme stays the colour role.
 
 
-const BadgeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const BadgeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
 
 class SfBadge extends BadgeElement {
@@ -515,12 +561,34 @@ class SfBadge extends BadgeElement {
   get templateName() {
     return this.getAttribute('template') || 'default';
   } // In a row or a table cell the element takes the text line of a form size,
-  // so the row keeps its control height.
+  // so the row keeps its control height; text takes the line of the text it
+  // stands beside, its size and line inherited (C95 point 6).
 
 
   get line() {
-    const line = this.getAttribute('line') || '';
+    const line = (this.getAttribute('line') || '').trim().toLowerCase();
+    if (line === 'text') return 'text';
     return line ? (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(line, 'sf-badge line') : '';
+  } // appearance="main" is the attention count's (owner decision C140 (4)): with
+  // any colour but error it draws tonal, and the spelling is noted once per
+  // badge until 2027-01-01 (journal value-badge-appearance-main-to-tonal).
+
+
+  noteRetiredMain() {
+    if (this._sfMainNoted || !(0,_component_badges_js_contract__WEBPACK_IMPORTED_MODULE_3__.isRetiredMain)({
+      type: this.getProp('appearance'),
+      scheme: this.paintedScheme
+    })) return;
+    this._sfMainNoted = true;
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+      component: 'sf-badge',
+      tag: 'sf-badge',
+      kind: 'value',
+      attribute: 'appearance',
+      from: 'main',
+      to: 'tonal',
+      ..._component_badges_js_contract__WEBPACK_IMPORTED_MODULE_3__.BADGE_MAIN_TONAL
+    });
   }
 
   get appearance() {
@@ -587,6 +655,7 @@ class SfBadge extends BadgeElement {
   }
 
   templateContext() {
+    this.noteRetiredMain();
     const props = this.getPropsContext();
     const variant = (0,_component_badges_js_contract__WEBPACK_IMPORTED_MODULE_3__.normalizeBadgeContract)(props);
     return this.createTemplateContext({ ...props,
@@ -605,7 +674,7 @@ class SfBadge extends BadgeElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderBadgeTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderBadgeTemplate)(this.templateContext());
   }
 
   get value() {
@@ -618,7 +687,7 @@ class SfBadge extends BadgeElement {
       scheme: this.scheme,
       status: this.status,
       activity: this.activity,
-      compact: this.compact,
+      iconOnly: this.iconOnly,
       tight: this.tight,
       text: this.text,
       icon: this.icon,
@@ -688,16 +757,21 @@ function renderBadgeTemplate(context) {
   const hasTextSlot = context.component?.hasSlotContent?.('text');
   const hasTextContent = hasTextSlot || String(context.drawnText ?? '').length > 0;
   const hasAccessibleLabel = String(context.ariaLabel || '').length > 0;
-  const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.drawnText; // Compact needs something to show: with no icon the text stays visible.
+  const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.drawnText; // Icon-only needs something to show: with no icon the text stays visible.
+  // compact is its dated alias (owner decision C134: compact means density
+  // only); the shim maps the attribute and the property onto icon-only.
 
-  const isCompact = Boolean(context.compact) && (leftIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing || rightIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing); // A figure -- one character and no icon, a single-figure count -- stays
+  const isIconOnly = Boolean(context.iconOnly) && (leftIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing || rightIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing); // A figure -- one character and no icon, a single-figure count -- stays
   // round in either side room: its side room is the block padding, so the
   // size's height is its width.
 
   const isFigure = !hasTextSlot && leftIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && rightIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && [...String(context.drawnText ?? '').trim()].length === 1;
   const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the run state's role, the status
   // or the colour role (the component's paintedScheme).
-  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', isCompact ? 'sf-badge--compact' : '', context.tight ? 'sf-badge--tight' : '', isFigure ? 'sf-badge--figure' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
+  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', // The class sf-badge--icon-only, and until 2027-01-01 its former name
+  // sf-badge--compact beside it, so a page selector that reached it still
+  // does (journal class-badges-compact-to-icon-only).
+  isIconOnly ? 'sf-badge--icon-only sf-badge--compact' : '', context.tight ? 'sf-badge--tight' : '', isFigure ? 'sf-badge--figure' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
   // filled whatever held it -- every status in a table cell was a bar the
   // width of the column.
   'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
@@ -711,7 +785,7 @@ function renderBadgeTemplate(context) {
       ${leftIconContent}
       ${hasTextContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <span
-              class=${`sf-badge-text-container flex items-center${isCompact ? ' sr-only' : ''}`}
+              class=${`sf-badge-text-container flex items-center${isIconOnly ? ' sr-only' : ''}`}
               aria-hidden=${hasAccessibleLabel ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             >
               <span class="sf-badge-text">${textContent}</span>
@@ -757,14 +831,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "2643258a0104"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"icon-left","to":"icon-start","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-start wins when both are given"},{"from":"icon-right","to":"icon-end","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-end wins when both are given"},{"from":"danger","to":"error","kind":"value","setting":"status","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-status-danger-critical-to-error"},{"from":"left","to":"start","kind":"value","setting":"icon-position","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as start"},{"from":"right","to":"end","kind":"value","setting":"icon-position","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as end"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"icon-left","to":"icon-start","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-start wins when both are given"},{"from":"icon-right","to":"icon-end","kind":"setting","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-end wins when both are given"},{"from":"danger","to":"error","kind":"value","setting":"status","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-status-danger-critical-to-error"},{"from":"left","to":"start","kind":"value","setting":"icon-position","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as start"},{"from":"right","to":"end","kind":"value","setting":"icon-position","component":"sf-badge","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as end"},{"from":"compact","to":"icon-only","kind":"setting","component":"sf-badge","since":"2026-11-14","remove_after":"2027-01-01","section":"§16 item 20","note":"owner decision C134 (ui-control control/research/2026-11-13-navigation-density.md D5, Q1; badges study control/research/2026-11-14-badges.md): the word compact means density only; the icon-only badge is icon-only and draws the class sf-badge--icon-only (sf-badge--compact is the class\'s dated alias, journal class-badges-compact-to-icon-only); the shim maps the attribute and the property"}]}');
 
 /***/ },
 
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"compact":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

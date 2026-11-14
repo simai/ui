@@ -411,6 +411,49 @@ function createSpinnerDotsSvg({
   return svg;
 }
 
+const ONE_LOOK = {
+  since: '2026-11-13',
+  remove_after: '2027-01-01'
+};
+
+function noteFormerLook(root, named) {
+  const smart = root.closest?.('sf-spinner');
+
+  if (named && named !== 'arc') {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+      component: smart ? 'sf-spinner' : 'spinner',
+      kind: 'value',
+      attribute: smart ? 'kind' : 'data-variant',
+      from: named,
+      to: 'arc',
+      ...ONE_LOOK
+    });
+  }
+
+  const page = root.closest?.('[data-sf-spinner]')?.getAttribute('data-sf-spinner');
+
+  if (page && page !== 'arc') {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+      component: 'spinner',
+      kind: 'attribute',
+      attribute: 'data-sf-spinner',
+      from: 'data-sf-spinner',
+      to: null,
+      ...ONE_LOOK
+    });
+  }
+} // The show delay (owner decision C130 (8); setting delay, its name final by C138):
+// milliseconds, written as data-delay; 0 shows at once. The sheet hides the
+// spinner for --sf-loader--delay, 1 s by default.
+
+
+function delayOf(root) {
+  const raw = root.dataset.delay;
+  if (raw === undefined || raw === '') return null;
+  const parsed = Number.parseFloat(raw);
+  return Number.isFinite(parsed) ? clamp(parsed, 0, 60000) : null;
+}
+
 function getSpinnerConfig(root) {
   const indicator = root.querySelector('.sf-loader--loading-indicator');
   const circles = root.querySelector('.sf-loader--circles');
@@ -426,12 +469,15 @@ function getSpinnerConfig(root) {
   const dots = clamp(Math.floor(toNumber(root.dataset.dots, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS)), 3, 32);
   const filled = clamp(Math.floor(toNumber(root.dataset.filled, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS_FILLED)), 1, dots);
   const dotRadius = root.dataset.dotRadius ? clamp(toNumber(root.dataset.dotRadius, 1), 1, Math.min(width, height) / 4) : null;
-  const direction = normalizeChoice(root.dataset.direction, ['clockwise', 'counterclockwise'], 'clockwise'); // The look is the page's (data-sf-spinner on an ancestor) unless the spinner
-  // names its own in data-variant; the sheet resolves both. Markup that brought
-  // its own .sf-loader--circles part and no variant was a dots spinner, and
-  // says so now that every look is drawn in the one indicator.
+  const direction = normalizeChoice(root.dataset.direction, ['clockwise', 'counterclockwise'], 'clockwise'); // One look, the arc (owner decision C130 (5)). A former look named by the
+  // spinner (data-variant: breathing, comet, dots, or the .sf-loader--circles
+  // part of old dots markup) or by the page (data-sf-spinner on an ancestor)
+  // draws the arc and is noted until the journal's date
+  // (value-spinner-one-look); the sheet draws the arc whatever the name.
 
-  const variant = root.dataset.variant ? normalizeChoice(root.dataset.variant, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_LOOKS, 'arc') : circles ? 'dots' : '';
+  const named = root.dataset.variant ? normalizeChoice(root.dataset.variant, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_LOOKS, 'arc') : circles ? 'dots' : '';
+  noteFormerLook(root, named);
+  const variant = named ? 'arc' : '';
   return {
     pixel,
     width,
@@ -446,6 +492,9 @@ function getSpinnerConfig(root) {
     hasExplicitHeight,
     infinite: root.dataset.infinite === 'true',
     announce: root.dataset.announce === 'true',
+    // The words are said, not shown (SP-07; label-hidden, its name final by C138):
+    // the label stays in the drawing for a screen reader and leaves the eye.
+    labelHidden: root.dataset.labelHidden === 'true',
     label: root.dataset.label !== undefined ? root.dataset.label : labelNode?.textContent?.trim?.() || '',
     indicator,
     circles,
@@ -520,6 +569,13 @@ function renderSpinner(root) {
 
 
   root.classList.toggle('sf-loader--pixel-geometry', config.pixel);
+  const delay = delayOf(root);
+  if (delay === null) root.style.removeProperty('--sf-loader--delay');else root.style.setProperty('--sf-loader--delay', `${delay}ms`); // A label that is said but not shown (SP-07): label="" took the words from
+  // the eye and from the screen reader alike, so a spinner that wanted to stay
+  // quiet on the page lost its name. The text keeps its node, the sheet hides
+  // it visually.
+
+  root.classList.toggle('sf-loader--label-hidden', config.labelHidden && Boolean(config.label));
 
   if (config.variant && root.dataset.variant !== config.variant) {
     root.dataset.variant = config.variant;
@@ -595,6 +651,8 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       dotRadius = null,
       infinite = false,
       announce = false,
+      labelHidden = false,
+      delay = 1000,
       direction = 'clockwise'
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
@@ -630,7 +688,14 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
     }
 
     this.template.dataset.infinite = String(infinite);
-    this.template.dataset.announce = String(announce);
+    this.template.dataset.announce = String(announce); // A spinner made by SF.Spinner waits as sf-spinner does (C130 (8)).
+
+    this.template.dataset.delay = String(delay ?? 1000);
+
+    if (labelHidden === true || labelHidden === 'true' || labelHidden === '') {
+      this.template.dataset.labelHidden = 'true';
+    }
+
     this.template.dataset.direction = String(direction);
 
     if (dotRadius !== null && dotRadius !== undefined) {
@@ -809,22 +874,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("eecc41af23fd");
-/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f4cc1d3fd22e");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4f18051b2e24");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("446b69079a47");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e0d992e70cd1");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("1de2b9d83763");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f4cc1d3fd22e");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4f18051b2e24");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("446b69079a47");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e0d992e70cd1");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1de2b9d83763");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
 
 
 
+ // The kind values: the arc (or none, which is the arc).
 
-
+const SPINNER_KINDS = ['', 'arc'];
 
 
 
@@ -836,14 +901,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // words)), and variant, the pixel geometry and getSpinnerRoot are dated rows
 // of aliases.json.
 
-const SpinnerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const SpinnerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   actions: {
     'refresh-spinner'() {
       if (this._boundRoot) (0,_component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__.renderSpinner)(this._boundRoot);
@@ -863,12 +928,12 @@ class SfSpinner extends SpinnerElement {
   static get props() {
     return { ...super.props,
       // The axis is called kind, because that is the question it answers.
-      // `variant` keeps working: see contracts/public-api-axes.json. Unset, the
-      // spinner takes the page's look (data-sf-spinner on html, body or any
-      // block; simai/ui-source#11), the arc when the page names none.
+      // `variant` keeps working: see contracts/public-api-axes.json. One look,
+      // the arc (owner decision C130 (5)): breathing, comet and dots are dated
+      // value aliases of arc (aliases.json) and draw the arc.
       kind: {
         default: '',
-        values: ['', ..._component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_LOOKS],
+        values: SPINNER_KINDS,
         aliases: ['variant']
       },
       rootClass: {
@@ -910,7 +975,7 @@ class SfSpinner extends SpinnerElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderSpinnerTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderSpinnerTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -947,8 +1012,8 @@ class SfSpinner extends SpinnerElement {
       kind: 'action',
       from: 'getSpinnerRoot',
       to: null,
-      since: _aliases_json__WEBPACK_IMPORTED_MODULE_7__.since,
-      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_7__.remove_after
+      since: _aliases_json__WEBPACK_IMPORTED_MODULE_6__.since,
+      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_6__.remove_after
     });
     return this.querySelector('.sf-loader-container');
   }
@@ -1008,6 +1073,8 @@ function renderSpinnerTemplate(context) {
       data-dot-radius=${valueOrNothing(context.dotRadius)}
       data-infinite=${String(!!context.infinite)}
       data-announce=${String(!!context.announce)}
+      data-label-hidden=${context.labelHidden ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-delay=${context.component?.hasAttribute?.('delay') ? String(context.delay ?? 1000) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-direction=${normalizeChoice(context.direction, ['clockwise', 'counterclockwise'], 'clockwise')}
     ></div>
   `;
@@ -1055,14 +1122,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "446b69079a47"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinner for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"variant","to":"kind","kind":"setting","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"height","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"stroke-width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"dot-radius","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"getSpinnerRoot","to":null,"kind":"action","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinner for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"variant","to":"kind","kind":"setting","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"height","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"stroke-width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"dot-radius","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"getSpinnerRoot","to":null,"kind":"action","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"},{"from":"breathing","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"comet","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"dots","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"}]}');
 
 /***/ },
 
 /***/ "4f18051b2e24"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"kind":{"type":"enum","values":["","arc","breathing","comet","dots"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"delay":{"type":"number","default":1000,"integer":true,"min":0},"label-hidden":{"type":"boolean","default":false},"kind":{"type":"enum","values":["","arc"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

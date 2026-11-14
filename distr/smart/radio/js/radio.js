@@ -10,6 +10,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
 /* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   SWITCH_TEXT_PARTS: () => (/* binding */ SWITCH_TEXT_PARTS),
 /* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
 /* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
 /* harmony export */ });
@@ -143,6 +144,16 @@ const RADIO_TEXT_PARTS = Object.freeze({
   label: '.sf-radio-button-top',
   column: '.sf-radio-button-container',
   description: '.sf-radio-button-description'
+}); // sf-switch reads the same binding since C63 W9 (it had its own copy in
+// component/switch/js/_switch.js, written first, the same algorithm).
+
+const SWITCH_TEXT_PARTS = Object.freeze({
+  kind: 'sf-switch',
+  classKind: 'sf-switch',
+  text: '.sf-switch-container',
+  label: '.sf-switch-top',
+  column: '.sf-switch-container-wrap',
+  description: '.sf-switch-description'
 });
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -899,6 +910,78 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "496db683b2c5"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKABLE_HELP_SIZE: () => (/* binding */ CHECKABLE_HELP_SIZE),
+/* harmony export */   checkableClasses: () => (/* binding */ checkableClasses),
+/* harmony export */   renderCheckableHelp: () => (/* binding */ renderCheckableHelp),
+/* harmony export */   renderCheckableRow: () => (/* binding */ renderCheckableRow),
+/* harmony export */   renderCheckableText: () => (/* binding */ renderCheckableText)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _checkable_row_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("42b499506736");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+ // The shared base of the three choice controls, sf-checkbox, sf-radio and
+// sf-switch (audit 2026-11-11 W9, owner decision C63): one text column with a
+// help slot, one help mark, one row and one sheet (checkable-row.css) for the
+// row's padding, the hit area, the help's size and place. The name and the
+// description are linked by src/component/checkable-text-helper.js
+// (linkCheckableText) for all three. Each control keeps its own class
+// vocabulary (.sf-checkbox-*, .sf-radio-button-*, .sf-switch-*): the class
+// markup is public and unchanged; the shared classes are .sf-checkable* on
+// what the Smart elements draw.
+// The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
+// 1, 1/2 beside size 2 (the mark adds no height of its own).
+
+const CHECKABLE_HELP_SIZE = Object.freeze({
+  '1/2': '1/3',
+  1: '1/3',
+  2: '1/2'
+}); // The help: what the help slot holds, or a «?» button (sf-help-mark) that
+// opens the help setting's explanation.
+
+function renderCheckableHelp(context, className) {
+  const component = context.component;
+  if (component?.hasSlotContent?.('help')) return component.getSlotContent('help');
+  if (!context.help) return '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class=${className} size=${CHECKABLE_HELP_SIZE[context.size] || '1/3'} text=${context.help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>`;
+} // The text column: the label row (the name), then the description.
+//   parts.column  the column's class      (.sf-checkbox-container)
+//   parts.top     the label row's class   (.sf-checkbox-top)
+//   parts.wrap    a class the label text sits in inside the row, if any
+
+function renderCheckableText(parts, labelContent, descriptionContent) {
+  if (!labelContent && !descriptionContent) return '';
+  const name = parts.wrap ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${parts.wrap}>${labelContent}</span>` : labelContent;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`${parts.column} flex flex-col`}>${labelContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`${parts.top} flex`}>${name}</span>` : ''}${descriptionContent}</span>`;
+} // The classes the shared sheet reads on the control's <label>.
+
+function checkableClasses(size, hasText) {
+  return ['sf-checkable', `sf-checkable--size-${size}`, hasText ? 'sf-checkable--text' : ''];
+} // The help mark is the label's sibling in a row, not inside the <label>
+// (owner decision C59, as C33 for field labels): pressing «?» is no press on
+// the control -- the label and its input never become :active, the box is not
+// painted pressed and the value does not change.
+
+function renderCheckableRow(size, control, help) {
+  if (!help) return control; // The help sits in a box of its own: sf-help-mark's host draws no box
+  // (display: contents), so the row places this one.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "078aa87e580e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -931,6 +1014,7 @@ function bindCheckableReset(component, input) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -1018,12 +1102,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -1041,6 +1127,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -1139,6 +1230,71 @@ const FormField = Base => class extends Base {
   formStateRestoreCallback(state) {
     if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
     this.sfSyncFormState();
+  }
+
+};
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
@@ -1448,18 +1604,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("61d50f69160a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("496db683b2c5");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
- // The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
-// 1, 1/2 beside size 2 (the mark adds no height of its own).
 
-const HELP_SIZE = {
-  '1/2': '1/3',
-  1: '1/3',
-  2: '1/2'
-};
+
 function renderRadioTemplate(context) {
   const {
     size,
@@ -1485,13 +1636,12 @@ function renderRadioTemplate(context) {
   const descriptionContent = context.component?.hasSlotContent?.('description') // A slotted description is held in a plain span so the input can name it
   // as its description (aria-describedby): a bare text node has no id.
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-radio-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description">${description}</span>` : '';
-  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') // help is the explanation: a «?» button after the label text that opens
-  // it (sf-help-mark), outside the control's activation.
-  : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-radio-button-help" size=${HELP_SIZE[size] || '1/3'} text=${help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>` : '';
-  const showContainer = !!(labelContent || descriptionContent || helpContent);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const helpContent = (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableHelp)(context, 'sf-radio-button-help');
+  const showContainer = !!(labelContent || descriptionContent);
+  rootClasses.push(...(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.checkableClasses)(size, showContainer));
+  const control = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__.keepHelpOutOfLabel}>
-      <span class="sf-radio-button-box transition flex items-cross-center content-main-center">
+      <span class="sf-radio-button-box flex items-cross-center content-main-center">
         <input
           type="radio"
           name=${controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1503,22 +1653,25 @@ function renderRadioTemplate(context) {
         <span class="sf-radio-button-mark" aria-hidden="true"></span>
       </span>
 
-      ${showContainer ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <span class="sf-radio-button-container flex flex-col">
-              ${labelContent || helpContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <span class="sf-radio-button-top flex">
-                      ${labelContent}
-                      ${helpContent}
-                    </span>
-                  ` : ''}
-              ${descriptionContent}
-            </span>
-          ` : ''}
+      ${(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableText)({
+    column: 'sf-radio-button-container',
+    top: 'sf-radio-button-top'
+  }, labelContent, descriptionContent)}
     </label>
   `;
+  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableRow)(size, control, helpContent);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "42b499506736"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ },
 
@@ -1567,7 +1720,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-radio
 /***/ "b9154ac40cf8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

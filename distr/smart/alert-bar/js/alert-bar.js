@@ -555,6 +555,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COLLAPSE_ICON: () => (/* binding */ COLLAPSE_ICON),
 /* harmony export */   HIDE: () => (/* binding */ HIDE),
 /* harmony export */   ICONS: () => (/* binding */ ICONS),
 /* harmony export */   LEVELS: () => (/* binding */ LEVELS),
@@ -567,16 +568,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_format__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d302c3bc5424");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("677c9e2dc7c8");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("528216f76e58");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2a4d264285b5");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ba9bcf2fbdc4");
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d3818183b14c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("677c9e2dc7c8");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("528216f76e58");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2a4d264285b5");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ba9bcf2fbdc4");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_9__);
 // sf-alert-bar: the full-width bar above a page or admin header for the
 // conditions that need action now -- a disk nearly full, a failed backup, a
 // site that does not answer, an update. One bar for all of them:
@@ -587,8 +589,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //   </script></sf-alert-bar>
 //
 // The items are sorted error, warning, info, the newest first; the bar takes
-// the colour of the first and shows it. Several are paged «‹ 1 из N ›» and
-// listed under the bar with «Все N». A warning closes for a day, an info item
+// the colour of the first and shows it, without paging arrows (owner decision
+// C114 (3)); «Ещё N» lists the others under the bar (NS-12). A warning closes for a day, an info item
 // for good; an error item is never closed, its button minimizes the bar to a
 // strip that keeps the count.
 //
@@ -600,6 +602,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4,
 // §8): the settings and values are made by core/js/element-manifest.js, close
 // is the action and answers an outcome, the words are the language files'.
+
 
 
 
@@ -630,7 +633,9 @@ const ICONS = {
   error: 'error',
   warning: 'warning',
   info: 'info'
-};
+}; // The open toggle's glyph on a narrow bar (1.6.1): the list collapses.
+
+const COLLAPSE_ICON = 'unfold_less';
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 /** An item's level: error, warning or info; the former danger is read as error (noted once), anything else as info. */
@@ -640,7 +645,7 @@ function levelOf(value) {
   const word = text(value).toLowerCase();
 
   if (word === 'danger') {
-    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__.noteDeprecated)({
+    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_9__.noteDeprecated)({
       component: 'sf-alert-bar',
       tag: 'sf-alert-bar',
       kind: 'value',
@@ -711,11 +716,11 @@ function wrapIndex(value, length) {
   const number = Math.trunc(Number(value)) || 0;
   return (number % length + length) % length;
 }
-const AlertBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const AlertBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
   },
   source: 'ru',
   actions: {
@@ -828,13 +833,6 @@ class SfAlertBar extends AlertBarElement {
   } // ---------------------------------------------------------------- presses
 
 
-  page(step) {
-    const count = this.list.length;
-    if (count < 2) return;
-    this._index = wrapIndex(this._index + step, count);
-    this.requestComponentUpdate('page');
-  }
-
   toggleList(force) {
     const open = force === undefined ? !this._listOpen : Boolean(force);
     if (open === this._listOpen) return;
@@ -903,14 +901,19 @@ class SfAlertBar extends AlertBarElement {
     })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
     this.leave(item.id);
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
-  } // An item leaves: the control that had focus hands it to the next control
-  // of the bar (§19.2: focus never falls to the page).
+  } // An item leaves: the control that had focus hands it on (§19.2: focus
+  // never falls to the page). From a row of the open list it goes to the
+  // row that takes its place -- the next one, or from the last row the one
+  // before it (NS-12); with no row left, to the bar. From the bar, to the
+  // bar's first control.
 
 
   leave(id) {
     const active = this.ownerDocument.activeElement;
     const focused = Boolean(active && this.contains(active));
-    const where = active?.closest?.('.sf-alert-bar-item') ? 'list' : 'bar';
+    const row = active?.closest?.('.sf-alert-bar-item');
+    const rows = row ? [...this.querySelectorAll('.sf-alert-bar-item')] : [];
+    const place = row ? rows.indexOf(row) : -1;
 
     this._gone.add(id);
 
@@ -919,9 +922,12 @@ class SfAlertBar extends AlertBarElement {
     if (count < 2) this._listOpen = false;
     this.requestComponentUpdate('leave');
     if (!focused) return;
+
+    const first = scope => scope?.querySelector('a[href], button:not([disabled])');
+
     this.whenDrawn(() => {
-      const scope = where === 'list' && this._listOpen ? '.sf-alert-bar-list' : '.sf-alert-bar-row';
-      const target = this.querySelector(`${scope} a[href], ${scope} button:not([disabled])`) ?? this.querySelector('.sf-alert-bar a[href], .sf-alert-bar button:not([disabled])');
+      const left = this._listOpen ? [...this.querySelectorAll('.sf-alert-bar-item')] : [];
+      const target = (place >= 0 && left.length ? first(left[Math.min(place, left.length - 1)]) : null) ?? first(this.querySelector('.sf-alert-bar-row')) ?? this.querySelector('.sf-alert-bar a[href], .sf-alert-bar button:not([disabled])');
       target?.focus({
         preventScroll: true
       });
@@ -958,7 +964,9 @@ class SfAlertBar extends AlertBarElement {
     const count = list.length;
     const index = wrapIndex(this._index, count);
     const current = list[index] ?? null;
-    this._shownId = current?.id;
+    this._shownId = current?.id; // The open list holds the others: every item but the one the bar shows.
+
+    const others = list.filter(item => item !== current);
     const level = list[0]?.level ?? ''; // The raw value stays under its own name; the template reads this one.
 
     const isMinimized = Boolean(this.minimized) && level === 'error';
@@ -977,6 +985,9 @@ class SfAlertBar extends AlertBarElement {
       list: list.map(item => ({ ...item,
         levelWord: word(`level-${item.level}`)
       })),
+      others: others.map(item => ({ ...item,
+        levelWord: word(`level-${item.level}`)
+      })),
       count,
       index,
       level,
@@ -985,15 +996,10 @@ class SfAlertBar extends AlertBarElement {
       listId: this._listId,
       announce: this._announce,
       icons: ICONS,
+      collapseIcon: COLLAPSE_ICON,
       words: {
-        position: word('position', {
-          n: index + 1,
-          count
-        }),
-        prev: word('prev'),
-        next: word('next'),
-        all: word('all', {
-          count
+        more: word('more', {
+          count: others.length
         }),
         collapseList: word('collapse-list'),
         list: word('list'),
@@ -1015,7 +1021,16 @@ class SfAlertBar extends AlertBarElement {
     // The live regions keep their text until the host's next list, so a
     // drawing in between (a page, a minimize) does not speak it again.
     this.syncList();
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderAlertBarTemplate)(this.templateContext());
+    const context = this.templateContext(); // The open toggle's collapse glyph (narrow bar, 1.6.1) is drawn only
+    // after a press: asked for with the bar's first drawing, so the page's
+    // icon request carries it and the glyph does not wait for a subset of
+    // its own (R074, as sf-toast asks for its status glyph).
+
+    if (context.count > 1) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_4__.preloadControlIcons)(this, [{
+      icon: COLLAPSE_ICON,
+      filled: false
+    }]);
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderAlertBarTemplate)(context);
   }
 
 }
@@ -1049,12 +1064,28 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // - Minimized (an error bar only): one button, the strip, that keeps the
 //   colour, the icon and the count and expands the bar on a press.
 // - Otherwise one row: the shown item's icon, its text with source and time,
-//   its action link (sf-button href), acknowledge, the pager «‹ 1 из N ›» and
-//   «Все N» when there are several, and at the end close (a warning or an
-//   info item) or minimize (an error item). With several items the list of
-//   all opens under the bar, each with its own action, acknowledge and close.
+//   its action link (sf-button href), acknowledge, «Ещё N» when there are
+//   several, and at the end close (a warning or an info item) or minimize (an
+//   error item). The bar shows the most serious item; it has no paging
+//   arrows (owner decision C114 (3)).
+// - With several items, «Ещё N» (the others, not the shown one) opens the
+//   list of the others under the bar, in the page flow (C114 (3) as shown
+//   expanded, layout Р1, NS-12); open, the button reads «Свернуть список».
+//   On a narrow bar (38rem) the open button keeps the place of «Ещё N» at
+//   the end of the action line: it shows the collapse glyph only, its name
+//   still «Свернуть список» (aria-label, title), so the longer label never
+//   wraps to a line of its own. Wide, the glyph is not drawn (scss/).
+//   Each row is the bar row's composition on the list's surface: the level
+//   icon in the level's colour (its word for a screen reader), the text with
+//   the source and time on the line below, the action and acknowledge, and
+//   the close for a warning or an info item; an error row keeps the close's
+//   place empty, so the columns line up. No level badge.
 //
-// The controls are sf-button and sf-button-icon of scheme on-surface: inside
+// One button family (AA-15): the action is tonal surface and every other
+// button (acknowledge, «Ещё N», hide) ghost, as on sf-alert and sf-toast
+// (owner decision C110 as amended 2026-11-12, variant E). Every button of
+// the bar and of its list is height="low" (owner decision C117, C27), the
+// family's one button height; the sheet's rung control is that height. The controls are sf-button and sf-button-icon of scheme on-surface: inside
 // the coloured bar the sheet sets the surface roles they read to the fill's
 // on- role, so they draw on it without a scheme of their own. The close is
 // the close glyph on an icon button, not kind="close": the drawn close mark
@@ -1063,23 +1094,27 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 const icon = (name, extra = '') => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${['sf-icon', 'sf-alert-bar-icon', extra].filter(Boolean).join(' ')} aria-hidden="true">${name}</i>`; // The time is sf-time (C40): relative within a day (threshold P1D, as 1.x
 // read it), else sf-time's auto («вчера, 19:40», «5 ноября»), the full
 // moment in its tooltip.
+//
+// In a row of the open list the time has no tooltip and is no Tab stop
+// (tooltip="none"): the row's stops are its buttons, and the time stays text
+// a screen reader reads in the row. The bar's own time keeps its tooltip.
 
 
-function meta(item, extra = '') {
+function meta(item, extra = '', tooltip = 'auto') {
   if (!item.source && !item.time) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-alert-bar-meta', extra].filter(Boolean).join(' ')}>${item.source}${item.source && item.time ? ' · ' : ''}${item.time ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-alert-bar-time" datetime=${item.time} threshold="P1D"></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-alert-bar-meta', extra].filter(Boolean).join(' ')}>${item.source}${item.source && item.time ? ' · ' : ''}${item.time ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-alert-bar-time" datetime=${item.time} threshold="P1D" tooltip=${tooltip === 'auto' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : tooltip}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
 }
 
 function actionLink(context, item, appearance) {
   if (!item.action) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-action" size=${context.size} appearance=${appearance} scheme="on-surface"
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-action" size=${context.size} height="low" appearance=${appearance} scheme="on-surface"
     text=${item.action.label} href=${item.action.href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     @click=${event => context.component.onNavigate(event, item)}></sf-button>`;
 }
 
 function acknowledgeButton(context, item, appearance) {
   if (!item.acknowledge) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-acknowledge" size=${context.size} appearance=${appearance} scheme="on-surface"
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-acknowledge" size=${context.size} height="low" appearance=${appearance} scheme="on-surface"
     text=${item.acknowledge.label || context.words.acknowledge}
     @click=${() => context.component.acknowledgeItem(item.id)}></sf-button>`;
 }
@@ -1119,10 +1154,10 @@ function row(context) {
 
   if (item.dismissible) {
     const label = hideWord(context, item);
-    end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-close" icon="close" size=${size} appearance="ghost" scheme="on-surface"
+    end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-close" icon="close" size=${size} height="low" appearance="ghost" scheme="on-surface"
       aria-label=${label} title=${label} @click=${() => component.closeItem(item.id)}></sf-button-icon>`;
   } else if (item.level === 'error') {
-    end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-minimize" icon="expand_less" size=${size} appearance="ghost" scheme="on-surface"
+    end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-minimize" icon="expand_less" size=${size} height="low" appearance="ghost" scheme="on-surface"
       aria-label=${words.minimize} title=${words.minimize} @click=${() => component.setMinimized(true)}></sf-button-icon>`;
   }
 
@@ -1133,45 +1168,45 @@ function row(context) {
       ${meta(item)}
     </div>
     ${item.action || item.acknowledge || many ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-alert-bar-actions">
-      ${actionLink(context, item, 'outline')}
+      ${actionLink(context, item, 'tonal')}
       ${acknowledgeButton(context, item, 'ghost')}
-      ${many ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-alert-bar-pager">
-        <sf-button-icon class="sf-alert-bar-prev" icon="chevron_left" size=${size} appearance="ghost" scheme="on-surface"
-          aria-label=${words.prev} @click=${() => component.page(-1)}></sf-button-icon>
-        <span class="sf-alert-bar-position">${words.position}</span>
-        <sf-button-icon class="sf-alert-bar-next" icon="chevron_right" size=${size} appearance="ghost" scheme="on-surface"
-          aria-label=${words.next} @click=${() => component.page(1)}></sf-button-icon>
-      </span>
-      <sf-button class="sf-alert-bar-all" size=${size} appearance="tonal" scheme="on-surface"
-        text=${listOpen ? words.collapseList : words.all} expanded=${listOpen ? 'true' : 'false'} aria-controls=${listId}
+      ${many ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-all" size=${size} height="low" appearance="ghost" scheme="on-surface"
+        text=${listOpen ? words.collapseList : words.more} icon-start=${listOpen ? context.collapseIcon : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-label=${listOpen ? words.collapseList : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${listOpen ? words.collapseList : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        expanded=${listOpen ? 'true' : 'false'} aria-controls=${listId}
         @click=${() => component.toggleList()}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${end}
   </div>`;
-}
+} // The list of the others (Р1, NS-12): one row per item, as the bar row.
 
-function listOfAll(context) {
+
+function listOfOthers(context) {
   const {
     component,
-    list,
+    others,
     size,
     words,
+    icons,
     listId
   } = context;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ul class="sf-alert-bar-list" id=${listId} aria-label=${words.list}>
-    ${list.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-alert-bar-item" data-level=${item.level} data-id=${item.id}>
-      <sf-badge class="sf-alert-bar-badge" status=${item.level} appearance="tonal" size="1/3" text=${item.levelWord}></sf-badge>
+    ${others.map(item => {
+    const label = hideWord(context, item);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-alert-bar-item" data-level=${item.level} data-id=${item.id}>
+      ${icon(icons[item.level], 'sf-alert-bar-item-icon')}
       <div class="sf-alert-bar-item-text">
-        <span class="sf-alert-bar-item-message">${item.text}</span>
-        ${meta(item, 'sf-alert-bar-item-meta')}
+        <span class="sf-alert-bar-item-message"><span class="sr-only">${item.levelWord}: </span>${item.text}</span>
+        ${meta(item, 'sf-alert-bar-item-meta', 'none')}
       </div>
-      <div class="sf-alert-bar-item-actions">
-        ${actionLink(context, item, 'outline')}
-        ${acknowledgeButton(context, item, 'outline')}
-        ${item.dismissible ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-alert-bar-item-close" size=${size} appearance="outline" scheme="on-surface"
-          text=${hideWord(context, item)} @click=${() => component.closeItem(item.id)}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      </div>
-    </li>`)}
+      ${item.action || item.acknowledge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-alert-bar-item-actions">
+        ${actionLink(context, item, 'tonal')}
+        ${acknowledgeButton(context, item, 'ghost')}
+      </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${item.dismissible ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-item-close" icon="close" size=${size} height="low" appearance="ghost" scheme="on-surface"
+          aria-label=${label} title=${label} @click=${() => component.closeItem(item.id)}></sf-button-icon>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-alert-bar-item-end" aria-hidden="true"></span>`}
+    </li>`;
+  })}
   </ul>`;
 }
 
@@ -1189,11 +1224,402 @@ function renderAlertBarTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="region" aria-label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     <div class="sf-alert-bar-live sr-only" role="alert">${announce.alert}</div>
     <div class="sf-alert-bar-live sr-only" role="status">${announce.status}</div>
-    ${count === 0 ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : isMinimized ? strip(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${row(context)}${listOpen ? listOfAll(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`}
+    ${count === 0 ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : isMinimized ? strip(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${row(context)}${listOpen ? listOfOthers(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`}
   </div>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "64feefebb417"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   THEME_ICONS: () => (/* binding */ THEME_ICONS),
+/* harmony export */   cycleItems: () => (/* binding */ cycleItems),
+/* harmony export */   cycleState: () => (/* binding */ cycleState),
+/* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
+/* harmony export */   nextTheme: () => (/* binding */ nextTheme),
+/* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
+/* harmony export */   preloadSwitchIcons: () => (/* binding */ preloadSwitchIcons),
+/* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   switchIconEntries: () => (/* binding */ switchIconEntries),
+/* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
+/* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
+/* harmony export */   themePreference: () => (/* binding */ themePreference),
+/* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
+/* harmony export */ });
+// One button, several values (docs review R039, owner decision D11d;
+// research ui-control control/research/2026-11-08-cycle-button.md).
+//
+// sf-button and sf-button-icon share this: the `cycle` setting is a list of
+// items shaped like sf-segmented's items ({value, label, icon} and an
+// optional `pressed`, which draws the item with the pressed look), `value`
+// is the current item, and a press moves to the next item and wraps. The
+// `theme-cycle` setting draws a ready theme switch over SF.Loader's theme
+// (the same contract as sf-segmented's theme-switch: themePreference,
+// setTheme, sf-theme-change).
+//
+// The name and the icon say the current value («Тема: тёмная»), the tooltip
+// says the current and the next («Тема: тёмная. Нажмите — как в системе»),
+// and a polite live region says the new value after a press. A cycle is a
+// plain button: it carries no aria-pressed, so pressed, label-pressed and
+// text-pressed are ignored beside it (with one console warning).
+const THEME_VALUES = ['system', 'light', 'dark']; // «Как в системе» in a cycle is the half-dark, half-light circle (D11d): a
+// monitor alone does not say a theme.
+
+const THEME_ICONS = Object.freeze({
+  system: 'contrast',
+  light: 'light_mode',
+  dark: 'dark_mode'
+});
+
+function parseList(source) {
+  if (Array.isArray(source)) return source;
+  const text = String(source ?? '').trim();
+  if (!text) return [];
+
+  if (text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  } // value::label::flags|… as sf-segmented's items take it; a flag icon=<name>
+  // names the icon, pressed draws the pressed look.
+
+
+  return text.split('|').map(entry => {
+    const [value, label = value, flags = ''] = entry.split('::');
+    const list = flags.split(',').map(flag => flag.trim()).filter(Boolean);
+    const icon = list.find(flag => flag.startsWith('icon='));
+    return {
+      value: value.trim(),
+      label: label.trim(),
+      icon: icon ? icon.slice(5) : '',
+      pressed: list.includes('pressed')
+    };
+  });
+}
+/** The cycle's items, normalised: a value each, once, in the given order. */
+
+/** Reads the attribute's JSON or value::label::flags form; a list stays a list. */
+
+
+function parseCycle(value) {
+  return parseList(value);
+}
+function cycleItems(source) {
+  const seen = new Set();
+  return parseList(source).map((item, index) => {
+    const one = typeof item === 'string' ? {
+      value: item,
+      label: item
+    } : item;
+    if (!one || typeof one !== 'object') return null;
+    const value = String(one.value ?? one.id ?? index).trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return {
+      value,
+      label: String(one.label ?? one.text ?? value),
+      icon: String(one.icon || ''),
+      lang: String(one.lang || '').trim(),
+      pressed: Boolean(one.pressed)
+    };
+  }).filter(Boolean);
+}
+/** The themes a theme-cycle offers: all three, or the two it names. */
+
+function themeCycleValues(attribute) {
+  const named = String(attribute ?? '').trim().toLowerCase().split(/[\s,]+/u).map(word => word === 'auto' ? 'system' : word).filter(word => THEME_VALUES.includes(word));
+  const unique = [...new Set(named)]; // Two themes without «as the system» flip the visible theme; anything else
+  // (empty, one word, all three) is the full cycle.
+
+  if (unique.length === 2 && !unique.includes('system')) return ['light', 'dark'];
+  return THEME_VALUES;
+}
+
+const opposite = theme => theme === 'dark' ? 'light' : 'dark';
+
+function loader() {
+  return globalThis.SF?.Loader;
+}
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
+
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
+
+function visibleTheme() {
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
+  if (theme === 'dark' || theme === 'light') return theme;
+  const root = globalThis.document?.documentElement;
+  if (root?.classList?.contains('theme-dark')) return 'dark';
+  if (root?.classList?.contains('theme-light')) return 'light';
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+}
+/** What the person chose: system, light or dark. */
+
+function themePreference() {
+  const preference = loader()?.themePreference;
+  return THEME_VALUES.includes(preference) ? preference : 'system';
+}
+/**
+ * The owner's order (D11d): first the theme opposite to the visible one,
+ * then the other, then «as the system». It needs the value before the
+ * current one: from an explicit theme reached from the other explicit theme
+ * the next is system; from system, or from a theme the page loaded with, the
+ * opposite theme. Two themes: always the opposite of the visible theme.
+ */
+
+function nextTheme({
+  values,
+  current,
+  previous
+}) {
+  if (!values.includes('system')) return opposite(visibleTheme());
+  if (current === 'system') return opposite(visibleTheme());
+  if (previous && previous !== 'system' && previous === opposite(current)) return 'system';
+  return opposite(current);
+}
+/**
+ * The cycle state the template reads: {items, item, next, index, name,
+ * tooltip}. `words(key, vars)` gives the element's words; `base` is the
+ * button's own name (aria-label, or the text of an sf-button).
+ */
+
+function hasCycle(host) {
+  if (host.hasAttribute('theme-cycle')) return true;
+  const own = host.getProp?.('cycle');
+  return Boolean(host.hasAttribute('cycle') || Array.isArray(own) && own.length);
+}
+function cycleState(host, {
+  base = '',
+  words
+}) {
+  if (host.hasAttribute('theme-cycle')) {
+    const values = themeCycleValues(host.getAttribute('theme-cycle'));
+    const two = !values.includes('system');
+    const current = two ? visibleTheme() : themePreference();
+
+    const label = value => words(`theme-${value}`);
+
+    const items = values.map(value => ({
+      value,
+      label: label(value),
+      icon: THEME_ICONS[value],
+      lang: '',
+      pressed: false
+    }));
+    const item = items.find(one => one.value === current) ?? items[0];
+    const nextValue = nextTheme({
+      values,
+      current: item.value,
+      previous: host.__sfCyclePrevious
+    });
+    const next = items.find(one => one.value === nextValue) ?? items[0];
+    const title = base || words('theme');
+    const now = item.value === 'system' ? words('theme-system-now', {
+      vars: {
+        theme: label(visibleTheme())
+      }
+    }) : item.label;
+    const name = `${title}: ${now}`;
+    return {
+      theme: true,
+      items,
+      item,
+      next,
+      name,
+      tooltip: words('cycle-next', {
+        vars: {
+          name,
+          next: next.label
+        }
+      })
+    };
+  }
+
+  const items = cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle'));
+  if (!items.length) return null;
+  const at = Math.max(0, items.findIndex(one => one.value === (host.getAttribute('value') ?? '')));
+  const item = items[at];
+  const next = items[(at + 1) % items.length];
+  const name = base ? `${base}: ${item.label}` : item.label;
+  return {
+    theme: false,
+    items,
+    item,
+    next,
+    name,
+    tooltip: words('cycle-next', {
+      vars: {
+        name,
+        next: next.label
+      }
+    })
+  };
+}
+/** A cycle beside a toggle's settings: the toggle's are ignored, said once. */
+
+function warnCycleToggle(host, names) {
+  const given = names.filter(name => host.hasAttribute(name));
+  if (!given.length || host.__sfCycleWarned) return;
+  host.__sfCycleWarned = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
+}
+/**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
+ * A person's press of a cycle: the next value, the change event and the
+ * announcement. Answers true when it moved.
+ */
+
+function pressCycle(host, state) {
+  if (!state) return false;
+  const previous = state.item.value;
+  const value = state.next.value; // Said after the drawing that follows: the flag first, as the drawing may
+  // come at once.
+
+  const before = host.__sfCyclePrevious;
+  host.__sfCycleAnnounce = true;
+  host.__sfCyclePrevious = previous;
+
+  if (state.theme) {
+    // The Loader moves the page first, so a listener of change finds the
+    // page in the theme it chose; a Loader that cannot (absent, or the
+    // theme switched off) leaves the cycle where it is.
+    host.__sfCycleExpect = value;
+
+    if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
+      host.__sfCycleAnnounce = false;
+      host.__sfCyclePrevious = before;
+      host.__sfCycleExpect = undefined;
+      return false;
+    }
+  } else {
+    host.setAttribute('value', value);
+  }
+
+  host.requestComponentUpdate?.('value');
+  const item = state.items.find(one => one.value === value) ?? null;
+  host.sfEmit('change', {
+    previous,
+    value,
+    item: item ? { ...item
+    } : null
+  });
+  return true;
+}
+/**
+ * sf-theme-change for a theme cycle: a theme set elsewhere (another switch,
+ * SF.Loader.setTheme) starts the order afresh from what is shown.
+ */
+
+function themeCycleFollow(host) {
+  if (!host.hasAttribute('theme-cycle')) return;
+  const values = themeCycleValues(host.getAttribute('theme-cycle'));
+  const now = values.includes('system') ? themePreference() : visibleTheme();
+  if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
+  host.__sfCycleExpect = undefined;
+  host.requestComponentUpdate?.('theme-cycle');
+} // The icons a control can switch to, asked for before it switches (R074).
+// Only the icon on screen was tracked, so the first press that showed another
+// one asked the subset service for a grown font on the click, and the new
+// icon stayed blank while the service built it (up to ~30 s when it was busy).
+// Asked for when the control is drawn, the names join the page's first icon
+// request (held until the Loader is ready); a control added later costs one
+// grown font off the click.
+
+/**
+ * The icon entries ({icon, filled}) a cycle, a theme cycle or a toggle can
+ * show. `icons` are a toggle's own icon names: with `pressed` present they
+ * are drawn filled while on, so both forms are asked for. `filled` is the
+ * control's own filled setting (every form filled).
+ */
+
+function switchIconEntries(host, {
+  icons = [],
+  filled = false
+} = {}) {
+  const entries = [];
+
+  const add = (icon, fill) => {
+    const name = String(icon || '').trim();
+    if (name) entries.push({
+      icon: name,
+      filled: Boolean(fill || filled)
+    });
+  };
+
+  if (host.hasAttribute('theme-cycle')) {
+    themeCycleValues(host.getAttribute('theme-cycle')).forEach(value => add(THEME_ICONS[value], false));
+  } else if (hasCycle(host)) {
+    cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle')).forEach(item => add(item.icon, item.pressed));
+  } else if (host.hasAttribute('pressed')) {
+    icons.forEach(icon => {
+      add(icon, false);
+      add(icon, true);
+    });
+  }
+
+  const seen = new Set();
+  return entries.filter(entry => {
+    const key = `${entry.icon}|${entry.filled}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+/**
+ * Asks the Loader for these icon entries once per distinct list (a render
+ * that draws the same items asks nothing). Answers the number of new names.
+ */
+
+function preloadControlIcons(host, entries) {
+  if (!Array.isArray(entries) || !entries.length) return 0;
+  const key = JSON.stringify(entries);
+  if (host.__sfPreloadedIcons === key) return 0;
+  const preload = loader()?.preloadIcons;
+  if (typeof preload !== 'function') return 0;
+  host.__sfPreloadedIcons = key;
+  return preload.call(loader(), entries) || 0;
+}
+/** switchIconEntries, asked for. */
+
+function preloadSwitchIcons(host, options = {}) {
+  return preloadControlIcons(host, switchIconEntries(host, options));
+}
 
 /***/ },
 
@@ -1244,21 +1670,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "677c9e2dc7c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.4.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["error","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-error-background-color":{"type":"color","state":"default"},"--sf-alert-bar-warning-background-color":{"type":"color","state":"default"},"--sf-alert-bar-info-background-color":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background-color":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.6.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["error","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-error-background-color":{"type":"color","state":"default"},"--sf-alert-bar-warning-background-color":{"type":"color","state":"default"},"--sf-alert-bar-info-background-color":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background-color":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "528216f76e58"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Alert bar","runtime":{"label":"Important notices","level-error":"Error","level-warning":"Warning","level-info":"Info","position":"{n} of {count}","prev":"Previous notice","next":"Next notice","all":"All {count}","collapse-list":"Hide the list","list":"All notices","hide-day":"Hide for a day","hide":"Hide","acknowledge":"Mark as seen","minimize":"Minimize the bar","expand":"expand","expand-label":"Expand the important notices","count":"Important notices: {count}"},"events":{"acknowledge":{"label":"Mark as seen"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Alert bar","runtime":{"label":"Important notices","level-error":"Error","level-warning":"Warning","level-info":"Info","more":"{count} more","collapse-list":"Hide the list","list":"All notices","hide-day":"Hide for a day","hide":"Hide","acknowledge":"Mark as read","minimize":"Minimize the bar","expand":"expand","expand-label":"Expand the important notices","count":"Important notices: {count}"},"events":{"acknowledge":{"label":"Mark as read"}}}');
 
 /***/ },
 
 /***/ "2a4d264285b5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Плашка уведомлений","runtime":{"label":"Важные уведомления","level-error":"Ошибка","level-warning":"Предупреждение","level-info":"Сведения","position":"{n} из {count}","prev":"Предыдущее уведомление","next":"Следующее уведомление","all":"Все {count}","collapse-list":"Свернуть список","list":"Все уведомления","hide-day":"Скрыть на сутки","hide":"Скрыть","acknowledge":"Отметить, что видели","minimize":"Свернуть плашку","expand":"развернуть","expand-label":"Развернуть важные уведомления","count":"Важных уведомлений: {count}"},"events":{"acknowledge":{"label":"Отметить, что видели"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Плашка уведомлений","runtime":{"label":"Важные уведомления","level-error":"Ошибка","level-warning":"Предупреждение","level-info":"Сведения","more":"Ещё {count}","collapse-list":"Свернуть список","list":"Все уведомления","hide-day":"Скрыть на сутки","hide":"Скрыть","acknowledge":"Прочитано","minimize":"Свернуть плашку","expand":"развернуть","expand-label":"Развернуть важные уведомления","count":"Важных уведомлений: {count}"},"events":{"acknowledge":{"label":"Прочитано"}}}');
 
 /***/ }
 

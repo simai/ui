@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "core.runtime",
   "kind": "core",
-  "version": "1.54.2",
+  "version": "1.55.0",
   "owner": "simai/ui-source",
   "summary": "The core runtime: the Loader, the Smart base, the composition runtime and the contracts it reads; everything under src/core that no token set, font, port or the core sheet claims.",
   "includes": [
@@ -128,11 +128,13 @@
     "src/core/js/control-spacing.js",
     "src/core/js/copy-feedback.js",
     "src/core/js/core-modules.js",
+    "src/core/js/css-url.js",
     "src/core/js/density.js",
     "src/core/js/deprecations.js",
     "src/core/js/early-port.js",
     "src/core/js/effects.js",
     "src/core/js/element-manifest.js",
+    "src/core/js/float-anchor.js",
     "src/core/js/format-date.js",
     "src/core/js/format-file-size.js",
     "src/core/js/format-intl.js",
@@ -154,6 +156,7 @@
     "src/core/js/notify.js",
     "src/core/js/on-view.js",
     "src/core/js/open-surface-mark.js",
+    "src/core/js/overflow-row.js",
     "src/core/js/package-modules.js",
     "src/core/js/page-actions.js",
     "src/core/js/page-language.js",
@@ -178,6 +181,7 @@
     "src/core/js/tag-aliases.js",
     "src/core/js/tailwind-map.js",
     "src/core/js/template-utilities.generated.json",
+    "src/core/js/text-fonts.js",
     "src/core/js/theme-palette.js",
     "src/core/js/upgrade-properties.js",
     "src/core/js/utilityModuleAliases.js",
@@ -220,7 +224,7 @@
     "src/core/types/smart-components.d.ts",
     "src/core/utility-full.js"
   ],
-  "content_sha256": "e648f2743f643fb0a2f6eb5b2df2ad2c64d958df49dfd9e73ff568eaf9159d37",
+  "content_sha256": "3d26c5fa3bf9c13111488cee99230f7257bce6b2e587439ad46ca20e4d15eb44",
   "dependencies": [
     {
       "id": "core.styles",

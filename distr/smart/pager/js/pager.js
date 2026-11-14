@@ -15,17 +15,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a64ab46d3d8c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4e5307ab3b30");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4c231960a2ad");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3d07c6617401");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ca9340e29756");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4e5307ab3b30");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4c231960a2ad");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3d07c6617401");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ca9340e29756");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-// sf-pager: navigation to the neighbouring page or step by meaning -- the
-// previous and the next documentation page, a wizard's steps, a course's
-// lessons, a record counter. Not list paging: sf-pagination keeps 1, 2, 3 ….
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__);
+// sf-pager: navigation to the neighbouring document by meaning (decision C97,
+// 2026-11-12), in three looks: cards (the previous and the next page at the
+// bottom of documentation), row (the previous and the next article) and
+// counter («‹ 3 из 240 ›» in a record card: the record's place in its list,
+// across the list's pages, with keys and the way back to the list). Not list
+// paging: sf-pagination keeps 1, 2, 3 ….
+//
+// steps and course still draw until 2027-01-01, each use noted in
+// SF.deprecations (change journal value-pager-steps-course-retired): a
+// wizard's steps are sf-wizard's, and no product walks a course. Image
+// counters and dots are sf-gallery's and sf-slider's.
 //
 // One input, two forms. cards and row take two sides from string settings
 // (prev-href, prev-title, next-href, next-title), so a server prints plain
@@ -48,6 +58,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // A key pressed in a field is the field's: the keys setting never takes it.
 
 const EDITABLE = 'input, textarea, select, [contenteditable=""], [contenteditable="true"], [role="textbox"], [role="combobox"], [role="spinbutton"], [role="slider"]';
@@ -63,18 +74,24 @@ function normalizeItems(value) {
     href: text(item.href),
     meta: text(item.meta)
   }));
-} // current clamped to items (0 with no items).
+} // The looks that leave sf-pager (C97): steps for sf-wizard, course with no
+// product to walk one.
+
+const RETIRED = {
+  steps: 'sf-wizard',
+  course: null
+}; // current clamped to items (0 with no items).
 
 function clampIndex(value, length) {
   const number = Math.trunc(Number(value));
   if (!Number.isFinite(number) || length <= 0) return 0;
   return Math.max(0, Math.min(length - 1, number));
 }
-const PagerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+const PagerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
   },
   source: 'ru',
   actions: {
@@ -127,11 +144,51 @@ class SfPager extends PagerElement {
 
   get list() {
     return normalizeItems(this.items);
-  } // The current place clamped to items; the template reads it as `at`.
+  } // The current place clamped to what there is; the template reads it as
+  // `at`.
 
 
   get at() {
-    return clampIndex(this.current, this.list.length);
+    const {
+      count,
+      open
+    } = this.span;
+    if (open) return Math.max(0, Math.trunc(Number(this.current)) || 0);
+    return clampIndex(this.current, count);
+  } // How many places the walk has. counter's records are the list's: total
+  // says how many there are across the list's pages, so a record card walks
+  // past the page it was opened from and the host loads the next one when
+  // asked (navigate carries the index). Without total the count is not
+  // known unless items is the whole list and has-next is off: the walk is
+  // then open ahead («3 из многих»), Next while has-next says so. Every other
+  // look walks items.
+
+
+  get span() {
+    const length = this.list.length;
+    if (this.appearance !== 'counter') return {
+      count: length,
+      open: false
+    };
+    const total = Math.trunc(Number(this.total));
+    if (Number.isFinite(total) && total > 0) return {
+      count: total,
+      open: false
+    };
+    if (length && !this.hasNext) return {
+      count: length,
+      open: false
+    };
+    return {
+      count: Math.max(length, this.at0 + 1),
+      open: true
+    };
+  } // current as written, a whole number from 0.
+
+
+  get at0() {
+    const number = Math.trunc(Number(this.current));
+    return Number.isFinite(number) && number > 0 ? number : 0;
   } // One side of cards or row: the settings first, else the neighbour in items.
 
 
@@ -189,6 +246,9 @@ class SfPager extends PagerElement {
   move(direction, wanted, {
     person = false
   } = {}) {
+    if (this.appearance === 'counter') return this.moveRecord(direction, wanted, {
+      person
+    });
     const list = this.list;
     if (!list.length) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('empty');
     const from = this.at;
@@ -229,6 +289,49 @@ class SfPager extends PagerElement {
 
     if (item.href && direction !== 'finish') globalThis.location?.assign?.(item.href);
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+  } // A move of counter: one record back or on, or to a place, in the list's
+  // records (total, or items). The request names the record's place in the
+  // whole list; a host that has not loaded that page loads it, or cancels and
+  // goes there itself. An item with an address is opened.
+
+
+  moveRecord(direction, wanted, {
+    person = false
+  } = {}) {
+    const {
+      count,
+      open
+    } = this.span;
+    if (!count && !open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('empty');
+    const from = this.at;
+    let index;
+
+    if (direction === 'prev') {
+      if (from <= 0) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('first');
+      index = from - 1;
+    } else if (direction === 'next') {
+      if (open ? !this.hasNext : from >= count - 1) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('last');
+      index = from + 1;
+    } else {
+      const number = Math.max(0, Math.trunc(Number(wanted)) || 0);
+      index = open ? number : Math.min(count - 1, number);
+      if (index === from) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('current');
+      direction = 'go-to';
+    }
+
+    const item = this.list[index] ?? null;
+    const allowed = this.sfEmit('navigate', {
+      direction,
+      index,
+      id: item?.id ?? null,
+      href: item?.href || null
+    }, {
+      cancelable: true
+    });
+    if (!allowed) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
+    this.apply(index, false, person);
+    if (item?.href) globalThis.location?.assign?.(item.href);
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   apply(index, complete, person) {
@@ -237,12 +340,13 @@ class SfPager extends PagerElement {
     this.current = index;
     this.complete = complete;
     this.sfHostState('data-complete', complete);
+    const item = this.list[index];
     if (person) this.sfEmit('change', {
       previous,
       current: index,
       complete,
-      item: { ...this.list[index]
-      }
+      item: item ? { ...item
+      } : null
     });
     this.keepFocus(focused);
   } // A press on a control of steps, course or counter.
@@ -303,12 +407,24 @@ class SfPager extends PagerElement {
     if (!this._keysBound) return;
     document.removeEventListener('keydown', this._onKey);
     this._keysBound = false;
-  } // ArrowLeft / ArrowRight on the page (keys set): never in a field, never a
-  // key another component took, never while the pager is not shown.
+  } // ArrowLeft / ArrowRight on the page (keys set), and for counter [ and ]
+  // as well (the record keys of mail and trackers, which a record page does
+  // not give to text): never in a field, never a key another component took,
+  // never while the pager is not shown.
 
 
   onKey(event) {
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+
+    if (this.appearance === 'counter' && (event.key === '[' || event.key === ']')) {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest(EDITABLE) || target?.isContentEditable) return;
+      if (!this.shown || !this.querySelector(':scope > nav')?.getClientRects().length) return;
+      const outcome = this.press(event.key === ']' ? 'next' : 'prev');
+      if (outcome.outcome === 'applied') event.preventDefault();
+      return;
+    }
+
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest(EDITABLE) || target?.isContentEditable) return;
@@ -317,26 +433,48 @@ class SfPager extends PagerElement {
     const forward = event.key === 'ArrowRight' !== rtl;
     const outcome = this.press(forward ? 'next' : 'prev');
     if (outcome.outcome === 'applied') event.preventDefault();
+  } // A retired look still draws; its use is noted once (C97).
+
+
+  noteRetired(appearance) {
+    if (!(appearance in RETIRED)) return;
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+      component: 'sf-pager',
+      tag: 'sf-pager',
+      kind: 'value',
+      attribute: 'appearance',
+      from: appearance,
+      to: RETIRED[appearance],
+      since: '2026-11-12',
+      remove_after: '2027-01-01'
+    });
   }
 
   templateContext() {
     const list = this.list;
-    const current = clampIndex(this.current, list.length);
-    const count = list.length;
-    const n = count ? current + 1 : 0;
     const appearance = this.appearance;
+    const {
+      count: spanCount,
+      open
+    } = this.span;
+    const current = appearance === 'counter' ? this.at : clampIndex(this.current, list.length);
+    const count = appearance === 'counter' ? spanCount : list.length;
+    const n = count || open ? current + 1 : 0;
 
     const word = (key, vars) => this.sfWord(key, vars ? {
       vars
     } : {});
 
+    this.noteRetired(appearance);
     const place = appearance === 'steps' ? word('step', {
       n,
       count
     }) : appearance === 'course' ? word('lesson', {
       n,
       count
-    }) : appearance === 'counter' ? word('position', {
+    }) : appearance === 'counter' ? open ? word('position-many', {
+      n
+    }) : word('position', {
       n,
       count
     }) : '';
@@ -352,6 +490,9 @@ class SfPager extends PagerElement {
       next: appearance === 'cards' || appearance === 'row' ? this.sideOf('next') : null,
       list,
       at: current,
+      count,
+      hasNextRecord: open ? Boolean(this.hasNext) : current < count - 1,
+      listHref: appearance === 'counter' ? text(this.listHref) : '',
       complete: Boolean(this.complete),
       placeText: place,
       words: {
@@ -361,7 +502,8 @@ class SfPager extends PagerElement {
         finished: word('finished'),
         restart: word('restart'),
         prevItem: word('prev-item'),
-        nextItem: word('next-item')
+        nextItem: word('next-item'),
+        toList: word('to-list')
       },
       rootClass: this.getRootClass()
     });
@@ -394,7 +536,8 @@ var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
  // sf-pager's markup, one <nav> per appearance (scss/ draws them on the one
-// ladder). cards and row are plain links from string settings, so the build
+// ladder): cards, row and counter (decision C97); steps and course draw until
+// 2027-01-01. cards and row are plain links from string settings, so the build
 // snapshot of them is the markup a server prints and it works without the
 // script; a side with no address is a button that moves in items. steps,
 // course and counter are drawn with sf-button and sf-icon-button of the
@@ -522,23 +665,28 @@ function renderCourse(context) {
     </div>
     ${lessonCard(context)}
   `;
-}
+} // counter: «‹ 3 из 240 ›» in a record card (C97 point 7), with the way back
+// to the list before it when list-href is given. The arrows are the quiet
+// icon buttons of a record head; at an end the arrow is disabled.
+
 
 function renderCounter(context) {
   const {
     component,
-    list: items,
     at: current,
     size,
     placeText: place,
     words
   } = context;
+  const step = size === '1/2' ? '1/2' : '1';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <sf-button-icon class="sf-pager-back" size=${size} appearance="outline" scheme="on-surface" icon="chevron_left"
-      aria-label=${words.prevItem} ?disabled=${current <= 0} @click=${() => component.press('prev')}></sf-button-icon>
+    ${context.listHref ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${`sf-pager-list sf-icon-button sf-icon-button--size-${step} sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center`}
+          href=${context.listHref} title=${words.toList} aria-label=${words.toList}>${icon('arrow_back')}</a>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    <sf-button-icon class="sf-pager-back" size=${size} appearance="ghost" scheme="on-surface" icon="chevron_left"
+      aria-label=${words.prevItem} title=${`${words.prevItem}  [`} ?disabled=${current <= 0} @click=${() => component.press('prev')}></sf-button-icon>
     <span class="sf-pager-place" role="status">${place}</span>
-    <sf-button-icon class="sf-pager-forward" size=${size} appearance="outline" scheme="on-surface" icon="chevron_right"
-      aria-label=${words.nextItem} ?disabled=${current >= items.length - 1} @click=${() => component.press('next')}></sf-button-icon>
+    <sf-button-icon class="sf-pager-forward" size=${size} appearance="ghost" scheme="on-surface" icon="chevron_right"
+      aria-label=${words.nextItem} title=${`${words.nextItem}  ]`} ?disabled=${!context.hasNextRecord} @click=${() => component.press('next')}></sf-button-icon>
   `;
 }
 
@@ -568,6 +716,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -592,21 +747,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "4e5307ab3b30"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.2.3","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background-color":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.3.2","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"total":{"type":"number","integer":true,"min":0,"default":0},"has-next":{"type":"boolean","default":false},"list-href":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background-color":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "4c231960a2ad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Pager","runtime":{"label":"Adjacent pages","prev":"Back","next":"Next","done":"Done","step":"Step {n} of {count}","lesson":"Lesson {n} of {count}","position":"{n} of {count}","next-lesson":"Next lesson","last-lesson":"Last lesson","start":"Start","finished":"Course complete","restart":"Start over","prev-item":"Previous record","next-item":"Next record"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Pager","runtime":{"label":"Adjacent pages","prev":"Back","next":"Next","done":"Done","step":"Step {n} of {count}","lesson":"Lesson {n} of {count}","position":"{n} of {count}","next-lesson":"Next lesson","last-lesson":"Last lesson","start":"Start","finished":"Course complete","restart":"Start over","prev-item":"Previous record","next-item":"Next record","position-many":"{n} of many","to-list":"Back to the list"}}');
 
 /***/ },
 
 /***/ "3d07c6617401"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Листалка страниц","runtime":{"label":"Соседние страницы","prev":"Назад","next":"Далее","done":"Готово","step":"Шаг {n} из {count}","lesson":"Урок {n} из {count}","position":"{n} из {count}","next-lesson":"Следующий урок","last-lesson":"Последний урок","start":"Начать","finished":"Курс пройден","restart":"Сначала","prev-item":"Предыдущая запись","next-item":"Следующая запись"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Листалка страниц","runtime":{"label":"Соседние страницы","prev":"Назад","next":"Далее","done":"Готово","step":"Шаг {n} из {count}","lesson":"Урок {n} из {count}","position":"{n} из {count}","next-lesson":"Следующий урок","last-lesson":"Последний урок","start":"Начать","finished":"Курс пройден","restart":"Сначала","prev-item":"Предыдущая запись","next-item":"Следующая запись","position-many":"{n} из многих","to-list":"К списку"}}');
 
 /***/ }
 

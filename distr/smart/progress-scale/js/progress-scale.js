@@ -8,11 +8,13 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -25,6 +27,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -63,15 +68,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -108,19 +125,23 @@ __webpack_require__.r(__webpack_exports__);
 
 const PROGRESS_SCALE_SELECTOR = '.sf-progress-scale';
 const BOUND_FLAG = 'sfProgressScaleBound';
-const SIZE_VALUES = ['1/3', '1/2', '1', '2', '3']; // The shared status words. `primary` was the old word for no status: it has no
-// colour of its own and draws the default, as before; `info` was turned into it.
+const SIZE_VALUES = ['1/3', '1/2', '1', '2', '3']; // The shared status words (owner decision C131 (1)): no status draws the
+// theme's primary and carries no class; neutral is grey, as in sf-dot and
+// sf-badge. `primary` is the former word for no status.
 
-const TONE_VALUES = ['info', 'success', 'warning', 'error'];
+const TONE_VALUES = ['neutral', 'info', 'success', 'warning', 'error'];
 
 function normalizeProgressScaleValue(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return 0;
   return Math.max(0, Math.min(100, parsed));
-}
+} // The blocks never show more than is done (PG-12): 61 % lights 6 of 10, not 7;
+// a block lights only once its tenth is reached. The epsilon keeps a value
+// that is a whole tenth in decimal (70) from falling a block short in binary.
+
 
 function normalizeProgressScaleStep(value) {
-  return Math.ceil(normalizeProgressScaleValue(value) / 10) * 10;
+  return Math.floor(normalizeProgressScaleValue(value) / 10 + 1e-9) * 10;
 }
 
 function normalizeProgressScaleSize(value) {
@@ -202,8 +223,9 @@ function renderProgressScale(root) {
   root.dataset.value = String(value);
   root.dataset.size = size;
   root.dataset.tone = tone;
-  root.dataset.showText = String(showText);
-  root.setAttribute('role', 'progressbar');
+  root.dataset.showText = String(showText); // Meter (C131 (7)): an amount within a known range, not a task's progress.
+
+  root.setAttribute('role', root.dataset.meter === 'true' ? 'meter' : 'progressbar');
   root.setAttribute('aria-valuemin', '0');
   root.setAttribute('aria-valuemax', '100');
   root.setAttribute('aria-valuenow', String(value));
@@ -269,6 +291,10 @@ function setProgressScaleState(target, state = {}) {
     if (valueText) root.dataset.valueText = valueText;else delete root.dataset.valueText;
   }
 
+  if (Object.prototype.hasOwnProperty.call(state, 'meter')) {
+    if (state.meter) root.dataset.meter = 'true';else delete root.dataset.meter;
+  }
+
   return renderProgressScale(root);
 }
 
@@ -282,7 +308,8 @@ function getProgressScaleState(target) {
     tone: normalizeProgressScaleTone(root.dataset.tone),
     showText: normalizeBoolean(root.dataset.showText, true),
     label: root.getAttribute('aria-label') || '',
-    valueText: root.getAttribute('aria-valuetext') || ''
+    valueText: root.getAttribute('aria-valuetext') || '',
+    meter: root.dataset.meter === 'true'
   };
 }
 
@@ -296,10 +323,11 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
       size = '1',
       value = 0,
       status,
-      tone = 'primary',
+      tone = '',
       showText = true,
       label = '',
-      valueText = ''
+      valueText = '',
+      meter = false
     } = this.params || {};
     const root = document.createElement('div');
     root.className = 'sf-progress-scale flex flex-col';
@@ -309,6 +337,7 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
     root.dataset.showText = String(normalizeBoolean(showText, true));
     if (String(label).trim()) root.dataset.label = String(label).trim();
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
+    if (meter) root.dataset.meter = 'true';
     this.template = root;
   }
 
@@ -582,19 +611,33 @@ const ProgressScaleElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODU
     }
 
   }
-});
+}); // The threshold the value reached (C131 (7)); unset thresholds are none.
+
+const RANK = {
+  warning: 1,
+  error: 2
+};
+
+function thresholdReached(value, warningAt, errorAt) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '';
+  if (Number.isFinite(errorAt) && number >= errorAt) return 'error';
+  if (Number.isFinite(warningAt) && number >= warningAt) return 'warning';
+  return '';
+}
 
 class SfProgressScale extends ProgressScaleElement {
   static get props() {
     return { ...super.props,
       // The axis is called status, and speaks the shared vocabulary. `tone`
       // and its value `primary` keep working: see contracts/public-api-axes.json.
+      // No status (empty) is the theme's primary; neutral is grey (C131 (1)).
       status: {
-        default: 'neutral',
-        values: ['neutral', 'info', 'success', 'warning', 'error'],
+        default: '',
+        values: ['', 'neutral', 'info', 'success', 'warning', 'error'],
         aliases: ['tone'],
         valueAliases: {
-          neutral: ['primary']
+          '': ['primary']
         }
       }
     };
@@ -623,6 +666,20 @@ class SfProgressScale extends ProgressScaleElement {
 
   get status() {
     return this.getProp('status');
+  } // A threshold holds only where the page set it.
+
+
+  threshold(attribute) {
+    if (!this.hasAttribute(attribute)) return null;
+    const number = Number(this.getAttribute(attribute));
+    return Number.isFinite(number) ? number : null;
+  } // The status drawn (C131 (7), as sf-progress-bar): the more serious of the
+  // page's status and the threshold the value reached.
+
+
+  get drawnStatus() {
+    const reached = thresholdReached(this.value, this.threshold('warning-at'), this.threshold('error-at'));
+    return (RANK[reached] ?? 0) > (RANK[this.status] ?? 0) ? reached : this.status;
   } // The accessible name: label, else the host's aria-label (§3.1, §4.8).
 
 
@@ -632,7 +689,11 @@ class SfProgressScale extends ProgressScaleElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    const status = this.drawnStatus;
+    this.sfHostState('data-status', status);
     return this.createTemplateContext({ ...props,
+      drawnStatus: status,
+      meter: Boolean(this.meter),
       component: this,
       line: this.line,
       label: this.accessibleLabel,
@@ -651,6 +712,8 @@ class SfProgressScale extends ProgressScaleElement {
       value: normalizeProgressValue(this.value),
       showText: this.showText,
       status: this.status,
+      drawnStatus: this.drawnStatus,
+      meter: Boolean(this.meter),
       label: this.label,
       valueText: this.valueText
     };
@@ -671,7 +734,7 @@ class SfProgressScale extends ProgressScaleElement {
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['value', 'show-text', 'status', 'tone', 'label', 'value-text', 'aria-label'];
+    const directPatchAttributes = ['value', 'show-text', 'status', 'tone', 'warning-at', 'error-at', 'meter', 'label', 'value-text', 'aria-label'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -683,10 +746,12 @@ class SfProgressScale extends ProgressScaleElement {
   updateDom() {
     const root = this.querySelector('.sf-progress-scale');
     if (!root) return false;
+    this.sfHostState('data-status', this.drawnStatus);
     return (0,_component_progress_scale_js_progress_scale__WEBPACK_IMPORTED_MODULE_4__.setProgressScaleState)(root, {
       value: this.value,
       showText: this.showText,
-      tone: this.status,
+      tone: this.drawnStatus,
+      meter: Boolean(this.meter),
       label: this.accessibleLabel,
       valueText: this.valueText
     });
@@ -723,31 +788,38 @@ function normalizeProgressValue(value) {
   }
 
   return Math.max(0, Math.min(100, parsed));
-}
+} // The blocks never show more than is done (PG-12): 61 % lights 6 of 10, not 7;
+// a block lights only once its tenth is reached. The epsilon keeps a value
+// that is a whole tenth in decimal (70) from falling a block short in binary.
+
 
 function normalizeScaleStep(value) {
   const normalized = normalizeProgressValue(value);
-  return Math.ceil(normalized / 10) * 10;
+  return Math.floor(normalized / 10 + 1e-9) * 10;
 }
 
 function normalizeSize(value) {
   const normalized = String(value || '').toLowerCase();
   return ['1/3', '1/2', '1', '2', '3'].includes(normalized) ? normalized : '1';
 } // The component normalises the legacy words, so the template sees the shared
-// vocabulary. `neutral` carries no class of its own, exactly as `primary` did.
+// vocabulary (owner decision C131 (1)): no status (empty) draws the theme's
+// primary and carries no class; neutral is grey, as in sf-dot and sf-badge.
 
 
 function normalizeStatus(value) {
   const normalized = String(value || '').toLowerCase();
-  return ['neutral', 'info', 'success', 'warning', 'error'].includes(normalized) ? normalized : 'neutral';
+  return ['neutral', 'info', 'success', 'warning', 'error'].includes(normalized) ? normalized : '';
 }
+
+const on = value => value === true || value === '' || value === 'true';
 
 function renderProgressScaleTemplate(context) {
   const size = normalizeSize(context.size);
   const value = normalizeProgressValue(context.value);
   const step = normalizeScaleStep(value);
-  const tone = normalizeStatus(context.status ?? context.tone);
-  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, `sf-progress-scale--${tone}`, // On a text line the track and the value share the line; otherwise the
+  const tone = normalizeStatus(context.drawnStatus ?? context.status ?? context.tone);
+  const meter = on(context.meter);
+  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, tone ? `sf-progress-scale--${tone}` : '', // On a text line the track and the value share the line; otherwise the
   // value stands under the track.
   ...(context.line ? [`sf-progress-scale--line-${context.line}`, 'flex', 'flex-row', 'items-cross-center'] : ['flex', 'flex-col']), context.rootClass].filter(Boolean);
 
@@ -761,11 +833,12 @@ function renderProgressScaleTemplate(context) {
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value=${String(value)}
       data-size=${size}
-      data-tone=${tone}
+      data-tone=${tone || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-meter=${meter ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-show-text=${String(Boolean(context.showText))}
       data-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value-text=${context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      role="progressbar"
+      role=${meter ? 'meter' : 'progressbar'}
       aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-valuemin="0"
       aria-valuemax="100"
@@ -824,7 +897,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.1.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

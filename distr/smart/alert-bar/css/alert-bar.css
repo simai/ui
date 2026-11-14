@@ -4,10 +4,22 @@
   /* sf-alert-bar (standard simai.smart-component 1.3.14 §6). One rung of the
      ladder (docs/foundation-composition-geometry.md), 1/2 by default, 1 with
      size="1": the text is the rung's line L, the icon that line, the buttons
-     the rung's control height H, icon-to-text the rung's text-space-x, the
-     bar's inline inset its space-x and its block inset (H - L) / 2, the inset a
-     control's label has inside the control, so the bar's text stands where a
-     button's label stands. The minimized strip is a control of the rung below.
+     the rung's low control height H (owner decision C117, C27 height="low":
+     L + 2 x the rung's low tightness step -- 28 at 1/2 and 32 at 1 on desktop,
+     one family height with sf-alert and sf-toast, C35), the bar's block inset
+     (H - L) / 2, the inset a control's label has inside the control, so the
+     bar's text stands where a button's label stands. The minimized strip is a
+     control of the rung below.
+
+     The horizontal steps are the standard's (owner decision C105, AA-14): the
+     edge 16 (phone 12, --sf-space-1), icon to text 12 (phone 8,
+     --sf-space-1/2), text to actions 16 (--sf-space-1), between buttons and
+     actions to the end button 8 (--sf-space-1/3, as on sf-alert). The fill runs the bar's whole
+     width; the content stands on the page column (C114 (2), AA-16): a site bar
+     (size 1) takes the .container's inset of the window's step -- its gutter and
+     half of what the bar is wider than the step -- so its icon lines up with
+     the site header's logo; an admin bar (size 1/2) has the whole width for its
+     column, so its inset is the edge.
 
      The public variables are read with the role token as their fallback and
      never set here. */
@@ -24,14 +36,22 @@
     --sf-alert-bar--font-size: var(--sf-text-size-1\/2);
     --sf-alert-bar--meta-line: var(--sf-text-height-1\/3);
     --sf-alert-bar--meta-font-size: var(--sf-text-size-1\/3);
-    --sf-alert-bar--control: var(--sf-ui-1\/2--control-height);
+    --sf-alert-bar--control: calc(var(--sf-alert-bar--line) + 2 * var(--sf-ui-1\/2--space-y-tightness-low));
     --sf-alert-bar--space-x: var(--sf-ui-1\/2--space-x);
     --sf-alert-bar--text-space-x: var(--sf-ui-1\/2--text-space-x);
     --sf-alert-bar--strip-line: var(--sf-text-height-1\/3);
     --sf-alert-bar--strip-font-size: var(--sf-text-size-1\/3);
     --sf-alert-bar--strip-height: var(--sf-ui-1\/3--control-height);
-    --sf-alert-bar--padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--space-x));
-    --sf-alert-bar--gap: var(--sf-alert-bar-gap, var(--sf-alert-bar--space-x));
+    /* The inline inset: the edge, or on a site bar the page column's inset. */
+    --sf-alert-bar--edge: var(--sf-space-1);
+    --sf-alert-bar--column-inset: var(--sf-alert-bar--edge);
+    --sf-alert-bar--padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--column-inset));
+    --sf-alert-bar--gap: var(--sf-alert-bar-gap, var(--sf-space-1));
+    --sf-alert-bar--icon-gap: var(--sf-space-1\/2);
+    --sf-alert-bar--between: var(--sf-space-1\/3);
+    /* Text to the actions when they stand under it (C115, the vertical
+       standard): 12, phone 8. */
+    --sf-alert-bar--under-gap: var(--sf-space-1\/2);
     --sf-alert-bar--padding-block: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
     display: block;
     position: relative;
@@ -48,12 +68,43 @@
     --sf-alert-bar--font-size: var(--sf-text-size-1);
     --sf-alert-bar--meta-line: var(--sf-text-height-1\/2);
     --sf-alert-bar--meta-font-size: var(--sf-text-size-1\/2);
-    --sf-alert-bar--control: var(--sf-ui-1--control-height);
+    --sf-alert-bar--control: calc(var(--sf-alert-bar--line) + 2 * var(--sf-ui-1--space-y-tightness-low));
     --sf-alert-bar--space-x: var(--sf-ui-1--space-x);
     --sf-alert-bar--text-space-x: var(--sf-ui-1--text-space-x);
     --sf-alert-bar--strip-line: var(--sf-text-height-1\/2);
     --sf-alert-bar--strip-font-size: var(--sf-text-size-1\/2);
     --sf-alert-bar--strip-height: var(--sf-ui-1\/2--control-height);
+    /* A site bar: the page column, as the .container of the site header's row
+       (below the first step its gutter, --sf-space-1). */
+    --sf-alert-bar--column-inset: var(--sf-container-gutter, var(--sf-alert-bar--edge));
+  }
+  /* The page column of a site bar at each step of the .container ladder: the
+     container's gutter and half of what the bar is wider than the step (100cqi
+     is the bar's own width: the bar is the query container of its row). */
+  @media (min-width: 32rem) {
+    .sf-alert-bar.sf-alert-bar--size-1 {
+      --sf-alert-bar--column-inset: calc(var(--sf-container-gutter, var(--sf-space-2)) + max(calc(var(--sf-px) * 0), (100cqi - var(--sf-breakpoint-sm)) / 2));
+    }
+  }
+  @media (min-width: 44rem) {
+    .sf-alert-bar.sf-alert-bar--size-1 {
+      --sf-alert-bar--column-inset: calc(var(--sf-container-gutter, var(--sf-space-3)) + max(calc(var(--sf-px) * 0), (100cqi - var(--sf-breakpoint-md)) / 2));
+    }
+  }
+  @media (min-width: 60rem) {
+    .sf-alert-bar.sf-alert-bar--size-1 {
+      --sf-alert-bar--column-inset: calc(var(--sf-container-gutter, var(--sf-space-4)) + max(calc(var(--sf-px) * 0), (100cqi - var(--sf-breakpoint-lg)) / 2));
+    }
+  }
+  @media (min-width: 72rem) {
+    .sf-alert-bar.sf-alert-bar--size-1 {
+      --sf-alert-bar--column-inset: calc(var(--sf-container-gutter, var(--sf-space-5)) + max(calc(var(--sf-px) * 0), (100cqi - var(--sf-breakpoint-xl)) / 2));
+    }
+  }
+  @media (min-width: 80rem) {
+    .sf-alert-bar.sf-alert-bar--size-1 {
+      --sf-alert-bar--column-inset: calc(var(--sf-container-gutter, var(--sf-space-6)) + max(calc(var(--sf-px) * 0), (100cqi - var(--sf-breakpoint-xxl)) / 2));
+    }
   }
   /* The level's fill and its ink: the theme's status roles, light and dark. */
   .sf-alert-bar.sf-alert-bar--error {
@@ -85,7 +136,12 @@
     --sf-surface-place-solid: var(--sf-error);
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-error);
+    --sf-place--ink: var(--sf-on-error);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-icon: var(--sf-on-error);
     --sf-on-surface-hover: var(--sf-on-error);
     --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
@@ -99,7 +155,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -125,7 +181,12 @@
     --sf-surface-place-solid: var(--sf-error);
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-error);
+    --sf-place--ink: var(--sf-on-error);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-icon: var(--sf-on-error);
     --sf-on-surface-hover: var(--sf-on-error);
     --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
@@ -139,7 +200,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -165,7 +226,12 @@
     --sf-surface-place-solid: var(--sf-error);
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-error);
+    --sf-place--ink: var(--sf-on-error);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-icon: var(--sf-on-error);
     --sf-on-surface-hover: var(--sf-on-error);
     --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
@@ -179,7 +245,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -205,7 +271,12 @@
     --sf-surface-place-solid: var(--sf-error);
     --sf-surface-place-ground: var(--sf-error);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-error);
+    --sf-place--ink: var(--sf-on-error);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-error);
+    --sf-on-surface-icon: var(--sf-on-error);
     --sf-on-surface-hover: var(--sf-on-error);
     --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
@@ -219,7 +290,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -286,6 +357,8 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
     --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
   }
   .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -299,6 +372,8 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
     --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
   }
   .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -312,6 +387,8 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
     --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
   }
   .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -325,13 +402,35 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
     --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
+  }
+  /* The close cross (owner decision C112, R198): the notice's service glyph
+     is the place's on-surface ink at 64 of the alpha scale's ink family
+     (48/64/80), as on sf-alert and sf-toast -- here the strong place's own
+     ink (sf-ink: white in the light theme, the level's tone 20 in the dark),
+     not the solid on-colour of the text. 64 holds 3:1 on every level's fill
+     in both themes; 48 does not. Declared on the glyph, so it wins over the
+     icon button's own glyph colour; under a pointer it catches the text ink
+     (C107 (4)) below. The glyph stays the bar's line, the size of its status
+     icon (C112 (1)). */
+  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
+  }
+  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
   }
   .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row {
     --sf-surface-place: var(--sf-warning);
     --sf-surface-place-solid: var(--sf-warning);
     --sf-surface-place-ground: var(--sf-warning);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-warning);
+    --sf-place--ink: var(--sf-on-warning);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-warning);
+    --sf-on-surface-icon: var(--sf-on-warning);
     --sf-on-surface-hover: var(--sf-on-warning);
     --sf-on-surface-active: var(--sf-on-warning);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
@@ -345,7 +444,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -371,7 +470,12 @@
     --sf-surface-place-solid: var(--sf-warning);
     --sf-surface-place-ground: var(--sf-warning);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-warning);
+    --sf-place--ink: var(--sf-on-warning);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-warning);
+    --sf-on-surface-icon: var(--sf-on-warning);
     --sf-on-surface-hover: var(--sf-on-warning);
     --sf-on-surface-active: var(--sf-on-warning);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
@@ -385,7 +489,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -436,6 +540,8 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-warning-90));
     --sf-place--on-plate: light-dark(var(--sf-warning-40), var(--sf-warning-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
   }
   .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-warning-20));
@@ -449,13 +555,32 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-warning-90));
     --sf-place--on-plate: light-dark(var(--sf-warning-40), var(--sf-warning-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
+  }
+  /* The close cross (owner decision C112, R198): the notice's service glyph
+     is the place's on-surface ink at 64 of the alpha scale's ink family
+     (48/64/80), as on sf-alert and sf-toast -- here the strong place's own
+     ink (sf-ink: white in the light theme, the level's tone 20 in the dark),
+     not the solid on-colour of the text. 64 holds 3:1 on every level's fill
+     in both themes; 48 does not. Declared on the glyph, so it wins over the
+     icon button's own glyph colour; under a pointer it catches the text ink
+     (C107 (4)) below. The glyph stays the bar's line, the size of its status
+     icon (C112 (1)). */
+  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
   }
   .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row {
     --sf-surface-place: var(--sf-info);
     --sf-surface-place-solid: var(--sf-info);
     --sf-surface-place-ground: var(--sf-info);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-info);
+    --sf-place--ink: var(--sf-on-info);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-info);
+    --sf-on-surface-icon: var(--sf-on-info);
     --sf-on-surface-hover: var(--sf-on-info);
     --sf-on-surface-active: var(--sf-on-info);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
@@ -469,7 +594,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -495,7 +620,12 @@
     --sf-surface-place-solid: var(--sf-info);
     --sf-surface-place-ground: var(--sf-info);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-place--ink-variant: var(--sf-on-info);
+    --sf-place--ink: var(--sf-on-info);
+    --sf-place--fill-surface: initial;
     --sf-on-surface: var(--sf-on-info);
+    --sf-on-surface-icon: var(--sf-on-info);
     --sf-on-surface-hover: var(--sf-on-info);
     --sf-on-surface-active: var(--sf-on-info);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
@@ -509,7 +639,7 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
@@ -560,6 +690,8 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-info-90));
     --sf-place--on-plate: light-dark(var(--sf-info-40), var(--sf-info-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
   }
   .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
@@ -573,6 +705,26 @@
     --sf-place--plate: light-dark(var(--sf-white), var(--sf-info-90));
     --sf-place--on-plate: light-dark(var(--sf-info-40), var(--sf-info-20));
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
+  }
+  /* The close cross (owner decision C112, R198): the notice's service glyph
+     is the place's on-surface ink at 64 of the alpha scale's ink family
+     (48/64/80), as on sf-alert and sf-toast -- here the strong place's own
+     ink (sf-ink: white in the light theme, the level's tone 20 in the dark),
+     not the solid on-colour of the text. 64 holds 3:1 on every level's fill
+     in both themes; 48 does not. Declared on the glyph, so it wins over the
+     icon button's own glyph colour; under a pointer it catches the text ink
+     (C107 (4)) below. The glyph stays the bar's line, the size of its status
+     icon (C112 (1)). */
+  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
+  }
+  .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button:not(:disabled):hover .sf-icon {
+    --sf-icon--color: var(--sf-alert-bar--ink);
+  }
+  .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button:not(:disabled):active .sf-icon {
+    --sf-icon--color: var(--sf-alert-bar--ink);
   }
   .sf-alert-bar-row,
   .sf-alert-bar-strip {
@@ -607,30 +759,30 @@
     color: inherit;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-right: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
   }
   @supports not (margin-inline-end: initial){
   html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-right: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
     }
   }
   .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(ltr)){
-    margin-right: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-left: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
   }
   @supports not (margin-inline-end: initial){
   [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-left: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
     }
   }
   .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(rtl)){
-    margin-left: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
   }
   .sf-alert-bar-row > .sf-alert-bar-icon {
-    -webkit-margin-end: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
-            margin-inline-end: calc(var(--sf-alert-bar--text-space-x) - var(--sf-alert-bar--gap));
+    -webkit-margin-end: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+            margin-inline-end: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
   }
   /* The text gives way first: it wraps down to its own floor (f0, 10rem), and
      only then do the actions wrap onto a second line. */
@@ -661,7 +813,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--sf-alert-bar--text-space-x);
+    gap: var(--sf-alert-bar--between);
   }
   /* An action keeps its label's natural width: never shrunk, never cut. The
      sf-button host is display: contents, so the native control is the item. */
@@ -681,22 +833,20 @@
     flex: none;
     white-space: nowrap;
   }
-  .sf-alert-bar-actions > .sf-alert-bar-pager {
-    flex: none;
-    white-space: nowrap;
-  }
-  .sf-alert-bar-pager {
-    display: inline-flex;
-    align-items: center;
-  }
-  .sf-alert-bar-position {
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+  /* The open toggle carries the collapse glyph for the narrow bar only
+     (below); wide, it reads «Свернуть список» as text alone. The sf-icon host
+     is display: contents (set on the element) and the glyph's display is the
+     icon sheet's, outside the layers, so the glyph is taken out of the flow
+     and out of sight instead (it is aria-hidden). */
+  @container sf-alert-bar (width > 38rem) {
+    .sf-alert-bar-row .sf-alert-bar-all > button > sf-icon > .sf-icon {
+      position: absolute;
+      visibility: hidden;
+    }
   }
   /* sf-button and sf-button-icon lay out as display: contents: the native
-     control inside is the box, so placement rules name it. */
+     control inside is the box, so placement rules name it. The end button
+     stands 8 after the actions (C105 H5), not the 16 between groups. */
   .sf-alert-bar-row > .sf-alert-bar-close > button {
     flex: none;
   }
@@ -708,6 +858,110 @@
   }
   .sf-alert-bar-row > .sf-alert-bar-minimize > a {
     flex: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
   /* Minimized: one thin strip of the rung below that keeps the colour, the
      icon and the count, and expands the bar on a press. */
@@ -779,15 +1033,99 @@
     flex: none;
     opacity: 0.8;
   }
-  /* The list of all, under the bar: an ordinary surface in the page flow (it
-     pushes the page down, it does not float), each level a tonal badge, each
-     item its own action, acknowledge and close. */
-  /* One grid for every row: the badge, text and actions columns line up
-     across the items (each item is a subgrid of the list). */
+  /* A link in the bar's text, or in an item of its list, is help only, in
+     the text's ink -- the level's on-colour on the bar, on-surface in the
+     list -- underlined (owner decision C126; core mix/_mix__notice-link.scss).
+     The actions are buttons. */
+  .sf-alert-bar .sf-alert-bar-text a[href] {
+    color: inherit;
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+    text-decoration-thickness: var(--sf-link--underline-weight);
+    text-underline-offset: var(--sf-a3);
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href] {
+    color: inherit;
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+    text-decoration-thickness: var(--sf-link--underline-weight);
+    text-underline-offset: var(--sf-a3);
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:hover {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:active {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:visited {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:hover {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:active {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:visited {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:hover {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:active {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:hover {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:active {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-alert-bar .sf-alert-bar-text a.focus-visible[href] {
+    outline-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a.focus-visible[href] {
+    outline-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href].focus-visible {
+    outline-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-text a[href]:focus-visible {
+    outline-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href].focus-visible {
+    outline-color: currentColor;
+  }
+  .sf-alert-bar .sf-alert-bar-item-text a[href]:focus-visible {
+    outline-color: currentColor;
+  }
+  /* The list of the others, under the bar (owner decision C114 (3), layout Р1,
+     NS-12): an area of the page in its flow -- it pushes the page down, it
+     does not float -- on the surface-area place, a line under it, scrolling
+     inside itself past g1 (352). Each row is the bar row's composition on the
+     bar's rung and steps (C105): the level icon (the line's size, the level's
+     colour), the text with the source and time on the line below, the actions
+     8 apart, then the close 8 after them; the row's block inset is the bar's,
+     (H - L) / 2 around the low control. An error row keeps the close's place
+     empty, so the columns line up. */
   .sf-alert-bar-list {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-content: start;
+    display: block;
     box-sizing: border-box;
     max-height: var(--sf-g1);
     max-block-size: var(--sf-g1);
@@ -802,22 +1140,27 @@
     --sf-surface-place: var(--sf-alert-bar--list-background);
     --sf-surface-place-solid: var(--sf-alert-bar--list-background);
     --sf-surface-place-ground: var(--sf-alert-bar--list-background);
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: initial;
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -830,10 +1173,12 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-alert-bar-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-alert-bar-list {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-alert-bar-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-alert-bar-list {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -845,6 +1190,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-alert-bar-list {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-alert-bar-list {
     --sf-primary: var(--sf-place--found-primary);
@@ -855,12 +1218,12 @@
     --sf-link-active: var(--sf-place--found-link-active);
   }
   .sf-alert-bar-item {
-    display: grid;
-    grid-column: 1/-1;
-    grid-template-columns: subgrid;
+    display: flex;
     align-items: center;
-    grid-gap: var(--sf-alert-bar--text-space-x) var(--sf-alert-bar--space-x);
-    gap: var(--sf-alert-bar--text-space-x) var(--sf-alert-bar--space-x);
+    gap: var(--sf-alert-bar--gap);
+    box-sizing: border-box;
+    min-height: calc(var(--sf-alert-bar--control) + 2 * var(--sf-alert-bar--padding-block));
+    min-block-size: calc(var(--sf-alert-bar--control) + 2 * var(--sf-alert-bar--padding-block));
     padding-top: var(--sf-alert-bar--padding-block);
     padding-bottom: var(--sf-alert-bar--padding-block);
     padding-block: var(--sf-alert-bar--padding-block);
@@ -873,24 +1236,173 @@
     -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
             border-block-start: var(--sf-px) solid var(--sf-outline-variant);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(ltr)){
+    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(rtl)){
+    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-icon {
+    -webkit-margin-end: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+            margin-inline-end: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
+  }
+  /* The level's colour is the icon's only; the theme's status roles. */
+  .sf-alert-bar-item[data-level=error] > .sf-alert-bar-item-icon {
+    color: var(--sf-error);
+  }
+  .sf-alert-bar-item[data-level=danger] > .sf-alert-bar-item-icon {
+    color: var(--sf-error);
+  }
+  .sf-alert-bar-item[data-level=warning] > .sf-alert-bar-item-icon {
+    color: var(--sf-warning);
+  }
+  .sf-alert-bar-item[data-level=info] > .sf-alert-bar-item-icon {
+    color: var(--sf-info);
+  }
   .sf-alert-bar-item-text {
-    display: flex;
-    flex-direction: column;
+    flex: 1 1 0;
     min-width: 0;
     min-inline-size: 0;
   }
   .sf-alert-bar-item-message {
+    display: block;
     word-wrap: anywhere;
   }
   .sf-alert-bar-item-meta {
+    display: block;
     color: var(--sf-on-surface-variant);
     opacity: 1;
   }
   .sf-alert-bar-item-actions {
     display: flex;
+    flex: none;
     flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: var(--sf-alert-bar--text-space-x);
+    align-items: center;
+    gap: var(--sf-alert-bar--between);
+  }
+  /* The close, or its kept place on an error row: 8 after the actions (C105
+     H5), the low control's square. sf-button-icon is display: contents, so the
+     native control is the item. */
+  .sf-alert-bar-item > .sf-alert-bar-item-close > button {
+    flex: none;
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-close > a {
+    flex: none;
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-end {
+    flex: none;
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-end {
+    width: var(--sf-alert-bar--control);
+    inline-size: var(--sf-alert-bar--control);
+    height: var(--sf-alert-bar--control);
+    block-size: var(--sf-alert-bar--control);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
+    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+    }
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
+    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end {
+    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
+  }
+  /* The list's cross is the notice's service glyph (owner decision C112): the
+     on-surface ink at 64 of the alpha scale's ink family, as on sf-alert on
+     the page; under a pointer the text ink (C107 (4)). */
+  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button:not(:disabled):hover .sf-icon {
+    --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button:not(:disabled):active .sf-icon {
+    --sf-icon--color: var(--sf-on-surface);
   }
   @media (prefers-reduced-motion: no-preference) {
     .sf-alert-bar-list {
@@ -921,19 +1433,40 @@
   }
   /* Narrow (the bar's own width up to g9, 608 px; a container query cannot
      read a variable, so the step is written in rem): the icon, the text and the
-     close share the first line; the actions go under the text; no arrows,
-     «Все N» at the line's end; the list's items stack. */
+     close share the first line; the actions go under the text from its start
+     (AA-17, C114 (5)), «Ещё N» at the line's end; the open list's rows do
+     the same. The
+     inset is the edge: a narrow bar has no page column to line up with.
+
+     Even bottom (C114 (5), NS-8): with the actions under the text, the inset
+     under the last button is what the eye sees above the first line -- the
+     block inset, the control's inset above the text, and the room above the
+     capitals inside the line, (line - 1cap) / 2 (1cap is the font's own cap
+     height, so it follows the rung and the density by itself). */
   @container sf-alert-bar (max-width: 38rem) {
     .sf-alert-bar-row {
       display: grid;
       grid-template-columns: var(--sf-alert-bar--line) minmax(0, 1fr) auto;
       align-items: start;
-      grid-column-gap: var(--sf-alert-bar--text-space-x);
-      -webkit-column-gap: var(--sf-alert-bar--text-space-x);
-         -moz-column-gap: var(--sf-alert-bar--text-space-x);
-              column-gap: var(--sf-alert-bar--text-space-x);
-      grid-row-gap: var(--sf-alert-bar--text-space-x);
-      row-gap: var(--sf-alert-bar--text-space-x);
+      grid-column-gap: var(--sf-alert-bar--icon-gap);
+      -webkit-column-gap: var(--sf-alert-bar--icon-gap);
+         -moz-column-gap: var(--sf-alert-bar--icon-gap);
+              column-gap: var(--sf-alert-bar--icon-gap);
+      grid-row-gap: var(--sf-alert-bar--under-gap);
+      row-gap: var(--sf-alert-bar--under-gap);
+      padding-left: var(--sf-alert-bar--edge);
+      padding-right: var(--sf-alert-bar--edge);
+      padding-inline: var(--sf-alert-bar--edge);
+      padding-left: var(--sf-alert-bar--edge);
+      padding-left: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+      padding-right: var(--sf-alert-bar--edge);
+      padding-right: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+      padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+    }
+    .sf-alert-bar-row:has(> .sf-alert-bar-actions) {
+      padding-bottom: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
+      -webkit-padding-after: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
+              padding-block-end: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
       margin-right: 0;
@@ -995,13 +1528,115 @@
       grid-column: 3;
       grid-row: 1;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
     .sf-alert-bar-actions {
       flex-wrap: wrap;
       grid-column: 2/4;
       grid-row: 2;
-    }
-    .sf-alert-bar-pager {
-      display: none;
+      justify-content: flex-start;
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-all > button{
       margin-left: auto;
@@ -1055,14 +1690,188 @@
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
-    .sf-alert-bar-list {
-      grid-template-columns: minmax(0, 1fr);
+    /* Open, the toggle keeps the place of «Ещё N» at the end of the action
+       line: «Свернуть список» is longer and would wrap to a line of its own
+       (the bar 36 px taller), so here the button is the collapse glyph on the
+       low control's square, an icon button's footprint. Its name stays
+       «Свернуть список» (aria-label); the label is kept for the name only. */
+    .sf-alert-bar-row .sf-alert-bar-all > button[aria-expanded=true] {
+      justify-content: center;
+      width: var(--sf-alert-bar--control);
+      inline-size: var(--sf-alert-bar--control);
+      padding-left: 0;
+      padding-right: 0;
+      padding-inline: 0;
     }
+    .sf-alert-bar-row .sf-alert-bar-all > button[aria-expanded=true] > .sf-button-text-container {
+      position: absolute;
+      width: var(--sf-px);
+      inline-size: var(--sf-px);
+      height: var(--sf-px);
+      block-size: var(--sf-px);
+      overflow: hidden;
+      -webkit-clip-path: inset(50%);
+              clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    /* A row of the open list does what the bar row does: the icon, the text
+       and the close (or its kept place) on the first line, the actions under
+       the text from its start, the even bottom (C114 (5)). */
     .sf-alert-bar-item {
-      grid-template-columns: minmax(0, 1fr);
-      justify-items: start;
+      display: grid;
+      grid-template-columns: var(--sf-alert-bar--line) minmax(0, 1fr) auto;
+      align-items: start;
+      grid-column-gap: var(--sf-alert-bar--icon-gap);
+      -webkit-column-gap: var(--sf-alert-bar--icon-gap);
+         -moz-column-gap: var(--sf-alert-bar--icon-gap);
+              column-gap: var(--sf-alert-bar--icon-gap);
+      grid-row-gap: var(--sf-alert-bar--under-gap);
+      row-gap: var(--sf-alert-bar--under-gap);
+      padding-left: var(--sf-alert-bar--edge);
+      padding-right: var(--sf-alert-bar--edge);
+      padding-inline: var(--sf-alert-bar--edge);
+      padding-left: var(--sf-alert-bar--edge);
+      padding-left: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+      padding-right: var(--sf-alert-bar--edge);
+      padding-right: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+      padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
+    }
+    .sf-alert-bar-item:has(> .sf-alert-bar-item-actions) {
+      padding-bottom: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
+      -webkit-padding-after: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
+              padding-block-end: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 2);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-end: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(ltr)){
+      margin-right: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-end: initial){
+    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(rtl)){
+      margin-left: 0;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-icon {
+      grid-column: 1;
+      grid-row: 1;
+      margin-top: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+      -webkit-margin-before: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+              margin-block-start: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+      -webkit-margin-end: 0;
+              margin-inline-end: 0;
+    }
+    .sf-alert-bar-item-text {
+      grid-column: 2;
+      grid-row: 1;
+      padding-top: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+      -webkit-padding-before: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+              padding-block-start: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-close > button {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-close > a {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-end {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+      margin-left: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+      margin-left: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
+      margin-left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+      margin-right: 0;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
+      margin-right: 0;
+      }
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
+      margin-right: 0;
+    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end {
+      -webkit-margin-start: 0;
+              margin-inline-start: 0;
     }
     .sf-alert-bar-item-actions {
+      grid-column: 2/4;
+      grid-row: 2;
       justify-content: flex-start;
     }
   }

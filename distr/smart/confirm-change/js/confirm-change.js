@@ -376,6 +376,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //
 // Both answers are outlined and weigh the same: a change is decided, not
 // nudged, and a filled «Confirm» beside a quiet «Decline» is a nudge.
+// «Отклонить» is that decision, not a cancel, so it stays outlined when every
+// «Отмена» is quiet (decision C116 #q-cancel; the shared footer's
+// declineAppearance).
 //
 // The status line is a polite live region and also the place focus goes when
 // the button that had it disappears (index.js, answer()).
@@ -398,7 +401,9 @@ function renderChangeConfirmTemplate(context) {
             <div class="sf-change-confirm__changes" role="group" aria-label=${context.changesLabel}>
                 <sf-change class="sf-change-confirm__list" layout="list" .changes=${context.changes}></sf-change>
             </div>
-            ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-change-confirm")}
+            ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-change-confirm", {
+    declineAppearance: "outline"
+  })}
         </section>
     `;
 }
@@ -872,26 +877,29 @@ function confirmSurface(Base, {
 // two answers. `block` is the drawn surface's class; `acceptStatus` "danger"
 // marks a destructive acceptance (a delete, decision C13).
 //
-// The answers (decision C25): a plain question offers two outlined answers of
-// one weight. A dangerous one fills the accepting answer with the danger
-// colour and leaves the declining one quiet (ghost, no frame), so the two are
-// told apart by more than the red of a word. Both stand on the element's size
+// The answers (decision C25): a plain question's accepting answer is outlined;
+// a dangerous one fills it with the danger colour. The declining answer, the
+// question's «Отмена», is always the quiet one, ghost on-surface (decision
+// C116, #q-cancel: «Отмена» is quiet everywhere), so the two are told apart by
+// more than the red of a word. A surface whose declining answer is a decision
+// of its own weight rather than a cancel -- sf-confirm-change's «Отклонить» --
+// asks for `declineAppearance: "outline"`. Both stand on the element's size
 // (context.size, 1 unless the page gives one); a size a template gives is
 // relative, so a compact region (data-sf-density, C22) moves them down a step.
 //
-// In a window (sf-confirm appearance="window", decision C39) the declining
-// answer of a dangerous question is tonal, the window's quiet answer beside
-// the filled one, and the answers come before the status line, at the start.
+// In a window (sf-confirm appearance="window", decision C39) the answers come
+// before the status line, at the start; the declining one is ghost there too
+// (C116; it was tonal, the window's quiet answer).
 
 function renderConfirmFooter(context, block, {
   acceptStatus = "",
-  window = false
+  window = false,
+  declineAppearance = "ghost"
 } = {}) {
   const {
     component
   } = context;
   const danger = acceptStatus === "danger" || acceptStatus === "error";
-  const quiet = window ? "tonal" : "ghost";
   const size = context.size || "1";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <footer class="${block}__footer">
@@ -918,7 +926,7 @@ function renderConfirmFooter(context, block, {
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
-                            appearance=${danger ? quiet : "outline"}
+                            appearance=${declineAppearance}
                             scheme="on-surface"
                             size=${size}
                             text=${context.declineText}
@@ -996,7 +1004,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.7.1","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.7.4","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

@@ -25,6 +25,11 @@
   initial-value: 0px;
 }
 @layer sf.components {
+  /* A link drawn as an icon button (sf-button-icon href, decision C51) takes
+     no link underline, as a.sf-button; its ink is the icon button's own. */
+  a.sf-icon-button {
+    text-decoration: none;
+  }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button {
     border-bottom-right-radius: var(--sf-icon-button--radius);
@@ -486,35 +491,39 @@
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--icon {
     --sf-icon--color: var(--sf-icon-button-color, var(--sf-primary-active));
   }
+  /* An icon with no text is the icon of a button with text (C107 (3), owner
+     2026-11-12): --sf-on-surface-icon, half a step paler than a label; under
+     a pointer it takes --sf-on-surface (the custom sheet's sf.states). Only
+     the service marks inside a field or a row stay --sf-on-surface-variant. */
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-icon));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--icon {
     --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-surface-container));
@@ -1738,19 +1747,27 @@
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--danger.sf-icon-button--icon {
     --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
-    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
+    /* The danger outline's border is red at the ink family's 64 step (C118),
+       as on sf-button; the other outlines keep the shared grey. */
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, color-mix(in srgb, var(--sf-error) 64%, transparent));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--icon {
     --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
-    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
+    /* The danger outline's border is red at the ink family's 64 step (C118),
+       as on sf-button; the other outlines keep the shared grey. */
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, color-mix(in srgb, var(--sf-error) 64%, transparent));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--danger.sf-icon-button--close {
     --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
-    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
+    /* The danger outline's border is red at the ink family's 64 step (C118),
+       as on sf-button; the other outlines keep the shared grey. */
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, color-mix(in srgb, var(--sf-error) 64%, transparent));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--close {
     --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
-    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
+    /* The danger outline's border is red at the ink family's 64 step (C118),
+       as on sf-button; the other outlines keep the shared grey. */
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, color-mix(in srgb, var(--sf-error) 64%, transparent));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--danger.sf-icon-button--icon {
     --sf-icon--color: var(--sf-icon-button-color, var(--sf-error));
@@ -2749,6 +2766,18 @@
   .sf-icon-button.sf-icon-button--secondary.sf-icon-button--outline.active:not(.does-not-exist):not(:disabled):not(.disabled) .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
+  /* The plain neutral icon catches the label's ink up under a pointer (C107
+     (4)): at rest --sf-on-surface-icon, hovered and pressed --sf-on-surface,
+     as the quiet neutral above. A filled control keeps its inverse glyph. */
+  .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--icon:not(.sf-icon-button--on-surface-variant):not(.sf-icon-button--default):not(:disabled):not(.disabled):hover {
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+  }
+  .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--icon:not(.sf-icon-button--on-surface-variant):not(.sf-icon-button--default):not(:disabled):not(.disabled):active {
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+  }
+  .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--icon.active:not(.sf-icon-button--on-surface-variant):not(.sf-icon-button--default):not(:disabled):not(.disabled) {
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
+  }
   /* A disabled icon button's spinner (disabled and loading) takes the disabled
      ink -- unless --sf-loader--color is set. */
   .sf-icon-button:disabled:not(.sf-icon-button-state-loading:not(.disabled)) .sf-icon-button-spinner {
@@ -2834,6 +2863,156 @@
   }
   .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button[aria-pressed=true]:not(:disabled):not(.disabled):active {
     --sf-icon-button--background-color: var(--sf-primary-container-active);
+  }
+  /* A tonal toggle (TB-3, rule C12), as sf-button's: a tonal (or surface)
+     icon button already rests on a container at the first fill step (12
+     light / 24 dark), so the pressed container at that step left primary with
+     its unpressed plate and the other schemes with a change of hue alone.
+     Pressed, it takes the container's pressed step (20 / 32, the
+     container's -active), whatever its scheme. The fill family stops at 32, so
+     hover and press over it lay the surface's state layer on that fill (4 and
+     12 of the state family, the place's own ink on a coloured place). */
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal[aria-pressed=true]:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface[aria-pressed=true]:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-icon-button-pressed-background-color, var(--sf-primary-container-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  /* The neutral toggle (C12, after C113). A tonal or surface icon button in on-surface or secondary rests on the
+     neutral fill at 12, which in the dark theme is a light tone over the
+     place; the pressed container (primary 50 at 32) is a dark tone and came
+     out barely apart from it: 1.08 / 1.01 / 1.06 on a dark page, card and
+     popup. The fill family ends at 32, so the pressed toggle carries the
+     selected state's layer over the fill (--sf-surface-state-select, 8):
+     1.33 / 1.23 / 1.13 from the unpressed plate (light 1.24). Over it, hover
+     takes the press layer (12) and press adds the hover layer to that (12 and
+     4), one state step each, so the label keeps 4.5:1 on a popup. Primary and the
+     other coloured schemes rest on their own container and keep TB-3's look. */
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled) {
+    background-image: linear-gradient(var(--sf-surface-state-select), var(--sf-surface-state-select));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled):hover {
+    background-image: linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary.sf-icon-button--pressed:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
+  }
+  .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--surface.sf-icon-button--secondary[aria-pressed=true]:not(:disabled):not(.disabled):active {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover)), linear-gradient(var(--sf-surface-state-active), var(--sf-surface-state-active));
   }
   @media (forced-colors: active) {
     .sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button.sf-icon-button--pressed:not(:disabled):not(.disabled) {

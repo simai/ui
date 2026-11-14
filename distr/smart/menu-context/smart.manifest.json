@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.menu-context",
-  "version": "1.14.3",
+  "version": "1.19.0",
   "title": "Context Menu",
   "summary": "The Framework's action menu and its settings panel: data entries with icon, caption, value, shortcut, check, submenu, separator and heading, and the value rows a setting needs (switch, range, choice, a group of rows or tiles) with one change event and the set-value, set-all, reset and show actions, opened by openFor() into the top layer, anchored, with keyboard, typeahead and focus return. A host may still render its own items and own the lifecycle.",
   "kind": "smart",
@@ -22,10 +22,12 @@
   "exported_parts": [],
   "composition": {
     "uses": [
+      "component.avatars",
       "component.context-menu",
       "component.kbd",
       "smart.button",
       "smart.button-icon",
+      "smart.icon",
       "smart.tabs"
     ],
     "public_parts": []
@@ -127,7 +129,7 @@
       "size": {
         "type": "string",
         "default": "1/2",
-        "description": "The menu's size: rows as tall as a field of that size (32px at 1/2, 40px at 1), its text, insets, search and footer. A submenu takes its parent's size.",
+        "description": "The menu's size, a step on the region's ladder (decisions C79, C134): rows as tall as a field of that size and its text, insets, search and footer. 1/2, the default, is 32px rows and 14px text on a page, 28 and 12 in a compact region, rows of at least 44 under a finger on a phone; 1 is a step above (40/16, compact 32/14). The density is the one of the control that opens the menu, or of what stands under the point it opens at. A submenu takes its parent's size.",
         "enum": [
           "1/2",
           "1"
@@ -144,7 +146,7 @@
           "array"
         ],
         "default": "",
-        "description": "A panel with tabs: labels separated by |, or [{id, label}] as a property. The head (tabs and the close button) and the footer never scroll, the body does, and the panel keeps a fixed width (a ladder step, or width) whatever a tab holds."
+        "description": "Deprecated (owner decision C106, 2026-11-12; a former name until 2027-01-01): a list's view settings are sf-settings look=\"panel\". A panel with tabs: labels separated by |, or [{id, label}] as a property. The head (tabs and the close button) and the footer never scroll, the body does, and the panel keeps a fixed width (a ladder step, or width) whatever a tab holds."
       },
       "active-tab": {
         "type": "string",
@@ -200,7 +202,7 @@
           "kind": "'check' | 'radio' for a checkable row",
           "checked": "boolean",
           "danger": "boolean, a destructive action",
-          "status": "'danger' (or its alias 'error'), the same as danger: true -- the controls' status word (C13)",
+          "status": "'danger' (or its alias 'error'), the same as danger: true -- the controls' status word (C13), the only one (C116)",
           "disabled": "boolean",
           "current": "boolean, the place the person is",
           "href": "string, a link row",
@@ -210,7 +212,8 @@
           "search": "{placeholder, empty}, a field above the submenu that narrows its rows by label, caption and keywords",
           "keywords": "string, extra words a search matches",
           "avatar": "string, a picture URL drawn in the lead (a site's logo, a person)",
-          "initials": "string, drawn in the lead when there is no picture"
+          "initials": "string, drawn in the lead when there is no picture",
+          "swatch": "string, a CSS colour drawn as a circle in the lead instead of an icon (a code, var() of a token, light-dark() of two): a colour row of sf-settings, a label's colour"
         }
       },
       "separator": {
@@ -241,7 +244,8 @@
           "icon": "string, a Material Symbols name in the lead",
           "caption": "string, a second line under the name",
           "view": "'quiet' (the default: the options at the row's end, sized to their content, no frame and no dividers, the chosen one on a soft fill), 'band' (the framed full-width band, for a row that must show every option across the panel) or 'drill' (the chosen option under the label and a chevron; the options open as a level of the panel, a check mark on the chosen one, and choosing goes back -- for a list too long or too wordy to stand at the row's end). A drilling view needs a drilling panel: in a flyout menu the row stays the quiet one",
-          "options": "[{id, text, icon, checked, disabled}], side by side; a choice is marked at once and the menu stays open unless keepOpen is false"
+          "options": "[{id, text, icon, swatch, checked, disabled}], side by side; a choice is marked at once and the menu stays open unless keepOpen is false. An option's swatch is a CSS colour drawn as a circle where its icon would stand (in the drilled level's lead, or alone in a quiet row's option)",
+          "swatch": "string, a CSS colour drawn as a circle in the row's lead: the colour chosen now"
         }
       },
       "switch": {
@@ -949,19 +953,19 @@
     "source_artifacts": [
       {
         "path": "src/smart/menu-context/index.js",
-        "sha256": "943bec39ace7f03119ad6966489616ed42ca17be07dd91f9b8232b408a556a27"
+        "sha256": "0742cc90b331c915dad75270173222ff65f4f2a9d4d4013942662c63f0e72ff1"
       },
       {
         "path": "src/smart/menu-context/js/templates/default.js",
-        "sha256": "e18525d4aba0c2f9b6cea177c73737a0f555a43783406a9330b6e3340972c2bc"
+        "sha256": "9fd48de66a63b444ebe63bd65bafaffa91bc024c9f5d418448379c2a0b19b38b"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu.scss",
-        "sha256": "70bb6545ed8da23405f2cead694dfe3fefaff7f4d4982aca667c790a35698a81"
+        "sha256": "8164c4907386c4bb452fd5a75edca1bf15537699d117b013ada808f9f431646c"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu_custom.scss",
-        "sha256": "2a1fb31060c09bd4f52b41c7fe0211b3ed114d5a9bb039538d961c3f1eba136b"
+        "sha256": "ab86d4eccbd894c2bda24baaf98687d340ffdeaad236b673d69950b25665e9ff"
       }
     ],
     "generated_runtime": [

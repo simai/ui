@@ -2,22 +2,116 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "403726af3b51"
 (module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   pageWindow: () => (/* binding */ pageWindow)
+/* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a57d260bd333");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("344edfee8242");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("90fab10c70dd");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38d83a636029");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("96e8b718b20a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a57d260bd333");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("344edfee8242");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("90fab10c70dd");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38d83a636029");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("96e8b718b20a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+
+
 
 
 
@@ -37,20 +131,66 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // SF.language.register keeps them until 2026-12-01, each old key noted once
 // in SF.deprecations (change journal option-pagination-word-keys-camel-to-kebab).
 
-const camelKey = key => String(key).replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
+const camelKey = key => String(key).replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase()); // Words added after the rename never had a camelCase key, so they have no
+// former key either (title-page, 1.4.0; the appearances' words, 1.5.0).
 
-const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+
+const LATER_WORDS = new Set(["title-page", "of-pages", "range", "range-many", "page-size-text", "previous-text", "next-text", "cursor-next-text", "show-more-count", "shown"]); // The appearances of decision C97 (2026-11-12). An element written without
+// appearance draws the compatible footer (range, page size, field, Show more,
+// band) until FOOTER_UNTIL: those parts belong to the list that owns them.
+
+const APPEARANCES = ["field", "numbers", "arrows", "cursor", "more"];
+const FOOTER_SINCE = "2026-11-12";
+const FOOTER_UNTIL = "2027-01-01"; // Places of numbers: seven, five below the sm step of the ladder
+// (core/js/breakpoints.js, the sheets' media-breakpoint-down).
+// The page window of numbers (USWDS, GOV.UK; prototype pagination-study.html):
+// at most `slots` places, the first and the last page always, a gap where
+// pages are left out. Exactly `slots` places once there are more pages than
+// that, so the row keeps its width while a person pages.
+
+function pageWindow(current, count, slots) {
+  if (count <= slots) return Array.from({
+    length: Math.max(0, count)
+  }, (_, index) => index + 1);
+  const side = slots - 2;
+  const inner = side - 2;
+  let start = Math.max(2, current - Math.floor((inner - 1) / 2));
+  let end = start + inner - 1;
+
+  if (end > count - 1) {
+    end = count - 1;
+    start = end - inner + 1;
+  }
+
+  if (start <= 3) {
+    start = 2;
+    end = side;
+  } else if (end >= count - 2) {
+    end = count - 1;
+    start = count - side + 1;
+  }
+
+  const places = [1];
+  if (start > 2) places.push("gap");
+
+  for (let page = start; page <= end; page += 1) places.push(page);
+
+  if (end < count - 1) places.push("gap");
+  places.push(count);
+  return places;
+}
+const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   formerWords: {
     since: "2026-10-27",
     remove_after: "2026-12-01",
-    words: Object.fromEntries(Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime).map(key => [key, camelKey(key)]))
+    words: Object.fromEntries(Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime).filter(key => !LATER_WORDS.has(key)).map(key => [key, camelKey(key)]))
   }
 }); // A word's key in the language files: pagesLabel → pages-label.
 
@@ -100,7 +240,7 @@ function parseActions(value, fallback = []) {
 } // The boolean settings that are on by default (component.json).
 
 
-const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_3__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name));
+const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_5__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name));
 
 class SfPagination extends PaginationElement {
   static get props() {
@@ -302,6 +442,22 @@ class SfPagination extends PaginationElement {
       actionsLabel: {
         attribute: "actions-label",
         default: ""
+      },
+      appearance: {
+        default: "field",
+        values: APPEARANCES
+      },
+      href: {
+        default: ""
+      },
+      pageParam: {
+        attribute: "page-param",
+        default: ""
+      },
+      pageInTitle: {
+        attribute: "page-in-title",
+        type: Boolean,
+        default: false
       }
     };
   }
@@ -340,6 +496,18 @@ class SfPagination extends PaginationElement {
 
   get pagesLabel() {
     return this.getAttribute("pages-label") || this.sfWord("pages-label");
+  } // The appearance (C97): field, numbers, arrows, cursor or more.
+
+
+  get appearance() {
+    const value = this.getAttribute("appearance");
+    return APPEARANCES.includes(value) ? value : "field";
+  } // No appearance written: the compatible footer of 1.4 and before, in the
+  // look of C97 (range, «По 20 ▾», field «из 12»), until 2027-01-01.
+
+
+  get footer() {
+    return !this.hasAttribute("appearance");
   }
 
   get pageLabel() {
@@ -542,6 +710,59 @@ class SfPagination extends PaginationElement {
 
   get clearSelectionLabel() {
     return this.getAttribute("clear-selection-label") || this.sfWord("clear-selection-label");
+  } // The address of a page, as a template: «?page={page}» or
+  // «/news/page/{page}/», with {page-size} for the page size (PG-10). Set,
+  // the arrows are links with rel prev/next and a page typed in the field is
+  // opened by its address; empty, they are buttons, as before 1.4.0.
+
+
+  get href() {
+    return (this.getAttribute("href") || "").trim();
+  } // The name of the address's query parameter that holds the page («page»):
+  // the page is read from it when the element is placed and on Back and
+  // Forward, and written to it (a new history entry) when a person moves.
+  // Page 1 is the address without it. Empty: the address is not touched.
+
+
+  get pageParam() {
+    return (this.getAttribute("page-param") || "").trim();
+  } // Whether the page number joins the document title («Новости — Страница
+  // 3»), as search results and catalogues do; page 1 keeps the title as it
+  // was. One pagination of a document says it, not every list on the page.
+
+
+  get pageInTitle() {
+    return this.getBooleanAttr("page-in-title", false);
+  } // The address of one page from the template, or "" without a template or a
+  // page to name (the last page of an estimate).
+
+
+  pageHref(page) {
+    const template = this.href;
+    const number = Number.parseInt(String(page ?? ""), 10);
+    if (!template || !Number.isFinite(number) || number < 1) return "";
+    return template.replace(/\{page\}/gu, String(number)).replace(/\{page-size\}/gu, String(this.pageSize));
+  } // A press on an arrow link. A plain press moves here and reports it; a host
+  // that takes the move in place (it loads the rows itself) cancels
+  // sf-pagination-change, and the link is not followed. A press with a
+  // modifier (a new tab, a new window) is the browser's alone.
+  // The address is read before the move: the move draws the arrows of the
+  // new page at once, and the browser reads a link's href only after the
+  // press is handled, so «next» showing page 4 opened page 5 (PG-10). A
+  // followed link is therefore opened here, by the address it showed.
+
+
+  followLink(event, page) {
+    if (event?.defaultPrevented) return this;
+    if (event && (event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return this;
+    const address = this.pageHref(page);
+    const outcome = this.goToPage(page, {
+      link: true
+    });
+    if (outcome.outcome !== "applied") return this;
+    event?.preventDefault?.();
+    if (!outcome.taken && address) globalThis.location?.assign?.(address);
+    return this;
   } // The page being read. It is held inside the page count only when there is a
   // count: without one the count is one page, and that clamp pinned every page
   // to the first — the switcher showed a single place on page three, and
@@ -607,6 +828,75 @@ class SfPagination extends PaginationElement {
       selected: start + index === current,
       edge: start + index === 1 || start + index === furthest
     }));
+  } // Whether the screen is narrow (below the sm step): numbers then shows five
+  // places in place of seven.
+
+
+  get narrow() {
+    return Boolean(this._sfNarrow?.matches);
+  } // The places of numbers: page numbers and gaps, at most seven (five on a
+  // narrow screen). Without an exact count the row reaches the page has_next
+  // promises and ends in a gap while more follow: there is no last page to
+  // name (USWDS «unbounded»).
+
+
+  get pageSlots() {
+    if (this.exactCount && this.total === 0) return [];
+    const slots = this.narrow ? 5 : 7;
+    const current = this.current;
+    const unbounded = !this.exactCount && this.hasNextPage;
+    const count = this.exactCount ? this.pageCount : Math.max(this.countKnown ? this.pageCount : 0, current + (this.hasNextPage ? 1 : 0));
+    const places = pageWindow(current, count, unbounded ? slots - 1 : slots);
+    if (unbounded) places.push("gap");
+    return places.map(place => place === "gap" ? {
+      type: "gap"
+    } : {
+      type: "page",
+      value: place,
+      selected: place === current
+    });
+  } // The first and the last row of the range part: «41–60».
+
+
+  get range() {
+    const from = (this.current - 1) * this.pageSize + 1;
+    const to = this.exactCount ? Math.min(this.total, this.current * this.pageSize) : this.current * this.pageSize;
+    return {
+      from,
+      to
+    };
+  } // The range part's line (C97 point 2): «41–60 из 240», «41–60 из ~450»,
+  // «41–60 из многих». A total-label the author wrote keeps the line of 1.4
+  // («Всего: 240») until 2027-01-01.
+
+
+  get rangeText() {
+    if (this.hasAttribute("total-label")) {
+      return this.countKnown || this.counting || this.canCount ? `${this.totalLabel} ${this.countKnown ? this.shownTotal : ""}`.trim() : "";
+    }
+
+    if (this.exactCount && this.total === 0) return "";
+    const {
+      from,
+      to
+    } = this.range;
+    return this.countKnown ? this.sfWord("range", {
+      vars: {
+        from,
+        to,
+        total: this.shownTotal
+      }
+    }) : this.sfWord("range-many", {
+      vars: {
+        from,
+        to
+      }
+    });
+  } // How many rows more shows: every portion up to the current one.
+
+
+  get shown() {
+    return this.exactCount ? Math.min(this.total, this.current * this.pageSize) : this.current * this.pageSize;
   }
 
   firstPage() {
@@ -624,7 +914,22 @@ class SfPagination extends PaginationElement {
     }
 
     const furthest = this.exactCount ? this.pageCount : parsed;
-    return this.goToPage(Math.min(Math.max(parsed, 1), Math.max(1, furthest)));
+    const page = Math.min(Math.max(parsed, 1), Math.max(1, furthest)); // With an address template the typed page is opened by its address, as
+    // the arrows are, unless the host takes the move in place.
+
+    if (this.href) {
+      const outcome = this.goToPage(page, {
+        link: true
+      });
+
+      if (outcome.outcome === "applied" && !outcome.taken) {
+        globalThis.location?.assign?.(this.pageHref(page));
+      }
+
+      return outcome;
+    }
+
+    return this.goToPage(page);
   } // The field grows with the number being typed. It is done to the element
   // rather than through the state on purpose: a re-render on every keystroke
   // would take the caret with it, which is a defect this component has had.
@@ -672,6 +977,48 @@ class SfPagination extends PaginationElement {
       firstLabel: this.text("firstLabel", "first-label"),
       pageFieldLabel: this.text("pageFieldLabel", "page-field-label"),
       rootClass: this.getRootClass(),
+      appearance: this.appearance,
+      footer: this.footer,
+      topClass: this.topClass,
+      mainClass: this.mainClass,
+      bottomClass: this.bottomClass,
+      // A label only an author's own pages-label still draws (until
+      // 2027-01-01): the row says what it is without it.
+      pagesLabelShown: this.hasAttribute("pages-label"),
+      fieldDigits: Math.max(String(this.current).length, this.exactCount ? String(this.pageCount).length : 1, 1),
+      ofPages: this.countKnown ? this.sfWord("of-pages", {
+        vars: {
+          count: this.totalExact ? this.pageCount : `~${this.pageCount}`
+        }
+      }) : "",
+      pageSlots: this.appearance === "numbers" ? this.pageSlots : [],
+      slotDigits: String(this.exactCount ? this.pageCount : this.current + 1).length,
+      previousText: this.sfWord("previous-text"),
+      nextText: this.sfWord("next-text"),
+      cursorNextText: this.sfWord("cursor-next-text"),
+      placeText: this.sfWord("title-page", {
+        vars: {
+          page: this.current
+        }
+      }),
+      showMoreCountText: this.getAttribute("show-more-text") || (this.exactCount ? this.sfWord("show-more-count", {
+        vars: {
+          count: Math.min(this.pageSize, Math.max(0, this.total - this.shown))
+        }
+      }) : this.showMoreText),
+      shownText: this.countKnown ? this.sfWord("shown", {
+        vars: {
+          shown: this.shown,
+          total: this.shownTotal
+        }
+      }) : "",
+      shownPercent: this.exactCount && this.total > 0 ? Math.round(this.shown / this.total * 100) : null,
+      rangeText: this.rangeText,
+      pageSizeText: this.sfWord("page-size-text", {
+        vars: {
+          size: this.pageSize
+        }
+      }),
       ariaLabel: this.ariaLabel,
       pagesLabel: this.pagesLabel,
       pageLabel: this.pageLabel,
@@ -693,9 +1040,12 @@ class SfPagination extends PaginationElement {
       totalExact: this.totalExact,
       shownTotal: this.shownTotal,
       // The last page is a jump to a number: offered when the number is
-      // exact, or when the host can count it first. Without a count at all
-      // the button asks for one, as it always has.
-      canJumpToLast: this.exactCount || this.canCount || !this.countKnown,
+      // exact, or when the host can count it first (the button asks for the
+      // count). A host that cannot count (a cursor list) has no last page
+      // (PG-11).
+      canJumpToLast: this.exactCount || this.canCount,
+      exactCount: this.exactCount,
+      href: this.href,
       canCount: this.canCount,
       counting: this.counting,
       showCountLabel: this.showCountLabel,
@@ -721,7 +1071,7 @@ class SfPagination extends PaginationElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderPaginationTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderPaginationTemplate)(this.templateContext());
   }
 
   getTopSection() {
@@ -738,9 +1088,16 @@ class SfPagination extends PaginationElement {
   // asked for (a number, an arrow, the field) or a host finishing what a
   // person started (the last page once the count arrives) is reported as
   // sf-pagination-change.
+  // A second argument is the element's own: {link} for a press on an arrow
+  // link or a page typed with an address template (sf-pagination-change is
+  // then cancelable, and a cancel means "taken in place, do not follow"),
+  // {address} for a page read from the address (not written back to it).
 
 
-  goToPage(page) {
+  goToPage(page, {
+    link = false,
+    address = false
+  } = {}) {
     if (this.exactCount && this.total === 0) {
       return {
         outcome: "refused",
@@ -773,16 +1130,202 @@ class SfPagination extends PaginationElement {
     this.setState({
       current: next
     });
-    this.sfEmit("change", {
+    const followed = this.sfEmit("change", {
       previous,
       current: next,
       total: this.total,
       "page-count": this.knownPageCount,
       "page-size": this.pageSize
-    });
-    return {
+    }, link ? {
+      cancelable: true
+    } : {});
+    const taken = link && followed === false; // The address follows a move made here; a link that is followed writes
+    // its own address, and a page read from the address is already in it.
+
+    if (!address && (!link || taken)) this.writeAddress(next);
+    this.applyTitle();
+    return taken ? {
+      outcome: "applied",
+      taken: true
+    } : {
       outcome: "applied"
     };
+  } // The page the address names (page-param), or null when it names none.
+
+
+  addressPage() {
+    if (!this.pageParam || !globalThis.location) return null;
+    const value = new URLSearchParams(globalThis.location.search).get(this.pageParam);
+    if (value === null) return 1;
+    const page = Number.parseInt(value, 10);
+    return Number.isFinite(page) && page >= 1 ? page : null;
+  } // The page written to the address as a new history entry, so Back returns
+  // to the page before; page 1 is the address without the parameter.
+
+
+  writeAddress(page) {
+    if (!this.pageParam || !globalThis.history?.pushState || !globalThis.location) return;
+    const url = new URL(globalThis.location.href);
+    if (page > 1) url.searchParams.set(this.pageParam, String(page));else url.searchParams.delete(this.pageParam);
+    if (url.href === globalThis.location.href) return;
+    globalThis.history.pushState(globalThis.history.state, "", url.href);
+  } // The address moved (placed on it, Back, Forward): the page follows it and
+  // is reported like any move, so the host loads it.
+
+
+  followAddress() {
+    const page = this.addressPage();
+    if (page !== null && page !== this.current) this.goToPage(page, {
+      address: true
+    });
+  } // The document title with the page in it (page-in-title). The title the
+  // page had is kept and comes back on page 1 and when the element leaves.
+
+
+  applyTitle() {
+    if (!globalThis.document) return;
+
+    if (!this.pageInTitle) {
+      this.restoreTitle();
+      return;
+    }
+
+    if (this._sfTitle === undefined || document.title !== this._sfTitleShown) {
+      this._sfTitle = document.title;
+    }
+
+    const shown = this.current > 1 ? `${this._sfTitle} — ${this.sfWord("title-page", {
+      vars: {
+        page: this.current
+      }
+    })}` : this._sfTitle;
+    this._sfTitleShown = shown;
+    if (document.title !== shown) document.title = shown;
+  }
+
+  restoreTitle() {
+    if (this._sfTitle === undefined || !globalThis.document) return;
+    if (document.title === this._sfTitleShown) document.title = this._sfTitle;
+    this._sfTitle = undefined;
+    this._sfTitleShown = undefined;
+  }
+
+  onConnected() {
+    super.onConnected?.();
+    this._sfNarrow = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__.breakpointMedia)("sm", {
+      below: true
+    });
+
+    if (this._sfNarrow) {
+      this._sfNarrow.addEventListener?.("change", () => {
+        if (this.appearance === "numbers" && !this.footer) this.refresh("narrow");
+      }, {
+        signal: this.sfScope
+      });
+    }
+
+    if (this.pageParam && globalThis.addEventListener) {
+      globalThis.addEventListener("popstate", () => this.followAddress(), {
+        signal: this.sfScope
+      }); // After the page's own listeners are on: a host that appends the
+      // element and then listens still hears the page the address names.
+
+      queueMicrotask(() => {
+        if (this.isConnected) this.followAddress();
+      });
+    }
+  }
+
+  onDisconnected() {
+    this.restoreTitle();
+    super.onDisconnected?.();
+  } // The title follows the page whoever set it: a person, the host, the address.
+
+
+  afterRender(changed) {
+    const result = super.afterRender(changed);
+
+    if (typeof changed !== "function") {
+      this.applyTitle();
+      this.noteFooterParts();
+    }
+
+    return result;
+  } // What this element still draws for compatibility (C97, until 2027-01-01),
+  // each noted once in SF.deprecations: the footer parts a list now composes
+  // itself, Show more beside the pages, the band of bulk controls and the
+  // words of the 1.4 footer an author wrote.
+
+
+  noteFooterParts() {
+    const note = (kind, from, to, attribute = "") => (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: "sf-pagination",
+      tag: "sf-pagination",
+      kind,
+      attribute,
+      from,
+      to,
+      since: FOOTER_SINCE,
+      remove_after: FOOTER_UNTIL
+    });
+
+    if (this.footer) note("value", "(none)", "field", "appearance");
+    if (this.footer && this.top && this.hasNext) note("setting", "top", 'appearance="more"');
+
+    if (this.footer && this.bottom && this.showActions && this.actions.length && this.selectedCount > 0) {
+      note("setting", "actions", "sf-view");
+    }
+
+    for (const attribute of ["total-label", "pages-label"]) {
+      if (this.hasAttribute(attribute)) note("attribute", attribute, null);
+    }
+  } // One of the events of the parts that leave for the list (C97 points 3
+  // and 5), noted once as it is sent.
+
+
+  noteFooterEvent(name) {
+    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: "sf-pagination",
+      tag: "sf-pagination",
+      kind: "event",
+      from: `sf-pagination-${name}`,
+      to: "sf-view",
+      since: FOOTER_SINCE,
+      remove_after: FOOTER_UNTIL
+    });
+  } // The page-size menu (C97 point 3): radio rows of the sizes offered, opened
+  // from the quiet button. The button's host is display: contents, so the
+  // menu is placed against the button it draws.
+
+
+  togglePageSizeMenu(button) {
+    const menu = this.querySelector(".sf-pagination-size-menu");
+    if (!menu) return this;
+    menu.entries = this.pageSizes.map(size => ({
+      id: String(size),
+      text: this.sfWord("page-size-text", {
+        vars: {
+          size
+        }
+      }),
+      kind: "radio",
+      checked: size === this.pageSize
+    }));
+    const anchor = button?.querySelector?.("button") ?? button;
+    if (typeof menu.toggleFor === "function") menu.toggleFor(anchor, {
+      align: "end",
+      width: "content"
+    });else menu.openFor?.(anchor, {
+      align: "end"
+    });
+    return this;
+  }
+
+  choosePageSize(event) {
+    const size = Number.parseInt(String(event?.detail?.id ?? event?.detail?.entry?.id ?? ""), 10);
+    if (Number.isFinite(size)) this.setPageSize(size);
+    event?.currentTarget?.close?.();
+    return this;
   } // The last page needs a number, and without a count nobody has one yet. So
   // the number is asked for, and the jump happens when it arrives — which is
   // why the request carries the reason. Counting on every answer instead is
@@ -819,6 +1362,7 @@ class SfPagination extends PaginationElement {
 
 
   clearSelection() {
+    this.noteFooterEvent("selection-clear");
     this.sfEmit("selection-clear", {
       "selected-count": this.selectedCount,
       total: this.total
@@ -865,10 +1409,13 @@ class SfPagination extends PaginationElement {
 
     const pageCount = Math.max(1, Math.ceil(this.total / parsed));
     const current = this.exactCount ? Math.min(this.current, pageCount) : this.current;
+    const moved = current !== this.current;
     this.setState({
       pageSize: parsed,
       current
     });
+    if (moved) this.writeAddress(current);
+    this.noteFooterEvent("size-change");
     this.sfEmit("size-change", {
       previous,
       "page-size": parsed,
@@ -892,6 +1439,7 @@ class SfPagination extends PaginationElement {
     this.setState({
       action: value
     });
+    this.noteFooterEvent("action-change");
     this.sfEmit("action-change", {
       previous,
       action: value
@@ -910,6 +1458,7 @@ class SfPagination extends PaginationElement {
     this.setState({
       actionForAll: next
     });
+    this.noteFooterEvent("action-for-all-change");
     this.sfEmit("action-for-all-change", {
       previous,
       "action-for-all": next
@@ -932,6 +1481,7 @@ class SfPagination extends PaginationElement {
     // the filter when «for all» is on.
 
 
+    this.noteFooterEvent("apply");
     this.sfEmit("apply", {
       action: this.action,
       scope: this.actionForAll ? "filter" : "selection",
@@ -1085,42 +1635,41 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
-
+ // sf-pagination's markup (decision C97, 2026-11-12). The element is page
+// navigation, in five appearances, each a named <nav> holding only the way
+// between pages:
+//
+//   numbers   ‹ 1 … 4 [5] 6 … 12 ›  (sites, catalogues, search; up to seven
+//             places, five on a phone; links when href is a template)
+//   field     |‹ ‹ [3] из 12 › ›|   (a dense table)
+//   arrows    ‹ Назад · Страница 3 · Далее ›  (the count is not known)
+//   cursor    В начало · Дальше ›  (a cursor list: no number, no last page)
+//   more      Показать ещё 20 / Показано 40 из 240  (its own look, never in
+//             one row with the arrows)
+//
+// In every appearance a control at an end is disabled, not removed, so the row
+// keeps its width while a person pages (PG-02).
+//
+// An element written without appearance draws the footer it drew before 1.5.0
+// -- the range «41–60 из 240», the page-size button «По 20 ▾», the field, and
+// Show more and the band of bulk controls when asked -- as a compatible
+// composition until 2027-01-01. Those parts belong to the list that owns them
+// (sf-view), which composes them beside an sf-pagination of its own appearance
+// (change journal value-pagination-footer-parts-to-view).
 
 function joinClasses(...tokens) {
   return tokens.flat().filter(Boolean).join(" ");
 }
 
-function renderPageItem(item, context) {
-  const {
-    component
-  } = context;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <li
-      class=${joinClasses("sf-pagination-item", item.edge ? "sf-pagination-item--edge" : "", item.selected ? "sf-pagination-item--current" : "")}
-    >
-      <button
-        type="button"
-        class=${joinClasses("sf-page-number", "sf-page-number--square", item.selected ? "selected" : "")}
-        data-page=${String(item.value)}
-        aria-current=${item.selected ? "page" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        aria-label=${`${context.pageLabel} ${item.value}`}
-        @click=${() => component.goToPage(item.value)}
-      >
-        ${item.value}
-      </button>
-    </li>
-  `;
-} // The page a person is on, and the way to any other. It used to sit beside the
-// row of numbers with a label of its own; it stands between the arrows now, and
-// the label is for a reader rather than a line of text in the footer.
+const stepOf = context => context.size === "1/2" ? "1/2" : "1"; // The page a person is on, and the way to any other. Its width is the width of
+// the longest page number there is, so it does not grow while a person pages.
 
 
 function renderPageField(context, component) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label
       class="sf-pagination-page-field flex items-cross-center"
-      style=${`--sf-pagination-page-input--digits: ${String(context.current).length}`}
+      style=${`--sf-pagination-page-input--digits: ${context.fieldDigits}`}
     >
       <sf-input
         size=${context.size}
@@ -1138,14 +1687,43 @@ function renderPageField(context, component) {
       ></sf-input>
     </label>
   `;
-}
+} // An arrow. With an address template (href) it is a link to its page, so a
+// server-printed list pages without the script and a reader or a crawler
+// knows the neighbours: prev and next say rel (PG-10). The link wears the
+// icon button's own classes (the ghost, on-surface look sf-button-icon draws
+// here), because a link inside a button would be two controls in one.
+// At an end it stays where it is, disabled (C97 point 4): a link loses its
+// address and says aria-disabled, a button is disabled.
+
 
 function renderDirection(context, {
   kind,
   icon,
   label,
-  page
+  page,
+  go,
+  disabled = false
 }) {
+  const href = context.href && !disabled ? context.component.pageHref(page) : "";
+
+  if (context.href) {
+    const size = stepOf(context);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <li class="sf-pagination-item">
+        <a
+          class=${joinClasses(`sf-pagination-direction sf-pagination-direction--${kind} sf-pagination-link`, `sf-icon-button sf-icon-button--size-${size} sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center`, href ? "" : "disabled")}
+          href=${href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          role=${href ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "link"}
+          aria-disabled=${href ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "true"}
+          rel=${href && (kind === "prev" || kind === "next") ? kind : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          title=${label}
+          aria-label=${label}
+          @click=${event => href ? context.component.followLink(event, page) : event.preventDefault()}
+        ><sf-icon root-class="pointer-event-none" icon=${icon} weight="400" aria-hidden="true"></sf-icon></a>
+      </li>
+    `;
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <li class="sf-pagination-item">
       <sf-button-icon
@@ -1156,194 +1734,315 @@ function renderDirection(context, {
         icon=${icon}
         title=${label}
         aria-label=${label}
-        @click=${page}
+        ?disabled=${disabled}
+        @click=${go}
       ></sf-button-icon>
     </li>
   `;
 }
 
-function renderPaginationTemplate(context) {
-  const {
-    component
-  } = context;
-  const rootClasses = joinClasses("sf-pagination", `sf-pagination--size-${context.size === "1/2" ? "1/2" : "1"}`, "flex", "flex-col", context.rootClass);
-  const topClasses = joinClasses("sf-pagination-top", "flex", "content-main-center", context.topClass);
-  const mainClasses = joinClasses("sf-pagination-main", "flex", "items-cross-center", "content-main-between", context.mainClass); // The row of bulk controls is a panel over the page while rows are marked,
-  // not a row inside the pagination: the controls act on the selection, which
-  // outlives the part of the page a person is looking at.
-  // Only the band's own class: `sf-pagination-bottom` is the generic last row,
-  // and it paints transparent at a higher specificity, so the band came out
-  // see-through with the rows reading through it.
+const first = (context, component) => renderDirection(context, {
+  kind: "first",
+  icon: "first_page",
+  label: context.firstLabel,
+  page: 1,
+  disabled: !context.hasPrev,
+  go: () => component.firstPage()
+});
 
-  const bottomClasses = joinClasses("sf-pagination-actions", "flex", "items-cross-center", context.bottomClass);
+const previous = (context, component) => renderDirection(context, {
+  kind: "prev",
+  icon: "keyboard_arrow_left",
+  label: context.previousLabel,
+  page: context.current - 1,
+  disabled: !context.hasPrev,
+  go: () => component.goToPage(context.current - 1)
+});
+
+const next = (context, component) => renderDirection(context, {
+  kind: "next",
+  icon: "keyboard_arrow_right",
+  label: context.nextLabel,
+  page: context.current + 1,
+  disabled: !context.hasNext,
+  go: () => component.goToPage(context.current + 1)
+}); // The last page is a jump to a number: drawn where the jump can be answered
+// (the count exact, or a host that can count it first; PG-11). A link only to
+// a page that is known: an estimate asks for the count first.
+
+
+const last = (context, component) => context.canJumpToLast ? renderDirection(context, {
+  kind: "last",
+  icon: "last_page",
+  label: context.lastLabel,
+  page: context.exactCount ? context.pageCount : null,
+  disabled: !context.hasNext,
+  go: () => component.lastPage()
+}) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // field: |‹ ‹ [3] из 12 › ›|. «из 12» only for an exact count; an estimate
+// reads «из ~23», and no count says nothing after the field.
+
+
+function renderField(context, component) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <nav
-      class=${rootClasses}
-      style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-label=${context.ariaLabel}
-    >
-      <!-- Show more had a row of its own above the footer. It is a page action
-           like the arrows, so it stands in the footer beside them; the row it
-           used to take was a line of empty space whenever there was nothing
-           more to show. -->
-      ${context.middle ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <div class=${mainClasses}>
-              <!-- How many are marked is said by the band of bulk controls,
-                   which only exists while something is marked. Saying it here
-                   as well meant a footer counting a selection of none out of
-                   the total at all times, and zero out of zero before the
-                   first answer. -->
-              <div class="sf-pagination-left flex items-cross-center">
-                <!-- Three answers to "how many": the number, a short wait, or
-                     an offer to find out. A host that cannot count is not
-                     offered at all — a link that answers "unavailable" is worse
-                     than no link. -->
-                <div class="sf-pagination-total flex items-cross-center">
-                  <!-- An estimate (total-exact false) reads «~N», and the
-                       offer to find out stands beside it: the number is
-                       there, but it is not one to act on. -->
-                  ${context.countKnown ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                        <div class="sf-pagination-total-text flex items-cross-center">
-                          ${context.totalLabel} ${context.shownTotal}
-                          ${context.totalExact ? "" : context.counting ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>` : context.canCount ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                                    <sf-button
-                                      class="sf-pagination-count-request"
-                                      size=${context.size}
-                                      appearance="ghost"
-                                      scheme="primary"
-                                      text=${context.showCountLabel}
-                                      @click=${() => component.requestCount("total")}
-                                    ></sf-button>
-                                  ` : ""}
-                        </div>
-                      ` : context.counting ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                          <div class="sf-pagination-total-text flex items-cross-center">
-                            ${context.totalLabel}
-                            <sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>
-                          </div>
-                        ` : context.canCount ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <div class="sf-pagination-total-text flex items-cross-center">
-                              ${context.totalLabel}
-                              <sf-button
-                                class="sf-pagination-count-request"
-                                size=${context.size}
-                                appearance="ghost"
-                                scheme="primary"
-                                text=${context.showCountLabel}
-                                @click=${() => component.requestCount("total")}
-                              ></sf-button>
-                            </div>
-                          ` : ""}
-                </div>
-              </div>
+    <ol class="sf-pagination-list flex items-cross-center">
+      ${first(context, component)}
+      ${previous(context, component)}
+      <li class="sf-pagination-item sf-pagination-item-field flex items-cross-center">
+        ${renderPageField(context, component)}
+        ${context.ofPages ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      </li>
+      ${next(context, component)}
+      ${last(context, component)}
+    </ol>
+  `;
+} // A page number of numbers: the button's own look (ghost, on-surface; the
+// current page tonal, primary) on a link when href is a template, else on a
+// button. The current page says aria-current="page".
 
-              ${!context.countKnown || context.total > 0 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <div class="sf-pagination-container flex items-cross-center">
-                      <span class="sf-pagination-pages-label">${context.pagesLabel}</span>
-                      <ol class="sf-pagination-list flex items-cross-center">
-                        ${context.hasPrev ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                              ${renderDirection(context, {
-    kind: "first",
-    icon: "first_page",
-    label: context.firstLabel,
-    page: () => component.firstPage()
-  })}
-                              ${renderDirection(context, {
+
+function renderPageSlot(context, component, slot) {
+  if (slot.type === "gap") {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-pagination-item sf-pagination-slot sf-pagination-slot--gap" aria-hidden="true"><span class="sf-pagination-gap">…</span></li>`;
+  }
+
+  const classes = joinClasses("sf-pagination-page", "sf-button", `sf-button--size-${stepOf(context)}`, slot.selected ? "sf-button--tonal sf-button--primary sf-pagination-page--current" : "sf-button--ghost sf-button--link sf-button--on-surface", "flex", "items-cross-center");
+  const label = `${context.pageLabel} ${slot.value}`;
+  const text = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-event-none flex-1">${slot.value}</span>`;
+  const href = context.href ? component.pageHref(slot.value) : "";
+  const body = href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+        class=${classes}
+        href=${href}
+        aria-label=${label}
+        aria-current=${slot.selected ? "page" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        data-page=${String(slot.value)}
+        @click=${event => slot.selected ? event.preventDefault() : component.followLink(event, slot.value)}
+      >${text}</a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+        type="button"
+        class=${classes}
+        aria-label=${label}
+        aria-current=${slot.selected ? "page" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        data-page=${String(slot.value)}
+        @click=${() => component.goToPage(slot.value)}
+      >${text}</button>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-pagination-item sf-pagination-slot">${body}</li>`;
+} // numbers: ‹ 1 … 4 [5] 6 … 12 ›, up to seven places (five on a phone), the
+// first and the last page always, the ellipsis not a control.
+
+
+function renderNumbers(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <ol class="sf-pagination-list flex items-cross-center" style=${`--sf-pagination--digits: ${context.slotDigits}`}>
+      ${previous(context, component)}
+      ${context.pageSlots.map(slot => renderPageSlot(context, component, slot))}
+      ${next(context, component)}
+    </ol>
+  `;
+} // A text button of arrows and cursor: the button's own element, a link when
+// href is a template (sf-button drops the address while it is disabled).
+
+
+function textButton(context, component, {
+  kind,
+  text,
+  page,
+  disabled,
+  appearance = "ghost",
+  scheme = "on-surface",
+  iconStart,
+  iconEnd,
+  go
+}) {
+  const href = context.href && !disabled ? component.pageHref(page) : "";
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <li class="sf-pagination-item">
+      <sf-button
+        class=${`sf-pagination-direction sf-pagination-direction--${kind}`}
+        size=${context.size}
+        appearance=${appearance}
+        scheme=${scheme}
+        text=${text}
+        icon-start=${iconStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        icon-end=${iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        href=${href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        rel=${href && (kind === "prev" || kind === "next") ? kind : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ?disabled=${disabled}
+        @click=${event => href ? component.followLink(event, page) : go()}
+      ></sf-button>
+    </li>
+  `;
+} // arrows: ‹ Назад · Страница 3 · Далее ›, for a total that is not known or
+// only estimated: no last page and no number to type.
+
+
+function renderArrows(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <ol class="sf-pagination-list flex items-cross-center">
+      ${textButton(context, component, {
     kind: "prev",
-    icon: "keyboard_arrow_left",
-    label: context.previousLabel,
-    page: () => component.goToPage(context.current - 1)
+    text: context.previousText,
+    page: context.current - 1,
+    disabled: !context.hasPrev,
+    iconStart: "chevron_left",
+    go: () => component.goToPage(context.current - 1)
   })}
-                            ` : ""}
-                        <!-- The field stands where the row of numbers stood: on
-                             a page five of hundreds the numbers around it said
-                             little, and the row they took changed width as the
-                             person moved through the pages. -->
-                        <li class="sf-pagination-item sf-pagination-item-field flex items-cross-center">
-                          ${renderPageField(context, component)}
-                        </li>
-                        ${context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                              ${renderDirection(context, {
+      <li class="sf-pagination-item sf-pagination-place" role="status">${context.placeText}</li>
+      ${textButton(context, component, {
     kind: "next",
-    icon: "keyboard_arrow_right",
-    label: context.nextLabel,
-    page: () => component.goToPage(context.current + 1)
+    text: context.nextText,
+    page: context.current + 1,
+    disabled: !context.hasNext,
+    iconEnd: "chevron_right",
+    go: () => component.goToPage(context.current + 1)
   })}
-                              ${context.canJumpToLast ? renderDirection(context, {
-    kind: "last",
-    icon: "last_page",
-    label: context.lastLabel,
-    page: () => component.lastPage()
-  }) : ""}
-                            ` : ""}
-                      </ol>
-                    </div>
-                  ` : ""}
+    </ol>
+  `;
+} // cursor: В начало · Дальше ›. The host knows only whether there is more
+// (has-next); there is no page number to show and never a last page (Larena
+// msg-0852f1a2). «В начало» is page 1, «Дальше» the next portion.
 
-              ${context.top && context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <div class="sf-pagination-more flex items-cross-center">
-                      <sf-button
-                        size=${context.size}
-                        appearance="outline"
-                        scheme="primary"
-                        ?loading=${context.showMoreBusy}
-                        ?disabled=${context.showMoreBusy}
-                        @click=${e => component.showMore(e.target)}
-                        text="${context.showMoreText}"
-                      ></sf-button>
-                    </div>
-                  ` : ""}
 
-              ${context.showPageSize && (!context.countKnown || context.total > 0) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <div class="sf-pagination-count flex items-cross-center">
-                      <span>${context.pageSizeLabel}</span>
-                      <sf-dropdown
-                        size=${context.size}
-                        appearance="outlined"
-                        search="false"
-                        mode="select"
-                        portal="true"
-                        value=${String(context.pageSize)}
-                        aria-label=${context.pageSizeLabel}
-                        .options=${(context.pageSizes || []).map(size => ({
-    type: "text",
-    size: context.size,
-    text: String(size),
-    value: String(size),
-    selected: Number(size) === Number(context.pageSize)
-  }))}
-                        @change=${event => component.setPageSize(Number(event.detail.value))}
-                      ></sf-dropdown>
-                    </div>
-                  ` : ""}
-            </div>
-          ` : ""}
-      <!-- A page row on its own still carries the band. Inside a data view the
-           card carries it instead, and the view turns this block off: a band
-           sticky inside the page row could travel no further than the row. -->
-      ${context.bottom && context.showActions && context.actions?.length && context.selectedCount > 0 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <div
-              class=${bottomClasses}
-              role="region"
-              aria-label=${context.actionsRegionLabel}
-            >
-              <span class="sf-pagination-actions-count">
-                ${context.selectedLabel} ${context.selectedCount}
-              </span>
-              <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
-              <sf-dropdown
-                size=${context.size}
-                appearance="outlined"
-                search="false"
-                mode="select"
-                value=${context.action}
-                placeholder=${context.actionChooseLabel}
-                aria-label=${context.actionsLabel}
-                .options=${[// The list opens on a choice that is not an action. A select
-  // that starts on the first real action makes Apply pressable
-  // before anyone has chosen anything, and the first action in
-  // the list is as likely to be "delete for ever" as anything
-  // else.
+function renderCursor(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <ol class="sf-pagination-list flex items-cross-center">
+      ${textButton(context, component, {
+    kind: "first",
+    text: context.firstLabel,
+    page: 1,
+    disabled: !context.hasPrev,
+    iconStart: "first_page",
+    go: () => component.firstPage()
+  })}
+      ${textButton(context, component, {
+    kind: "next",
+    text: context.cursorNextText,
+    page: context.current + 1,
+    disabled: !context.hasNext,
+    appearance: "outline",
+    scheme: "primary",
+    iconEnd: "chevron_right",
+    go: () => component.goToPage(context.current + 1)
+  })}
+    </ol>
+  `;
+} // more: «Показать ещё 20», then «Показано 40 из 240» and a thin bar. It adds a
+// portion (sf-pagination-load-more); current is the number of portions shown.
+// When everything is shown the button goes and the line stays.
+
+
+function renderMore(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class="sf-pagination-more flex flex-col items-cross-center">
+      ${context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-button
+              class="sf-pagination-more-button"
+              size=${context.size}
+              appearance="outline"
+              scheme="primary"
+              text=${context.showMoreCountText}
+              ?loading=${context.showMoreBusy}
+              ?disabled=${context.showMoreBusy}
+              @click=${event => component.showMore(event.target)}
+            ></sf-button>
+          ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${context.shownText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <span class="sf-pagination-shown" role="status">${context.shownText}</span>
+            ${context.shownPercent === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar
+                  class="sf-pagination-progress"
+                  size="1/3"
+                  value=${String(context.shownPercent)}
+                  text-position="none"
+                  label=${context.shownText}
+                ></sf-progress-bar>`}
+          ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </div>
+  `;
+}
+
+const VIEWS = {
+  field: renderField,
+  numbers: renderNumbers,
+  arrows: renderArrows,
+  cursor: renderCursor,
+  more: renderMore
+}; // The range part of the compatible footer: «41–60 из 240», «41–60 из многих»,
+// «41–60 из ~450» with an offer to count, and a short wait while it does. A
+// host that cannot count is not offered the count at all. A total-label the
+// author wrote keeps the «Всего: 240» line until 2027-01-01.
+
+function renderRange(context, component) {
+  const countButton = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <sf-button
+      class="sf-pagination-count-request"
+      size=${context.size}
+      appearance="ghost"
+      scheme="primary"
+      text=${context.showCountLabel}
+      @click=${() => component.requestCount("total")}
+    ></sf-button>
+  `;
+  const spinner = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>`;
+  const offer = context.exactCount ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.counting ? spinner : context.canCount ? countButton : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class="sf-pagination-left flex items-cross-center">
+      <div class="sf-pagination-total flex items-cross-center">
+        ${context.rangeText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-range" role="status">${context.rangeText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${offer}
+      </div>
+    </div>
+  `;
+} // The page-size part of the compatible footer: a quiet button «По 20 ▾» that
+// opens a menu of radio rows (C97 point 3), not a labelled select. Its name
+// says what it is: «На странице: 20».
+
+
+function renderPageSize(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class="sf-pagination-count flex items-cross-center">
+      <sf-button
+        class="sf-pagination-size"
+        size=${context.size}
+        appearance="ghost"
+        scheme="on-surface"
+        icon-end="arrow_drop_down"
+        text=${context.pageSizeText}
+        aria-label=${`${context.pageSizeLabel} ${context.pageSize}`.trim()}
+        aria-haspopup="menu"
+        @click=${event => component.togglePageSizeMenu(event.currentTarget)}
+      ></sf-button>
+      <sf-menu-context
+        class="sf-pagination-size-menu"
+        popup
+        size=${context.size}
+        aria-label=${context.pageSizeLabel}
+        @sf-menu-context-select=${event => component.choosePageSize(event)}
+      ></sf-menu-context>
+    </div>
+  `;
+} // The band of bulk controls, kept for a pagination that carries it until
+// 2027-01-01 (C97 point 5: it belongs to sf-view, which draws it itself).
+
+
+function renderBand(context, component) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div
+      class=${joinClasses("sf-pagination-actions", "flex", "items-cross-center", context.bottomClass)}
+      role="region"
+      aria-label=${context.actionsRegionLabel}
+    >
+      <span class="sf-pagination-actions-count">
+        ${context.selectedLabel} ${context.selectedCount}
+      </span>
+      <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
+      <sf-dropdown
+        size=${context.size}
+        appearance="outlined"
+        search="false"
+        mode="select"
+        value=${context.action}
+        placeholder=${context.actionChooseLabel}
+        aria-label=${context.actionsLabel}
+        .options=${[// The list opens on a choice that is not an action: Apply is not
+  // pressable before anyone has chosen anything.
   {
     type: "text",
     size: context.size,
@@ -1358,41 +2057,102 @@ function renderPaginationTemplate(context) {
     selected: action.value === context.action,
     disabled: Boolean(action.disabled)
   }))]}
-                @change=${event => component.setAction(event.detail.value)}
-              ></sf-dropdown>
-              <sf-button
-                size=${context.size}
-                appearance="default"
-                scheme="primary"
-                text=${context.actionApplyText}
-                ?disabled=${!context.action}
-                @click=${() => component.applyAction()}
-              ></sf-button>
-              ${context.showActionForAll ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
-                    <sf-checkbox
-                      label=${context.countKnown ? `${context.actionForAllLabel} (${context.shownTotal})` : context.actionForAllLabel}
-                      ?checked=${Boolean(context.actionForAll)}
-                      @change=${event => component.setActionForAll(Boolean(event.target?.checked))}
-                    ></sf-checkbox>
-                  ` : ""}
-              <sf-button-icon
-                class="sf-pagination-actions-clear"
-                size=${context.size}
-                appearance="ghost"
-                scheme="on-surface"
-                icon="close"
-                title=${context.clearSelectionLabel}
-                aria-label=${context.clearSelectionLabel}
-                @click=${() => component.clearSelection()}
-              ></sf-button-icon>
-            </div>
+        @change=${event => component.setAction(event.detail.value)}
+      ></sf-dropdown>
+      <sf-button
+        size=${context.size}
+        appearance="default"
+        scheme="primary"
+        text=${context.actionApplyText}
+        ?disabled=${!context.action}
+        @click=${() => component.applyAction()}
+      ></sf-button>
+      ${context.showActionForAll ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
+            <sf-checkbox
+              size=${context.size}
+              label=${context.countKnown ? `${context.actionForAllLabel} (${context.shownTotal})` : context.actionForAllLabel}
+              ?checked=${Boolean(context.actionForAll)}
+              @change=${event => component.setActionForAll(Boolean(event.target?.checked))}
+            ></sf-checkbox>
           ` : ""}
+      <sf-button-icon
+        class="sf-pagination-actions-clear"
+        size=${context.size}
+        appearance="ghost"
+        scheme="on-surface"
+        icon="close"
+        title=${context.clearSelectionLabel}
+        aria-label=${context.clearSelectionLabel}
+        @click=${() => component.clearSelection()}
+      ></sf-button-icon>
+    </div>
+  `;
+} // The compatible footer (no appearance written): one row «41–60 из 240 · По 20
+// ▾ · ‹ [3] из 12 ›» -- the sf-view admin footer of C97 point 5 -- with Show
+// more on a line of its own above it (never in one row with the arrows) and
+// the band below.
+
+
+function renderFooter(context, component) {
+  const mainClasses = joinClasses("sf-pagination-main", "flex", "items-cross-center", "content-main-between", context.mainClass);
+  const hasPages = !context.countKnown || context.total > 0;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    ${context.top && context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+          <div class=${joinClasses("sf-pagination-top", "flex", "content-main-center", context.topClass)}>
+            <sf-button
+              class="sf-pagination-more-button"
+              size=${context.size}
+              appearance="outline"
+              scheme="primary"
+              ?loading=${context.showMoreBusy}
+              ?disabled=${context.showMoreBusy}
+              @click=${event => component.showMore(event.target)}
+              text=${context.showMoreText}
+            ></sf-button>
+          </div>
+        ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.middle ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+          <div class=${mainClasses}>
+            ${renderRange(context, component)}
+            ${hasPages ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                  <div class="sf-pagination-container flex items-cross-center">
+                    ${context.pagesLabelShown ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-pages-label">${context.pagesLabel}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ${renderField(context, component)}
+                  </div>
+                ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.showPageSize && hasPages ? renderPageSize(context, component) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          </div>
+        ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.bottom && context.showActions && context.actions?.length && context.selectedCount > 0 ? renderBand(context, component) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  `;
+}
+
+function renderPaginationTemplate(context) {
+  const {
+    component
+  } = context;
+  const appearance = context.footer ? "footer" : VIEWS[context.appearance] ? context.appearance : "field";
+  const rootClasses = joinClasses("sf-pagination", `sf-pagination--size-${stepOf(context)}`, `sf-pagination--${appearance}`, "flex", context.footer ? "flex-col" : "items-cross-center", context.rootClass);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <nav
+      class=${rootClasses}
+      style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${context.ariaLabel}
+    >
+      ${context.footer ? renderFooter(context, component) : VIEWS[appearance](context, component)}
     </nav>
   `;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1427,21 +2187,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-pagin
 /***/ "344edfee8242"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.3.15","kind":"leaf","settings":{"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.5.1","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
 
 /***/ },
 
 /***/ "38d83a636029"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Pagination","runtime":{"action-apply-text":"Apply","action-choose-label":"Choose an action","action-for-all-label":"For all","actions-label":"Action for the selected records","actions-region-label":"Actions for the selected","aria-label":"Result pages","clear-selection-label":"Clear the selection","counting-label":"Counting","first-label":"First","last-label":"Last","next-label":"Next page","page-field-label":"Page:","page-label":"Page","page-size-label":"Per page:","pages-label":"Pages:","previous-label":"Previous page","selected-label":"Selected:","show-count-label":"Show the number","show-more-text":"Show more","total-label":"Total:"},"events":{"selection-clear":{"label":"Selection cleared"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Pagination","runtime":{"action-apply-text":"Apply","action-choose-label":"Choose an action","action-for-all-label":"For all","actions-label":"Action for the selected records","actions-region-label":"Actions for the selected","aria-label":"Result pages","clear-selection-label":"Clear the selection","counting-label":"Counting","cursor-next-text":"Next","first-label":"First","last-label":"Last","next-label":"Next page","next-text":"Next","of-pages":"of {count}","page-field-label":"Page:","page-label":"Page","page-size-label":"Per page:","page-size-text":"{size} per page","pages-label":"Pages:","previous-label":"Previous page","previous-text":"Back","range":"{from}–{to} of {total}","range-many":"{from}–{to} of many","selected-label":"Selected:","show-count-label":"count","show-more-count":"Show {count} more","show-more-text":"Show more","shown":"Showing {shown} of {total}","title-page":"Page {page}","total-label":"Total:"},"events":{"selection-clear":{"label":"Selection cleared"}}}');
 
 /***/ },
 
 /***/ "96e8b718b20a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пагинация","events":{"selection-clear":{"label":"Выделение снято"}},"runtime":{"action-apply-text":"Применить","action-choose-label":"Выберите действие","action-for-all-label":"Для всех","actions-label":"Действие с выбранными элементами","actions-region-label":"Действия с отмеченными","aria-label":"Страницы результатов","clear-selection-label":"Снять выделение","counting-label":"Считаем","first-label":"В начало","last-label":"Последняя","next-label":"Следующая страница","page-field-label":"Страница:","page-label":"Страница","page-size-label":"На странице:","pages-label":"Страницы:","previous-label":"Предыдущая страница","selected-label":"Отмечено:","show-count-label":"Показать количество","show-more-text":"Показать ещё","total-label":"Всего:"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Пагинация","events":{"selection-clear":{"label":"Выделение снято"}},"runtime":{"action-apply-text":"Применить","action-choose-label":"Выберите действие","action-for-all-label":"Для всех","actions-label":"Действие с выбранными элементами","actions-region-label":"Действия с отмеченными","aria-label":"Страницы результатов","clear-selection-label":"Снять выделение","counting-label":"Считаем","cursor-next-text":"Дальше","first-label":"В начало","last-label":"Последняя","next-label":"Следующая страница","next-text":"Далее","of-pages":"из {count}","page-field-label":"Страница:","page-label":"Страница","page-size-label":"На странице:","page-size-text":"По {size}","pages-label":"Страницы:","previous-label":"Предыдущая страница","previous-text":"Назад","range":"{from}–{to} из {total}","range-many":"{from}–{to} из многих","selected-label":"Отмечено:","show-count-label":"посчитать","show-more-count":"Показать ещё {count}","show-more-text":"Показать ещё","shown":"Показано {shown} из {total}","title-page":"Страница {page}","total-label":"Всего:"}}');
 
 /***/ }
 

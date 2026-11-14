@@ -559,6 +559,22 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
         from: formerScheme,
         to: _contract__WEBPACK_IMPORTED_MODULE_3__.BADGE_SCHEME_ALIASES[formerScheme]
       });
+    } // main is the attention count's (C140 (4)): on any colour but error it
+    // draws tonal, and the spelling is noted until 2027-01-01.
+
+
+    if ((0,_contract__WEBPACK_IMPORTED_MODULE_3__.isRetiredMain)({
+      type: params.appearance ?? params.type,
+      scheme: requestedScheme
+    })) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'badges',
+        kind: 'value',
+        attribute: 'appearance',
+        from: 'main',
+        to: 'tonal',
+        ..._contract__WEBPACK_IMPORTED_MODULE_3__.BADGE_MAIN_TONAL
+      });
     }
 
     const {
@@ -700,12 +716,14 @@ Badges.utilityMap = _json_badge_utility_json__WEBPACK_IMPORTED_MODULE_1__;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
 /* harmony export */ });
 const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
@@ -718,8 +736,11 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']);
-const DEFAULT_BADGE_TYPE = 'main';
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
 const DEFAULT_BADGE_SCHEME = 'neutral';
 const DEFAULT_BADGE_SIZE = '1/3';
 
@@ -734,12 +755,31 @@ function canonicalBadgeScheme(value) {
   const name = String(value ?? '').trim().toLowerCase();
   const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
   return BADGE_SCHEMES.includes(canonical) ? canonical : '';
-}
-const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => !(scheme === 'on-surface' && type === 'tonal')).flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
   type,
   scheme,
   size
-})))));
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
 function normalizeBadgeContract({
   type,
   scheme,
@@ -747,10 +787,12 @@ function normalizeBadgeContract({
 } = {}) {
   let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
   const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
-  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE);
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
 
-  if (normalizedType === 'tonal' && normalizedScheme === 'on-surface') {
-    normalizedType = 'main';
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
   }
 
   return {

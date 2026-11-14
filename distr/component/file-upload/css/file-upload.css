@@ -249,6 +249,8 @@
     background-color: var(--sf-file-upload--background-color);
     border-color: transparent;
     border-color: var(--sf-file-upload--border-color, transparent);
+    /* A drop zone, not a box (owner C81, 2026-11-12: «Рамка зоны — пунктир»). */
+    border-style: dashed;
     box-shadow: var(--sf-file-upload--box-shadow);
     --sf-file-upload--background-color: var(--sf-file-upload-background-color, var(--sf-transparent));
     --sf-file-upload--border-color: var(--sf-file-upload-border-color, var(--sf-outline));
@@ -299,9 +301,9 @@
     font-weight: var(--sf-file-upload-text--font-weight);
     line-height: var(--sf-file-upload-text--line-height);
   }
-  .sf-file-upload .sf-featured-icon > .sf-icon {
-    color: var(--sf-icon-featured-icon--color);
-  }
+  /* The glyph at rest takes the featured icon's own ink: the grey circle's
+     on-surface-variant (owner decision C120). The rule that stood here read a
+     variable nothing defines, so the glyph fell back to the text's ink. */
   .sf-file-upload--size-1 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-1);
     --sf-file-upload-link--line-height: var(--sf-text-height-1);
@@ -422,6 +424,71 @@
   }
   .sf-file-upload.disabled .sf-file-upload-text {
     --sf-file-upload-text--color: var(--sf-on-surface-disabled);
+  }
+  /* The files a choice or a drop left out, under the area (C81; FU-6, FU-7):
+     the error role in the field's hint step, as sf-input says an error. */
+  .sf-file-upload-message {
+    --sf-file-upload-message--color: var(--sf-error);
+    --sf-file-upload-message--font-size: var(--sf-text-size-1\/2);
+    --sf-file-upload-message--line-height: var(--sf-text-height-1\/2);
+    color: var(--sf-file-upload-message--color);
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-file-upload-message--font-size);
+    font-weight: var(--sf-font-weight-regular);
+    line-height: var(--sf-file-upload-message--line-height);
+    margin-top: var(--sf-space-1\/3);
+    -webkit-margin-before: var(--sf-space-1\/3);
+            margin-block-start: var(--sf-space-1\/3);
+    word-wrap: anywhere;
+  }
+  .sf-file-upload-message[hidden] {
+    display: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload-message ul{
+    padding-left: var(--sf-space-1);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-file-upload-message ul{
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .sf-file-upload-message ul:where(:dir(ltr)){
+    padding-left: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload-message ul{
+    padding-right: var(--sf-space-1);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-file-upload-message ul{
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .sf-file-upload-message ul:where(:dir(rtl)){
+    padding-right: var(--sf-space-1);
+  }
+  .sf-file-upload-message ul {
+    margin: 0;
+    -webkit-padding-start: var(--sf-space-1);
+            padding-inline-start: var(--sf-space-1);
+  }
+  .sf-file-upload--size-2 + .sf-file-upload-message {
+    --sf-file-upload-message--font-size: var(--sf-text-size-1);
+    --sf-file-upload-message--line-height: var(--sf-text-height-1);
+  }
+  .sf-file-upload--size-1\/2 + .sf-file-upload-message {
+    --sf-file-upload-message--font-size: var(--sf-text-size-1\/3);
+    --sf-file-upload-message--line-height: var(--sf-text-height-1\/3);
+  }
+  /* The list stood flush under the area (gap 0, FU-12): it keeps the rows' own
+     distance from the area, and from the message when there is one. */
+  .sf-file-upload ~ .sf-file-upload-files:has(> .sf-upload-progress) {
+    margin-top: var(--sf-space-1);
+    -webkit-margin-before: var(--sf-space-1);
+            margin-block-start: var(--sf-space-1);
+    margin-top: var(--sf-space-1);
+    margin-top: var(--sf-file-upload-files--gap, var(--sf-space-1));
+    -webkit-margin-before: var(--sf-file-upload-files--gap, var(--sf-space-1));
+            margin-block-start: var(--sf-file-upload-files--gap, var(--sf-space-1));
   }
   @media (forced-colors: active) {
     .sf-file-upload:not([disabled]):not(.disabled).focus-visible {
@@ -811,20 +878,22 @@
     --sf-upload-progress-text--font-size: var(--sf-text-size-1\/3);
     --sf-upload-progress-text--line-height: var(--sf-text-height-1\/3);
   }
-  .sf-upload-progress--process .sf-icon, .sf-upload-progress--done .sf-icon {
-    --sf-icon--color: var(--sf-primary);
-  }
-  .sf-upload-progress--process .sf-upload-progress-text, .sf-upload-progress--done .sf-upload-progress-text {
+  .sf-upload-progress--ready .sf-upload-progress-text, .sf-upload-progress--process .sf-upload-progress-text, .sf-upload-progress--done .sf-upload-progress-text {
     --sf-upload-progress-text--color: var(--sf-on-surface-variant);
   }
-  .sf-upload-progress--process .sf-icon-button > .sf-icon, .sf-upload-progress--error .sf-icon-button > .sf-icon {
+  .sf-upload-progress--ready .sf-icon-button > .sf-icon, .sf-upload-progress--process .sf-icon-button > .sf-icon, .sf-upload-progress--done .sf-icon-button > .sf-icon, .sf-upload-progress--error .sf-icon-button > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-variant);
   }
   .sf-upload-progress--error .sf-icon {
     --sf-icon--color: var(--sf-error);
   }
   .sf-upload-progress--error .sf-upload-progress-text {
-    --sf-upload-progress-text--color: var(--sf-on-surface);
+    /* The reason a file did not go: the error role, as a field's error line. */
+    --sf-upload-progress-text--color: var(--sf-error);
+  }
+  /* The sent file's check, in the success role (FU-4). */
+  .sf-upload-progress--done .sf-upload-progress-mark {
+    --sf-icon--color: var(--sf-success);
   }
   .sf-upload-progress--error .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--color: var(--sf-on-surface);

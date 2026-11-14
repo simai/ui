@@ -142,7 +142,46 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const SLOTS = ['brand', 'nav', 'actions', 'tools', 'sheet'];
-let sequence = 0;
+const TAGS = ['sf-header-site', 'sf-site-header'];
+const SWITCH_OPERATIONS = ['toggle', 'open', 'close'];
+let sequence = 0; // A switch of the page's own (owner decision C104, as sf-drawer's
+// data-drawer): an element with data-header-site="toggle", "open" or "close"
+// naming the bar's id in aria-controls. sf-button carries its data-* and
+// aria-controls to its native button, so the press finds them there. One
+// listener for the document, bound when the first bar connects.
+
+function controlsBar(element, id) {
+  return (element.getAttribute('aria-controls') || '').split(/\s+/u).includes(id);
+}
+
+function barSwitches(id) {
+  if (!id || typeof document === 'undefined') return [];
+  return Array.from(document.querySelectorAll('[data-header-site][aria-controls]')).filter(element => SWITCH_OPERATIONS.includes(element.getAttribute('data-header-site')) && controlsBar(element, id));
+}
+
+let switchesBound = false;
+
+function bindSwitches() {
+  if (switchesBound || typeof document === 'undefined') return;
+  document.addEventListener('click', event => {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest('[data-header-site][aria-controls]');
+    const operation = trigger?.getAttribute('data-header-site');
+    if (!trigger || !SWITCH_OPERATIONS.includes(operation)) return;
+
+    for (const id of trigger.getAttribute('aria-controls').split(/\s+/u)) {
+      const bar = id ? document.getElementById(id) : null;
+
+      if (bar && TAGS.includes(bar.localName) && typeof bar[operation] === 'function') {
+        bar[operation](operation === 'close' ? {
+          reason: 'close'
+        } : undefined);
+      }
+    }
+  });
+  switchesBound = true;
+}
+
 const SiteHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
@@ -189,6 +228,18 @@ class SfSiteHeader extends SiteHeaderElement {
 
     this._onMedia = () => this.syncCollapsed();
 
+    this._outsideSwitch = false;
+    this._switchFrame = 0;
+
+    this._onResize = () => {
+      if (this._switchFrame) return;
+      this._switchFrame = globalThis.requestAnimationFrame?.(() => {
+        this._switchFrame = 0;
+        this.syncSwitches();
+      }) ?? 0;
+      if (!this._switchFrame) this.syncSwitches();
+    };
+
     this._scrollFrame = 0;
 
     this._onScroll = () => {
@@ -219,6 +270,14 @@ class SfSiteHeader extends SiteHeaderElement {
 
     this.watchCollapse();
     this.watchScroll();
+    bindSwitches();
+    if (typeof globalThis.addEventListener === 'function') globalThis.addEventListener('resize', this._onResize, {
+      passive: true
+    });
+    this._offSwitches?.();
+    this._offSwitches = this.onAfterRender(() => this.syncSwitches(), {
+      once: false
+    });
   }
 
   disconnectedCallback() {
@@ -229,6 +288,11 @@ class SfSiteHeader extends SiteHeaderElement {
     this._media?.removeEventListener?.('change', this._onMedia);
     this._media = null;
     this.unwatchScroll();
+    if (typeof globalThis.removeEventListener === 'function') globalThis.removeEventListener('resize', this._onResize);
+    if (this._switchFrame) globalThis.cancelAnimationFrame?.(this._switchFrame);
+    this._switchFrame = 0;
+    this._offSwitches?.();
+    this._offSwitches = null;
     super.disconnectedCallback?.();
   }
 
@@ -309,6 +373,38 @@ class SfSiteHeader extends SiteHeaderElement {
     const bar = this.header();
     const scrolled = Boolean(bar) && (globalThis.scrollY ?? 0) > 0 && bar.getBoundingClientRect().top <= 0;
     this.sfHostState('data-scrolled', scrolled);
+  } // The page's switches (data-header-site): each says whether the panel is
+  // open, and while a toggle or open switch outside the panel is on screen
+  // the bar draws no menu button of its own (C104). Checked after each
+  // drawing and on resize, as sf-drawer's controlled checks its switch.
+
+
+  syncSwitches() {
+    const switches = barSwitches(this.id);
+    const expanded = this.isOpen ? 'true' : 'false';
+
+    for (const element of switches) {
+      if (element.getAttribute('data-header-site') !== 'close' && element.getAttribute('aria-expanded') !== expanded) {
+        element.setAttribute('aria-expanded', expanded);
+      }
+    }
+
+    const panel = this.panel();
+    const outside = switches.some(element => element.getAttribute('data-header-site') !== 'close' && !panel?.contains(element) && element.getClientRects().length > 0 && (element.checkVisibility?.({
+      visibilityProperty: true
+    }) ?? true));
+
+    if (outside !== this._outsideSwitch) {
+      this._outsideSwitch = outside;
+      this.requestComponentUpdate('switch');
+    }
+  } // The page's switch on screen, when the bar draws no menu button.
+
+
+  outsideSwitch() {
+    if (!this._outsideSwitch) return null;
+    const panel = this.panel();
+    return barSwitches(this.id).find(element => element.getAttribute('data-header-site') !== 'close' && !panel?.contains(element) && element.getClientRects().length > 0) ?? null;
   }
 
   navMenus() {
@@ -331,7 +427,7 @@ class SfSiteHeader extends SiteHeaderElement {
 
 
   focusDelegate() {
-    return this.collapsed ? this.menuButton() : null;
+    return this.collapsed ? this.menuButton() ?? this.outsideSwitch() : null;
   } // The action open.
 
 
@@ -359,6 +455,7 @@ class SfSiteHeader extends SiteHeaderElement {
         zIndex
       }) => this.place(zIndex)
     });
+    this.syncSwitches();
     this.requestComponentUpdate('open'); // Lit draws the open panel in a microtask; a frame later it has a box to
     // take focus.
 
@@ -401,12 +498,13 @@ class SfSiteHeader extends SiteHeaderElement {
       restoreFocus: false
     });
     this.place('');
+    this.syncSwitches();
     this.requestComponentUpdate('close');
 
     if (restoreFocus) {
       // Focus goes back to the menu button that opened it (§19.2), or by the
       // stack's rule when that is gone.
-      const button = this.menuButton();
+      const button = this.menuButton() ?? this.outsideSwitch();
       const target = button?.getClientRects().length ? button : this._returnTo;
       (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.returnLayerFocus)(wasTop, target, this._returnAncestors);
     }
@@ -494,6 +592,8 @@ class SfSiteHeader extends SiteHeaderElement {
       id: this._id,
       open: this.isOpen,
       collapse: this.collapse,
+      menuPlacement: this.menuPlacement === 'inline-end' ? 'inline-end' : 'inline-start',
+      ownMenuButton: !this._outsideSwitch,
       sticky: this.sticky,
       size: this.size,
       navigationAlign: this.navigationAlign,
@@ -536,9 +636,13 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // Wide, the row reads brand · nav … actions · tools, and the panel around the
 // nav and the actions is display: contents, so they stand in the row itself.
 // Collapsed (a media rule per `collapse` step, scss/), the menu button comes
-// first and the panel is shown only while open: a side panel at the inline
-// start over a scrim, named by its heading. The page's slot nodes are placed
-// once and stay where they are in both forms.
+// first (menu-placement inline-start) or last, after the tools (inline-end),
+// and the panel is shown only while open: a side panel from the button's edge
+// over a scrim, named by its heading. The button is in the DOM where it is
+// shown, so the reading and Tab order follow what is seen. While a switch of
+// the page's own is on screen (data-header-site, C104) the bar draws none.
+// The page's slot nodes are placed once and stay where they are in both
+// forms.
 
 function renderSiteHeaderTemplate(context) {
   const {
@@ -546,6 +650,8 @@ function renderSiteHeaderTemplate(context) {
     id,
     open,
     collapse,
+    menuPlacement,
+    ownMenuButton,
     sticky,
     size,
     navigationAlign,
@@ -558,12 +664,13 @@ function renderSiteHeaderTemplate(context) {
   } = context;
   const panelId = `${id}-panel`;
   const headingId = `${id}-heading`;
-  const classes = ['sf-site-header', `sf-site-header--collapse-${collapse}`, `sf-site-header--size-${size === '1/2' ? 'half' : '1'}`, navigationAlign === 'center' ? 'sf-site-header--navigation-center' : '', sticky ? 'sf-site-header--sticky' : '', open ? 'sf-site-header--open' : '', rootClass].filter(Boolean).join(' ');
+  const menuButton = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-site-header-menu-button" icon="menu" size=${size} appearance="ghost" scheme="on-surface"
+        aria-label=${menuLabel} aria-haspopup="dialog" aria-controls=${panelId} aria-expanded=${String(Boolean(open))}
+        @click=${() => component.toggle()}></sf-button-icon>`;
+  const classes = ['sf-site-header', `sf-site-header--collapse-${collapse}`, menuPlacement === 'inline-end' ? 'sf-site-header--menu-inline-end' : '', `sf-site-header--size-${size === '1/2' ? 'half' : '1'}`, navigationAlign === 'center' ? 'sf-site-header--navigation-center' : '', sticky ? 'sf-site-header--sticky' : '', open ? 'sf-site-header--open' : '', rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<header class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     <div class="sf-site-header-row container w-full m-inline-auto">
-      <sf-button-icon class="sf-site-header-menu-button" icon="menu" size=${size} appearance="ghost" scheme="on-surface"
-        aria-label=${menuLabel} aria-haspopup="dialog" aria-controls=${panelId} aria-expanded=${String(Boolean(open))}
-        @click=${() => component.toggle()}></sf-button-icon>
+      ${ownMenuButton && menuPlacement !== 'inline-end' ? menuButton : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${hasSlot('brand') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-brand">${slot('brand')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <div class="sf-site-header-scrim" aria-hidden="true" @click=${() => component.close({
     reason: 'outside'
@@ -584,6 +691,7 @@ function renderSiteHeaderTemplate(context) {
         ${hasSlot('sheet') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-sheet">${slot('sheet')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
       ${hasSlot('tools') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-tools">${slot('tools')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${ownMenuButton && menuPlacement === 'inline-end' ? menuButton : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   </header>`;
 }
@@ -639,7 +747,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "3b2d3ad548e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.8.3","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.9.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

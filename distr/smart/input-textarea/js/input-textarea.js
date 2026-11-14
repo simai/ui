@@ -121,11 +121,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -138,6 +140,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -176,15 +181,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -649,7 +666,8 @@ async function bindMask(root, textarea) {
 }
 
 function bindTextarea(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.retireFieldSizeClass)(root, 'sf-textarea');
+  // The textarea stands on the field ladder (field-size.js): 1/3 and 3 are
+  // its own steps, no class to move.
   if (!root || root.dataset[TEXTAREA_BOUND_FLAG] === '1') return;
   const textarea = getTextareaNode(root);
   if (!textarea) return;
@@ -810,7 +828,7 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       maxRows
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
-    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(size, 'sf-textarea');
+    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(size);
     const normalizedVariant = boundedValue(type, TEXTAREA_VARIANTS, 'bordered');
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
@@ -1048,12 +1066,97 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "76b2d9a8d7c6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COUNT_FROM: () => (/* binding */ COUNT_FROM),
+/* harmony export */   charCount: () => (/* binding */ charCount),
+/* harmony export */   countAnnouncement: () => (/* binding */ countAnnouncement),
+/* harmony export */   countLimit: () => (/* binding */ countLimit)
+/* harmony export */ });
+// The character count of a text field with a limit (owner decision C141 (1),
+// the rule sf-chat-composer keeps in ui-pro): one rule for every field that
+// counts, so the message box, the multi-line field and the formatted text
+// say the same thing at the same moment.
+//
+// - The count shows from 80 % of the limit (more than 0.8 x limit
+//   characters), or always when the field asks for it (`counter`).
+// - Past the limit the count and the field's frame are the error colour and
+//   the field is invalid (too-long), so its form is not sent; the text is
+//   never cut: the person decides what to take out.
+// - A polite line speaks only when a threshold is crossed (near, over, back
+//   under), never on every key.
+//
+// The field draws the count at the end of its message line (the hint's or
+// the error's), in the message's text and colour with digits of one width.
+
+/** The share of the limit from which the count shows. */
+const COUNT_FROM = 0.8;
+/** A limit as a positive whole number, or null when there is none. */
+
+function countLimit(value) {
+  const number = Math.trunc(Number(value));
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+/**
+ * Where a text of `length` characters stands against `limit`:
+ * {limit, length, near, over, shown, level}. `level` is '', 'near' or
+ * 'over'; `shown` says whether the count is drawn (near, over, or `always`).
+ * Without a limit nothing is counted.
+ */
+
+function charCount(length, limit, {
+  always = false
+} = {}) {
+  const max = countLimit(limit);
+  const count = Math.max(0, Number(length) || 0);
+  if (max === null) return {
+    limit: null,
+    length: count,
+    near: false,
+    over: false,
+    shown: false,
+    level: ''
+  };
+  const near = count > max * COUNT_FROM;
+  const over = count > max;
+  return {
+    limit: max,
+    length: count,
+    near,
+    over,
+    shown: Boolean(always) || near,
+    level: over ? 'over' : near ? 'near' : ''
+  };
+}
+/**
+ * What the polite line says now: the count's words when its level changed
+ * since `lastLevel`, else `lastSaid` as it was. Returns {level, said}; the
+ * component keeps both for the next call.
+ */
+
+function countAnnouncement(state, lastLevel, lastSaid, words) {
+  if (state.level === (lastLevel || '')) return {
+    level: state.level,
+    said: lastSaid || ''
+  };
+  return {
+    level: state.level,
+    said: state.level ? words(state) : ''
+  };
+}
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -1141,12 +1244,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -1164,6 +1269,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -1262,6 +1372,71 @@ const FormField = Base => class extends Base {
   formStateRestoreCallback(state) {
     if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
     this.sfSyncFormState();
+  }
+
+};
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
@@ -1575,15 +1750,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d1519077b57e");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a105cae235ec");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7bae0cbaaf2a");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("88be139816dd");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4ced3f61aadc");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_char_count__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("76b2d9a8d7c6");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d1519077b57e");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("a105cae235ec");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7bae0cbaaf2a");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("88be139816dd");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4ced3f61aadc");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
+([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -1602,17 +1779,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 // control through ElementInternals: it submits the text and reports the native
 // textarea's validity, and the textarea carries no name (§17.1).
 
-const TextareaElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const TextareaElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 });
 
-class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(TextareaElement) {
+class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownRequired)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(TextareaElement)) {
   static get props() {
     return { ...super.props,
       rootClass: {
@@ -1645,10 +1822,18 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   constructor() {
     super();
     this._boundRoot = null;
+    this._countLevel = '';
+    this._countSaid = ''; // The count follows the text (C141 (1)): with a limit, every edit redraws
+    // the count and, at a threshold, the frame. The redraw keeps the caret:
+    // the textarea's value is the text it already holds.
+
+    this.addEventListener('input', () => {
+      if (this.maxlength !== null) this.requestComponentUpdate?.('count');
+    });
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-textarea');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.ladderSize)(this.getAttribute('size'));
   }
 
   get minlength() {
@@ -1713,6 +1898,81 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   get maxRows() {
     const value = Math.trunc(this.getNumberAttr('maxRows', null));
     return value > 0 ? Math.max(value, this.minRows) : null;
+  } // C141 (2): a form field follows its text from 3 to 10 rows. It grows unless
+  // the page says auto-grow="false", or fixes the height with rows (and no
+  // auto-grow), or the field is flush -- a part of a composite that sizes it
+  // (the chat composer), which grows only when asked, from 1 row, uncapped,
+  // as before. A growing form field starts at min-rows, else rows, else 3,
+  // and stops at max-rows, else 10, then scrolls inside.
+
+
+  get growing() {
+    if (this.hasAttribute('auto-grow')) return Boolean(this.autoGrow);
+    if (this.appearance === 'flush') return false;
+    return !this.hasAttribute('rows');
+  }
+
+  get growMinRows() {
+    if (this.appearance === 'flush' || this.hasAttribute('min-rows')) return this.minRows;
+    return this.hasAttribute('rows') ? this.rows : 3;
+  }
+
+  get growMaxRows() {
+    const value = Math.trunc(this.getNumberAttr('maxRows', null));
+    if (value > 0) return Math.max(value, this.growMinRows);
+    return this.appearance === 'flush' ? null : Math.max(10, this.growMinRows);
+  } // The count against maxlength (C141 (1), helpers/char-count.js): shown from
+  // 80 % of the limit or always with `counter`; past the limit the field is
+  // invalid and draws the error frame, and the text is kept whole.
+
+
+  sfCount() {
+    return (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_6__.charCount)(this.value.length, this.maxlength, {
+      always: Boolean(this.counter)
+    });
+  } // What the template draws of the count, and the polite line, which changes
+  // only when a threshold is crossed.
+
+
+  sfCountView() {
+    const count = this.sfCount();
+
+    const words = state => this.sfWord('count-text', {
+      vars: {
+        count: state.length,
+        max: state.limit
+      }
+    });
+
+    const said = (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_6__.countAnnouncement)(count, this._countLevel, this._countSaid, state => state.over ? this.sfTooLongMessage(state) : words(state));
+    this._countLevel = said.level;
+    this._countSaid = said.said;
+    return {
+      over: count.over,
+      text: count.shown ? words(count) : '',
+      said: said.said
+    };
+  }
+
+  sfTooLongMessage(count) {
+    return this.sfWord('too-long', {
+      vars: {
+        max: count.limit
+      }
+    });
+  } // The native textarea's validity, and too-long past the limit: the native
+  // maxlength would cut the text, so the field counts itself. Without
+  // ElementInternals the textarea is the form control and carries it.
+
+
+  sfSyncValidity() {
+    const anchor = this.sfValidityAnchor();
+    const count = this.sfCount();
+    const message = count.over ? this.sfTooLongMessage(count) : '';
+    if (!this.sfInternals && anchor?.setCustomValidity) anchor.setCustomValidity(message);
+    (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.syncFieldValidity)(this, anchor, count.over ? {
+      tooLong: message
+    } : {});
   } // The inherited-value seam: the native textarea is the value, the focus and
   // what carries the description.
 
@@ -1745,20 +2005,42 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   templateContext() {
     const props = this.getPropsContext();
     const textarea = this.querySelector('textarea');
+    const count = this.sfCountView();
+    const code = this.text === 'code';
     return this.createTemplateContext({ ...props,
-      // The size the field draws: a retired size (1/3) is the one it keeps.
+      // The size the field draws: one of the field ladder's five steps.
       size: this.size,
       value: this.hasAttribute('value') || !textarea ? props.value : textarea.value,
+      // The default form.reset() puts back is the declared value, never the
+      // live one: a render while the person types (the shown required error
+      // clearing) made the first typed character the default (C55
+      // acceptance F1 R2, D2).
+      defaultValue: props.value ?? '',
       // The host is the form control where the browser has ElementInternals,
       // so the textarea carries no name (§17.1 item 6).
       controlName: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.innerControlName)(this, props.name),
+      // The page's error, or the required one a failed form check shows
+      // (ShownRequired, C55 acceptance F1: as sf-dropdown 1.9.0), or a text
+      // past the limit (C141 (1)).
+      invalid: this.sfShownInvalid(props.invalid) || count.over,
+      error: false,
+      errorMessage: this.sfShownMessage(props.invalid, props.errorMessage),
       // Resolved names the template reads (contracts/template-context.json).
       type: this.appearance,
       minlength: this.minlength,
       maxlength: this.maxlength,
-      autoGrow: this.autoGrow,
-      minRows: this.minRows,
-      maxRows: this.maxRows,
+      autoGrow: this.growing,
+      minRows: this.growMinRows,
+      maxRows: this.growMaxRows,
+      // The grip only on request, never on a touch screen (the sheet says it).
+      resize: Boolean(this.resize),
+      // The count: its words when shown, over the limit; the polite line.
+      count: count.text,
+      countOver: count.over,
+      countSaid: count.said,
+      // C141 (8): code -- the code font, no spelling, no wrapping.
+      code,
+      spellCheck: code ? false : props.spellCheck,
       inheritedValue: this.inheritedValue,
       inheritedText: this.inheritedText,
       resetLabel: this.resetLabel,
@@ -1792,7 +2074,7 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderTextareaTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderTextareaTemplate)(this.templateContext());
   }
 
   get state() {
@@ -1852,6 +2134,7 @@ function renderTextareaTemplate(context) {
     wrap,
     hint,
     value,
+    defaultValue = '',
     controlName,
     rows,
     disabled,
@@ -1866,7 +2149,12 @@ function renderTextareaTemplate(context) {
     minRows,
     maxRows,
     ariaLabel,
-    labelledBy
+    labelledBy,
+    resize,
+    count = '',
+    countOver = false,
+    countSaid = '',
+    code = false
   } = context;
   const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
     prefix: 'sf-textarea',
@@ -1877,8 +2165,12 @@ function renderTextareaTemplate(context) {
   });
   const errorContent = context.component?.hasSlotContent?.('error') ? context.component.getSlotContent('error') : errorMessage;
   const hintContent = context.component?.hasSlotContent?.('hint') ? context.component.getSlotContent('hint') : hint;
-  const messageContent = field.invalid && errorContent ? errorContent : hintContent;
-  const rootClasses = ['sf-textarea', `sf-textarea--size-${size}`, `sf-textarea--${appearance ?? type}`, field.invalid ? 'error' : '', autoGrow ? 'sf-textarea--auto-grow' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
+  const messageContent = field.invalid && errorContent ? errorContent : hintContent; // The count stands at the end of the message line (C141 (1)), so the line
+  // is drawn for it alone too; the textarea is described by both.
+
+  const countId = `${field.messageId}-count`;
+  const describedBy = [messageContent ? field.messageId : '', count ? countId : ''].filter(Boolean).join(' ');
+  const rootClasses = ['sf-textarea', `sf-textarea--size-${size}`, `sf-textarea--${appearance ?? type}`, field.invalid ? 'error' : '', autoGrow ? 'sf-textarea--auto-grow' : '', resize && !autoGrow ? 'sf-textarea--resize' : '', code ? 'sf-textarea--code' : '', countOver ? 'sf-textarea--over' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
   const labelContent = label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-textarea-text">${label}</span>
         ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-required">*</span>` : ''}
@@ -1889,7 +2181,14 @@ function renderTextareaTemplate(context) {
   // lands (simai/ui-source#30).
 
   const accessibleName = !labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const accessibleLabelledBy = labelledBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const accessibleLabelledBy = labelledBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The message line: the hint, or the error in its place. With the count it
+  // shares one row, the count at the end; without it the markup is as it was.
+
+  const messageNode = messageContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        id=${field.messageId}
+        class="sf-textarea-hint-text-wrap"
+        data-field-message=${field.invalid && errorContent ? 'error' : 'hint'}
+      >${messageContent}</span>` : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label
       class=${rootClasses.join(' ')}
@@ -1911,11 +2210,13 @@ function renderTextareaTemplate(context) {
         autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         minlength=${minlength ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        maxlength=${maxlength ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         .spellcheck=${spellCheck}
-        wrap=${wrap}
+        wrap=${code ? 'off' : wrap}
+        autocapitalize=${code ? 'off' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        autocorrect=${code ? 'off' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        translate=${code ? 'no' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         .value=${value}
-        .defaultValue=${value}
+        .defaultValue=${defaultValue}
         name=${controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         rows=${autoGrow ? minRows : rows}
         ?disabled=${disabled}
@@ -1924,7 +2225,7 @@ function renderTextareaTemplate(context) {
         aria-label=${accessibleName}
         aria-labelledby=${accessibleLabelledBy}
         aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-describedby=${describedBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         data-mask=${String(mask)}
         data-mask-pattern=${maskPattern || ''}
@@ -1940,12 +2241,8 @@ function renderTextareaTemplate(context) {
     className: 'sf-textarea-inherited'
   })}
 
-      ${messageContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
-            id=${field.messageId}
-            class="sf-textarea-hint-text-wrap"
-            data-field-message=${field.invalid && errorContent ? 'error' : 'hint'}
-          >${messageContent}</span>` : ''}
-    </label>
+      ${count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-message flex">${messageNode}<span id=${countId} class="sf-textarea-count">${count}</span></span>` : messageNode}
+    </label>${maxlength !== null && maxlength !== undefined ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-count-said" aria-live="polite">${countSaid}</span>` : ''}
   `;
 }
 __webpack_async_result__();
@@ -2021,21 +2318,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a105cae235ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.7.5","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":false},"min-rows":{"type":"number","default":1},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.9.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"text":{"type":"enum","values":["plain","code"],"default":"plain"},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":true},"min-rows":{"type":"number","default":3},"max-rows":{"type":"number","default":10},"resize":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "88be139816dd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Text area","x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Text area","runtime":{"value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "4ced3f61aadc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Многострочное поле","x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Многострочное поле","runtime":{"value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

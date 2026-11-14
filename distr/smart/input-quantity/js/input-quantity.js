@@ -121,11 +121,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -138,6 +140,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -176,15 +181,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -471,6 +488,7 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -558,12 +576,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -581,6 +601,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -679,6 +704,71 @@ const FormField = Base => class extends Base {
   formStateRestoreCallback(state) {
     if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
     this.sfSyncFormState();
+  }
+
+};
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
@@ -1035,8 +1125,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // it is typed or pasted. The decimal mark is the page's language's (a comma in
 // Russian; the other of «.» and «,» is taken as one too unless the language
 // groups with it). The value is committed on Enter and when the field loses
-// focus: then it is rounded to the field's digits, clamped to the bounds and
-// written back in the page's format.
+// focus: then it is rounded to the field's digits and written back in the
+// page's format. A number past a bound or off the step is kept as typed, not
+// clamped (QR-1): the field shows its error under the box -- the standard
+// invalid state, aria-invalid, the range word, said once by a polite status --
+// and the form will not submit it (§17.2: the invalid state is shown when the
+// validity fails after the person touched the field). The steppers and the
+// keys still stop at the bounds.
 //
 // Since standard simai.smart-component 1.3.8 it is built from its
 // component.json (§3, §4, §17, §20): the settings are made by
@@ -1067,7 +1162,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const REPEAT_DELAY = 400;
 const REPEAT_INTERVAL = 60; // PageUp and PageDown move this many steps unless the field names its own.
 
-const PAGE_STEPS = 10; // The actions (§4.4): each answers an outcome, and none is a person's change,
+const PAGE_STEPS = 10; // The remove mode for a cart line (owner decision C122). PROVISIONAL NAMES:
+// the setting, its label and the event are the research's proposal and wait
+// for the owner's word. The code reads them from here only, so a rename is
+// this map plus the keys of component.json and lang/*.json (`events.<event>`),
+// then generate-component-files. The DOM name of the event follows §8:
+// `sf-input-quantity-<event>`.
+
+const REMOVE_MODE = Object.freeze({
+  setting: 'removable',
+  label: 'remove-label',
+  event: 'remove'
+}); // The actions (§4.4): each answers an outcome, and none is a person's change,
 // so none sends an event, as a native field's stepUp() does not.
 
 const actions = {
@@ -1176,11 +1282,22 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
     this._reported = undefined;
     this._committed = undefined;
-    this._hold = null;
+    this._hold = null; // A press that began on the trash (C122): only such a press removes, never
+    // the click that ends a held «−» run reaching the bound.
+
+    this._removePress = false; // The range or step error a commit showed (QR-1), and what the status
+    // says: shown until the value is valid again or the form is reset.
+
+    this._rangeShown = false;
+    this._announcement = '';
     this._releaseReset = null;
     this._resetControl = null;
 
-    this.__sfStopHold = () => this.stopHold();
+    this.__sfStopHold = () => this.stopHold(); // The browser's own check (a submit, checkValidity(), reportValidity())
+    // fires invalid on the host: a range or step error it found is shown too.
+
+
+    this.addEventListener('invalid', () => this.showRangeError());
   }
 
   attributeChangedCallback(name, previous, next) {
@@ -1195,7 +1312,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-quantity');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(this.getAttribute('size'));
   }
 
   get ariaLabel() {
@@ -1348,35 +1465,74 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     return this.formValue;
   } // value-missing is the box's own (required, and empty -- an inherited value
   // is a hint and does not count, §20.2); the range and the step are read off
-  // the value, which a person may type past a bound until the commit clamps it.
+  // the value, which a person may type past a bound and commit: it is kept, and
+  // the error is shown (QR-1).
 
 
   sfSyncFormState() {
     this.sfSyncForm();
-    const value = this.value;
+    (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.syncFieldValidity)(this, this.getInputElement(), this.ownValidity());
+  } // What the value breaks that the text box cannot know: {flag: message} for
+  // the range and the step, empty while the value keeps them.
+
+
+  ownValidity(value = this.value) {
     const own = {};
+    if (value === null) return own;
+    if (this.min !== null && value < this.min) own.rangeUnderflow = this.sfWord('range-underflow', {
+      vars: {
+        min: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.min, this.numberOptions)
+      }
+    });
+    if (this.max !== null && value > this.max) own.rangeOverflow = this.sfWord('range-overflow', {
+      vars: {
+        max: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.max, this.numberOptions)
+      }
+    });
+    const base = this.min ?? 0;
+    const steps = (value - base) / this.step;
+    if (Math.abs(steps - Math.round(steps)) > 1e-7) own.stepMismatch = this.sfWord('step-mismatch', {
+      vars: {
+        step: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.step, this.numberOptions)
+      }
+    });
+    return own;
+  } // The first word of what the value breaks, '' while it keeps the rules.
 
-    if (value !== null) {
-      if (this.min !== null && value < this.min) own.rangeUnderflow = this.sfWord('range-underflow', {
-        vars: {
-          min: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.min, this.numberOptions)
-        }
-      });
-      if (this.max !== null && value > this.max) own.rangeOverflow = this.sfWord('range-overflow', {
-        vars: {
-          max: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.max, this.numberOptions)
-        }
-      });
-      const base = this.min ?? 0;
-      const steps = (value - base) / this.step;
-      if (Math.abs(steps - Math.round(steps)) > 1e-7) own.stepMismatch = this.sfWord('step-mismatch', {
-        vars: {
-          step: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.step, this.numberOptions)
-        }
-      });
-    }
 
-    (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.syncFieldValidity)(this, this.getInputElement(), own);
+  get rangeMessage() {
+    return Object.values(this.ownValidity())[0] || '';
+  } // The invalid state the field draws: the page's, or the range error a
+  // commit showed. The page's message wins; the range word fills in when the
+  // page says invalid without one.
+
+
+  get shownInvalid() {
+    return this.invalid || this._rangeShown;
+  }
+
+  get shownErrorMessage() {
+    if (this.invalid && this.errorMessage) return this.errorMessage;
+    return this._rangeShown ? this.rangeMessage : this.errorMessage;
+  } // A commit, or the browser's own check (a submit, checkValidity()), shows
+  // the range error while the value breaks the range or the step, and the
+  // status says it once. A valid value takes it away.
+
+
+  showRangeError() {
+    const message = this.rangeMessage;
+    const shown = Boolean(message);
+    if (shown === this._rangeShown && (!shown || this._announcement === message)) return;
+    this._rangeShown = shown;
+    this._announcement = message;
+    this.requestComponentUpdate('invalid');
+  }
+
+  hideRangeError() {
+    if (!this._rangeShown) return;
+    this._rangeShown = false;
+    this._announcement = '';
+    this.requestComponentUpdate('invalid');
   } // The browser's restore of a form (back, reload): the submitted number.
 
 
@@ -1448,6 +1604,45 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   atMax(value = this.value) {
     return value !== null && this.max !== null && value >= this.max;
+  } // ---- The remove mode (C122) ------------------------------------------------
+  // Off by default: a shop may not want removal made easier (a product page).
+  // Read through the map, not by its own name, so the generated accessors of
+  // the two settings stay the manifest's.
+
+
+  get removeModeOn() {
+    return Boolean(this[(0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.camelName)(REMOVE_MODE.setting)]);
+  }
+
+  get removeModeLabel() {
+    return this[(0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.camelName)(REMOVE_MODE.label)] || '';
+  } // The «−» is the trash while the mode is on, the field can change and the
+  // value stands on its lower bound; a field with no lower bound never shows it.
+
+
+  removeShown(value = this.value) {
+    return this.removeModeOn && this.interactive && this.steppers !== 'none' && this.atMin(value);
+  } // «0» typed and committed with Enter asks for removal too (Baymard: people
+  // type 0 to remove), while 0 is below the bound; with the mode off it is the
+  // ordinary out-of-range commit (QR-1).
+
+
+  typedRemove() {
+    if (!this.removeModeOn || !this.interactive || this._draft === null) return false;
+    if (this.min === null || !(this.min > 0)) return false;
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions) === 0;
+  } // The field never removes itself: it asks, and the page removes the line and
+  // offers «Вернуть» (C25). Cancelable; answers whether nobody refused.
+
+
+  requestRemove(source, value = this.value) {
+    return this.sfEmit(REMOVE_MODE.event, {
+      value,
+      name: this.name,
+      source
+    }, {
+      cancelable: true
+    });
   } // ---- The inherited-value seam -------------------------------------------
 
 
@@ -1547,14 +1742,16 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     return this.writeValue(next, source, {
       change
     });
-  } // The typed text, made the value: rounded, clamped, written back.
+  } // The typed text, made the value: rounded and written back, kept as typed
+  // past a bound (QR-1); the error shows instead of a silent clamp.
 
 
   commitDraft(source = 'commit') {
     if (this._draft === null) return false;
     const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions);
-    const next = typed === null || !Number.isFinite(typed) ? typed === null ? null : this.value : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.clamp)((0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(typed, this.precision), this.min, this.max);
+    const next = typed === null || !Number.isFinite(typed) ? typed === null ? null : this.value : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(typed, this.precision);
     this.writeValue(next, source);
+    this.showRangeError();
     return true;
   } // ---- Native events of the text box ---------------------------------------
   // The text box's own input and change bubble out as plain Events with no
@@ -1648,6 +1845,15 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     }
 
     if (event.key === 'Enter') {
+      if (this.typedRemove()) {
+        // Not refused: the typing is taken back -- the page removes the line.
+        // Refused: the «0» goes the ordinary way, kept with its error (QR-1).
+        // Either way no implicit submit of the form.
+        event.preventDefault();
+        if (this.requestRemove('typing', 0)) this.revertDraft();else this.commitDraft('commit');
+        return;
+      }
+
       this.commitDraft('commit');
       return;
     }
@@ -1655,12 +1861,19 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     if (event.key === 'Escape' && this._draft !== null) {
       event.preventDefault();
       event.stopPropagation();
-      this._draft = null;
-      this._value = this._committedValue();
-      this._reported = this._value;
-      this.syncInputText(true);
-      this.syncControlState();
+      this.revertDraft();
     }
+  } // The typing taken back to the committed value.
+
+
+  revertDraft() {
+    this._draft = null;
+    this._value = this._committedValue();
+    this._reported = this._value;
+    this.syncInputText(true);
+    this.syncControlState(); // Back to a committed number past a bound: its error shows again.
+
+    this.showRangeError();
   } // ---- The steppers ---------------------------------------------------------
   // A pointer press steps at once and repeats while held; the click that
   // follows it is the same press and is left alone. A click with no pointer
@@ -1669,8 +1882,16 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
 
   onStepPointerDown(event, direction) {
+    this._removePress = false;
     if (event.button !== 0 || !this.interactive) return;
-    if (event.currentTarget.disabled) return;
+    if (event.currentTarget.disabled) return; // The trash takes a press of its own (C122): no step, no hold; the click
+    // that follows asks for removal.
+
+    if (direction < 0 && this.removeShown()) {
+      this._removePress = true;
+      return;
+    }
+
     this.stopHold();
     this.commitDraft('commit');
     this._hold = {
@@ -1714,6 +1935,17 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   onStepClick(event, direction) {
     event.preventDefault();
+
+    if (direction < 0 && this.removeShown()) {
+      // A pointer press that began on the trash, or a click with no pointer
+      // behind it (Enter, Space). The click that ends a held «−» run which
+      // reached the bound began on the minus and removes nothing.
+      const asked = this._removePress || event.detail === 0;
+      this._removePress = false;
+      if (asked) this.requestRemove('button');
+      return;
+    }
+
     if (event.detail > 0) return;
     this.commitDraft('commit');
     this.stepBy(direction, 'button');
@@ -1770,7 +2002,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     }
 
     const [minus, plus] = this.querySelectorAll(':scope .sf-quantity-count');
-    if (minus) minus.disabled = !this.interactive || this.atMin(value);
+    if (minus) minus.disabled = !this.interactive || this.atMin(value) && !this.removeShown(value);
     if (plus) plus.disabled = !this.interactive || this.atMax(value); // At a bound, said on the host (§5.3, simai/ui-source#46 item 4).
 
     this.sfHostState('data-at-min', this.atMin(value));
@@ -1781,7 +2013,10 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     if (wrap && this.digits === null) wrap.style.setProperty('--sf-quantity--digits', String(this.autoDigits));
     const hidden = this.querySelector(':scope .sf-quantity-value');
     if (hidden) hidden.value = this.formValue;
-    this.sfSyncFormState();
+    this.sfSyncFormState(); // The shown range error goes as soon as the value keeps the rules again,
+    // whatever moved it: typing, a step, a value set from script.
+
+    if (this._rangeShown && !this.rangeMessage) this.hideRangeError();
   }
 
   afterRender(callback) {
@@ -1797,6 +2032,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       this._releaseReset = input ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__.bindFormReset)(input, () => {
         this._value = undefined;
         this._draft = null;
+        this._rangeShown = false;
+        this._announcement = '';
         this._reported = undefined;
         this._committed = undefined;
         this.requestComponentUpdate('reset');
@@ -1817,14 +2054,16 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   templateContext() {
     const props = this.getPropsContext();
+    const invalid = this.shownInvalid;
+    const errorMessage = this.shownErrorMessage;
     const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_3__.createFieldContract)(this, {
       prefix: 'sf-quantity',
       required: this.required,
-      invalid: this.invalid,
+      invalid,
       hint: this.hint,
-      errorMessage: this.errorMessage
+      errorMessage
     });
-    const errorContent = this.hasSlotContent?.('error') ? this.getSlotContent('error') : this.errorMessage;
+    const errorContent = this.hasSlotContent?.('error') && !(this._rangeShown && !this.invalid) ? this.getSlotContent('error') : errorMessage;
     const hintContent = this.hasSlotContent?.('hint') ? this.getSlotContent('hint') : this.hint;
     const value = this.value;
     return this.createTemplateContext({ ...props,
@@ -1855,8 +2094,9 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       required: this.required,
       disabled: this.disabled,
       readonly: this.readonly,
-      invalid: this.invalid,
-      errorMessage: this.errorMessage,
+      invalid,
+      errorMessage,
+      announcement: this._announcement,
       ariaLabel: this.ariaLabel,
       decrementLabel: this.decrementLabel,
       incrementLabel: this.incrementLabel,
@@ -1866,6 +2106,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       interactive: this.interactive,
       atMin: this.atMin(value),
       atMax: this.atMax(value),
+      removeShown: this.removeShown(value),
+      removeLabel: this.removeModeLabel,
       shownPlaceholder: this.hasInheritedValue ? this.inheritedDisplayValue() : this.placeholder,
       message: field.invalid && errorContent ? errorContent : hintContent,
       messageKind: field.invalid && errorContent ? 'error' : 'hint',
@@ -1924,23 +2166,27 @@ function renderStepper(context, direction) {
     component,
     field
   } = context;
-  const down = direction < 0;
-  const reached = down ? context.atMin : context.atMax; // Out of the tab order, as the APG spinbutton has its buttons: the arrow
+  const down = direction < 0; // The remove mode (C122): on the lower bound «−» is the trash, the same
+  // button in the same grey (removal can be undone, so no danger colour).
+
+  const trash = down && context.removeShown;
+  const reached = trash ? false : down ? context.atMin : context.atMax; // Out of the tab order, as the APG spinbutton has its buttons: the arrow
   // keys already do what they do, and two more stops per field would make a
   // form of numbers three times as long to cross. Still real buttons, named,
-  // reachable by a pointer and a screen reader.
+  // reachable by a pointer and a screen reader. The trash is in the Tab
+  // order: removal is not a step, no key does it.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button type="button"
             class="${STEPPER} ${LAYOUT.count}"
-            tabindex="-1"
-            aria-label=${down ? context.decrementLabel : context.incrementLabel}
-            aria-controls=${field.controlId}
+            tabindex=${trash ? '0' : '-1'}
+            aria-label=${trash ? context.removeLabel : down ? context.decrementLabel : context.incrementLabel}
+            aria-controls=${trash ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : field.controlId}
             ?disabled=${!context.interactive || reached}
             @pointerdown=${event => component.onStepPointerDown(event, direction)}
             @mousedown=${event => component.onStepMouseDown(event)}
             @click=${event => component.onStepClick(event, direction)}
-    ><i class="sf-icon" aria-hidden="true">${down ? 'remove' : 'add'}</i></button>
+    ><i class="sf-icon" aria-hidden="true">${trash ? 'delete' : down ? 'remove' : 'add'}</i></button>
   `;
 }
 
@@ -2017,6 +2263,10 @@ function renderQuantityTemplate(context) {
 
       ${context.message ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${field.messageId} class="sf-quantity-hint-text-wrap"
                      data-field-message=${context.messageKind}>${context.message}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+
+      ${context.interactive // A number kept past a bound shows its error under the box; the status
+  // says it once, when the commit shows it (QR-1). Empty otherwise.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-status sr-only" role="status" aria-live="polite" aria-atomic="true">${context.announcement || ''}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -2243,28 +2493,28 @@ __webpack_async_result__();
 /***/ "7fb5569a4eda"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input-quantity for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"error","to":"invalid","kind":"setting","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","section":"§17.2","note":"error is a dated alias of invalid; the shim maps the attribute and the property"},{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"},{"from":"sf-quantity","to":"sf-input-quantity","kind":"tag","component":"sf-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-quantity; sf-quantity is a subclass defined beside it until the date"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input-quantity for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"error","to":"invalid","kind":"setting","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","section":"§17.2","note":"error is a dated alias of invalid; the shim maps the attribute and the property"},{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-input-quantity","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"},{"from":"sf-quantity","to":"sf-input-quantity","kind":"tag","component":"sf-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-quantity; sf-quantity is a subclass defined beside it until the date"},{"from":"sf-quantity-remove","to":"sf-input-quantity-remove","kind":"event","component":"sf-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","cancelable":true,"section":"§8","note":"the event name carries the tag: the remove event (1.5.0, provisional name) keeps the old tag\'s name while sf-quantity is defined, as tag rename R0 asks of every tagged event"}]}');
 
 /***/ },
 
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.4.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.6.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "82e515f62ffb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Quantity","runtime":{"decrement":"Decrease value","increment":"Increase value","range-underflow":"The value must be at least {min}","range-overflow":"The value must be at most {max}","step-mismatch":"The value must be a multiple of {step}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Quantity","runtime":{"decrement":"Decrease value","increment":"Increase value","range-underflow":"The value must be at least {min}","range-overflow":"The value must be at most {max}","step-mismatch":"The value must be a multiple of {step}","remove":"Remove"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}},"events":{"remove":{"label":"Remove"}}}');
 
 /***/ },
 
 /***/ "83cbe18cd482"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Количество","runtime":{"decrement":"Уменьшить значение","increment":"Увеличить значение","range-underflow":"Значение должно быть не меньше {min}","range-overflow":"Значение должно быть не больше {max}","step-mismatch":"Значение должно быть кратно {step}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Количество","runtime":{"decrement":"Уменьшить значение","increment":"Увеличить значение","range-underflow":"Значение должно быть не меньше {min}","range-overflow":"Значение должно быть не больше {max}","step-mismatch":"Значение должно быть кратно {step}","remove":"Удалить"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}},"events":{"remove":{"label":"Удалить"}}}');
 
 /***/ }
 

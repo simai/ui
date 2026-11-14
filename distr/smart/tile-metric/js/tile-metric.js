@@ -453,7 +453,9 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   so every part is a span the sheet lays out.
 // - The change says its direction in words (visually hidden) beside the arrow
 //   of a tonal sf-badge, the status its word beside the icon, so colour is
-//   never the only sign.
+//   never the only sign. With a hint the word is said before it (visually
+//   hidden); without one the word is the line's text («Внимание»), so a
+//   threshold that fired is never an icon alone.
 // - The limit is a meter; the sf-progress-bar under it is its picture
 //   (aria-hidden), with the page's thresholds.
 // - loading keeps the label and draws a skeleton bar on each line that waits.
@@ -490,7 +492,7 @@ function renderMeter(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-meter" role="meter" aria-label=${meter.name}
       aria-valuemin="0" aria-valuemax=${String(meter.max)} aria-valuenow=${String(meter.value)} aria-valuetext=${meter.text}>
     <sf-progress-bar class="sf-tile-metric-bar" aria-hidden="true" size=${size} value=${String(meter.percent)}
-      status=${context.status} warning-at=${meter.warningAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} error-at=${meter.errorAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>
+      status=${context.status === 'neutral' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.status} warning-at=${meter.warningAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} error-at=${meter.errorAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>
     <span class="sf-tile-metric-limit" aria-hidden="true">${meter.text}</span>
   </span>`;
 }
@@ -503,8 +505,8 @@ function renderStatus(context) {
   if (status === 'neutral' && !hint) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-tile-metric-status sf-tile-metric-status--${status}`}>
     ${status === 'neutral' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-tile-metric-status-icon" aria-hidden="true">${context.statusIcon}</i>`}
-    ${context.statusWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only">${context.statusWord}${hint ? ': ' : ''}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    ${hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-hint">${hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.statusWord && hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only">${context.statusWord}: </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${hint || context.statusWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-hint">${hint || context.statusWord}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </span>`;
 }
 
@@ -591,7 +593,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "1d705aa58430"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.2.3","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.3.0","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

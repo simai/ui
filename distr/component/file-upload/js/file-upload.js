@@ -7,11 +7,13 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -20,6 +22,9 @@ __webpack_require__.r(__webpack_exports__);
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -58,15 +63,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -87,12 +104,17 @@ function retireFieldSizeClass(root, block) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ITEM_STATES: () => (/* binding */ ITEM_STATES),
 /* harmony export */   bindFileUpload: () => (/* binding */ bindFileUpload),
 /* harmony export */   clearFileUpload: () => (/* binding */ clearFileUpload),
+/* harmony export */   describeUploadItem: () => (/* binding */ describeUploadItem),
+/* harmony export */   formatAcceptWords: () => (/* binding */ formatAcceptWords),
 /* harmony export */   getFileUploadItems: () => (/* binding */ getFileUploadItems),
 /* harmony export */   initExistingFileUploads: () => (/* binding */ initExistingFileUploads),
+/* harmony export */   normalizeItemState: () => (/* binding */ normalizeItemState),
 /* harmony export */   retryFileUploadItem: () => (/* binding */ retryFileUploadItem),
 /* harmony export */   setFileUploadItems: () => (/* binding */ setFileUploadItems),
+/* harmony export */   takeFiles: () => (/* binding */ takeFiles),
 /* harmony export */   unbindFileUpload: () => (/* binding */ unbindFileUpload)
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
@@ -100,6 +122,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
+/* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _intake_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ab7ec7cd175d");
+
+
 
 
 
@@ -114,14 +140,57 @@ const FILE_UPLOAD_ITEM_TEXT = {
     uploading: 'Uploading',
     retry: 'Try again',
     linkText: 'Click to upload',
-    text: 'or drag and drop'
+    text: 'or drag and drop',
+    // The words of a file that was not added (FU-6, FU-7), keyed as the Smart
+    // lang/<locale>.json runtime keys them, so one SF.language.register
+    // reaches both.
+    'not-added': 'Not added: {n}',
+    'reject-type': '“{name}” is not accepted: allowed {formats}',
+    'reject-one': '“{name}” was not added: this field takes one file',
+    'reject-duplicate': '“{name}” is already in the list',
+    'reject-empty': '“{name}” is empty',
+    'reject-size': '“{name}” is {size}; the limit is {max}',
+    'reject-min-size': '“{name}” is {size}; it must be at least {min}',
+    'reject-count': {
+      one: '“{name}” was not added: up to {n} file',
+      other: '“{name}” was not added: up to {n} files'
+    },
+    'reject-total': '“{name}” was not added: all files together up to {max}',
+    'formats-image': 'images',
+    'formats-video': 'video',
+    'formats-audio': 'audio',
+    done: 'Uploaded',
+    'done-line': '{size} · uploaded',
+    error: 'Not uploaded',
+    'error-line': 'Not uploaded: {message}'
   },
   ru: {
     remove: 'Удалить',
     uploading: 'Загрузка',
     retry: 'Повторить',
     linkText: 'Выберите файл',
-    text: 'или перетащите его сюда'
+    text: 'или перетащите его сюда',
+    'not-added': 'Не добавлено {n}:',
+    'reject-type': '«{name}» не подходит: можно {formats}',
+    'reject-one': '«{name}» не добавлен: сюда можно только один файл',
+    'reject-duplicate': '«{name}» уже добавлен',
+    'reject-empty': '«{name}» пустой — в нём нет данных',
+    'reject-size': '«{name}» — {size}, а можно до {max}',
+    'reject-min-size': '«{name}» — {size}, а нужно от {min}',
+    'reject-count': {
+      one: '«{name}» не добавлен: можно не больше {n} файла',
+      few: '«{name}» не добавлен: можно не больше {n} файлов',
+      many: '«{name}» не добавлен: можно не больше {n} файлов',
+      other: '«{name}» не добавлен: можно не больше {n} файла'
+    },
+    'reject-total': '«{name}» не добавлен: все файлы вместе — до {max}',
+    'formats-image': 'изображения',
+    'formats-video': 'видео',
+    'formats-audio': 'аудио',
+    done: 'Загружен',
+    'done-line': '{size} · загружен',
+    error: 'Не загрузился',
+    'error-line': 'Не загрузился: {message}'
   }
 };
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
@@ -135,11 +204,16 @@ function toBoolean(value, fallback = false) {
 
 function normalizeSize(value) {
   return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
-}
+} // An entry's state: ready (chosen, not sent), process (being sent), done,
+// error. A chosen file was process at 0 % at once and looked like an upload
+// that had stuck (FU-3); it is ready until the host or the uploader sends it.
 
-function normalizeItemState(item) {
-  const state = String(item?.state || item?.status || 'process').toLowerCase();
-  return ['process', 'done', 'error'].includes(state) ? state : 'process';
+
+const ITEM_STATES = Object.freeze(['ready', 'process', 'done', 'error']);
+
+function normalizeItemState(item, fallback = 'process') {
+  const state = String(item?.state || item?.status || fallback).toLowerCase();
+  return ITEM_STATES.includes(state) ? state : 'process';
 }
 
 function getItemEventKey(item, index) {
@@ -177,7 +251,8 @@ function getFilesContainer(root) {
     }
   }
 
-  const next = root.nextElementSibling;
+  let next = root.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-message')) next = next.nextElementSibling;
 
   if (next?.classList?.contains('sf-file-upload-files')) {
     return next;
@@ -197,6 +272,18 @@ function getMultiple(root) {
 
 function getAccept(root) {
   return root.dataset.accept || root.getAttribute('accept') || '';
+} // A limit in bytes or files, from data-<name> or <name>: a positive number, or
+// none (FU-8). Each page wrote its own check (sf-chat-composer in ui-pro too).
+
+
+function getLimit(root, name) {
+  const key = name.replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
+  return (0,_intake_mjs__WEBPACK_IMPORTED_MODULE_6__.positiveLimit)(root.dataset[key] ?? root.getAttribute(name));
+}
+
+function itemBytes(item) {
+  const bytes = Number(item?.file?.size ?? item?.size);
+  return Number.isFinite(bytes) && bytes > 0 ? bytes : 0;
 } // function getTriggerLink(root) {
 //   return root?.querySelector?.('.sf-file-upload-link') || null;
 // }
@@ -253,13 +340,15 @@ function syncFileUploadInteraction(root) {
     if (!previous.managedDisabled) previous.disabled = button.disabled;
     const nextDisabled = disabled || previous.disabled;
     if (button.disabled !== nextDisabled) button.disabled = nextDisabled;
-    previous.managedDisabled = disabled;
-    if (button.dataset.action !== 'remove') return;
+    previous.managedDisabled = disabled; // Remove and Retry are named with their file: three rows said «Удалить»
+    // three times, and the retry button said only its word (FU-10).
+
     const currentLabel = button.getAttribute('aria-label');
 
     if (!button.hasAttribute('aria-labelledby') && (!currentLabel || currentLabel === previous.label)) {
       const name = button.closest('.sf-upload-progress')?.querySelector('.sf-upload-progress-name')?.textContent?.trim() || '';
-      const label = `${(0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload')} ${name}`.trim();
+      const word = button.dataset.action === 'retry' ? button.textContent.trim() || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload');
+      const label = `${word} ${name}`.trim();
       if (currentLabel !== label) button.setAttribute('aria-label', label);
       previous.label = label;
     }
@@ -298,16 +387,108 @@ function syncFileUploadInteraction(root) {
       bar.dataset.sfUploadLabel = label;
     }
   });
+} // What a row says, from its item: the same for the class row and the Smart
+// template, so the two draw one row.
+//   ready    name, size; Remove                      (FU-3)
+//   process  name, size; Remove; the bar
+//   done     name, «size · загружен», the check; Remove   (FU-4: it had no
+//            way out and kept its 100 % bar)
+//   error    name, «Не загрузился: <message>»; Remove; «Повторить»   (FU-5:
+//            the message was the retry button's label, so the reason was the
+//            thing a person pressed to send the same file again)
+// `progress: null` is a transfer whose share is not known yet: the bar runs
+// without a number. A missing progress reads 100 on done and 0 otherwise.
+
+
+function describeUploadItem(item, owner = null, fallbackState = 'process') {
+  const state = normalizeItemState(item, fallbackState);
+  const name = String(item?.name || item?.fileName || 'File');
+  const size = String(item?.fileSize || item?.sizeText || '');
+  const raw = item?.progress;
+  const progress = raw === null ? null : Math.max(0, Math.min(100, Number(raw ?? (state === 'done' ? 100 : 0)) || 0));
+  const message = String(item?.errorMessage || item?.error || '');
+  let line = size;
+  if (state === 'done') line = size ? fileUploadWord(owner, 'done-line', {
+    vars: {
+      size
+    }
+  }) : fileUploadWord(owner, 'done');else if (state === 'error') line = message ? fileUploadWord(owner, 'error-line', {
+    vars: {
+      message
+    }
+  }) : fileUploadWord(owner, 'error');
+  return {
+    state,
+    name,
+    size,
+    line,
+    message,
+    progress,
+    icon: uploadItemIcon(item, state),
+    retryText: String(item?.retryText || fileUploadWord(owner, 'retry'))
+  };
+} // A row's glyph says what the file is (C81: a type icon where there is no
+// thumbnail): the core file icons by media type, the type guessed from the
+// extension when the item has none, a plain file otherwise; an error row
+// shows the error glyph. It was cloud_upload in every state, in the primary
+// colour, outside the three icon roles (FU-12).
+
+
+const EXTENSION_TYPES = Object.freeze({
+  pdf: 'application/pdf',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  svg: 'image/svg+xml',
+  heic: 'image/heic',
+  avif: 'image/avif',
+  mp4: 'video/mp4',
+  mov: 'video/quicktime',
+  webm: 'video/webm',
+  mkv: 'video/x-matroska',
+  mp3: 'audio/mpeg',
+  wav: 'audio/wav',
+  ogg: 'audio/ogg',
+  m4a: 'audio/mp4',
+  zip: 'application/zip',
+  rar: 'application/vnd.rar',
+  '7z': 'application/x-7z-compressed',
+  gz: 'application/gzip',
+  tar: 'application/x-tar',
+  csv: 'text/csv',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ods: 'application/vnd.oasis.opendocument.spreadsheet',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  odp: 'application/vnd.oasis.opendocument.presentation',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  odt: 'application/vnd.oasis.opendocument.text',
+  rtf: 'application/rtf',
+  txt: 'text/plain',
+  md: 'text/markdown'
+});
+
+function uploadItemIcon(item, state) {
+  if (item?.icon) return String(item.icon);
+  if (state === 'error') return 'error';
+  const name = String(item?.name || item?.fileName || item?.file?.name || '');
+  const extension = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+  const type = String(item?.file?.type || item?.mime || EXTENSION_TYPES[extension] || '');
+  const icon = (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(type);
+  return icon === 'download' ? 'draft' : icon;
 }
 
 function createUploadProgressItem(item, size = '1', owner = null) {
   const normalizedSize = normalizeSize(size);
-  const state = String(item.state || item.status || 'done').toLowerCase();
-  const fileName = String(item.name || item.fileName || 'File');
-  const fileSize = String(item.fileSize || item.sizeText || '');
-  const progress = Math.max(0, Math.min(100, Number(item.progress ?? 100) || 0));
-  const iconName = String(item.icon || 'cloud_upload');
-  const errorMessage = String(item.errorMessage || item.retryText || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', owner, 'sf-file-upload'));
+  const row = describeUploadItem(item, owner, 'done');
+  const {
+    state,
+    progress
+  } = row;
   const root = document.createElement('div');
   root.className = ['sf-upload-progress', `sf-upload-progress--size-${normalizedSize}`, `sf-upload-progress--${state}`, 'flex', 'items-main-start', 'items-cross-start'].join(' ');
   const leftIcon = document.createElement('i');
@@ -315,7 +496,7 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   // «delete») were read as text (docs pre-check 2026-11-10 FU-03).
 
   leftIcon.setAttribute('aria-hidden', 'true');
-  leftIcon.textContent = iconName;
+  leftIcon.textContent = row.icon;
   const content = document.createElement('div');
   content.className = 'sf-upload-progress-content flex flex-col flex-1';
   const top = document.createElement('div');
@@ -324,66 +505,63 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   left.className = 'sf-upload-progress-left flex flex-col';
   const nameNode = document.createElement('div');
   nameNode.className = 'sf-upload-progress-name';
-  nameNode.textContent = fileName;
+  nameNode.textContent = row.name;
   const textNode = document.createElement('div');
   textNode.className = 'sf-upload-progress-text';
-  textNode.textContent = fileSize;
+  textNode.textContent = row.line;
   left.append(nameNode, textNode);
   top.append(left);
 
   if (state === 'done') {
     const doneIcon = document.createElement('i');
-    doneIcon.className = 'sf-icon sf-icon-solid';
+    doneIcon.className = 'sf-icon sf-icon-solid sf-upload-progress-mark';
     doneIcon.setAttribute('aria-hidden', 'true');
     doneIcon.textContent = 'check_circle';
     top.append(doneIcon);
-  } else if (state === 'error') {
-    const removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
-    removeButton.dataset.action = 'remove';
-    const removeIcon = document.createElement('i');
-    removeIcon.className = 'sf-icon';
-    removeIcon.setAttribute('aria-hidden', 'true');
-    removeIcon.textContent = 'delete';
-    removeButton.append(removeIcon);
-    top.append(removeButton);
+  } // Every state can be taken out of the list.
+
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
+  removeButton.dataset.action = 'remove';
+  const removeIcon = document.createElement('i');
+  removeIcon.className = 'sf-icon';
+  removeIcon.setAttribute('aria-hidden', 'true');
+  removeIcon.textContent = 'delete';
+  removeButton.append(removeIcon);
+  top.append(removeButton);
+  content.append(top);
+
+  if (state === 'error') {
     const retry = document.createElement('button');
     retry.type = 'button';
     retry.className = 'sf-upload-progress-repeat self-cross-start';
     retry.dataset.action = 'retry';
-    retry.textContent = errorMessage;
-    content.append(top, retry);
-    root.append(leftIcon, content);
-    return root;
-  } else {
-    const removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
-    removeButton.dataset.action = 'remove';
-    const removeIcon = document.createElement('i');
-    removeIcon.className = 'sf-icon';
-    removeIcon.setAttribute('aria-hidden', 'true');
-    removeIcon.textContent = 'delete';
-    removeButton.append(removeIcon);
-    top.append(removeButton);
+    retry.textContent = row.retryText;
+    content.append(retry);
+  } // A chosen file that is not being sent, and a sent one, have no bar: there
+  // is no transfer to show (FU-3, FU-4).
+
+
+  if (state === 'process') {
+    const progressBar = document.createElement('div');
+    progressBar.className = `sf-progress-bar sf-progress-bar--size-${normalizedSize} flex flex-row items-cross-center`;
+    if (progress === null) progressBar.dataset.indeterminate = 'true';else progressBar.dataset.value = String(progress);
+    progressBar.dataset.textPosition = 'inline-end';
+    const progressMain = document.createElement('div');
+    progressMain.className = 'sf-progress-bar-main';
+    const progressValue = document.createElement('div');
+    progressValue.className = 'sf-progress-bar-progress transition';
+    if (progress !== null) progressValue.style.width = `${progress}%`;
+    const progressText = document.createElement('div');
+    progressText.className = 'sf-progress-bar-text';
+    progressText.textContent = progress === null ? '' : `${progress}%`;
+    progressMain.append(progressValue);
+    progressBar.append(progressMain, progressText);
+    content.append(progressBar);
   }
 
-  const progressBar = document.createElement('div');
-  progressBar.className = `sf-progress-bar sf-progress-bar--size-${normalizedSize} flex flex-row items-cross-center`;
-  progressBar.dataset.value = String(progress);
-  progressBar.dataset.textPosition = 'inline-end';
-  const progressMain = document.createElement('div');
-  progressMain.className = 'sf-progress-bar-main';
-  const progressValue = document.createElement('div');
-  progressValue.className = 'sf-progress-bar-progress transition';
-  progressValue.style.width = `${progress}%`;
-  const progressText = document.createElement('div');
-  progressText.className = 'sf-progress-bar-text';
-  progressText.textContent = `${progress}%`;
-  progressMain.append(progressValue);
-  progressBar.append(progressMain, progressText);
-  content.append(top, progressBar);
   root.append(leftIcon, content);
   return root;
 }
@@ -486,8 +664,7 @@ function normalizeFileItems(files = [], root = null) {
     fileSize: (0,_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize)(file.size, {
       node: root
     }),
-    progress: 0,
-    state: 'process',
+    state: 'ready',
     file
   }));
 }
@@ -528,11 +705,17 @@ function retryFileUploadItem(root, index) {
 
   const nextItems = currentItems.map(item => ({ ...item
   }));
-  const currentItem = nextItems[normalizedIndex];
+  const currentItem = nextItems[normalizedIndex]; // Back in process with its share not known yet: the bar runs without a
+  // number until the transfer reports one. It went to 0 % and stood there,
+  // which read as a second failure when nothing sent the file again (FU-11);
+  // sf-file-upload's uploader sends it, an ordinary area's page answers
+  // retry.
+
   currentItem.state = 'process';
-  currentItem.progress = 0;
+  currentItem.progress = null;
   delete currentItem.errorMessage;
-  delete currentItem.retryText;
+  delete currentItem.error;
+  delete currentItem.reason;
   const previousItems = Array.from(root.__sfFileUploadItems || []);
   root.__sfFileUploadItems = nextItems;
   renderFileUploadItems(root, nextItems);
@@ -546,21 +729,6 @@ function retryFileUploadItem(root, index) {
     }
   }));
   return true;
-} // Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
-// as the platform dialog reads it. The dialog filters what a person may pick; a
-// drop went past it and took any file at all.
-
-
-function acceptsFile(accept, file) {
-  const tokens = String(accept || '').split(',').map(token => token.trim().toLowerCase()).filter(Boolean);
-  if (!tokens.length) return true;
-  const name = String(file?.name || '').toLowerCase();
-  const type = String(file?.type || '').toLowerCase();
-  return tokens.some(token => {
-    if (token.startsWith('.')) return name.endsWith(token);
-    if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
-    return type === token;
-  });
 }
 
 function emitSelect(root, files, source = 'input') {
@@ -572,18 +740,206 @@ function emitSelect(root, files, source = 'input') {
       multiple: getMultiple(root)
     }
   }));
-}
+} // A choice adds to the list on a multiple area, so files can be added in
+// portions; a file already listed (same name, size and time) is not listed
+// twice. A single area keeps one file: a new choice replaces it, and the
+// replaced entry leaves with remove {reason: 'replaced'}. The choice assigned
+// the new files over the list, so a second pick wiped the first (study
+// 2026-11-11 FU-1). Returns the entries that entered the list.
+
 
 function applySelectedFiles(root, files = [], source = 'input') {
-  const nextFiles = normalizeFileItems(files, root);
+  const chosen = normalizeFileItems(files, root);
   const previousItems = Array.from(root.__sfFileUploadItems || []);
+  const multiple = getMultiple(root);
+  const listed = new Set(previousItems.map((item, index) => getItemEventKey(item, index)));
+  const added = multiple ? chosen.filter((item, index) => !listed.has(item.id) && chosen.findIndex(other => other.id === item.id) === index) : chosen.slice(0, 1);
+  if (!added.length) return [];
+  const replaced = multiple ? [] : previousItems;
+  const nextFiles = multiple ? [...previousItems, ...added] : added;
   root.__sfFileUploadItems = nextFiles;
   renderFileUploadItems(root, nextFiles);
   syncFileUploadStateEvents(root, nextFiles, previousItems);
-  nextFiles.forEach((item, index) => {
-    emitFileUploadItemAdd(root, item, index, nextFiles, source);
+  replaced.forEach((item, index) => {
+    root.dispatchEvent(new CustomEvent('sf-file-upload:remove', {
+      bubbles: true,
+      detail: {
+        item,
+        index,
+        items: nextFiles,
+        reason: 'replaced'
+      }
+    }));
   });
-  emitSelect(root, nextFiles, source);
+  added.forEach(item => {
+    emitFileUploadItemAdd(root, item, nextFiles.indexOf(item), nextFiles, source);
+  });
+  emitSelect(root, added, source);
+  return added;
+}
+
+function fileUploadWord(root, key, options = {}) {
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(FILE_UPLOAD_ITEM_TEXT, key, root, {
+    component: 'sf-file-upload',
+    ...options
+  });
+} // The formats an accept list names, as people read them: «PDF, DOCX»,
+// «изображения». `type/*` is the kind's word; it wrote «*» before.
+// The names are the core's (intake.mjs): image/jpeg reads «JPG», image/svg+xml
+// «SVG».
+
+
+function formatAcceptWords(accept, root = null) {
+  return (0,_intake_mjs__WEBPACK_IMPORTED_MODULE_6__.acceptFormats)(accept, kind => fileUploadWord(root, `formats-${kind}`));
+} // Where a file that was not added is said: the line under the area (C81: the
+// message under the field, not a row in the list), a polite status a screen
+// reader announces. The Smart template draws it; an ordinary area gets one
+// after it on the first rejection.
+
+
+function getMessage(root, create = false) {
+  if (!root) return null;
+  const next = root.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-message')) return next;
+  if (!create || isManagedRenderRoot(root) || typeof document === 'undefined' || typeof root.after !== 'function') return null;
+  const message = document.createElement('div');
+  message.className = 'sf-file-upload-message';
+  message.setAttribute('role', 'status');
+  message.hidden = true;
+  root.after(message);
+  return message;
+}
+
+function showFileUploadRejections(root, rejected = []) {
+  const message = getMessage(root, rejected.length > 0);
+  root.__sfFileUploadRejected = rejected;
+  if (!message) return;
+  message.replaceChildren();
+  message.hidden = !rejected.length;
+  if (!rejected.length) return;
+
+  if (rejected.length === 1) {
+    message.textContent = rejected[0].message;
+    return;
+  }
+
+  const head = document.createElement('span');
+  head.textContent = fileUploadWord(root, 'not-added', {
+    count: rejected.length
+  });
+  const list = document.createElement('ul');
+  rejected.forEach(entry => {
+    const line = document.createElement('li');
+    line.textContent = entry.message;
+    list.append(line);
+  });
+  message.append(head, list);
+} // What a choice or a drop leaves out, and why: a type the accept list does
+// not name (on a pick too: the dialog's «All files» skipped the filter), a
+// second file on a single area, a file already listed. The drop took the
+// first file and said nothing of the rest (FU-6); a wrong type sent
+// rejected and showed nothing (FU-7). Each one is said under the area and in
+// reject {files, rejected: [{file, name, reason, message}], accept, source}.
+
+
+function takeFiles(root, files = [], source = 'input') {
+  const accept = getAccept(root);
+  const multiple = getMultiple(root);
+  const kept = multiple ? Array.from(root.__sfFileUploadItems || []) : [];
+  const listed = new Set(kept.map((item, index) => getItemEventKey(item, index)));
+  const maxSize = getLimit(root, 'max-size');
+  const minSize = getLimit(root, 'min-size');
+  const maxFiles = multiple ? getLimit(root, 'max-files') : 0;
+  const maxTotal = getLimit(root, 'max-total-size');
+
+  const size = bytes => (0,_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize)(bytes, {
+    node: root
+  });
+
+  let count = kept.length;
+  let total = kept.reduce((sum, item) => sum + itemBytes(item), 0);
+  const accepted = [];
+  const rejected = [];
+  Array.from(files).forEach(file => {
+    const name = String(file?.name || '');
+    const key = `${file?.name}-${file?.size}-${file?.lastModified}`;
+    const bytes = Number(file?.size) || 0;
+    let reason = '';
+    let vars = {
+      name
+    };
+    let words = {};
+    const own = (0,_intake_mjs__WEBPACK_IMPORTED_MODULE_6__.fileRejection)(file, {
+      accept,
+      maxSize,
+      minSize
+    });
+    if (!multiple && accepted.length) reason = 'one';else if (listed.has(key)) reason = 'duplicate';else if (own === 'type') {
+      reason = 'type';
+      vars = {
+        name,
+        formats: formatAcceptWords(accept, root)
+      };
+    } else if (own === 'empty') reason = 'empty';else if (own === 'size') {
+      reason = 'size';
+      vars = {
+        name,
+        size: size(bytes),
+        max: size(maxSize)
+      };
+    } else if (own === 'min-size') {
+      reason = 'min-size';
+      vars = {
+        name,
+        size: size(bytes),
+        min: size(minSize)
+      };
+    } else if (maxFiles && count >= maxFiles) {
+      reason = 'count';
+      words = {
+        count: maxFiles
+      };
+    } else if (maxTotal && total + bytes > maxTotal) {
+      reason = 'total';
+      vars = {
+        name,
+        max: size(maxTotal)
+      };
+    }
+
+    if (reason) {
+      rejected.push({
+        file,
+        name,
+        reason: reason === 'one' ? 'count' : reason,
+        message: fileUploadWord(root, `reject-${reason}`, {
+          vars,
+          ...words
+        })
+      });
+      return;
+    }
+
+    listed.add(key);
+    count += 1;
+    total += bytes;
+    accepted.push(file);
+  });
+  showFileUploadRejections(root, rejected);
+
+  if (rejected.length) {
+    root.dispatchEvent(new CustomEvent('sf-file-upload:reject', {
+      bubbles: true,
+      detail: {
+        files: rejected.map(entry => entry.file),
+        rejected,
+        accept,
+        source
+      }
+    }));
+  }
+
+  return accepted.length ? applySelectedFiles(root, accepted, source) : [];
 }
 
 function bindFileUpload(root) {
@@ -643,7 +999,7 @@ function bindFileUpload(root) {
     if (isDisabledRoot(root)) return;
     const files = Array.from(event.target?.files || []);
     if (!files.length) return;
-    applySelectedFiles(root, files, 'input');
+    takeFiles(root, files, 'input');
     event.target.value = '';
   };
 
@@ -672,29 +1028,14 @@ function bindFileUpload(root) {
     if (!files.length && !Array.from(event.dataTransfer?.types || []).includes('Files')) return;
     event.preventDefault();
     if (isDisabledRoot(root) || !files.length) return;
-    const accepted = files.filter(file => acceptsFile(getAccept(root), file));
-    const rejected = files.filter(file => !accepted.includes(file));
-
-    if (rejected.length) {
-      root.dispatchEvent(new CustomEvent('sf-file-upload:reject', {
-        bubbles: true,
-        detail: {
-          files: rejected,
-          accept: getAccept(root),
-          source: 'drop'
-        }
-      }));
-    }
-
-    if (!accepted.length) return;
-    const normalized = getMultiple(root) ? accepted : accepted.slice(0, 1);
-    applySelectedFiles(root, normalized, 'drop'); // A pick sends change from the native input; a drop sent none, so a form
+    const added = takeFiles(root, files, 'drop');
+    if (!added.length) return; // A pick sends change from the native input; a drop sent none, so a form
     // listening for change never heard of a dropped file.
 
     root.dispatchEvent(new CustomEvent('change', {
       bubbles: true,
       detail: {
-        files: normalized,
+        files: added.map(item => item.file),
         source: 'drop'
       }
     }));
@@ -830,6 +1171,8 @@ function setFileUploadItems(target, items = []) {
 }
 
 function clearFileUpload(target) {
+  const root = target instanceof HTMLElement ? target.closest(FILE_UPLOAD_SELECTOR) || target : null;
+  if (root) showFileUploadRejections(root, []);
   return setFileUploadItems(target, []);
 } // The class built nothing: template stayed null and render() returned null. It
 // builds the drop area and its list now, the markup the Smart template draws.
@@ -852,8 +1195,10 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
       label = ''
     } = this.params || {};
     const step = normalizeSize(size);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'sf-file-upload-wrap flex flex-col gap-1';
+    const wrapper = document.createElement('div'); // The list keeps its distance from the area itself (FU-12), the same
+    // inside this wrapper and under a Smart host.
+
+    wrapper.className = 'sf-file-upload-wrap flex flex-col';
     const root = document.createElement('div');
     if (this.id) root.id = this.id;
     root.className = `sf-file-upload sf-file-upload--size-${step} flex flex-col items-cross-center cursor-pointer`;
@@ -893,9 +1238,13 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     }
 
     root.append(featured, bottom);
+    const message = document.createElement('div');
+    message.className = 'sf-file-upload-message';
+    message.setAttribute('role', 'status');
+    message.hidden = true;
     const files = document.createElement('div');
     files.className = 'sf-file-upload-files grid grid-col-1 gap-1 w-full';
-    wrapper.append(root, files);
+    wrapper.append(root, message, files);
     this.root = root;
     this.template = wrapper;
   }
@@ -1511,6 +1860,96 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "e577837dd70a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+// Dates in the page's language: formatDate, the calendar day offset and the
+// next midnight, with no top-level side effects (format-intl.js). The same
+// functions as core/js/format.js and SF.format; relative days and times are
+// format-relative.js, so a bundle that writes a date does not carry them.
+
+
+const DAY_MS = 86400000;
+
+function hasDateStyle(style) {
+  return style === 'short' || style === 'medium' || style === 'long' || style === 'full';
+}
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
+ * `gap`, '' by default.
+ */
+
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (hasDateStyle(date)) options.dateStyle = date;
+    if (hasDateStyle(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone: 0 today,
+ * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
+ * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
+ * day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date()
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !today) return Number.NaN;
+  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
+  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date()) {
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return next.getTime() - today.getTime();
+}
+
+/***/ },
+
 /***/ "c016c43b1452"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1647,6 +2086,289 @@ function intlFormatter(kind, locale, options) {
   cache.set(key, made);
   return made;
 }
+
+/***/ },
+
+/***/ "c9ce0852ac73"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const word = String(format || 'number').trim();
+  if (word === 'integer') return {
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+}
+
+/***/ },
+
+/***/ "ee5c3aad2640"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+// Relative days and times in the page's language («вчера», «5 минут назад»),
+// with no top-level side effects (format-intl.js). The same functions as
+// core/js/format.js and SF.format.relativeDay / relativeTime.
+
+ // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+
+function capitalise(text, locale) {
+  const first = Array.from(text)[0] ?? '';
+  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+}
+/**
+ * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
+ * the weekday within the last week («понедельник»), else the date («3 ноября»,
+ * with the year when it is not this one). The words are the platform's for
+ * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
+ * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
+ * `weekday: false` goes from yesterday straight to the date; `capital: true`
+ * starts the word with a capital, as a heading or a divider does.
+ *
+ * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
+ * says when.
+ */
+
+
+function formatRelativeDay(value, {
+  now = new Date(),
+  today,
+  yesterday,
+  tomorrow,
+  weekday = true,
+  capital = false,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
+    now
+  });
+  const own = {
+    0: today,
+    [-1]: yesterday,
+    1: tomorrow
+  }[offset];
+  let text;
+
+  if (own) {
+    text = String(own);
+  } else if (offset >= -1 && offset <= 1) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    }).format(offset, 'day');
+  } else if (weekday && offset < -1 && offset > -7) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      weekday: 'long'
+    }).format(moment);
+  } else {
+    const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
+      year: 'numeric'
+    };
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      day: 'numeric',
+      month: 'long',
+      ...year
+    }).format(moment);
+  }
+
+  return capital ? capitalise(text, locale) : text;
+} // The largest unit a span reaches is the one it is said in (mail-letters'
+// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
+
+const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
+
+function formatRelativeTime(value, {
+  now = new Date(),
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const base = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !base) return gap;
+  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
+  const format = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), {
+    numeric: 'auto'
+  });
+
+  for (const [unit, size] of RELATIVE_STEPS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+
+  return format.format(seconds, 'second');
+}
+
+/***/ },
+
+/***/ "5b8371b87515"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.FILE_SIZE_UNITS),
+/* harmony export */   calendarDayOffset: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.fileSizeUnits),
+/* harmony export */   formatDate: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize),
+/* harmony export */   formatLocale: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale),
+/* harmony export */   formatNumber: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber),
+/* harmony export */   formatRelativeDay: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime),
+/* harmony export */   msUntilNextDay: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay),
+/* harmony export */   numberOptions: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions),
+/* harmony export */   publishFormat: () => (/* binding */ publishFormat),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _format_relative_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ee5c3aad2640");
+/* harmony import */ var _format_number_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
+// Dates, days, numbers and file sizes as people read them, in the page's
+// language (reuse audit 2026-11-02, finding 7). About fourteen components
+// wrote these themselves -- three relative-day rules (thread-list, chat-window
+// with its own midnight refresh, mail-letters), file sizes in four places,
+// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
+// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
+// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
+// number words are kept as they were.
+//
+// The locale is the page's (page-language.js pageLocale): an explicit
+// `locale`, else the language of `node` -- the nearest [lang] above it, the
+// page's choice, <html lang>, English. Never a fixed ru-RU.
+//
+// This module gathers the helpers and the SF.format object; the helpers live
+// in modules of their own with no top-level side effects (core.runtime 1.28.0;
+// ui-chart, 2026-11-05), and a bundle imports what it calls from those:
+//
+//   format-number.js     formatNumber, numberOptions
+//   format-date.js       formatDate, calendarDayOffset, msUntilNextDay, toDate
+//   format-relative.js   formatRelativeDay, formatRelativeTime
+//   format-file-size.js  formatFileSize, fileSizeUnits, FILE_SIZE_UNITS
+//   format-intl.js       formatLocale, toDate (and the shared Intl formatters)
+//
+// Until 1.28.0 this module published SF.format on load, from whichever bundle
+// ran it first; that kept every helper in every bundle that imported one (each
+// chart bundle grew by 1.3-1.4 KB gzip). Core's entry publishes it now
+// (index.js calls publishFormat), and importing this module changes nothing on
+// the page. Its exports are as they were.
+
+
+
+
+
+
+const Format = /* @__PURE__ */Object.freeze({
+  locale: _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale,
+  date: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate,
+  relativeDay: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay,
+  relativeTime: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime,
+  dayOffset: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset,
+  msUntilNextDay: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay,
+  number: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber,
+  numberOptions: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions,
+  fileSize: _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize
+});
+/**
+ * Publishes SF.format on `root` (the page's global), unless something is there
+ * already: core's entry calls it once; a component bundle never does.
+ */
+
+function publishFormat(root = typeof globalThis !== 'undefined' ? globalThis : undefined) {
+  if (!root) return undefined;
+  root.SF = root.SF || {};
+  if (!root.SF.format) root.SF.format = Format;
+  return root.SF.format;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Format);
 
 /***/ },
 
@@ -2509,6 +3231,160 @@ if (typeof globalThis !== 'undefined') {
 
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "ab7ec7cd175d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FORMAT_NAMES: () => (/* binding */ FORMAT_NAMES),
+/* harmony export */   acceptFormats: () => (/* binding */ acceptFormats),
+/* harmony export */   acceptsFile: () => (/* binding */ acceptsFile),
+/* harmony export */   fileRejection: () => (/* binding */ fileRejection),
+/* harmony export */   positiveLimit: () => (/* binding */ positiveLimit)
+/* harmony export */ });
+// The upload core's checks (C81: one core, five views), as pure functions:
+// which files an accept list names, why one file is refused before any count
+// is taken, and how the formats read in a message. sf-file-upload's intake
+// (_file_upload.js takeFiles) and sf-input-image (src/smart/input-image) both
+// read them from here, so a file is refused for the same reasons and in the
+// same words in a list and in an image field. This module binds nothing and
+// reads no page: _file_upload.js binds every .sf-file-upload as it loads,
+// which a page with only an image field has no use for, so the field imports
+// these and not that.
+
+// Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
+// as the platform dialog reads it. The dialog filters what a person may pick;
+// a drop (or a paste, or the dialog's «All files») goes past it.
+function acceptsFile(accept, file) {
+  const tokens = String(accept || '').split(',').map((token) => token.trim().toLowerCase()).filter(Boolean);
+  if (!tokens.length) return true;
+  const name = String(file?.name || '').toLowerCase();
+  const type = String(file?.type || '').toLowerCase();
+  return tokens.some((token) => {
+    if (token.startsWith('.')) return name.endsWith(token);
+    if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
+    return type === token;
+  });
+}
+
+// A limit in bytes, pixels or files: a positive number, else none (0).
+function positiveLimit(value) {
+  const number = Number(value ?? '');
+  return Number.isFinite(number) && number > 0 ? number : 0;
+}
+
+// Why one file is refused on its own, before the list's counts: '' when it
+// passes; else 'type' (accept does not name it), 'empty' (no bytes), 'size'
+// (past maxSize) or 'min-size' (under minSize). The order is the order a
+// person fixes them in: the kind of file first, then its size.
+function fileRejection(file, {accept = '', maxSize = 0, minSize = 0} = {}) {
+  if (!acceptsFile(accept, file)) return 'type';
+  const bytes = Number(file?.size) || 0;
+  if (bytes === 0) return 'empty';
+  if (maxSize && bytes > maxSize) return 'size';
+  if (minSize && bytes < minSize) return 'min-size';
+  return '';
+}
+
+// The names people know a format by, where its media subtype is not one:
+// image/jpeg is a JPG, image/svg+xml an SVG.
+const FORMAT_NAMES = Object.freeze({
+  jpeg: 'JPG',
+  pjpeg: 'JPG',
+  'svg+xml': 'SVG',
+  webp: 'WebP',
+  'x-icon': 'ICO',
+  'vnd.microsoft.icon': 'ICO',
+});
+
+// The formats an accept list names, as people read them: «PDF, DOCX»,
+// «JPG, PNG», «изображения». `kindWord(kind)` gives the word of a whole kind
+// (`image/*`, `video/*`, `audio/*`) in the page's language.
+function acceptFormats(accept, kindWord = (kind) => kind) {
+  const parts = String(accept || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const wild = /^(image|video|audio)\/\*$/iu.exec(part);
+      if (wild) return kindWord(wild[1].toLowerCase());
+      const bare = part.replace(/^\./u, '');
+      const sub = (bare.includes('/') ? bare.split('/').pop() || bare : bare).toLowerCase();
+      return FORMAT_NAMES[sub] ?? sub.toUpperCase();
+    });
+  return [...new Set(parts)].join(', ');
+}
+
+
+/***/ },
+
+/***/ "fb0bdf7719f0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_ICONS: () => (/* binding */ FILE_ICONS),
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.FILE_SIZE_UNITS),
+/* harmony export */   fileIcon: () => (/* binding */ fileIcon),
+/* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.formatFileSize)
+/* harmony export */ });
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5b8371b87515");
+// How a stored file reads to people: its size in the page's language and its
+// name when nobody gave it one. sf-image-field wrote these first (its
+// value.mjs re-exports them); the Composition renderer draws content.file with
+// the same rule, so a size reads the same in a field and on a page. No DOM.
+
+// The size rule is core's number format (core/js/format.js, reuse audit
+// 2026-11-02 finding 7), re-exported under the names this module published:
+// formatFileSize(size, units, locale) still reads as it did. Imported through
+// format.js on purpose: the builder ships a source module's relative imports
+// beside it, and this import is what lays core/js/format.js and its parts
+// (format-*.js) in the distribution for products that import them. None of
+// them has a top-level side effect, so a bundle keeps only what it calls.
+
+
+// The last part of an address, decoded, without its query and fragment: the
+// name a file is shown under when it has no label. A data: or blob: address
+// has no name in it -- the last «/» of `data:image/svg+xml,<svg …>` falls
+// inside the content, and the name read «>» (image field study IF-14) -- so it
+// gives none, and the caller says what the file is instead.
+function fileNameFromAddress(href) {
+  if (/^\s*(?:data|blob):/iu.test(String(href ?? ''))) return '';
+  const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
+  try {
+    return decodeURIComponent(tail);
+  } catch {
+    return tail;
+  }
+}
+
+// The icon of a file's kind, by its media type: sf-download-file's own glyph
+// (download) when the type says nothing a reader would recognise. The
+// Composition renderer draws content.file with it; an editor that draws the
+// same row (sf-content-editor) imports it from here rather than keeping a copy.
+// Each entry is [pattern, icon]; the first pattern that matches wins.
+const FILE_ICONS = Object.freeze([
+  [/^application\/pdf$/u, 'picture_as_pdf'],
+  [/^image\//u, 'image'],
+  [/^video\//u, 'movie'],
+  [/^audio\//u, 'audio_file'],
+  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
+  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
+  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
+  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
+].map((entry) => Object.freeze(entry)));
+
+// The icon name for a media type; download when there is none or nothing matches.
+function fileIcon(mime) {
+  if (typeof mime !== 'string' || !mime) return 'download';
+  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
+}
 
 
 /***/ }

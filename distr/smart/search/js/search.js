@@ -72,6 +72,12 @@ const KEY_CAPS = {
   end: 'End',
   pageup: 'PgUp',
   pagedown: 'PgDn'
+}; // An Apple keyboard's own signs where they differ (component.kbd 1.3.3, CM-9
+// of ui-control research 2026-11-14-context-menu): forward delete is ⌦, as
+// macOS menus print it; Del is a Windows word.
+
+const MAC_KEY_CAPS = {
+  delete: '⌦'
 }; // The names of KeyboardEvent.key for the words above.
 
 const KEY_NAMES = {
@@ -149,7 +155,7 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
     modifiers.push(caps[name]);
   }
 
-  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  const key = (apple ? MAC_KEY_CAPS[parsed.key] : undefined) ?? KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
   return [...modifiers, key].map(text => ({
     text,
     square: [...text].length === 1
@@ -2543,7 +2549,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.7.4","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.7.5","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 

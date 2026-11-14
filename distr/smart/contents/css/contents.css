@@ -2,7 +2,7 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The page's table of contents (standard simai.smart-component 1.3.11 §6):
-     one list of in-page links drawn as a column, a compact button, a rail of
+     one list of in-page links drawn as a column, a sheet button, a rail of
      strokes or a row of tabs. Every length is a token of the one ladder
      (docs/foundation-composition-geometry.md); every colour a theme role. The
      public variables are read with the role or token as their fallback and are
@@ -15,7 +15,23 @@
     --sf-contents--color: var(--sf-contents-color, var(--sf-on-surface-variant));
     --sf-contents--current: var(--sf-contents-current-color, var(--sf-primary));
     --sf-contents--line: var(--sf-contents-line-color, var(--sf-outline-variant));
-    --sf-contents--indent: var(--sf-contents-indent, var(--sf-space-1\/2));
+    /* The value inset of a list (C77, R191 HS-12): it follows the size's
+       step with a floor of 12 (--sf-b2), as the fields do -- 1/2 is
+       max(--sf-space-1/2, --sf-b2), 12 on the desktop, compact and the phone
+       (where --sf-space-1/2 is 8); 1 is --sf-space-1 (16, compact and phone 12). */
+    --sf-contents--value-inset: max(var(--sf-space-1\/2), var(--sf-b2));
+    /* A deeper level steps in by the list's own inset, H4 of the
+       horizontal-spacing standard (owner decision C109 point 2, NI-8): a
+       text-only list has no column to stand under, so the step is the inset
+       its text already keeps from the edge -- 12 at size 1/2 everywhere, 16 at
+       size 1 (12 compact and on a phone). It was --sf-space-1/2, 8 in compact
+       and on a phone, under the 12 inset. Resolved here, on the element whose
+       size class may move the inset. */
+    --sf-contents--indent: var(--sf-contents-indent, var(--sf-contents--value-inset));
+    /* The text's distance from the line (C95 point 1, CT-02): public, so a host
+       whose divider is the line sets one value on its column and lines its own
+       parts under the contents up with it. */
+    --sf-contents--inset: var(--sf-contents-inset-inline, var(--sf-contents--value-inset));
     --sf-contents--top: var(--sf-contents-inset-block-start, var(--sf-space-1));
     display: block;
     box-sizing: border-box;
@@ -25,11 +41,22 @@
     font-size: var(--sf-contents--text-size);
     line-height: var(--sf-contents--text-height);
   }
+  /* Fewer than two sections (CT-03, C95 point 5): nothing is drawn. The host
+     says data-empty once the script counted; the printed markup is counted by
+     the sheet, so the first paint draws no heading over one entry either. */
+  sf-contents[data-empty] > .sf-contents {
+    display: none;
+  }
+  /* A rule of its own: a browser without :has drops only this one. */
+  .sf-contents:not(:has(.sf-contents-item + .sf-contents-item)) {
+    display: none;
+  }
   .sf-contents--size-1 {
     --sf-contents--text-size: var(--sf-text-size-1);
     --sf-contents--text-height: var(--sf-text-height-1);
     --sf-contents--control-height: var(--sf-ui-1--control-height);
     --sf-contents--space-x: var(--sf-ui-1--space-x);
+    --sf-contents--value-inset: var(--sf-space-1);
   }
   .sf-contents-list {
     margin: var(--sf-0);
@@ -52,9 +79,62 @@
   .sf-contents-link:hover {
     color: var(--sf-on-surface);
   }
+  /* The current section (C95 point 2, CT-06): the text is the surface's own
+     ink at medium weight, as sf-menu's column and sf-tabs; the primary colour
+     is on the 2 px line only (the mark), never on the text. */
   .sf-contents-link[aria-current=location] {
-    color: var(--sf-contents--current);
+    color: var(--sf-on-surface);
     font-weight: var(--sf-font-weight-medium);
+  }
+  /* An entry with a count or a status (C95 point 6, CT-07): the badge stands
+     on the line of the entry's text (sf-badge line="text"), at the inline end,
+     on its first line when the name wraps. */
+  .sf-contents-link--marked {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sf-space-1\/4);
+  }
+  .sf-contents-link--marked .sf-contents-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents-count{
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-contents-count{
+    margin-left: auto;
+    }
+  }
+  .sf-contents-count:where(:dir(ltr)){
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents-count{
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-contents-count{
+    margin-right: auto;
+    }
+  }
+  .sf-contents-count:where(:dir(rtl)){
+    margin-right: auto;
+  }
+  .sf-contents-count {
+    flex: none;
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
+  }
+  /* expand current (C95 point 3, CT-11): the deeper entries of the other
+     branches are folded away in the column and the sheet's list; the rail and
+     the bar keep every entry. */
+  .sf-contents--expand-current:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-folded {
+    display: none;
+  }
+  /* The sheet view's veil (a phone's bottom sheet, below); nowhere else. */
+  .sf-contents-veil {
+    display: none;
   }
   /* The ring inside the link: a column or a panel that scrolls would clip one
      drawn outside. */
@@ -69,7 +149,7 @@
   .sf-contents-mark {
     display: none;
   }
-  /* A deeper level, in the column and the compact list: its name steps in by
+  /* A deeper level, in the column and the sheet's list: its name steps in by
      the indent, once for the next level and twice for any below it; the row,
      its bar and its hover keep the full width. Written once for every layout
      (the rail's names and the bar's tabs do not step in), so the sheet holds
@@ -132,14 +212,21 @@
   }
   /* Column: a heading, then the list on a line at its inline start; the current
      section's bar lies on the line. */
-  /* Compact: the button with the current section and the reading progress
+  /* Sheet: the button with the current section and the reading progress
      under it; the list opens under them as a raised panel. */
   /* Rail: a stroke per section at the inline end, longer for the current one;
      the names show on hover of the rail and on focus within it, as raised chips
      beside the strokes. Hidden, a name stays its link's accessible name. */
   /* Bar: a sticky row of anchor tabs on the page's surface with a region edge
-     under it; the current tab's line lies on the edge. The row scrolls sideways. */
+     under it; the current tab's line lies on the edge. What does not fit goes
+     into «Ещё (n)» (overflow more, the default, C54 as sf-tabs); with overflow
+     scroll the row scrolls sideways. */
   .sf-contents--layout-column {
+    /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
+       element draws none, and the current mark lies on its inline-start edge,
+       over the divider's pixel, the host having put it flush against the
+       divider. line none: no line and no mark; the current entry is its ink
+       and weight alone. */
     /* A block, so a long name that wraps keeps its level's indent on every line. */
   }
   .sf-contents--layout-column.sf-contents--sticky {
@@ -152,14 +239,52 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
+    padding-left: var(--sf-contents--inset);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
+    padding-left: var(--sf-contents--inset);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
+    padding-right: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
+    padding-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-contents--layout-column .sf-contents-label:where(:dir(ltr)){
+    padding-left: var(--sf-contents--inset);
+    padding-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
+    padding-right: var(--sf-contents--inset);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
+    padding-right: var(--sf-contents--inset);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
+    padding-left: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
+    padding-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-contents--layout-column .sf-contents-label:where(:dir(rtl)){
+    padding-right: var(--sf-contents--inset);
+    padding-left: var(--sf-space-1\/2);
+  }
   .sf-contents--layout-column .sf-contents-label {
     display: block;
     padding-bottom: var(--sf-space-1\/4);
     -webkit-padding-after: var(--sf-space-1\/4);
             padding-block-end: var(--sf-space-1\/4);
-    padding-left: var(--sf-space-1\/2);
-    padding-right: var(--sf-space-1\/2);
-    padding-inline: var(--sf-space-1\/2);
+    padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
     color: var(--sf-on-surface);
     font-weight: var(--sf-font-weight-bold);
   }
@@ -203,14 +328,58 @@
     inline-size: var(--sf-px);
     background-color: var(--sf-contents--line);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
+    padding-left: var(--sf-contents--inset);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
+    padding-left: var(--sf-contents--inset);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
+    padding-right: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
+    padding-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-contents--layout-column .sf-contents-link:where(:dir(ltr)){
+    padding-left: var(--sf-contents--inset);
+    padding-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
+    padding-right: var(--sf-contents--inset);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
+    padding-right: var(--sf-contents--inset);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
+    padding-left: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
+    padding-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-contents--layout-column .sf-contents-link:where(:dir(rtl)){
+    padding-right: var(--sf-contents--inset);
+    padding-left: var(--sf-space-1\/2);
+  }
   .sf-contents--layout-column .sf-contents-link {
     padding-top: var(--sf-space-1\/4);
     padding-bottom: var(--sf-space-1\/4);
     padding-block: var(--sf-space-1\/4);
-    padding-left: var(--sf-space-1\/2);
-    padding-right: var(--sf-space-1\/2);
-    padding-inline: var(--sf-space-1\/2);
+    padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
     border-radius: var(--sf-0);
+  }
+  .sf-contents--layout-column.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-column.sf-contents--line-none .sf-contents-list::after {
+    content: none;
+  }
+  .sf-contents--layout-column.sf-contents--line-none .sf-contents-mark {
+    display: none;
   }
   .sf-contents--layout-column .sf-contents-text {
     display: block;
@@ -252,6 +421,32 @@
   .sf-contents--layout-column .sf-contents-link[aria-current=location] .sf-contents-mark {
     background-color: var(--sf-contents--current);
   }
+  /* sheet; sf-contents--layout-compact is its former class (layout="compact"),
+     drawn the same until 2027-01-01 (owner decision C134: the word compact
+     means density only; journal value-contents-layout-compact-to-sheet). */
+  .sf-contents--layout-sheet {
+    position: relative;
+    /* Sticky, the button travels with the reader. The page scrolls under it, so
+       the head takes the page's own surface and gives the band back with a
+       negative margin: without it the text shows through the button's gaps and
+       under the progress line. The column keeps the reading width, so the band
+       is the host's own. */
+    /* The reading line lies on the button's own bottom edge (C95 point 4,
+       CT-12, the owner's phone screenshot): inside the border, inset by the
+       corner radius at both ends; no track under the button and no plate below
+       it -- the element ends where the button does. */
+    /* A row of the open list is a menu's row: the control height of the size,
+       the value inset of the size (C77), the panel's inset given back. */
+    /* The current section (C95 point 2): the surface's ink at medium weight
+       and the 2 px line at the row's inline start, as in the column; no fill
+       (a fill says «where I am in the site», sf-menu's, C23). */
+    /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+       link editor): the open list is a bottom sheet -- the screen's width up
+       to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+       clear of the safe area; its rows are the phone ladder's (the size's
+       control height below 60rem). The open element rises over the page's
+       sticky parts. */
+  }
   .sf-contents--layout-compact {
     position: relative;
     /* Sticky, the button travels with the reader. The page scrolls under it, so
@@ -259,10 +454,36 @@
        negative margin: without it the text shows through the button's gaps and
        under the progress line. The column keeps the reading width, so the band
        is the host's own. */
+    /* The reading line lies on the button's own bottom edge (C95 point 4,
+       CT-12, the owner's phone screenshot): inside the border, inset by the
+       corner radius at both ends; no track under the button and no plate below
+       it -- the element ends where the button does. */
     /* A row of the open list is a menu's row: the control height of the size,
-       its inset, the panel's inset given back. */
-    /* The current section: the selected role every component takes (C16),
-       primary-container with its ink. */
+       the value inset of the size (C77), the panel's inset given back. */
+    /* The current section (C95 point 2): the surface's ink at medium weight
+       and the 2 px line at the row's inline start, as in the column; no fill
+       (a fill says «where I am in the site», sf-menu's, C23). */
+    /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+       link editor): the open list is a bottom sheet -- the screen's width up
+       to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+       clear of the safe area; its rows are the phone ladder's (the size's
+       control height below 60rem). The open element rises over the page's
+       sticky parts. */
+  }
+  .sf-contents--layout-sheet.sf-contents--sticky {
+    position: sticky;
+    z-index: var(--sf-z-index-5);
+    z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+    top: var(--sf-contents--top);
+    inset-block-start: var(--sf-contents--top);
+    padding-top: var(--sf-space-1\/4);
+    padding-bottom: var(--sf-0);
+    padding-block: var(--sf-space-1\/4) var(--sf-0);
+    margin-top: calc(var(--sf-space-1\/4) * -1);
+    margin-bottom: var(--sf-0);
+    margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
+    background-color: var(--sf-surface-page);
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
   }
   .sf-contents--layout-compact.sf-contents--sticky {
     position: sticky;
@@ -271,18 +492,31 @@
     top: var(--sf-contents--top);
     inset-block-start: var(--sf-contents--top);
     padding-top: var(--sf-space-1\/4);
-    padding-bottom: var(--sf-space-1\/4);
-    padding-block: var(--sf-space-1\/4);
+    padding-bottom: var(--sf-0);
+    padding-block: var(--sf-space-1\/4) var(--sf-0);
     margin-top: calc(var(--sf-space-1\/4) * -1);
-    margin-bottom: calc(var(--sf-space-1\/4) * -1);
-    margin-block: calc(var(--sf-space-1\/4) * -1);
+    margin-bottom: var(--sf-0);
+    margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
     background-color: var(--sf-surface-page);
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
   }
-  .sf-contents--layout-compact .sf-contents-head {
+  .sf-contents--layout-sheet .sf-contents-head {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--sf-space-1\/4);
+  }
+  .sf-contents--layout-compact .sf-contents-head {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .sf-contents--layout-sheet .sf-contents-toggle .sf-button-text-container {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .sf-contents--layout-compact .sf-contents-toggle .sf-button-text-container {
     flex: 1 1 auto;
@@ -292,13 +526,46 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .sf-contents--layout-compact .sf-contents-progress {
+  .sf-contents--layout-sheet .sf-contents-progress {
+    position: absolute;
+    left: var(--sf-radius--ui);
+    right: var(--sf-radius--ui);
+    inset-inline: var(--sf-radius--ui);
+    bottom: var(--sf-px);
+    inset-block-end: var(--sf-px);
     display: block;
     height: var(--sf-a2);
     block-size: var(--sf-a2);
     overflow: hidden;
     border-radius: var(--sf-px);
     background-color: var(--sf-contents--line);
+    pointer-events: none;
+  }
+  .sf-contents--layout-compact .sf-contents-progress {
+    position: absolute;
+    left: var(--sf-radius--ui);
+    right: var(--sf-radius--ui);
+    inset-inline: var(--sf-radius--ui);
+    bottom: var(--sf-px);
+    inset-block-end: var(--sf-px);
+    display: block;
+    height: var(--sf-a2);
+    block-size: var(--sf-a2);
+    overflow: hidden;
+    border-radius: var(--sf-px);
+    background-color: var(--sf-contents--line);
+    pointer-events: none;
+  }
+  .sf-contents--layout-sheet .sf-contents-progress-value {
+    display: block;
+    height: 100%;
+    block-size: 100%;
+    width: calc(0 * 100%);
+    inline-size: calc(0 * 100%);
+    width: calc(0 * 100%);
+    width: calc(var(--sf-contents--progress, 0) * 100%);
+    inline-size: calc(var(--sf-contents--progress, 0) * 100%);
+    background-color: var(--sf-contents--current);
   }
   .sf-contents--layout-compact .sf-contents-progress-value {
     display: block;
@@ -311,8 +578,65 @@
     inline-size: calc(var(--sf-contents--progress, 0) * 100%);
     background-color: var(--sf-contents--current);
   }
+  .sf-contents--layout-sheet .sf-contents-list {
+    display: none;
+  }
   .sf-contents--layout-compact .sf-contents-list {
     display: none;
+  }
+  .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+    position: absolute;
+    z-index: var(--sf-z-index-5);
+    z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+    top: calc(100% + var(--sf-space-1\/4));
+    inset-block-start: calc(100% + var(--sf-space-1\/4));
+    left: var(--sf-0);
+    right: var(--sf-0);
+    inset-inline: var(--sf-0);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    max-height: min(60dvh, var(--sf-g1));
+    max-block-size: min(60dvh, var(--sf-g1));
+    padding: var(--sf-space-1\/4);
+    overflow-y: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+    border-radius: var(--sf-radius--ui);
+    background-color: var(--sf-surface-popup);
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-place--container-outline: initial;
+    box-shadow: var(--sf-shadow-overlay);
   }
   .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
     position: absolute;
@@ -338,22 +662,27 @@
     --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
     --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
     --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -363,10 +692,17 @@
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -378,6 +714,63 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.sf-surface-media) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.bg-surface-4) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   :where(.bg-surface-4) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
     --sf-primary: var(--sf-place--found-primary);
@@ -387,6 +780,14 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
+  .sf-contents--layout-sheet.sf-contents--open .sf-contents-list > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+  }
   .sf-contents--layout-compact.sf-contents--open .sf-contents-list > * {
     --sf-surface-popup: var(--sf-surface-popup-nested);
     --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
@@ -395,25 +796,393 @@
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
+  .sf-contents--layout-sheet .sf-contents-link {
+    display: flex;
+    align-items: center;
+    min-height: var(--sf-contents--control-height);
+    min-block-size: var(--sf-contents--control-height);
+    padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+    padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+    padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+    color: var(--sf-on-surface);
+  }
   .sf-contents--layout-compact .sf-contents-link {
     display: flex;
     align-items: center;
     min-height: var(--sf-contents--control-height);
     min-block-size: var(--sf-contents--control-height);
-    padding-left: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-    padding-right: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-    padding-inline: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
+    padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+    padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+    padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
     color: var(--sf-on-surface);
+  }
+  .sf-contents--layout-sheet .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
+    color: var(--sf-contents--color);
   }
   .sf-contents--layout-compact .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
     color: var(--sf-contents--color);
   }
+  .sf-contents--layout-sheet .sf-contents-link:hover {
+    background-color: var(--sf-surface-container-hover);
+    /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+       keeps its own tone under the pointer. */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-surface-container-hover);
+  }
   .sf-contents--layout-compact .sf-contents-link:hover {
     background-color: var(--sf-surface-container-hover);
+    /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+       keeps its own tone under the pointer. */
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-surface-container-hover);
+  }
+  .sf-contents--layout-sheet .sf-contents-link[aria-current=location] {
+    color: var(--sf-on-surface);
   }
   .sf-contents--layout-compact .sf-contents-link[aria-current=location] {
-    background-color: var(--sf-primary-container);
-    color: var(--sf-on-primary-container);
+    color: var(--sf-on-surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet .sf-contents-mark{
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-sheet .sf-contents-mark{
+    left: var(--sf-0);
+    }
+  }
+  .sf-contents--layout-sheet .sf-contents-mark:where(:dir(ltr)){
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet .sf-contents-mark{
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-contents--layout-sheet .sf-contents-mark{
+    right: var(--sf-0);
+    }
+  }
+  .sf-contents--layout-sheet .sf-contents-mark:where(:dir(rtl)){
+    right: var(--sf-0);
+  }
+  .sf-contents--layout-sheet .sf-contents-mark {
+    position: absolute;
+    top: var(--sf-space-1\/4);
+    bottom: var(--sf-space-1\/4);
+    inset-block: var(--sf-space-1\/4);
+    inset-inline-start: var(--sf-0);
+    display: block;
+    width: var(--sf-a2);
+    inline-size: var(--sf-a2);
+    border-radius: var(--sf-px);
+    background-color: transparent;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact .sf-contents-mark{
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-contents--layout-compact .sf-contents-mark{
+    left: var(--sf-0);
+    }
+  }
+  .sf-contents--layout-compact .sf-contents-mark:where(:dir(ltr)){
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact .sf-contents-mark{
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-contents--layout-compact .sf-contents-mark{
+    right: var(--sf-0);
+    }
+  }
+  .sf-contents--layout-compact .sf-contents-mark:where(:dir(rtl)){
+    right: var(--sf-0);
+  }
+  .sf-contents--layout-compact .sf-contents-mark {
+    position: absolute;
+    top: var(--sf-space-1\/4);
+    bottom: var(--sf-space-1\/4);
+    inset-block: var(--sf-space-1\/4);
+    inset-inline-start: var(--sf-0);
+    display: block;
+    width: var(--sf-a2);
+    inline-size: var(--sf-a2);
+    border-radius: var(--sf-px);
+    background-color: transparent;
+  }
+  .sf-contents--layout-sheet .sf-contents-link[aria-current=location] .sf-contents-mark {
+    background-color: var(--sf-contents--current);
+  }
+  .sf-contents--layout-compact .sf-contents-link[aria-current=location] .sf-contents-mark {
+    background-color: var(--sf-contents--current);
+  }
+  @media not all and (min-width: 44rem) {
+    .sf-contents--layout-sheet {
+      /* Before the list in the markup, so at the same level it lies under it. */
+    }
+    .sf-contents--layout-compact {
+      /* Before the list in the markup, so at the same level it lies under it. */
+    }
+    .sf-contents--layout-sheet.sf-contents--open {
+      z-index: var(--sf-z-index-9);
+    }
+    .sf-contents--layout-compact.sf-contents--open {
+      z-index: var(--sf-z-index-9);
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-veil {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: var(--sf-0);
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: var(--sf-0);
+      display: block;
+      background-color: var(--sf-black--alfa-64);
+      background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-veil {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: var(--sf-0);
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: var(--sf-0);
+      display: block;
+      background-color: var(--sf-black--alfa-64);
+      background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: auto;
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: auto var(--sf-0) var(--sf-0);
+      width: 100%;
+      inline-size: 100%;
+      max-width: var(--sf-h1);
+      max-inline-size: var(--sf-h1);
+      max-height: 70dvh;
+      max-block-size: 70dvh;
+      margin: var(--sf-0) auto;
+      padding-top: var(--sf-space-1\/2);
+      padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      border-end-end-radius: var(--sf-0);
+      border-end-start-radius: var(--sf-0);
+      border-start-end-radius: var(--sf-radius--surface);
+      border-start-start-radius: var(--sf-radius--surface);
+      box-shadow: var(--sf-shadow-modal);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: auto;
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: auto var(--sf-0) var(--sf-0);
+      width: 100%;
+      inline-size: 100%;
+      max-width: var(--sf-h1);
+      max-inline-size: var(--sf-h1);
+      max-height: 70dvh;
+      max-block-size: 70dvh;
+      margin: var(--sf-0) auto;
+      padding-top: var(--sf-space-1\/2);
+      padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      border-end-end-radius: var(--sf-0);
+      border-end-start-radius: var(--sf-0);
+      border-start-end-radius: var(--sf-radius--surface);
+      border-start-start-radius: var(--sf-radius--surface);
+      box-shadow: var(--sf-shadow-modal);
+    }
+  }
+  .sf-contents--layout-rail {
+    /* The strokes carry no badge; the entry's name still says its mark. */
+    /* Where nothing hovers (CT-04): the first tap on a stroke opens the rail
+       (data-open, the toggle action) and the names show as on hover; a shown
+       name is pressed as its link. */
   }
   .sf-contents--layout-rail.sf-contents--sticky {
     position: sticky;
@@ -490,22 +1259,27 @@
     --sf-surface-place: var(--sf-surface-popup);
     --sf-surface-place-solid: var(--sf-surface-popup);
     --sf-surface-place-ground: var(--sf-surface-popup);
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -514,15 +1288,25 @@
     --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
-    white-space: nowrap;
+    /* A long name wraps (C95 point 5) within the column's width. */
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+    inline-size: -webkit-max-content;
+    inline-size: -moz-max-content;
+    inline-size: max-content;
+    max-width: var(--sf-f2);
+    max-inline-size: var(--sf-f2);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--sf-duration-fast) var(--sf-animation);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-rail .sf-contents-text {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-rail .sf-contents-text {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-rail .sf-contents-text {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-rail .sf-contents-text {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -534,6 +1318,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-contents--layout-rail .sf-contents-text {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-contents--layout-rail .sf-contents-text {
     --sf-primary: var(--sf-place--found-primary);
@@ -566,6 +1368,25 @@
   .sf-contents--layout-rail .sf-contents-list:focus-within .sf-contents-text {
     opacity: 1;
   }
+  .sf-contents--layout-rail .sf-contents-count {
+    display: none;
+  }
+  .sf-contents--layout-rail.sf-contents--open .sf-contents-text {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .sf-contents--layout-bar {
+    /* overflow more: the row and «Ещё (n)» side by side on one edge. The edge
+       and the surface move from the row to the navigation, so the trigger
+       stands on them; the row clips sideways only, so the current tab's line
+       still lies on the edge (overflow-y stays visible). */
+    /* The current tab alone wider than the row beside «Ещё»: it alone is cut
+       with an ellipsis; every other tab is whole or in «Ещё». */
+    /* «Ещё (n)» stands only while something is in it; the sf-button host is
+       display: contents, so the button inside is what is hidden. */
+    /* line edge: the host's edge under the row is the line, the mark lies on
+       it; line none: no edge and no mark (C95 point 1). */
+  }
   .sf-contents--layout-bar.sf-contents--sticky {
     position: sticky;
     z-index: var(--sf-z-index-5);
@@ -587,6 +1408,52 @@
   }
   .sf-contents--layout-bar .sf-contents-item {
     flex: none;
+  }
+  .sf-contents--layout-bar.sf-contents--overflow-more {
+    display: flex;
+    align-items: flex-end;
+    border-bottom: var(--sf-px) solid var(--sf-contents--line);
+    -webkit-border-after: var(--sf-px) solid var(--sf-contents--line);
+            border-block-end: var(--sf-px) solid var(--sf-contents--line);
+    background-color: var(--sf-surface-page);
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
+  }
+  .sf-contents--layout-bar.sf-contents--overflow-more .sf-contents-list {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+    overflow-x: clip;
+    border-bottom: none;
+    -webkit-border-after: none;
+            border-block-end: none;
+    background-color: transparent;
+  }
+  .sf-contents--layout-bar .sf-contents-overflowed {
+    display: none;
+  }
+  .sf-contents--layout-bar .sf-contents-squeezed {
+    flex: 0 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-contents--layout-bar .sf-contents-squeezed .sf-contents-link {
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
+  .sf-contents--layout-bar .sf-contents-squeezed .sf-contents-text {
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-contents--layout-bar .sf-contents-more > button {
+    flex: none;
+    white-space: nowrap;
+  }
+  .sf-contents--layout-bar:not([data-more]) .sf-contents-more, .sf-contents--layout-bar:not([data-more]) .sf-contents-more > button {
+    display: none;
   }
   .sf-contents--layout-bar .sf-contents-link {
     display: flex;
@@ -615,10 +1482,38 @@
   .sf-contents--layout-bar .sf-contents-link[aria-current=location] .sf-contents-mark {
     background-color: var(--sf-contents--current);
   }
-  /* auto: the column at and above the step, compact below it -- a media rule per
+  .sf-contents--layout-bar.sf-contents--line-edge {
+    border-bottom: none;
+    -webkit-border-after: none;
+            border-block-end: none;
+  }
+  .sf-contents--layout-bar.sf-contents--line-none {
+    border-bottom: none;
+    -webkit-border-after: none;
+            border-block-end: none;
+  }
+  .sf-contents--layout-bar.sf-contents--line-edge .sf-contents-list {
+    border-bottom: none;
+    -webkit-border-after: none;
+            border-block-end: none;
+  }
+  .sf-contents--layout-bar.sf-contents--line-none .sf-contents-list {
+    border-bottom: none;
+    -webkit-border-after: none;
+            border-block-end: none;
+  }
+  .sf-contents--layout-bar.sf-contents--line-none .sf-contents-mark {
+    display: none;
+  }
+  /* auto: the column at and above the step, the sheet below it -- a media rule per
      step, so the printed markup is right before the script arrives. */
   @media (min-width: 32rem) {
     .sf-contents--layout-auto.sf-contents--collapse-sm {
+      /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
+         element draws none, and the current mark lies on its inline-start edge,
+         over the divider's pixel, the host having put it flush against the
+         divider. line none: no line and no mark; the current entry is its ink
+         and weight alone. */
       /* A block, so a long name that wraps keeps its level's indent on every line. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
@@ -631,14 +1526,52 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label {
       display: block;
       padding-bottom: var(--sf-space-1\/4);
       -webkit-padding-after: var(--sf-space-1\/4);
               padding-block-end: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       color: var(--sf-on-surface);
       font-weight: var(--sf-font-weight-bold);
     }
@@ -682,14 +1615,58 @@
       inline-size: var(--sf-px);
       background-color: var(--sf-contents--line);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link {
       padding-top: var(--sf-space-1\/4);
       padding-bottom: var(--sf-space-1\/4);
       padding-block: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--line-none .sf-contents-list::after {
+      content: none;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--line-none .sf-contents-mark {
+      display: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-text {
       display: block;
@@ -740,10 +1717,21 @@
          negative margin: without it the text shows through the button's gaps and
          under the progress line. The column keeps the reading width, so the band
          is the host's own. */
+      /* The reading line lies on the button's own bottom edge (C95 point 4,
+         CT-12, the owner's phone screenshot): inside the border, inset by the
+         corner radius at both ends; no track under the button and no plate below
+         it -- the element ends where the button does. */
       /* A row of the open list is a menu's row: the control height of the size,
-         its inset, the panel's inset given back. */
-      /* The current section: the selected role every component takes (C16),
-         primary-container with its ink. */
+         the value inset of the size (C77), the panel's inset given back. */
+      /* The current section (C95 point 2): the surface's ink at medium weight
+         and the 2 px line at the row's inline start, as in the column; no fill
+         (a fill says «where I am in the site», sf-menu's, C23). */
+      /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+         link editor): the open list is a bottom sheet -- the screen's width up
+         to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+         clear of the safe area; its rows are the phone ladder's (the size's
+         control height below 60rem). The open element rises over the page's
+         sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
       position: sticky;
@@ -752,18 +1740,18 @@
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
       padding-top: var(--sf-space-1\/4);
-      padding-bottom: var(--sf-space-1\/4);
-      padding-block: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-0);
+      padding-block: var(--sf-space-1\/4) var(--sf-0);
       margin-top: calc(var(--sf-space-1\/4) * -1);
-      margin-bottom: calc(var(--sf-space-1\/4) * -1);
-      margin-block: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: var(--sf-0);
+      margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
       background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-head {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-space-1\/4);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-toggle .sf-button-text-container {
       flex: 1 1 auto;
@@ -774,12 +1762,19 @@
       white-space: nowrap;
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-progress {
+      position: absolute;
+      left: var(--sf-radius--ui);
+      right: var(--sf-radius--ui);
+      inset-inline: var(--sf-radius--ui);
+      bottom: var(--sf-px);
+      inset-block-end: var(--sf-px);
       display: block;
       height: var(--sf-a2);
       block-size: var(--sf-a2);
       overflow: hidden;
       border-radius: var(--sf-px);
       background-color: var(--sf-contents--line);
+      pointer-events: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-progress-value {
       display: block;
@@ -819,22 +1814,27 @@
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -844,10 +1844,12 @@
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -859,6 +1861,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--found-primary);
@@ -881,9 +1901,9 @@
       align-items: center;
       min-height: var(--sf-contents--control-height);
       min-block-size: var(--sf-contents--control-height);
-      padding-left: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-right: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-inline: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
+      padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
       color: var(--sf-on-surface);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
@@ -891,14 +1911,191 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:hover {
       background-color: var(--sf-surface-container-hover);
+      /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+         keeps its own tone under the pointer. */
+      --sf-surface-underlay: var(--sf-surface-place-solid);
+      --sf-surface-place-fill: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-primary-container);
-      color: var(--sf-on-primary-container);
+      color: var(--sf-on-surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
+      left: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
+      left: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(ltr)){
+      left: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
+      right: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
+      right: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(rtl)){
+      right: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark {
+      position: absolute;
+      top: var(--sf-space-1\/4);
+      bottom: var(--sf-space-1\/4);
+      inset-block: var(--sf-space-1\/4);
+      inset-inline-start: var(--sf-0);
+      display: block;
+      width: var(--sf-a2);
+      inline-size: var(--sf-a2);
+      border-radius: var(--sf-px);
+      background-color: transparent;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link[aria-current=location] .sf-contents-mark {
+      background-color: var(--sf-contents--current);
+    }
+    @media not all and (min-width: 44rem) {
+      .sf-contents--layout-auto.sf-contents--collapse-sm {
+        /* Before the list in the markup, so at the same level it lies under it. */
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open {
+        z-index: var(--sf-z-index-9);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-veil {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: var(--sf-0);
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: var(--sf-0);
+        display: block;
+        background-color: var(--sf-black--alfa-64);
+        background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: auto;
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: auto var(--sf-0) var(--sf-0);
+        width: 100%;
+        inline-size: 100%;
+        max-width: var(--sf-h1);
+        max-inline-size: var(--sf-h1);
+        max-height: 70dvh;
+        max-block-size: 70dvh;
+        margin: var(--sf-0) auto;
+        padding-top: var(--sf-space-1\/2);
+        padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        border-end-end-radius: var(--sf-0);
+        border-end-start-radius: var(--sf-0);
+        border-start-end-radius: var(--sf-radius--surface);
+        border-start-start-radius: var(--sf-radius--surface);
+        box-shadow: var(--sf-shadow-modal);
+      }
     }
   }
   @media (min-width: 44rem) {
     .sf-contents--layout-auto.sf-contents--collapse-md {
+      /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
+         element draws none, and the current mark lies on its inline-start edge,
+         over the divider's pixel, the host having put it flush against the
+         divider. line none: no line and no mark; the current entry is its ink
+         and weight alone. */
       /* A block, so a long name that wraps keeps its level's indent on every line. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
@@ -911,14 +2108,52 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label {
       display: block;
       padding-bottom: var(--sf-space-1\/4);
       -webkit-padding-after: var(--sf-space-1\/4);
               padding-block-end: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       color: var(--sf-on-surface);
       font-weight: var(--sf-font-weight-bold);
     }
@@ -962,14 +2197,58 @@
       inline-size: var(--sf-px);
       background-color: var(--sf-contents--line);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link {
       padding-top: var(--sf-space-1\/4);
       padding-bottom: var(--sf-space-1\/4);
       padding-block: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--line-none .sf-contents-list::after {
+      content: none;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--line-none .sf-contents-mark {
+      display: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-text {
       display: block;
@@ -1020,10 +2299,21 @@
          negative margin: without it the text shows through the button's gaps and
          under the progress line. The column keeps the reading width, so the band
          is the host's own. */
+      /* The reading line lies on the button's own bottom edge (C95 point 4,
+         CT-12, the owner's phone screenshot): inside the border, inset by the
+         corner radius at both ends; no track under the button and no plate below
+         it -- the element ends where the button does. */
       /* A row of the open list is a menu's row: the control height of the size,
-         its inset, the panel's inset given back. */
-      /* The current section: the selected role every component takes (C16),
-         primary-container with its ink. */
+         the value inset of the size (C77), the panel's inset given back. */
+      /* The current section (C95 point 2): the surface's ink at medium weight
+         and the 2 px line at the row's inline start, as in the column; no fill
+         (a fill says «where I am in the site», sf-menu's, C23). */
+      /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+         link editor): the open list is a bottom sheet -- the screen's width up
+         to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+         clear of the safe area; its rows are the phone ladder's (the size's
+         control height below 60rem). The open element rises over the page's
+         sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
       position: sticky;
@@ -1032,18 +2322,18 @@
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
       padding-top: var(--sf-space-1\/4);
-      padding-bottom: var(--sf-space-1\/4);
-      padding-block: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-0);
+      padding-block: var(--sf-space-1\/4) var(--sf-0);
       margin-top: calc(var(--sf-space-1\/4) * -1);
-      margin-bottom: calc(var(--sf-space-1\/4) * -1);
-      margin-block: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: var(--sf-0);
+      margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
       background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-head {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-space-1\/4);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-toggle .sf-button-text-container {
       flex: 1 1 auto;
@@ -1054,12 +2344,19 @@
       white-space: nowrap;
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-progress {
+      position: absolute;
+      left: var(--sf-radius--ui);
+      right: var(--sf-radius--ui);
+      inset-inline: var(--sf-radius--ui);
+      bottom: var(--sf-px);
+      inset-block-end: var(--sf-px);
       display: block;
       height: var(--sf-a2);
       block-size: var(--sf-a2);
       overflow: hidden;
       border-radius: var(--sf-px);
       background-color: var(--sf-contents--line);
+      pointer-events: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-progress-value {
       display: block;
@@ -1099,22 +2396,27 @@
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1124,10 +2426,12 @@
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1139,6 +2443,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--found-primary);
@@ -1161,9 +2483,9 @@
       align-items: center;
       min-height: var(--sf-contents--control-height);
       min-block-size: var(--sf-contents--control-height);
-      padding-left: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-right: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-inline: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
+      padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
       color: var(--sf-on-surface);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
@@ -1171,14 +2493,191 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:hover {
       background-color: var(--sf-surface-container-hover);
+      /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+         keeps its own tone under the pointer. */
+      --sf-surface-underlay: var(--sf-surface-place-solid);
+      --sf-surface-place-fill: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-primary-container);
-      color: var(--sf-on-primary-container);
+      color: var(--sf-on-surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
+      left: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
+      left: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(ltr)){
+      left: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
+      right: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
+      right: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(rtl)){
+      right: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark {
+      position: absolute;
+      top: var(--sf-space-1\/4);
+      bottom: var(--sf-space-1\/4);
+      inset-block: var(--sf-space-1\/4);
+      inset-inline-start: var(--sf-0);
+      display: block;
+      width: var(--sf-a2);
+      inline-size: var(--sf-a2);
+      border-radius: var(--sf-px);
+      background-color: transparent;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link[aria-current=location] .sf-contents-mark {
+      background-color: var(--sf-contents--current);
+    }
+  }
+  @media not all and (min-width: 44rem) {
+    .sf-contents--layout-auto.sf-contents--collapse-md {
+      /* Before the list in the markup, so at the same level it lies under it. */
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open {
+      z-index: var(--sf-z-index-9);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-veil {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: var(--sf-0);
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: var(--sf-0);
+      display: block;
+      background-color: var(--sf-black--alfa-64);
+      background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-left-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-bottom-left-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+    }
+    @supports not (border-end-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-bottom-right-radius: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-bottom-right-radius: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
+      position: fixed;
+      z-index: var(--sf-z-index-9);
+      top: auto;
+      right: var(--sf-0);
+      bottom: var(--sf-0);
+      left: var(--sf-0);
+      inset: auto var(--sf-0) var(--sf-0);
+      width: 100%;
+      inline-size: 100%;
+      max-width: var(--sf-h1);
+      max-inline-size: var(--sf-h1);
+      max-height: 70dvh;
+      max-block-size: 70dvh;
+      margin: var(--sf-0) auto;
+      padding-top: var(--sf-space-1\/2);
+      padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+      border-end-end-radius: var(--sf-0);
+      border-end-start-radius: var(--sf-0);
+      border-start-end-radius: var(--sf-radius--surface);
+      border-start-start-radius: var(--sf-radius--surface);
+      box-shadow: var(--sf-shadow-modal);
     }
   }
   @media (min-width: 60rem) {
     .sf-contents--layout-auto.sf-contents--collapse-lg {
+      /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
+         element draws none, and the current mark lies on its inline-start edge,
+         over the divider's pixel, the host having put it flush against the
+         divider. line none: no line and no mark; the current entry is its ink
+         and weight alone. */
       /* A block, so a long name that wraps keeps its level's indent on every line. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
@@ -1191,14 +2690,52 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label {
       display: block;
       padding-bottom: var(--sf-space-1\/4);
       -webkit-padding-after: var(--sf-space-1\/4);
               padding-block-end: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       color: var(--sf-on-surface);
       font-weight: var(--sf-font-weight-bold);
     }
@@ -1242,14 +2779,58 @@
       inline-size: var(--sf-px);
       background-color: var(--sf-contents--line);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link {
       padding-top: var(--sf-space-1\/4);
       padding-bottom: var(--sf-space-1\/4);
       padding-block: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--line-none .sf-contents-list::after {
+      content: none;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--line-none .sf-contents-mark {
+      display: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-text {
       display: block;
@@ -1300,10 +2881,21 @@
          negative margin: without it the text shows through the button's gaps and
          under the progress line. The column keeps the reading width, so the band
          is the host's own. */
+      /* The reading line lies on the button's own bottom edge (C95 point 4,
+         CT-12, the owner's phone screenshot): inside the border, inset by the
+         corner radius at both ends; no track under the button and no plate below
+         it -- the element ends where the button does. */
       /* A row of the open list is a menu's row: the control height of the size,
-         its inset, the panel's inset given back. */
-      /* The current section: the selected role every component takes (C16),
-         primary-container with its ink. */
+         the value inset of the size (C77), the panel's inset given back. */
+      /* The current section (C95 point 2): the surface's ink at medium weight
+         and the 2 px line at the row's inline start, as in the column; no fill
+         (a fill says «where I am in the site», sf-menu's, C23). */
+      /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+         link editor): the open list is a bottom sheet -- the screen's width up
+         to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+         clear of the safe area; its rows are the phone ladder's (the size's
+         control height below 60rem). The open element rises over the page's
+         sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
       position: sticky;
@@ -1312,18 +2904,18 @@
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
       padding-top: var(--sf-space-1\/4);
-      padding-bottom: var(--sf-space-1\/4);
-      padding-block: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-0);
+      padding-block: var(--sf-space-1\/4) var(--sf-0);
       margin-top: calc(var(--sf-space-1\/4) * -1);
-      margin-bottom: calc(var(--sf-space-1\/4) * -1);
-      margin-block: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: var(--sf-0);
+      margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
       background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-head {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-space-1\/4);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-toggle .sf-button-text-container {
       flex: 1 1 auto;
@@ -1334,12 +2926,19 @@
       white-space: nowrap;
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-progress {
+      position: absolute;
+      left: var(--sf-radius--ui);
+      right: var(--sf-radius--ui);
+      inset-inline: var(--sf-radius--ui);
+      bottom: var(--sf-px);
+      inset-block-end: var(--sf-px);
       display: block;
       height: var(--sf-a2);
       block-size: var(--sf-a2);
       overflow: hidden;
       border-radius: var(--sf-px);
       background-color: var(--sf-contents--line);
+      pointer-events: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-progress-value {
       display: block;
@@ -1379,22 +2978,27 @@
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1404,10 +3008,12 @@
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1419,6 +3025,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--found-primary);
@@ -1441,9 +3065,9 @@
       align-items: center;
       min-height: var(--sf-contents--control-height);
       min-block-size: var(--sf-contents--control-height);
-      padding-left: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-right: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-inline: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
+      padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
       color: var(--sf-on-surface);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
@@ -1451,14 +3075,191 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:hover {
       background-color: var(--sf-surface-container-hover);
+      /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+         keeps its own tone under the pointer. */
+      --sf-surface-underlay: var(--sf-surface-place-solid);
+      --sf-surface-place-fill: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-primary-container);
-      color: var(--sf-on-primary-container);
+      color: var(--sf-on-surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
+      left: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
+      left: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(ltr)){
+      left: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
+      right: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
+      right: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(rtl)){
+      right: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark {
+      position: absolute;
+      top: var(--sf-space-1\/4);
+      bottom: var(--sf-space-1\/4);
+      inset-block: var(--sf-space-1\/4);
+      inset-inline-start: var(--sf-0);
+      display: block;
+      width: var(--sf-a2);
+      inline-size: var(--sf-a2);
+      border-radius: var(--sf-px);
+      background-color: transparent;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link[aria-current=location] .sf-contents-mark {
+      background-color: var(--sf-contents--current);
+    }
+    @media not all and (min-width: 44rem) {
+      .sf-contents--layout-auto.sf-contents--collapse-lg {
+        /* Before the list in the markup, so at the same level it lies under it. */
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open {
+        z-index: var(--sf-z-index-9);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-veil {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: var(--sf-0);
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: var(--sf-0);
+        display: block;
+        background-color: var(--sf-black--alfa-64);
+        background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: auto;
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: auto var(--sf-0) var(--sf-0);
+        width: 100%;
+        inline-size: 100%;
+        max-width: var(--sf-h1);
+        max-inline-size: var(--sf-h1);
+        max-height: 70dvh;
+        max-block-size: 70dvh;
+        margin: var(--sf-0) auto;
+        padding-top: var(--sf-space-1\/2);
+        padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        border-end-end-radius: var(--sf-0);
+        border-end-start-radius: var(--sf-0);
+        border-start-end-radius: var(--sf-radius--surface);
+        border-start-start-radius: var(--sf-radius--surface);
+        box-shadow: var(--sf-shadow-modal);
+      }
     }
   }
   @media (min-width: 72rem) {
     .sf-contents--layout-auto.sf-contents--collapse-xl {
+      /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
+         element draws none, and the current mark lies on its inline-start edge,
+         over the divider's pixel, the host having put it flush against the
+         divider. line none: no line and no mark; the current entry is its ink
+         and weight alone. */
       /* A block, so a long name that wraps keeps its level's indent on every line. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
@@ -1471,14 +3272,52 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label {
       display: block;
       padding-bottom: var(--sf-space-1\/4);
       -webkit-padding-after: var(--sf-space-1\/4);
               padding-block-end: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       color: var(--sf-on-surface);
       font-weight: var(--sf-font-weight-bold);
     }
@@ -1522,14 +3361,58 @@
       inline-size: var(--sf-px);
       background-color: var(--sf-contents--line);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-left: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-right: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:where(:dir(ltr)){
+      padding-left: var(--sf-contents--inset);
+      padding-right: var(--sf-space-1\/2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-right: var(--sf-contents--inset);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
+      padding-left: var(--sf-space-1\/2);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:where(:dir(rtl)){
+      padding-right: var(--sf-contents--inset);
+      padding-left: var(--sf-space-1\/2);
+    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link {
       padding-top: var(--sf-space-1\/4);
       padding-bottom: var(--sf-space-1\/4);
       padding-block: var(--sf-space-1\/4);
-      padding-left: var(--sf-space-1\/2);
-      padding-right: var(--sf-space-1\/2);
-      padding-inline: var(--sf-space-1\/2);
+      padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--line-none .sf-contents-list::after {
+      content: none;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--line-none .sf-contents-mark {
+      display: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-text {
       display: block;
@@ -1580,10 +3463,21 @@
          negative margin: without it the text shows through the button's gaps and
          under the progress line. The column keeps the reading width, so the band
          is the host's own. */
+      /* The reading line lies on the button's own bottom edge (C95 point 4,
+         CT-12, the owner's phone screenshot): inside the border, inset by the
+         corner radius at both ends; no track under the button and no plate below
+         it -- the element ends where the button does. */
       /* A row of the open list is a menu's row: the control height of the size,
-         its inset, the panel's inset given back. */
-      /* The current section: the selected role every component takes (C16),
-         primary-container with its ink. */
+         the value inset of the size (C77), the panel's inset given back. */
+      /* The current section (C95 point 2): the surface's ink at medium weight
+         and the 2 px line at the row's inline start, as in the column; no fill
+         (a fill says «where I am in the site», sf-menu's, C23). */
+      /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
+         link editor): the open list is a bottom sheet -- the screen's width up
+         to 44rem, the top corners rounded, the modal shadow, the veil behind it,
+         clear of the safe area; its rows are the phone ladder's (the size's
+         control height below 60rem). The open element rises over the page's
+         sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
       position: sticky;
@@ -1592,18 +3486,18 @@
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
       padding-top: var(--sf-space-1\/4);
-      padding-bottom: var(--sf-space-1\/4);
-      padding-block: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-0);
+      padding-block: var(--sf-space-1\/4) var(--sf-0);
       margin-top: calc(var(--sf-space-1\/4) * -1);
-      margin-bottom: calc(var(--sf-space-1\/4) * -1);
-      margin-block: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: var(--sf-0);
+      margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
       background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-head {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-space-1\/4);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-toggle .sf-button-text-container {
       flex: 1 1 auto;
@@ -1614,12 +3508,19 @@
       white-space: nowrap;
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-progress {
+      position: absolute;
+      left: var(--sf-radius--ui);
+      right: var(--sf-radius--ui);
+      inset-inline: var(--sf-radius--ui);
+      bottom: var(--sf-px);
+      inset-block-end: var(--sf-px);
       display: block;
       height: var(--sf-a2);
       block-size: var(--sf-a2);
       overflow: hidden;
       border-radius: var(--sf-px);
       background-color: var(--sf-contents--line);
+      pointer-events: none;
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-progress-value {
       display: block;
@@ -1659,22 +3560,27 @@
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+      --sf-place--ink: initial;
+      --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
       --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
       --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+      --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
       --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
       --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
       --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
       --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
       --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
       --sf-on-surface-muted: var(--sf-on-surface-disabled);
       --sf-surface-underlay: initial;
+      --sf-surface-place-fill: initial;
       --sf-disable: var(--sf-surface-disabled);
       --sf-on-disable: var(--sf-on-surface-disabled);
       --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -1684,10 +3590,12 @@
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
       --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+      --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
     }
-    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
+    :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
       --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
       --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -1699,6 +3607,24 @@
       --sf-place--plate: initial;
       --sf-place--on-plate: initial;
       --sf-place--fill-placeholder: initial;
+      --sf-place--control-hover: initial;
+      --sf-place--control-active: initial;
+    }
+    :where(.sf-surface-media) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
+      --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+      --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+      --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+      --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+      --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+      --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+      --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+      --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+      --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+      --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+      --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     }
     :where(.bg-surface-4) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
       --sf-primary: var(--sf-place--found-primary);
@@ -1721,9 +3647,9 @@
       align-items: center;
       min-height: var(--sf-contents--control-height);
       min-block-size: var(--sf-contents--control-height);
-      padding-left: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-right: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
-      padding-inline: calc(var(--sf-contents--space-x) - var(--sf-space-1\/4));
+      padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
+      padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
       color: var(--sf-on-surface);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
@@ -1731,10 +3657,190 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:hover {
       background-color: var(--sf-surface-container-hover);
+      /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
+         keeps its own tone under the pointer. */
+      --sf-surface-underlay: var(--sf-surface-place-solid);
+      --sf-surface-place-fill: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-primary-container);
-      color: var(--sf-on-primary-container);
+      color: var(--sf-on-surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
+      left: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
+      left: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(ltr)){
+      left: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
+      right: var(--sf-0);
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
+      right: var(--sf-0);
+      }
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(rtl)){
+      right: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark {
+      position: absolute;
+      top: var(--sf-space-1\/4);
+      bottom: var(--sf-space-1\/4);
+      inset-block: var(--sf-space-1\/4);
+      inset-inline-start: var(--sf-0);
+      display: block;
+      width: var(--sf-a2);
+      inline-size: var(--sf-a2);
+      border-radius: var(--sf-px);
+      background-color: transparent;
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link[aria-current=location] .sf-contents-mark {
+      background-color: var(--sf-contents--current);
+    }
+    @media not all and (min-width: 44rem) {
+      .sf-contents--layout-auto.sf-contents--collapse-xl {
+        /* Before the list in the markup, so at the same level it lies under it. */
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open {
+        z-index: var(--sf-z-index-9);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-veil {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: var(--sf-0);
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: var(--sf-0);
+        display: block;
+        background-color: var(--sf-black--alfa-64);
+        background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-left-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-bottom-left-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+      }
+      @supports not (border-end-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-bottom-right-radius: var(--sf-0);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-bottom-right-radius: var(--sf-0);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-end-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-left-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
+        border-top-left-radius: var(--sf-radius--surface);
+      }
+      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      @supports not (border-start-start-radius: initial){
+      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
+        border-top-right-radius: var(--sf-radius--surface);
+        }
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+        border-top-right-radius: var(--sf-radius--surface);
+      }
+      .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
+        position: fixed;
+        z-index: var(--sf-z-index-9);
+        top: auto;
+        right: var(--sf-0);
+        bottom: var(--sf-0);
+        left: var(--sf-0);
+        inset: auto var(--sf-0) var(--sf-0);
+        width: 100%;
+        inline-size: 100%;
+        max-width: var(--sf-h1);
+        max-inline-size: var(--sf-h1);
+        max-height: 70dvh;
+        max-block-size: 70dvh;
+        margin: var(--sf-0) auto;
+        padding-top: var(--sf-space-1\/2);
+        padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
+        border-end-end-radius: var(--sf-0);
+        border-end-start-radius: var(--sf-0);
+        border-start-end-radius: var(--sf-radius--surface);
+        border-start-start-radius: var(--sf-radius--surface);
+        box-shadow: var(--sf-shadow-modal);
+      }
+    }
+  }
+  /* A finger (pointer coarse): a row of the open sheet's list is at least the
+     touch target, as sf-menu-context's rows (simai/ui-source#25). */
+  @media (pointer: coarse) {
+    .sf-contents--open:not(.sf-contents--layout-rail) .sf-contents-list .sf-contents-link {
+      min-height: max(var(--sf-contents--control-height), var(--sf-d1));
+      min-block-size: max(var(--sf-contents--control-height), var(--sf-d1));
     }
   }
   @media (prefers-reduced-motion: reduce) {

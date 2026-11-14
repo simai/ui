@@ -170,8 +170,33 @@ function arrowPlacement(arrow, rtl) {
   }
 }
 
-const tooltipInstances = new WeakMap(); // Whether the focus shows (the platform's :focus-visible); where the selector
+const tooltipInstances = new WeakMap(); // The tooltip kind of C59 (owner decision 2026-11-11, research
+// control/research/2026-11-11-popover.md): a pointer resting on a trigger
+// opens its tooltip after 0.5 s, so a pointer crossing a toolbar does not pop
+// one on every button; once a tooltip shows, its neighbours open at once --
+// while one is open and for 300 ms after the last one closed. Keyboard focus
+// opens it at once. On a touch screen, where nothing hovers, a long press
+// (held 0.5 s) shows it; it stays while the finger is down and 1.5 s after.
+// Times, not lengths: the Framework has no delay tokens (sf-menu's hover
+// delays are written the same way, C30).
+
+const OPEN_DELAY = 500;
+const GROUP_WINDOW = 300;
+const TOUCH_SHOWN = 1500; // The group is page-wide: every bundle that carries this controller counts on
+// one shared record, not on a module-scope one of its own.
+
+const GROUP = Symbol.for('sf.tooltip.group');
+
+const group = () => globalThis[GROUP] || (globalThis[GROUP] = {
+  open: 0,
+  closedAt: -Infinity
+});
+
+const now = () => globalThis.performance?.now?.() ?? Date.now();
+
+const warm = () => group().open > 0 || now() - group().closedAt < GROUP_WINDOW; // Whether the focus shows (the platform's :focus-visible); where the selector
 // is unknown, the focus counts as shown, as before.
+
 
 function focusVisible(element) {
   try {
@@ -206,6 +231,15 @@ class SfTooltipController {
     this.onFocusIn = this.handleFocusIn.bind(this);
     this.onFocusOut = this.handleFocusOut.bind(this);
     this.onPress = this.handlePress.bind(this);
+    this.onPointerDown = this.handlePointerDown.bind(this);
+    this.onTouchEnd = this.handleTouchEnd.bind(this);
+    this.onClickCapture = this.handleClickCapture.bind(this);
+    this.onContextMenu = this.handleContextMenu.bind(this);
+    this.openTimer = 0;
+    this.touchTimer = 0;
+    this.touchHold = false;
+    this.touchShown = false;
+    this.swallowClick = false;
     this.onDocumentKeydown = this.handleDocumentKeydown.bind(this);
   }
 
@@ -257,8 +291,12 @@ class SfTooltipController {
     pointerRoot.addEventListener('pointerleave', this.onPointerLeave);
     this.trigger.addEventListener('focusin', this.onFocusIn);
     this.trigger.addEventListener('focusout', this.onFocusOut);
-    this.trigger.addEventListener('pointerdown', this.onPress);
+    this.trigger.addEventListener('pointerdown', this.onPointerDown);
+    this.trigger.addEventListener('pointerup', this.onTouchEnd);
+    this.trigger.addEventListener('pointercancel', this.onTouchEnd);
+    this.trigger.addEventListener('click', this.onClickCapture, true);
     this.trigger.addEventListener('click', this.onPress);
+    this.trigger.addEventListener('contextmenu', this.onContextMenu);
     tooltipInstances.set(this.trigger, this);
   }
 
@@ -270,8 +308,13 @@ class SfTooltipController {
     pointerRoot.removeEventListener('pointerleave', this.onPointerLeave);
     this.trigger.removeEventListener('focusin', this.onFocusIn);
     this.trigger.removeEventListener('focusout', this.onFocusOut);
-    this.trigger.removeEventListener('pointerdown', this.onPress);
+    this.trigger.removeEventListener('pointerdown', this.onPointerDown);
+    this.trigger.removeEventListener('pointerup', this.onTouchEnd);
+    this.trigger.removeEventListener('pointercancel', this.onTouchEnd);
+    this.trigger.removeEventListener('click', this.onClickCapture, true);
     this.trigger.removeEventListener('click', this.onPress);
+    this.trigger.removeEventListener('contextmenu', this.onContextMenu);
+    this.clearTimers();
     this.trigger.ownerDocument.removeEventListener('keydown', this.onDocumentKeydown);
 
     if (this.originalDescription === null) {
@@ -286,21 +329,46 @@ class SfTooltipController {
       this.surface.setAttribute('role', this.originalRole);
     }
 
+    if (!this.surface.hidden) this.leaveGroup();
     this.surface.hidden = this.originalHidden;
     this.surface.classList.remove('active');
     tooltipInstances.delete(this.trigger);
   }
 
+  clearTimers() {
+    clearTimeout(this.openTimer);
+    clearTimeout(this.touchTimer);
+    this.openTimer = 0;
+    this.touchTimer = 0;
+  } // A pointer resting on the trigger: the tooltip after OPEN_DELAY, or at once
+  // while the group is warm (a neighbour shows, or closed a moment ago).
+
+
   handlePointerEnter(event) {
     if (event.pointerType === 'touch') return;
     this.pointerInside = true;
-    if (!this.dismissed) this.open();
+    if (this.dismissed || !this.surface?.hidden) return;
+
+    if (warm()) {
+      this.open();
+      return;
+    }
+
+    clearTimeout(this.openTimer);
+    this.openTimer = setTimeout(() => {
+      this.openTimer = 0;
+      if (this.pointerInside && !this.dismissed) this.open();
+    }, OPEN_DELAY);
   } // The pointer leaves: the tooltip goes unless keyboard focus holds it. A
   // focus a press left (not :focus-visible) does not, and the next hover
   // shows the tooltip again.
 
 
-  handlePointerLeave() {
+  handlePointerLeave(event) {
+    // A finger lifted leaves too; the long press keeps its own time.
+    if (event?.pointerType === 'touch') return;
+    clearTimeout(this.openTimer);
+    this.openTimer = 0;
     this.pointerInside = false;
     const active = this.trigger.ownerDocument.activeElement;
 
@@ -315,6 +383,7 @@ class SfTooltipController {
 
   handleFocusIn(event) {
     this.focusInside = true;
+    if (this.touchHold || this.touchShown) return;
     if (!this.dismissed && focusVisible(event?.target ?? this.trigger)) this.open();
   } // A press on the trigger -- a pointer, or Enter or Space that click it --
   // hides the tooltip; it stays hidden until the pointer leaves and the focus
@@ -323,8 +392,72 @@ class SfTooltipController {
 
 
   handlePress() {
+    clearTimeout(this.openTimer);
+    this.openTimer = 0;
     this.dismissed = true;
     this.close();
+  } // A finger: a tap is a press (it hides the tooltip, as a mouse press does);
+  // held for OPEN_DELAY it is a long press, which shows the tooltip instead.
+
+
+  handlePointerDown(event) {
+    if (event.pointerType !== 'touch') {
+      this.handlePress();
+      return;
+    }
+
+    this.clearTimers();
+    this.swallowClick = false;
+    this.touchHold = true;
+
+    if (this.touchShown) {
+      this.touchShown = false;
+      this.close();
+    }
+
+    this.touchTimer = setTimeout(() => {
+      this.touchTimer = 0;
+      if (!this.touchHold) return;
+      this.touchShown = true;
+      this.dismissed = false;
+      this.open();
+    }, OPEN_DELAY);
+  } // The finger lifts (or the browser takes the touch for a scroll): a tooltip
+  // the long press showed stays TOUCH_SHOWN more, and the click the release
+  // may still send is not a press of the trigger.
+
+
+  handleTouchEnd(event) {
+    if (event.pointerType !== 'touch' || !this.touchHold) return;
+    this.touchHold = false;
+    clearTimeout(this.touchTimer);
+    this.touchTimer = 0;
+    if (!this.touchShown) return;
+
+    if (event.type === 'pointerup') {
+      this.swallowClick = true;
+      setTimeout(() => {
+        this.swallowClick = false;
+      }, GROUP_WINDOW);
+    }
+
+    this.touchTimer = setTimeout(() => {
+      this.touchTimer = 0;
+      this.touchShown = false;
+      this.close();
+    }, TOUCH_SHOWN);
+  }
+
+  handleClickCapture(event) {
+    if (!this.swallowClick) return;
+    this.swallowClick = false;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  } // The browser's own long-press menu would cover the tooltip.
+
+
+  handleContextMenu(event) {
+    if (this.touchHold || this.touchShown) event.preventDefault();
   }
 
   handleFocusOut() {
@@ -344,6 +477,12 @@ class SfTooltipController {
     this.close();
   }
 
+  leaveGroup() {
+    const shared = group();
+    shared.open = Math.max(0, shared.open - 1);
+    shared.closedAt = now();
+  }
+
   open() {
     // The surface was replaced or taken out after the link was made (a page
     // that redrew the tooltip with new text): link the trigger again, so the
@@ -356,6 +495,9 @@ class SfTooltipController {
     }
 
     if (!this.surface || !this.surface.hidden) return;
+    clearTimeout(this.openTimer);
+    this.openTimer = 0;
+    group().open += 1;
     this.surface.hidden = false;
     this.surface.classList.add('active');
     this.startPosition();
@@ -451,6 +593,9 @@ class SfTooltipController {
 
   close() {
     if (!this.surface) return;
+    clearTimeout(this.openTimer);
+    this.openTimer = 0;
+    if (!this.surface.hidden) this.leaveGroup();
     this.stopPosition();
     this.surface.hidden = true;
     this.surface.classList.remove('active');
@@ -803,9 +948,15 @@ function inTopLayer(element) {
 // the host's variables, theme, lang, dir and density by plain inheritance --
 // what a body portal has to carry by hand (carryLayerOrigin). A surface the
 // component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
-// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
-// layer is left as it is; a browser without popovers keeps the fixed panel in
-// place, placed against its containing block.
+// sf-input-lookup, dropdown lists) is left as it is; a browser without
+// popovers keeps the fixed panel in place, placed against its containing block.
+//
+// A surface inside another top-layer surface -- a tooltip, a dropdown or a
+// nested popover in an open sf-popover, a modal dialog -- is lifted too, and
+// so stands above its parent. Left inside it, it was a fixed box in the
+// parent's stacking context, painted under the parent's later content: a
+// tooltip in an open popover hid under the next field's label (C59 S1
+// acceptance D1). Shown after its parent, it is drawn over it.
 //
 // The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
 // and CanvasText, overflow auto) is taken back by a rule of no specificity in
@@ -840,11 +991,7 @@ function adoptLiftedRule(floating) {
 
 function liftable(floating) {
   if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
-  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
-
-  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
-
-  return true;
+  return !floating.hasAttribute('popover') && !inTopLayer(floating);
 }
 /** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
 
@@ -875,6 +1022,38 @@ function liftToTopLayer(floating) {
       floating.removeAttribute(LIFTED);
     }
   };
+} // The scroll positions inside a floating surface (the surface itself and every
+// box in it that is scrolled), to be put back after a measurement that lifted
+// its height cap. Only boxes away from their start are kept.
+
+function scrollOffsets(floating) {
+  const found = [];
+
+  const keep = element => {
+    if (element.scrollTop || element.scrollLeft) found.push([element, element.scrollTop, element.scrollLeft]);
+  };
+
+  keep(floating);
+
+  for (const element of floating.querySelectorAll('*')) keep(element);
+
+  return found;
+} // Put back at once: the Framework sheet makes every box scroll smoothly
+// (* {scroll-behavior: smooth}, core scroll), and an assigned scrollTop glided
+// from the start the measurement threw it to. After a page scroll the list ran
+// 0 -> 800 over half a second and read 784 when the probe looked; a reposition
+// during the glide kept the value it had reached (R171 follow-up, 2026-11-12).
+
+
+function restoreScrollOffsets(found) {
+  for (const [element, top, left] of found) {
+    if (!element.isConnected) continue;
+    if (element.scrollTop !== top || element.scrollLeft !== left) element.scrollTo({
+      top,
+      left,
+      behavior: 'instant'
+    });
+  }
 }
 
 function fixedContainingBlock(element) {
@@ -914,6 +1093,19 @@ function anchorReference(element) {
     }
 
   };
+} // data-sf-density on the root or on a region restates the space tokens; one
+// attribute filter, so nothing else on the page wakes it.
+
+function watchDensity(doc, run) {
+  const view = doc?.defaultView;
+  if (typeof view?.MutationObserver !== 'function') return () => {};
+  const observer = new view.MutationObserver(() => run());
+  observer.observe(doc.documentElement, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['data-sf-density']
+  });
+  return () => observer.disconnect();
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -926,6 +1118,7 @@ function anchorReference(element) {
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
+
 
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
@@ -996,14 +1189,21 @@ function anchor(reference, floating, options = {}) {
   //   content does not change by scrolling; when it does, its size changes
   //   and that is a full fit), and max-height is not reset to read it.
   // - Inline styles and data-sf-side are written only when they change.
+  // A density change (data-sf-density on the root or a region) restates
+  // the space tokens without resizing the window, and the gap stayed the old
+  // one until the panel was opened again (C59 S1 acceptance M1). The key also
+  // carries the computed values of the tokens the lengths are written with: a
+  // read of a clean style, no probe and no restyle.
 
+  const tokens = [...new Set([settings.offset, settings.padding, settings.alignmentOffset].filter(value => typeof value === 'string').flatMap(value => [...value.matchAll(/var\(\s*(--(?:\\.|[^\s,)\\])+)/gu)].map(match => match[1].replace(/\\(.)/gu, '$1'))))];
   let lengths = null;
 
   const lengthsNow = () => {
-    const key = `${window.innerWidth}x${window.innerHeight}`;
+    const context = reference.parentElement;
+    const values = tokens.length && context?.isConnected ? tokens.map(name => getComputedStyle(context).getPropertyValue(name).trim()).join('|') : '';
+    const key = `${window.innerWidth}x${window.innerHeight}|${values}`;
 
     if (!lengths || lengths.key !== key) {
-      const context = reference.parentElement;
       lengths = {
         key,
         gap: resolveLength(settings.offset, context),
@@ -1022,6 +1222,32 @@ function anchor(reference, floating, options = {}) {
   };
 
   const run = async full => {
+    // Measuring the natural height takes the cap off for a moment: a list
+    // that scrolls inside the panel stops overflowing, and the browser puts
+    // its scroll back to the start. Every reposition that measured -- one per
+    // wheel step for a dropdown that follows the page's scroll in capture --
+    // threw the list back to its top, so it never moved and shook in place
+    // (owner R171, 2026-11-12), and a list scrolled to a keyboard-focused
+    // option jumped back to its first row (keyboard reveal). Only a fit that
+    // takes the cap off (a full fit, or the first) can clamp the scroll; a
+    // light fit keeps the cap and needs nothing put back. What was scrolled
+    // is put back once the cap is, and before onPosition, so a component that
+    // scrolls there has the last word.
+    let scrolled = settings.fitHeight && (full || !measures) ? scrollOffsets(floating) : null;
+
+    const putBack = () => {
+      if (scrolled) restoreScrollOffsets(scrolled);
+      scrolled = null;
+    };
+
+    try {
+      return await place(full, putBack);
+    } finally {
+      putBack();
+    }
+  };
+
+  const place = async (full, putBack) => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
@@ -1146,6 +1372,7 @@ function anchor(reference, floating, options = {}) {
 
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
     if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
+    putBack();
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -1204,7 +1431,8 @@ function anchor(reference, floating, options = {}) {
   (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
     ancestorResize: false,
     elementResize: false
-  })] : [];
+  }), // A density switch that moves no box still restates the gap: a full fit.
+  ...(tokens.length ? [watchDensity(floating.ownerDocument, controller.update)] : [])] : [];
   armed = true;
 
   controller.stop = () => {

@@ -59,7 +59,7 @@ class SfClose extends CloseElement {
   } // The size the box is drawn at (1.3.0, DEV D1 on C35). A page's size wins.
   // Without one, a close asked for a height is a control of its place, as an
   // unsized sf-button is: the place's step, size 1, which a compact region
-  // moves down because no size attribute holds it (C22) -- so
+  // moves down (C22; an explicit size comes down too since C79) -- so
   // <sf-button-close height="low"> is 32, compact and phone 28, the notice's
   // close. Without a size or a height it stays the default 1/3.
 
@@ -208,7 +208,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "02dfc60c5026"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.3.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

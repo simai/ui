@@ -3,6 +3,24 @@ import { createFieldContract } from '../../../../component/field-contract';
 import { renderInheritedSlot } from '../../../helpers/inherited-value';
 import { ariaKeyShortcuts, parseShortcut, shortcutView } from '../../../../component/kbd/js/shortcut';
 import './default.css'
+
+// A label written into the label slot keeps the label's look (text inputs
+// study 2026-11-14, TI-24): its words stand in .sf-input-text, as the label
+// setting's do, so they take the label's step, line and ink rather than the
+// page's (16 on 24 in the text ink, the row 4 taller at size 1). A help mark
+// written beside them stays a child of the label row, where the C33 / C133
+// rules place it after the last word.
+function isHelpMark(node) {
+  return node?.nodeType === 1 && (node.localName === 'sf-help-mark' || node.classList?.contains('sf-help-mark'));
+}
+
+function slottedLabel(content) {
+  const nodes = (Array.isArray(content) ? content : [content]).filter((node) => node != null && node !== nothing);
+  const text = nodes.filter((node) => !isHelpMark(node));
+  const marks = nodes.filter(isHelpMark);
+  return html`${text.length ? html`<span class="sf-input-text">${text}</span>` : nothing}${marks}`;
+}
+
 export function renderInputTemplate(context) {
   const {
     size,
@@ -43,6 +61,8 @@ export function renderInputTemplate(context) {
     maskOptions,
     ariaLabel,
     shortcut,
+    clearable,
+    revealed,
   } = context;
   // The shortcut's keys (C04, C38): the kbd component's, read in this
   // platform's words; the field draws them at its end and never styles them.
@@ -61,6 +81,39 @@ export function renderInputTemplate(context) {
   const shownPlaceholder = context.inheritedValue || placeholder;
   const inheritedSlot = renderInheritedSlot(context.component, {size, disabled: disabled || readonly});
   const inputValue = hasControlledValue ? value : defaultValue;
+  // The actions inside the field (owner decision C123): glyphs without a plate,
+  // the field layer's .sf-field-action, from the text to the edge: clear, then
+  // the password reveal. A search field's clear is the Framework's in place of
+  // the browser's own; any other field has it with clearable. Neither is drawn
+  // where the person cannot change the value.
+  const editable = !disabled && !readonly;
+  const isPassword = inputType === 'password';
+  const showClear = editable && (clearable || inputType === 'search');
+  const nativeType = isPassword && revealed ? 'text' : inputType;
+  const clearWord = context.component?.sfWord?.('clear') || 'Clear';
+  const revealWord = context.component?.sfWord?.('reveal') || 'Show password';
+  const actionsContent = html`
+    ${showClear
+      ? html`<button
+          type="button"
+          class="sf-field-action sf-input-clear"
+          data-action="clear"
+          aria-label=${clearWord}
+          ?hidden=${!String(value ?? '')}
+          @click=${(event) => context.component?.clearFromButton?.(event)}
+        ><sf-icon icon="close" aria-hidden="true"></sf-icon></button>`
+      : nothing}
+    ${isPassword && !disabled
+      ? html`<button
+          type="button"
+          class="sf-field-action sf-input-reveal"
+          data-action="reveal"
+          aria-label=${revealWord}
+          aria-pressed=${revealed ? 'true' : 'false'}
+          @click=${(event) => context.component?.toggleReveal?.(event)}
+        ><sf-icon icon=${revealed ? 'visibility_off' : 'visibility'} aria-hidden="true"></sf-icon></button>`
+      : nothing}
+  `;
   const field = createFieldContract(context.component, {
     prefix: 'sf-input',
     required,
@@ -97,7 +150,7 @@ export function renderInputTemplate(context) {
   }
   const labelContent =
     context.component?.hasSlotContent?.('label')
-      ? context.component.getSlotContent('label')
+      ? slottedLabel(context.component.getSlotContent('label'))
       : label
         ? html`
             <span class="sf-input-text">${label}</span>
@@ -121,11 +174,12 @@ export function renderInputTemplate(context) {
 
   const rightContent =
     context.component?.hasSlotContent?.('end')
-      ? context.component.getSlotContent('end')
+      ? html`${actionsContent}${context.component.getSlotContent('end')}`
       : context.component?.hasSlotContent?.('right')
-      ? context.component.getSlotContent('right')
+      ? html`${actionsContent}${context.component.getSlotContent('right')}`
       : html`
           ${rightText ? html`<span class="sf-input-right"><span class="sf-input-text">${rightText}</span></span>` : ''}
+          ${actionsContent}
           ${shortcutKeys.length ? html`<span class="sf-input-right sf-input-shortcut" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutKeys.map((key, at) => html`${at && shortcutJoin ? html`<span class="sf-kbd-join">+</span>` : nothing}<kbd class=${key.square ? 'sf-kbd--square' : nothing}>${key.text}</kbd>`)}</kbd></span>` : ''}
           ${hintIcon ? html`<span class="sf-input-hint flex"><sf-icon icon="${hintIcon}"></sf-icon></span>` : ''}
         `;
@@ -170,7 +224,7 @@ export function renderInputTemplate(context) {
           ? html`
               <input
                 id=${field.controlId}
-                type=${inputType}
+                type=${nativeType}
                 autocomplete=${autocomplete || nothing}
                 inputmode=${inputmode || nothing}
                 minlength=${minlength === '' ? nothing : minlength}
@@ -201,7 +255,7 @@ export function renderInputTemplate(context) {
           : html`
               <input
                 id=${field.controlId}
-                type=${inputType}
+                type=${nativeType}
                 autocomplete=${autocomplete || nothing}
                 inputmode=${inputmode || nothing}
                 minlength=${minlength === '' ? nothing : minlength}

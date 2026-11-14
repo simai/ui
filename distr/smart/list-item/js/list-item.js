@@ -8,11 +8,13 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -25,6 +27,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -63,15 +68,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -86,6 +103,268 @@ function retireFieldSizeClass(root, block) {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c69a3dc158df"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_PLACEHOLDER_ICON: () => (/* binding */ AVATAR_PLACEHOLDER_ICON),
+/* harmony export */   AVATAR_SIZES: () => (/* binding */ AVATAR_SIZES),
+/* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
+/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
+/* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+
+ // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
+// component that shows a person beside its own content -- sf-avatar-group,
+// sf-tag, sf-list-item, sf-dropdown, sf-input-lookup, sf-menu-context, the
+// signs of sf-list -- draw the picture with these functions and the avatars
+// sheet's classes: a photo is an <img> filling the circle, initials stand on
+// the neutral plate (or the hue the host names, C17), and with neither the
+// placeholder is a glyph on the neutral plate -- person by default, the
+// host's icon for a bot, a system or a service. Before, five copies drew it
+// five ways: the photo as a background image in the tag, the list row and the
+// dropdown, an empty transparent circle in a row with no photo, and the
+// context menu's own classes on the secondary container.
+
+/** The sizes of the avatar ladder. */
+
+const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
+/** The glyph of a placeholder: a person, unless the host names another. */
+
+const AVATAR_PLACEHOLDER_ICON = "person";
+/**
+ * The drawing context of one avatar picture, from what a host knows: the photo,
+ * the initials or the name they are taken from, the hue, the placeholder's
+ * glyph, the size (or the text line of a form size) and the shape.
+ */
+
+function avatarPictureContext(options = {}) {
+  const imageUrl = String(options.imageUrl ?? "").trim();
+  const name = String(options.name ?? "").trim();
+  const explicitText = String(options.text ?? "").trim();
+  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them.
+
+  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
+  const isImage = Boolean(imageUrl);
+  const isText = !isImage && Boolean(text);
+  const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
+  return {
+    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    line: String(options.line ?? ""),
+    shape: options.shape === "square" ? "square" : "circle",
+    imageUrl,
+    isImage,
+    isText,
+    text,
+    icon,
+    status: options.status || "none",
+    expressive: Boolean(options.expressive),
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    rootClass: options.rootClass || "",
+    rootStyle: options.rootStyle || "",
+    disabled: Boolean(options.disabled),
+    // A long list's rows load their photos as they scroll in.
+    lazy: Boolean(options.lazy),
+    component: options.component
+  };
+}
+/**
+ * The classes of the avatar picture. The avatars sheet answers every class
+ * this file writes. sf-avatar's own templates hand it their utility classes
+ * for the box (options.layout, src/smart/avatar/js/templates/shared.js), as
+ * they wrote them before; a host's picture writes none -- sf-avatar--picture
+ * gives it the same box from the avatars sheet -- so a host asks the Loader
+ * for no utility it did not ask for before (a menu, a tag, a list row).
+ */
+
+function avatarClasses(context, options = {}) {
+  const includeRootClass = options.includeRootClass !== false;
+  const layout = options.layout ?? null;
+  const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
+
+  if (context.isImage && layout) {
+    classes.push(layout.center);
+  }
+
+  if (context.isText) {
+    classes.push("sf-avatar--text");
+    if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
+
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
+    }
+  }
+
+  if (!context.isImage && !context.isText) {
+    classes.push("sf-avatar--placeholder");
+    if (layout) classes.push(layout.center);
+  } // The decorative level (C91 level 2): the sheet turns the initials'
+  // plate of the largest size into a cover of its hue.
+
+
+  if (context.expressive) {
+    classes.push("sf-avatar--expressive");
+  }
+
+  if (context.status && context.status !== "none" && layout) {
+    classes.push(layout.anchor);
+  }
+
+  if (context.shape === "square") {
+    classes.push("sf-avatar--square");
+  }
+
+  if (context.status === "online") {
+    classes.push("sf-avatar--status-icon-online-indicator");
+  }
+
+  if (options.disabled) {
+    classes.push("disabled");
+  }
+
+  if (includeRootClass && context.rootClass) {
+    classes.push(context.rootClass);
+  }
+
+  if (options.extraClass) {
+    classes.push(options.extraClass);
+  }
+
+  return classes.join(" ");
+}
+/**
+ * What the circle holds: the photo, the initials, or the placeholder glyph as
+ * an sf-icon element, so its name reaches the icon font request (a bare
+ * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
+ * review 2026-11-09).
+ */
+
+function avatarContent(context) {
+  if (context.isText) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
+  }
+
+  if (context.isImage) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+}
+/** The icon names a picture draws (for a host's icon preload). */
+
+function avatarPictureIcons(options = {}) {
+  const context = avatarPictureContext(options);
+  return context.isImage || context.isText ? [] : [context.icon];
+}
+/**
+ * One avatar picture beside a host's own content: a span hidden from
+ * assistive technology (the host's visible text names the person), drawn with
+ * the avatars sheet. extraClass adds the host's own geometry class.
+ */
+
+function avatarPicture(options = {}) {
+  const context = avatarPictureContext(options);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        class=${avatarClasses(context, {
+    extraClass: options.extraClass,
+    disabled: context.disabled
+  })}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-hidden="true"
+    >${avatarContent(context)}</span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "cbce4a5232a6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getInitials: () => (/* binding */ getInitials),
+/* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
+/* harmony export */ });
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+function normalizeInitialsWords(value = "") {
+  return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
+} // The first character a reader sees: a whole grapheme, so a letter written
+// with a combining accent («E» + U+0301) or outside the basic plane keeps all
+// of its code points. Array.from alone splits surrogate pairs correctly but
+// not combining marks; Intl.Segmenter does both where the platform has it.
+
+function firstGrapheme(word) {
+  const Segmenter = globalThis.Intl?.Segmenter;
+
+  if (typeof Segmenter === "function") {
+    for (const {
+      segment
+    } of new Segmenter(undefined, {
+      granularity: "grapheme"
+    }).segment(word)) {
+      return segment;
+    }
+
+    return "";
+  }
+
+  return Array.from(word)[0] || "";
+} // The one rule for initials (reuse audit 2026-11-02, finding 10): sf-avatar,
+// the context menu, the admin menu and the chat drew them by five rules that
+// disagreed on a hyphen, an empty name and a letter outside the basic plane.
+//
+//   «Анна Смирнова»        → «АС»   the first letters of the first two words
+//   «Отдел по работе»      → «ОР»   a preposition after the first word is skipped
+//   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
+//   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
+//   «Анна»                 → «А»
+//   «»                     → ''     or `fallback`: '?' where text must stand
+//
+// `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
+// `locale` capitalises by a locale's rule.
+
+
+function getInitials(value = "", options = {}) {
+  const {
+    maxLetters = 2,
+    skipWords = INITIALS_SKIP_WORDS,
+    fallback = "",
+    locale
+  } = options;
+  const words = normalizeInitialsWords(value);
+  let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
+  // are its words. Split before the skip list, «из-за» would be two words.
+
+  if (significantWords.length === 1) {
+    const parts = significantWords[0].split(/[-\u2010-\u2015]+/u).filter(Boolean);
+    if (parts.length > 1) significantWords = parts;
+  }
+
+  if (!significantWords.length) {
+    return String(fallback);
+  }
+
+  const letters = significantWords.length > 1 ? significantWords.slice(0, Math.max(1, maxLetters)).map(firstGrapheme).join("") : firstGrapheme(significantWords[0]);
+  return (locale ? letters.toLocaleUpperCase(locale) : letters.toUpperCase()) || String(fallback);
+}
 
 /***/ },
 
@@ -450,9 +729,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e6d86f2cd058");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c69a3dc158df");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
  // The mark in a row's box is bound as a property, not as an attribute. A press
 // anywhere in the row reaches the label that holds this input and flips its live
@@ -475,15 +756,16 @@ function renderListItemTemplate(context) {
   const roving = !isOption && Boolean(context.interactive || sortableItem);
   const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", context.rootClass].filter(Boolean);
   const wrapClasses = ["sf-list-item-wrap", "flex", "flex-1"];
-  const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type);
+  const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type); // The step between the picture and the text is the row's own (C105 H2,
+  // HS-5): the list item sheet sets it from the size and the density. A layout
+  // class here (gap-2, --sf-space-2) put 20 between them at every size.
 
   if (isDecoratedType) {
-    wrapClasses.push("flex", "flex-row", "flex-nowrap", "items-center", "gap-2");
+    wrapClasses.push("flex", "flex-row", "flex-nowrap", "items-center");
   }
 
-  if (context.type === "avatar" || context.type === "color") {
-    wrapClasses.splice(wrapClasses.indexOf("gap-2"), 1);
-    wrapClasses.push("justify-between", "gap-2");
+  if (isOption && context.type === "avatar" || context.type === "color") {
+    wrapClasses.push("justify-between");
   }
 
   const renderLeading = () => {
@@ -517,16 +799,35 @@ function renderListItemTemplate(context) {
     }
 
     if (context.type === "avatar") {
-      const avatarClasses = ["sf-avatar", `sf-avatar--size-${context.sizeGroup.item === "1/3" || context.sizeGroup.item === "1/2" ? "1/3" : context.sizeGroup.item === "1" ? "1/2" : context.sizeGroup.item === "2" ? "1" : "2"}`, "bg-cover", context.disabled ? "disabled" : ""].filter(Boolean);
+      // sf-avatar's own drawing (js/picture.js, avatar study AV-8): the photo
+      // an <img>, else the initials of the title on the neutral plate, else
+      // the person glyph. It was a background image, and with no photo an
+      // empty circle.
+      const avatarSize = context.sizeGroup.item === "1/3" || context.sizeGroup.item === "1/2" ? "1/3" : context.sizeGroup.item === "1" ? "1/2" : context.sizeGroup.item === "2" ? "1" : "2"; // A row outside a dropdown (list item study LI-5): the picture is the
+      // row's leading part, as an icon row's glyph is, and the title and its
+      // supporting line are the row's own text block. In the label group the
+      // supporting line was dropped (a 28 row at size 1, under the ladder).
+      // An option keeps the label group sf-dropdown reads.
+
+      if (!isOption) {
+        return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPicture)({
+          size: avatarSize,
+          imageUrl: context.avatarImageUrl,
+          name: context.avatarTitle,
+          disabled: context.disabled
+        });
+      }
+
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
           class="sf-avatar-label-group sf-avatar-label-group--size-${context.sizeGroup.avatarGroup} flex items-cross-center"
         >
-          <span
-            class=${avatarClasses.join(" ")}
-            aria-hidden="true"
-            style=${context.avatarImageUrl ? `background-image: url(${context.avatarImageUrl});` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-          ></span>
+          ${(0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPicture)({
+        size: avatarSize,
+        imageUrl: context.avatarImageUrl,
+        name: context.avatarTitle,
+        disabled: context.disabled
+      })}
           <div class="sf-avatar-label-group-container flex flex-col">
             <div class="sf-avatar-label-group-title">
               ${context.avatarTitle}
@@ -551,13 +852,16 @@ function renderListItemTemplate(context) {
 
   const renderText = () => {
     if (context.type === "color") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-    if (context.type === "avatar") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    if (context.type === "avatar" && isOption) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // An avatar row's title is its text, else its avatar-title (the label
+    // group showed avatar-title, which defaults to text).
+
+    const title = context.type === "avatar" && !textContent ? context.avatarTitle : textContent;
 
     if (twoLine) {
-      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container"><span class="sf-list-item-title">${textContent}</span><span class="sf-list-item-supporting">${supportingContent}</span></div>`;
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container"><span class="sf-list-item-title">${title}</span><span class="sf-list-item-supporting">${supportingContent}</span></div>`;
     }
 
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container">${textContent}</div>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container">${title}</div>`;
   }; // The handle stands in a slot of its own before everything else; a pinned
   // row keeps the slot empty, so its text starts where its neighbours' does.
 
@@ -568,9 +872,13 @@ function renderListItemTemplate(context) {
   };
 
   const renderTrailing = () => {
-    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return trailingContent;
+    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return trailingContent; // The box after a picture is a dropdown option's choice, and only where
+    // the list may hold several chosen. A row outside a dropdown has no choice
+    // to mark (docs precheck smart content LI-01: an empty checkbox stood at
+    // the end of every such row); an option of a single choice says it is
+    // chosen with its fill alone (owner C08; DEV P2, owner R143, 2026-11-12).
 
-    if (context.type === "avatar" || context.type === "color") {
+    if (isOption && context.multiple && (context.type === "avatar" || context.type === "color")) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <label
           class="sf-checkbox sf-checkbox--size-${context.sizeGroup.checkbox} flex"
@@ -618,7 +926,9 @@ function renderListItemTemplate(context) {
 // pointer. The dropdown built this inline and nothing else could, which is why
 // a multi-select list outside a dropdown had to be hand-made out of checkboxes.
 
-function renderListItemOption(option = {}) {
+function renderListItemOption(option = {}, {
+  multiple = false
+} = {}) {
   const size = String(option.size || "1");
   return renderListItemTemplate({
     component: {
@@ -640,6 +950,7 @@ function renderListItemOption(option = {}) {
     avatarImageUrl: option.avatarImageUrl,
     avatarTitle: option.avatarTitle,
     ariaLabel: option.ariaLabel,
+    multiple: Boolean(multiple),
     option: true
   });
 } // What a list says about itself between its rows. A long list of names needs to
@@ -708,17 +1019,102 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "a6b3ed0c1589"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_HUES: () => (/* binding */ AVATAR_HUES),
+/* harmony export */   AVATAR_TONES: () => (/* binding */ AVATAR_TONES),
+/* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
+/* harmony export */   TONE_HUES: () => (/* binding */ TONE_HUES),
+/* harmony export */   avatarHue: () => (/* binding */ avatarHue),
+/* harmony export */   avatarTone: () => (/* binding */ avatarTone),
+/* harmony export */   avatarToneHash: () => (/* binding */ avatarToneHash),
+/* harmony export */   resolveAvatarHue: () => (/* binding */ resolveAvatarHue),
+/* harmony export */   resolveAvatarTone: () => (/* binding */ resolveAvatarTone)
+/* harmony export */ });
+// sf-avatar's hue from a name, without a document: a plain function of its
+// argument, so tests/avatar-tones.contract.test.mjs runs it in Node and a server
+// can print the same class in the first paint. docs/docs.md gives the algorithm
+// for a server in another language.
+//
+// Owner decision C17 (2026-11-08): avatars have no colours of their own. The
+// initials take a hue of the static palette (the hue setting, the class
+// sf-hue-<name>); the eight tones of initials are gone, and `auto` picks among
+// eight static hues in the old order, so a name keeps its slot: rose is pink,
+// the former violet (HCT hue 325) is purple, the other six keep their names.
+// A former tone moves at most 15 degrees (dispatcher, 2026-11-09).
+//
+// FNV-1a, 32 bits, over the UTF-8 bytes of the string exactly as given (no
+// trimming, no case folding, no normalisation), its high half folded onto the
+// low one, because the low bits of FNV-1a alone follow the low bits of the
+// input; the remainder by the length of the list picks the tone.
+//
+// The list and its order are part of the algorithm: a name keeps its tone only
+// while they stay. A later named tone does not join `auto`.
+const AVATAR_HUES = Object.freeze(['pink', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'purple']);
+
+// Every hue a setting may name: the static palette (theme-palette.js
+// STATIC_HUES, tests/avatar-tones.contract.test.mjs holds the two equal).
+const STATIC_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']);
+
+// The former tone setting and its names, until 2027-01-01 (journal
+// attribute-c17-avatar-tone-to-hue, value-c17-avatar-rose-to-pink, which
+// also carries violet to purple).
+const AVATAR_TONES = Object.freeze(['rose', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'violet']);
+const TONE_HUES = Object.freeze({rose: 'pink', violet: 'purple'});
+
+const FNV_OFFSET = 0x811c9dc5;
+const FNV_PRIME = 0x01000193;
+
+function avatarToneHash(name) {
+  let hash = FNV_OFFSET;
+  for (const byte of new TextEncoder().encode(String(name))) {
+    hash = Math.imul(hash ^ byte, FNV_PRIME) >>> 0;
+  }
+  return (hash ^ (hash >>> 16)) >>> 0;
+}
+
+// No name, no hue: the neutral look.
+function avatarHue(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_HUES[avatarToneHash(text) % AVATAR_HUES.length] : '';
+}
+
+// The hue a setting asks for: a named one as it is, auto the one of the name,
+// empty (or a name the palette does not have) the neutral look. The former
+// tone setting is read when hue is empty, its rose as pink and its violet as purple.
+function resolveAvatarHue(hue, name, tone = '') {
+  const setting = hue || TONE_HUES[tone] || tone || '';
+  if (setting === 'auto') return avatarHue(name);
+  return STATIC_HUES.includes(setting) ? setting : '';
+}
+
+// The former names (2027-01-01): the tone of a name in the old words.
+function avatarTone(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_TONES[avatarToneHash(text) % AVATAR_TONES.length] : '';
+}
+
+function resolveAvatarTone(setting, name) {
+  return setting === 'auto' ? avatarTone(name) : setting || '';
+}
+
+
+/***/ },
+
 /***/ "06e7f30e3c4d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-item for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"kind","kind":"setting","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"sf-list-item-activate","to":"sf-list-item-open","kind":"event","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"manifest":{"from":"sf-list-item-activate","to":"open"},"section":"§8, vocabulary 1.1.5 §5 open","note":"the old detail {value, item, trigger} is made by the element\'s adapter (sfAliasAdapters)"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-item for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"kind","kind":"setting","component":"sf-list-item","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"sf-list-item-activate","to":"sf-list-item-open","kind":"event","component":"sf-list-item","since":"2026-10-27","remove_after":"2027-01-01","mode":"split","cancelable":false,"manifest":{"from":"sf-list-item-activate","to":"open"},"section":"§8, vocabulary 1.1.5 §5 open","note":"the old detail {value, item, trigger} is made by the element\'s adapter (sfAliasAdapters)"}]}');
 
 /***/ },
 
 /***/ "f4c129a27dd4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.2.8","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.5.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

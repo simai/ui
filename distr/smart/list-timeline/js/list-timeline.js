@@ -619,7 +619,9 @@ class SfListTimeline extends ListTimelineElement {
     const decorate = item => ({ ...item,
       iso: item.at ? item.at.toISOString() : '',
       tone: TONES[item.status] ?? 'neutral',
-      statusWord: item.state ? this.sfWord(`state-${item.state}`) : item.status === 'neutral' ? '' : this.sfWord(`status-${item.status}`)
+      // A step says its state, and its status when it has a tone (C61 round 4:
+      // the status is drawn by colour only, so the words carry it too).
+      statusWord: item.state ? [this.sfWord(`state-${item.state}`), TONES[item.status] ? this.sfWord(`status-${item.status}`).toLowerCase() : ''].filter(Boolean).join(', ') : item.status === 'neutral' ? '' : this.sfWord(`status-${item.status}`)
     });
 
     const runs = groupByDay(list, {
@@ -750,22 +752,32 @@ const SIZE_CLASS = {
   '1/2': 'half',
   1: '1',
   2: '2'
-}; // A step's marker: done is the solid primary circle, current the soft one
-// with its ring, upcoming an empty one (list-timeline.html scene B).
+}; // A step's marker (owner decision C61, variant A; one logic with and without
+// an icon; C61 round 4: the shape shows the progress, the colour the status):
+// done the solid circle, current the same circle ringed outside through a gap,
+// upcoming an empty circle with a ring (scss/ draws the rings). The colour is
+// primary (an upcoming one: quiet), or the status tone (error, warning,
+// success) when the step has one: an upcoming step with an error stays empty.
 
-const STEP_TONE = {
-  done: 'primary sf-featured-icon--solid',
-  current: 'primary sf-featured-icon--soft',
-  upcoming: 'neutral sf-featured-icon--soft'
+const STEP_FILL = {
+  done: 'solid',
+  current: 'solid',
+  upcoming: 'soft'
 };
+
+function stepTone(item) {
+  if (item.tone !== 'neutral') return item.tone;
+  return item.state === 'upcoming' ? 'neutral' : 'primary';
+}
 
 function marker(context, item) {
   if (!item.icon) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--dot sf-list-timeline-marker--${item.status}`}><span class="sf-list-timeline-dot"></span></span>`;
   }
 
-  const tone = item.state ? STEP_TONE[item.state] : `${item.tone} sf-featured-icon--soft`;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--${item.state || item.tone}`}><span
+  const step = STEP_FILL[item.state] ? item.state : '';
+  const tone = step ? `${stepTone(item)} sf-featured-icon--${STEP_FILL[step]}` : `${item.tone} sf-featured-icon--soft`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-list-timeline-marker sf-list-timeline-marker--${step || item.tone}`}><span
     class=${`sf-featured-icon sf-featured-icon--circle sf-featured-icon--size-${BELOW[context.size]} sf-featured-icon--${tone}`}><i
     class="sf-icon sf-list-timeline-icon">${item.icon}</i></span></span>`;
 }
@@ -953,7 +965,7 @@ function foldRuns(items, {collapse = 5, opened = new Set()} = {}) {
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.1.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.3.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

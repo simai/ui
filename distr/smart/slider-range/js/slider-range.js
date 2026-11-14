@@ -2,6 +2,110 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "e6d86f2cd058"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
+/* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
+/* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
+/* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
+/* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
+/* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
+// them, and they could not hold a field's own pictures, tags and targets. A
+// page written for a retired size keeps rendering at the nearest kept size, and
+// says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
+
+const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
+const RETIRED_FIELD_SIZES = Object.freeze({
+  '1/3': '1/2',
+  '3': '2'
+});
+const warned = new Set(); // A control placed inside something with the whole scale (a list item, say)
+// takes the nearest form size, quietly: the list is not wrong to be 1/3.
+
+function nearestFieldSize(value) {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+  return Object.hasOwn(RETIRED_FIELD_SIZES, size) ? RETIRED_FIELD_SIZES[size] : '1';
+}
+function fieldSize(value, component = 'field', fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+
+  if (Object.hasOwn(RETIRED_FIELD_SIZES, size)) {
+    const kept = RETIRED_FIELD_SIZES[size];
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component,
+      kind: 'value',
+      attribute: 'size',
+      from: size,
+      to: kept
+    });
+    const key = `${component}:${size}`;
+
+    if (!warned.has(key) && typeof console !== 'undefined') {
+      warned.add(key);
+      console.warn(`[SIMAI Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
+    }
+
+    return kept;
+  }
+
+  return fallback;
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
+
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
+} // Markup written by hand carries its size as a class, so the binder moves a
+// retired size class to the kept one before anything measures the field.
+
+function retireFieldSizeClass(root, block) {
+  if (!root?.classList) return;
+
+  for (const [retired, kept] of Object.entries(RETIRED_FIELD_SIZES)) {
+    const name = `${block}--size-${retired}`;
+    if (!root.classList.contains(name)) continue;
+    root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "46dcc01f14ec"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -9,6 +113,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindRangeSlider: () => (/* binding */ bindRangeSlider),
+/* harmony export */   formatRangeSliderNumber: () => (/* binding */ formatNumberOnly),
+/* harmony export */   formatRangeSliderText: () => (/* binding */ formatRangeText),
 /* harmony export */   getRangeSliderValue: () => (/* binding */ getRangeSliderValue),
 /* harmony export */   initExistingRangeSliders: () => (/* binding */ initExistingRangeSliders),
 /* harmony export */   setRangeSliderValue: () => (/* binding */ setRangeSliderValue),
@@ -83,16 +189,21 @@ function getDecimalPlaces(value) {
   const [coefficient, exponent = '0'] = normalized.split('e');
   const fraction = coefficient.split('.')[1]?.replace(/0+$/, '').length || 0;
   return Math.min(100, Math.max(0, fraction - Number(exponent)));
-}
+} // Digits after the decimal mark: data-precision, as sf-input-quantity names it
+// (S1); data-decimals is its former name and is still read until 2027-01-01.
+// Unset, the step's digits (0.5 has one). Never fewer than the step's: a value
+// on its step is not shown rounded off it (2.6 with step 0.1 is «2,6», not «3»).
+
 
 function getValueDecimals(root) {
-  const decimalsAttr = root.getAttribute('data-decimals');
+  const stepDecimals = getDecimalPlaces(root.getAttribute('data-step'));
+  const decimalsAttr = root.getAttribute('data-precision') ?? root.getAttribute('data-decimals');
 
   if (decimalsAttr !== null && decimalsAttr !== '') {
-    return Math.min(100, Math.max(0, Math.trunc(toNumber(decimalsAttr, 0))));
+    return Math.min(100, Math.max(stepDecimals, Math.trunc(toNumber(decimalsAttr, 0))));
   }
 
-  return getDecimalPlaces(root.getAttribute('data-step'));
+  return stepDecimals;
 }
 
 function isMultipleRoot(root) {
@@ -129,12 +240,19 @@ function getHandleLabelPosition(root, mode = 'none') {
   }
 
   return mode === 'text' ? 'bottom' : 'top';
+} // A unit is held to its number by a no-break space (S1): «20 000 ₽» never
+// breaks before «₽». An author's ordinary space at the joint becomes one.
+
+
+function unitText(text, side) {
+  const value = String(text || '');
+  return side === 'prefix' ? value.replace(/[ \t]+$/u, '\u00a0') : value.replace(/^[ \t]+/u, '\u00a0');
 }
 
 function formatValue(root, value) {
   const decimals = getValueDecimals(root);
-  const prefix = root.getAttribute('data-prefix') || '';
-  const suffix = root.getAttribute('data-suffix') || '';
+  const prefix = unitText(root.getAttribute('data-prefix'), 'prefix');
+  const suffix = unitText(root.getAttribute('data-suffix'), 'suffix');
   const numeric = Number(value);
 
   if (!Number.isFinite(numeric)) {
@@ -142,23 +260,43 @@ function formatValue(root, value) {
   }
 
   return `${prefix}${formatDecimal(root, numeric, decimals)}${suffix}`;
-} // The number in the page's language, as sf-quantity writes it: a Russian page
-// reads «1,23 кг», not «1.23 кг» (docs pre-check 2026-11-10 CRS-01). The
-// `data-locale` of the slider wins over the page's `lang`. Grouping follows
-// the locale. Number.toFixed is the fallback where Intl refuses the digits.
+} // The number in the page's language, as sf-input-quantity writes it: a Russian
+// page reads «1,23 кг», not «1.23 кг» (docs pre-check 2026-11-10 CRS-01). The
+// `data-locale` of the slider wins over the page's `lang`. Thousands are
+// grouped the locale's way unless data-grouping="false" (a year, a code).
+// Number.toFixed is the fallback where Intl refuses the digits.
 
 
 function formatDecimal(root, numeric, decimals) {
   const locale = root.getAttribute('data-locale') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageLocale)(root);
+  const grouping = String(root.getAttribute('data-grouping') ?? '').trim().toLowerCase() !== 'false';
 
   try {
     return new Intl.NumberFormat(locale, {
       minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
+      maximumFractionDigits: Math.min(20, decimals),
+      useGrouping: grouping
     }).format(numeric);
   } catch {
     return numeric.toFixed(decimals);
   }
+} // The number alone, in the slider's language and digits: the joined value of a
+// range and the from/to field write each number this way, the unit once.
+
+
+function formatNumberOnly(root, value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? formatDecimal(root, numeric, getValueDecimals(root)) : String(value ?? '');
+} // One value with its prefix and unit; a range as «от 5 000 – 20 000 ₽»: the
+// prefix before the first number, the unit after the last (C78 name line).
+
+
+function formatRangeText(root, values = []) {
+  const list = (Array.isArray(values) ? values : [values]).map(Number);
+  if (list.length < 2) return formatValue(root, list[0]);
+  const prefix = unitText(root.getAttribute('data-prefix'), 'prefix');
+  const suffix = unitText(root.getAttribute('data-suffix'), 'suffix');
+  return `${prefix}${formatNumberOnly(root, list[0])} – ${formatNumberOnly(root, list[1])}${suffix}`;
 }
 
 function createVisualNode(mode = 'none', position = 'top') {
@@ -243,7 +381,15 @@ function bindSliderAccessibility(root, owner = root) {
         handle.setAttribute(name, value);
         next[name] = value;
       }
-    });
+    }); // The visible name of the field (C78: label above the slider, as every
+    // field) names a handle nothing else names.
+
+    const visibleName = root.getAttribute('data-labelledby');
+
+    if (visibleName && !handle.hasAttribute('aria-label') && !handle.hasAttribute('aria-labelledby')) {
+      handle.setAttribute('aria-labelledby', visibleName);
+      next['aria-labelledby'] = visibleName;
+    }
 
     if (isDisabledRoot(root)) {
       handle.setAttribute('aria-disabled', 'true');
@@ -256,6 +402,7 @@ function bindSliderAccessibility(root, owner = root) {
   sync();
   state.observer = new MutationObserver(sync);
   const ownerFilter = owner === root ? [...accessibleAttributes, ...handleLabelAttributes] : [...accessibleAttributes, 'lower-label', 'upper-label'];
+  ownerFilter.push('data-labelledby');
 
   if (owner === root) {
     state.observer.observe(root, {
@@ -269,7 +416,7 @@ function bindSliderAccessibility(root, owner = root) {
     });
     state.observer.observe(root, {
       attributes: true,
-      attributeFilter: [...handleLabelAttributes, 'disabled', 'class']
+      attributeFilter: [...handleLabelAttributes, 'data-labelledby', 'disabled', 'class']
     });
   }
 
@@ -320,8 +467,11 @@ function bindHandleLabels(root) {
   row.className = `sf-range-slider-labels sf-thumb sf-thumb--label-${mode} sf-range-slider-labels--${position}`; // Each handle exposes its exact value and units through ARIA already.
 
   row.setAttribute('aria-hidden', 'true');
-  const entries = getHandles(root).map(handle => {
-    const label = handle.querySelector(mode === 'tooltip' ? '.sf-tooltip' : '.sf-thumb-text');
+  const entries = getHandles(root).map((handle, index) => {
+    const label = handle.querySelector(mode === 'tooltip' ? '.sf-tooltip' : '.sf-thumb-text'); // The sheet shows a tooltip only while its own handle is dragged or
+    // keyboard-focused (C78), so each label knows its handle.
+
+    label.dataset.handle = String(index);
     const text = mode === 'tooltip' ? label.querySelector('.sf-tooltip-text') : label;
     row.append(label);
     return {
@@ -361,6 +511,7 @@ function bindHandleLabels(root) {
     }) => label.getBoundingClientRect().width);
     const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
     const plan = planLabelPositions(bounds.width, centers, sizes, gap);
+    row.classList.toggle('sf-range-slider-labels--merged', plan.merged);
 
     if (plan.merged) {
       entries[0].text.textContent = state.values.join(' – ');
@@ -426,6 +577,11 @@ function isDisabledRoot(root) {
   return root.hasAttribute('disabled') || root.classList.contains('disabled');
 }
 
+function isReadonlyRoot(root) {
+  if (typeof root?.hasAttribute !== 'function') return false;
+  return root.hasAttribute('readonly') || Boolean(root.classList?.contains?.('readonly')) || toBoolean(root.getAttribute('data-readonly'), false);
+}
+
 function createSliderOptions(root) {
   const {
     min,
@@ -443,11 +599,14 @@ function createSliderOptions(root) {
     },
     connect: getConnect(root, multiple),
     step: root.hasAttribute('data-step') && toNumber(root.getAttribute('data-step'), 0) > 0 ? toNumber(root.getAttribute('data-step'), 1) : undefined,
+    pageStep: toNumber(root.getAttribute('data-page-step'), 0) > 0 ? toNumber(root.getAttribute('data-page-step'), 0) : undefined,
     margin: multiple && root.hasAttribute('data-margin') && toNumber(root.getAttribute('data-margin'), 0) > 0 ? Math.min(max - min, toNumber(root.getAttribute('data-margin'), 0)) : undefined,
     range: {
       min,
       max
     },
+    readonly: isReadonlyRoot(root),
+    ticks: toBoolean(root.getAttribute('data-ticks'), false),
     keyboardSupport: !root.hasAttribute('data-keyboard') || toBoolean(root.getAttribute('data-keyboard'), true),
     cssPrefix: '',
     cssClasses: {
@@ -548,9 +707,14 @@ function bindRangeSlider(root, accessibilityOwner) {
       margin = 0
     } = slider.options;
     getHandles(root).forEach((node, index) => {
-      node.setAttribute('aria-valuenow', String(numericValues[index]));
-      node.setAttribute('aria-valuemin', String(index > 0 ? Math.max(range.min, numericValues[index - 1] + margin) : range.min));
-      node.setAttribute('aria-valuemax', String(index < numericValues.length - 1 ? Math.min(range.max, numericValues[index + 1] - margin) : range.max));
+      node.setAttribute('aria-valuenow', String(numericValues[index])); // Rounded to the step's digits, as the values are (S2): 0.2 + 0.1 is 0.3.
+
+      const digits = Math.max(getDecimalPlaces(slider.options.step ?? ''), getDecimalPlaces(range.min));
+
+      const bound = number => String(Number(Number(number).toFixed(Math.min(20, Math.max(digits, getDecimalPlaces(margin))))));
+
+      node.setAttribute('aria-valuemin', index > 0 ? bound(Math.max(range.min, numericValues[index - 1] + margin)) : String(range.min));
+      node.setAttribute('aria-valuemax', index < numericValues.length - 1 ? bound(Math.min(range.max, numericValues[index + 1] - margin)) : String(range.max));
     });
     updateHandleLabels(root, numericValues);
     dispatchSliderEvent(root, 'update', numericValues, {
@@ -686,7 +850,9 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createNativeSlider: () => (/* binding */ createNativeSlider)
+/* harmony export */   createNativeSlider: () => (/* binding */ createNativeSlider),
+/* harmony export */   decimalPlaces: () => (/* binding */ decimalPlaces),
+/* harmony export */   roundToDigits: () => (/* binding */ roundToDigits)
 /* harmony export */ });
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, Number(value)));
@@ -694,6 +860,25 @@ function clamp(value, min, max) {
 
 function numericList(value) {
   return (Array.isArray(value) ? value : [value]).map(Number);
+} // Digits after the point a number is written with: 0.1 has one, 2.5e-3 four,
+// 500 none. A value is rounded to the digits of its step and its minimum, so
+// three steps of 0.1 are 0.3, not 0.30000000000000004 (S2).
+
+
+function decimalPlaces(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text || !Number.isFinite(Number(text))) return 0;
+  const [coefficient, exponent = '0'] = text.split('e');
+  const fraction = coefficient.split('.')[1]?.length || 0;
+  return Math.min(20, Math.max(0, fraction - Number(exponent)));
+}
+function roundToDigits(value, digits) {
+  const rounded = Number(Number(value).toFixed(Math.min(20, Math.max(0, digits))));
+  return Object.is(rounded, -0) ? 0 : rounded;
+}
+
+function span(range) {
+  return range.max - range.min;
 }
 
 function createNode(tag, className) {
@@ -706,9 +891,16 @@ function createNativeSlider(root, options) {
   const classes = options.cssClasses;
   const range = options.range;
   const margin = Number(options.margin || 0);
-  const step = Number(options.step || 1);
+  const step = Number(options.step || 1); // PageUp, PageDown and Shift with an arrow move by the large step: ten
+  // steps unless page-step says otherwise, as sf-input-quantity (S4; APG,
+  // Radix, Carbon).
+
+  const pageStep = Number(options.pageStep) > 0 ? Number(options.pageStep) : step * 10;
+  const digits = Math.max(decimalPlaces(step), decimalPlaces(range.min));
   const listeners = new Map();
-  let disabled = false;
+  let disabled = false; // Read-only (C80): focusable and read out, but neither keys nor a pointer move it.
+
+  let readonly = Boolean(options.readonly);
   let values = numericList(options.start).map(value => clamp(value, range.min, range.max));
   root.classList.add(classes.target, classes.horizontal, options.direction === 'rtl' ? classes.textDirectionRtl : classes.textDirectionLtr);
   root.replaceChildren();
@@ -718,7 +910,23 @@ function createNativeSlider(root, options) {
   const connect = createNode('div', classes.connect);
   connects.append(connect);
   base.append(track, connects);
-  root.append(base);
+  root.append(base); // Ticks T1 (C80): a dot per step, at most twenty, over the rail and the fill.
+
+  const tickCount = span(range) / step;
+
+  if (options.ticks && Number.isFinite(tickCount) && tickCount >= 1 && tickCount <= 20) {
+    const ticks = createNode('div', 'sf-range-slider-ticks');
+    ticks.setAttribute('aria-hidden', 'true');
+
+    for (let index = 0; index <= Math.floor(tickCount + 1e-9); index += 1) {
+      const tick = createNode('span', 'sf-range-slider-tick');
+      tick.style.insetInlineStart = `${Math.min(100, index * step / span(range) * 100)}%`;
+      ticks.append(tick);
+    }
+
+    base.append(ticks);
+  }
+
   const handles = values.map((value, index) => {
     const origin = createNode('div', classes.origin);
     const handle = createNode('div', `${classes.handle} ${index === 0 ? classes.handleLower : classes.handleUpper}`);
@@ -741,14 +949,14 @@ function createNativeSlider(root, options) {
   };
 
   const boundsFor = index => ({
-    min: index > 0 ? values[index - 1] + margin : range.min,
-    max: index < values.length - 1 ? values[index + 1] - margin : range.max
+    min: index > 0 ? roundToDigits(values[index - 1] + margin, digits) : range.min,
+    max: index < values.length - 1 ? roundToDigits(values[index + 1] - margin, digits) : range.max
   });
 
   const normalize = (value, index) => {
     const bounds = boundsFor(index);
-    const stepped = range.min + Math.round((Number(value) - range.min) / step) * step;
-    return clamp(stepped, bounds.min, bounds.max);
+    const stepped = roundToDigits(range.min + Math.round((Number(value) - range.min) / step) * step, digits);
+    return roundToDigits(clamp(stepped, bounds.min, bounds.max), digits);
   };
 
   const render = () => {
@@ -763,6 +971,7 @@ function createNativeSlider(root, options) {
       handle.setAttribute('aria-valuemin', String(boundsFor(index).min));
       handle.setAttribute('aria-valuemax', String(boundsFor(index).max));
       handle.setAttribute('aria-valuetext', options.ariaFormat?.to?.(values[index]) || String(values[index]));
+      if (readonly) handle.setAttribute('aria-readonly', 'true');else handle.removeAttribute('aria-readonly');
     });
     const start = values.length > 1 ? percents[0] : options.connect === 'upper' ? percents[0] : 0;
     const end = values.length > 1 ? percents[1] : options.connect === false ? percents[0] : options.connect === 'upper' ? 100 : percents[0]; // connect: false draws no fill at all; it drew one from the start of the
@@ -789,10 +998,13 @@ function createNativeSlider(root, options) {
   };
 
   const beginPointer = event => {
-    if (disabled || event.button !== 0) return;
+    if (disabled || readonly || event.button !== 0) return;
     const value = valueFromPointer(event);
     const index = values.length === 1 || Math.abs(values[0] - value) <= Math.abs(values[1] - value) ? 0 : 1;
-    event.preventDefault();
+    event.preventDefault(); // Marks the handle being dragged: its value bubble shows only meanwhile (C78).
+
+    const dragged = handles[index].handle;
+    dragged.classList.add('sf-range-slider-handle--dragging');
     emit('start', index);
     setHandle(index, value);
 
@@ -800,6 +1012,7 @@ function createNativeSlider(root, options) {
 
     const end = next => {
       setHandle(index, valueFromPointer(next), true);
+      dragged.classList.remove('sf-range-slider-handle--dragging');
       emit('end', index);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', end);
@@ -815,17 +1028,21 @@ function createNativeSlider(root, options) {
   }, index) => handle.addEventListener('keydown', event => {
     if (disabled || options.keyboardSupport === false) return;
     const direction = options.direction === 'rtl' ? -1 : 1;
+    const by = event.shiftKey ? pageStep : step;
     const delta = {
-      ArrowRight: step * direction,
-      ArrowLeft: -step * direction,
-      ArrowUp: step,
-      ArrowDown: -step
+      ArrowRight: by * direction,
+      ArrowLeft: -by * direction,
+      ArrowUp: by,
+      ArrowDown: -by,
+      PageUp: pageStep,
+      PageDown: -pageStep
     }[event.key];
     let next = delta === undefined ? null : values[index] + delta;
     if (event.key === 'Home') next = boundsFor(index).min;
     if (event.key === 'End') next = boundsFor(index).max;
     if (next === null) return;
     event.preventDefault();
+    if (readonly) return;
     emit('start', index);
     setHandle(index, next, true);
     emit('end', index);
@@ -863,6 +1080,11 @@ function createNativeSlider(root, options) {
         handle.tabIndex = -1;
         handle.setAttribute('aria-disabled', 'true');
       });
+    },
+
+    setReadonly(next = true) {
+      readonly = Boolean(next);
+      render();
     },
 
     enable() {
@@ -917,14 +1139,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("68aa98f1301b");
 /* harmony import */ var _helpers_loaderDragState__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("870b5dfddc25");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c73b7ddd1da4");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("57a7b9f33b50");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c64f6025c3f7");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f6d198d7afd8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c73b7ddd1da4");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("57a7b9f33b50");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c64f6025c3f7");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f6d198d7afd8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__);
+
+
+
 
 
 
@@ -967,6 +1197,71 @@ function getValueHandleCount(value) {
   }
 
   return 1;
+} // label was how each handle showed its value (none | text | tooltip) until
+// 1.4.0; it is the visible name of the field now, as on every field (owner
+// decision C78), and that setting is value-display. Those three words in label
+// keep their old meaning until 2027-01-01 and are noted in SF.deprecations
+// (change journal attribute-slider-range-c78).
+
+
+const VALUE_DISPLAYS = ['none', 'text', 'tooltip'];
+
+function legacyValueDisplay(element) {
+  const label = String(element.getAttribute('label') ?? '').trim().toLowerCase();
+  return VALUE_DISPLAYS.includes(label) ? label : null;
+} // The marks of the scale, placed on the range: the ends (scale) or the
+// author's list "value:text,...", each at its share of the track.
+
+
+function scaleMarks(element) {
+  const min = Number(element.min ?? 0);
+  const max = Number(element.max ?? 100);
+  const span = max - min;
+  if (!(span > 0)) return [];
+  const raw = String(element.getAttribute('marks') ?? '').trim();
+  const list = raw ? raw.split(',').map(item => {
+    const at = item.indexOf(':');
+    const value = Number((at < 0 ? item : item.slice(0, at)).trim());
+    return {
+      value,
+      text: at < 0 ? null : item.slice(at + 1).trim()
+    };
+  }).filter(mark => Number.isFinite(mark.value) && mark.value >= min && mark.value <= max) : element.hasAttribute('scale') && element.getAttribute('scale') !== 'false' ? [{
+    value: min,
+    text: null
+  }, {
+    value: max,
+    text: null
+  }] : [];
+  return list.map(mark => ({ ...mark,
+    percent: (mark.value - min) / span * 100,
+    edge: mark.value === min ? 'start' : mark.value === max ? 'end' : ''
+  }));
+} // A number typed in the from/to field, read the way the slider writes it:
+// the locale's group marks and spaces go, its decimal mark (and the other of
+// «.» and «,» where the locale does not group with it) is a point. NaN for
+// text that is not a number.
+
+
+function parseTyped(text, locale) {
+  let group = ',';
+  let decimal = '.';
+
+  try {
+    const parts = new Intl.NumberFormat(locale || undefined).formatToParts(12345.6);
+    group = parts.find(part => part.type === 'group')?.value ?? group;
+    decimal = parts.find(part => part.type === 'decimal')?.value ?? decimal;
+  } catch {
+    /* the platform's default marks */
+  }
+
+  let value = String(text ?? '').replace(/[\s\u00a0\u202f]/gu, '').replace(/[\u2212\u2013]/gu, '-');
+  const groupMark = group.replace(/[\s\u00a0\u202f]/gu, '');
+  if (groupMark && groupMark !== decimal) value = value.split(groupMark).join('');
+  value = value.split(decimal).join('.');
+  if (decimal !== ',' && groupMark !== ',') value = value.split(',').join('.');
+  if (!/^-?\d*(?:\.\d*)?$/u.test(value) || !/\d/u.test(value)) return Number.NaN;
+  return Number(value);
 }
 
 function getSliderHandleCount(root) {
@@ -981,14 +1276,14 @@ function getSliderHandleCount(root) {
 // is prefix-text, and the old change names follow change.
 
 
-const RangeSliderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const RangeSliderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 }); // The class component's events, copied onto the host under their old method
 // names. Outside the interface: change is the host's own (sfEmit), and the
 // shim sends sf-range-slider-change and onSliderChange after it.
@@ -1125,10 +1420,38 @@ class SfRangeSlider extends RangeSliderElement {
 
   get keyboard() {
     return this.getBooleanAttr('keyboard', true);
-  }
+  } // The visible name above the slider (C78). A former value-display word is
+  // not a name.
+
 
   get label() {
-    return this.getAttribute('label') || 'none';
+    if (legacyValueDisplay(this)) return '';
+    return this.getAttribute('label') || '';
+  } // The three form sizes (S5): the slider row is the control height of the step.
+
+
+  get size() {
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_6__.fieldSize)(this.getAttribute('size') || '1', 'sf-slider-range');
+  }
+
+  get valueDisplay() {
+    const own = String(this.getAttribute('value-display') ?? '').trim().toLowerCase();
+    if (VALUE_DISPLAYS.includes(own)) return own;
+    const legacy = legacyValueDisplay(this);
+
+    if (legacy) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
+        component: 'sf-slider-range',
+        kind: 'attribute',
+        from: `label="${legacy}"`,
+        to: `value-display="${legacy}"`,
+        since: '2026-11-12',
+        remove_after: '2027-01-01'
+      });
+      return legacy;
+    }
+
+    return 'none';
   }
 
   get suffix() {
@@ -1141,10 +1464,6 @@ class SfRangeSlider extends RangeSliderElement {
 
   get upperLabel() {
     return this.getAttribute('upper-label') || '';
-  }
-
-  get decimals() {
-    return this.getAttribute('decimals') || '';
   }
 
   get tooltipPosition() {
@@ -1173,12 +1492,118 @@ class SfRangeSlider extends RangeSliderElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    const valueDisplay = this.valueDisplay;
+    const name = this.label;
     return this.createTemplateContext({ ...props,
       component: this,
       rootClass: this.getRootClass(),
       multiple: this.multiple,
-      start: this.initialValue
+      start: this.initialValue,
+      name,
+      nameId: name ? `${(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.instancePath)(this, {
+        kind: 'sf-range-slider'
+      }))}--name` : '',
+      valueDisplay,
+      size: this.size,
+      // The class draws a tooltip over each handle; the value as text sits at
+      // the end of the name line, drawn here (C78).
+      handleLabel: valueDisplay === 'tooltip' ? 'tooltip' : 'none',
+      outputText: this.outputText(),
+      scaleMarks: scaleMarks(this),
+      field: this.hasAttribute('field') && this.getAttribute('field') !== 'false',
+      fieldLabels: this.fieldLabels(),
+      fieldDecimal: String(this.step ?? '').includes('.') || Number(this.getAttribute('precision')) > 0,
+      ticks: this.hasAttribute('ticks') && this.getAttribute('ticks') !== 'false'
     });
+  } // Each number of the from/to field is named as its handle is: lower-label and
+  // upper-label, else the field's name or the host's aria-label with «от»/«до».
+
+
+  fieldLabels() {
+    const name = this.label || this.getAttribute('aria-label') || '';
+    if (!this.multiple) return [name];
+    const words = [this.sfWord?.('from') || 'от', this.sfWord?.('to') || 'до'];
+    return [this.lowerLabel, this.upperLabel].map((own, index) => own || [words[index], name].filter(Boolean).join(' '));
+  } // The numbers of the from/to field follow the handles; the box being typed in
+  // is left alone. The rulers beside each box hold the ends of the range in the
+  // slider's writing, so every box is as wide as the wider end: a value never
+  // outgrows its box (C80, acceptance R2). A ruler takes the box's text size,
+  // which core raises to 16px on a touch phone (touch_fields, no zoom on focus).
+
+
+  syncField(values) {
+    const root = this.getSliderRoot();
+    const inputs = this.querySelectorAll('.sf-range-slider-field-input');
+    if (!root || !inputs.length) return;
+    const list = values ?? String(this.value || '').split(',').map(Number).filter(Number.isFinite);
+    const ends = [this.min, this.max].map(bound => (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, bound));
+    this.querySelectorAll('.sf-range-slider-field-box').forEach(box => {
+      const input = box.querySelector('.sf-range-slider-field-input');
+      const size = input ? getComputedStyle(input).fontSize : '';
+      box.querySelectorAll('.sf-range-slider-field-ruler').forEach((ruler, index) => {
+        if (ruler.textContent !== ends[index]) ruler.textContent = ends[index];
+        if (size && getComputedStyle(ruler).fontSize !== size) ruler.style.fontSize = size;
+      });
+    });
+    inputs.forEach((input, index) => {
+      if (document.activeElement !== input && list[index] !== undefined) input.value = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, list[index]);
+    });
+  }
+
+  onFieldKeyDown(event, index) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    this.commitField(index);
+  } // Enter or leaving the box puts the typed number on the handle (C80): the
+  // slider admits it within range, step and the other handle, the box then shows
+  // what was admitted, and a person's change is a change.
+
+
+  commitField(index) {
+    const root = this.getSliderRoot();
+    const input = this.querySelectorAll('.sf-range-slider-field-input')[index];
+    if (!root || !input || this.disabled || this.readonly) return;
+    const typed = parseTyped(input.value, root.getAttribute('data-locale') || root.closest('[lang]')?.getAttribute('lang'));
+    const before = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.getRangeSliderValue)(root);
+    const current = Array.isArray(before) ? [...before] : [before];
+    if (Number.isFinite(typed)) current[index] = typed;
+    this.setValue(this.multiple ? current : current[0]);
+    const after = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.getRangeSliderValue)(root);
+    const values = Array.isArray(after) ? after : [after];
+    input.value = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, values[index]);
+
+    if (String(after) !== String(before)) {
+      this.syncOutput(values);
+      this.emitChange({
+        values,
+        value: this.multiple ? values : values[0],
+        handleCount: values.length,
+        handle: index
+      });
+    }
+  } // A mark without text of its own writes its number the slider's way.
+
+
+  syncScale() {
+    const root = this.getSliderRoot();
+    if (!root) return;
+    this.querySelectorAll('.sf-range-slider-scale-mark').forEach((mark, index) => {
+      const own = scaleMarks(this)[index];
+      if (own && own.text === null) mark.textContent = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, own.value);
+    });
+  } // The value as the name line writes it: «45 %», «5 000 – 20 000 ₽».
+
+
+  outputText(values) {
+    const root = this.getSliderRoot();
+    const list = values ?? String(this.value || '').split(',').map(Number).filter(Number.isFinite);
+    if (!root || !list.length) return '';
+    return (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderText)(root, list);
+  }
+
+  syncOutput(values) {
+    const output = this.querySelector('.sf-range-slider-output');
+    if (output) output.textContent = this.outputText(values);
   }
 
   template() {
@@ -1194,9 +1619,9 @@ class SfRangeSlider extends RangeSliderElement {
       return 'lit';
     }
 
-    const requiresRerender = changedAttributes.some(name => ['template', 'connected', 'min', 'max', 'start', 'multiple', 'step', 'margin', 'connect', 'keyboard', 'label', 'prefix-text', 'suffix', 'lower-label', 'upper-label', 'decimals', 'tooltip-position', 'text-position', 'label-position', 'root-class', // Disabled is drawn by the template from the setting (§5.3), not
+    const requiresRerender = changedAttributes.some(name => ['template', 'connected', 'min', 'max', 'start', 'multiple', 'step', 'page-step', 'margin', 'connect', 'keyboard', 'label', 'value-display', 'size', 'prefix-text', 'suffix', 'lower-label', 'upper-label', 'precision', 'grouping', 'locale', 'tooltip-position', 'text-position', 'label-position', 'root-class', // Disabled is drawn by the template from the setting (§5.3), not
     // toggled on the root by a script.
-    'disabled'].includes(name));
+    'disabled', 'readonly', 'ticks', 'scale', 'marks', 'field'].includes(name));
     return requiresRerender ? 'lit' : 'dom';
   }
 
@@ -1238,13 +1663,20 @@ class SfRangeSlider extends RangeSliderElement {
 
       if (this.disabled && this._boundRoot.noUiSlider) {
         this._boundRoot.noUiSlider.disable();
-      }
+      } // The first render had no slider to format with.
+
+
+      this.syncOutput();
+      this.syncScale();
+      this.syncField();
     }
 
     this.sfSyncForm();
   } // A form control (1.3.1, §17.1): the value a form gets is the one the slider
-  // shows, the number or both joined by a comma; nothing while disabled or
-  // without a name's form. The value written first is the one a reset puts back.
+  // shows; nothing while disabled. A range submits two entries under one name
+  // (price=5000&price=20000, as Radix and a pair of native inputs do: S3), so a
+  // server reads both without splitting a string. The value written first is
+  // the one a reset puts back.
 
 
   connectedCallback() {
@@ -1255,7 +1687,17 @@ class SfRangeSlider extends RangeSliderElement {
   sfFormValue() {
     if (this.disabled || this.sfFormDisabled) return null;
     const value = this.value;
-    return value === undefined || value === null ? null : String(value);
+    if (value === undefined || value === null) return null;
+    const parts = String(value).split(',').map(part => part.trim()).filter(part => part !== '');
+    const name = this.getAttribute('name') || '';
+
+    if (parts.length > 1 && name && typeof FormData === 'function') {
+      const data = new FormData();
+      parts.slice(0, 2).forEach(part => data.append(name, part));
+      return data;
+    }
+
+    return String(value);
   }
 
   formResetCallback() {
@@ -1332,6 +1774,8 @@ class SfRangeSlider extends RangeSliderElement {
       return;
     }
 
+    this.syncOutput(this.multiple ? values : values.slice(0, 1));
+    this.syncField(this.multiple ? values : values.slice(0, 1));
     const serialized = serializeValue(this.multiple ? values : values[0]);
 
     if ((this.getAttribute('value') || '') === serialized) {
@@ -1355,15 +1799,20 @@ class SfRangeSlider extends RangeSliderElement {
       value,
       handleCount,
       handle
-    } = event.detail || {}; // change keeps its native name (§8, §17.3).
-
-    this.sfEmit('change', {
+    } = event.detail || {};
+    this.emitChange({
       values,
       value,
       handleCount,
       handle
     });
-  };
+  }; // change keeps its native name (§8, §17.3); a drag, a key or the from/to
+  // field all send it from here, once per person's change.
+
+  emitChange(detail) {
+    this.sfEmit('change', detail);
+  }
+
   _handleSliderAlias = event => {
     const alias = sliderEventAliases[event.type];
 
@@ -1459,19 +1908,25 @@ class SfRangeSlider extends RangeSliderElement {
       value: this.value,
       multiple: this.multiple,
       step: this.step,
+      pageStep: this.pageStep,
       margin: this.margin,
       connect: this.connect,
       keyboard: this.keyboard,
       label: this.label,
+      valueDisplay: this.valueDisplay,
+      size: this.size,
       prefixText: this.prefixText,
       suffix: this.suffix,
       lowerLabel: this.lowerLabel,
       upperLabel: this.upperLabel,
-      decimals: this.decimals,
+      precision: this.precision,
+      grouping: this.grouping,
+      locale: this.locale,
       tooltipPosition: this.tooltipPosition,
       textPosition: this.textPosition,
       labelPosition: this.labelPosition,
       disabled: this.disabled,
+      readonly: this.readonly,
       rootClass: this.getRootClass()
     };
   }
@@ -1624,33 +2079,134 @@ function joinClasses(...tokens) {
 
 function valueOrNothing(value) {
   return value === '' || value === null || value === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(value);
+} // The field around the slider (C78): the visible name above, as every field's
+// label, with the value at the end of that line when value-display="text";
+// the slider's own track line under it. The class component draws the track
+// (component/range-slider); the name line belongs to the host.
+
+
+function renderHead(context) {
+  const showName = Boolean(context.name); // With the from/to field the numbers are in the field; the line keeps the name.
+
+  const showOutput = context.valueDisplay === 'text' && !context.field;
+  if (!showName && !showOutput) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-range-slider-head">
+            ${showName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name" id=${context.nameId}>${context.name}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${showOutput // Each handle reads its own value out (aria-valuetext); this is the sighted copy.
+  // A property, not a text part: the host rewrites the text as the
+  // handles move, and a text part's markers would go with it, so the
+  // next render (a setting changed after the first) had nowhere to write.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-output" aria-hidden="true" .textContent=${context.outputText ?? ''}></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+} // The scale under the track (C78, C80): the ends with scale, or the author's
+// marks ("1:плохо,3:нормально,5:отлично"; a mark without text writes its
+// number). Numbers are written by the host after the slider is bound, in the
+// slider's own language and digits.
+
+
+function renderScale(context) {
+  const marks = context.scaleMarks || [];
+  if (!marks.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-range-slider-scale" aria-hidden="true">
+            ${marks.map(mark => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+                    class=${joinClasses('sf-range-slider-scale-mark', mark.edge ? `sf-range-slider-scale-mark--${mark.edge}` : '')}
+                    style=${`inset-inline-start: ${mark.percent}%`}
+                    data-value=${String(mark.value)}
+                    .textContent=${mark.text ?? ''}
+            ></span>`)}
+        </div>
+    `;
+} // The from/to field (owner decision C80, #r2-fields): one field
+// «5 000 – 20 000 ₽» at the end of the track line, the field height of the
+// step, as a period is one field (C62). Typing a number and Enter (or leaving
+// the box) moves the handle; dragging rewrites the number. The numbers are
+// written by the host after the slider is bound.
+
+
+function renderField(context) {
+  if (!context.field) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const {
+    component
+  } = context; // Each box sits in a one-cell grid with two hidden rulers holding the ends
+  // of the range, written by the host: the cell is as wide as the wider end
+  // in the box's own font, and follows a late web font, a size or a density
+  // by layout alone. The box fills the cell (acceptance R2: 8ch clipped).
+
+  const input = index => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-box"
+        ><span class="sf-range-slider-field-ruler" aria-hidden="true"></span
+        ><span class="sf-range-slider-field-ruler" aria-hidden="true"></span
+        ><input
+            type="text"
+            size="1"
+            class="sf-range-slider-field-input"
+            data-handle=${String(index)}
+            inputmode=${context.fieldDecimal ? 'decimal' : 'numeric'}
+            autocomplete="off"
+            spellcheck="false"
+            aria-label=${context.fieldLabels[index] || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ?disabled=${context.disabled}
+            ?readonly=${context.readonly}
+            @focus=${event => event.target.select?.()}
+            @keydown=${event => component.onFieldKeyDown(event, index)}
+            @input=${event => event.stopPropagation()}
+            @change=${event => {
+    event.stopPropagation();
+    component.commitField(index);
+  }}
+    ></span>`;
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-range-slider-field">
+            ${context.prefixText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-unit" aria-hidden="true">${context.prefixText.trim()}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${input(0)}
+            ${context.multiple ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-dash" aria-hidden="true">–</span>${input(1)}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.suffix ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-unit" aria-hidden="true">${context.suffix.trim()}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </span>
+    `;
 }
 
 function renderRangeSliderTemplate(context) {
-  const rootClasses = joinClasses('sf-range-slider', 'flex-1', context.rootClass, context.disabled ? 'disabled' : '');
+  const groupClasses = joinClasses('sf-range-slider-group', `sf-range-slider-group--size-${context.size}`, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
+  const rootClasses = joinClasses('sf-range-slider', 'flex-1', `sf-range-slider--size-${context.size}`, context.rootClass, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div
-                class=${rootClasses}
-                style=${valueOrNothing(context.rootStyle)}
-                data-min=${valueOrNothing(context.min)}
-                data-max=${valueOrNothing(context.max)}
-                data-start=${valueOrNothing(context.start)}
-                data-multiple=${String(!!context.multiple)}
-                data-step=${valueOrNothing(context.step)}
-                data-margin=${valueOrNothing(context.margin)}
-                data-connect=${valueOrNothing(context.connect)}
-                data-keyboard=${String(!!context.keyboard)}
-                data-label=${valueOrNothing(context.label)}
-                data-prefix=${valueOrNothing(context.prefixText)}
-                data-suffix=${valueOrNothing(context.suffix)}
-                data-lower-label=${valueOrNothing(context.lowerLabel)}
-                data-upper-label=${valueOrNothing(context.upperLabel)}
-                data-decimals=${valueOrNothing(context.decimals)}
-                data-tooltip-position=${valueOrNothing(context.tooltipPosition)}
-                data-text-position=${valueOrNothing(context.textPosition)}
-                data-label-position=${valueOrNothing(context.labelPosition)}
-                ?disabled=${context.disabled}
-        ></div>
+        <div class=${groupClasses}>
+            ${renderHead(context)}
+            <div class="sf-range-slider-line">
+              <div class="sf-range-slider-track-column">
+                <div
+                        class=${rootClasses}
+                        style=${valueOrNothing(context.rootStyle)}
+                        data-min=${valueOrNothing(context.min)}
+                        data-max=${valueOrNothing(context.max)}
+                        data-start=${valueOrNothing(context.start)}
+                        data-multiple=${String(!!context.multiple)}
+                        data-step=${valueOrNothing(context.step)}
+                        data-page-step=${valueOrNothing(context.pageStep)}
+                        data-margin=${valueOrNothing(context.margin)}
+                        data-connect=${valueOrNothing(context.connect)}
+                        data-keyboard=${String(!!context.keyboard)}
+                        data-label=${valueOrNothing(context.handleLabel)}
+                        data-prefix=${valueOrNothing(context.prefixText)}
+                        data-suffix=${valueOrNothing(context.suffix)}
+                        data-lower-label=${valueOrNothing(context.lowerLabel)}
+                        data-upper-label=${valueOrNothing(context.upperLabel)}
+                        data-labelledby=${context.name ? context.nameId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        data-precision=${valueOrNothing(context.precision)}
+                        data-grouping=${context.grouping === false ? 'false' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        data-locale=${valueOrNothing(context.locale)}
+                        data-tooltip-position=${valueOrNothing(context.tooltipPosition)}
+                        data-label-position=${valueOrNothing(context.labelPosition)}
+                        data-ticks=${context.ticks ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        ?disabled=${context.disabled}
+                ></div>
+                ${renderScale(context)}
+              </div>
+              ${renderField(context)}
+            </div>
+        </div>
     `;
 }
 __webpack_async_result__();
@@ -1658,10 +2214,24 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1689,28 +2259,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "57a7b9f33b50"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"prefix","to":"prefix-text","kind":"setting","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","section":"§3.1, §16 item 26","note":"the old attribute and property write prefix-text; the property prefix is the browser\'s own (Element.prototype.prefix), so only the attribute is mapped"},{"from":"sf-range-slider-change","to":"change","kind":"event","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail"},{"from":"onSliderChange","to":"change","kind":"event","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail"},{"from":"sf-range-slider","to":"sf-slider-range","kind":"tag","component":"sf-slider-range","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-slider-range; sf-range-slider is a subclass defined beside it until the date"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"prefix","to":"prefix-text","kind":"setting","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","section":"§3.1, §16 item 26","note":"the old attribute and property write prefix-text; the property prefix is the browser\'s own (Element.prototype.prefix), so only the attribute is mapped"},{"from":"sf-range-slider-change","to":"change","kind":"event","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail"},{"from":"onSliderChange","to":"change","kind":"event","component":"sf-slider-range","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail"},{"from":"sf-range-slider","to":"sf-slider-range","kind":"tag","component":"sf-slider-range","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-slider-range; sf-range-slider is a subclass defined beside it until the date"},{"from":"decimals","to":"precision","kind":"setting","component":"sf-slider-range","since":"2026-11-12","remove_after":"2027-01-01","section":"§3.1, change journal attribute-slider-range-c78","note":"the old attribute writes precision, the name sf-input-quantity gives the same setting (S1); the class component still reads data-decimals until the date"},{"from":"label","to":"value-display","kind":"attribute","component":"sf-slider-range","since":"2026-11-12","remove_after":"2027-01-01","mode":"manifest-only","section":"§4.2, change journal attribute-slider-range-c78","note":"label is the visible name now (C78); its three former words still set value-display, read by the element itself until the date (no shim: the attribute keeps its name, only those values move)","shim":"none"}]}');
 
 /***/ },
 
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.3.1","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"decimals":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.4.1","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "c64f6025c3f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider","runtime":{"from":"from","to":"to"}}');
 
 /***/ },
 
 /***/ "f6d198d7afd8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер диапазона"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер диапазона","runtime":{"from":"от","to":"до"}}');
 
 /***/ }
 

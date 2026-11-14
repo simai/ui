@@ -5889,38 +5889,42 @@ function applyRememberedIconSubset({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3924cca3566b");
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
-/* harmony import */ var _core_modules_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6734a1a77ea7");
-/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("987c832cfe13");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9770341d4bfa");
-/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ff34a74152a4");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0730c3d86f4b");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("a30ed252d965");
-/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("43cada8855de");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("5b8371b87515");
-/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("1446153b1a96");
-/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("effedf2a2981");
-/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _text_fonts_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1d167187169d");
+/* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("364eb185ca94");
+/* harmony import */ var _core_modules_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6734a1a77ea7");
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("987c832cfe13");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9770341d4bfa");
+/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("32dfc4431a24");
+/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ff34a74152a4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("0730c3d86f4b");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("a30ed252d965");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("5b8371b87515");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("1446153b1a96");
+/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("effedf2a2981");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("6c7f357fe960");
+ // The text faces the page needs, started before anything else runs, so a
+// quick network brings Inter in before the first frame (core/js/text-fonts.js).
+
 
 
 
@@ -5971,7 +5975,7 @@ __webpack_require__.r(__webpack_exports__);
 
  // SF.format, before anything below can be asked to format.
 
-(0,_format_js__WEBPACK_IMPORTED_MODULE_18__.publishFormat)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
+(0,_format_js__WEBPACK_IMPORTED_MODULE_19__.publishFormat)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
 // core.js, holding the modules the Smart bundles are built against (they carry
 // no lit or smart-base of their own). Asked for by the bundles and by the
 // Loader as soon as it queues a Smart element. A page that included the script
@@ -5979,12 +5983,17 @@ __webpack_require__.r(__webpack_exports__);
 
 if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
-  const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
+  const SF = window.SF; // SF.deprecations.warn, the console switch for old names (a page sets it
+  // to true): there and false from the start, unless the page set it first.
+  // Core alone writes it, so the bundles' own copies of deprecations.js stay
+  // as they are.
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_25__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  if (SF.deprecations && !('warn' in SF.deprecations)) SF.deprecations.warn = false; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
+
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_26__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_28__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_29__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -6048,9 +6057,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_29__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -6136,10 +6145,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_26__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_27__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_27__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_28__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -6245,12 +6254,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   // them at once and is left alone, as it was.
 
   const holdUndefinedUntilDefined = () => {
-    if (window.SF_PRELOADED && Object.keys(window.SF_PRELOADED.modules || {}).length) {
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_30__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_30__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_31__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_31__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -6258,41 +6267,51 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_31__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_32__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_32__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
-    if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.createPreloaderContent)(cfg);
+    if (cfg.enabled === false || document.querySelector('.sf-loader')) return; // Preloaded modules draw their elements before this runs: nothing is
+    // left for a preloader to stand in for (input-choice audit 2026-11-11).
+
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) return;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
     let delayTimer = null;
+    let stopWatch = null; // Gone in the same frame: display:none on the element itself, so no
+    // transition or late sheet keeps it over the page (R216).
 
     const hide = () => {
+      stopWatch?.();
+      stopWatch = null;
+
       if (wrap) {
         wrap.classList.add('hidden');
+        wrap.style.display = 'none';
       }
     };
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
     const buildPreloader = () => {
       if (preloaderRun || document.querySelector('.sf-loader')) return; // A page with static markup or skeletons shows them, never the
-      // preloader over them (§5.4). Read when the preloader would show, after
-      // its delay, when the server's markup has been parsed.
+      // preloader over them (§5.4), nor over Smart elements already drawn.
+      // Read when the preloader would show, after its delay, when the
+      // server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_31__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -6314,7 +6333,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_31__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
+      // preloader over drawn content (R216, any site).
+
+      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.watchForContent)(() => {
+        preloaderRun = false;
+        stopAnimation();
+        hide();
+
+        if (window.SF_BOOT_CONFIG?.preloader) {
+          window.SF_BOOT_CONFIG.preloader.preloaderActive = false;
+        }
+      });
     };
 
     const cancelBuild = () => {
@@ -6351,7 +6381,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_31__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageShowsContent)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -7099,14 +7129,14 @@ const THEMES = ['theme-dark', 'theme-light'];
  * longer different is taken back, so a host moved to another area takes that
  * area's values.
  */
-// The density a host stands in (C22; core/js/density.js says the same): the
-// nearest region's, or "normal" under an explicit size. Written here, not
-// imported: this module is loaded on its own (shared runtime, tests).
+// The density a host stands in (C22, C79; core/js/density.js says the same):
+// the nearest region's -- an explicit size follows its region since C79.
+// Written here, not imported: this module is loaded on its own (shared
+// runtime, tests).
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -7850,15 +7880,23 @@ __webpack_require__.r(__webpack_exports__);
 // corner of its own, for its own time -- so messages turned up anywhere and
 // one on top of another (owner, 2026-10-13). Now there is one place for them.
 //
-// SF.notify({status, title, text, action, duration, source, key}), or a string as
-// the text, shows a toast
-// in the page's notification area and says so with the `sf-notification` event
-// on the document, which a notification centre (Larena's) records. The area
-// lives in the top layer, at one edge of the window; messages stack with a gap,
-// at most four at a time and the rest waiting their turn; the same message
-// shown again counts up instead of stacking twice; a timer pauses while the
-// pointer or the focus is on its toast; an error is announced at once, the rest
-// politely. The toast is the toast component, fetched the first time.
+// SF.notify({status, title, text, action, actions, duration, source, key}), or a
+// string as the text, shows a toast in the page's notification area and says so
+// with the `sf-notification` event on the document, which a notification centre
+// (Larena's) records. The area lives in the top layer, at one edge of the
+// window; at most four messages at a time and the rest waiting their turn; the
+// same message shown again counts up instead of stacking twice; a timer pauses
+// while the pointer or the focus is on its toast; an error is announced at
+// once, the rest politely. The toast is the toast component, fetched the first
+// time.
+//
+// The messages of a corner are a stack (owner decision C50, 2026-11-10): the
+// newest in front, the two before it peeking out behind it by the area's gap
+// (12; compact and phone 8), each a step narrower (5 %); the stack opens into
+// the list on hover, focus and tap, and every timer in it stands while it is
+// open; Escape closes the message in focus and moves the focus to the next.
+// The list of earlier pairs, every message whole with a gap, is a setting:
+// SF.notifications.configure({layout: 'list'}).
 
 
 const NOTIFY_TEXT = {
@@ -7876,17 +7914,25 @@ const ICONS = {
   warning: 'warning',
   error: 'error',
   neutral: ''
-}; // Long enough to read a sentence; an error stays a little longer. 0 keeps a
-// message until it is closed.
+}; // Long enough to read a sentence. 0 keeps a message until it is closed: an
+// error or a warning always stays until a person closes it (owner decision
+// C114 (6), NS-2, WCAG 2.2.1), whatever duration it is given; it was 10 s and
+// 8 s. The class toast holds the same rule (component/toast, readDuration).
 
 const DURATIONS = {
   neutral: 5000,
   info: 5000,
   success: 5000,
-  warning: 8000,
-  error: 10000
+  warning: 0,
+  error: 0
 };
+const STAYS = new Set(['warning', 'error']);
 const PLACEMENTS = new Set(['top-start', 'top-end', 'bottom-start', 'bottom-end']);
+const LAYOUTS = new Set(['stack', 'list']); // The front message and the two before it show when the stack is closed (C50);
+// a fourth waits hidden behind them and shows when it opens.
+
+const STACK_LAYERS = 3;
+const STACK_STEP = 0.05;
 const state = {
   region: null,
   shown: [],
@@ -7894,8 +7940,133 @@ const state = {
   history: [],
   max: 4,
   placement: 'bottom-end',
-  counter: 0
+  layout: 'stack',
+  counter: 0,
+  // Why the stack is open: the pointer over it, the focus in it, a tap on it.
+  hover: false,
+  focus: false,
+  pinned: false,
+  open: false,
+  // Where the focus came from, to go back to when the last message closes.
+  returnFocus: null,
+  frame: 0,
+  resize: null
 };
+
+const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false; // The messages on view, newest first, without the ones leaving.
+
+
+function onView() {
+  return state.shown.map(entry => entry.toast).filter(toast => toast?.isConnected && !toast.classList.contains('closing')).reverse();
+}
+
+function timers(toast, reason, stand) {
+  const api = globalThis.SF?.Toast;
+  if (stand) api?.pause?.(toast, reason);else api?.resume?.(toast, reason);
+}
+
+function clearStack(toast) {
+  for (const property of ['transform', 'clipPath', 'zIndex']) toast.style[property] = '';
+
+  delete toast.dataset.stackLayer;
+} // Where every message of the stack stands. Heights are the boxes' own
+// (offsetHeight ignores the transform); a message behind keeps its height and
+// is clipped to the front one's, so its top edge alone shows.
+
+
+function layout() {
+  state.frame = 0;
+  const area = state.region;
+  if (!area) return;
+  const toasts = onView();
+  area.dataset.layout = state.layout;
+
+  if (state.layout !== 'stack') {
+    area.style.blockSize = '';
+    area.removeAttribute('data-expanded');
+    toasts.forEach(toast => {
+      clearStack(toast);
+      timers(toast, 'stack', false);
+      timers(toast, 'hidden', false);
+    });
+    return;
+  }
+
+  const open = state.open;
+  area.toggleAttribute('data-expanded', open);
+  const top = state.placement.startsWith('top');
+  const gap = Number.parseFloat(globalThis.getComputedStyle(area).rowGap) || 0;
+  const heights = toasts.map(toast => toast.offsetHeight);
+  const front = heights[0] ?? 0;
+  let reach = 0;
+  toasts.forEach((toast, at) => {
+    const layer = Math.min(at, STACK_LAYERS - 1);
+    const hidden = !open && at >= STACK_LAYERS; // How far the message moves away from the edge it stands on.
+
+    let away = reach;
+    let scale = 1;
+    let clip = 0;
+    if (open) reach += heights[at] + gap;else {
+      away = front + gap * layer - heights[at];
+      scale = 1 - STACK_STEP * layer;
+      clip = Math.max(0, heights[at] - front);
+    } // A message coming in starts outside the window's edge (C50): its own
+    // height and the area's distance from that edge past where it will stand.
+
+    if (toast.dataset.stackEntering !== undefined) away = -(heights[at] + edgeDistance(area, top));
+    toast.style.transform = `translateY(${top ? away : -away}px) scale(${scale})`;
+    toast.style.clipPath = clip ? top ? `inset(${clip}px 0 0 0)` : `inset(0 0 ${clip}px 0)` : '';
+    toast.style.zIndex = String(toasts.length - at);
+    if (hidden) toast.dataset.stackLayer = 'hidden';else if (!open && at > 0) toast.dataset.stackLayer = 'behind';else delete toast.dataset.stackLayer;
+    timers(toast, 'stack', open);
+    timers(toast, 'hidden', hidden);
+  });
+  const layers = Math.min(toasts.length, STACK_LAYERS);
+  const size = open ? Math.max(0, reach - gap) : toasts.length ? front + gap * (layers - 1) : 0;
+  area.style.blockSize = `${size}px`;
+} // How far the area stands from the window edge it grows from.
+
+
+function edgeDistance(area, top) {
+  const box = area.getBoundingClientRect();
+  return Math.max(0, top ? box.top : (globalThis.innerHeight || 0) - box.bottom);
+}
+
+function layoutSoon() {
+  if (state.frame) return;
+  state.frame = globalThis.requestAnimationFrame?.(layout) ?? setTimeout(layout, 16);
+}
+
+function setOpen() {
+  const open = state.layout === 'stack' && onView().length > 0 && (state.hover || state.focus || state.pinned);
+  if (open === state.open) return;
+  state.open = open;
+  layout();
+} // Escape closes the message in focus and hands the focus to the next one, or
+// back to where it came from when none is left (C50).
+
+
+function closeFocused(event) {
+  if (event.key !== 'Escape' || event.defaultPrevented) return;
+  const toasts = onView();
+  const toast = document.activeElement?.closest?.('.sf-toast');
+  const at = toasts.indexOf(toast);
+  if (at === -1) return;
+  event.preventDefault();
+  globalThis.SF?.Toast?.dismiss?.(toast);
+  const rest = onView();
+  const next = rest[Math.min(at, rest.length - 1)];
+  const target = next?.querySelector('[data-close], a[href], button:not(:disabled)');
+
+  if (target) {
+    target.focus();
+    return;
+  }
+
+  const back = state.returnFocus;
+  state.returnFocus = null;
+  if (back?.isConnected && typeof back.focus === 'function') back.focus();else toast.querySelector(':focus')?.blur?.();
+}
 
 function toastApi() {
   return globalThis.SF?.Toast?.create ? globalThis.SF.Toast : null;
@@ -7936,9 +8107,95 @@ function region() {
   area.addEventListener('sf-toast-action', event => {
     const entry = state.shown.find(item => item.toast === event.detail?.toast);
     if (!entry) return;
-    entry.options.action?.onSelect?.(entry.record);
+    const action = entry.actions.find(one => one.id === event.detail?.action) ?? entry.actions[0];
+    action?.onSelect?.(entry.record);
     globalThis.SF?.Toast?.dismiss?.(entry.toast);
+  }); // A mouse or a pen over the stack opens it; a touch has no hover, so a tap
+  // on it opens it until a tap elsewhere (C50).
+
+  area.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'touch') return;
+    state.hover = true;
+    setOpen();
+  }); // The gaps of an open stack take no pointer (they would swallow the page's
+  // clicks), so the pointer in one has left the area's messages but not the
+  // area: the stack stays open while the pointer is inside the area's box and
+  // closes when it leaves it. Closing on the gap itself moved the messages
+  // under a resting pointer, which opened it again, over and over.
+
+  let watching = null;
+
+  const stopWatching = () => {
+    if (watching) document.removeEventListener('pointermove', watching, true);
+    watching = null;
+  };
+
+  const inside = event => {
+    const box = area.getBoundingClientRect();
+    return event.clientX >= box.left && event.clientX < box.right && event.clientY >= box.top && event.clientY < box.bottom;
+  };
+
+  const leave = () => {
+    stopWatching();
+    state.hover = false;
+    setOpen();
+  };
+
+  area.addEventListener('pointerover', stopWatching);
+  area.addEventListener('pointerleave', event => {
+    if (event.pointerType === 'touch') return;
+    stopWatching();
+
+    if (!state.open || !inside(event)) {
+      leave();
+      return;
+    }
+
+    watching = move => {
+      if (move.pointerType === 'touch' || inside(move)) return;
+      leave();
+    };
+
+    document.addEventListener('pointermove', watching, true);
   });
+  let touched = false;
+  area.addEventListener('pointerdown', event => {
+    touched = event.pointerType === 'touch';
+  });
+  area.addEventListener('click', event => {
+    if (!touched || event.target?.closest?.('a[href], button')) return;
+    state.pinned = true;
+    setOpen();
+  });
+  area.addEventListener('focusin', event => {
+    if (!area.contains(event.relatedTarget)) state.returnFocus = event.relatedTarget ?? null;
+    state.focus = true;
+    setOpen();
+  });
+  area.addEventListener('focusout', event => {
+    if (area.contains(event.relatedTarget)) return;
+    state.focus = false;
+    setOpen();
+  });
+  area.addEventListener('keydown', closeFocused);
+
+  for (const politeness of ['polite', 'assertive']) {
+    const live = document.createElement('div');
+    live.className = 'sf-notifications-live sr-only';
+    live.dataset.live = politeness;
+    live.setAttribute('aria-live', politeness);
+    live.setAttribute('aria-atomic', 'true');
+    live.setAttribute('role', politeness === 'assertive' ? 'alert' : 'status');
+    area.append(live);
+  }
+
+  document.addEventListener('pointerdown', event => {
+    if (!state.pinned || area.contains(event.target)) return;
+    state.pinned = false;
+    setOpen();
+  }, true);
+  if (typeof ResizeObserver === 'function') state.resize = new ResizeObserver(layoutSoon);
+  area.dataset.layout = state.layout;
   document.body.append(area);
   state.region = area;
   return area;
@@ -7975,13 +8232,158 @@ function hideRegionWhenEmpty() {
   if (typeof area.hidePopover === 'function' && area.matches(':popover-open')) area.hidePopover();
   (0,_layer_stack__WEBPACK_IMPORTED_MODULE_1__.closeLayer)(area, {
     restoreFocus: false
-  });
+  }); // An empty area is no longer under the pointer, in focus or tapped open.
+
+  state.hover = false;
+  state.focus = false;
+  state.pinned = false;
+  state.open = false;
+  layout();
 }
 
 function release(entry) {
   state.shown = state.shown.filter(item => item !== entry);
+  if (entry.toast) state.resize?.unobserve(entry.toast);
   const next = state.waiting.shift();
   if (next) display(next);else setTimeout(hideRegionWhenEmpty, 0);
+
+  if (!onView().length) {
+    state.open = false;
+  }
+
+  layout();
+} // The actions a message offers (C50, C126 (1)): every action is a button; one
+// light navigation action is the action button drawn as a link, and undo,
+// retry, extend and two actions are buttons (C35, C46). With the link the
+// other actions do not apply.
+
+
+function actionsOf(options) {
+  const list = Array.isArray(options.actions) ? options.actions : options.action ? [options.action] : [];
+  return list.filter(one => one && String(one.label ?? '').trim()).slice(0, 2).map((one, at) => ({ ...one,
+    label: String(one.label).trim(),
+    id: String(one.id ?? (at ? `action-${at + 1}` : 'action'))
+  }));
+} // Every message is said through the area's live copy once, when it arrives,
+// whatever slot it takes (M2: the fourth of a stack is hidden and was never in
+// the tree while three were on view) -- one waiting its turn behind four too.
+// An error is said at once, the rest politely. The copy is visually hidden and
+// written after a frame, so a live region already in the tree changes and is
+// read; messages arriving in the same frame are said together, none lost.
+
+
+const pendingWords = new WeakMap();
+
+function announce(entry) {
+  if (entry.announced) return;
+  entry.announced = true;
+  const {
+    record
+  } = entry;
+  const area = region();
+  const live = area.querySelector(record.status === 'error' ? '.sf-notifications-live[data-live="assertive"]' : '.sf-notifications-live[data-live="polite"]');
+  if (!live) return;
+  const words = [record.title, record.text].filter(Boolean).join('. ');
+  const pending = pendingWords.get(live);
+
+  if (pending) {
+    pending.push(words);
+    return;
+  }
+
+  pendingWords.set(live, [words]);
+  live.textContent = '';
+
+  const write = () => {
+    live.textContent = pendingWords.get(live).join(' ');
+    pendingWords.delete(live);
+  };
+
+  if (globalThis.requestAnimationFrame) globalThis.requestAnimationFrame(write);else setTimeout(write, 16);
+} // The toast's script can be there before its sheet: drawn meanwhile, a message
+// stood unstyled in the middle of the window and jumped into its corner. The
+// area waits hidden until the toast sheet is applied to it. An open popover is
+// already position: fixed by the browser's own style, so the area is known
+// placed by a value only the toast sheet gives it: it takes no pointer.
+// The first message also waits for its parts (the icon, the close button,
+// their utilities): the Loader found them only after its 100 ms watch, and the
+// message changed height while it slid in, a 21 px step back. They are asked
+// for at once and the message shows when every sheet and font is in, at most
+// two seconds.
+//
+// Every message raised while a wait runs joins it (T1, C50 acceptance r3): two
+// messages of one task found each other connected, so neither was the first;
+// the second did not wait, showed the area unstyled and opaque, and the first
+// jumped 408-434 px into place. A message is the first when it finds no
+// settled message on view, and the area shows when the one wait ends.
+
+
+function areaPlaced(area) {
+  const style = globalThis.getComputedStyle(area);
+  return style.position === 'fixed' && style.pointerEvents === 'none';
+} // A stylesheet link that will never give a sheet -- switched off, or answered
+// with an error -- is not waited for: one broken link held the first message
+// for the whole two seconds (C50 acceptance r3, N3).
+
+
+const failedSheets = new WeakSet();
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('error', event => {
+    if (event.target?.localName === 'link') failedSheets.add(event.target);
+  }, true);
+}
+
+function sheetPending(link) {
+  if (link.sheet || link.disabled || failedSheets.has(link)) return false;
+  const entry = globalThis.performance?.getEntriesByName?.(link.href, 'resource')?.at?.(-1);
+  return !(entry?.responseStatus >= 400);
+}
+
+let areaWait = null;
+let areaWaitFirst = false;
+
+function sheetApplied(area) {
+  if (areaWait) {
+    // A message joining the first wait has parts of its own (buttons, say):
+    // the Loader is asked for them too, and the wait counts their sheets.
+    if (areaWaitFirst) globalThis.SF?.Loader?.scanDom?.(area);
+    return areaWait;
+  }
+
+  const settled = state.shown.some(entry => entry.settled && entry.toast?.isConnected);
+  if (settled && areaPlaced(area)) return Promise.resolve();
+  areaWaitFirst = !settled;
+  areaWait = waitForSheets(area, areaWaitFirst).finally(() => {
+    areaWait = null;
+  });
+  return areaWait;
+}
+
+async function waitForSheets(area, first) {
+  const fonts = globalThis.document?.fonts;
+  if (first) globalThis.SF?.Loader?.scanDom?.(area);
+
+  const sheetsIn = () => ![...document.querySelectorAll('link[rel="stylesheet"]')].some(sheetPending);
+
+  const ready = () => areaPlaced(area) && (!fonts || fonts.status === 'loaded') && sheetsIn(); // Laid out, the message asks for its fonts.
+
+
+  void area.offsetHeight;
+  area.style.visibility = 'hidden';
+  const started = Date.now(); // Ready three checks in a row: the sheets the scan asked for are linked a
+  // frame after it. A later message finds its parts in: it waits only for
+  // the sheet that places the area (it stood two frames at its place and then
+  // waited for sheets of other parts of the page, out of sight but late).
+
+  let calm = 0;
+
+  while (Date.now() - started < 2000) {
+    await new Promise(resolve => setTimeout(resolve, 16));
+    void area.offsetHeight;
+    calm = (first ? ready() : areaPlaced(area)) ? calm + 1 : 0;
+    if (calm >= (first ? 3 : 1)) break;
+  }
 } // The slot is taken at once and the toast drawn when its component is there:
 // taken after the fetch, every message raised meanwhile found the area empty
 // and all of them were shown, the same one twice.
@@ -7993,18 +8395,30 @@ async function display(entry) {
   if (!api || !state.shown.includes(entry)) return;
   const {
     record,
-    options
+    options,
+    actions
   } = entry;
+  const link = actions.length === 1 && (actions[0].href || actions[0].kind === 'link') ? actions[0] : null;
   const toast = api.create({
     status: record.status,
     icon: options.icon ?? ICONS[record.status],
     title: record.title,
     supportingText: record.text,
-    actionText: options.action?.label ?? '',
-    action: options.action ? options.action.id ?? 'action' : '',
+    link: link ? {
+      text: link.label,
+      href: link.href ?? '',
+      action: link.id,
+      target: link.target ?? ''
+    } : null,
+    actions: link ? [] : actions.map(one => ({
+      text: one.label,
+      action: one.id
+    })),
     closable: true,
     duration: options.duration,
-    role: record.status === 'error' ? 'alert' : 'status'
+    // Not a live region of its own: the area's live copy says every message
+    // (announce), the one behind the stack too.
+    role: ''
   });
   toast.dataset.sfNotification = record.id;
   if (entry.count > 1) toast.dataset.count = String(entry.count);
@@ -8012,14 +8426,50 @@ async function display(entry) {
   showRegion(); // The newest at the edge the area grows from: nearest the edge it sits on.
 
   const area = region();
-  if (state.placement.startsWith('top')) area.prepend(toast);else area.append(toast);
+  const stack = state.layout === 'stack' && !reducedMotion(); // In a stack the newest comes in from outside the edge and fades in; the
+  // first frame stands it there, the next lets it move (no jump: every move
+  // is a transition from where the message stood).
+  // layout() reads every height, and that read commits the styles: the
+  // message is laid at its start outside the edge with no transition, the
+  // start committed, and only then let move (M1: it was committed at its
+  // final place first and dipped 3.4 px back to it).
+
+  if (stack) {
+    toast.dataset.stackEntering = '';
+    toast.style.transition = 'none';
+  } // In a stack the newest is first in the focus order, then the older ones
+  // (C50 call): its place is the transform's, so the document order is free.
+
+
+  if (state.layout === 'stack' || state.placement.startsWith('top')) area.prepend(toast);else area.append(toast);
+  state.resize?.observe(toast);
+  await sheetApplied(area);
+  if (!state.shown.includes(entry)) return;
+  entry.settled = true;
+  area.style.visibility = '';
+  announce(entry);
+  layout();
+
+  if (stack) {
+    void toast.offsetHeight;
+    toast.style.transition = '';
+
+    const settle = () => {
+      delete toast.dataset.stackEntering;
+      layout();
+    };
+
+    const frame = globalThis.requestAnimationFrame;
+    if (frame) frame(() => frame(settle));else setTimeout(settle, 32);
+  }
 }
 
 function normalise(options) {
   const status = STATUSES.has(options.status) ? options.status : 'neutral';
   const title = String(options.title ?? '').trim();
   const text = String(options.text ?? '').trim();
-  const duration = Number.isFinite(Number(options.duration)) ? Math.max(0, Number(options.duration)) : DURATIONS[status];
+  const given = Number.isFinite(Number(options.duration)) ? Math.max(0, Number(options.duration)) : DURATIONS[status];
+  const duration = STAYS.has(status) ? 0 : given;
   return {
     status,
     title,
@@ -8085,7 +8535,9 @@ function notify(input = {}) {
     if (repeated.toast) {
       repeated.toast.dataset.count = String(repeated.count);
       globalThis.SF?.Toast?.unbind?.(repeated.toast);
-      globalThis.SF?.Toast?.bind?.(repeated.toast);
+      globalThis.SF?.Toast?.bind?.(repeated.toast); // Bound again, its timer starts over: an open stack stands it again.
+
+      layout();
     }
 
     return {
@@ -8100,10 +8552,16 @@ function notify(input = {}) {
     options: { ...options,
       duration
     },
+    actions: actionsOf(options),
     count: 1,
     toast: null
   };
-  if (state.shown.length >= state.max) state.waiting.push(entry);else display(entry);
+
+  if (state.shown.length >= state.max) {
+    state.waiting.push(entry);
+    announce(entry);
+  } else display(entry);
+
   return handle;
 }
 
@@ -8125,12 +8583,16 @@ function close(id) {
 
   return globalThis.SF?.Toast?.dismiss?.(entry.toast) ?? false;
 }
-/** Where the area sits and how many messages it shows at once. */
+/**
+ * Where the area sits, how many messages it shows at once and how they stand:
+ * 'stack' (the default, C50) or 'list'.
+ */
 
 
 function configureNotifications({
   placement,
-  max
+  max,
+  layout: arrangement
 } = {}) {
   if (PLACEMENTS.has(placement)) {
     state.placement = placement;
@@ -8138,9 +8600,17 @@ function configureNotifications({
   }
 
   if (Number.isInteger(max) && max > 0) state.max = max;
+
+  if (LAYOUTS.has(arrangement) && arrangement !== state.layout) {
+    state.layout = arrangement;
+    if (arrangement !== 'stack') state.open = false;else setOpen();
+    layout();
+  }
+
   return {
     placement: state.placement,
-    max: state.max
+    max: state.max,
+    layout: state.layout
   };
 }
 
@@ -9427,9 +9897,15 @@ function inTopLayer(element) {
 // the host's variables, theme, lang, dir and density by plain inheritance --
 // what a body portal has to carry by hand (carryLayerOrigin). A surface the
 // component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
-// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
-// layer is left as it is; a browser without popovers keeps the fixed panel in
-// place, placed against its containing block.
+// sf-input-lookup, dropdown lists) is left as it is; a browser without
+// popovers keeps the fixed panel in place, placed against its containing block.
+//
+// A surface inside another top-layer surface -- a tooltip, a dropdown or a
+// nested popover in an open sf-popover, a modal dialog -- is lifted too, and
+// so stands above its parent. Left inside it, it was a fixed box in the
+// parent's stacking context, painted under the parent's later content: a
+// tooltip in an open popover hid under the next field's label (C59 S1
+// acceptance D1). Shown after its parent, it is drawn over it.
 //
 // The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
 // and CanvasText, overflow auto) is taken back by a rule of no specificity in
@@ -9464,11 +9940,7 @@ function adoptLiftedRule(floating) {
 
 function liftable(floating) {
   if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
-  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
-
-  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
-
-  return true;
+  return !floating.hasAttribute('popover') && !inTopLayer(floating);
 }
 /** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
 
@@ -9499,6 +9971,38 @@ function liftToTopLayer(floating) {
       floating.removeAttribute(LIFTED);
     }
   };
+} // The scroll positions inside a floating surface (the surface itself and every
+// box in it that is scrolled), to be put back after a measurement that lifted
+// its height cap. Only boxes away from their start are kept.
+
+function scrollOffsets(floating) {
+  const found = [];
+
+  const keep = element => {
+    if (element.scrollTop || element.scrollLeft) found.push([element, element.scrollTop, element.scrollLeft]);
+  };
+
+  keep(floating);
+
+  for (const element of floating.querySelectorAll('*')) keep(element);
+
+  return found;
+} // Put back at once: the Framework sheet makes every box scroll smoothly
+// (* {scroll-behavior: smooth}, core scroll), and an assigned scrollTop glided
+// from the start the measurement threw it to. After a page scroll the list ran
+// 0 -> 800 over half a second and read 784 when the probe looked; a reposition
+// during the glide kept the value it had reached (R171 follow-up, 2026-11-12).
+
+
+function restoreScrollOffsets(found) {
+  for (const [element, top, left] of found) {
+    if (!element.isConnected) continue;
+    if (element.scrollTop !== top || element.scrollLeft !== left) element.scrollTo({
+      top,
+      left,
+      behavior: 'instant'
+    });
+  }
 }
 
 function fixedContainingBlock(element) {
@@ -9538,6 +10042,19 @@ function anchorReference(element) {
     }
 
   };
+} // data-sf-density on the root or on a region restates the space tokens; one
+// attribute filter, so nothing else on the page wakes it.
+
+function watchDensity(doc, run) {
+  const view = doc?.defaultView;
+  if (typeof view?.MutationObserver !== 'function') return () => {};
+  const observer = new view.MutationObserver(() => run());
+  observer.observe(doc.documentElement, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['data-sf-density']
+  });
+  return () => observer.disconnect();
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -9550,6 +10067,7 @@ function anchorReference(element) {
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
+
 
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
@@ -9620,14 +10138,21 @@ function anchor(reference, floating, options = {}) {
   //   content does not change by scrolling; when it does, its size changes
   //   and that is a full fit), and max-height is not reset to read it.
   // - Inline styles and data-sf-side are written only when they change.
+  // A density change (data-sf-density on the root or a region) restates
+  // the space tokens without resizing the window, and the gap stayed the old
+  // one until the panel was opened again (C59 S1 acceptance M1). The key also
+  // carries the computed values of the tokens the lengths are written with: a
+  // read of a clean style, no probe and no restyle.
 
+  const tokens = [...new Set([settings.offset, settings.padding, settings.alignmentOffset].filter(value => typeof value === 'string').flatMap(value => [...value.matchAll(/var\(\s*(--(?:\\.|[^\s,)\\])+)/gu)].map(match => match[1].replace(/\\(.)/gu, '$1'))))];
   let lengths = null;
 
   const lengthsNow = () => {
-    const key = `${window.innerWidth}x${window.innerHeight}`;
+    const context = reference.parentElement;
+    const values = tokens.length && context?.isConnected ? tokens.map(name => getComputedStyle(context).getPropertyValue(name).trim()).join('|') : '';
+    const key = `${window.innerWidth}x${window.innerHeight}|${values}`;
 
     if (!lengths || lengths.key !== key) {
-      const context = reference.parentElement;
       lengths = {
         key,
         gap: resolveLength(settings.offset, context),
@@ -9646,6 +10171,32 @@ function anchor(reference, floating, options = {}) {
   };
 
   const run = async full => {
+    // Measuring the natural height takes the cap off for a moment: a list
+    // that scrolls inside the panel stops overflowing, and the browser puts
+    // its scroll back to the start. Every reposition that measured -- one per
+    // wheel step for a dropdown that follows the page's scroll in capture --
+    // threw the list back to its top, so it never moved and shook in place
+    // (owner R171, 2026-11-12), and a list scrolled to a keyboard-focused
+    // option jumped back to its first row (keyboard reveal). Only a fit that
+    // takes the cap off (a full fit, or the first) can clamp the scroll; a
+    // light fit keeps the cap and needs nothing put back. What was scrolled
+    // is put back once the cap is, and before onPosition, so a component that
+    // scrolls there has the last word.
+    let scrolled = settings.fitHeight && (full || !measures) ? scrollOffsets(floating) : null;
+
+    const putBack = () => {
+      if (scrolled) restoreScrollOffsets(scrolled);
+      scrolled = null;
+    };
+
+    try {
+      return await place(full, putBack);
+    } finally {
+      putBack();
+    }
+  };
+
+  const place = async (full, putBack) => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
@@ -9770,6 +10321,7 @@ function anchor(reference, floating, options = {}) {
 
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
     if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
+    putBack();
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -9828,7 +10380,8 @@ function anchor(reference, floating, options = {}) {
   (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
     ancestorResize: false,
     elementResize: false
-  })] : [];
+  }), // A density switch that moves no box still restates the gap: a full fit.
+  ...(tokens.length ? [watchDensity(floating.ownerDocument, controller.update)] : [])] : [];
   armed = true;
 
   controller.stop = () => {
@@ -10142,13 +10695,18 @@ const Preferences = globalThis.SF?.Preferences;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DEFAULT_PRELOADER: () => (/* binding */ DEFAULT_PRELOADER),
+/* harmony export */   DRAWN_CONTENT_SELECTOR: () => (/* binding */ DRAWN_CONTENT_SELECTOR),
 /* harmony export */   FIRST_PAINT_SELECTOR: () => (/* binding */ FIRST_PAINT_SELECTOR),
 /* harmony export */   createPreloaderContent: () => (/* binding */ createPreloaderContent),
 /* harmony export */   getPreloaderBackground: () => (/* binding */ getPreloaderBackground),
 /* harmony export */   getPreloaderColor: () => (/* binding */ getPreloaderColor),
 /* harmony export */   pageHasFirstPaint: () => (/* binding */ pageHasFirstPaint),
+/* harmony export */   pageHasPreloadedModules: () => (/* binding */ pageHasPreloadedModules),
+/* harmony export */   pageHasRenderedSmart: () => (/* binding */ pageHasRenderedSmart),
+/* harmony export */   pageShowsContent: () => (/* binding */ pageShowsContent),
 /* harmony export */   startPreloaderMotion: () => (/* binding */ startPreloaderMotion),
-/* harmony export */   stopPreloaderMotion: () => (/* binding */ stopPreloaderMotion)
+/* harmony export */   stopPreloaderMotion: () => (/* binding */ stopPreloaderMotion),
+/* harmony export */   watchForContent: () => (/* binding */ watchForContent)
 /* harmony export */ });
 const DEFAULT_PRELOADER = Object.freeze({
   width: 31.68,
@@ -10169,6 +10727,97 @@ const MOTION_HANDLE = '__sfPreloaderMotion'; // What the server printed is the f
 const FIRST_PAINT_SELECTOR = '[data-sf-static], [data-sf-skeleton]';
 function pageHasFirstPaint(doc = globalThis.document) {
   return Boolean(doc?.querySelector?.(FIRST_PAINT_SELECTOR));
+} // A page that ships its modules preloaded (SF_PRELOADED, Docara's example
+// frames) defines its Smart elements before core.js runs: they draw at once,
+// and a boot preloader would only cover what is already drawn (input-choice
+// first-paint audit 2026-11-11, item 1).
+
+function pageHasPreloadedModules(win = globalThis) {
+  const modules = win?.SF_PRELOADED?.modules;
+  return Boolean(modules && Object.keys(modules).length);
+} // Is a Smart element on the page drawn already? The style gate marks a drawn
+// host data-sf-style-ready; a host drawn without the gate says so itself
+// (isRendered).
+
+function pageHasRenderedSmart(doc = globalThis.document) {
+  if (!doc?.querySelector) return false;
+  if (doc.querySelector('[data-sf-style-ready]')) return true;
+  const root = doc.body || doc.documentElement;
+  if (!root || typeof doc.createTreeWalker !== 'function') return false;
+  const walker = doc.createTreeWalker(root, 1);
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.localName?.startsWith('sf-') && node.isRendered === true) return true;
+  }
+
+  return false;
+} // Content the boot preloader must never cover: the server's first paint, or
+// Smart elements already drawn.
+
+function pageShowsContent(doc = globalThis.document) {
+  return pageHasFirstPaint(doc) || pageHasRenderedSmart(doc);
+} // The boot preloader never covers a component already drawn, on any site
+// (R216, 2026-11-13). Checked once is not enough: a preloader that is up
+// when an element draws under it -- a cold load where the Smart elements
+// come in after the delay, as in Docara's example frames -- covered the drawn
+// example until sf-loader-ready, 0.5-0.9 s. While the preloader is up this
+// watches for content and calls onContent once, at the first of:
+//   - a host marked drawn by the style gate (data-sf-style-ready);
+//   - a host drawn without the gate (sf-after-render, captured on the window:
+//     the event is the element's own and need not bubble);
+//   - a first paint added later (data-sf-static / data-sf-skeleton).
+// Returns the stop function.
+
+const DRAWN_CONTENT_SELECTOR = `${FIRST_PAINT_SELECTOR}, [data-sf-style-ready]`;
+function watchForContent(onContent, {
+  doc = globalThis.document,
+  win = globalThis
+} = {}) {
+  let stopped = false;
+  let observer = null;
+
+  const onRender = event => {
+    if (event?.target?.localName?.startsWith?.('sf-')) found();
+  };
+
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    observer?.disconnect();
+    win?.removeEventListener?.('sf-after-render', onRender, true);
+  };
+
+  const found = () => {
+    if (stopped) return;
+    stop();
+    onContent();
+  };
+
+  const holds = node => node?.nodeType === 1 && Boolean(node.matches?.(DRAWN_CONTENT_SELECTOR) || node.querySelector?.(DRAWN_CONTENT_SELECTOR));
+
+  win?.addEventListener?.('sf-after-render', onRender, true);
+  const Observer = win?.MutationObserver;
+  const root = doc?.documentElement;
+
+  if (typeof Observer === 'function' && root) {
+    observer = new Observer(records => {
+      for (const record of records) {
+        if (record.type === 'attributes' ? record.target?.hasAttribute?.(record.attributeName) : Array.from(record.addedNodes || []).some(holds)) {
+          found();
+          return;
+        }
+      }
+    });
+    observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['data-sf-style-ready', 'data-sf-static', 'data-sf-skeleton']
+    });
+  }
+
+  return stop;
 }
 function getPreloaderColor(root = document.documentElement) {
   const fallback = root?.classList?.contains('theme-dark') ? '#e3e2e7' : '#1a1b1f';
@@ -11312,7 +11961,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.54.2';
+const CORE_RUNTIME = '1.55.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -11916,6 +12565,93 @@ if (typeof globalThis !== 'undefined') {
       is: isTag,
       canonical: canonicalTag,
       list: listTagAliases
+    });
+  }
+}
+
+/***/ },
+
+/***/ "1d167187169d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   TEXT_FONT_FAMILY: () => (/* binding */ TEXT_FONT_FAMILY),
+/* harmony export */   startTextFonts: () => (/* binding */ startTextFonts),
+/* harmony export */   textFontProbes: () => (/* binding */ textFontProbes),
+/* harmony export */   unicodeRangeCovers: () => (/* binding */ unicodeRangeCovers)
+/* harmony export */ });
+// The text faces a page needs, asked for from the first script.
+//
+// Inter's faces are `font-display: optional` (core/scss/_sf_css__fonts.scss):
+// a face is used only if it is in by the first frame, so text never moves when
+// it arrives. But the browser starts a face's file only when text set in it is
+// laid out, and that is the first frame itself, so on a cold visit Inter was
+// never in time: every first visit drew in the metric fallback, and a visit
+// that got some faces and not others mixed the two on one line (R074 F-3).
+// Starting the files here, while the head is still parsed, lets a quick
+// network bring them in before the first frame. A slow one changes nothing:
+// the face misses the frame and the page keeps the fallback for the visit, as
+// before.
+//
+// FontFace.load() needs no file address (the built sheet names the files by
+// hash) and leaves no "preloaded but not used" warning. Only the faces the
+// page's text is likely to need are started: Latin always (spaces, digits and
+// punctuation are Latin), Cyrillic when the document's language is written in
+// it. A page in another script loads its face on first use, as before.
+// Opt out with SF_BOOT_CONFIG.fonts.early = false.
+const TEXT_FONT_FAMILY = 'Inter Variable'; // Languages written in Cyrillic (ISO 639-1), read from <html lang>.
+
+const CYRILLIC_LANGUAGE = /^(ru|uk|be|bg|sr|mk|kk|ky|tg|mn|ba|tt|cv|ce|os|sah|ab)(-|$)/i;
+const LATIN_PROBE = 0x61; // a
+
+const CYRILLIC_PROBE = 0x430; // а
+// "U+0-FF, U+131, U+400-45F" covers a code point?
+
+function unicodeRangeCovers(range, codePoint) {
+  if (!range) return true;
+  return String(range).split(',').some(part => {
+    const match = /^\s*U\+([0-9a-f?]+)(?:-([0-9a-f]+))?\s*$/i.exec(part);
+    if (!match) return false;
+    const start = parseInt(match[1].replace(/\?/g, '0'), 16);
+    const end = match[2] ? parseInt(match[2], 16) : parseInt(match[1].replace(/\?/g, 'f'), 16);
+    return codePoint >= start && codePoint <= end;
+  });
+}
+function textFontProbes(language) {
+  const probes = [LATIN_PROBE];
+  if (CYRILLIC_LANGUAGE.test(String(language || '').trim())) probes.push(CYRILLIC_PROBE);
+  return probes;
+} // Starts the Inter faces the page's text needs; returns the faces started.
+
+function startTextFonts(doc = typeof document !== 'undefined' ? document : null, config = typeof window !== 'undefined' ? window.SF_BOOT_CONFIG : null) {
+  if (config?.fonts?.early === false) return [];
+  const fonts = doc?.fonts;
+  if (!fonts || typeof fonts.forEach !== 'function') return [];
+  const probes = textFontProbes(doc.documentElement?.getAttribute?.('lang'));
+  const started = [];
+  fonts.forEach(face => {
+    if (String(face.family || '').replace(/["']/g, '').trim() !== TEXT_FONT_FAMILY) return;
+    if (face.status !== 'unloaded') return;
+    if (!probes.some(codePoint => unicodeRangeCovers(face.unicodeRange, codePoint))) return;
+    started.push(face);
+
+    try {
+      const pending = face.load();
+      if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+    } catch {// A face that cannot load leaves the page on the fallback, as before.
+    }
+  });
+  return started;
+} // Now, from the first script: core.css stands before core.js in a page head,
+// so its faces are in document.fonts. A page that links the sheet after the
+// script gets a second try once the document is parsed.
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  if (!startTextFonts().length && document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => startTextFonts(), {
+      once: true
     });
   }
 }
@@ -21278,7 +22014,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "string"
         },
         "appearance": {
-          "default": "main",
+          "default": "tonal",
           "enum": [
             "main",
             "tonal",
@@ -21290,10 +22026,6 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
-        "compact": {
-          "default": false,
-          "type": "boolean"
-        },
         "icon": {
           "default": "",
           "type": "string"
@@ -21301,6 +22033,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "icon-end": {
           "default": "",
           "type": "string"
+        },
+        "icon-only": {
+          "default": false,
+          "type": "boolean"
         },
         "icon-position": {
           "default": "start",
@@ -21320,7 +22056,8 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "",
             "1/2",
             "1",
-            "2"
+            "2",
+            "text"
           ],
           "type": "string"
         },
@@ -21368,7 +22105,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.4.0"
+    "version": "1.6.0"
   },
   "sf-button": {
     "inputs": {
@@ -21380,8 +22117,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "default",
             "tonal",
             "outline",
-            "ghost",
-            "surface"
+            "ghost"
           ],
           "type": "string"
         },
@@ -21478,7 +22214,6 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "primary",
           "enum": [
             "primary",
-            "secondary",
             "on-surface",
             "on-surface-variant"
           ],
@@ -21523,6 +22258,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "split": {
+          "default": false,
+          "type": "boolean"
+        },
         "status": {
           "default": "",
           "enum": [
@@ -21566,7 +22305,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.13.0"
+    "version": "1.15.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -21607,6 +22346,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "download": {
+          "default": "",
+          "type": "string"
+        },
         "filled": {
           "default": false,
           "type": "boolean"
@@ -21619,6 +22362,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "high",
             "highest"
           ],
+          "type": "string"
+        },
+        "href": {
+          "default": "",
           "type": "string"
         },
         "icon": {
@@ -21662,6 +22409,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "square",
             "rounded"
           ],
+          "type": "string"
+        },
+        "rel": {
+          "default": "",
           "type": "string"
         },
         "scheme": {
@@ -21712,6 +22463,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "target": {
+          "default": "",
+          "type": "string"
+        },
         "theme-cycle": {
           "default": "",
           "type": "string"
@@ -21725,7 +22480,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.8.4"
+    "version": "1.10.0"
   },
   "sf-checkbox": {
     "inputs": {
@@ -21793,7 +22548,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.2.0"
+    "version": "1.3.1"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -21924,7 +22679,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.9.0"
+    "version": "1.11.0"
   },
   "sf-icon": {
     "inputs": {
@@ -21992,9 +22747,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "enum": [
             "",
-            "outlined",
-            "rounded",
-            "sharp"
+            "outlined"
           ],
           "type": "string"
         },
@@ -22009,7 +22762,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.1.7"
+    "version": "1.2.0"
   },
   "sf-input": {
     "inputs": {
@@ -22031,6 +22784,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "autocomplete": {
           "default": "",
           "type": "string"
+        },
+        "clearable": {
+          "default": false,
+          "type": "boolean"
         },
         "default-value": {
           "default": "",
@@ -22202,7 +22959,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.7.2"
+    "version": "1.9.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -22226,12 +22983,16 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "string"
         },
         "auto-grow": {
-          "default": false,
+          "default": true,
           "type": "boolean"
         },
         "autocomplete": {
           "default": "",
           "type": "string"
+        },
+        "counter": {
+          "default": false,
+          "type": "boolean"
         },
         "disabled": {
           "default": false,
@@ -22289,13 +23050,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "string"
         },
         "max-rows": {
+          "default": 10,
           "type": "number"
         },
         "maxlength": {
           "type": "number"
         },
         "min-rows": {
-          "default": 1,
+          "default": 3,
           "type": "number"
         },
         "minlength": {
@@ -22321,6 +23083,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "resize": {
+          "default": false,
+          "type": "boolean"
+        },
         "rows": {
           "default": 3,
           "type": "number"
@@ -22328,15 +23094,25 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "size": {
           "default": "1",
           "enum": [
+            "1/3",
             "1/2",
             "1",
-            "2"
+            "2",
+            "3"
           ],
           "type": "string"
         },
         "spell-check": {
           "default": true,
           "type": "boolean"
+        },
+        "text": {
+          "default": "plain",
+          "enum": [
+            "plain",
+            "code"
+          ],
+          "type": "string"
         },
         "value": {
           "default": "",
@@ -22355,7 +23131,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.7.5"
+    "version": "1.9.0"
   },
   "sf-switch": {
     "inputs": {
@@ -22423,7 +23199,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.5.0"
+    "version": "1.5.3"
   }
 });
 
@@ -22882,8 +23658,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // The last part of an address, decoded, without its query and fragment: the
-// name a file is shown under when it has no label.
+// name a file is shown under when it has no label. A data: or blob: address
+// has no name in it -- the last «/» of `data:image/svg+xml,<svg …>` falls
+// inside the content, and the name read «>» (image field study IF-14) -- so it
+// gives none, and the caller says what the file is instead.
 function fileNameFromAddress(href) {
+  if (/^\s*(?:data|blob):/iu.test(String(href ?? ''))) return '';
   const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
   try {
     return decodeURIComponent(tail);
@@ -23154,7 +23934,7 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
       // listeners go with it, and what stands in its place is the error state.
       const state = globalThis.document.createElement('sf-empty-state');
       state.setAttribute('kind', 'error');
-      state.setAttribute('title', this.text('heading'));
+      state.setAttribute('heading', this.text('heading'));
       this.replaceChildren(state);
       this.dispatchEvent(new globalThis.CustomEvent('sf-fragment-error', {
         bubbles: true, composed: true,

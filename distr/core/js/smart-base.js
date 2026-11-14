@@ -1210,14 +1210,15 @@ __webpack_require__.r(__webpack_exports__);
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
 // root or on a container moves every component one ladder step down; the CSS
 // does it (core/scss/_sf_css__density.scss): each step variable holds the step
-// below, and an element with an explicit size takes the normal ladder back.
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
 //
-// "Explicit" is a size the page gave. A size a component's template gives an
-// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
-// relative to the component's own size: under a compact sf-input its button
-// has to come down with it, not stand at the normal ladder. Those are marked
-// data-sf-size-relative here, once the component has drawn; the CSS leaves
-// them in the region's ladder.
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
 //
 // What a component holds of the page's own (captured slot content, children
 // left in place) keeps its size explicit. The store is on the shared global:
@@ -1291,13 +1292,12 @@ function followDensity(element, from) {
   const density = densityOf(from);
   if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
   return element;
-} // The density an element stands in: the nearest region's, or "normal" under an
-// explicit size (where the ladder is the normal one again); null outside any.
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -2116,6 +2116,44 @@ function isShown(element) {
   }
 
   return true;
+} // A label's activation of a form-associated host (§17.1, RD-1). A <label>
+// around a Smart form control, or one `for` its id, takes the host as its
+// labeled control: the host is the first labelable element inside it. The
+// platform then clicks the host, which has no activation of its own, and the
+// native control drawn inside stays as it was. The host passes that press on
+// as a native label would: the control takes the focus, and a checkbox or a
+// radio is clicked (it toggles and sends its own input and change).
+// Only a click addressed to the host itself is passed on; a press on the
+// control, its own text or a part inside reaches them as before and is not
+// handled twice. A checkable's host click goes no further: its ancestors hear
+// the control's click instead, one click for one press, as with a native one.
+
+
+const LABEL_CONTROLS = 'input:not([type="hidden"]), select, textarea';
+const CHECKABLE = new Set(['checkbox', 'radio']);
+
+const nearestFormHost = node => {
+  for (let element = node.parentElement; element; element = element.parentElement) {
+    if (element.constructor?.formAssociated === true) return element;
+  }
+
+  return null;
+};
+
+function activateFromLabel(event) {
+  if (event.target !== this || event.defaultPrevented) return;
+  const control = this.sfLabelControl?.();
+  if (!control || control === this || !this.contains(control) || control.matches?.(':disabled')) return; // A person's press moves the focus to the control first, as a label does;
+  // a script's host.click() leaves the focus where it is.
+
+  if (event.isTrusted) control.focus?.({
+    focusVisible: false
+  });
+
+  if (control.localName === 'input' && CHECKABLE.has(String(control.type).toLowerCase())) {
+    event.stopPropagation();
+    control.click();
+  }
 }
 /**
  * The class a component extends: its manifest's plumbing over `base`.
@@ -2198,6 +2236,27 @@ function elementFromManifest(manifest, {
       completeOwnAccessors(new.target, ManifestElement.prototype, read.members);
       takeObjectForms(new.target, ManifestElement.prototype, read.actions, positionalActions);
       this.sfInternals = formAssociated && typeof this.attachInternals === 'function' ? this.attachInternals() : null;
+      if (formAssociated) this.addEventListener('click', activateFromLabel);
+    }
+    /**
+     * The control a label's activation reaches (§17.1): a form-associated
+     * host is labelable, so a <label> around it (or for its id) clicks the
+     * host itself, and the native control drawn inside never hears it. This
+     * is that control: the component's own `getInputElement()`, else its
+     * first native control that is not a nested form host's. A component
+     * overrides it; null leaves the activation as it is.
+     */
+
+
+    sfLabelControl() {
+      const own = typeof this.getInputElement === 'function' ? this.getInputElement() : undefined;
+      if (own !== undefined) return own || null;
+
+      for (const control of this.querySelectorAll(LABEL_CONTROLS)) {
+        if (nearestFormHost(control) === this) return control;
+      }
+
+      return null;
     }
 
     connectedCallback() {
@@ -2254,20 +2313,24 @@ function elementFromManifest(manifest, {
       }
     }
     /**
-     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
-     * the host was printed with data-sf-first-paint="skeleton" and a setting
-     * declared late (presentation.skeleton.late) has not arrived. The first
-     * render waits for it, so the skeleton turns into content in one frame.
-     * A list given explicitly, even empty, has arrived: an empty list is
-     * data (the empty state), not data still to come. Only a list nobody set
-     * -- its default -- keeps the skeleton waiting.
-     * A component whose data comes another way (a port) overrides this.
+     * The late lists a printed skeleton still holds (§5.4, §7.3 phase 3).
+     * A skeleton names the late lists it stands for in data-sf-late (printed
+     * when a component declares more than one): a job printed without steps
+     * holds only its counters, and never waits for steps that are not
+     * coming. A skeleton that names none holds every declared late list, as
+     * before. Each list releases its own hold when it arrives: a list given
+     * explicitly, even empty, has arrived -- an empty list is data (the empty
+     * state), not data still to come. Only a list nobody set -- its default
+     * -- is still held.
      */
 
 
-    sfAwaitingData() {
-      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
-      return late.some(member => {
+    sfLateHeld() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return [];
+      const named = this.getAttribute('data-sf-late');
+      const words = named === null ? null : named.split(/\s+/u).filter(Boolean);
+      const held = words ? late.filter(member => words.includes(member.name)) : late;
+      return held.filter(member => {
         if (member.attribute && this.hasAttribute(member.attribute)) return false;
         const store = this.__sfManifestData;
 
@@ -2279,7 +2342,19 @@ function elementFromManifest(manifest, {
 
         const value = this[member.property];
         return value === undefined || value === null || Array.isArray(value) && !value.length;
-      });
+      }).map(member => member.name);
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a late
+     * list it holds (sfLateHeld) has not arrived. The first render waits for
+     * every one, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      return this.sfLateHeld().length > 0;
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2625,7 +2700,8 @@ __webpack_require__.r(__webpack_exports__);
 // data-sf-style-ready, was missing here and came back from dataAttributes as
 // sfStylePending / sfStyleReady beside what the author wrote (docs review
 // R022, 2026-11-07).
-const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer", "data-sf-style-pending", "data-sf-style-ready", // Density (C22): a size the parent's drawing gave is relative; the CSS reads
+const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", // The late lists a printed skeleton holds (element-manifest.js sfLateHeld).
+"data-sf-late", "data-sf-held", "data-sf-skeleton", "data-sf-observer", "data-sf-style-pending", "data-sf-style-ready", // Density (C22): a size the parent's drawing gave is relative; the CSS reads
 // the mark on the host itself, so it stays there.
 "data-sf-size-relative", // ... and a size that is a width, not a ladder step (manifest x-scale).
 "data-sf-size-scale", // A density set on a host stays on it: what it draws inherits the ladder.
@@ -3497,14 +3573,14 @@ const THEMES = ['theme-dark', 'theme-light'];
  * longer different is taken back, so a host moved to another area takes that
  * area's values.
  */
-// The density a host stands in (C22; core/js/density.js says the same): the
-// nearest region's, or "normal" under an explicit size. Written here, not
-// imported: this module is loaded on its own (shared runtime, tests).
+// The density a host stands in (C22, C79; core/js/density.js says the same):
+// the nearest region's -- an explicit size follows its region since C79.
+// Written here, not imported: this module is loaded on its own (shared
+// runtime, tests).
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -4790,9 +4866,15 @@ function inTopLayer(element) {
 // the host's variables, theme, lang, dir and density by plain inheritance --
 // what a body portal has to carry by hand (carryLayerOrigin). A surface the
 // component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
-// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
-// layer is left as it is; a browser without popovers keeps the fixed panel in
-// place, placed against its containing block.
+// sf-input-lookup, dropdown lists) is left as it is; a browser without
+// popovers keeps the fixed panel in place, placed against its containing block.
+//
+// A surface inside another top-layer surface -- a tooltip, a dropdown or a
+// nested popover in an open sf-popover, a modal dialog -- is lifted too, and
+// so stands above its parent. Left inside it, it was a fixed box in the
+// parent's stacking context, painted under the parent's later content: a
+// tooltip in an open popover hid under the next field's label (C59 S1
+// acceptance D1). Shown after its parent, it is drawn over it.
 //
 // The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
 // and CanvasText, overflow auto) is taken back by a rule of no specificity in
@@ -4827,11 +4909,7 @@ function adoptLiftedRule(floating) {
 
 function liftable(floating) {
   if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
-  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
-
-  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
-
-  return true;
+  return !floating.hasAttribute('popover') && !inTopLayer(floating);
 }
 /** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
 
@@ -4862,6 +4940,38 @@ function liftToTopLayer(floating) {
       floating.removeAttribute(LIFTED);
     }
   };
+} // The scroll positions inside a floating surface (the surface itself and every
+// box in it that is scrolled), to be put back after a measurement that lifted
+// its height cap. Only boxes away from their start are kept.
+
+function scrollOffsets(floating) {
+  const found = [];
+
+  const keep = element => {
+    if (element.scrollTop || element.scrollLeft) found.push([element, element.scrollTop, element.scrollLeft]);
+  };
+
+  keep(floating);
+
+  for (const element of floating.querySelectorAll('*')) keep(element);
+
+  return found;
+} // Put back at once: the Framework sheet makes every box scroll smoothly
+// (* {scroll-behavior: smooth}, core scroll), and an assigned scrollTop glided
+// from the start the measurement threw it to. After a page scroll the list ran
+// 0 -> 800 over half a second and read 784 when the probe looked; a reposition
+// during the glide kept the value it had reached (R171 follow-up, 2026-11-12).
+
+
+function restoreScrollOffsets(found) {
+  for (const [element, top, left] of found) {
+    if (!element.isConnected) continue;
+    if (element.scrollTop !== top || element.scrollLeft !== left) element.scrollTo({
+      top,
+      left,
+      behavior: 'instant'
+    });
+  }
 }
 
 function fixedContainingBlock(element) {
@@ -4901,6 +5011,19 @@ function anchorReference(element) {
     }
 
   };
+} // data-sf-density on the root or on a region restates the space tokens; one
+// attribute filter, so nothing else on the page wakes it.
+
+function watchDensity(doc, run) {
+  const view = doc?.defaultView;
+  if (typeof view?.MutationObserver !== 'function') return () => {};
+  const observer = new view.MutationObserver(() => run());
+  observer.observe(doc.documentElement, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['data-sf-density']
+  });
+  return () => observer.disconnect();
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -4913,6 +5036,7 @@ function anchorReference(element) {
  * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
+
 
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
@@ -4983,14 +5107,21 @@ function anchor(reference, floating, options = {}) {
   //   content does not change by scrolling; when it does, its size changes
   //   and that is a full fit), and max-height is not reset to read it.
   // - Inline styles and data-sf-side are written only when they change.
+  // A density change (data-sf-density on the root or a region) restates
+  // the space tokens without resizing the window, and the gap stayed the old
+  // one until the panel was opened again (C59 S1 acceptance M1). The key also
+  // carries the computed values of the tokens the lengths are written with: a
+  // read of a clean style, no probe and no restyle.
 
+  const tokens = [...new Set([settings.offset, settings.padding, settings.alignmentOffset].filter(value => typeof value === 'string').flatMap(value => [...value.matchAll(/var\(\s*(--(?:\\.|[^\s,)\\])+)/gu)].map(match => match[1].replace(/\\(.)/gu, '$1'))))];
   let lengths = null;
 
   const lengthsNow = () => {
-    const key = `${window.innerWidth}x${window.innerHeight}`;
+    const context = reference.parentElement;
+    const values = tokens.length && context?.isConnected ? tokens.map(name => getComputedStyle(context).getPropertyValue(name).trim()).join('|') : '';
+    const key = `${window.innerWidth}x${window.innerHeight}|${values}`;
 
     if (!lengths || lengths.key !== key) {
-      const context = reference.parentElement;
       lengths = {
         key,
         gap: resolveLength(settings.offset, context),
@@ -5009,6 +5140,32 @@ function anchor(reference, floating, options = {}) {
   };
 
   const run = async full => {
+    // Measuring the natural height takes the cap off for a moment: a list
+    // that scrolls inside the panel stops overflowing, and the browser puts
+    // its scroll back to the start. Every reposition that measured -- one per
+    // wheel step for a dropdown that follows the page's scroll in capture --
+    // threw the list back to its top, so it never moved and shook in place
+    // (owner R171, 2026-11-12), and a list scrolled to a keyboard-focused
+    // option jumped back to its first row (keyboard reveal). Only a fit that
+    // takes the cap off (a full fit, or the first) can clamp the scroll; a
+    // light fit keeps the cap and needs nothing put back. What was scrolled
+    // is put back once the cap is, and before onPosition, so a component that
+    // scrolls there has the last word.
+    let scrolled = settings.fitHeight && (full || !measures) ? scrollOffsets(floating) : null;
+
+    const putBack = () => {
+      if (scrolled) restoreScrollOffsets(scrolled);
+      scrolled = null;
+    };
+
+    try {
+      return await place(full, putBack);
+    } finally {
+      putBack();
+    }
+  };
+
+  const place = async (full, putBack) => {
     // The panel is fixed before it is measured, so it is measured in the box
     // it will be placed in: left absolute by the stylesheet (a tooltip in its
     // anchor), its first position was taken from the anchor and written as
@@ -5133,6 +5290,7 @@ function anchor(reference, floating, options = {}) {
 
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
     if (floating.dataset.sfSide !== controller.side) floating.dataset.sfSide = controller.side;
+    putBack();
     settings.onPosition?.({
       side: controller.side,
       placement: result.placement,
@@ -5191,7 +5349,8 @@ function anchor(reference, floating, options = {}) {
   (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, follow, {
     ancestorResize: false,
     elementResize: false
-  })] : [];
+  }), // A density switch that moves no box still restates the gap: a full fit.
+  ...(tokens.length ? [watchDensity(floating.ownerDocument, controller.update)] : [])] : [];
   armed = true;
 
   controller.stop = () => {
@@ -5744,7 +5903,12 @@ class SfBaseElement extends HTMLElement {
   static externalTemplateCssLoaded = new Set();
   static externalTemplateCssMisses = new Set();
   static waitForStylesBeforeRenderReady = true;
-  static styleReadyTimeout = 3000; // A component that takes the page's children into its markup can keep
+  static styleReadyTimeout = 3000; // How long a box of the element's own outside the host (a window's
+  // portal) stays out of view waiting for its sheets (holdPortalUntilStyled):
+  // longer than the host's gate, since a box shown before its sheets is a
+  // whole window drawn as a card in the page flow, not a few lines of text.
+
+  static portalStyleTimeout = 15000; // A component that takes the page's children into its markup can keep
   // them where the page wrote them until it draws, instead of taking them out
   // when it connects (holdSlotNode, releaseHeldSlotNodes). Between the two the
   // nodes were out of the document for one or more tasks, and a page that
@@ -6750,7 +6914,14 @@ class SfBaseElement extends HTMLElement {
     if (!awaitedLoader) return null;
     const readiness = awaitedLoader.then(loader => typeof loader?.ensureStylesReady === "function" ? loader.ensureStylesReady(this, {
       autoLoad
-    }) : true);
+    }) : true); // The sheets applied, without the time limit (holdPortalUntilStyled).
+
+    if (autoLoad) {
+      this._styleAppliedPromise = readiness.then(() => {
+        this._styleApplied = true;
+      }, () => {});
+    }
+
     const timeout = Number(this.constructor.styleReadyTimeout ?? 3000); // The time limit is cleared once the sheets are in: a timer left behind
     // per element was a leak of its own (gate 36).
 
@@ -7071,7 +7242,22 @@ class SfBaseElement extends HTMLElement {
     const target = this.focusDelegate?.();
 
     if (target && typeof target.focus === "function") {
-      target.focus(options);
+      const activeWhenAsked = this.ownerDocument?.activeElement || null;
+      target.focus(options); // A host still drawing has its control in place but not shown until its
+      // sheets apply (the style gate): the control takes no focus yet, and the
+      // focus stayed where it was (sf-file-download's «Повторить», probe
+      // 2026-11-11). Focus it once it is drawn -- only if nothing else took
+      // the focus meanwhile.
+
+      if (!this.isRendered && (this.ownerDocument?.activeElement || null) === activeWhenAsked && activeWhenAsked !== target) {
+        this.whenRendered(() => {
+          const ready = this.focusDelegate?.();
+          if (!ready || typeof ready.focus !== "function") return;
+          if ((this.ownerDocument?.activeElement || null) !== activeWhenAsked) return;
+          ready.focus(options);
+        });
+      }
+
       return;
     } // Asked before the control exists: focus once it does, and only if nothing
     // else took focus while this waited -- a queued focus must not steal it back.
@@ -7744,12 +7930,24 @@ class SfBaseElement extends HTMLElement {
 
       if (!this._liveSlotNodes.has(slotName)) {
         this._liveSlotNodes.set(slotName, []);
-      }
+      } // A plain wrapper that only names the slot (<div slot="content">) gives
+      // the slot its children. A custom element is the content itself: it is
+      // never unwrapped. Counting its attributes alone made the answer depend
+      // on the upgrade order -- <sf-breadcrumbs slot="path"> carries only
+      // `slot` until its own class connects and writes style/data-sf-started,
+      // so a sf-header-page that upgraded first kept the bare items and
+      // dropped the trail (3 of 72 loads, 2026-11-12; every load when the
+      // header's script arrives first). A figure is one piece too, and so is
+      // a picture or anything holding a figcaption: unwrapped, a
+      // <figure slot="slide"> with its caption became two slides, the image
+      // and the caption (gallery GL evidence, 2026-11-14).
 
-      const shouldUnwrapSlotHost = child.getAttributeNames().length === 1 && child.hasAttribute("slot");
+
+      const shouldUnwrapSlotHost = !child.localName.includes("-") && child.localName !== "figure" && child.localName !== "picture" && !Array.from(child.children ?? []).some(node => node.localName === "figcaption") && child.getAttributeNames().length === 1 && child.hasAttribute("slot");
       const slotNodes = shouldUnwrapSlotHost ? Array.from(child.childNodes) : [child];
 
-      this._liveSlotNodes.get(slotName).push(...slotNodes); // The page's content: a size it gives stays explicit (density, C22).
+      this._liveSlotNodes.get(slotName).push(...slotNodes); // The page's content: a size it gives stays the page's (density, C22; it
+      // follows the region like any size since C79).
 
 
       (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)(slotNodes);
@@ -7871,18 +8069,32 @@ class SfBaseElement extends HTMLElement {
   // the page flow, and a closed drawer's panel stood in view beside the page
   // (ui-control evidence 2026-11-11-modal-followups, N2). Call it before the
   // drawing; `shown` runs once the box shows.
+  //
+  // The host's gate gives up after styleReadyTimeout (3 s); the box waits for
+  // the sheets themselves, at the latest portalStyleTimeout: under sheets
+  // that came after 3 s the window showed as a card for a few frames (DEV's
+  // acceptance 2026-11-11, L2: 5 of 72 hostile loads).
 
 
   holdPortalUntilStyled(target, shown) {
-    if (this._styleReady || !target || target === this) return;
-    const styles = this.stylesReadiness();
+    if (this._styleApplied || !target || target === this) return; // After the host's gate gave up the sheets may still be on their way.
+
+    const styles = this.stylesReadiness() ?? this._styleAppliedPromise;
+
     if (!styles) return;
     target.setAttribute("data-sf-style-pending", "");
     (this._styleHeldTargets ??= new Set()).add(target);
     if (shown) (this._styleHeldShown ??= new Set()).add(shown);
     if (this._styleHeldWait) return;
-    this._styleHeldWait = styles.then(() => {
-      this._styleReady = true;
+    const guard = Number(this.constructor.portalStyleTimeout ?? 15000);
+    let timer = null;
+    const applied = Promise.race([this._styleAppliedPromise || styles, new Promise(resolve => {
+      timer = setTimeout(resolve, guard > 0 ? guard : 0);
+    })]).finally(() => clearTimeout(timer));
+    this._styleHeldWait = Promise.all([styles, applied]).then(() => {
+      this._styleReady = true; // Applied or given up: later boxes do not wait again.
+
+      this._styleApplied = true;
 
       this._styleHeldTargets.forEach(one => one.removeAttribute("data-sf-style-pending"));
 
@@ -7900,7 +8112,7 @@ class SfBaseElement extends HTMLElement {
     (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.drawing)(() => (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(result, container));
     (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.markRelativeSizes)(container, this._sfSizedBefore ??= (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.sizedBefore)(this));
   } // A copy of captured page content is the page's as well (density, C22): a
-  // size in it stays explicit.
+  // size in it stays unmarked (it follows the region like any size, C79).
 
 
   authoredCopy(node) {
@@ -8300,6 +8512,7 @@ class SfBaseElement extends HTMLElement {
     }
 
     this.removeAttribute("data-sf-first-paint");
+    this.removeAttribute("data-sf-late");
     Array.from(this.children).forEach(child => child.removeAttribute("data-sf-held")); // A host printed as a static node of another's picture and adopted live
     // (sf-view takes its printed sf-view-table and sf-pagination as its
     // slotted children) is no longer static markup once it draws. The mark

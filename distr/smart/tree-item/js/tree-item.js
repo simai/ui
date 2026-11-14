@@ -2,6 +2,111 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "f3cba14ced8a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_KINDS: () => (/* binding */ FILE_KINDS),
+/* harmony export */   fileKind: () => (/* binding */ fileKind),
+/* harmony export */   fileKindIcon: () => (/* binding */ fileKindIcon),
+/* harmony export */   fileKindOfName: () => (/* binding */ fileKindOfName),
+/* harmony export */   fileType: () => (/* binding */ fileType)
+/* harmony export */ });
+/* harmony import */ var _file_types_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9bbeb11fb966");
+// The type of an entry -- a file, a page, a folder -- and its icon, from one
+// map (file-types.json; owner decision C102, 2026-11-12). Who chooses the icon,
+// first word wins:
+//
+//   icon        a name the host gives (or false: no icon)
+//   kind        one of the twelve words of the map (page, image, code, ...)
+//   extension   of the name, when names say their type (file-types="name")
+//   place       a folder (it has children, or kind="folder"), else a file
+//
+// No top-level side effects: a bundle that imports one function carries the
+// map and nothing else. sf-tree draws its rows with it; sf-file-upload,
+// sf-file-download and sf-view's file cells are to follow (C102 item 2).
+
+const KINDS = _file_types_json__WEBPACK_IMPORTED_MODULE_0__.kinds;
+/** The twelve kinds, in the map's order. */
+
+const FILE_KINDS = /* @__PURE__ */Object.freeze(Object.keys(KINDS));
+
+const BY_EXTENSION = /* @__PURE__ */(() => {
+  const found = new Map();
+
+  for (const [kind, spec] of Object.entries(KINDS)) for (const extension of spec.extensions ?? []) found.set(extension, kind);
+
+  return found;
+})();
+/** A word of the map, or '' for anything else (an old or unknown word). */
+
+
+function fileKind(word) {
+  const kind = String(word ?? '').trim().toLowerCase();
+  return Object.hasOwn(KINDS, kind) ? kind : '';
+}
+/** The kind a name's extension says («Смета.xlsx» → table), or ''. */
+
+function fileKindOfName(name) {
+  const found = /\.([a-z0-9]+)$/iu.exec(String(name ?? '').trim());
+  return found ? BY_EXTENSION.get(found[1].toLowerCase()) ?? '' : '';
+}
+/** The icon of a kind; a folder open shows its open icon. */
+
+function fileKindIcon(kind, {
+  open = false
+} = {}) {
+  const spec = KINDS[fileKind(kind)];
+  if (!spec) return KINDS.file.icon;
+  return open && spec['open-icon'] ? spec['open-icon'] : spec.icon;
+}
+/**
+ * The kind an entry is shown as and its icon.
+ *
+ *   fileType({icon, kind, name, folder, open, byName})
+ *     icon     a name, or false for none ('' / true: choose)
+ *     kind     a word of the map, or ''
+ *     name     the entry's name, read for its extension when byName
+ *     folder   the entry has children (or says it will have them)
+ *     open     a folder that is open
+ *     byName   the extension may say the kind (default true)
+ *   → {kind, icon}   icon '' when the host said false
+ */
+
+function fileType({
+  icon,
+  kind,
+  name,
+  folder = false,
+  open = false,
+  byName = true
+} = {}) {
+  let shown = fileKind(kind); // A folder is a folder by its place; file is the word for "some file", which
+  // the name may say more about.
+
+  if (!shown || shown === 'file') {
+    if (folder && !shown) shown = 'folder';else shown = byName && fileKindOfName(name) || shown || 'file';
+  }
+
+  if (icon === false || icon === 'false') return {
+    kind: shown,
+    icon: ''
+  };
+  if (typeof icon === 'string' && icon.trim() && icon !== 'true') return {
+    kind: shown,
+    icon: icon.trim()
+  };
+  return {
+    kind: shown,
+    icon: fileKindIcon(shown, {
+      open
+    })
+  };
+}
+
+/***/ },
+
 /***/ "11057d00e2b0"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -11,10 +116,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("26d4ed181d97");
 /* harmony import */ var _js_node_data_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2fb8a633d966");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38c83d62c9cb");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3caeafa9a937");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("873f949da61a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("73a6f336a620");
+/* harmony import */ var _core_js_file_types_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f3cba14ced8a");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38c83d62c9cb");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3caeafa9a937");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("873f949da61a");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("73a6f336a620");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -39,14 +145,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const TreeItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+
+const TreeItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   actions: {
     expand() {
       return this.setOpen(true);
@@ -156,10 +263,11 @@ class SfTreeItem extends TreeItemElement {
     this._itemsData = append ? [...this._itemsData, ...nextItems] : nextItems;
     nodes.forEach(node => node.remove());
     return true;
-  }
+  } // A branch: children, or has-children before they are loaded (TR-5).
 
-  get hasChildren() {
-    return !this.isFile && this.childItems.length > 0;
+
+  get isBranch() {
+    return !this.isFile && (this.childItems.length > 0 || Boolean(this.hasChildren));
   }
 
   get content() {
@@ -202,15 +310,42 @@ class SfTreeItem extends TreeItemElement {
       selected: this.selected || sourceData.selected || false,
       active: this.active || sourceData.active || false,
       disabled: this.disabled || sourceData.disabled || false,
+      hasChildren: Boolean(this.hasChildren) || sourceData.hasChildren || false,
       openIcon: this.getAttribute('open-icon') || sourceData.openIcon || '',
       closedIcon: this.getAttribute('closed-icon') || sourceData.closedIcon || '',
-      icon: this.icon,
+      icon: this.iconSetting(),
       chevronOpenIcon: this.getAttribute('chevron-open-icon') || sourceData.chevronOpenIcon || '',
       chevronClosedIcon: this.getAttribute('chevron-closed-icon') || sourceData.chevronClosedIcon || '',
       openLabel: this.getAttribute('open-label') || sourceData.openLabel || '',
       closeLabel: this.getAttribute('close-label') || sourceData.closeLabel || '',
       children: this.isFile ? [] : this.childItems.length ? this.childItems : sourceData.children || []
     };
+  } // icon as the node says it: a name, false for none, '' to choose (C102).
+
+
+  iconSetting() {
+    const icon = this.icon;
+    if (icon === false || icon === 'false') return false;
+    return typeof icon === 'string' && icon !== 'true' ? icon : '';
+  } // The node's icon (core file-types, C102): icon → kind → the name's
+  // extension → folder or file. A node's own open-icon / closed-icon (the
+  // attributes, not their defaults) still name its glyph.
+
+
+  nodeIcon() {
+    const folder = this.isBranch || this.kind === 'folder';
+    const open = folder && this.isBranch && Boolean(this.open);
+    const openIcon = this.getAttribute('open-icon') || '';
+    const closedIcon = this.getAttribute('closed-icon') || '';
+    const custom = folder ? open ? openIcon : closedIcon : closedIcon || openIcon;
+    const icon = this.iconSetting();
+    return (0,_core_js_file_types_index_js__WEBPACK_IMPORTED_MODULE_4__.fileType)({
+      icon: icon === false ? false : icon || custom || '',
+      kind: this.kind,
+      name: this.label,
+      folder,
+      open
+    }).icon;
   }
 
   templateContext() {
@@ -227,7 +362,9 @@ class SfTreeItem extends TreeItemElement {
       selected: this.selected,
       active: this.active,
       disabled: this.disabled,
-      icon: this.icon,
+      icon: this.iconSetting(),
+      nodeIcon: this.nodeIcon(),
+      folder: this.isBranch || this.kind === 'folder',
       openIcon: this.openIcon,
       closedIcon: this.closedIcon,
       chevronOpenIcon: this.chevronOpenIcon,
@@ -238,7 +375,7 @@ class SfTreeItem extends TreeItemElement {
       containerClass: this.containerClass,
       nameClass: this.nameClass,
       children: this.childItems,
-      hasChildren: this.hasChildren,
+      hasChildren: this.isBranch,
       rootClass: this.getRootClass(),
       rootStyle: this.getRootStyle(),
       onToggle: this.handleToggle,
@@ -291,7 +428,7 @@ class SfTreeItem extends TreeItemElement {
 
   setOpen(open = true) {
     const next = Boolean(open);
-    if (this.isFile || !this.hasChildren) return {
+    if (!this.isBranch) return {
       outcome: 'refused',
       reason: 'leaf'
     };
@@ -377,6 +514,15 @@ function getDirectLabel(node) {
   return Array.from(node?.childNodes || []).filter(child => !isTreeItemNode(child)).map(child => child.textContent || '').join(' ').replace(/\s+/g, ' ').trim();
 }
 
+function readIcon(value) {
+  if (value === 'false') return false;
+  return value && value !== 'true' ? value : '';
+}
+
+function readFlag(node, name) {
+  return node.hasAttribute(name) && node.getAttribute(name) !== 'false';
+}
+
 function treeItemNodeToData(node) {
   if (typeof node?.toTreeItemData === 'function') {
     return node.toTreeItemData();
@@ -394,9 +540,16 @@ function treeItemNodeToData(node) {
     selected: node.hasAttribute('selected') && node.getAttribute('selected') !== 'false',
     active: node.hasAttribute('active') && node.getAttribute('active') !== 'false',
     disabled: node.hasAttribute('disabled') && node.getAttribute('disabled') !== 'false',
+    hasChildren: node.hasAttribute('has-children') && node.getAttribute('has-children') !== 'false',
     openIcon: node.getAttribute('open-icon') || '',
     closedIcon: node.getAttribute('closed-icon') || '',
-    icon: !node.hasAttribute('icon') || node.getAttribute('icon') !== 'false',
+    // A name, or false for none (C102); absent or true: chosen.
+    icon: readIcon(node.getAttribute('icon')),
+    note: node.getAttribute('note') || '',
+    mark: readFlag(node, 'mark'),
+    more: readFlag(node, 'more'),
+    hidden: readFlag(node, 'hidden'),
+    error: readFlag(node, 'error'),
     chevronOpenIcon: node.getAttribute('chevron-open-icon') || '',
     chevronClosedIcon: node.getAttribute('chevron-closed-icon') || '',
     openLabel: node.getAttribute('open-label') || '',
@@ -442,11 +595,12 @@ function renderTreeItemData(item = {}) {
       chevron-closed-icon=${item.chevronClosedIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       open-label=${item.openLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       close-label=${item.closeLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      icon=${item.icon === false ? 'false' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      icon=${item.icon === false ? 'false' : item.icon && item.icon !== true ? item.icon : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?open=${Boolean(item.open)}
       ?selected=${Boolean(item.selected)}
       ?active=${Boolean(item.active)}
       ?disabled=${Boolean(item.disabled)}
+      ?has-children=${Boolean(item.hasChildren ?? item['has-children'])}
       .itemsData=${item.children || []}
     ></sf-tree-item>
   `;
@@ -467,7 +621,8 @@ function renderTreeItemTemplate(context) {
     selected: context.selected,
     active: context.active,
     disabled: context.disabled,
-    icon: context.icon,
+    nodeIcon: context.nodeIcon,
+    folder: context.folder,
     openIcon: context.openIcon,
     closedIcon: context.closedIcon,
     chevronOpenIcon: context.chevronOpenIcon,
@@ -514,11 +669,28 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // (simai/ui-source#43).
 //
 // row:
-//   id, value, label, href, target, rel, kind, open, selected, active,
-//   disabled, icon, openIcon, closedIcon, chevronOpenIcon, chevronClosedIcon,
-//   openLabel, closeLabel, hasChildren
+//   id, value, label, href, target, rel, open, selected, active, disabled,
+//   openIcon, closedIcon, chevronOpenIcon, chevronClosedIcon, openLabel,
+//   closeLabel, hasChildren
+//   nodeIcon                   the type icon the caller chose (core
+//                              file-types: icon, kind, extension, place);
+//                              '' draws none (C102)
+//   folder                     a branch or an empty folder: the row's class
+//   note                       a second text after the name: a comment, a
+//                              count, a size (C102 §7 items 7-8)
+//   mark, more                 a highlighted line; the «…» line
+//   pageHidden, hiddenWord     a hidden page, greyed, with its word (C102 8)
+//   check                      'true' | 'false' | 'mixed': a check box in the
+//                              row and aria-checked (selection="check")
+//   checkSize                  the check box's step: the tree's size (C109)
+//   placeholder, spinner       'loading' | 'error': the row a lazy branch
+//                              shows while its children load or failed
+//                              (C102 6); spinner is the Framework's spinner
+//   retryLabel, onRetry        the error row's button
 //   level, setsize, posinset   aria-level and the rest, for a flat tree
 //   tabStop                    the one row Tab reaches
+//   tipId                      a name cut to one line (TR-14): the id of the
+//                              Framework tooltip that holds the whole name
 //   selection                  'none' leaves aria-selected out
 //   rootClass, itemClass, containerClass, nameClass, rootStyle
 //   content                    what a standalone item draws for its name
@@ -537,23 +709,75 @@ function joinClasses(...tokens) {
 function renderIcon(icon, className = '') {
   if (!icon) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class=${joinClasses('sf-icon', className)} aria-hidden="true">${icon}</i>`;
+} // The whole name of a row whose name the line cuts (TR-14): the Framework's
+// tooltip surface (component.tooltip), hidden in the markup and shown by its
+// controller on hover and keyboard focus of the row, which names it with
+// data-tooltip. No tail (C59). The row's aria-label is the same name, so the
+// controller does not make the tooltip a description that repeats it.
+
+function renderTip(row) {
+  if (!row.tipId || !row.label) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-tree-item-tip" id=${row.tipId} hidden><span
+      class="sf-tooltip-content"><span class="sf-tooltip-text">${row.label}</span></span></span>`;
 }
 
 function renderName(row) {
   if (row.label) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span>${row.label}</span>`;
   return row.content !== undefined && row.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? row.content : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // A check box of the Framework's class markup (component.checkbox): its box
+// and mark only -- the row is the label, the press and the keys are the
+// tree's, so the box is hidden from assistive technology and the treeitem
+// says aria-checked.
+
+
+function renderCheck(row) {
+  if (!row.check) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const on = row.check === 'true';
+  const mixed = row.check === 'mixed';
+  const size = row.checkSize === '1/2' || row.checkSize === '2' ? row.checkSize : '1';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkbox sf-checkbox--size-${size} sf-tree-check flex`} aria-hidden="true"><span class="sf-checkbox-box flex"><input
+      type="checkbox" tabindex="-1" .checked=${on} .indeterminate=${mixed} ?disabled=${row.disabled}><i class="sf-icon" aria-hidden="true">${mixed ? 'remove' : on ? 'check' : ''}</i></span></span>`;
+}
+
+function renderNote(row) {
+  const word = row.pageHidden && row.hiddenWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tree-item-note sf-tree-item-hidden-word">${row.hiddenWord}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const note = row.note ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tree-item-note">${row.note}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${word}${note}`;
+} // The row a lazy branch shows under itself: «Загрузка…» with the spinner, or
+// the error with its retry button (C102 item 6).
+
+
+function renderPlaceholder(row) {
+  const level = row.level ? String(row.level) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const error = row.placeholder === 'error';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
+      class=${joinClasses('sf-tree-item flex flex-col', `sf-tree-item--${row.placeholder}`)}
+      style=${row.level ? `--sf-tree-level:${row.level}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      role="treeitem"
+      tabindex=${row.tabStop ? '0' : '-1'}
+      aria-level=${level}
+      aria-setsize="1"
+      aria-posinset="1"
+      aria-busy=${error ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}
+      aria-disabled=${error ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}
+      data-sf-entry=${row.id}
+      data-sf-tree-level=${level}
+    ><div class="sf-tree-item-container flex items-cross-center relative"><span class="sf-tree-toggle-spacer" aria-hidden="true"></span>${error ? renderIcon('error', 'sf-tree-node-icon') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tree-node-icon sf-tree-item-spinner" aria-hidden="true">${row.spinner ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`}<span class="sf-tree-item-name">${row.label}</span>${error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" tabindex="-1" class="sf-tree-item-retry" @click=${row.onRetry}>${row.retryLabel}</button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div></div>`;
 }
 
 function renderTreeRow(row, children = lit__WEBPACK_IMPORTED_MODULE_0__.nothing) {
+  if (row.placeholder) return renderPlaceholder(row);
   const isFile = row.kind === 'file';
   const canToggle = !isFile && Boolean(row.hasChildren);
   const open = canToggle && Boolean(row.open);
-  const itemClasses = joinClasses('sf-tree-item flex flex-col', row.kind ? `sf-tree-item--${row.kind}` : '', open ? 'open' : '', canToggle ? 'has-children' : '', row.selected || row.active ? 'active' : '', row.disabled ? 'disabled' : '', row.rootClass, row.itemClass);
+  const folder = row.folder ?? canToggle;
+  const itemClasses = joinClasses('sf-tree-item flex flex-col', folder ? 'sf-tree-item--folder' : 'sf-tree-item--file', open ? 'open' : '', canToggle ? 'has-children' : '', row.selected || row.active ? 'active' : '', row.disabled ? 'disabled' : '', row.mark ? 'sf-tree-item--mark' : '', row.more ? 'sf-tree-item--more' : '', row.pageHidden ? 'sf-tree-item--hidden' : '', row.rootClass, row.itemClass);
   const containerClasses = joinClasses('sf-tree-item-container flex items-cross-center relative', row.containerClass);
   const nameClasses = joinClasses('sf-tree-item-name', row.nameClass);
-  const nodeIcon = isFile ? 'draft' : open ? row.openIcon : row.closedIcon;
+  const nodeIcon = row.more ? 'more_horiz' : row.nodeIcon;
   const chevronIcon = open ? row.chevronOpenIcon : row.chevronClosedIcon;
   const level = row.level ? String(row.level) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const checked = row.check ? row.check : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
       class=${itemClasses}
       style=${[row.rootStyle, row.level ? `--sf-tree-level:${row.level}` : ''].filter(Boolean).join(';') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -563,15 +787,19 @@ function renderTreeRow(row, children = lit__WEBPACK_IMPORTED_MODULE_0__.nothing)
       aria-setsize=${row.setsize ? String(row.setsize) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-posinset=${row.posinset ? String(row.posinset) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-expanded=${canToggle ? String(open) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-selected=${row.selection === 'none' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(row.selected))}
+      aria-selected=${row.selection === 'none' || row.check ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(row.selected))}
+      aria-checked=${checked}
       aria-current=${row.active ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-disabled=${row.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      data-open-icon=${row.openIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      data-closed-icon=${row.closedIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${row.tipId && row.label ? row.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-tooltip=${row.tipId && row.label ? row.tipId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-open-icon=${folder ? row.openIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-closed-icon=${folder ? row.closedIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value=${row.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-sf-entry=${row.id ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-sf-tree-level=${level}
-    ><div class=${containerClasses}>${canToggle ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" tabindex="-1" class="sf-icon-button sf-tree-toggle" ?disabled=${row.disabled} aria-expanded=${String(open)} aria-label=${open ? row.closeLabel : row.openLabel} @click=${row.onToggle}>${renderIcon(chevronIcon, 'sf-tree-chevron')}</button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tree-toggle-spacer" aria-hidden="true"></span>`}${row.icon === false ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : renderIcon(nodeIcon, 'sf-tree-node-icon')}${row.href && !row.disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${nameClasses} href=${row.href} target=${row.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} rel=${row.rel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} tabindex="-1" @click=${row.onName}>${renderName(row)}</a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${nameClasses} @click=${row.onName}>${renderName(row)}</span>`}</div>${children}</div>`;
+      draggable=${row.draggable ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ><div class=${containerClasses}>${canToggle ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" tabindex="-1" class="sf-icon-button sf-tree-toggle" ?disabled=${row.disabled} aria-expanded=${String(open)} aria-label=${open ? row.closeLabel : row.openLabel} @click=${row.onToggle}>${renderIcon(chevronIcon, 'sf-tree-chevron')}</button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tree-toggle-spacer" aria-hidden="true"></span>`}${renderCheck(row)}${renderIcon(nodeIcon, 'sf-tree-node-icon')}${row.href && !row.disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${nameClasses} href=${row.href} target=${row.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} rel=${row.rel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} tabindex="-1" @click=${row.onName}>${renderName(row)}</a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${nameClasses} @click=${row.onName}>${renderName(row)}</span>`}${renderNote(row)}${renderTip(row)}</div>${children}</div>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -599,6 +827,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "9bbeb11fb966"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The kinds of an entry and the extensions of a name that say them: one map for every SIMAI Framework part that shows a file or a page by its type -- sf-tree\'s rows today; sf-file-upload, sf-file-download and sf-view\'s file cells to follow; Docara\'s static tree, Larena\'s files and ui-mail read the same words (owner decision C102, 2026-11-12; research ui-control control/research/2026-11-12-tree.md section 7 items 2-3). A kind is one of twelve words; its icon is a Material Symbols name of the Framework\'s icon font. An extension is matched on the name\'s last dot, in lower case. A kind without extensions is said by the host (kind) or by the entry\'s place (folder: it has children). Keep the words: they are public (an entry\'s kind).","schema":"simai.framework.file-types","version":1,"kinds":{"folder":{"icon":"folder","open-icon":"folder_open","extensions":[]},"file":{"icon":"draft","extensions":[]},"page":{"icon":"article","extensions":[]},"document":{"icon":"description","extensions":["md","txt","doc","docx","pdf","rtf","odt"]},"image":{"icon":"image","extensions":["png","jpg","jpeg","gif","svg","webp","ico","avif"]},"code":{"icon":"code","extensions":["js","mjs","ts","css","scss","html","php","py","sh","vue"]},"data":{"icon":"data_object","extensions":["json","yml","yaml","xml","toml","lock","ini","env"]},"table":{"icon":"table_chart","extensions":["csv","xls","xlsx","ods"]},"archive":{"icon":"folder_zip","extensions":["zip","tar","gz","rar","7z"]},"video":{"icon":"movie","extensions":["mp4","mov","webm"]},"audio":{"icon":"audio_file","extensions":["mp3","wav","ogg","m4a"]},"link":{"icon":"link","extensions":[]}}}');
+
+/***/ },
+
 /***/ "3caeafa9a937"
 (module) {
 
@@ -609,7 +844,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tree-
 /***/ "38c83d62c9cb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree-item","tag":"sf-tree-item","version":"1.1.5","kind":"leaf","settings":{"label":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"kind":{"type":"enum","values":["folder","file"],"default":"folder"},"value":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"items-data":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","icon":"boolean","open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"open-icon":{"type":"icon","default":"folder_open"},"closed-icon":{"type":"icon","default":"folder"},"icon":{"type":"boolean","default":true},"chevron-open-icon":{"type":"icon","default":"keyboard_arrow_down"},"chevron-closed-icon":{"type":"icon","default":"chevron_right"},"open-label":{"type":"string","default-from":"runtime.open-label"},"close-label":{"type":"string","default-from":"runtime.close-label"},"item-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"name-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false},"active":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","value":"string"}},"toggle":{"carries":{"id":"string","open":"boolean","value":"string"}}},"actions":{"expand":{},"collapse":{},"toggle-open":{},"activate":{},"focus-item":{}},"css-variables":{"--sf-tree-item-gap":{"type":"length","state":"default"},"--sf-tree-item-name-color":{"type":"color","state":"default"},"--sf-tree-item-icon-color":{"type":"color","state":"default"},"--sf-tree-item-drop-background-color":{"type":"color","state":"drop-target"},"--sf-tree-item-drop-outline-color":{"type":"color","state":"drop-target"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree-item","tag":"sf-tree-item","version":"1.3.1","kind":"leaf","settings":{"label":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"],"default":""},"value":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"has-children":{"type":"boolean","default":false},"items-data":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"open-icon":{"type":"icon","default":"folder_open"},"closed-icon":{"type":"icon","default":"folder"},"icon":{"type":"string","default":""},"chevron-open-icon":{"type":"icon","default":"keyboard_arrow_down"},"chevron-closed-icon":{"type":"icon","default":"chevron_right"},"open-label":{"type":"string","default-from":"runtime.open-label"},"close-label":{"type":"string","default-from":"runtime.close-label"},"item-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"name-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false},"active":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","value":"string"}},"toggle":{"carries":{"id":"string","open":"boolean","value":"string"}}},"actions":{"expand":{},"collapse":{},"toggle-open":{},"activate":{},"focus-item":{}},"css-variables":{"--sf-tree-item-gap":{"type":"length","state":"default"},"--sf-tree-item-name-color":{"type":"color","state":"default"},"--sf-tree-item-icon-color":{"type":"color","state":"default"},"--sf-tree-item-drop-background-color":{"type":"color","state":"drop-target"},"--sf-tree-item-drop-outline-color":{"type":"color","state":"drop-target"}}}');
 
 /***/ },
 

@@ -121,11 +121,13 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -138,6 +140,9 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
 
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
@@ -176,15 +181,27 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
-} // A text field keeps the ladder's outer steps (actions block item 4,
-// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
-// search or a hero search stands beside buttons of 1/3 and 3. Every other
-// field keeps the three sizes.
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
+// dropdown, file upload, image, rich text) keep the three sizes for now.
 
-const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
-function inputSize(value, fallback = '1') {
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
-  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -832,6 +849,12 @@ const KEY_CAPS = {
   end: 'End',
   pageup: 'PgUp',
   pagedown: 'PgDn'
+}; // An Apple keyboard's own signs where they differ (component.kbd 1.3.3, CM-9
+// of ui-control research 2026-11-14-context-menu): forward delete is ⌦, as
+// macOS menus print it; Del is a Windows word.
+
+const MAC_KEY_CAPS = {
+  delete: '⌦'
 }; // The names of KeyboardEvent.key for the words above.
 
 const KEY_NAMES = {
@@ -909,7 +932,7 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
     modifiers.push(caps[name]);
   }
 
-  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  const key = (apple ? MAC_KEY_CAPS[parsed.key] : undefined) ?? KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
   return [...modifiers, key].map(text => ({
     text,
     square: [...text].length === 1
@@ -1210,12 +1233,404 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "64feefebb417"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   THEME_ICONS: () => (/* binding */ THEME_ICONS),
+/* harmony export */   cycleItems: () => (/* binding */ cycleItems),
+/* harmony export */   cycleState: () => (/* binding */ cycleState),
+/* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   loaderOwnsTheme: () => (/* binding */ loaderOwnsTheme),
+/* harmony export */   nextTheme: () => (/* binding */ nextTheme),
+/* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   preloadControlIcons: () => (/* binding */ preloadControlIcons),
+/* harmony export */   preloadSwitchIcons: () => (/* binding */ preloadSwitchIcons),
+/* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   switchIconEntries: () => (/* binding */ switchIconEntries),
+/* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
+/* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
+/* harmony export */   themePreference: () => (/* binding */ themePreference),
+/* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle),
+/* harmony export */   warnThemeNotOwned: () => (/* binding */ warnThemeNotOwned)
+/* harmony export */ });
+// One button, several values (docs review R039, owner decision D11d;
+// research ui-control control/research/2026-11-08-cycle-button.md).
+//
+// sf-button and sf-button-icon share this: the `cycle` setting is a list of
+// items shaped like sf-segmented's items ({value, label, icon} and an
+// optional `pressed`, which draws the item with the pressed look), `value`
+// is the current item, and a press moves to the next item and wraps. The
+// `theme-cycle` setting draws a ready theme switch over SF.Loader's theme
+// (the same contract as sf-segmented's theme-switch: themePreference,
+// setTheme, sf-theme-change).
+//
+// The name and the icon say the current value («Тема: тёмная»), the tooltip
+// says the current and the next («Тема: тёмная. Нажмите — как в системе»),
+// and a polite live region says the new value after a press. A cycle is a
+// plain button: it carries no aria-pressed, so pressed, label-pressed and
+// text-pressed are ignored beside it (with one console warning).
+const THEME_VALUES = ['system', 'light', 'dark']; // «Как в системе» in a cycle is the half-dark, half-light circle (D11d): a
+// monitor alone does not say a theme.
+
+const THEME_ICONS = Object.freeze({
+  system: 'contrast',
+  light: 'light_mode',
+  dark: 'dark_mode'
+});
+
+function parseList(source) {
+  if (Array.isArray(source)) return source;
+  const text = String(source ?? '').trim();
+  if (!text) return [];
+
+  if (text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  } // value::label::flags|… as sf-segmented's items take it; a flag icon=<name>
+  // names the icon, pressed draws the pressed look.
+
+
+  return text.split('|').map(entry => {
+    const [value, label = value, flags = ''] = entry.split('::');
+    const list = flags.split(',').map(flag => flag.trim()).filter(Boolean);
+    const icon = list.find(flag => flag.startsWith('icon='));
+    return {
+      value: value.trim(),
+      label: label.trim(),
+      icon: icon ? icon.slice(5) : '',
+      pressed: list.includes('pressed')
+    };
+  });
+}
+/** The cycle's items, normalised: a value each, once, in the given order. */
+
+/** Reads the attribute's JSON or value::label::flags form; a list stays a list. */
+
+
+function parseCycle(value) {
+  return parseList(value);
+}
+function cycleItems(source) {
+  const seen = new Set();
+  return parseList(source).map((item, index) => {
+    const one = typeof item === 'string' ? {
+      value: item,
+      label: item
+    } : item;
+    if (!one || typeof one !== 'object') return null;
+    const value = String(one.value ?? one.id ?? index).trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return {
+      value,
+      label: String(one.label ?? one.text ?? value),
+      icon: String(one.icon || ''),
+      lang: String(one.lang || '').trim(),
+      pressed: Boolean(one.pressed)
+    };
+  }).filter(Boolean);
+}
+/** The themes a theme-cycle offers: all three, or the two it names. */
+
+function themeCycleValues(attribute) {
+  const named = String(attribute ?? '').trim().toLowerCase().split(/[\s,]+/u).map(word => word === 'auto' ? 'system' : word).filter(word => THEME_VALUES.includes(word));
+  const unique = [...new Set(named)]; // Two themes without «as the system» flip the visible theme; anything else
+  // (empty, one word, all three) is the full cycle.
+
+  if (unique.length === 2 && !unique.includes('system')) return ['light', 'dark'];
+  return THEME_VALUES;
+}
+
+const opposite = theme => theme === 'dark' ? 'light' : 'dark';
+
+function loader() {
+  return globalThis.SF?.Loader;
+}
+/**
+ * False when the page's host draws the theme itself and started the Loader
+ * with `theme: false` (SF_BOOT_CONFIG.theme): the Loader then neither reads
+ * nor sets a theme, and its `theme` stays at the value it began with.
+ */
+
+
+function loaderOwnsTheme() {
+  return loader()?.themeEnabled !== false;
+}
+/**
+ * The theme drawn now (light or dark), whatever the preference. The Loader's
+ * own value counts only while the Loader owns the theme; under a host that
+ * owns it (R076: a Docara example frame) the document says what is drawn.
+ */
+
+function visibleTheme() {
+  const theme = loaderOwnsTheme() ? loader()?.theme : undefined;
+  if (theme === 'dark' || theme === 'light') return theme;
+  const root = globalThis.document?.documentElement;
+  if (root?.classList?.contains('theme-dark')) return 'dark';
+  if (root?.classList?.contains('theme-light')) return 'light';
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+}
+/** What the person chose: system, light or dark. */
+
+function themePreference() {
+  const preference = loader()?.themePreference;
+  return THEME_VALUES.includes(preference) ? preference : 'system';
+}
+/**
+ * The owner's order (D11d): first the theme opposite to the visible one,
+ * then the other, then «as the system». It needs the value before the
+ * current one: from an explicit theme reached from the other explicit theme
+ * the next is system; from system, or from a theme the page loaded with, the
+ * opposite theme. Two themes: always the opposite of the visible theme.
+ */
+
+function nextTheme({
+  values,
+  current,
+  previous
+}) {
+  if (!values.includes('system')) return opposite(visibleTheme());
+  if (current === 'system') return opposite(visibleTheme());
+  if (previous && previous !== 'system' && previous === opposite(current)) return 'system';
+  return opposite(current);
+}
+/**
+ * The cycle state the template reads: {items, item, next, index, name,
+ * tooltip}. `words(key, vars)` gives the element's words; `base` is the
+ * button's own name (aria-label, or the text of an sf-button).
+ */
+
+function hasCycle(host) {
+  if (host.hasAttribute('theme-cycle')) return true;
+  const own = host.getProp?.('cycle');
+  return Boolean(host.hasAttribute('cycle') || Array.isArray(own) && own.length);
+}
+function cycleState(host, {
+  base = '',
+  words
+}) {
+  if (host.hasAttribute('theme-cycle')) {
+    const values = themeCycleValues(host.getAttribute('theme-cycle'));
+    const two = !values.includes('system');
+    const current = two ? visibleTheme() : themePreference();
+
+    const label = value => words(`theme-${value}`);
+
+    const items = values.map(value => ({
+      value,
+      label: label(value),
+      icon: THEME_ICONS[value],
+      lang: '',
+      pressed: false
+    }));
+    const item = items.find(one => one.value === current) ?? items[0];
+    const nextValue = nextTheme({
+      values,
+      current: item.value,
+      previous: host.__sfCyclePrevious
+    });
+    const next = items.find(one => one.value === nextValue) ?? items[0];
+    const title = base || words('theme');
+    const now = item.value === 'system' ? words('theme-system-now', {
+      vars: {
+        theme: label(visibleTheme())
+      }
+    }) : item.label;
+    const name = `${title}: ${now}`;
+    return {
+      theme: true,
+      items,
+      item,
+      next,
+      name,
+      tooltip: words('cycle-next', {
+        vars: {
+          name,
+          next: next.label
+        }
+      })
+    };
+  }
+
+  const items = cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle'));
+  if (!items.length) return null;
+  const at = Math.max(0, items.findIndex(one => one.value === (host.getAttribute('value') ?? '')));
+  const item = items[at];
+  const next = items[(at + 1) % items.length];
+  const name = base ? `${base}: ${item.label}` : item.label;
+  return {
+    theme: false,
+    items,
+    item,
+    next,
+    name,
+    tooltip: words('cycle-next', {
+      vars: {
+        name,
+        next: next.label
+      }
+    })
+  };
+}
+/** A cycle beside a toggle's settings: the toggle's are ignored, said once. */
+
+function warnCycleToggle(host, names) {
+  const given = names.filter(name => host.hasAttribute(name));
+  if (!given.length || host.__sfCycleWarned) return;
+  host.__sfCycleWarned = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
+}
+/**
+ * A theme cycle whose press cannot move the theme says why, once per
+ * element (R076): a host that owns the theme (the Loader started with
+ * `theme: false`), or no Loader at all. The button stays where it is and
+ * sends no change.
+ */
+
+function warnThemeNotOwned(host) {
+  if (host.__sfThemeWarned) return;
+  host.__sfThemeWarned = true;
+  const reason = loader() ? 'the page\'s theme belongs to its host (the Loader runs with theme: false); a host that hands the theme to the Loader makes it work (a Docara example: theme_switch=true)' : 'SF.Loader is absent';
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName} theme-cycle: the press changes nothing: ${reason}.`);
+}
+/**
+ * A person's press of a cycle: the next value, the change event and the
+ * announcement. Answers true when it moved.
+ */
+
+function pressCycle(host, state) {
+  if (!state) return false;
+  const previous = state.item.value;
+  const value = state.next.value; // Said after the drawing that follows: the flag first, as the drawing may
+  // come at once.
+
+  const before = host.__sfCyclePrevious;
+  host.__sfCycleAnnounce = true;
+  host.__sfCyclePrevious = previous;
+
+  if (state.theme) {
+    // The Loader moves the page first, so a listener of change finds the
+    // page in the theme it chose; a Loader that cannot (absent, or the
+    // theme switched off) leaves the cycle where it is.
+    host.__sfCycleExpect = value;
+
+    if (loader()?.setTheme?.(value) !== true) {
+      warnThemeNotOwned(host);
+      host.__sfCycleAnnounce = false;
+      host.__sfCyclePrevious = before;
+      host.__sfCycleExpect = undefined;
+      return false;
+    }
+  } else {
+    host.setAttribute('value', value);
+  }
+
+  host.requestComponentUpdate?.('value');
+  const item = state.items.find(one => one.value === value) ?? null;
+  host.sfEmit('change', {
+    previous,
+    value,
+    item: item ? { ...item
+    } : null
+  });
+  return true;
+}
+/**
+ * sf-theme-change for a theme cycle: a theme set elsewhere (another switch,
+ * SF.Loader.setTheme) starts the order afresh from what is shown.
+ */
+
+function themeCycleFollow(host) {
+  if (!host.hasAttribute('theme-cycle')) return;
+  const values = themeCycleValues(host.getAttribute('theme-cycle'));
+  const now = values.includes('system') ? themePreference() : visibleTheme();
+  if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
+  host.__sfCycleExpect = undefined;
+  host.requestComponentUpdate?.('theme-cycle');
+} // The icons a control can switch to, asked for before it switches (R074).
+// Only the icon on screen was tracked, so the first press that showed another
+// one asked the subset service for a grown font on the click, and the new
+// icon stayed blank while the service built it (up to ~30 s when it was busy).
+// Asked for when the control is drawn, the names join the page's first icon
+// request (held until the Loader is ready); a control added later costs one
+// grown font off the click.
+
+/**
+ * The icon entries ({icon, filled}) a cycle, a theme cycle or a toggle can
+ * show. `icons` are a toggle's own icon names: with `pressed` present they
+ * are drawn filled while on, so both forms are asked for. `filled` is the
+ * control's own filled setting (every form filled).
+ */
+
+function switchIconEntries(host, {
+  icons = [],
+  filled = false
+} = {}) {
+  const entries = [];
+
+  const add = (icon, fill) => {
+    const name = String(icon || '').trim();
+    if (name) entries.push({
+      icon: name,
+      filled: Boolean(fill || filled)
+    });
+  };
+
+  if (host.hasAttribute('theme-cycle')) {
+    themeCycleValues(host.getAttribute('theme-cycle')).forEach(value => add(THEME_ICONS[value], false));
+  } else if (hasCycle(host)) {
+    cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle')).forEach(item => add(item.icon, item.pressed));
+  } else if (host.hasAttribute('pressed')) {
+    icons.forEach(icon => {
+      add(icon, false);
+      add(icon, true);
+    });
+  }
+
+  const seen = new Set();
+  return entries.filter(entry => {
+    const key = `${entry.icon}|${entry.filled}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+/**
+ * Asks the Loader for these icon entries once per distinct list (a render
+ * that draws the same items asks nothing). Answers the number of new names.
+ */
+
+function preloadControlIcons(host, entries) {
+  if (!Array.isArray(entries) || !entries.length) return 0;
+  const key = JSON.stringify(entries);
+  if (host.__sfPreloadedIcons === key) return 0;
+  const preload = loader()?.preloadIcons;
+  if (typeof preload !== 'function') return 0;
+  host.__sfPreloadedIcons = key;
+  return preload.call(loader(), entries) || 0;
+}
+/** switchIconEntries, asked for. */
+
+function preloadSwitchIcons(host, options = {}) {
+  return preloadControlIcons(host, switchIconEntries(host, options));
+}
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
@@ -1303,12 +1718,14 @@ function syncFieldValidity(component, control, own = {}) {
 }
 /**
  * The host's validity from what the component says itself (fieldValidity()):
- * value-missing and the custom error the page set; `anchor`, when it is a part
- * of the host, is where the browser points.
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
  */
 
 function syncOwnValidity(component, {
   valueMissing = false,
+  tooLong = false,
   message = '',
   anchor = null
 } = {}) {
@@ -1326,6 +1743,11 @@ function syncOwnValidity(component, {
   if (valueMissing) {
     flags.valueMissing = true;
     text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
   }
 
   try {
@@ -1424,6 +1846,71 @@ const FormField = Base => class extends Base {
   formStateRestoreCallback(state) {
     if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
     this.sfSyncFormState();
+  }
+
+};
+/**
+ * The required error a text field shows after a failed form check (owner
+ * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
+ * browser's check finds the field required and empty -- a submit attempt,
+ * checkValidity(), reportValidity(), all of which fire `invalid` on the host
+ * -- the field draws its error border and the component's value-missing word
+ * under it, until the person's input fills it or the form is reset. The
+ * browser's own bubble and its focus on the first invalid field are left as
+ * they are. The page's invalid / error-message win over it.
+ *
+ * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
+ * the template reads `sfShownInvalid(invalid)` and
+ * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ */
+
+const ShownRequired = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfMissingShown = false;
+    this.addEventListener('invalid', () => {
+      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
+      this.__sfMissingShown = true;
+      this.requestComponentUpdate?.('invalid');
+    });
+  } // The shown required error goes once the value is no longer missing,
+  // whatever filled it: the person's input or change, a value set from
+  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
+  // shownMissing reads the value the same way). Every one of them ends in
+  // this sync, so the check is here and not on the events.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
+    this.__sfMissingShown = false;
+    this.requestComponentUpdate?.('value');
+  }
+  /** The required error is shown now. */
+
+
+  get sfMissingShown() {
+    return this.__sfMissingShown;
+  }
+  /** The invalid state the field draws: the page's, or the required one shown. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfMissingShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the required word. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+  }
+
+  formResetCallback() {
+    const shown = this.__sfMissingShown;
+    this.__sfMissingShown = false;
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
@@ -1738,14 +2225,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5c571b560382");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fc92d2bbc3ce");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b0558b1b8eb0");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e9f1da81a45b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d6f37816062a");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("fc92d2bbc3ce");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b0558b1b8eb0");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e9f1da81a45b");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d6f37816062a");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -1764,17 +2253,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 // the form control through ElementInternals: it submits the text, reports the
 // native input's validity, and the native input carries no name (§17.1).
 
-const InputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const InputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 });
 
-class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(InputElement) {
+class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownRequired)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(InputElement)) {
   static get props() {
     return { ...super.props,
       rootClass: {
@@ -1803,7 +2292,42 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
 
   constructor() {
     super();
-    this._boundRoot = null;
+    this._boundRoot = null; // The password reveal (C123 (5)): the field's own state, not a setting.
+
+    this._revealed = false; // The clear shows while the field holds a value: typing, a paste or the
+    // page's own input event say so (C123 (6)).
+
+    this.addEventListener('input', () => this.syncClearAction());
+  } // The clear (C123 (6)): empties the field the way a reset does -- input,
+  // then change, from the native input -- and gives the focus back to it, as
+  // the button that had it is gone.
+
+
+  clearFromButton(event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (this.disabled || this.readonly) return;
+    this.clearOwnValue();
+    this.syncClearAction();
+    this.getInputElement()?.focus?.();
+  } // The password reveal (C123 (5)): a toggle button, aria-pressed, the eye
+  // crossed out while the password shows. The native input's type follows;
+  // the focus stays on the button.
+
+
+  toggleReveal(event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (this.disabled) return;
+    this._revealed = !this._revealed;
+    this.requestComponentUpdate('revealed');
+  }
+
+  syncClearAction() {
+    const clear = this.querySelector(':scope .sf-input-clear');
+    if (!clear) return;
+    const empty = !(this.getInputElement()?.value || '');
+    if (clear.hidden !== empty) clear.hidden = empty;
   } // sf-input keeps the ladder's outer steps (1/3 and 3) that the other
   // fields retired (field-size.js inputSize).
 
@@ -1834,6 +2358,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
 
     const mask = this.querySelector('.sf-input')?.__sfInputMask;
     if (mask) mask.value = normalizedValue;else if (input && input.value !== normalizedValue) input.value = normalizedValue;
+    this.syncClearAction?.();
     this.sfSyncFormState?.();
   }
 
@@ -1897,6 +2422,21 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
     input?.dispatchEvent(new Event('change', {
       bubbles: true
     }));
+  } // A form reset puts the default text back without an input event, a task
+  // later for a masked field: the clear follows it, and a revealed password
+  // is hidden again.
+
+
+  formResetCallback() {
+    super.formResetCallback?.();
+
+    if (this._revealed) {
+      this._revealed = false;
+      this.requestComponentUpdate('revealed');
+    }
+
+    Promise.resolve().then(() => this.syncClearAction());
+    setTimeout(() => this.syncClearAction(), 0);
   } // The browser's restore of a form (back, reload) gives the text back.
 
 
@@ -1919,6 +2459,11 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
       textEnd: this.textEnd,
       type: this.appearance,
       maskLazy: this.maskLazy,
+      // The page's error, or the required one a failed form check shows
+      // (ShownRequired, C55 acceptance F1: as sf-dropdown 1.9.0).
+      invalid: this.sfShownInvalid(props.invalid || props.error),
+      error: false,
+      errorMessage: this.sfShownMessage(props.invalid || props.error, props.errorMessage),
       // The host is the form control where the browser has ElementInternals,
       // so the native input carries no name (§17.1 item 6).
       controlName: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.innerControlName)(this, props.name),
@@ -1928,6 +2473,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
       inheritedValue: this.inheritedValue,
       inheritedText: this.inheritedText,
       resetLabel: this.resetLabel,
+      revealed: this._revealed && props.inputType === 'password',
       component: this
     });
   }
@@ -1955,15 +2501,19 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
       // cleared the message while the red border and aria-invalid="true" came
       // back (Larena acceptance, 2026-10-22: the datetime's time field after
       // «Укажите время» and then 10:30).
-      const invalid = this.invalid;
+      const invalid = this.sfShownInvalid(this.invalid);
 
       this._boundRoot.classList.toggle('error', invalid);
 
       this.getInputElement()?.classList.toggle('error', invalid);
       (0,_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__.bindInput)(this._boundRoot);
-    }
+    } // The reveal's other glyph is asked for with the first drawing, so the
+    // crossed eye is there on the first press (as sf-button-copy's check).
 
+
+    if (this.querySelector(':scope .sf-input-reveal')) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.preloadControlIcons)(this, ['visibility', 'visibility_off']);
     this.syncInheritedState();
+    this.syncClearAction();
     this.sfSyncFormState();
   }
 
@@ -2062,6 +2612,23 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // A label written into the label slot keeps the label's look (text inputs
+// study 2026-11-14, TI-24): its words stand in .sf-input-text, as the label
+// setting's do, so they take the label's step, line and ink rather than the
+// page's (16 on 24 in the text ink, the row 4 taller at size 1). A help mark
+// written beside them stays a child of the label row, where the C33 / C133
+// rules place it after the last word.
+
+function isHelpMark(node) {
+  return node?.nodeType === 1 && (node.localName === 'sf-help-mark' || node.classList?.contains('sf-help-mark'));
+}
+
+function slottedLabel(content) {
+  const nodes = (Array.isArray(content) ? content : [content]).filter(node => node != null && node !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing);
+  const text = nodes.filter(node => !isHelpMark(node));
+  const marks = nodes.filter(isHelpMark);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${text.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-text">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${marks}`;
+}
 
 function renderInputTemplate(context) {
   const {
@@ -2102,7 +2669,9 @@ function renderInputTemplate(context) {
     maskPlaceholderChar,
     maskOptions,
     ariaLabel,
-    shortcut
+    shortcut,
+    clearable,
+    revealed
   } = context; // The shortcut's keys (C04, C38): the kbd component's, read in this
   // platform's words; the field draws them at its end and never styles them.
   // The native input says the combination in aria-keyshortcuts.
@@ -2126,7 +2695,36 @@ function renderInputTemplate(context) {
     size,
     disabled: disabled || readonly
   });
-  const inputValue = hasControlledValue ? value : defaultValue;
+  const inputValue = hasControlledValue ? value : defaultValue; // The actions inside the field (owner decision C123): glyphs without a plate,
+  // the field layer's .sf-field-action, from the text to the edge: clear, then
+  // the password reveal. A search field's clear is the Framework's in place of
+  // the browser's own; any other field has it with clearable. Neither is drawn
+  // where the person cannot change the value.
+
+  const editable = !disabled && !readonly;
+  const isPassword = inputType === 'password';
+  const showClear = editable && (clearable || inputType === 'search');
+  const nativeType = isPassword && revealed ? 'text' : inputType;
+  const clearWord = context.component?.sfWord?.('clear') || 'Clear';
+  const revealWord = context.component?.sfWord?.('reveal') || 'Show password';
+  const actionsContent = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    ${showClear ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+          type="button"
+          class="sf-field-action sf-input-clear"
+          data-action="clear"
+          aria-label=${clearWord}
+          ?hidden=${!String(value ?? '')}
+          @click=${event => context.component?.clearFromButton?.(event)}
+        ><sf-icon icon="close" aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${isPassword && !disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+          type="button"
+          class="sf-field-action sf-input-reveal"
+          data-action="reveal"
+          aria-label=${revealWord}
+          aria-pressed=${revealed ? 'true' : 'false'}
+          @click=${event => context.component?.toggleReveal?.(event)}
+        ><sf-icon icon=${revealed ? 'visibility_off' : 'visibility'} aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  `;
   const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
     prefix: 'sf-input',
     required,
@@ -2152,7 +2750,7 @@ function renderInputTemplate(context) {
       />`;
   }
 
-  const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const labelContent = context.component?.hasSlotContent?.('label') ? slottedLabel(context.component.getSlotContent('label')) : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <span class="sf-input-text">${label}</span>
             ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-required">*</span>` : ''}
           ` // No label, no label row. A lone star above a control names nothing --
@@ -2162,8 +2760,9 @@ function renderInputTemplate(context) {
   // labels are drawn beside them.
   : '';
   const leftContent = context.component?.hasSlotContent?.('start') ? context.component.getSlotContent('start') : context.component?.hasSlotContent?.('left') ? context.component.getSlotContent('left') : leftIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-left flex"><sf-icon icon="${leftIcon}"></sf-icon></span>` : '';
-  const rightContent = context.component?.hasSlotContent?.('end') ? context.component.getSlotContent('end') : context.component?.hasSlotContent?.('right') ? context.component.getSlotContent('right') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const rightContent = context.component?.hasSlotContent?.('end') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actionsContent}${context.component.getSlotContent('end')}` : context.component?.hasSlotContent?.('right') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actionsContent}${context.component.getSlotContent('right')}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           ${rightText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-right"><span class="sf-input-text">${rightText}</span></span>` : ''}
+          ${actionsContent}
           ${shortcutKeys.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-right sf-input-shortcut" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutKeys.map((key, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${key.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${key.text}</kbd>`)}</kbd></span>` : ''}
           ${hintIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-hint flex"><sf-icon icon="${hintIcon}"></sf-icon></span>` : ''}
         `;
@@ -2196,7 +2795,7 @@ function renderInputTemplate(context) {
         ${hasControlledValue ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
               <input
                 id=${field.controlId}
-                type=${inputType}
+                type=${nativeType}
                 autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
@@ -2226,7 +2825,7 @@ function renderInputTemplate(context) {
             ` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
               <input
                 id=${field.controlId}
-                type=${inputType}
+                type=${nativeType}
                 autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
@@ -2348,21 +2947,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.7.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.9.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "e9f1da81a45b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Text fields","x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Text fields","runtime":{"value-missing":"Fill in this field","clear":"Clear","reveal":"Show password"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "d6f37816062a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Текстовые поля","x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Текстовые поля","runtime":{"value-missing":"Заполните поле","clear":"Очистить","reveal":"Показать пароль"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

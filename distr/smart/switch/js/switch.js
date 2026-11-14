@@ -10,6 +10,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
 /* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   SWITCH_TEXT_PARTS: () => (/* binding */ SWITCH_TEXT_PARTS),
 /* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
 /* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
 /* harmony export */ });
@@ -143,6 +144,16 @@ const RADIO_TEXT_PARTS = Object.freeze({
   label: '.sf-radio-button-top',
   column: '.sf-radio-button-container',
   description: '.sf-radio-button-description'
+}); // sf-switch reads the same binding since C63 W9 (it had its own copy in
+// component/switch/js/_switch.js, written first, the same algorithm).
+
+const SWITCH_TEXT_PARTS = Object.freeze({
+  kind: 'sf-switch',
+  classKind: 'sf-switch',
+  text: '.sf-switch-container',
+  label: '.sf-switch-top',
+  column: '.sf-switch-container-wrap',
+  description: '.sf-switch-description'
 });
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -281,11 +292,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__]);
+/* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
-/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__);
+_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
 
 
 
@@ -312,77 +322,15 @@ function getSwitchNodes(root) {
     inner,
     description
   };
-} // The parts of the description: the .sf-switch-description of class markup and
-// of a description setting, or whatever a description slot placed after the
-// label row.
-
-
-function descriptionParts(root) {
-  const wrap = root.querySelector('.sf-switch-container-wrap');
-  if (!wrap) return [...root.querySelectorAll('.sf-switch-description')];
-  return [...wrap.children].filter(node => !node.classList.contains('sf-switch-top') && !node.hasAttribute('aria-hidden') && node.textContent.trim());
-}
-
-function splitIds(value) {
-  return String(value || '').split(/\s+/).filter(Boolean);
 } // The switch's name is its label alone; its description is the description
-// (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44). Everything
-// sits inside one <label> so a press anywhere flips the switch, and a label
-// names its control by all its text: the description, the inherited marker and
-// the reset button were read as part of the name. The input is named by the
-// label row (aria-labelledby) and described by the description
-// (aria-describedby). An author's aria-label or aria-labelledby wins; ids the
-// author put on aria-describedby are kept. Ids come from the instance path,
-// never a counter (#41).
+// (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44): the label
+// row names the checkbox (aria-labelledby), the description describes it
+// (aria-describedby). The binding is the one sf-checkbox and sf-radio read
+// (src/component/checkable-text-helper.js, C63 W9).
 
 
 function linkSwitchText(root) {
-  const {
-    input
-  } = getSwitchNodes(root);
-  if (!input) return;
-  const owner = root.closest('sf-switch') || root; // A switch built before it is placed has no path yet: link it once it is.
-
-  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.pathIsSettled)(owner)) {
-    if (!root.__sfSwitchLinkPending && typeof requestAnimationFrame === 'function') {
-      root.__sfSwitchLinkPending = true;
-      requestAnimationFrame(() => {
-        root.__sfSwitchLinkPending = false;
-        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.pathIsSettled)(owner)) linkSwitchText(root);
-      });
-    }
-
-    return;
-  }
-
-  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.instancePath)(owner, {
-    kind: 'sf-switch'
-  });
-  const linked = root.__sfSwitchLinked || {
-    label: '',
-    described: []
-  };
-  const label = root.querySelector('.sf-switch-container');
-  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
-
-  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
-    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.partId)(path, 'label');
-    input.setAttribute('aria-labelledby', label.id);
-    linked.label = label.id;
-  } else if (ownLabel) {
-    input.removeAttribute('aria-labelledby');
-    linked.label = '';
-  }
-
-  const ids = descriptionParts(root).map((node, index) => {
-    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.partId)(path, index ? `description-${index + 1}` : 'description');
-    return node.id;
-  });
-  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
-  const describedBy = [...new Set([...authored, ...ids])];
-  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
-  linked.described = ids;
-  root.__sfSwitchLinked = linked;
+  (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.SWITCH_TEXT_PARTS);
 }
 
 function syncSwitchState(root) {
@@ -748,6 +696,78 @@ class ComponentObserver {
   destroyInternal() {}
 
 }
+
+/***/ },
+
+/***/ "496db683b2c5"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKABLE_HELP_SIZE: () => (/* binding */ CHECKABLE_HELP_SIZE),
+/* harmony export */   checkableClasses: () => (/* binding */ checkableClasses),
+/* harmony export */   renderCheckableHelp: () => (/* binding */ renderCheckableHelp),
+/* harmony export */   renderCheckableRow: () => (/* binding */ renderCheckableRow),
+/* harmony export */   renderCheckableText: () => (/* binding */ renderCheckableText)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _checkable_row_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("42b499506736");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+ // The shared base of the three choice controls, sf-checkbox, sf-radio and
+// sf-switch (audit 2026-11-11 W9, owner decision C63): one text column with a
+// help slot, one help mark, one row and one sheet (checkable-row.css) for the
+// row's padding, the hit area, the help's size and place. The name and the
+// description are linked by src/component/checkable-text-helper.js
+// (linkCheckableText) for all three. Each control keeps its own class
+// vocabulary (.sf-checkbox-*, .sf-radio-button-*, .sf-switch-*): the class
+// markup is public and unchanged; the shared classes are .sf-checkable* on
+// what the Smart elements draw.
+// The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
+// 1, 1/2 beside size 2 (the mark adds no height of its own).
+
+const CHECKABLE_HELP_SIZE = Object.freeze({
+  '1/2': '1/3',
+  1: '1/3',
+  2: '1/2'
+}); // The help: what the help slot holds, or a «?» button (sf-help-mark) that
+// opens the help setting's explanation.
+
+function renderCheckableHelp(context, className) {
+  const component = context.component;
+  if (component?.hasSlotContent?.('help')) return component.getSlotContent('help');
+  if (!context.help) return '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class=${className} size=${CHECKABLE_HELP_SIZE[context.size] || '1/3'} text=${context.help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>`;
+} // The text column: the label row (the name), then the description.
+//   parts.column  the column's class      (.sf-checkbox-container)
+//   parts.top     the label row's class   (.sf-checkbox-top)
+//   parts.wrap    a class the label text sits in inside the row, if any
+
+function renderCheckableText(parts, labelContent, descriptionContent) {
+  if (!labelContent && !descriptionContent) return '';
+  const name = parts.wrap ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${parts.wrap}>${labelContent}</span>` : labelContent;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`${parts.column} flex flex-col`}>${labelContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`${parts.top} flex`}>${name}</span>` : ''}${descriptionContent}</span>`;
+} // The classes the shared sheet reads on the control's <label>.
+
+function checkableClasses(size, hasText) {
+  return ['sf-checkable', `sf-checkable--size-${size}`, hasText ? 'sf-checkable--text' : ''];
+} // The help mark is the label's sibling in a row, not inside the <label>
+// (owner decision C59, as C33 for field labels): pressing «?» is no press on
+// the control -- the label and its input never become :active, the box is not
+// painted pressed and the value does not change.
+
+function renderCheckableRow(size, control, help) {
+  if (!help) return control; // The help sits in a box of its own: sf-help-mark's host draws no box
+  // (display: contents), so the row places this one.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -1398,19 +1418,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("61d50f69160a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("496db683b2c5");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
- // The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
-// 1, 1/2 beside size 2 (the mark adds no height of its own).
 
-const HELP_SIZE = {
-  '1/2': '1/3',
-  1: '1/3',
-  2: '1/2'
-};
+
 function renderSwitchTemplate(context) {
   const {
     size,
@@ -1429,11 +1444,10 @@ function renderSwitchTemplate(context) {
   // text node has no id. The span draws nothing of its own.
 
   const descriptionContent = context.component?.hasSlotContent?.('description') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-switch-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-switch-description">${description}</span>` : '';
-  const helpContent = context.component?.hasSlotContent?.('help') ? context.component.getSlotContent('help') // help is the explanation: a «?» button after the label text that opens
-  // it (sf-help-mark), outside the switch's activation.
-  : help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-switch-help" size=${HELP_SIZE[size] || '1/3'} text=${help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>` : '';
-  const showContainer = !!(labelContent || descriptionContent || helpContent);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const helpContent = (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableHelp)(context, 'sf-switch-help');
+  const showContainer = !!(labelContent || descriptionContent);
+  rootClasses.push(...(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.checkableClasses)(size, showContainer));
+  const control = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_2__.keepHelpOutOfLabel}>
       <span class="sf-switch-toggler transition flex items-cross-center content-main-start">
         <input
@@ -1448,21 +1462,11 @@ function renderSwitchTemplate(context) {
         <span class="sf-switch-inner transition" aria-hidden="true"></span>
       </span>
 
-      ${showContainer ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <span class="sf-switch-container-wrap flex flex-col">
-              ${labelContent || helpContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <span class="sf-switch-top flex">
-                      ${labelContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <span class="sf-switch-container flex items-cross-center content-main-center">
-                              ${labelContent}
-                            </span>
-                          ` : ''}
-                      ${helpContent}
-                    </span>
-                  ` : ''}
-              ${descriptionContent}
-            </span>
-          ` : ''}
+      ${(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableText)({
+    column: 'sf-switch-container-wrap',
+    top: 'sf-switch-top',
+    wrap: 'sf-switch-container flex items-cross-center content-main-center'
+  }, labelContent, descriptionContent)}
       ${(0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__.renderInheritedSlot)(context.component, {
     size,
     disabled,
@@ -1470,9 +1474,19 @@ function renderSwitchTemplate(context) {
   })}
     </label>
   `;
+  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableRow)(size, control, helpContent);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "42b499506736"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ },
 
@@ -1530,7 +1544,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.5.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.5.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 

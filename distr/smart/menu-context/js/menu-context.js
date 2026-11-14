@@ -72,6 +72,12 @@ const KEY_CAPS = {
   end: 'End',
   pageup: 'PgUp',
   pagedown: 'PgDn'
+}; // An Apple keyboard's own signs where they differ (component.kbd 1.3.3, CM-9
+// of ui-control research 2026-11-14-context-menu): forward delete is ⌦, as
+// macOS menus print it; Del is a Windows word.
+
+const MAC_KEY_CAPS = {
+  delete: '⌦'
 }; // The names of KeyboardEvent.key for the words above.
 
 const KEY_NAMES = {
@@ -149,7 +155,7 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
     modifiers.push(caps[name]);
   }
 
-  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  const key = (apple ? MAC_KEY_CAPS[parsed.key] : undefined) ?? KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
   return [...modifiers, key].map(text => ({
     text,
     square: [...text].length === 1
@@ -346,14 +352,15 @@ __webpack_require__.r(__webpack_exports__);
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
 // root or on a container moves every component one ladder step down; the CSS
 // does it (core/scss/_sf_css__density.scss): each step variable holds the step
-// below, and an element with an explicit size takes the normal ladder back.
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
 //
-// "Explicit" is a size the page gave. A size a component's template gives an
-// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
-// relative to the component's own size: under a compact sf-input its button
-// has to come down with it, not stand at the normal ladder. Those are marked
-// data-sf-size-relative here, once the component has drawn; the CSS leaves
-// them in the region's ladder.
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
 //
 // What a component holds of the page's own (captured slot content, children
 // left in place) keeps its size explicit. The store is on the shared global:
@@ -427,13 +434,12 @@ function followDensity(element, from) {
   const density = densityOf(from);
   if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
   return element;
-} // The density an element stands in: the nearest region's, or "normal" under an
-// explicit size (where the ladder is the normal one again); null outside any.
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
 
 function densityOf(from) {
   for (let node = from; node?.nodeType === 1; node = node.parentElement) {
     if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
-    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
   }
 
   return null;
@@ -830,6 +836,248 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "c69a3dc158df"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_PLACEHOLDER_ICON: () => (/* binding */ AVATAR_PLACEHOLDER_ICON),
+/* harmony export */   AVATAR_SIZES: () => (/* binding */ AVATAR_SIZES),
+/* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
+/* harmony export */   avatarContent: () => (/* binding */ avatarContent),
+/* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
+/* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+
+ // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
+// component that shows a person beside its own content -- sf-avatar-group,
+// sf-tag, sf-list-item, sf-dropdown, sf-input-lookup, sf-menu-context, the
+// signs of sf-list -- draw the picture with these functions and the avatars
+// sheet's classes: a photo is an <img> filling the circle, initials stand on
+// the neutral plate (or the hue the host names, C17), and with neither the
+// placeholder is a glyph on the neutral plate -- person by default, the
+// host's icon for a bot, a system or a service. Before, five copies drew it
+// five ways: the photo as a background image in the tag, the list row and the
+// dropdown, an empty transparent circle in a row with no photo, and the
+// context menu's own classes on the secondary container.
+
+/** The sizes of the avatar ladder. */
+
+const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
+/** The glyph of a placeholder: a person, unless the host names another. */
+
+const AVATAR_PLACEHOLDER_ICON = "person";
+/**
+ * The drawing context of one avatar picture, from what a host knows: the photo,
+ * the initials or the name they are taken from, the hue, the placeholder's
+ * glyph, the size (or the text line of a form size) and the shape.
+ */
+
+function avatarPictureContext(options = {}) {
+  const imageUrl = String(options.imageUrl ?? "").trim();
+  const name = String(options.name ?? "").trim();
+  const explicitText = String(options.text ?? "").trim();
+  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them.
+
+  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
+  const isImage = Boolean(imageUrl);
+  const isText = !isImage && Boolean(text);
+  const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
+  return {
+    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    line: String(options.line ?? ""),
+    shape: options.shape === "square" ? "square" : "circle",
+    imageUrl,
+    isImage,
+    isText,
+    text,
+    icon,
+    status: options.status || "none",
+    expressive: Boolean(options.expressive),
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    rootClass: options.rootClass || "",
+    rootStyle: options.rootStyle || "",
+    disabled: Boolean(options.disabled),
+    // A long list's rows load their photos as they scroll in.
+    lazy: Boolean(options.lazy),
+    component: options.component
+  };
+}
+/**
+ * The classes of the avatar picture. The avatars sheet answers every class
+ * this file writes. sf-avatar's own templates hand it their utility classes
+ * for the box (options.layout, src/smart/avatar/js/templates/shared.js), as
+ * they wrote them before; a host's picture writes none -- sf-avatar--picture
+ * gives it the same box from the avatars sheet -- so a host asks the Loader
+ * for no utility it did not ask for before (a menu, a tag, a list row).
+ */
+
+function avatarClasses(context, options = {}) {
+  const includeRootClass = options.includeRootClass !== false;
+  const layout = options.layout ?? null;
+  const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
+
+  if (context.isImage && layout) {
+    classes.push(layout.center);
+  }
+
+  if (context.isText) {
+    classes.push("sf-avatar--text");
+    if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
+
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
+    }
+  }
+
+  if (!context.isImage && !context.isText) {
+    classes.push("sf-avatar--placeholder");
+    if (layout) classes.push(layout.center);
+  } // The decorative level (C91 level 2): the sheet turns the initials'
+  // plate of the largest size into a cover of its hue.
+
+
+  if (context.expressive) {
+    classes.push("sf-avatar--expressive");
+  }
+
+  if (context.status && context.status !== "none" && layout) {
+    classes.push(layout.anchor);
+  }
+
+  if (context.shape === "square") {
+    classes.push("sf-avatar--square");
+  }
+
+  if (context.status === "online") {
+    classes.push("sf-avatar--status-icon-online-indicator");
+  }
+
+  if (options.disabled) {
+    classes.push("disabled");
+  }
+
+  if (includeRootClass && context.rootClass) {
+    classes.push(context.rootClass);
+  }
+
+  if (options.extraClass) {
+    classes.push(options.extraClass);
+  }
+
+  return classes.join(" ");
+}
+/**
+ * What the circle holds: the photo, the initials, or the placeholder glyph as
+ * an sf-icon element, so its name reaches the icon font request (a bare
+ * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
+ * review 2026-11-09).
+ */
+
+function avatarContent(context) {
+  if (context.isText) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
+  }
+
+  if (context.isImage) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+}
+/** The icon names a picture draws (for a host's icon preload). */
+
+function avatarPictureIcons(options = {}) {
+  const context = avatarPictureContext(options);
+  return context.isImage || context.isText ? [] : [context.icon];
+}
+/**
+ * One avatar picture beside a host's own content: a span hidden from
+ * assistive technology (the host's visible text names the person), drawn with
+ * the avatars sheet. extraClass adds the host's own geometry class.
+ */
+
+function avatarPicture(options = {}) {
+  const context = avatarPictureContext(options);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        class=${avatarClasses(context, {
+    extraClass: options.extraClass,
+    disabled: context.disabled
+  })}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-hidden="true"
+    >${avatarContent(context)}</span>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "60a3f9a6662c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   warnUnknownControlStatus: () => (/* binding */ warnUnknownControlStatus)
+/* harmony export */ });
+// A control's status is danger alone (rule C13): a button, an icon button or
+// a menu item that deletes, discards or cannot be undone. error is its former
+// name (until 2027-01-01) and critical an older one. There are no success,
+// warning or info controls -- a result's colour belongs to a notice or a
+// badge (ui-control research 2026-11-13-button-schemes, R202, defect BS-1).
+// Such a word used to be dropped without a sound and the scheme colour drawn;
+// it still draws so, and the console now says it once per page for each
+// component and word.
+//
+// Every bundle carries its own copy of this module, so the words already said
+// live on one shared global, as SF.deprecations keeps its notes.
+const CONTROL_STATUSES = Object.freeze(['', 'danger', 'error', 'critical']);
+
+function saidWords() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfUnknownStatusWarned instanceof Set)) {
+    Object.defineProperty(root, '__sfUnknownStatusWarned', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfUnknownStatusWarned;
+} // Answers whether `value` is a status the control does not know, and says so
+// once per page. `allowed` narrows the words a component reads; `label` is how
+// the message names the setting (status="…" on a host, an item's status).
+
+
+function warnUnknownControlStatus(component, value, {
+  allowed = CONTROL_STATUSES,
+  label = 'status'
+} = {}) {
+  if (value === null || value === undefined) return false;
+  const word = String(value);
+  if (allowed.includes(word)) return false;
+  const said = saidWords();
+  const key = `${component}|${label}|${word}`;
+  if (said.has(key)) return true;
+  said.add(key);
+  globalThis.console?.warn?.(`[SIMAI Framework] ${component}: ${label}="${word}" is not a status of a control; a control's status is danger (rule C13), and there are no success, warning or info controls. Drawn without a status.`);
+  return true;
+}
+
+/***/ },
+
 /***/ "cbce4a5232a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -915,17 +1163,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b8b80063ca9a");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("cb6d39a52a42");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4ff97a05802b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("25e9776cb404");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c19f070ad532");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4ff97a05802b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("68b68beb66a3");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("25e9776cb404");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c19f070ad532");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -942,14 +1193,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
-const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
   // openFor(anchor, options), toggleFor(anchor, options) and chooseTab(index)
   // take their fields in order; the runtime gives them the object form of
   // §4.4 as well: openFor({anchor, options}), chooseTab({index}).
@@ -957,7 +1208,55 @@ const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
 }); // Prefer the helper Core published; a bundle loaded without core.js still
 // positions with its own copy.
 
-const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default());
+const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default()); // What a point anchor stands for (sf-menu-context 1.18.0). An anchor is a
+// point when it draws a box of no size: a fixed span at the pointer of a
+// right-click. A host that draws no box of its own (display: contents, as
+// sf-button) or a hidden element is not one. Answers null for any other
+// anchor, else {under, focusable, lent}: the page's element under the point
+// (never the anchor or the menu), and what takes the focus back when the
+// menu closes and nothing held it before (CM-2): the nearest focusable
+// element from it up, else the element itself, lent a tabindex.
+
+
+const FOCUSABLE = "button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]";
+
+function pointOf(anchor, menu) {
+  if (!anchor.getClientRects?.().length) return null;
+  const rect = anchor.getBoundingClientRect();
+  if (rect.width !== 0 || rect.height !== 0) return null;
+  const document = anchor.ownerDocument;
+  const under = (document.elementsFromPoint?.(rect.left, rect.top) ?? []).find(element => element !== anchor && !menu.contains(element) && element !== document.documentElement && element !== document.body);
+  if (!under) return {
+    under: null,
+    focusable: null,
+    lent: false
+  };
+  const near = under.closest(FOCUSABLE);
+  return near && near !== document.body ? {
+    under,
+    focusable: near,
+    lent: false
+  } : {
+    under,
+    focusable: under,
+    lent: true
+  };
+} // Focus to an element that may not take it: lent a tabindex of -1 (focusable
+// from script, never a Tab stop) until it loses the focus.
+
+
+function focusLent(element, options) {
+  if (!element.hasAttribute("tabindex")) {
+    element.setAttribute("tabindex", "-1");
+    element.addEventListener("blur", () => {
+      if (element.getAttribute("tabindex") === "-1") element.removeAttribute("tabindex");
+    }, {
+      once: true
+    });
+  }
+
+  element.focus(options);
+}
 
 const TYPEAHEAD_MS = 500; // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
 // class sheet sizes each from core's --sf-popup-*-width steps, which follow
@@ -974,7 +1273,13 @@ const onPhone = () => !getComputedStyle(document.documentElement).getPropertyVal
 // first of these takes the focus when the menu has no row and no search.
 
 
-const TABBABLE = 'input:not([type="hidden"]), select, textarea, button, a[href], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable="true"]';
+const TABBABLE = 'input:not([type="hidden"]), select, textarea, button, a[href], [tabindex]:not([tabindex="-1"]), [contenteditable=""], [contenteditable="true"]'; // A panel's list (R193, DP-4): the rows of one container that each hold a
+// checkable mark -- a checkbox or a switch -- are one Tab stop, and the
+// arrows walk them, as a menu's rows (APG). One of several is a radio group,
+// whose native radios of one name already are one stop with arrows; they are
+// not walked here.
+
+const ROW_MARK = 'input[type="checkbox"], [role="checkbox"], [role="switch"]';
 
 const editable = element => Boolean(element?.matches?.('input, select, textarea, [contenteditable=""], [contenteditable="true"]')); // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
 // A row's path in the tree, the way the template writes it into the markup:
@@ -1183,6 +1488,9 @@ class SfContextMenu extends ContextMenuElement {
     this._itemAttributes = new Map();
     this._currentItem = null;
     this._itemObserver = new MutationObserver(() => this.syncMenuItems());
+    this._rowMarks = new Map();
+    this._rowCurrent = new WeakMap();
+    this.addEventListener("keydown", this.handleRowKeyDown);
     this.addEventListener("keydown", this.handleMenuKeyDown);
     this.addEventListener("keydown", this.handleOwnedKeyDown);
     this.addEventListener("click", this.handleEntryClick);
@@ -1240,6 +1548,14 @@ class SfContextMenu extends ContextMenuElement {
     };
 
     this.addEventListener("focusin", event => {
+      const list = this.rowListOf(event.target);
+
+      if (list) {
+        this._rowCurrent.set(list.parent, event.target);
+
+        this.syncRowLists();
+      }
+
       if (this.menuItems().includes(event.target)) {
         this._currentItem = event.target;
         this.syncMenuItems();
@@ -1276,19 +1592,22 @@ class SfContextMenu extends ContextMenuElement {
   // inline-end padding then, and keeps it beside an overlay scrollbar or none.
   // Read whenever the area is drawn or changes its size: a narrowed search, a
   // panel fitted to its room, a window made smaller.
+  // A panel with tabs scrolls its body, under the head and over the footer
+  // (the scroll-area inset rule, owner C106 addendum to C105, 2026-11-12).
 
 
   scrollArea() {
-    return this.querySelector(".sf-context-menu-content--search > .sf-context-menu-list") ?? this.querySelector(":scope > .sf-context-menu:not(.sf-context-menu--panel) > .sf-context-menu-frame > .sf-context-menu-content");
+    return this.querySelector(".sf-context-menu-content--search > .sf-context-menu-list") ?? this.querySelector(":scope > .sf-context-menu.sf-context-menu--panel > .sf-context-menu-frame > .sf-context-menu-content > .sf-context-menu-body") ?? this.querySelector(":scope > .sf-context-menu:not(.sf-context-menu--panel) > .sf-context-menu-frame > .sf-context-menu-content");
   } // The mark itself is shared with every dropping panel
   // (src/component/panel-scrollbar.js).
 
 
   watchScrollbar() {
     const area = this.scrollArea();
-    this._scrollbar ??= new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_7__.PanelScrollbar();
+    const name = area?.classList.contains("sf-context-menu-list") ? "sf-context-menu-list--scrollbar" : area?.classList.contains("sf-context-menu-body") ? "sf-context-menu-body--scrollbar" : "sf-context-menu-content--scrollbar";
+    this._scrollbar ??= new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_8__.PanelScrollbar();
 
-    this._scrollbar.watch(area, area?.classList.contains("sf-context-menu-list") ? "sf-context-menu-list--scrollbar" : "sf-context-menu-content--scrollbar");
+    this._scrollbar.watch(area, name);
   }
 
   disconnectedCallback() {
@@ -1303,6 +1622,8 @@ class SfContextMenu extends ContextMenuElement {
     this._scrollbar?.disconnect();
 
     for (const item of this._itemAttributes.keys()) this.releaseItem(item);
+
+    for (const mark of [...this._rowMarks.keys()]) this.releaseRowMark(mark);
 
     this._currentItem = null;
     super.disconnectedCallback();
@@ -1375,6 +1696,111 @@ class SfContextMenu extends ContextMenuElement {
       if (!item.matches(STOPS)) this.ownItemAttribute(item, "role", "menuitem");
       this.ownItemAttribute(item, "tabindex", item === this._currentItem ? "0" : "-1");
     }
+
+    this.syncRowLists();
+  } // ─── a panel's lists (R193, DP-4) ───────────────────────────────────────
+  // The lists of rows in the menu's content: rows of one container, each
+  // with a checkable mark, two or more of them. A row's mark is its first
+  // checkbox or switch; a handle or a pin beside it keeps its own stop.
+
+
+  rowLists() {
+    const content = this.querySelector(".sf-context-menu-content");
+    if (!content) return [];
+    const lists = new Map();
+
+    for (const row of content.querySelectorAll(".sf-context-menu-row")) {
+      const mark = row.querySelector(ROW_MARK);
+      if (!mark || mark.closest(".sf-context-menu-row") !== row) continue;
+      const parent = row.parentElement;
+      if (!lists.has(parent)) lists.set(parent, []);
+      lists.get(parent).push(mark);
+    }
+
+    return Array.from(lists, ([parent, marks]) => ({
+      parent,
+      marks
+    })).filter(list => list.marks.length > 1);
+  }
+
+  rowListOf(element) {
+    if (!element?.matches?.(ROW_MARK) || !element.closest?.(".sf-context-menu-row")) return null;
+    return this.rowLists().find(list => list.marks.includes(element)) ?? null;
+  }
+
+  availableRowMarks(list) {
+    return list.marks.filter(mark => !mark.matches(":disabled") && mark.getAttribute("aria-disabled") !== "true" && !mark.closest("[hidden], [inert]") && mark.getClientRects().length > 0);
+  } // One stop per list: the mark last focused in it, else its first one. A
+  // mark that left the lists gets back the tabindex it had.
+
+
+  syncRowLists() {
+    const kept = new Set();
+
+    for (const list of this.rowLists()) {
+      const available = this.availableRowMarks(list);
+
+      let current = this._rowCurrent.get(list.parent);
+
+      if (!available.includes(current)) current = available[0] ?? null;
+
+      this._rowCurrent.set(list.parent, current);
+
+      for (const mark of list.marks) {
+        kept.add(mark);
+        if (!this._rowMarks.has(mark)) this._rowMarks.set(mark, mark.getAttribute("tabindex"));
+        const tabindex = mark === current ? "0" : "-1";
+        if (mark.getAttribute("tabindex") !== tabindex) mark.setAttribute("tabindex", tabindex);
+      }
+    }
+
+    for (const mark of [...this._rowMarks.keys()]) if (!kept.has(mark)) this.releaseRowMark(mark);
+  }
+
+  releaseRowMark(mark) {
+    const original = this._rowMarks.get(mark);
+
+    this._rowMarks.delete(mark);
+
+    if (original === null || original === undefined) mark.removeAttribute("tabindex");else mark.setAttribute("tabindex", original);
+  } // Up and down walk a list, Home and End go to its ends; Space is the mark's
+  // own and checks it, Tab leaves the list.
+
+
+  handleRowKeyDown(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    const list = this.rowListOf(event.target);
+    if (!list) return;
+    const marks = this.availableRowMarks(list),
+          index = marks.indexOf(event.target);
+    if (index < 0) return;
+    let next;
+
+    switch (event.key) {
+      case "ArrowDown":
+        next = (index + 1) % marks.length;
+        break;
+
+      case "ArrowUp":
+        next = (index + marks.length - 1) % marks.length;
+        break;
+
+      case "Home":
+        next = 0;
+        break;
+
+      default:
+        next = marks.length - 1;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this._rowCurrent.set(list.parent, marks[next]);
+
+    this.syncRowLists();
+    marks[next].focus();
   }
 
   focus(options) {
@@ -1790,7 +2216,7 @@ class SfContextMenu extends ContextMenuElement {
 
   tabbables() {
     const surface = this.surface() ?? this;
-    return Array.from(surface.querySelectorAll(TABBABLE)).filter(element => !element.matches(":disabled") && !element.closest('[hidden], [inert]') && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden");
+    return Array.from(surface.querySelectorAll(TABBABLE)).filter(element => !element.matches(":disabled") && element.getAttribute("tabindex") !== "-1" && !element.closest('[hidden], [inert]') && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden");
   } // One option of a choice row: the menu marks it at once, so the row shows
   // the choice while the host applies it, and stays open -- a theme is tried,
   // not committed. The row is found by its path, so a choice row inside a
@@ -2013,7 +2439,16 @@ class SfContextMenu extends ContextMenuElement {
     if (!surface) return {
       outcome: "unavailable",
       reason: "no-surface"
-    }; // Focus goes back where it was, or to the control that opened the menu
+    }; // An anchor the size of nothing is a point: where a right-click was (a
+    // host's contextmenu, SF.Effects). The menu's corner is the point itself,
+    // not --sf-space-1/4 below it (CM-5, as system menus open), and what
+    // stands under the point is the place the menu belongs to: its density
+    // (C22/C79) and where the focus goes back (CM-2). A point appended to
+    // <body> had neither, so the menu came out normal in a compact table and
+    // the focus fell to <body>.
+
+    const point = pointOf(anchor, this);
+    const place = point?.under ?? anchor; // Focus goes back where it was, or to the control that opened the menu
     // when it was nowhere -- a press on an sf-button leaves it on the body in
     // some browsers, and the menu returned it there. A host element is not
     // itself focusable; its native control is.
@@ -2024,7 +2459,8 @@ class SfContextMenu extends ContextMenuElement {
     this._owned = {
       anchor,
       parentMenu,
-      returnTo: active instanceof HTMLElement && active !== document.body && active !== document.documentElement ? active : focusable(anchor),
+      returnTo: active instanceof HTMLElement && active !== document.body && active !== document.documentElement ? active : point ? point.focusable : focusable(anchor),
+      lent: Boolean(point?.lent) && !(active instanceof HTMLElement && active !== document.body && active !== document.documentElement),
       expanded: anchor.getAttribute("aria-expanded"),
       haspopup: anchor.getAttribute("aria-haspopup")
     };
@@ -2032,15 +2468,13 @@ class SfContextMenu extends ContextMenuElement {
     anchor.setAttribute("aria-expanded", "true"); // The density of the control that opens it (C22): the panel is drawn
     // where the menu element stands -- often on <body>, outside the compact
     // region of the toolbar or table that opens it -- so two menus of one
-    // compact page drew at two sizes. A size the page gave the menu wins.
+    // compact page drew at two sizes. A size the page gave the menu is a step
+    // on that region's ladder too (C79), so every menu takes it.
 
-    if (!this.hasAttribute("size") || this.hasAttribute(_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.RELATIVE)) {
-      this._owned.density = surface.getAttribute("data-sf-density");
-      surface.setAttribute("data-sf-density", (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.densityOf)(anchor) ?? "normal");
-    } // The top layer, where the platform has it: above every stacking context
+    this._owned.density = surface.getAttribute("data-sf-density");
+    surface.setAttribute("data-sf-density", (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.densityOf)(place) ?? "normal"); // The top layer, where the platform has it: above every stacking context
     // and every clipping box, so a menu in a scrolled card is never cut and
     // never under the table it belongs to.
-
 
     surface.classList.add("sf-context-menu--open");
 
@@ -2085,7 +2519,7 @@ class SfContextMenu extends ContextMenuElement {
 
     const owned = this._owned;
 
-    const place = asSheet => {
+    const placeAt = asSheet => {
       owned.position?.stop();
       owned.position = null;
       owned.sheet = asSheet;
@@ -2104,7 +2538,9 @@ class SfContextMenu extends ContextMenuElement {
         shift: true,
         fitHeight: true,
         matchWidth: width === "trigger",
-        ...(offset === undefined || offset === null || offset === "" ? {} : {
+        ...(offset === undefined || offset === null || offset === "" ? point ? {
+          offset: 0
+        } : {} : {
           offset
         }),
         // The trigger may change its width while the menu is open (a field
@@ -2115,12 +2551,12 @@ class SfContextMenu extends ContextMenuElement {
       });
     };
 
-    place(sheet); // A form stays what the screen makes it: opened wide and the window
+    placeAt(sheet); // A form stays what the screen makes it: opened wide and the window
     // narrowed to a phone, it becomes the sheet; widened, it is anchored again.
 
     if (FORM_KINDS.has(kind)) {
       owned.onResize = () => {
-        if (this._owned === owned && onPhone() !== owned.sheet) place(onPhone());
+        if (this._owned === owned && onPhone() !== owned.sheet) placeAt(onPhone());
       };
 
       window.addEventListener("resize", owned.onResize);
@@ -2224,9 +2660,15 @@ class SfContextMenu extends ContextMenuElement {
     } = owned;
     if (owned.haspopup === null) anchor.removeAttribute("aria-haspopup");else anchor.setAttribute("aria-haspopup", owned.haspopup);
     if (owned.expanded === null) anchor.setAttribute("aria-expanded", "false");else anchor.setAttribute("aria-expanded", owned.expanded);
-    if (restoreFocus) (owned.returnTo?.isConnected ? owned.returnTo : anchor)?.focus?.({
-      preventScroll: true
-    });
+
+    if (restoreFocus) {
+      if (owned.lent && owned.returnTo?.isConnected) focusLent(owned.returnTo, {
+        preventScroll: true
+      });else (owned.returnTo?.isConnected ? owned.returnTo : anchor)?.focus?.({
+        preventScroll: true
+      });
+    }
+
     this.sfEmit("closed", {
       reason
     });
@@ -2270,7 +2712,11 @@ class SfContextMenu extends ContextMenuElement {
 
     if (this.size === "1") child.setAttribute("size", "1");
     child.entries = entry.submenu;
-    if (entry.search) child.search = entry.search; // Selections in the submenu are the parent's to announce: a host listens
+    if (entry.search) child.search = entry.search; // A submenu's width, as the menu's own setting reads it (C32 kinds or a
+    // length): a submenu of language rows is the panel (C142 (7)), so the
+    // second name beside each name is not cut.
+
+    if (entry.width) child.setAttribute("width", entry.width); // Selections in the submenu are the parent's to announce: a host listens
     // on one element whatever depth the item sits at.
 
     child.addEventListener("sf-menu-context-select", event => {
@@ -2537,7 +2983,9 @@ class SfContextMenu extends ContextMenuElement {
       rootClass: {
         default: ""
       },
-      // The menu's size: "1/2" (32px rows, the default) or "1" (40px rows).
+      // The menu's size, a step on the region's ladder (C79): "1/2" by
+      // default (owner decision C134: 32px rows on a page, 28 in a compact
+      // region, 44 under a finger on a phone) or "1" (40, 32 compact).
       size: {
         default: "1/2"
       },
@@ -2602,10 +3050,24 @@ class SfContextMenu extends ContextMenuElement {
 
   get closable() {
     return this.getBooleanAttr("closable", false);
-  }
+  } // A panel with tabs is a former name until 2027-01-01 (owner decision
+  // C106): a list's view settings are sf-settings look="panel". It is still
+  // drawn; a page that asks for deprecation notes hears it once.
+
 
   get panel() {
-    return this.tabs.length > 0;
+    const panel = this.tabs.length > 0;
+    if (panel) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+      component: "sf-menu-context",
+      tag: this.localName,
+      kind: "setting",
+      attribute: "tabs",
+      from: "tabs",
+      to: 'sf-settings look="panel"',
+      since: "2026-11-12",
+      remove_after: "2027-01-01"
+    });
+    return panel;
   } // A tab chosen: the head marks it and says so; the host puts that tab's
   // rows in the body. The panel keeps its width -- it is fixed, never the
   // width of what a tab holds.
@@ -2704,18 +3166,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderContextMenuTemplate: () => (/* binding */ renderContextMenuTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c69a3dc158df");
 /* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("151a293c8c90");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("60a3f9a6662c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+
  // A destructive row: danger: true, or status "danger" as every control writes
-// it (C13), with "error" read as its alias.
+// it (C13), with "error" read as its alias. Any other status (success,
+// warning, info) draws a plain row and is said once per page (BS-1).
+
+const ITEM_STATUSES = Object.freeze(["", "danger", "error"]);
 
 function isDestructive(entry) {
+  (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_3__.warnUnknownControlStatus)("sf-menu-context", entry.status, {
+    allowed: ITEM_STATUSES,
+    label: "item status"
+  });
   return Boolean(entry.danger) || entry.status === "danger" || entry.status === "error";
 } // An entry's shortcut: the kbd component's keys -- `mod+c` in this platform's
 // words, or the text a page wrote (⇧⌘L, F2) as it is. Inside a menu the kbd
@@ -2776,7 +3246,24 @@ const ROLE = {
 
 function icon(name, className) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon ${className}" aria-hidden="true">${name}</i>`;
-} // What leads a row: an icon, or a picture of the thing itself -- a site's logo,
+} // A colour the row stands for -- a colour row of sf-settings (C85), a label's
+// colour -- drawn as a circle in the place of an icon. `swatch` is a CSS
+// colour (a code, var() of a token, light-dark() of two); anything that could
+// close the declaration is not drawn.
+
+
+const SWATCH = /^[#\w\s(),.%/-]+$/u;
+
+const hasSwatch = entry => typeof entry?.swatch === "string" && SWATCH.test(entry.swatch);
+
+function swatch(value) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-swatch" style=${`--sf-context-menu-swatch: ${value}`} aria-hidden="true"></span>`;
+} // The pictures of a row and of the header are sf-avatar's own drawing
+// (avatar js/picture.js, avatar study AV-8): the photo an <img>, the initials
+// on the neutral plate, the person glyph without either; the context menu's
+// sheet gives them the row's line and the header's step only. They were the
+// menu's own classes on the secondary container, in the medium weight.
+// What leads a row: an icon, or a picture of the thing itself -- a site's logo,
 // a person -- with its initials when there is no picture. A row ticked on and
 // off (kind: "check") leads with its check, in the column and at the width of
 // the icons: nothing is kept at the row's end for it (owner R016, 2026-11-07).
@@ -2785,8 +3272,13 @@ function icon(name, className) {
 
 function renderLead(entry) {
   if (entry.kind === "check" && entry.type !== "switch" && entry.checked) return icon("check", "sf-context-menu-item-check");
-  if (entry.avatar) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-context-menu-item-avatar" src=${entry.avatar} alt="">`;
-  if (entry.initials) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-avatar" aria-hidden="true">${entry.initials}</span>`;
+  if (entry.avatar || entry.initials) return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__.avatarPicture)({
+    imageUrl: entry.avatar,
+    text: entry.initials,
+    shape: "square",
+    extraClass: "sf-context-menu-item-avatar"
+  });
+  if (hasSwatch(entry)) return swatch(entry.swatch);
   return entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // The leading column of the level: kept for every row once any row of it has
 // something to lead with -- an icon, a picture, or a check it may be given --
@@ -2803,7 +3295,12 @@ function renderLeadPlace(entry, lead) {
 
 
 function renderHeader(entry) {
-  const picture = entry.avatar ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-context-menu-header-avatar" src=${entry.avatar} alt="">` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-header-avatar" aria-hidden="true">${entry.initials ?? (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(entry.text ?? "")}</span>`;
+  const picture = (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__.avatarPicture)({
+    imageUrl: entry.avatar,
+    text: entry.initials,
+    name: entry.text,
+    extraClass: "sf-context-menu-header-avatar"
+  });
   const lines = Array.isArray(entry.caption) ? entry.caption : [entry.caption].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-header" role="presentation">
         ${picture}
@@ -2838,7 +3335,7 @@ function renderChoiceOptions(entry, path, iconsOnly) {
             aria-label=${option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             title=${iconsOnly ? option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ?disabled=${Boolean(option.disabled)}
-    >${option.icon ? icon(option.icon, "") : option.text ?? ""}</button>`);
+    >${hasSwatch(option) ? swatch(option.swatch) : option.icon ? icon(option.icon, "") : option.text ?? ""}</button>`);
 } // A choice of a few options -- the theme in a profile menu, a setting in a
 // panel. The quiet form, the default since 1.5.0 (owner, 2026-10-30): the
 // label on its own row with the options at its end, sized to their content,
@@ -2879,7 +3376,7 @@ function renderLevelOptions(choice, context) {
     path
   } = choice;
   const options = entry.options ?? [];
-  const lead = options.some(option => option.icon);
+  const lead = options.some(option => option.icon || hasSwatch(option));
   const query = String(context.query ?? "").trim().toLowerCase();
   const shown = options.map((option, at) => [option, at]).filter(([option]) => !query || String(option.text ?? "").toLowerCase().includes(query));
   return shown.map(([option, at]) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
@@ -2891,14 +3388,14 @@ function renderLevelOptions(choice, context) {
             aria-checked=${String(Boolean(option.checked))}
             ?disabled=${Boolean(option.disabled)}
     >
-        ${lead ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-lead">${option.icon ? icon(option.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${lead ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-lead">${hasSwatch(option) ? swatch(option.swatch) : option.icon ? icon(option.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${renderItemText(option)}
     </button>`);
 }
 
 function renderChoice(entry, path, lead, context) {
   const options = entry.options ?? [];
-  const iconsOnly = options.length > 0 && options.every(option => option.icon);
+  const iconsOnly = options.length > 0 && options.every(option => option.icon || hasSwatch(option));
 
   if (context?.drill && entry.view === "drill" && options.length > 0) {
     return renderChoiceDrill(entry, path, lead);
@@ -3085,7 +3582,7 @@ const ROWS = entry => entry && !BLOCKS.has(entry.type); // A row that keeps the 
 
 
 function leads(entry) {
-  return Boolean(entry.icon || entry.avatar || entry.initials || entry.kind === "check" && entry.type !== "switch");
+  return Boolean(entry.icon || entry.avatar || entry.initials || hasSwatch(entry) || entry.kind === "check" && entry.type !== "switch");
 } // What a search narrows to: the rows whose label or caption holds the query. A
 // group is kept while one of its own rows is: the block is where its rows live,
 // not a thing to be found on its own.
@@ -3214,7 +3711,10 @@ function renderFooter(context) {
   if (!context.component?.hasSlotContent?.("footer")) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-footer">${context.component.getSlotContent("footer")}</div>`;
 } // A panel's head: the tabs, and the way out at its end. It never scrolls --
-// the body under it does (owner, 2026-10-15).
+// the body under it does (owner, 2026-10-15). The tab is chosen on sf-tabs'
+// current event, sf-tabs-change; its former name sf-tab-change, which sf-tabs
+// still sends after it until 2026-12-01, is only kept inside the menu (both
+// stop here, the menu is not a tab strip). Remove that stopper with the alias.
 
 
 function renderPanelHead(context) {
@@ -3223,10 +3723,11 @@ function renderPanelHead(context) {
         <sf-tabs class="sf-context-menu-tabs" type="underline" size=${context.size === "1" ? "1" : "1/2"}
                 items=${context.tabs.map(tab => tab.label).join("|")}
                 active-index=${String(active?.index ?? 0)}
-                @sf-tab-change=${event => {
+                @sf-tabs-change=${event => {
     event.stopPropagation();
     context.component.chooseTab(Number(event.detail?.current ?? 0));
-  }}></sf-tabs>
+  }}
+                @sf-tab-change=${event => event.stopPropagation()}></sf-tabs>
         ${context.closable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-context-menu-close" appearance="ghost" scheme="on-surface"
                 size=${context.size === "1" ? "1" : "1/2"} icon="close"
                 aria-label=${context.closeLabel} title=${context.closeLabel}
@@ -3323,17 +3824,102 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "a6b3ed0c1589"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_HUES: () => (/* binding */ AVATAR_HUES),
+/* harmony export */   AVATAR_TONES: () => (/* binding */ AVATAR_TONES),
+/* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
+/* harmony export */   TONE_HUES: () => (/* binding */ TONE_HUES),
+/* harmony export */   avatarHue: () => (/* binding */ avatarHue),
+/* harmony export */   avatarTone: () => (/* binding */ avatarTone),
+/* harmony export */   avatarToneHash: () => (/* binding */ avatarToneHash),
+/* harmony export */   resolveAvatarHue: () => (/* binding */ resolveAvatarHue),
+/* harmony export */   resolveAvatarTone: () => (/* binding */ resolveAvatarTone)
+/* harmony export */ });
+// sf-avatar's hue from a name, without a document: a plain function of its
+// argument, so tests/avatar-tones.contract.test.mjs runs it in Node and a server
+// can print the same class in the first paint. docs/docs.md gives the algorithm
+// for a server in another language.
+//
+// Owner decision C17 (2026-11-08): avatars have no colours of their own. The
+// initials take a hue of the static palette (the hue setting, the class
+// sf-hue-<name>); the eight tones of initials are gone, and `auto` picks among
+// eight static hues in the old order, so a name keeps its slot: rose is pink,
+// the former violet (HCT hue 325) is purple, the other six keep their names.
+// A former tone moves at most 15 degrees (dispatcher, 2026-11-09).
+//
+// FNV-1a, 32 bits, over the UTF-8 bytes of the string exactly as given (no
+// trimming, no case folding, no normalisation), its high half folded onto the
+// low one, because the low bits of FNV-1a alone follow the low bits of the
+// input; the remainder by the length of the list picks the tone.
+//
+// The list and its order are part of the algorithm: a name keeps its tone only
+// while they stay. A later named tone does not join `auto`.
+const AVATAR_HUES = Object.freeze(['pink', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'purple']);
+
+// Every hue a setting may name: the static palette (theme-palette.js
+// STATIC_HUES, tests/avatar-tones.contract.test.mjs holds the two equal).
+const STATIC_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']);
+
+// The former tone setting and its names, until 2027-01-01 (journal
+// attribute-c17-avatar-tone-to-hue, value-c17-avatar-rose-to-pink, which
+// also carries violet to purple).
+const AVATAR_TONES = Object.freeze(['rose', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'violet']);
+const TONE_HUES = Object.freeze({rose: 'pink', violet: 'purple'});
+
+const FNV_OFFSET = 0x811c9dc5;
+const FNV_PRIME = 0x01000193;
+
+function avatarToneHash(name) {
+  let hash = FNV_OFFSET;
+  for (const byte of new TextEncoder().encode(String(name))) {
+    hash = Math.imul(hash ^ byte, FNV_PRIME) >>> 0;
+  }
+  return (hash ^ (hash >>> 16)) >>> 0;
+}
+
+// No name, no hue: the neutral look.
+function avatarHue(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_HUES[avatarToneHash(text) % AVATAR_HUES.length] : '';
+}
+
+// The hue a setting asks for: a named one as it is, auto the one of the name,
+// empty (or a name the palette does not have) the neutral look. The former
+// tone setting is read when hue is empty, its rose as pink and its violet as purple.
+function resolveAvatarHue(hue, name, tone = '') {
+  const setting = hue || TONE_HUES[tone] || tone || '';
+  if (setting === 'auto') return avatarHue(name);
+  return STATIC_HUES.includes(setting) ? setting : '';
+}
+
+// The former names (2027-01-01): the tone of a name in the old words.
+function avatarTone(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_TONES[avatarToneHash(text) % AVATAR_TONES.length] : '';
+}
+
+function resolveAvatarTone(setting, name) {
+  return setting === 'auto' ? avatarTone(name) : setting || '';
+}
+
+
+/***/ },
+
 /***/ "68b68beb66a3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-context for the shim (core/js/aliases.js, standard §16 item 20). mode: host-attribute (no shim), manifest-only (the DOM name does not change; its meaning does), retired (no new name; kept until the date).","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"role","to":null,"kind":"attribute","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute (menu by default); no shim"},{"from":"position","to":null,"kind":"setting","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"compatibility.deprecations 1.3.0","note":"openFor(anchor, {side, align}) places the menu; read until the date"},{"from":"tooltip","to":null,"kind":"setting","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"compatibility.deprecations 1.3.0","note":"a menu has no tail; read until the date"},{"from":"sf-context-menu","to":"sf-menu-context","kind":"tag","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-menu-context; sf-context-menu is a subclass defined beside it until the date"},{"from":"sf-context-menu-select","to":"sf-menu-context-select","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-change","to":"sf-menu-context-change","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-changed","to":"sf-menu-context-changed","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-reset","to":"sf-menu-context-reset","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-open","to":"sf-menu-context-open","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-opened","to":"sf-menu-context-opened","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-close","to":"sf-menu-context-close","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-closed","to":"sf-menu-context-closed","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-search","to":"sf-menu-context-search","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-tab","to":"sf-menu-context-tab","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-context for the shim (core/js/aliases.js, standard §16 item 20). mode: host-attribute (no shim), manifest-only (the DOM name does not change; its meaning does), retired (no new name; kept until the date).","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"role","to":null,"kind":"attribute","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute (menu by default); no shim"},{"from":"position","to":null,"kind":"setting","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"compatibility.deprecations 1.3.0","note":"openFor(anchor, {side, align}) places the menu; read until the date"},{"from":"tooltip","to":null,"kind":"setting","component":"sf-menu-context","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"compatibility.deprecations 1.3.0","note":"a menu has no tail; read until the date"},{"from":"sf-context-menu","to":"sf-menu-context","kind":"tag","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-menu-context; sf-context-menu is a subclass defined beside it until the date"},{"from":"sf-context-menu-select","to":"sf-menu-context-select","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-change","to":"sf-menu-context-change","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-changed","to":"sf-menu-context-changed","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-reset","to":"sf-menu-context-reset","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-open","to":"sf-menu-context-open","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-opened","to":"sf-menu-context-opened","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-close","to":"sf-menu-context-close","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-closed","to":"sf-menu-context-closed","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-search","to":"sf-menu-context-search","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"sf-context-menu-tab","to":"sf-menu-context-tab","kind":"event","component":"sf-menu-context","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"},{"from":"tabs","to":null,"kind":"setting","component":"sf-menu-context","since":"2026-11-12","remove_after":"2027-01-01","mode":"retired","section":"owner decision C106 (1)","note":"a list\'s view settings are sf-settings look=\\"panel\\"; the action menu\'s tabs are read and drawn until the date"}]}');
 
 /***/ },
 
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.14.3","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.19.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

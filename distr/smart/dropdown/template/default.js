@@ -1,5 +1,6 @@
 import { html, nothing } from "lit";
 import { renderInheritedSlot } from "../../../helpers/inherited-value";
+import { avatarPicture } from "../../../avatar/js/picture";
 import {
   renderListItemHeading,
   renderListItemOption,
@@ -28,9 +29,11 @@ function renderOptions(options = [], multiple = false) {
     // so on a long list nothing on screen told the person what they had picked
     // (Larena storage QA, 2026-10-22). An option that draws a picture of its
     // own -- an icon, a colour, an avatar -- keeps it, because that is the
-    // place the box would take.
+    // place the box would take; an avatar or a colour row then draws its box
+    // after the picture, and only in a multiple list (C08: a single choice
+    // is the row's fill, no box).
     const withBox = multiple && (!option.type || option.type === "text");
-    parts.push(renderListItemOption(withBox ? {...option, type: "checkbox"} : option));
+    parts.push(renderListItemOption(withBox ? {...option, type: "checkbox"} : option, {multiple}));
   }
 
   return parts;
@@ -40,10 +43,12 @@ function renderOptions(options = [], multiple = false) {
 // field's own text. Size 1/2 does not (one pixel would be left), so its tag
 // goes one size down onto the field line, rendered inline: its label is one
 // text step down and it takes no block padding.
+// The tag's height is its low step (C27; the tag's spacing-compact before,
+// journal class-tag-spacing-to-height).
 const FIELD_TAG = Object.freeze({
-  "1/2": {size: "1/3", spacing: ""},
-  "1": {size: "1", spacing: "compact"},
-  "2": {size: "2", spacing: "compact"},
+  "1/2": {size: "1/3", height: ""},
+  "1": {size: "1", height: "low"},
+  "2": {size: "2", height: "low"},
 });
 
 // A single choice shows its picture in the field as well as its label. The
@@ -61,8 +66,15 @@ function renderFieldVisual(context) {
   if (option.type === "color" && option.colorClass) {
     return html`<span class="sf-tag-color-icon sf-dropdown-field-visual ${option.colorClass}" aria-hidden="true"></span>`;
   }
-  if (option.type === "avatar" && option.avatarImageUrl) {
-    return html`<span class="sf-avatar sf-avatar--size-1/2 bg-cover sf-dropdown-field-visual" aria-hidden="true" style=${`background-image: url(${option.avatarImageUrl});`}></span>`;
+  // sf-avatar's own drawing (js/picture.js, avatar study AV-8): the photo an
+  // <img>, else the initials of the option's name, else the person glyph.
+  if (option.type === "avatar") {
+    return avatarPicture({
+      size: "1/2",
+      imageUrl: option.avatarImageUrl,
+      name: option.avatarTitle || option.text,
+      extraClass: "sf-dropdown-field-visual",
+    });
   }
   return nothing;
 }
@@ -71,7 +83,7 @@ function renderTag(context, option) {
   const label = getOptionLabel(option);
   const fieldTag = FIELD_TAG[context.size] || FIELD_TAG["1"];
   const tagSize = fieldTag.size;
-  const tagSpacing = fieldTag.spacing ? ` spacing-${fieldTag.spacing}` : "";
+  const tagSpacing = fieldTag.height ? ` sf-tag--height-${fieldTag.height}` : "";
   const tagType =
     option.type === "color" ? "color" : option.type === "avatar" ? "avatar" : "icon";
 
@@ -87,15 +99,11 @@ function renderTag(context, option) {
         ? html`<sf-icon icon=${option.icon} root-class="sf-tag-icon" aria-hidden="true"></sf-icon>`
         : nothing}
       ${option.type === "avatar"
-        ? html`
-            <span
-              class="sf-avatar sf-avatar--size-${tagSize} bg-cover"
-              aria-hidden="true"
-              style=${option.avatarImageUrl
-                ? `background-image: url(${option.avatarImageUrl});`
-                : nothing}
-            ></span>
-          `
+        ? avatarPicture({
+            size: tagSize,
+            imageUrl: option.avatarImageUrl,
+            name: option.avatarTitle || option.text,
+          })
         : nothing}
       <span class="sf-tag-container">${label}</span>
       <button
@@ -152,8 +160,12 @@ export function renderDropdownTemplate(context) {
     "flex",
   ].filter(Boolean);
 
-  const iconButtonSize =
-    context.size === "1" || context.size === "1/2" ? "1/2" : context.size;
+  // The chevron is the field's indicator (owner decision C123 (3)): the field
+  // layer's .sf-field-action, a glyph without a plate the size of the field's
+  // leading picture, quiet at rest and the text's ink while the field is
+  // under the pointer. It stays the button that holds the combobox's focus
+  // and names (component/dropdown/interaction.js), the field's one Tab stop
+  // whose ring the field draws; the whole field opens the list.
   // The chevron and the search glyph are sf-icon elements, as the pictures
   // of a choice are (1.8.0): the element tells the Loader its name, so it
   // joins the first icon font request instead of a later round (1.8.1).
@@ -214,7 +226,7 @@ export function renderDropdownTemplate(context) {
           </div>
           <button
             type="button"
-            class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${iconButtonSize}"
+            class="sf-field-action sf-field-action--indicator sf-dropdown-chevron"
             ?disabled=${context.disabled}
           >
             <sf-icon icon=${dropdownIcon} aria-hidden="true"></sf-icon>
@@ -242,7 +254,7 @@ export function renderDropdownTemplate(context) {
         ${renderInheritedSlot(context.component, {size: context.size, disabled: context.disabled})}
         <button
           type="button"
-          class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${iconButtonSize} absolute"
+          class="sf-field-action sf-field-action--indicator sf-dropdown-chevron absolute"
           ?disabled=${context.disabled}
         >
           <sf-icon icon=${dropdownIcon} aria-hidden="true"></sf-icon>

@@ -864,7 +864,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // Prefer the placement helper Core published; an isolated bundle uses its own copy.
+ // The fields whose actions are glyphs (C123): sf-input's field and the class
+// markup of the inputs component.
+
+const IN_FIELD = '.sf-input-field'; // Prefer the placement helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default());
 
@@ -1008,7 +1011,7 @@ class SfCopyButton extends CopyButtonElement {
     const result = this.querySelector(':scope .sf-copy-button-result'); // The drawn control, under its current tag or an old one in its window.
 
     const hosts = [(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button'), (0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button-icon')].join(', ');
-    const control = this.querySelector(`:scope .sf-copy-button > :is(${hosts})`)?.querySelector('.sf-button, .sf-icon-button');
+    const control = this.querySelector(':scope .sf-copy-button > .sf-field-action') || this.querySelector(`:scope .sf-copy-button > :is(${hosts})`)?.querySelector('.sf-button, .sf-icon-button');
 
     if (!result || result.hidden || !control) {
       this.stopResult();
@@ -1048,7 +1051,11 @@ class SfCopyButton extends CopyButtonElement {
       }), 'name'),
       phase: this.state.phase,
       message: this.state.message,
-      rootClass: this.getRootClass()
+      rootClass: this.getRootClass(),
+      // Standing in a field (C123), the button is the field's action. Read
+      // on every drawing: the host is drawn again when it is moved, and a
+      // field's end slot moves it into the field.
+      inField: Boolean(this.closest(IN_FIELD))
     });
   }
 
@@ -1116,7 +1123,15 @@ function renderCopyButtonTemplate(context) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${['sf-copy-button', 'sf-tooltip-anchor', `sf-copy-button--${context.phase}`, context.rootClass].filter(Boolean).join(' ')}>
-      ${context.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${common.size} appearance=${common.appearance} scheme=${common.scheme}
+      ${context.inField && !context.text // Inside a field (owner decision C123): the field layer's action, a
+  // glyph without a plate the size of the field's leading icon, its
+  // hit area the field's height; the field's step, not the button's
+  // size, sets it. The name tooltip and the result stay as they are.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" class="sf-field-action sf-copy-button-action"
+                 aria-label=${context.name} data-tooltip=${context.nameTooltipId}
+                 style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                 aria-disabled=${context.phase === 'pending' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                 @click=${() => context.component.copy()}><sf-icon icon=${icon} aria-hidden="true"></sf-icon></button>` : context.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${common.size} appearance=${common.appearance} scheme=${common.scheme}
                  icon-start=${icon} text=${context.text} aria-label=${context.name}
                  root-style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                  aria-disabled=${context.phase === 'pending' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1608,7 +1623,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "7eee0ce1da86"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-copy","tag":"sf-button-copy","version":"1.4.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"appearance":{"type":"enum","values":["ghost","outline","tonal"],"default":"ghost"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-copy","tag":"sf-button-copy","version":"1.5.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"appearance":{"type":"enum","values":["ghost","outline","tonal"],"default":"ghost"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
 
 /***/ },
 

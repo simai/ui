@@ -2,6 +2,157 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "61d50f69160a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHECKBOX_TEXT_PARTS: () => (/* binding */ CHECKBOX_TEXT_PARTS),
+/* harmony export */   RADIO_TEXT_PARTS: () => (/* binding */ RADIO_TEXT_PARTS),
+/* harmony export */   SWITCH_TEXT_PARTS: () => (/* binding */ SWITCH_TEXT_PARTS),
+/* harmony export */   keepHelpOutOfLabel: () => (/* binding */ keepHelpOutOfLabel),
+/* harmony export */   linkCheckableText: () => (/* binding */ linkCheckableText)
+/* harmony export */ });
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("695f21e50358");
+ // A checkable control's name is its label alone; its description is the
+// description (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44).
+// The box, the label and the description sit inside one <label> so a press
+// anywhere toggles the control, and a <label> names its control by all of its
+// text: «Приглашения на мероприятия Не чаще раза в месяц» was read as one name.
+// The input is named by the label row (aria-labelledby) and described by the
+// rest of the text column (aria-describedby). An author's aria-label or
+// aria-labelledby wins; ids the author put on aria-describedby are kept. Ids
+// come from the instance path, never a counter (#41).
+//
+// sf-switch was fixed this way first (1.3.1, its own copy in _switch.js);
+// sf-checkbox and sf-radio share the anatomy and read this helper.
+//
+// parts:
+//   kind         the Smart tag (`sf-checkbox`)
+//   classKind    the root class of class markup (`sf-checkbox`, `sf-radio-button`)
+//   text         selector of the label text inside the label row: the name;
+//                the help mark beside it is a button with a name of its own
+//                and is left out (the row is the name when there is no text
+//                part, as in class markup without one)
+//   label        selector of the label row inside the root
+//   column       selector of the text column that holds the label row and the description
+//   description  selector of the description when there is no column
+
+function splitIds(value) {
+  return String(value || '').split(/\s+/).filter(Boolean);
+}
+
+function descriptionParts(root, parts) {
+  const column = parts.column ? root.querySelector(parts.column) : null;
+  if (!column) return parts.description ? [...root.querySelectorAll(parts.description)] : [];
+  const label = root.querySelector(parts.label) || parts.text && root.querySelector(parts.text);
+  return [...column.children].filter(node => node !== label && !node.contains(label) && !node.hasAttribute('aria-hidden') && node.textContent.trim());
+}
+
+function linkCheckableText(root, parts) {
+  if (!root) return;
+  const input = root.querySelector('input[type="checkbox"], input[type="radio"]');
+  if (!input) return;
+  const smart = root.closest(parts.kind);
+  const owner = smart || root;
+  const kind = smart ? parts.kind : parts.classKind; // A control built before it is placed has no path yet: link it once it is.
+
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) {
+    if (!root.__sfCheckableLinkPending && typeof requestAnimationFrame === 'function') {
+      root.__sfCheckableLinkPending = true;
+      requestAnimationFrame(() => {
+        root.__sfCheckableLinkPending = false;
+        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner)) linkCheckableText(root, parts);
+      });
+    }
+
+    return;
+  }
+
+  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind
+  });
+  const linked = root.__sfCheckableLinked || {
+    label: '',
+    described: []
+  };
+  const label = parts.text && root.querySelector(parts.text) || root.querySelector(parts.label);
+  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
+
+  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
+    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'label');
+    input.setAttribute('aria-labelledby', label.id);
+    linked.label = label.id;
+  } else if (ownLabel) {
+    input.removeAttribute('aria-labelledby');
+    linked.label = '';
+  }
+
+  const ids = descriptionParts(root, parts).map((node, index) => {
+    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, index ? `description-${index + 1}` : 'description');
+    return node.id;
+  });
+  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
+  const describedBy = [...new Set([...authored, ...ids])];
+  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
+  linked.described = ids; // The <label> names its control by `for`, not by the first control inside
+  // it: the help mark is a button, and with the box at the end
+  // (position="end") the button came first and a press on the text pressed
+  // the help.
+
+  if (root instanceof HTMLLabelElement && !root.htmlFor) {
+    if (!input.id) input.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path, 'input');
+    root.htmlFor = input.id;
+  }
+
+  root.__sfCheckableLinked = linked;
+} // A press that comes from the help (the sf-help-mark of the help setting, or
+// what the help slot holds) is the help's, never the control's: the <label>
+// around both must not toggle. The press cancels the label's activation (the
+// «?» button has no default of its own, its listener still opens the help);
+// a link or a field in the explanation keeps its own default, which the label
+// leaves alone as interactive content. Read on the <label> as its click
+// listener.
+
+function keepHelpOutOfLabel(event) {
+  const label = event.currentTarget;
+  const target = event.target;
+  if (!(target instanceof Element) || !(label instanceof Element)) return;
+  const help = target.closest('sf-help-mark, [slot="help"]');
+  if (!help || !label.contains(help)) return;
+  const own = target.closest('a[href], input, select, textarea, summary');
+  if (own && help.contains(own)) return;
+  event.preventDefault();
+}
+const CHECKBOX_TEXT_PARTS = Object.freeze({
+  kind: 'sf-checkbox',
+  classKind: 'sf-checkbox',
+  text: '.sf-checkbox-label, [data-sf-checkbox-label]',
+  label: '.sf-checkbox-top',
+  column: '.sf-checkbox-container',
+  description: '.sf-checkbox-description'
+});
+const RADIO_TEXT_PARTS = Object.freeze({
+  kind: 'sf-radio',
+  classKind: 'sf-radio-button',
+  text: '.sf-radio-button-text, [data-sf-radio-label]',
+  label: '.sf-radio-button-top',
+  column: '.sf-radio-button-container',
+  description: '.sf-radio-button-description'
+}); // sf-switch reads the same binding since C63 W9 (it had its own copy in
+// component/switch/js/_switch.js, written first, the same algorithm).
+
+const SWITCH_TEXT_PARTS = Object.freeze({
+  kind: 'sf-switch',
+  classKind: 'sf-switch',
+  text: '.sf-switch-container',
+  label: '.sf-switch-top',
+  column: '.sf-switch-container-wrap',
+  description: '.sf-switch-description'
+});
+
+/***/ },
+
 /***/ "67eed2647f47"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -133,7 +284,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("695f21e50358");
+/* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
 
 
 
@@ -160,77 +311,15 @@ function getSwitchNodes(root) {
     inner,
     description
   };
-} // The parts of the description: the .sf-switch-description of class markup and
-// of a description setting, or whatever a description slot placed after the
-// label row.
-
-
-function descriptionParts(root) {
-  const wrap = root.querySelector('.sf-switch-container-wrap');
-  if (!wrap) return [...root.querySelectorAll('.sf-switch-description')];
-  return [...wrap.children].filter(node => !node.classList.contains('sf-switch-top') && !node.hasAttribute('aria-hidden') && node.textContent.trim());
-}
-
-function splitIds(value) {
-  return String(value || '').split(/\s+/).filter(Boolean);
 } // The switch's name is its label alone; its description is the description
-// (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44). Everything
-// sits inside one <label> so a press anywhere flips the switch, and a label
-// names its control by all its text: the description, the inherited marker and
-// the reset button were read as part of the name. The input is named by the
-// label row (aria-labelledby) and described by the description
-// (aria-describedby). An author's aria-label or aria-labelledby wins; ids the
-// author put on aria-describedby are kept. Ids come from the instance path,
-// never a counter (#41).
+// (standard simai.smart-component 1.3.8 §4.8; simai/ui-source#44): the label
+// row names the checkbox (aria-labelledby), the description describes it
+// (aria-describedby). The binding is the one sf-checkbox and sf-radio read
+// (src/component/checkable-text-helper.js, C63 W9).
 
 
 function linkSwitchText(root) {
-  const {
-    input
-  } = getSwitchNodes(root);
-  if (!input) return;
-  const owner = root.closest('sf-switch') || root; // A switch built before it is placed has no path yet: link it once it is.
-
-  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.pathIsSettled)(owner)) {
-    if (!root.__sfSwitchLinkPending && typeof requestAnimationFrame === 'function') {
-      root.__sfSwitchLinkPending = true;
-      requestAnimationFrame(() => {
-        root.__sfSwitchLinkPending = false;
-        if ((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.pathIsSettled)(owner)) linkSwitchText(root);
-      });
-    }
-
-    return;
-  }
-
-  const path = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.instancePath)(owner, {
-    kind: 'sf-switch'
-  });
-  const linked = root.__sfSwitchLinked || {
-    label: '',
-    described: []
-  };
-  const label = root.querySelector('.sf-switch-container');
-  const ownLabel = linked.label && input.getAttribute('aria-labelledby') === linked.label;
-
-  if (label && label.textContent.trim() && !input.hasAttribute('aria-label') && (ownLabel || !input.hasAttribute('aria-labelledby'))) {
-    if (!label.id) label.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.partId)(path, 'label');
-    input.setAttribute('aria-labelledby', label.id);
-    linked.label = label.id;
-  } else if (ownLabel) {
-    input.removeAttribute('aria-labelledby');
-    linked.label = '';
-  }
-
-  const ids = descriptionParts(root).map((node, index) => {
-    if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.partId)(path, index ? `description-${index + 1}` : 'description');
-    return node.id;
-  });
-  const authored = splitIds(input.getAttribute('aria-describedby')).filter(id => !linked.described.includes(id));
-  const describedBy = [...new Set([...authored, ...ids])];
-  if (describedBy.length) input.setAttribute('aria-describedby', describedBy.join(' '));else input.removeAttribute('aria-describedby');
-  linked.described = ids;
-  root.__sfSwitchLinked = linked;
+  (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.SWITCH_TEXT_PARTS);
 }
 
 function syncSwitchState(root) {

@@ -15,8 +15,11 @@
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/2) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   /* The notice's geometry (owner decision C35, remarks R066 and R079), in
      tokens, so a compact region (data-sf-density) moves every step itself:
-     - one inline padding on both sides, --sf-space-1 (16; compact and phone
-       12); the block padding --sf-space-1/2 (12; compact and phone 8);
+     - one inline inset on both sides, --sf-space-1 (16; compact and phone
+       12) with the 1 px border inside it (owner decision C105 H4/H6, as the
+       fields' C77 inset: the padding is the step less the border, so the
+       icon and the letters stand 16 from the outer edge, not 17); the block
+       padding --sf-space-1/2 (12; compact and phone 8);
      - the first line stands in the box of a low size-1 control (the line +
        2 x --sf-ui-1--space-y-tightness-low: 32; compact and phone 28), the
        status icon, the text's first line and the close centred in it; the
@@ -141,60 +144,104 @@
     border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-toast{
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
     }
   }
   .sf-toast:where(:dir(ltr)){
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-toast{
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
     }
   }
   .sf-toast:where(:dir(rtl)){
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-toast{
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
     }
   }
   .sf-toast:where(:dir(ltr)){
-    padding-left: var(--sf-space-1);
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-toast{
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
     }
   }
   .sf-toast:where(:dir(rtl)){
-    padding-right: var(--sf-space-1);
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-toast{
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    }
+  }
+  .sf-toast:where(:dir(ltr)){
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-toast{
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    }
+  }
+  .sf-toast:where(:dir(rtl)){
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toast{
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+    }
+  }
+  .sf-toast:where(:dir(ltr)){
+    padding-left: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-toast{
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+    }
+  }
+  .sf-toast:where(:dir(rtl)){
+    padding-right: calc(var(--sf-space-1) - var(--sf-px));
   }
   .sf-toast {
     --sf-toast--lead: var(--sf-ui-1--space-y-tightness-low);
@@ -217,14 +264,14 @@
     gap: var(--sf-toast-gap, var(--sf-toast--gap, var(--sf-space-1\/2)));
     padding-bottom: var(--sf-space-1\/2);
     padding-bottom: var(--sf-toast-padding-block, var(--sf-toast--padding-bottom, var(--sf-space-1\/2)));
-    -webkit-padding-end: var(--sf-space-1);
-            padding-inline-end: var(--sf-space-1);
-    -webkit-padding-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
-            padding-inline-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, var(--sf-space-1)));
-    -webkit-padding-start: var(--sf-space-1);
-            padding-inline-start: var(--sf-space-1);
-    -webkit-padding-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
-            padding-inline-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, var(--sf-space-1)));
+    -webkit-padding-end: calc(var(--sf-space-1) - var(--sf-px));
+            padding-inline-end: calc(var(--sf-space-1) - var(--sf-px));
+    -webkit-padding-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
+            padding-inline-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
+    -webkit-padding-start: calc(var(--sf-space-1) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-space-1) - var(--sf-px));
+    -webkit-padding-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
+            padding-inline-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
     padding-top: var(--sf-space-1\/2);
     padding-top: var(--sf-toast-padding-block, var(--sf-toast--padding-top, var(--sf-space-1\/2)));
     /* A toast floats over the page, and the status containers are
@@ -235,22 +282,27 @@
     --sf-surface-place: var(--sf-surface-popup);
     --sf-surface-place-solid: var(--sf-surface-popup);
     --sf-surface-place-ground: var(--sf-surface-popup);
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -269,10 +321,12 @@
     transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter);
     transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter);
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-toast {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-toast {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed) .sf-toast {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-toast {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -284,6 +338,24 @@
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-toast {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-toast {
     --sf-primary: var(--sf-place--found-primary);
@@ -389,10 +461,56 @@
     padding-bottom: var(--sf-toast--lead);
     padding-block: var(--sf-toast--lead);
   }
+  /* Even bottom (owner decision C114 (5), NS-10): with the action under the
+     text, the space under it is what the eye sees above the first line -- the
+     lead and the room above the capitals inside the line, (line - 1cap) / 2.
+     1cap is the font's own cap height; the container takes the text's font so
+     1cap is the text's. */
   .sf-toast .sf-toast-container:has(> .sf-toast-bottom) {
-    padding-bottom: 0;
-    -webkit-padding-after: 0;
-            padding-block-end: 0;
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1);
+    padding-bottom: calc(var(--sf-toast--lead) + (var(--sf-text-height-1) - 1cap) / 2);
+    -webkit-padding-after: calc(var(--sf-toast--lead) + (var(--sf-text-height-1) - 1cap) / 2);
+            padding-block-end: calc(var(--sf-toast--lead) + (var(--sf-text-height-1) - 1cap) / 2);
+  }
+  /* Where the action stands (owner decision C115, layout L3a; AA-7, AA-8): a
+     toast with one action puts it in the row with the text from 20rem of the
+     toast's own width (every toast of the notification area, 28rem), centred
+     on the text block, its plate overhanging the line by the low button's
+     block padding, as the close does (C35); narrower, or with two actions,
+     under the text from its start. The toast with an action is the query
+     container; the step is the toast's whole width, so the query (which reads
+     the content box) takes off its frame: two inline insets (--sf-space-1,
+     16, the border inside them). The author's switch (owner 2026-11-13,
+     #q-layout-override): the modifier .sf-toast--actions-under (sf-toast
+     actions-layout="under") keeps the action under the text at every width,
+     with the same gap and the even bottom. */
+  .sf-toast:has(> .sf-toast-container > .sf-toast-bottom) {
+    container: sf-toast/inline-size;
+  }
+  @container sf-toast (min-width: calc(20rem - 2 * 1rem)) {
+    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-container:has(> .sf-toast-bottom) {
+      flex-direction: row;
+      align-items: center;
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+      padding-bottom: 0;
+      -webkit-padding-after: 0;
+              padding-block-end: 0;
+    }
+    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-wrap {
+      flex: 1 1 0;
+      min-width: var(--sf-0);
+      min-inline-size: var(--sf-0);
+    }
+    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-bottom {
+      flex: none;
+      flex-wrap: nowrap;
+      margin-top: calc(-1 * var(--sf-ui-1--space-y-tightness-low));
+      margin-bottom: calc(-1 * var(--sf-ui-1--space-y-tightness-low));
+      margin-block: calc(-1 * var(--sf-ui-1--space-y-tightness-low));
+    }
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-toast .sf-toast-bottom {
@@ -401,15 +519,18 @@
     flex-wrap: wrap;
     gap: var(--sf-space-1\/3);
   }
-  /* The tonal action on a notice of any level is a solid light plate (owner
-     decision C46, 2026-11-10, option D of the C35 acceptance): its translucent
-     fill, --sf-primary-container and its states, is laid over the solid colour
-     of the toast's own place, its popup plate (--sf-surface-place-solid, the
-     C43 rule), not over the level's tint. So the plate is the same on every level and the
-     level's tone does not show through it. The second action stays ghost
-     on-surface (C35). A loading button keeps its own stripes. */
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--primary:not(.sf-button-state-loading) {
-    background-image: linear-gradient(var(--sf-button--background-color), var(--sf-button--background-color)), linear-gradient(var(--sf-surface-place-solid), var(--sf-surface-place-solid));
+  /* The action is tonal surface on a toast of any level (owner decision
+     C110 as amended 2026-11-12, variant E; replaces C46): the theme's neutral
+     tonal plate, the same on every level, as on sf-alert. A toast of a level
+     is a soft coloured place (below), which re-declares the surface container
+     as the level's container, so the action takes the theme's neutral
+     container back on itself. */
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface {
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-toast-wrap--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-toast .sf-toast-wrap {
@@ -442,6 +563,26 @@
     font-weight: var(--sf-toast-text--font-weight);
     line-height: var(--sf-toast-text--line-height);
     word-wrap: anywhere;
+  }
+  /* The cross is a service glyph of the notice (owner decision C112, R198,
+     AA-13; it refines C107 (1) for service glyphs on coloured places): the
+     on-surface ink at 64 of the alpha scale's ink family (48/64/80), black in
+     the light theme and white in the dark, on every level and on a neutral
+     toast alike -- translucent, so it reads as one tone over the popup and
+     any status tint. 64 holds 3:1 on every toast and on the strong alert bar
+     that shares the rule; 48 does not on the bar. Before it was the place's
+     --sf-on-surface-variant (C107 (1)), and before that the text ink (14.71:1
+     light). The glyph stays the size-1 close (16 in the 24 box of the status
+     icon, C103 and C112 (1)). Under a pointer it catches the text ink (C107
+     (4), as the quiet icon button does, C15). */
+  .sf-toast > .sf-icon-button.sf-icon-button--close > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
+  }
+  .sf-toast > .sf-icon-button.sf-icon-button--close:not(:disabled):hover > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-toast--content-color, var(--sf-on-surface));
+  }
+  .sf-toast > .sf-icon-button.sf-icon-button--close:not(:disabled):active > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-toast--content-color, var(--sf-on-surface));
   }
   /* The quiet icon role, as on the alert (C35 acceptance F1): the theme's
      dim ink on a fill, the alert's #515257 / #d4d4d9. Not the place's
@@ -484,12 +625,6 @@
   .sf-toast.sf-toast--primary > sf-icon > .sf-icon {
     --sf-icon--color: var(--sf-info);
   }
-  .sf-toast.sf-toast--info > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-info-container);
-  }
-  .sf-toast.sf-toast--primary > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-info-container);
-  }
   .sf-toast.sf-toast--info .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-info-container));
   }
@@ -506,9 +641,6 @@
   .sf-toast.sf-toast--error > sf-icon > .sf-icon {
     --sf-icon--color: var(--sf-error);
   }
-  .sf-toast.sf-toast--error > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-error-container);
-  }
   .sf-toast.sf-toast--error .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-error-container));
   }
@@ -519,9 +651,6 @@
   .sf-toast.sf-toast--warning > sf-icon > .sf-icon {
     --sf-icon--color: var(--sf-warning);
   }
-  .sf-toast.sf-toast--warning > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-warning-container);
-  }
   .sf-toast.sf-toast--warning .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-warning-container));
   }
@@ -531,9 +660,6 @@
   .sf-toast.sf-toast--success > .sf-icon,
   .sf-toast.sf-toast--success > sf-icon > .sf-icon {
     --sf-icon--color: var(--sf-success);
-  }
-  .sf-toast.sf-toast--success > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-success-container);
   }
   .sf-toast.sf-toast--success .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-success-container));
@@ -546,44 +672,201 @@
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-surface));
-    --sf-close-icon--background-color: var(--sf-on-surface);
   }
   .sf-toast--default {
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-surface));
-    --sf-close-icon--background-color: var(--sf-on-surface);
   }
   /* utility-hint: flex/1 (.flex-1) */
+  /* A toast of a level is a soft coloured place over its popup plate (R190
+     AA-3, C16, C19): sf-place-soft(<level>), as bg-<c>-container and the
+     alert bar's soft levels, so a neutral outline button on it takes the
+     level's outline and state layers, not the theme's grey ones. The popup
+     stays its ground (--sf-surface-place-ground). */
   /* info is the information palette's, as success, warning and error are
      theirs (C17 info parity, dispatcher 2026-11-09); it read the brand's
      primary container before, and under a theme of another colour an info
      toast took that colour. */
   .sf-toast--info {
+    --sf-surface-place: var(--sf-info-container);
+    --sf-surface-place-solid: initial;
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-surface-container: var(--sf-info-container);
+    --sf-surface-container-hover: var(--sf-info-container-hover);
+    --sf-surface-container-active: var(--sf-info-container-active);
+    --sf-surface-state-hover: var(--sf-info-state-hover);
+    --sf-surface-state-select: var(--sf-info-state-select);
+    --sf-surface-state-active: var(--sf-info-state-active);
+    --sf-outline: var(--sf-info-outline);
+    --sf-outline-variant: var(--sf-info-container-strong);
+    --sf-place--container-outline: var(--sf-outline);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-info-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-info-container));
-    --sf-close-icon--background-color: var(--sf-on-info-container);
   }
   .sf-toast--primary {
+    --sf-surface-place: var(--sf-info-container);
+    --sf-surface-place-solid: initial;
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-surface-container: var(--sf-info-container);
+    --sf-surface-container-hover: var(--sf-info-container-hover);
+    --sf-surface-container-active: var(--sf-info-container-active);
+    --sf-surface-state-hover: var(--sf-info-state-hover);
+    --sf-surface-state-select: var(--sf-info-state-select);
+    --sf-surface-state-active: var(--sf-info-state-active);
+    --sf-outline: var(--sf-info-outline);
+    --sf-outline-variant: var(--sf-info-container-strong);
+    --sf-place--container-outline: var(--sf-outline);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-info-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-info-container));
-    --sf-close-icon--background-color: var(--sf-on-info-container);
+  }
+  :where(.bg-surface-4) .sf-toast--info {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  :where(.bg-surface-4) .sf-toast--primary {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   /* utility-hint: flex/1 (.flex-1) */
   .sf-toast--error {
+    --sf-surface-place: var(--sf-error-container);
+    --sf-surface-place-solid: initial;
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-surface-container: var(--sf-error-container);
+    --sf-surface-container-hover: var(--sf-error-container-hover);
+    --sf-surface-container-active: var(--sf-error-container-active);
+    --sf-surface-state-hover: var(--sf-error-state-hover);
+    --sf-surface-state-select: var(--sf-error-state-select);
+    --sf-surface-state-active: var(--sf-error-state-active);
+    --sf-outline: var(--sf-error-outline);
+    --sf-outline-variant: var(--sf-error-container-strong);
+    --sf-place--container-outline: var(--sf-outline);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-error-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-error-container));
-    --sf-close-icon--background-color: var(--sf-on-error-container);
+  }
+  :where(.bg-surface-4) .sf-toast--error {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   .sf-toast--warning {
+    --sf-surface-place: var(--sf-warning-container);
+    --sf-surface-place-solid: initial;
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-surface-container: var(--sf-warning-container);
+    --sf-surface-container-hover: var(--sf-warning-container-hover);
+    --sf-surface-container-active: var(--sf-warning-container-active);
+    --sf-surface-state-hover: var(--sf-warning-state-hover);
+    --sf-surface-state-select: var(--sf-warning-state-select);
+    --sf-surface-state-active: var(--sf-warning-state-active);
+    --sf-outline: var(--sf-warning-outline);
+    --sf-outline-variant: var(--sf-warning-container-strong);
+    --sf-place--container-outline: var(--sf-outline);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-warning-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-warning-container));
-    --sf-close-icon--background-color: var(--sf-on-warning-container);
+  }
+  :where(.bg-surface-4) .sf-toast--warning {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
   }
   .sf-toast--success {
+    --sf-surface-place: var(--sf-success-container);
+    --sf-surface-place-solid: initial;
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-surface-container: var(--sf-success-container);
+    --sf-surface-container-hover: var(--sf-success-container-hover);
+    --sf-surface-container-active: var(--sf-success-container-active);
+    --sf-surface-state-hover: var(--sf-success-state-hover);
+    --sf-surface-state-select: var(--sf-success-state-select);
+    --sf-surface-state-active: var(--sf-success-state-active);
+    --sf-outline: var(--sf-success-outline);
+    --sf-outline-variant: var(--sf-success-container-strong);
+    --sf-place--container-outline: var(--sf-outline);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-success-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-success-container));
-    --sf-close-icon--background-color: var(--sf-on-success-container);
+  }
+  :where(.bg-surface-4) .sf-toast--success {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  /* A link in the toast's text is help only, in the text's ink, underlined
+     (owner decision C126; core mix/_mix__notice-link.scss). The action is a
+     button. */
+  .sf-toast .sf-toast-wrap a[href] {
+    color: inherit;
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+    text-decoration-thickness: var(--sf-link--underline-weight);
+    text-underline-offset: var(--sf-a3);
+  }
+  .sf-toast .sf-toast-wrap a[href]:hover {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-toast .sf-toast-wrap a[href]:active {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-toast .sf-toast-wrap a[href]:visited {
+    color: inherit;
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+  }
+  .sf-toast .sf-toast-wrap a[href]:hover {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-toast .sf-toast-wrap a[href]:active {
+    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
+  }
+  .sf-toast .sf-toast-wrap a[href].focus-visible {
+    outline-color: currentColor;
+  }
+  .sf-toast .sf-toast-wrap a[href]:focus-visible {
+    outline-color: currentColor;
   }
   @media (prefers-reduced-motion: reduce) {
     .sf-toast {
@@ -594,6 +877,103 @@
     .sf-toast {
       border-color: CanvasText;
     }
+  }
+}
+/* The action's label under the pointer in the dark theme (C113 follow-up,
+   DEV overlays acceptance 2026-11-13). The toast is a popup place, lighter
+   than the page in the dark theme, and the neutral tonal and ghost plates
+   step up the fill family over it (12 / 16 / 20, C113 (2)), so the dark
+   theme's label, --sf-on-surface (neutral 90, kept under the pointer by the
+   buttons' own rule), fell to 4.38:1 hovered and 4.01:1 pressed on a neutral
+   toast and to 4.43-4.72 pressed on the levels. Under the pointer the label
+   and its icon take the ink family's full step, the alpha scale's base
+   (--sf-alpha-base: white in the dark theme; the 48 / 64 / 80 inks and the
+   cross's 64, C112, are its steps), so the plates keep C113's steps and the
+   label holds 4.5:1 in every state and level: tonal 5.64-6.71 hovered and
+   5.16-6.08 pressed, ghost 5.65-8.06 and 5.17-7.77. The light theme keeps the
+   buttons' stepped inks (--sf-on-surface-hover / -active). In sf.states, as
+   the buttons' rule. */
+@layer sf.states {
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
+    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
+  }
+  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
+    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
   }
 }
 /* The page's notification area (core/js/notify.js, SF.notify): one place at an

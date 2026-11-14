@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* An inline-level tag sits in its parent's line by a baseline it takes from
@@ -27,6 +28,21 @@
   }
   .sf-tag .sf-tag-action:disabled {
     cursor: default;
+  }
+  /* The row a tag stands in (js/tag-row.js; owner decision C58, tags study
+     TG-2): in a one-row container the tags that do not fit leave the row and
+     a plain count «+N» of the row's size stands after the last one shown;
+     the first tag always stands and, alone, ends in an ellipsis. */
+  sf-tag[data-sf-tag-over] {
+    display: none !important;
+  }
+  sf-tag[data-sf-tag-shrink] > .sf-tag {
+    flex-shrink: 1;
+  }
+  .sf-tag[data-sf-tag-more] {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
   }
   .sf-tag--interactive:has(> .sf-tag-action.focus-visible) {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -400,54 +416,54 @@
     --sf-close-icon--height: var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7));
     --sf-close-icon--width: var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
   .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-icon > .sf-icon-button.sf-icon-button--close {
@@ -456,54 +472,54 @@
     -webkit-margin-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
             margin-inline-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
   .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-icon-button > .sf-icon-button.sf-icon-button--close {
@@ -512,54 +528,54 @@
     -webkit-margin-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
             margin-inline-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
   .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-button-close > .sf-icon-button.sf-icon-button--close {
@@ -568,54 +584,54 @@
     -webkit-margin-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
             margin-inline-start: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - var(--sf-tag--close-size, calc(var(--sf-tag--font-size) * 0.7))) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(ltr)){
     margin-left: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close{
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
     }
   }
-  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)) {
+  .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close:where(:dir(rtl)){
     margin-right: max(var(--sf-px) * 0, (var(--sf-c2) - calc(var(--sf-tag--font-size) * 0.7)) / 2);
   }
   .sf-tag:not(.sf-tag--inline):has(> .sf-tag-action) > sf-close > .sf-icon-button.sf-icon-button--close {

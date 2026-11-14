@@ -3,8 +3,9 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "3b4e9ff2f1d2"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindProgressBar: () => (/* binding */ bindProgressBar),
@@ -15,6 +16,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 const PROGRESS_BAR_SELECTOR = '.sf-progress-bar';
@@ -34,16 +41,41 @@ function normalizeValue(value) {
   }
 
   return Math.max(0, Math.min(100, parsed));
-}
+} // The text stands over the bar (top: the name at the start, the value at the
+// end) or at the end of its row (inline-end), or is not shown (owner decision
+// C131 (4)). bottom and right are the former words for top and inline-end,
+// read until 2027-01-01 (journal record value-progress-text-position).
+
+
+const TEXT_POSITIONS = ['none', 'top', 'inline-end'];
+const FORMER_TEXT_POSITIONS = {
+  bottom: 'top',
+  right: 'inline-end'
+};
 
 function normalizeTextPosition(value, fallback = 'none') {
   const normalized = String(value || fallback).toLowerCase();
-  return ['none', 'right', 'inline-end', 'bottom'].includes(normalized) ? normalized : fallback;
-} // The shared status words. `primary` was the old word for no status: it has no
-// colour of its own and draws the default, as before; `info` was turned into it.
+  const named = FORMER_TEXT_POSITIONS[normalized] ?? normalized;
+
+  if (named !== normalized) {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: 'progress-bar',
+      kind: 'value',
+      attribute: 'data-position',
+      from: normalized,
+      to: named,
+      since: '2026-11-13',
+      remove_after: '2027-01-01'
+    });
+  }
+
+  return TEXT_POSITIONS.includes(named) ? named : fallback;
+} // The shared status words (owner decision C131 (1)): no status draws the
+// theme's primary and carries no class; neutral is grey, as in sf-dot and
+// sf-badge. `primary` is the former word for no status.
 
 
-const TONES = ['info', 'success', 'warning', 'error'];
+const TONES = ['neutral', 'info', 'success', 'warning', 'error'];
 
 function normalizeTone(value) {
   const normalized = String(value || '').toLowerCase();
@@ -58,6 +90,10 @@ function getTextNode(root) {
   return root?.querySelector?.('.sf-progress-bar-text') || null;
 }
 
+function getHeadNode(root) {
+  return root?.querySelector?.(':scope > .sf-progress-bar-head') || null;
+}
+
 function getMainNode(root) {
   return root?.querySelector?.('.sf-progress-bar-main') || null;
 }
@@ -67,11 +103,11 @@ function detectTextPosition(root) {
     return 'none';
   }
 
-  if (root.classList.contains('flex-col')) {
-    return 'bottom';
+  if (getHeadNode(root) || root.classList.contains('flex-col')) {
+    return 'top';
   }
 
-  return 'right';
+  return 'inline-end';
 }
 
 function ensureTextNode(root) {
@@ -87,30 +123,38 @@ function syncRootLayout(root, textPosition = 'none') {
   root.classList.add('sf-progress-bar', 'flex');
   root.classList.remove('flex-col', 'flex-row', 'items-cross-end', 'items-cross-center');
 
-  if (textPosition === 'bottom') {
-    root.classList.add('flex-col', 'items-cross-end');
+  if (textPosition === 'top') {
+    root.classList.add('flex-col');
     return;
   }
 
-  if (textPosition === 'right' || textPosition === 'inline-end') {
+  if (textPosition === 'inline-end') {
     root.classList.add('flex-row', 'items-cross-center');
   }
 } // Indeterminate (C34): the size of the work is not known, so the bar has no
 // value to say: aria-valuenow is left out (WAI-ARIA progressbar), and the
 // value text, when the page gives one, says what is going on.
+// A meter always has a value, so it is never indeterminate.
 
 
 function isIndeterminate(root) {
+  if (root.dataset.meter === 'true') return false;
   return root.classList.contains('sf-progress-bar--indeterminate') || root.dataset.indeterminate === 'true';
 } // Paused (C34): the work stands still, so an indeterminate segment stops.
 
 
 function isPaused(root) {
   return root.classList.contains('sf-progress-bar--paused') || root.dataset.paused === 'true';
+} // Meter (owner decision C131 (7)): an amount within a known range (a quota
+// used), not a task's progress: role meter. A meter always has a value.
+
+
+function isMeter(root) {
+  return root.dataset.meter === 'true';
 }
 
 function syncProgressAccessibility(root, value) {
-  root.setAttribute('role', 'progressbar');
+  root.setAttribute('role', isMeter(root) ? 'meter' : 'progressbar');
   root.setAttribute('aria-valuemin', '0');
   root.setAttribute('aria-valuemax', '100');
   if (isIndeterminate(root)) root.removeAttribute('aria-valuenow');else root.setAttribute('aria-valuenow', String(value));
@@ -127,16 +171,13 @@ function syncProgressAccessibility(root, value) {
   } else {
     root.removeAttribute('aria-valuetext');
   }
-} // The template writes sf-progress-bar--neutral for no status (it draws
-// nothing of its own); a status it changes to takes it away, so no
-// --neutral stays beside the new status class.
+} // One status class at most; no status has none.
 
 
 function syncTone(root, tone) {
   ['primary', ...TONES].forEach(name => {
     root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
   });
-  if (tone) root.classList.remove('sf-progress-bar--neutral');
   if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
 
@@ -156,7 +197,54 @@ function renderProgressBar(root) {
   syncProgressAccessibility(root, value);
   if (indeterminate) progress.style.removeProperty('width');else progress.style.width = `${value}%`;
   root.dataset.value = String(value);
-  root.dataset.position = textPosition;
+  root.dataset.position = textPosition; // Top: one line over the bar, the name at the start and the value at the
+  // end. The line is a picture of what the role already says (name and
+  // value), so it is hidden from the accessibility tree.
+
+  if (textPosition === 'top') {
+    let head = getHeadNode(root);
+
+    if (!head) {
+      head = document.createElement('div');
+      head.className = 'sf-progress-bar-head';
+      root.insertBefore(head, main);
+    }
+
+    head.setAttribute('aria-hidden', 'true');
+    let labelNode = head.querySelector('.sf-progress-bar-label');
+    const label = root.dataset.label || '';
+
+    if (label) {
+      if (!labelNode) {
+        labelNode = document.createElement('span');
+        labelNode.className = 'sf-progress-bar-label';
+        head.prepend(labelNode);
+      }
+
+      if (labelNode.textContent !== label) labelNode.textContent = label;
+    } else if (labelNode) {
+      labelNode.remove();
+    }
+
+    let textNode = head.querySelector('.sf-progress-bar-text');
+
+    if (indeterminate) {
+      textNode?.remove();
+    } else {
+      if (!textNode) {
+        textNode = getTextNode(root) || document.createElement('span');
+        textNode.className = 'sf-progress-bar-text';
+        head.append(textNode);
+      }
+
+      if (textNode.textContent !== `${value}%`) textNode.textContent = `${value}%`;
+    }
+
+    root.querySelectorAll(':scope > .sf-progress-bar-text').forEach(node => node.remove());
+    return true;
+  }
+
+  getHeadNode(root)?.remove();
 
   if (textPosition === 'none' || indeterminate) {
     const textNode = getTextNode(root);
@@ -169,12 +257,8 @@ function renderProgressBar(root) {
   }
 
   const textNode = ensureTextNode(root);
-  textNode.textContent = `${value}%`;
-
-  if (textPosition === 'bottom' && textNode.parentElement !== root) {
-    root.append(textNode);
-  }
-
+  if (textNode.textContent !== `${value}%`) textNode.textContent = `${value}%`;
+  textNode.setAttribute('aria-hidden', 'true');
   return true;
 }
 
@@ -233,6 +317,10 @@ function setProgressBarState(target, state = {}) {
     root.classList.toggle('sf-progress-bar--indeterminate', Boolean(state.indeterminate));
   }
 
+  if (Object.prototype.hasOwnProperty.call(state, 'meter')) {
+    if (state.meter) root.dataset.meter = 'true';else delete root.dataset.meter;
+  }
+
   if (Object.prototype.hasOwnProperty.call(state, 'paused')) {
     if (state.paused) root.dataset.paused = 'true';else delete root.dataset.paused;
     root.classList.toggle('sf-progress-bar--paused', Boolean(state.paused));
@@ -262,7 +350,8 @@ function getProgressBarState(target) {
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
     indeterminate: isIndeterminate(root),
-    paused: isPaused(root)
+    paused: isPaused(root),
+    meter: isMeter(root)
   };
 }
 
@@ -277,11 +366,12 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       value = 0,
       textPosition = 'none',
       status,
-      tone = 'primary',
+      tone = '',
       label = '',
       valueText = '',
       indeterminate = false,
-      paused = false
+      paused = false,
+      meter = false
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const root = document.createElement('div');
@@ -303,6 +393,7 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     if (indeterminate) root.dataset.indeterminate = 'true';
     if (paused) root.dataset.paused = 'true';
+    if (meter) root.dataset.meter = 'true';
     const main = document.createElement('div');
     main.className = 'sf-progress-bar-main';
     const progress = document.createElement('div');
@@ -357,6 +448,8 @@ progressBarObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -530,8 +623,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("361e38151042");
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8c9a03a2745a");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2cbf36776b51");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__);
@@ -631,12 +724,24 @@ class SfProgressBar extends ProgressBarElement {
     return { ...super.props,
       // The axis is called status, and speaks the shared vocabulary. `tone`
       // and its value `primary` keep working: see contracts/public-api-axes.json.
+      // No status (empty) is the theme's primary; neutral is grey (C131 (1)).
       status: {
-        default: 'neutral',
-        values: ['neutral', 'info', 'success', 'warning', 'error'],
+        default: '',
+        values: ['', 'neutral', 'info', 'success', 'warning', 'error'],
         aliases: ['tone'],
         valueAliases: {
-          neutral: ['primary']
+          '': ['primary']
+        }
+      },
+      // top | inline-end | none (C131 (4)); bottom and right are the former
+      // words until 2027-01-01 (journal value-progress-text-position).
+      textPosition: {
+        default: 'none',
+        values: ['none', 'top', 'inline-end'],
+        attribute: 'text-position',
+        valueAliases: {
+          top: ['bottom'],
+          'inline-end': ['right']
         }
       }
     };
@@ -692,6 +797,7 @@ class SfProgressBar extends ProgressBarElement {
       spokenValueText: this.spokenValueText,
       indeterminate: Boolean(this.indeterminate),
       paused: Boolean(this.paused),
+      meter: Boolean(this.meter),
       component: this
     });
   }
@@ -710,7 +816,8 @@ class SfProgressBar extends ProgressBarElement {
       label: this.label,
       valueText: this.valueText,
       indeterminate: Boolean(this.indeterminate),
-      paused: Boolean(this.paused)
+      paused: Boolean(this.paused),
+      meter: Boolean(this.meter)
     };
   } // §4.4: a reader retires; read value.
 
@@ -728,7 +835,7 @@ class SfProgressBar extends ProgressBarElement {
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'warning-at', 'error-at', 'label', 'value-text', 'aria-label', 'indeterminate', 'paused'];
+    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'warning-at', 'error-at', 'label', 'value-text', 'aria-label', 'indeterminate', 'paused', 'meter'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -749,7 +856,8 @@ class SfProgressBar extends ProgressBarElement {
       label: this.accessibleLabel,
       valueText: this.spokenValueText,
       indeterminate: Boolean(this.indeterminate),
-      paused: Boolean(this.paused)
+      paused: Boolean(this.paused),
+      meter: Boolean(this.meter)
     });
   }
 
@@ -810,13 +918,27 @@ function normalizeSize(value) {
   const normalized = String(value || '').toLowerCase();
   return ['1/3', '1/2', '1', '2', '3'].includes(normalized) ? normalized : '1';
 } // The component normalises the legacy words, so the template sees the shared
-// vocabulary. `neutral` carries no class of its own, exactly as `primary` did.
+// vocabulary (owner decision C131 (1)): no status (empty) draws the theme's
+// primary and carries no class; neutral is grey, as in sf-dot and sf-badge.
 
 
 function normalizeStatus(value) {
   const normalized = String(value || '').toLowerCase();
-  return ['neutral', 'info', 'success', 'warning', 'error'].includes(normalized) ? normalized : 'neutral';
+  return ['neutral', 'info', 'success', 'warning', 'error'].includes(normalized) ? normalized : '';
+} // top | inline-end | none (C131 (4)); bottom and right are the former words.
+
+
+const FORMER_POSITIONS = {
+  bottom: 'top',
+  right: 'inline-end'
+};
+
+function normalizePosition(value) {
+  const named = FORMER_POSITIONS[value] ?? value;
+  return ['none', 'top', 'inline-end'].includes(named) ? named : 'none';
 }
+
+const on = value => value === true || value === '' || value === 'true';
 
 function renderProgressBarTemplate(context) {
   const {
@@ -826,17 +948,21 @@ function renderProgressBarTemplate(context) {
   const size = normalizeSize(context.size);
   const tone = normalizeStatus(context.drawnStatus ?? context.status ?? context.tone);
   const normalizedValue = normalizeValue(value);
-  const normalizedPosition = ['none', 'right', 'inline-end', 'bottom'].includes(textPosition) ? textPosition : 'none';
-  const indeterminate = Boolean(context.indeterminate);
-  const paused = Boolean(context.paused);
-  const rootClasses = ['sf-progress-bar', `sf-progress-bar--size-${size}`, `sf-progress-bar--${tone}`, indeterminate ? 'sf-progress-bar--indeterminate' : '', paused ? 'sf-progress-bar--paused' : '', 'flex', context.rootClass].filter(Boolean);
+  const normalizedPosition = normalizePosition(textPosition); // A meter (C131 (7)) shows an amount within a known range: it always has a
+  // value, so it is never indeterminate.
 
-  if (normalizedPosition === 'right' || normalizedPosition === 'inline-end') {
+  const meter = on(context.meter);
+  const indeterminate = Boolean(context.indeterminate) && !meter;
+  const paused = Boolean(context.paused);
+  const rootClasses = ['sf-progress-bar', `sf-progress-bar--size-${size}`, tone ? `sf-progress-bar--${tone}` : '', indeterminate ? 'sf-progress-bar--indeterminate' : '', paused ? 'sf-progress-bar--paused' : '', 'flex', context.rootClass].filter(Boolean);
+
+  if (normalizedPosition === 'inline-end') {
     rootClasses.push('flex-row', 'items-cross-center');
-  } else if (normalizedPosition === 'bottom') {
-    rootClasses.push('flex-col', 'items-cross-end');
+  } else if (normalizedPosition === 'top') {
+    rootClasses.push('flex-col');
   }
 
+  const valueText = `${normalizedValue}%`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses.join(' ')}
@@ -848,17 +974,19 @@ function renderProgressBarTemplate(context) {
       data-value-text=${(context.spokenValueText ?? context.valueText) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-indeterminate=${indeterminate ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-paused=${paused ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      role="progressbar"
+      data-meter=${meter ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      role=${meter ? 'meter' : 'progressbar'}
       aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-valuemin="0"
       aria-valuemax="100"
       aria-valuenow=${indeterminate ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(normalizedValue)}
       aria-valuetext=${(context.spokenValueText ?? context.valueText) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
+      ${normalizedPosition === 'top' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-bar-head" aria-hidden="true">${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-bar-label">${context.label}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${indeterminate ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-bar-text">${valueText}</span>`}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <div class="sf-progress-bar-main">
         <div class="sf-progress-bar-progress transition"></div>
       </div>
-      ${normalizedPosition !== 'none' && !indeterminate ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-bar-text">${normalizedValue}%</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${normalizedPosition === 'inline-end' && !indeterminate ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-bar-text" aria-hidden="true">${valueText}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -898,14 +1026,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "361e38151042"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progress-bar for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"tone","to":"status","kind":"setting","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"setProgress","to":"chunk","kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","section":"§4.4, vocabulary §5.2","note":"setProgress(n) calls chunk(n): n of 100"},{"from":"getProgress","to":null,"kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires: read value; the method stays until the date and notes each call"},{"from":"setTextPosition","to":null,"kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"text-position is a writable setting; the method stays until the date and notes each call"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progress-bar for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"tone","to":"status","kind":"setting","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"setProgress","to":"chunk","kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","section":"§4.4, vocabulary §5.2","note":"setProgress(n) calls chunk(n): n of 100"},{"from":"getProgress","to":null,"kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires: read value; the method stays until the date and notes each call"},{"from":"setTextPosition","to":null,"kind":"action","component":"sf-progress-bar","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"text-position is a writable setting; the method stays until the date and notes each call"},{"from":"bottom","to":"top","kind":"value","setting":"text-position","component":"sf-progress-bar","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C131 (4)","note":"journal value-progress-text-position: the label positions are top and inline-end; the former word is read as the new one until the date"},{"from":"right","to":"inline-end","kind":"value","setting":"text-position","component":"sf-progress-bar","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C131 (4)","note":"journal value-progress-text-position: the label positions are top and inline-end; the former word is read as the new one until the date"}]}');
 
 /***/ },
 
 /***/ "e023bc52f90d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","inline-end","bottom","right"],"default":"none"},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","top","inline-end"],"default":"none"},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 
