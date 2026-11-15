@@ -204,6 +204,21 @@ function focusVisible(element) {
   } catch {
     return true;
   }
+} // At most two lines (owner decision C160 (2)): the sheet cuts a longer text
+// after its second line; the console says once per page which tooltip was
+// cut, so the page moves the explanation to a «?» beside the control
+// (sf-help-mark). Shared across bundles, as the group.
+
+
+const CUT_SAID = Symbol.for('sf.tooltip.cut-said');
+
+function sayCut(surface, trigger) {
+  const text = surface.querySelector('.sf-tooltip-text');
+  if (!text || text.scrollHeight <= text.clientHeight + 1) return;
+  if (globalThis[CUT_SAID]) return;
+  globalThis[CUT_SAID] = true;
+  const words = text.textContent.replace(/\s+/gu, ' ').trim();
+  globalThis.console?.warn?.(`[SIMAI Framework] tooltip: «${words.slice(0, 60)}${words.length > 60 ? '…' : ''}» (${trigger.closest?.('[id]')?.id ? `#${trigger.closest('[id]').id}` : trigger.localName}) is longer than two lines and was cut. A tooltip names a control; an explanation goes to a «?» beside it (sf-help-mark), decision C160.`);
 }
 
 const TRIGGER_SELECTOR = '[data-tooltip]';
@@ -501,6 +516,7 @@ class SfTooltipController {
     this.surface.hidden = false;
     this.surface.classList.add('active');
     this.startPosition();
+    sayCut(this.surface, this.trigger);
     this.trigger.ownerDocument.addEventListener('keydown', this.onDocumentKeydown);
   } // Shared Framework geometry (SF.Position): the arrow chooses the side, the
   // tooltip flips (with a mirrored arrow) and shifts inside the viewport.
@@ -1165,7 +1181,18 @@ function anchor(reference, floating, options = {}) {
   };
 
   const heightCap = cap(floatingStyle.maxHeight, document.documentElement.clientHeight);
-  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth);
+  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth); // A point -- a reference that draws a box of no size: a fixed span where a
+  // right-click or a long press was (sf-menu-context, C164 (1)) -- is not a
+  // control the panel hangs from but a corner, as system menus open: the panel
+  // flips to the other side of the point on both axes when it does not fit,
+  // left of it at the right edge (right of it in RTL), above it at the bottom.
+  // Shifted, it covered the point and stood 36 px off it on a phone (ui-view
+  // K1 follow-ups, 2026-11-15). Only when it fits on neither side is it
+  // shifted, to the viewport's edge less the padding (--sf-space-1/2), on the
+  // side with more room. A box of any size keeps its alignment and is shifted.
+
+  const pointBox = reference.getBoundingClientRect();
+  const atPoint = pointBox.width === 0 && pointBox.height === 0 && reference.getClientRects().length > 0;
   const controller = {
     side: settings.side,
     stopped: false
@@ -1290,20 +1317,23 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = referenceRect(reference);
+    const box = referenceRect(reference); // A point is not a field at a frame's edge: it keeps the whole padding.
+
     const edges = {
       top: padding,
       bottom: padding,
-      left: Math.min(padding, Math.max(0, box.left)),
-      right: Math.min(padding, Math.max(0, clientWidth - box.right))
+      left: atPoint ? padding : Math.min(padding, Math.max(0, box.left)),
+      right: atPoint ? padding : Math.min(padding, Math.max(0, clientWidth - box.right))
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
       alignmentAxis: alignment
-    })];
+    })]; // crossAxis: a point also flips its alignment (start <-> end) when the
+    // panel overflows the inline edge; a box only flips its side.
+
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
-      crossAxis: false
+      crossAxis: atPoint
     })); // Shift before size: a panel near the inline edge moves inside the viewport
     // instead of being squeezed to the space left of its field.
 

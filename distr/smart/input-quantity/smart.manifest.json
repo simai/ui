@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.input-quantity",
-  "version": "1.7.1",
+  "version": "1.9.1",
   "title": "Quantity",
   "summary": "A number field with «−» and «+»: a WAI-ARIA spinbutton with bounds, a step and digits, strict typing in the page's language, ArrowUp/ArrowDown, PageUp/PageDown and Home/End, a held stepper repeats; label, help, error, required, disabled, read-only, the three field sizes and the inherited value as every field has them.",
   "kind": "smart",
@@ -30,7 +30,9 @@
     "uses": [
       "component.icon-buttons",
       "component.icons",
-      "component.quantity"
+      "component.inputs",
+      "component.quantity",
+      "smart.help-mark"
     ],
     "public_parts": []
   },
@@ -66,6 +68,11 @@
         "type": "string",
         "default": "",
         "description": "Help text under the field; slot `hint` takes markup instead."
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "description": "The explanation behind a «?» (sf-help-mark, C133's look) after the label text (C153 (8)): a step below the value as the label; the label row keeps its height. The mark is named by its subject («Подробнее: <label>»). Empty: no mark."
       },
       "placeholder": {
         "type": "string",
@@ -173,11 +180,11 @@
       "removable": {
         "type": "boolean",
         "default": false,
-        "description": "The remove mode for a cart line (owner decision C122; the name is provisional, waiting for the owner): on the lower bound «−» becomes a trash in the same button and the same grey, in the Tab order; pressing it, or typing «0» and Enter while 0 is below `min`, sends the cancelable `remove` event. A held «−» stops on the bound: removal takes a new press. The field never removes itself: the page removes the line and offers «Вернуть» (C25). Needs a lower bound; off by default."
+        "description": "The remove mode for a cart line (owner decision C122; name agreed by the owner 2026-11-13): on the lower bound «−» becomes a trash in the same button and the same grey, in the Tab order; pressing it, or typing «0» and Enter while 0 is below `min`, sends the cancelable `remove` event. A held «−» stops on the bound: removal takes a new press. The field never removes itself: the page removes the line and offers «Вернуть» (C25). Needs a lower bound; off by default."
       },
       "remove-label": {
         "type": "string",
-        "description": "The accessible name of the trash in the remove mode (provisional name, C122). Unset, it follows the page's language («Удалить», «Remove»); a cart writes «Удалить из корзины»."
+        "description": "The accessible name of the trash in the remove mode (owner decision C122). Unset, it follows the page's language («Удалить», «Remove»); a cart writes «Удалить из корзины»."
       },
       "aria-label": {
         "type": "string",
@@ -468,7 +475,7 @@
       "canonical": true
     },
     "sf-input-quantity-remove": {
-      "summary": "Provisional name (C122). A request to remove the line the field counts, in the remove mode: the trash was pressed, or «0» was typed and committed with Enter. The field changes nothing itself; the page removes the line. Not cancelled after a typed «0», the typing is taken back; cancelled, the «0» is committed as any number past the bound (kept, with its error).",
+      "summary": "Owner decision C122. A request to remove the line the field counts, in the remove mode: the trash was pressed, or «0» was typed and committed with Enter. The field changes nothing itself; the page removes the line. Not cancelled after a typed «0», the typing is taken back; cancelled, the «0» is committed as any number past the bound (kept, with its error).",
       "payload": {
         "type": "object",
         "required": [
@@ -656,7 +663,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/input-quantity/index.js",
-        "sha256": "aa1b57817b67f6638ede46f5a2b6edd15a0a4f6428a48a9c6550fcb0090f22b9"
+        "sha256": "53e43104552196062504042d7ef1f0e7ddc5afa179abe1ad2eb8234cf259b407"
       },
       {
         "path": "src/smart/input-quantity/value.mjs",
@@ -664,15 +671,15 @@
       },
       {
         "path": "src/smart/input-quantity/js/templates/default.js",
-        "sha256": "db49e1142a1b6bb8c9069ad1816e2a69cab2e104df411636ee4f826e7b8f6e77"
+        "sha256": "da8a64821e019578e6a52f767fd60e35ea9d45ba389d3de8ae2030fef744716b"
       },
       {
         "path": "src/smart/input-quantity/rule.js",
-        "sha256": "94f813277eb02c9007f5acb45d65fda587433e59fa7dcaf0b0725716e03339f0"
+        "sha256": "fff090737e9f0dbe165cd22a4e13a67cdc7c5f959595c6e5a64d7d2f3b49b51d"
       },
       {
         "path": "src/smart/input-quantity/docs.md",
-        "sha256": "1906b0776772dc42d7ded605de70369c52395d109743dea5932d55ae9180c943"
+        "sha256": "dfe53929b61eb94adef0279b6dc6f712bf151f6ceea0e481bbb2e194a9c478b2"
       }
     ],
     "generated_runtime": []

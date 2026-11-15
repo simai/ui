@@ -25,10 +25,25 @@
        the container's breakout reads, --sf-container-breakout-page when a
        product sets it, else the window. Zero below the first step. */
     --sf-site-header--centring: calc(var(--sf-px) * 0);
-    /* The open panel's width, read by the panel and by its head. */
-    --sf-site-header--sheet-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+    /* The open panel's width, read by the panel and by its head: the side
+       panel's step 1/2, 20rem (owner decision C157 (2): the three steps 20 ·
+       24 · 30rem, and 22rem moves to a step; it was --sf-g1, 22rem). */
+    --sf-site-header--sheet-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g0)));
+    /* The bar collapses at a step of its own width (C181 (2), C104): it is the
+       container its parts query, so a bar narrower than the window -- a
+       column, a card, an example frame -- collapses as its nav and actions run
+       out of room, not when the window does. A block in the flow, its width is
+       never its content's. The containment makes no containing block: the
+       open panel stays fixed to the window. */
+    container: sf-site-header/inline-size;
     min-height: var(--sf-site-header--block-size);
     min-block-size: var(--sf-site-header--block-size);
+    /* core.css holds the drawn bar at its height and clips it until this sheet
+       arrives (HD-13, the first paint without printed markup); with the sheet
+       the bar is as tall as its row. */
+    height: auto;
+    block-size: auto;
+    overflow: visible;
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
             border-block-end: var(--sf-px) solid var(--sf-outline-variant);
@@ -73,18 +88,22 @@
     background: var(--sf-site-header-background-color, var(--sf-site-header-background, var(--sf-surface-raised)));
     box-shadow: var(--sf-shadow-raised);
   }
-  /* The row: brand · nav … actions · tools, on one centre line. */
+  /* The row: brand · nav … actions · tools, on one centre line. Its parts are
+     groups, --sf-space-1 apart (C105 H6: 16, a phone 12). */
   .sf-site-header-row {
     display: flex;
     align-items: center;
-    gap: var(--sf-space-2);
-    gap: var(--sf-site-header-gap, var(--sf-space-2));
+    gap: var(--sf-space-1);
+    gap: var(--sf-site-header-gap, var(--sf-space-1));
     box-sizing: border-box;
     min-height: calc(var(--sf-site-header--block-size) - var(--sf-px));
     min-block-size: calc(var(--sf-site-header--block-size) - var(--sf-px));
     padding-top: var(--sf-space-1);
     padding-bottom: var(--sf-space-1);
     padding-block: var(--sf-space-1);
+    /* Shown again once this sheet is in (core.css keeps it out of view before,
+       HD-13). */
+    visibility: inherit;
   }
   .sf-site-header-brand {
     display: flex;
@@ -130,6 +149,7 @@
   .sf-site-header-panel-head,
   .sf-site-header-scrim,
   .sf-site-header-sheet,
+  .sf-site-header-settings,
   .sf-site-header-menu-button > button {
     display: none;
   }
@@ -154,7 +174,11 @@
     display: flex;
     flex: none;
     align-items: center;
-    gap: var(--sf-space-1);
+  }
+  /* The actions (a link, a button) are neighbours of one group: 8 apart, 4 in
+     a compact region (C105 H5, --sf-space-1/3). */
+  .sf-site-header-actions {
+    gap: var(--sf-gap--actions);
   }
   /* The tools are a toolbar of icon-sized controls: one even step between them,
      and a colour's swatch and its reset button take the same step, so the reset
@@ -206,6 +230,12 @@
     /* The brand gives way, the tools stay whole: a bar narrower than the menu
        button, the brand and the tools shrinks the brand (its text ends in the
        page's own ellipsis) instead of scrolling the page sideways. */
+    /* ... and its words end in an ellipsis of the bar's own (HD-10: the brand
+       box shrank, but its text ran on under the tools). A link fits the brand
+       and its words close down: the link itself when it holds only words,
+       else the words beside its picture. The picture keeps its size. :where
+       keeps the rules at the brand's weight, so a page's own brand CSS stays in
+       charge. */
     /* While open, the scrim and the panel stand above everything in the bar
        (C104, MP-6): the header is the layer's stacking context (place() in
        index.js), the scrim and the panel take the first step of the z-index
@@ -224,6 +254,11 @@
     /* menu-placement inline-end: the close stands at the end of the head, on
        the button's axis there, and the heading keeps the start at the panel's
        own inset, in line with its rows. */
+    /* The settings group (C161 (8)): the language and the theme the bar's
+       tools held on a wide screen, under the sections as a group of the panel
+       -- its padding, gap and top line -- headed «Настройки» in the quiet
+       small words, each setting a row of its word and its control at the
+       row's end. */
     /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
        control height of the ladder (44 on a phone), the words still size 1. */
     /* A plain list of links in the nav stands as a column in the panel; an
@@ -315,6 +350,22 @@
   }
   .sf-site-header--collapse-always .sf-site-header-brand {
     flex: 0 1 auto;
+  }
+  .sf-site-header--collapse-always .sf-site-header-brand :where(a) {
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
+  .sf-site-header--collapse-always .sf-site-header-brand :where(a:not(:has(img, svg))),
+  .sf-site-header--collapse-always .sf-site-header-brand :where(a:has(img, svg) > :not(img):not(svg)),
+  .sf-site-header--collapse-always .sf-site-header-brand > :where(:not(a):not(img):not(svg):not(:has(a, img, svg))) {
+    display: block;
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .sf-site-header--collapse-always .sf-site-header-panel {
     display: none;
@@ -414,6 +465,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     color: var(--sf-on-surface);
   }
@@ -637,7 +690,7 @@
   .sf-site-header--collapse-always .sf-site-header-panel-heading {
     font-size: var(--sf-text-medium--size);
     line-height: var(--sf-text-medium--height);
-    font-weight: 700;
+    font-weight: var(--sf-heading--weight);
   }
   .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-sheet {
     display: flex;
@@ -652,6 +705,30 @@
     -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
             border-block-start: var(--sf-px) solid var(--sf-outline-variant);
   }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-settings {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sf-space-1);
+    padding: var(--sf-space-2);
+    border-top: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  .sf-site-header--collapse-always .sf-site-header-settings-heading {
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-site-header--collapse-always .sf-site-header-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sf-space-1);
+    min-width: 0;
+    min-inline-size: 0;
+  }
   .sf-site-header--collapse-always .sf-site-header-nav .sf-menu .sf-menu-element {
     --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
   }
@@ -659,6 +736,9 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+  }
+  .sf-site-header--collapse-always .sf-site-header-row {
+    --sf-site-header--collapsed: 1;
   }
   @media (min-width: 32rem) {
     .sf-site-header {
@@ -690,7 +770,50 @@
       --sf-site-header--centring: max(calc(var(--sf-px) * 0), calc((var(--sf-container-breakout-page, 100vw) - var(--sf-breakpoint-xxl)) / 2));
     }
   }
-  @media not all and (min-width: 32rem) {
+  /* The row's gutter on the bar's own width (C104, C181 (2)): below the xl
+     step the .container inset is the step the bar is at, not the window's --
+     a bar in a 512 px column of a 1440 window had the window's xl gutter and
+     ran its parts over each other. --sf-container--inset is the utility's own
+     per-element inset (it does not inherit), --sf-container-gutter a product's
+     setting, kept first. From xl up nothing is set: the window's steps (xl,
+     xxl) draw the gutter as before, and a full-width bar under xl is at the
+     window's own step, so it is unchanged. The steps are the screen
+     breakpoints' places on the container ladder. */
+  .sf-site-header-row {
+    --sf-container--inset: var(--sf-container-gutter, var(--sf-space-1));
+    --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-1));
+  }
+  @container sf-site-header (width >= 32rem) and (width < 44rem) {
+    .sf-site-header-row {
+      --sf-container--inset: var(--sf-container-gutter, var(--sf-space-2));
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-2));
+    }
+  }
+  @container sf-site-header (width >= 44rem) and (width < 60rem) {
+    .sf-site-header-row {
+      --sf-container--inset: var(--sf-container-gutter, var(--sf-space-3));
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-3));
+    }
+  }
+  @container sf-site-header (width >= 60rem) and (width < 72rem) {
+    .sf-site-header-row {
+      --sf-container--inset: var(--sf-container-gutter, var(--sf-space-4));
+      --sf-site-header--gutter: var(--sf-container-gutter, var(--sf-space-4));
+    }
+  }
+  @container sf-site-header (width >= 72rem) {
+    .sf-site-header-row {
+      --sf-container--inset: initial;
+      --sf-site-header--gutter: inherit;
+    }
+  }
+  /* collapse <step>: below that step of the bar's own width. The steps are the
+     screen breakpoints' places on the one container ladder (C181 (2)): sm g6
+     32rem, md h1 44rem, lg h5 60rem, xl h8 72rem. A full-width bar reads the
+     window's width less a classic scrollbar, so it collapses as before. The row
+     publishes the answer (--sf-site-header--collapsed: 1), and index.js reads it
+     from there: the script and the sheet cannot disagree. */
+  @container sf-site-header (width < 32rem) {
     .sf-site-header--collapse-sm {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
@@ -700,6 +823,12 @@
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* ... and its words end in an ellipsis of the bar's own (HD-10: the brand
+         box shrank, but its text ran on under the tools). A link fits the brand
+         and its words close down: the link itself when it holds only words,
+         else the words beside its picture. The picture keeps its size. :where
+         keeps the rules at the brand's weight, so a page's own brand CSS stays in
+         charge. */
       /* While open, the scrim and the panel stand above everything in the bar
          (C104, MP-6): the header is the layer's stacking context (place() in
          index.js), the scrim and the panel take the first step of the z-index
@@ -718,6 +847,11 @@
       /* menu-placement inline-end: the close stands at the end of the head, on
          the button's axis there, and the heading keeps the start at the panel's
          own inset, in line with its rows. */
+      /* The settings group (C161 (8)): the language and the theme the bar's
+         tools held on a wide screen, under the sections as a group of the panel
+         -- its padding, gap and top line -- headed «Настройки» in the quiet
+         small words, each setting a row of its word and its control at the
+         row's end. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -809,6 +943,22 @@
     }
     .sf-site-header--collapse-sm .sf-site-header-brand {
       flex: 0 1 auto;
+    }
+    .sf-site-header--collapse-sm .sf-site-header-brand :where(a) {
+      min-width: 0;
+      min-inline-size: 0;
+      max-width: 100%;
+      max-inline-size: 100%;
+    }
+    .sf-site-header--collapse-sm .sf-site-header-brand :where(a:not(:has(img, svg))),
+    .sf-site-header--collapse-sm .sf-site-header-brand :where(a:has(img, svg) > :not(img):not(svg)),
+    .sf-site-header--collapse-sm .sf-site-header-brand > :where(:not(a):not(img):not(svg):not(:has(a, img, svg))) {
+      display: block;
+      min-width: 0;
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sf-site-header--collapse-sm .sf-site-header-panel {
       display: none;
@@ -908,6 +1058,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
@@ -1131,7 +1283,7 @@
     .sf-site-header--collapse-sm .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
       line-height: var(--sf-text-medium--height);
-      font-weight: 700;
+      font-weight: var(--sf-heading--weight);
     }
     .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-sheet {
       display: flex;
@@ -1146,6 +1298,30 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-settings {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-sm .sf-site-header-settings-heading {
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+      color: var(--sf-on-surface-variant);
+    }
+    .sf-site-header--collapse-sm .sf-site-header-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-1);
+      min-width: 0;
+      min-inline-size: 0;
+    }
     .sf-site-header--collapse-sm .sf-site-header-nav .sf-menu .sf-menu-element {
       --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
     }
@@ -1154,8 +1330,11 @@
       flex-direction: column;
       align-items: stretch;
     }
+    .sf-site-header--collapse-sm .sf-site-header-row {
+      --sf-site-header--collapsed: 1;
+    }
   }
-  @media not all and (min-width: 44rem) {
+  @container sf-site-header (width < 44rem) {
     .sf-site-header--collapse-md {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
@@ -1165,6 +1344,12 @@
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* ... and its words end in an ellipsis of the bar's own (HD-10: the brand
+         box shrank, but its text ran on under the tools). A link fits the brand
+         and its words close down: the link itself when it holds only words,
+         else the words beside its picture. The picture keeps its size. :where
+         keeps the rules at the brand's weight, so a page's own brand CSS stays in
+         charge. */
       /* While open, the scrim and the panel stand above everything in the bar
          (C104, MP-6): the header is the layer's stacking context (place() in
          index.js), the scrim and the panel take the first step of the z-index
@@ -1183,6 +1368,11 @@
       /* menu-placement inline-end: the close stands at the end of the head, on
          the button's axis there, and the heading keeps the start at the panel's
          own inset, in line with its rows. */
+      /* The settings group (C161 (8)): the language and the theme the bar's
+         tools held on a wide screen, under the sections as a group of the panel
+         -- its padding, gap and top line -- headed «Настройки» in the quiet
+         small words, each setting a row of its word and its control at the
+         row's end. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -1274,6 +1464,22 @@
     }
     .sf-site-header--collapse-md .sf-site-header-brand {
       flex: 0 1 auto;
+    }
+    .sf-site-header--collapse-md .sf-site-header-brand :where(a) {
+      min-width: 0;
+      min-inline-size: 0;
+      max-width: 100%;
+      max-inline-size: 100%;
+    }
+    .sf-site-header--collapse-md .sf-site-header-brand :where(a:not(:has(img, svg))),
+    .sf-site-header--collapse-md .sf-site-header-brand :where(a:has(img, svg) > :not(img):not(svg)),
+    .sf-site-header--collapse-md .sf-site-header-brand > :where(:not(a):not(img):not(svg):not(:has(a, img, svg))) {
+      display: block;
+      min-width: 0;
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sf-site-header--collapse-md .sf-site-header-panel {
       display: none;
@@ -1373,6 +1579,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
@@ -1596,7 +1804,7 @@
     .sf-site-header--collapse-md .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
       line-height: var(--sf-text-medium--height);
-      font-weight: 700;
+      font-weight: var(--sf-heading--weight);
     }
     .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-sheet {
       display: flex;
@@ -1611,6 +1819,30 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-settings {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-md .sf-site-header-settings-heading {
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+      color: var(--sf-on-surface-variant);
+    }
+    .sf-site-header--collapse-md .sf-site-header-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-1);
+      min-width: 0;
+      min-inline-size: 0;
+    }
     .sf-site-header--collapse-md .sf-site-header-nav .sf-menu .sf-menu-element {
       --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
     }
@@ -1619,8 +1851,11 @@
       flex-direction: column;
       align-items: stretch;
     }
+    .sf-site-header--collapse-md .sf-site-header-row {
+      --sf-site-header--collapsed: 1;
+    }
   }
-  @media not all and (min-width: 60rem) {
+  @container sf-site-header (width < 60rem) {
     .sf-site-header--collapse-lg {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
@@ -1630,6 +1865,12 @@
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* ... and its words end in an ellipsis of the bar's own (HD-10: the brand
+         box shrank, but its text ran on under the tools). A link fits the brand
+         and its words close down: the link itself when it holds only words,
+         else the words beside its picture. The picture keeps its size. :where
+         keeps the rules at the brand's weight, so a page's own brand CSS stays in
+         charge. */
       /* While open, the scrim and the panel stand above everything in the bar
          (C104, MP-6): the header is the layer's stacking context (place() in
          index.js), the scrim and the panel take the first step of the z-index
@@ -1648,6 +1889,11 @@
       /* menu-placement inline-end: the close stands at the end of the head, on
          the button's axis there, and the heading keeps the start at the panel's
          own inset, in line with its rows. */
+      /* The settings group (C161 (8)): the language and the theme the bar's
+         tools held on a wide screen, under the sections as a group of the panel
+         -- its padding, gap and top line -- headed «Настройки» in the quiet
+         small words, each setting a row of its word and its control at the
+         row's end. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -1739,6 +1985,22 @@
     }
     .sf-site-header--collapse-lg .sf-site-header-brand {
       flex: 0 1 auto;
+    }
+    .sf-site-header--collapse-lg .sf-site-header-brand :where(a) {
+      min-width: 0;
+      min-inline-size: 0;
+      max-width: 100%;
+      max-inline-size: 100%;
+    }
+    .sf-site-header--collapse-lg .sf-site-header-brand :where(a:not(:has(img, svg))),
+    .sf-site-header--collapse-lg .sf-site-header-brand :where(a:has(img, svg) > :not(img):not(svg)),
+    .sf-site-header--collapse-lg .sf-site-header-brand > :where(:not(a):not(img):not(svg):not(:has(a, img, svg))) {
+      display: block;
+      min-width: 0;
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sf-site-header--collapse-lg .sf-site-header-panel {
       display: none;
@@ -1838,6 +2100,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
@@ -2061,7 +2325,7 @@
     .sf-site-header--collapse-lg .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
       line-height: var(--sf-text-medium--height);
-      font-weight: 700;
+      font-weight: var(--sf-heading--weight);
     }
     .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-sheet {
       display: flex;
@@ -2076,6 +2340,30 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-settings {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-lg .sf-site-header-settings-heading {
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+      color: var(--sf-on-surface-variant);
+    }
+    .sf-site-header--collapse-lg .sf-site-header-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-1);
+      min-width: 0;
+      min-inline-size: 0;
+    }
     .sf-site-header--collapse-lg .sf-site-header-nav .sf-menu .sf-menu-element {
       --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
     }
@@ -2084,8 +2372,11 @@
       flex-direction: column;
       align-items: stretch;
     }
+    .sf-site-header--collapse-lg .sf-site-header-row {
+      --sf-site-header--collapsed: 1;
+    }
   }
-  @media not all and (min-width: 72rem) {
+  @container sf-site-header (width < 72rem) {
     .sf-site-header--collapse-xl {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
@@ -2095,6 +2386,12 @@
       /* The brand gives way, the tools stay whole: a bar narrower than the menu
          button, the brand and the tools shrinks the brand (its text ends in the
          page's own ellipsis) instead of scrolling the page sideways. */
+      /* ... and its words end in an ellipsis of the bar's own (HD-10: the brand
+         box shrank, but its text ran on under the tools). A link fits the brand
+         and its words close down: the link itself when it holds only words,
+         else the words beside its picture. The picture keeps its size. :where
+         keeps the rules at the brand's weight, so a page's own brand CSS stays in
+         charge. */
       /* While open, the scrim and the panel stand above everything in the bar
          (C104, MP-6): the header is the layer's stacking context (place() in
          index.js), the scrim and the panel take the first step of the z-index
@@ -2113,6 +2410,11 @@
       /* menu-placement inline-end: the close stands at the end of the head, on
          the button's axis there, and the heading keeps the start at the panel's
          own inset, in line with its rows. */
+      /* The settings group (C161 (8)): the language and the theme the bar's
+         tools held on a wide screen, under the sections as a group of the panel
+         -- its padding, gap and top line -- headed «Настройки» in the quiet
+         small words, each setting a row of its word and its control at the
+         row's end. */
       /* The panel is the phone's menu (C30): its rows are touch rows, the size 2
          control height of the ladder (44 on a phone), the words still size 1. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -2204,6 +2506,22 @@
     }
     .sf-site-header--collapse-xl .sf-site-header-brand {
       flex: 0 1 auto;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-brand :where(a) {
+      min-width: 0;
+      min-inline-size: 0;
+      max-width: 100%;
+      max-inline-size: 100%;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-brand :where(a:not(:has(img, svg))),
+    .sf-site-header--collapse-xl .sf-site-header-brand :where(a:has(img, svg) > :not(img):not(svg)),
+    .sf-site-header--collapse-xl .sf-site-header-brand > :where(:not(a):not(img):not(svg):not(:has(a, img, svg))) {
+      display: block;
+      min-width: 0;
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sf-site-header--collapse-xl .sf-site-header-panel {
       display: none;
@@ -2303,6 +2621,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       color: var(--sf-on-surface);
     }
@@ -2526,7 +2846,7 @@
     .sf-site-header--collapse-xl .sf-site-header-panel-heading {
       font-size: var(--sf-text-medium--size);
       line-height: var(--sf-text-medium--height);
-      font-weight: 700;
+      font-weight: var(--sf-heading--weight);
     }
     .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-sheet {
       display: flex;
@@ -2541,6 +2861,30 @@
       -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
               border-block-start: var(--sf-px) solid var(--sf-outline-variant);
     }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-settings {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-xl .sf-site-header-settings-heading {
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+      color: var(--sf-on-surface-variant);
+    }
+    .sf-site-header--collapse-xl .sf-site-header-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-1);
+      min-width: 0;
+      min-inline-size: 0;
+    }
     .sf-site-header--collapse-xl .sf-site-header-nav .sf-menu .sf-menu-element {
       --sf-menu-element--padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width, calc(var(--sf-px) * 0)));
     }
@@ -2548,6 +2892,9 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-row {
+      --sf-site-header--collapsed: 1;
     }
   }
 }

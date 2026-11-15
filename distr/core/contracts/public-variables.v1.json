@@ -2885,29 +2885,29 @@
         {
           "name": "--sf-profile-picker-background-color",
           "role": "background",
-          "summary": "The folded trigger's fill.",
-          "default": "transparent",
+          "summary": "The trigger's fill at rest (an sf-button ghost since 1.6.0; hover and focus stay the button's); the button's own when unset.",
+          "default": "var(--sf-button-background-color, transparent)",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-profile-picker-border-color",
           "role": "border-color",
-          "summary": "The folded trigger's border at rest; open keeps its own.",
-          "default": "var(--sf-outline-variant)",
+          "summary": "The trigger's border colour at rest (seen with --sf-button-border-width); the button's own when unset.",
+          "default": "var(--sf-button-border-color, transparent)",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-profile-picker-radius",
           "role": "radius",
-          "summary": "The folded trigger's corners.",
-          "default": "var(--sf-radius--ui)",
+          "summary": "The trigger's corners; the button's own when unset.",
+          "default": "var(--sf-button-radius, var(--sf-radius--ui))",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-profile-picker-color",
           "role": "color",
-          "summary": "The trigger's words.",
-          "default": "var(--sf-on-surface)",
+          "summary": "The trigger's words at rest; the button's own when unset.",
+          "default": "var(--sf-button-color, var(--sf-on-surface))",
           "since": "2026-10-27"
         },
         {
@@ -3171,7 +3171,7 @@
           "name": "--sf-site-header-gap",
           "role": "gap",
           "summary": "The space between the brand, the navigation, the actions and the tools.",
-          "default": "var(--sf-space-2)",
+          "default": "var(--sf-space-1)",
           "since": "2026-10-28"
         },
         {
@@ -3192,7 +3192,7 @@
           "name": "--sf-site-header-sheet-inline-size",
           "role": "inline-size",
           "summary": "The open side panel's width.",
-          "default": "min(90vw, var(--sf-g1))",
+          "default": "min(90vw, var(--sf-g0))",
           "state": "open",
           "since": "2026-10-28"
         },
@@ -3244,8 +3244,8 @@
         {
           "name": "--sf-search-mark-color",
           "role": "background",
-          "summary": "The fill of the matched text in a result's title.",
-          "default": "var(--sf-primary-container)",
+          "summary": "A fill behind the matched text in a result's title; none by default, the match is medium weight (owner decision C139 (8), sf-search 1.8.0).",
+          "default": "transparent",
           "state": "open",
           "since": "2026-10-30"
         },
@@ -3757,8 +3757,8 @@
         {
           "name": "--sf-figure-gap",
           "role": "gap",
-          "summary": "The space between the media and the caption.",
-          "default": "var(--sf-space-1\\/2)",
+          "summary": "The space between the media and the caption: 8 at every width, 4 in compact density (owner decision C188 (5)).",
+          "default": "var(--sf-space-1\\/3)",
           "since": "2026-11-01"
         }
       ]
@@ -3770,8 +3770,8 @@
         {
           "name": "--sf-procedure-marker-background-color",
           "role": "background",
-          "summary": "The fill of a step's marker; a complete or current step draws its own. The former name --sf-procedure-marker-background is still read, under this one, until 2027-01-01 (C16 naming, src/core/contracts/token-aliases.v1.json).",
-          "default": "var(--sf-surface-container)",
+          "summary": "The fill of a step's marker; none by default, an empty circle as the sf-steps marker (C194); a complete or current step draws its own. The former name --sf-procedure-marker-background is still read, under this one, until 2027-01-01 (C16 naming, src/core/contracts/token-aliases.v1.json).",
+          "default": "transparent",
           "since": "2026-11-08"
         },
         {
@@ -3935,46 +3935,46 @@
       ]
     },
     {
-      "component": "change-confirm",
-      "selector": "sf-confirm-change, .sf-change-confirm",
+      "component": "confirm-change",
+      "selector": "sf-confirm-change, .sf-confirm-change",
       "variables": [
         {
-          "name": "--sf-change-confirm-radius",
+          "name": "--sf-confirm-change-radius",
           "role": "radius",
-          "summary": "The card's corner.",
+          "summary": "The card's corner. The former name --sf-change-confirm-radius is still read, under this one, until 2027-01-01 (journal token-confirm-change-variable-names, CT-13).",
           "default": "var(--sf-radius-2)",
           "since": "2026-10-27"
         },
         {
-          "name": "--sf-change-confirm-inset",
+          "name": "--sf-confirm-change-inset",
           "role": "padding",
           "summary": "The card's padding.",
           "default": "var(--sf-space-1\\/2) var(--sf-space-1)",
           "since": "2026-10-27"
         },
         {
-          "name": "--sf-change-confirm-gap",
+          "name": "--sf-confirm-change-gap",
           "role": "gap",
           "summary": "The space between the card's rows.",
           "default": "var(--sf-space-1\\/2)",
           "since": "2026-10-27"
         },
         {
-          "name": "--sf-change-confirm-before-background-color",
+          "name": "--sf-confirm-change-before-background-color",
           "role": "background",
           "summary": "The ground of the value as it was, behind the text of sf-change; none since 1.7.0 (C40).",
           "default": "transparent",
           "since": "2026-10-27"
         },
         {
-          "name": "--sf-change-confirm-after-background-color",
+          "name": "--sf-confirm-change-after-background-color",
           "role": "background",
           "summary": "The ground of the value as it will be, behind the text of sf-change; none since 1.7.0 (C40).",
           "default": "transparent",
           "since": "2026-10-27"
         },
         {
-          "name": "--sf-change-confirm-after-color",
+          "name": "--sf-confirm-change-after-color",
           "role": "color",
           "summary": "The text of the value as it will be; sf-change's new value colour (--sf-change-after-color, on-surface) since 1.7.0 (C40).",
           "default": "var(--sf-change--after)",
@@ -4655,6 +4655,47 @@
       ]
     },
     {
+      "component": "display-settings",
+      "selector": "sf-display-settings, .sf-display-settings",
+      "variables": [
+        {
+          "name": "--sf-display-settings-background",
+          "role": "background",
+          "summary": "The panel's surface.",
+          "default": "var(--sf-surface-card)",
+          "since": "2026-11-15"
+        },
+        {
+          "name": "--sf-display-settings-border-color",
+          "role": "border-color",
+          "summary": "The panel's edge.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-11-15"
+        },
+        {
+          "name": "--sf-display-settings-label-color",
+          "role": "color",
+          "summary": "The groups' words («Текст», «Цвет», …) and the notes.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-11-15"
+        },
+        {
+          "name": "--sf-display-settings-gap",
+          "role": "gap",
+          "summary": "Between the groups.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-11-15"
+        },
+        {
+          "name": "--sf-display-settings-group-gap",
+          "role": "gap",
+          "summary": "Inside a group: the word and the buttons; also the trigger and the panel.",
+          "default": "var(--sf-space-1\\/3)",
+          "since": "2026-11-15"
+        }
+      ]
+    },
+    {
       "component": "group-heading",
       "selector": ".sf-group-heading",
       "variables": [
@@ -4692,6 +4733,47 @@
           "summary": "A divider's two hairlines.",
           "default": "var(--sf-outline-variant)",
           "since": "2026-11-10"
+        }
+      ]
+    },
+    {
+      "component": "form",
+      "selector": "sf-form, .sf-form",
+      "variables": [
+        {
+          "name": "--sf-form-field-gap",
+          "role": "gap",
+          "summary": "The space between fields (C52).",
+          "default": "var(--sf-space-1)",
+          "since": "2026-11-14"
+        },
+        {
+          "name": "--sf-form-group-gap",
+          "role": "gap",
+          "summary": "The space between groups and before the buttons (C52).",
+          "default": "var(--sf-space-3)",
+          "since": "2026-11-14"
+        },
+        {
+          "name": "--sf-form-label-color",
+          "role": "color",
+          "summary": "The label, its «*» and the required note (C153 (1)).",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-11-14"
+        },
+        {
+          "name": "--sf-form-summary-background-color",
+          "role": "background",
+          "summary": "The errors summary's fill.",
+          "default": "var(--sf-error-container)",
+          "since": "2026-11-14"
+        },
+        {
+          "name": "--sf-form-footer-background-color",
+          "role": "background",
+          "summary": "The sticky footer's fill (footer=\"sticky\").",
+          "default": "var(--sf-surface-place-solid)",
+          "since": "2026-11-14"
         }
       ]
     }

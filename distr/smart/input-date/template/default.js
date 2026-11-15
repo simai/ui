@@ -28,7 +28,7 @@ function renderTop(context) {
             <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-button-icon>
-            <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
+            <div class="sf-datepicker-period flex content-main-center items-cross-center">
                 <!-- The toggles are size 1/2, as tall as the compact size 1 they were:
                      density no longer changes a button's height (C01). The arrows
                      beside them are the same size: one band of buttons, one height
@@ -94,6 +94,19 @@ function renderContext(context) {
     return nothing;
 }
 
+// The field's end (owner decision C197, 2026-11-15, prototype
+// date-icon-place.html#q-date-icon, variant B): from the text to the edge, by
+// the C123 (6) order, sf-input's own clear, then the hint marker, then the
+// calendar -- the field's indicator at the edge, as sf-dropdown's chevron is
+// (C123 (3)): the field layer's .sf-field-action glyph, quiet at rest, the
+// text's ink while the field is under the pointer; the whole field opens the
+// panel, so the glyph is no Tab stop of its own and is hidden from a screen
+// reader (the field is the combobox that names the dialog). The start of the
+// field stays for an icon that says what the date is (icon-start).
+// Both are the inner sf-input's end slot: it draws its actions, then the slot.
+// They are written in the field's own template, always, with no part that
+// comes and goes, because sf-input takes its slot's children once, when it
+// connects; their attributes still follow the settings.
 function renderDatepickerInput(context) {
     return html`
         <sf-input class="sf-datepicker-input" ${ref(context.component.refs.input)}
@@ -104,7 +117,8 @@ function renderDatepickerInput(context) {
             root-class=${context.inputRootClass || nothing} value=${context.displayValue || ''}
             ?disabled=${context.disabled} ?required=${context.required} ?invalid=${context.invalid}
             error-message=${context.errorMessage || nothing}
-            hint=${context.hint || nothing} hint-icon=${context.hintIcon || nothing}
+            hint=${context.hint || nothing}
+            help=${context.help || nothing}
             ?mask=${context.mask}
             mask-pattern=${context.maskPattern || nothing} mask-lazy=${String(context.maskLazy)}
             mask-placeholder-char=${context.maskPlaceholderChar || nothing}
@@ -112,14 +126,19 @@ function renderDatepickerInput(context) {
             @click=${(event) => context.component.handleInputClick(event)}
             @change=${(event) => context.component.handleInputChange(event)}
             @input=${(event) => context.component.handleInputInput(event)}
-            @keydown=${(event) => context.component.handleInputKeydown(event)}></sf-input>`;
+            @keydown=${(event) => context.component.handleInputKeydown(event)}
+        ><span slot="end" class=${context.hintIcon ? 'sf-input-hint flex' : 'sf-input-hint'} ?hidden=${!context.hintIcon} aria-hidden="true"
+            ><sf-icon icon=${context.hintIcon || nothing}></sf-icon></span
+        ><span slot="end" class="sf-field-action sf-field-action--indicator sf-datepicker-indicator" aria-hidden="true"
+            ><sf-icon icon=${context.calendarIcon}></sf-icon></span></sf-input>`;
 }
 
 function renderDay(day, context) {
     const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '',
         day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '',
         day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '',
-        day.currentMonth ? '' : 'sf-datepicker-another-month', day.disabled ? 'disabled' : '');
+        day.currentMonth ? '' : 'sf-datepicker-another-month', day.special ? 'sf-datepicker-day-special' : '',
+        day.disabled ? 'disabled' : '');
 
     return html`
         <button class=${classes} type="button" role="gridcell" ?disabled=${day.disabled}
@@ -128,6 +147,7 @@ function renderDay(day, context) {
             aria-selected=${day.selected || day.rangeSelected ? 'true' : 'false'} tabindex=${day.tabIndex}
             @click=${() => context.component.selectDate(day)}
             @focus=${() => context.component.setActiveDate(day.value)}
+            @pointerenter=${() => context.component.showDayLine(day.value)}
             @keydown=${(event) => context.component.handleDayKeydown(event, day)}>
             <span class="sf-datepicker-day-date">${day.day}</span>
         </button>`;
@@ -143,12 +163,27 @@ function renderGrid(context) {
     for (let at = 0; at < context.days.length; at += 7) weeks.push(context.days.slice(at, at + 7));
     return html`
         <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}
-            aria-readonly=${context.valueLocked ? 'true' : nothing}>
+            aria-readonly=${context.valueLocked ? 'true' : nothing}
+            @pointerleave=${() => context.component.showDayLine('')}
+            @focusin=${() => context.component.noteDaysFocus(true)}
+            @focusout=${() => context.component.noteDaysFocus(false)}>
             <div class="sf-datepicker-week" role="row">
                 ${context.weekdayNames.map((name) => html`<span class="sr-only" role="columnheader">${name}</span>`)}
             </div>
             ${weeks.map((week) => html`<div class="sf-datepicker-week" role="row">${week.map((day) => renderDay(day, context))}</div>`)}
         </div>`;
+}
+
+// The line under the grid (owner decision C198): only when the site gave
+// special days; the name of the day under the pointer, with the focus or
+// chosen. Two text lines high in every month, so the panel keeps its size.
+// A screen reader hears the name in the day's own label, so the line is
+// hidden from it.
+function renderDayLine(context) {
+    const line = context.dayLine;
+    if (!line) return nothing;
+    return html`<p class="sf-datepicker-dayline" aria-hidden="true">${line.name
+        ? html`<b class="sf-datepicker-dayline-date">${line.date}</b> · ${line.name}` : nothing}</p>`;
 }
 
 function renderPresets(context) {
@@ -263,6 +298,7 @@ function renderDatepickerPanel(context) {
                         ${context.weekdays.map((weekday, at) => html`<span class=${context.weekdaysOff?.[at] ? 'sf-datepicker-weekday sf-datepicker-weekday-off' : 'sf-datepicker-weekday'}>${weekday}</span>`)}
                     </div>
                     ${renderGrid(context)}
+                    ${renderDayLine(context)}
                 </div>
                 ${renderTime(context)}
             </div>

@@ -219,6 +219,771 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
+/***/ "557c99eb8f3a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   focusTarget: () => (/* binding */ focusTarget),
+/* harmony export */   roving: () => (/* binding */ roving)
+/* harmony export */ });
+// One Tab stop for a row of controls, and the arrows between them (owner
+// decision C184 (1)-(3), 2026-11-14; study control/research/2026-11-14-
+// toolbar-menu-open.md, K-02). A toolbar is not a component of its own
+// (C155 (8): no sf-toolbar): it is ordinary sf-button-icon groups, 4 apart
+// inside a group and a separator between groups (C144), and this helper gives
+// them the keyboard of the WAI-ARIA toolbar pattern:
+//
+// - the row is one Tab stop; Tab comes back to the control the person left
+//   (memory, C184 (3)), or to the first one (memory: false);
+// - the arrows of the row's orientation move between the controls, in the
+//   row's direction (right-to-left reverses ← and →), Home and End go to the
+//   ends, and the walk wraps;
+// - a control that cannot be used now (aria-disabled) stays in the walk,
+//   dimmed by its component, with its reason as a tooltip (C184 (2), as
+//   C164 (4) does for a menu row); disabled: 'skip' leaves it out. A control
+//   with the native disabled attribute cannot take the focus and is skipped;
+// - a control inside «Ещё» (the C155 row engine marks the part that left the
+//   row with .out or [hidden]) is not in the walk;
+// - ↓ (↑) on a menu button of a horizontal row opens its menu, as the
+//   pattern's menu button does.
+//
+// It is also the list's keyboard (C184 (5)): a list is one Tab stop and ↑ ↓
+// move between its rows (orientation 'vertical').
+//
+// roving(container, options) -> {refresh, set, current, items, destroy}.
+// The look stays with the components; this module holds no state of its own
+// outside the controller it returns, so every bundle may carry its own copy.
+const NATIVE_FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex], [contenteditable=""], [contenteditable="true"]';
+const OUT = '.out, [hidden], [data-sf-out], [inert]'; // The element that takes the focus for an item: the item itself when it can
+// (a <button>, a row with a tabindex), else the control inside it -- an
+// sf-button-icon host draws a <button> and is display: contents.
+
+function focusTarget(item) {
+  if (!item) return null;
+  if (item.matches?.(NATIVE_FOCUSABLE)) return item;
+  return item.querySelector?.('button, a[href], [role="button"], [tabindex]') ?? item;
+}
+
+const isUnavailable = target => target.getAttribute?.('aria-disabled') === 'true';
+
+const isDisabled = target => Boolean(target.disabled) || target.matches?.(':disabled');
+
+function roving(container, {
+  items: itemsOf = 'button',
+  orientation = 'horizontal',
+  wrap = true,
+  disabled = 'focusable',
+  memory = true,
+  out = OUT,
+  onMove = null,
+  observe = true
+} = {}) {
+  let current = null; // Every item of the row, in order, as the targets that take the focus.
+
+  const all = () => {
+    const found = typeof itemsOf === 'function' ? itemsOf() : [...container.querySelectorAll(itemsOf)];
+    const targets = [];
+
+    for (const item of found) {
+      const target = focusTarget(item);
+      if (!target || !container.contains(target) || targets.includes(target)) continue; // Out of the row: a part inside it that left (into «Ещё») or is
+      // hidden. The row itself being hidden for now does not count.
+
+      const away = target.closest(out);
+      if (away && away !== container && container.contains(away)) continue;
+      targets.push(target);
+    }
+
+    return targets;
+  }; // The items the walk stops on.
+
+
+  const items = () => all().filter(target => !isDisabled(target) && (disabled === 'focusable' || !isUnavailable(target)));
+
+  function set(element) {
+    const target = focusTarget(element);
+    const every = all();
+    if (!target || !every.includes(target)) return;
+    current = target;
+
+    for (const other of every) {
+      const next = other === target ? '0' : '-1';
+      if (other.getAttribute('tabindex') !== next) other.setAttribute('tabindex', next);
+    }
+  } // After a drawing or a change of the row: the one Tab stop is the item
+  // remembered, or the first one when it is gone (or the row forgets).
+
+
+  function refresh() {
+    const list = items();
+
+    if (!list.length) {
+      // Nothing to stop on: no item keeps a stop either (a disabled field's
+      // toolbar is not a Tab stop).
+      for (const other of all()) if (other.getAttribute('tabindex') !== '-1') other.setAttribute('tabindex', '-1');
+
+      current = null;
+      return;
+    }
+
+    set(current && list.includes(current) ? current : list[0]);
+  }
+
+  const vertical = orientation === 'vertical';
+  const both = orientation === 'both';
+
+  function onKeydown(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    const list = items();
+    const target = list.find(one => one === event.target || one.contains(event.target));
+    if (!target) return; // A field inside an item (a link's address) keeps its own keys.
+
+    if (event.target !== target && event.target.matches?.('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) return;
+    const rtl = getComputedStyle(container).direction === 'rtl';
+    const forward = vertical ? ['ArrowDown'] : both ? ['ArrowDown', rtl ? 'ArrowLeft' : 'ArrowRight'] : [rtl ? 'ArrowLeft' : 'ArrowRight'];
+    const back = vertical ? ['ArrowUp'] : both ? ['ArrowUp', rtl ? 'ArrowRight' : 'ArrowLeft'] : [rtl ? 'ArrowRight' : 'ArrowLeft'];
+    const at = list.indexOf(target);
+    let next = null;
+
+    if (!vertical && !both && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && target.getAttribute('aria-haspopup') === 'menu' && !isUnavailable(target)) {
+      event.preventDefault();
+      target.click();
+      return;
+    }
+
+    if (forward.includes(event.key)) next = at + 1 < list.length ? list[at + 1] : wrap ? list[0] : null;else if (back.includes(event.key)) next = at > 0 ? list[at - 1] : wrap ? list[list.length - 1] : null;else if (event.key === 'Home') next = list[0];else if (event.key === 'End') next = list[list.length - 1];else return;
+    event.preventDefault();
+    if (!next || next === target) return;
+    set(next);
+    next.focus();
+    onMove?.(next, event.key);
+  }
+
+  function onFocusIn(event) {
+    const target = all().find(one => one === event.target);
+    if (!target || target === current) return;
+    set(target);
+    onMove?.(target, 'focus');
+  }
+
+  function onFocusOut(event) {
+    if (memory || container.contains(event.relatedTarget)) return;
+    const list = items();
+    if (list.length) set(list[0]);
+  }
+
+  container.addEventListener('keydown', onKeydown);
+  container.addEventListener('focusin', onFocusIn);
+  container.addEventListener('focusout', onFocusOut); // Items drawn later -- a host that draws its <button> on its own schedule
+  // (sf-button-icon), a row added -- join the walk with tabindex -1 at once:
+  // the row stays one Tab stop whatever draws when.
+
+  let queued = false;
+  const watcher = observe && typeof MutationObserver === 'function' ? new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      refresh();
+    });
+  }) : null;
+  watcher?.observe(container, {
+    childList: true,
+    subtree: true
+  });
+  refresh();
+  return {
+    refresh,
+    set,
+    items,
+
+    get current() {
+      return current;
+    },
+
+    destroy() {
+      watcher?.disconnect();
+      container.removeEventListener('keydown', onKeydown);
+      container.removeEventListener('focusin', onFocusIn);
+      container.removeEventListener('focusout', onFocusOut);
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (roving);
+
+/***/ },
+
 /***/ "76b2d9a8d7c6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -303,6 +1068,75 @@ function countAnnouncement(state, lastLevel, lastSaid, words) {
 
 /***/ },
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -310,10 +1144,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -527,72 +1369,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -609,14 +1688,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _helpers_char_count__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("76b2d9a8d7c6");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ed57c006afc1");
-/* harmony import */ var _js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4f56033a1eae");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d41b3b9112e6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("194659de6d72");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("1b8b77aa1331");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2369556fe449");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_roving_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("557c99eb8f3a");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ed57c006afc1");
+/* harmony import */ var _js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4f56033a1eae");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d41b3b9112e6");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("194659de6d72");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("1b8b77aa1331");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("2369556fe449");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -629,6 +1710,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
  // The marks the toolbar sets: the elements that say them, and the style of
 // a run that says the mark is off (the cleaner splits a mark around it).
 
@@ -685,11 +1776,11 @@ const onPhone = doc => !doc.defaultView?.getComputedStyle(doc.documentElement).g
 // own history of cleaned states.
 
 
-const RichTextElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const RichTextElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en,
+    ru
   },
   source: 'en'
 });
@@ -702,7 +1793,9 @@ const BLOCK_TAGS = {
 const LEAF_BLOCKS = 'p, h2, h3, h4, li, div';
 const HISTORY_LIMIT = 100;
 const TYPING_GROUP_MS = 1000; // The toolbar, in its order. `pressed` names the state that presses it;
-// `unavailable` greys it out (aria-disabled, still reachable by the arrows).
+// `unavailable` greys it out (aria-disabled, still reachable by the arrows)
+// and `reason` is the word that says why, as its tooltip (owner decision
+// C184 (2)).
 //
 // The four block levels are drawn as text, not glyphs: the Framework's icon
 // font is Material Icons, which has no paragraph or heading-level icon
@@ -715,25 +1808,29 @@ const TOOLS = Object.freeze([{
   word: 'paragraph',
   text: 'P',
   pressed: 'p',
-  unavailable: state => state.inList
+  unavailable: state => state.inList,
+  reason: 'not-in-list'
 }, {
   id: 'heading-2',
   word: 'heading-2',
   text: 'H2',
   pressed: 'h2',
-  unavailable: state => state.inList
+  unavailable: state => state.inList,
+  reason: 'not-in-list'
 }, {
   id: 'heading-3',
   word: 'heading-3',
   text: 'H3',
   pressed: 'h3',
-  unavailable: state => state.inList
+  unavailable: state => state.inList,
+  reason: 'not-in-list'
 }, {
   id: 'heading-4',
   word: 'heading-4',
   text: 'H4',
   pressed: 'h4',
-  unavailable: state => state.inList
+  unavailable: state => state.inList,
+  reason: 'not-in-list'
 }, {
   id: 'bold',
   word: 'bold',
@@ -777,14 +1874,16 @@ const TOOLS = Object.freeze([{
   icon: 'undo',
   key: 'Z',
   shortcut: 'Control+Z Meta+Z',
-  unavailable: state => !state.canUndo
+  unavailable: state => !state.canUndo,
+  reason: 'nothing-to-undo'
 }, {
   id: 'redo',
   word: 'redo',
   icon: 'redo',
   key: 'Shift+Z',
   shortcut: 'Control+Shift+Z Meta+Shift+Z Control+Y',
-  unavailable: state => !state.canRedo
+  unavailable: state => !state.canRedo,
+  reason: 'nothing-to-redo'
 }]); // ------------------------------------------------------------ the caret
 //
 // A place in the editor as a count of units -- characters, line breaks and
@@ -911,7 +2010,8 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     this._lastTyping = 0;
     this._muted = false;
     this._dispatching = false;
-    this._roving = 'paragraph';
+    this._roving = 'levels';
+    this._toolsOut = [];
     this._state = {
       canUndo: false,
       canRedo: false
@@ -956,16 +2056,16 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
   get value() {
     const editor = this.editor;
-    if (editor && this._loaded) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(editor, {
+    if (editor && this._loaded) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(editor, {
       mode: 'value'
     });
-    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(this.getAttribute('value') || '', {
+    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(this.getAttribute('value') || '', {
       mode: 'value'
     });
   }
 
   set value(next) {
-    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(next === null || next === undefined ? '' : String(next), {
+    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(next === null || next === undefined ? '' : String(next), {
       mode: 'value'
     });
     if (next === null || next === undefined) this.removeAttribute('value');else this.setAttribute('value', clean);
@@ -1004,7 +2104,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     const source = this.getAttribute('value') || '';
     if (!source) return 0;
     const template = this.ownerDocument.createElement('template');
-    template.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(source, {
+    template.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(source, {
       mode: 'value'
     });
     return template.content.textContent.length;
@@ -1065,6 +2165,8 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
       maxRows: this.maxRows,
       tools: this.toolList(),
       state: this._state,
+      overflow: this.overflowMore ? 'more' : 'wrap',
+      level: Object.keys(BLOCK_TAGS).find(id => this._state[BLOCK_TAGS[id]]) || 'paragraph',
       roving: this._roving,
       linkValue: this._link.value,
       linkError: this._link.error,
@@ -1103,7 +2205,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderRichTextTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderRichTextTemplate)(this.templateContext());
   }
 
   onConnected() {
@@ -1131,9 +2233,152 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
   onDisconnected() {
     this._lowerLinkPanel();
+
+    this._toolbarObserver?.disconnect();
+    this._toolbarObserver = null;
+    this._toolbarObserved = null;
+  } // ─── «Ещё» (owner decision C155, R233) ────────────────────────────────────
+  // overflow="more" (the default): the toolbar keeps one row and its groups
+  // leave for ⋯ at its end when they do not fit -- whole, with their
+  // separator, the highest data-sf-priority first (undo and redo, then the
+  // lists and the quote); the text levels and bold, italic, link stay. ⋯
+  // lists the tools that left with their icons, names and shortcuts, a
+  // pressed one checked (C155 (6)); ⋯ itself is never pressed.
+
+
+  get overflowMore() {
+    return this.getAttribute('overflow') !== 'wrap';
+  }
+
+  _observeToolbar(bar) {
+    if (!bar || !this.overflowMore || typeof ResizeObserver === 'undefined') {
+      this._toolbarObserver?.disconnect();
+      this._toolbarObserved = null;
+      return;
+    }
+
+    if (this._toolbarObserved === bar) return;
+    this._toolbarObserver ??= new ResizeObserver(() => this._layoutToolbar());
+
+    this._toolbarObserver.disconnect(); // The frame's width is the row's room; the groups' boxes widen when the
+    // icon face or the sheet arrives later.
+
+
+    this._toolbarObserver.observe(bar.parentElement);
+
+    for (const group of bar.querySelectorAll(':scope > .sf-rich-text-group')) this._toolbarObserver.observe(group);
+
+    this._toolbarObserved = bar;
+  }
+
+  _layoutToolbar() {
+    const bar = this.querySelector('.sf-rich-text-toolbar');
+    const more = bar?.querySelector(':scope > .sf-rich-text-more');
+    if (!bar || !more) return;
+    const groups = [...bar.querySelectorAll(':scope > .sf-rich-text-group')];
+    const separators = [...bar.querySelectorAll(':scope > .sf-rich-text-separator:not(.sf-rich-text-more-separator)')];
+    const units = groups.map((element, at) => {
+      const rank = Number(element.dataset.sfPriority) || at + 1;
+      return {
+        element,
+        rank,
+        pin: rank <= 1,
+        group: at
+      };
+    });
+    const {
+      out
+    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.layoutActionRow)({
+      row: bar,
+      units,
+      more,
+      moreSeparator: bar.querySelector(':scope > .sf-rich-text-more-separator'),
+      separators: separators.map((element, at) => ({
+        element,
+        after: at
+      })),
+      outClass: 'sf-rich-text-out'
+    });
+    this._toolsOut = out.flatMap(at => [...groups[at].querySelectorAll('button.sf-rich-text-tool')].map(button => button.dataset.sfTool));
+    bar.setAttribute('data-sf-row-laid', ''); // The roving stop stays on a tool the row shows.
+
+    const shown = this._tools();
+
+    if (!shown.some(button => button.dataset.sfTool === this._roving)) this._setRoving(shown[0]);
+  } // A menu button of the toolbar (the levels, ⋯): the standard menu under it.
+
+
+  _openToolMenu(button) {
+    const id = button.dataset.sfTool;
+    const state = this._state;
+    const size = {
+      '1/3': '1/2',
+      '1/2': '1/2'
+    }[this.size] || '1';
+
+    if (id === 'levels') {
+      const current = Object.keys(BLOCK_TAGS).find(level => state[BLOCK_TAGS[level]]) || 'paragraph';
+      const entries = Object.keys(BLOCK_TAGS).map(level => ({
+        id: level,
+        text: this.sfWord(level),
+        kind: 'radio',
+        checked: level === current,
+        disabled: Boolean(state.inList) || undefined
+      }));
+      return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.openRowMenu)(this, {
+        anchor: button,
+        entries,
+        label: this.sfWord('text-level'),
+        size,
+        select: level => this.runCommand(level)
+      });
+    }
+
+    const tools = this.toolList();
+    const entries = [];
+    let lastGroup = null;
+
+    for (const toolId of this._toolsOut) {
+      const tool = tools.find(one => one.id === toolId);
+      const element = this.querySelector(`.sf-rich-text-toolbar button.sf-rich-text-tool[data-sf-tool="${toolId}"]`);
+      if (!tool || !element) continue;
+      const group = element.closest('.sf-rich-text-group');
+      if (lastGroup && group !== lastGroup) entries.push({
+        type: 'separator'
+      });
+      lastGroup = group;
+      const entry = {
+        id: tool.id,
+        text: this.sfWord(tool.word),
+        icon: tool.icon
+      };
+      if (tool.key) entry.shortcut = `mod+${tool.key.toLowerCase()}`;
+
+      if (tool.pressed) {
+        entry.kind = 'check';
+        entry.checked = Boolean(state[tool.pressed]);
+      }
+
+      if (tool.unavailable?.(state)) entry.disabled = true;
+      entries.push(entry);
+    }
+
+    return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.openRowMenu)(this, {
+      anchor: button,
+      entries,
+      label: this.sfWord('more'),
+      size,
+      select: toolId => this.runCommand(toolId)
+    });
   }
 
   afterRender() {
+    const bar = this.querySelector('.sf-rich-text-toolbar');
+
+    this._observeToolbar(bar);
+
+    if (bar && this.overflowMore) this._layoutToolbar();
+    this._toolbarKeys()?.refresh();
     const editor = this.editor;
     if (!editor) return;
     if (editor.__sfRichText !== this) this._bindEditor(editor);
@@ -1180,7 +2425,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   _load(html) {
     const editor = this.editor;
     if (!editor) return;
-    editor.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(String(html ?? ''), {
+    editor.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(String(html ?? ''), {
       mode: 'editor'
     });
     this._loaded = true;
@@ -1370,7 +2615,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   _clean(selection = this._saveSelection()) {
     const editor = this.editor;
     if (!editor) return;
-    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(editor, {
+    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(editor, {
       mode: 'editor'
     });
 
@@ -1675,10 +2920,10 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
   _cleanTransfer(data) {
     const html = data?.getData?.('text/html') || '';
-    if (html) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.sanitizeRichText)(html, {
+    if (html) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(html, {
       mode: 'value'
     });
-    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.richTextFromPlainText)(data?.getData?.('text/plain') || '', {
+    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.richTextFromPlainText)(data?.getData?.('text/plain') || '', {
       mode: 'value'
     });
   } // Cleaned HTML in place of the selection: the first paragraph joins the
@@ -2145,7 +3390,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   applyLinkFromPanel() {
     const raw = this._linkInputValue().trim();
 
-    const href = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_6__.richTextHref)(raw);
+    const href = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.richTextHref)(raw);
 
     if (!href) {
       this._link = { ...this._link,
@@ -2283,42 +3528,45 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     const anchor = range ? this._within(range.startContainer, 'a') : null;
     if (anchor) anchor.replaceWith(...anchor.childNodes);
   } // ---------------------------------------------------------- toolbar
+  // The tools a person reaches: not disabled, not out of the row (C155).
 
 
   _tools() {
-    return [...this.querySelectorAll('.sf-rich-text-toolbar button.sf-rich-text-tool:not([disabled])')];
+    return [...this.querySelectorAll('.sf-rich-text-toolbar button.sf-rich-text-tool:not([disabled])')].filter(button => !button.closest('.sf-rich-text-out'));
+  } // The toolbar's keys are core's roving helper (owner decision C184 (1)-(3)):
+  // one Tab stop that comes back to the tool the person left, the arrows in
+  // the row's direction (right-to-left too), Home and End, the walk wrapping;
+  // an unavailable tool stays in the walk with its reason.
+
+
+  _toolbarKeys() {
+    const bar = this.querySelector('.sf-rich-text-toolbar');
+    if (!bar) return null;
+
+    if (this._toolbarRow?.bar !== bar) {
+      this._toolbarRow?.keys.destroy();
+      const keys = (0,_core_js_roving_js__WEBPACK_IMPORTED_MODULE_6__.roving)(bar, {
+        items: 'button.sf-rich-text-tool',
+        out: '.sf-rich-text-out, [hidden], [inert]',
+        onMove: button => {
+          this._roving = button.dataset.sfTool;
+        }
+      });
+      const remembered = bar.querySelector(`button.sf-rich-text-tool[data-sf-tool="${this._roving}"]`);
+      if (remembered && !remembered.disabled) keys.set(remembered);
+      this._toolbarRow = {
+        bar,
+        keys
+      };
+    }
+
+    return this._toolbarRow.keys;
   }
 
   _setRoving(button) {
     if (!button) return;
     this._roving = button.dataset.sfTool;
-
-    for (const other of this.querySelectorAll('.sf-rich-text-toolbar button.sf-rich-text-tool')) {
-      other.setAttribute('tabindex', other === button ? '0' : '-1');
-    }
-  }
-
-  onToolbarKeydown(event) {
-    const button = event.target?.closest?.('button.sf-rich-text-tool');
-    if (!button) return;
-
-    const tools = this._tools();
-
-    const index = tools.indexOf(button);
-    if (index < 0) return;
-    let next = null;
-    if (event.key === 'ArrowRight') next = tools[(index + 1) % tools.length];else if (event.key === 'ArrowLeft') next = tools[(index - 1 + tools.length) % tools.length];else if (event.key === 'Home') next = tools[0];else if (event.key === 'End') next = tools[tools.length - 1];
-    if (!next) return;
-    event.preventDefault();
-
-    this._setRoving(next);
-
-    next.focus();
-  }
-
-  onToolbarFocusIn(event) {
-    const button = event.target?.closest?.('button.sf-rich-text-tool');
-    if (button) this._setRoving(button);
+    this._toolbarKeys()?.set(button);
   } // A press on a tool keeps the caret and the selection in the text.
 
 
@@ -2336,6 +3584,13 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
     if (id === 'link') return;
     if (button.getAttribute('aria-disabled') === 'true') return;
+
+    if (id === 'levels' || id === 'more') {
+      this._openToolMenu(button);
+
+      return;
+    }
+
     this.runCommand(id);
   } // ---------------------------------------------------------- focus and change
 
@@ -2377,10 +3632,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderRichTextTemplate: () => (/* binding */ renderRichTextTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
  // The field: a label row, one frame holding the toolbar over the editing
 // surface, and the hint or error line -- sf-textarea's parts, in its places.
@@ -2425,14 +3682,17 @@ function toolButton(context, tool) {
   // greyed, still reached by the arrows; the whole toolbar is disabled with
   // the field.
 
-  const unavailable = Boolean(tool.unavailable?.(state));
+  const unavailable = Boolean(tool.unavailable?.(state)); // Why it is unavailable, as its tooltip and its description (C184 (2)).
+
+  const reason = unavailable && tool.reason ? component.sfWord(tool.reason) : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
       type="button"
       class="sf-rich-text-tool sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-${buttonSize} flex items-cross-center"
       data-sf-tool=${tool.id}
       tabindex=${roving === tool.id ? '0' : '-1'}
       aria-label=${component.sfWord(tool.word)}
-      title=${tool.keys ? `${component.sfWord(tool.word)} (${tool.keys})` : component.sfWord(tool.word)}
+      title=${reason || (tool.keys ? `${component.sfWord(tool.word)} (${tool.keys})` : component.sfWord(tool.word))}
+      aria-description=${reason || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-pressed=${pressed}
       aria-keyshortcuts=${tool.shortcut || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-haspopup=${tool.popup || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2466,7 +3726,7 @@ function renderRichTextTemplate(context) {
     countSaid = '',
     counted = false
   } = context;
-  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(component, {
+  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_2__.createFieldContract)(component, {
     prefix: 'sf-rich-text',
     required,
     invalid,
@@ -2511,13 +3771,42 @@ function renderRichTextTemplate(context) {
   }); // The toolbar's groups stand in the order of importance (owner decision
   // C141 (4)): the text levels, then bold, italic and link (priority 1), then
   // the lists and the quote (2), then undo and redo (3). What does not fit one
-  // row is to go to a «More» control at the end -- everywhere, not only on a
-  // phone (R233). TODO(R233): the shared «More» overflow waits for its own
-  // study; until it lands the row still wraps, and data-sf-priority is the
-  // hook it will read (the highest number leaves first).
+  // row leaves for ⋯ «Ещё» at its end -- everywhere, not only on a phone
+  // (R233, owner decision C155): whole groups with their separator, the
+  // highest data-sf-priority first; the groups of priority 1 stay
+  // (core/js/overflow-row.js, laid out by the element). overflow="wrap" keeps
+  // the row that wraps.
 
 
-  const separator = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-rich-text-separator" aria-hidden="true"></span>`; // The message line: the hint, or the error in its place; with the count
+  const separator = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-rich-text-separator" aria-hidden="true"></span>`;
+  const more = context.overflow === 'more'; // The text levels are one menu button with the current level and a radio
+  // menu (owner decision C155 (5)): «Абзац ▾», first in the row.
+
+  const level = context.level || 'paragraph';
+  const levelsUnavailable = Boolean(context.state?.inList);
+  const levels = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+      type="button"
+      class="sf-rich-text-tool sf-rich-text-levels sf-button sf-button--size-${buttonSize} sf-button--ghost sf-button--on-surface flex items-cross-center"
+      data-sf-tool="levels"
+      tabindex=${context.roving === 'levels' ? '0' : '-1'}
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label=${`${component.sfWord('text-level')}: ${component.sfWord(level)}`}
+      title=${component.sfWord('text-level')}
+      aria-disabled=${levelsUnavailable ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?disabled=${disabled || readonly}
+    ><span class="sf-button-text-container" aria-hidden="true">${component.sfWord(level)}</span><i class="sf-icon" aria-hidden="true">expand_more</i></button>`;
+  const moreTool = more ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-rich-text-separator sf-rich-text-more-separator sf-rich-text-out" aria-hidden="true"></span><button
+        type="button"
+        class="sf-rich-text-tool sf-rich-text-more sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-${buttonSize} flex items-cross-center sf-rich-text-out"
+        data-sf-tool="more"
+        tabindex=${context.roving === 'more' ? '0' : '-1'}
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-label=${component.sfWord('more')}
+        title=${component.sfWord('more')}
+        ?disabled=${disabled || readonly}
+      ><i class="sf-icon" aria-hidden="true">more_horiz</i></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The message line: the hint, or the error in its place; with the count
   // (C141 (1)) they share one row, the count at the end.
 
   const messageNode = message ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${field.messageId} class="sf-rich-text-hint-text-wrap"
@@ -2529,23 +3818,30 @@ function renderRichTextTemplate(context) {
       ${label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-rich-text-label flex" id=${labelId} @click=${() => component.focus()}>
             <span class="sf-rich-text-text">${label}</span>
             ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-rich-text-required" aria-hidden="true">*</span>` : ''}
+            ${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help: context.help,
+    label,
+    size,
+    className: 'sf-rich-text-help',
+    component
+  })}
           </span>` : ''}
       <div class="sf-rich-text-frame flex flex-col"
         style=${`--sf-rich-text--rows: ${rows};${maxRows ? ` --sf-rich-text--max-rows: ${maxRows};` : ''}`}>
-        ${readonly ? '' : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-rich-text-toolbar flex flex-wrap items-cross-center" role="toolbar" id=${toolbarId}
+        ${readonly ? '' : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${more ? 'sf-rich-text-toolbar sf-rich-text-toolbar--more flex items-cross-center' : 'sf-rich-text-toolbar flex flex-wrap items-cross-center'} role="toolbar" id=${toolbarId}
           aria-label=${component.sfWord('toolbar')} aria-controls=${field.controlId}
           aria-disabled=${disabled || readonly ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-          @keydown=${event => component.onToolbarKeydown(event)}
           @mousedown=${event => component.onToolbarMouseDown(event)}
           @click=${event => component.onToolbarClick(event)}
-          @focusin=${event => component.onToolbarFocusIn(event)}>
-          <div class="sf-rich-text-group flex items-cross-center" role="group" data-sf-priority="1">${group(['paragraph', 'heading-2', 'heading-3', 'heading-4'])}</div>
+>
+          <div class="sf-rich-text-group flex items-cross-center" role="group" data-sf-priority="1">${levels}</div>
           ${separator}
           <div class="sf-rich-text-group flex items-cross-center" role="group" data-sf-priority="1">${group(['bold', 'italic', 'link'])}</div>
           ${separator}
           <div class="sf-rich-text-group flex items-cross-center" role="group" data-sf-priority="2">${group(['bulleted-list', 'numbered-list', 'quote'])}</div>
           ${separator}
           <div class="sf-rich-text-group flex items-cross-center" role="group" data-sf-priority="3">${group(['undo', 'redo'])}</div>
+          ${moreTool}
         </div>`}
         <div
           class="sf-rich-text-editor"
@@ -3565,21 +4861,21 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.6.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.8.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "194659de6d72"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Rich text","runtime":{"toolbar":"Formatting","paragraph":"Paragraph","heading-2":"Heading 2","heading-3":"Heading 3","heading-4":"Heading 4","bold":"Bold","italic":"Italic","link":"Link","bulleted-list":"Bulleted list","numbered-list":"Numbered list","quote":"Quote","undo":"Undo","redo":"Redo","link-dialog":"Link","link-address":"Link address","link-hint":"https://…, mailto:, tel: or a path on this site such as /about","link-invalid":"Use an https:, mailto: or tel: address, or a path on this site that starts with /.","link-apply":"Apply","link-remove":"Remove link","value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Rich text","runtime":{"toolbar":"Formatting","paragraph":"Paragraph","heading-2":"Heading 2","heading-3":"Heading 3","heading-4":"Heading 4","bold":"Bold","italic":"Italic","link":"Link","bulleted-list":"Bulleted list","numbered-list":"Numbered list","quote":"Quote","undo":"Undo","redo":"Redo","not-in-list":"Not available in a list","nothing-to-undo":"Nothing to undo","nothing-to-redo":"Nothing to redo","link-dialog":"Link","link-address":"Link address","link-hint":"https://…, mailto:, tel: or a path on this site such as /about","link-invalid":"Use an https:, mailto: or tel: address, or a path on this site that starts with /.","link-apply":"Apply","link-remove":"Remove link","value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters","help":"More about: {label}","text-level":"Text level","more":"More"}}');
 
 /***/ },
 
 /***/ "1b8b77aa1331"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Форматированный текст","runtime":{"toolbar":"Форматирование","paragraph":"Абзац","heading-2":"Заголовок 2","heading-3":"Заголовок 3","heading-4":"Заголовок 4","bold":"Полужирный","italic":"Курсив","link":"Ссылка","bulleted-list":"Маркированный список","numbered-list":"Нумерованный список","quote":"Цитата","undo":"Отменить","redo":"Повторить","link-dialog":"Ссылка","link-address":"Адрес ссылки","link-hint":"https://…, mailto:, tel: или путь на этом сайте, например /about","link-invalid":"Укажите адрес https:, mailto: или tel: либо путь на этом сайте, начинающийся с /.","link-apply":"Применить","link-remove":"Убрать ссылку","value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Форматированный текст","runtime":{"toolbar":"Форматирование","paragraph":"Абзац","heading-2":"Заголовок 2","heading-3":"Заголовок 3","heading-4":"Заголовок 4","bold":"Полужирный","italic":"Курсив","link":"Ссылка","bulleted-list":"Маркированный список","numbered-list":"Нумерованный список","quote":"Цитата","undo":"Отменить","redo":"Повторить","not-in-list":"Недоступно в списке","nothing-to-undo":"Нечего отменять","nothing-to-redo":"Нечего повторять","link-dialog":"Ссылка","link-address":"Адрес ссылки","link-hint":"https://…, mailto:, tel: или путь на этом сайте, например /about","link-invalid":"Укажите адрес https:, mailto: или tel: либо путь на этом сайте, начинающийся с /.","link-apply":"Применить","link-remove":"Убрать ссылку","value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков","help":"Подробнее: {label}","text-level":"Уровень текста","more":"Ещё"}}');
 
 /***/ }
 

@@ -26,7 +26,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-progress-ring from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+}; // sf-progress-ring from its component.json (standard simai.smart-component
 // 1.3.11 §3, §4; the 1.4 folder of five authored files): its settings are
 // attributes and properties made by core/js/element-manifest.js, and a job's
 // part arrives as the stream fact chunk {done, total} (vocabulary 1.1.5 §5.2),
@@ -37,8 +45,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const ProgressRingElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en,
+    ru
   },
   source: 'ru',
   actions: {
@@ -199,12 +207,19 @@ function renderProgressRingTemplate(context) {
   // (aria-valuenow), so a screen reader still says it; the eye reads the arc.
 
   const text = on(context.showText) && !unknown && !TEXTLESS.has(size) ? `${value}%` : '';
-  const content = context.content && context.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? context.content : null;
+  const content = context.content && context.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? context.content : null; // A ring around a picture is about something of the person's own -- a
+  // profile filled in, a photo being sent (owner decision C191 (4)). At 100 %
+  // nothing is left to do, so the ring goes away (C191 (7) #q-ar-done): no
+  // line and no value to say, the picture alone, in the same box so nothing
+  // around it moves. A meter (an amount used) and an unknown value keep the
+  // ring: a quota at 100 % is the news, not the end of it.
+
+  const done = Boolean(content) && !meter && !unknown && value >= 100;
   const rootClasses = ['sf-progress-ring', `sf-progress-ring--size-${size}`, status ? `sf-progress-ring--${status}` : '', unknown ? 'sf-progress-ring--indeterminate' : '', context.rootClass].filter(Boolean).join(' ');
   const style = [`--sf-progress-ring--value: ${unknown ? 0 : value}`, context.rootStyle].filter(Boolean).join('; ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${rootClasses} style=${style} data-value=${String(value)} data-status=${status}>
-      <span
+      ${done ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
         class="sf-progress-ring-indicator"
         role=${role}
         aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -212,7 +227,7 @@ function renderProgressRingTemplate(context) {
         aria-valuemax="100"
         aria-valuenow=${unknown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(value)}
         aria-valuetext=${unknown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ></span>
+      ></span>`}
       ${content ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content">${content}</span>` : text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content" aria-hidden="true">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
@@ -246,7 +261,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

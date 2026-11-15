@@ -130,7 +130,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-reference-link from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+}; // sf-reference-link from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4): the settings are the attributes and properties
 // core/js/element-manifest.js makes from the manifest. size and line keep
 // their getters (a form size mapped onto the field ladder), icon its own
@@ -139,8 +147,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const ReferenceLinkElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
@@ -529,7 +537,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-refer
 /***/ "02ab397b5f7e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.2.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","inline","plain"],"default":"card"},"copy":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"state":{"type":"enum","values":["","missing","forbidden"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.2.1","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","inline","plain"],"default":"card"},"copy":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"state":{"type":"enum","values":["","missing","forbidden"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

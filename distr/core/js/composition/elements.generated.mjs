@@ -111,7 +111,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "sf-button": {
     "inputs": {
@@ -311,7 +311,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.0"
+    "version": "1.16.1"
   },
   "sf-button-icon": {
     "inputs": {
@@ -477,6 +477,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "tooltip": {
+          "default": "",
+          "type": "string"
+        },
         "value": {
           "default": "",
           "type": "string"
@@ -486,7 +490,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.10.1"
+    "version": "1.11.0"
   },
   "sf-checkbox": {
     "inputs": {
@@ -499,6 +503,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "checked": {
           "default": false,
           "type": "boolean"
+        },
+        "controls": {
+          "default": "",
+          "type": "string"
         },
         "description": {
           "default": "",
@@ -554,7 +562,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.4.1"
+    "version": "1.5.0"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -599,6 +607,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -685,7 +697,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.13.0"
+    "version": "1.16.0"
   },
   "sf-icon": {
     "inputs": {
@@ -777,7 +789,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.3.0"
+    "version": "1.3.1"
   },
   "sf-input": {
     "inputs": {
@@ -804,6 +816,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "counter": {
+          "default": false,
+          "type": "boolean"
+        },
         "default-value": {
           "default": "",
           "type": "string"
@@ -813,6 +829,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -965,6 +985,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "text-start": {
+          "default": "",
+          "type": "string"
+        },
         "value": {
           "default": "",
           "type": "string"
@@ -974,7 +998,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.10.1"
+    "version": "1.13.0"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -1014,6 +1038,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -1146,7 +1174,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.10.1"
+    "version": "1.12.1"
   },
   "sf-switch": {
     "inputs": {
@@ -1214,6 +1242,6 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.5.3"
+    "version": "1.7.1"
   }
 });

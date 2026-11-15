@@ -53,7 +53,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-gallery 1.3.0 from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+}; // sf-gallery 1.3.0 from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8), owner decision C150 (2026-11-14): a set of pictures is a
 // grid of picture tiles by default, or the main picture with thumbnails, or
 // masonry (C150 (11): each picture in its own shape, into the shortest
@@ -66,8 +74,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const GalleryElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
@@ -963,7 +971,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderGalleryTemplate: () => (/* binding */ renderGalleryTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a4ffdf799148");
+/* harmony import */ var _default_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("77ff37ad859f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
@@ -1788,7 +1796,7 @@ __webpack_async_result__();
 
 /***/ },
 
-/***/ "a4ffdf799148"
+/***/ "77ff37ad859f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1842,7 +1850,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-galle
 /***/ "a2bebed909d0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.4.0","kind":"leaf","settings":{"layout":{"type":"enum","values":["grid","thumbnails","masonry"],"default":"grid"},"tile-size":{"type":"enum","values":["s","m","l"],"default":"m"},"ratio":{"type":"enum","values":["1/1","4/3","16/9","auto"],"default":"1/1"},"caption":{"type":"enum","values":["viewer","under"],"default":"viewer"},"selection":{"type":"enum","values":["none","many"],"default":"none"},"heading":{"type":"string","default-from":"runtime.heading"},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"modal-id":{"type":"id","default":""},"text":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":true},"thumbs":{"type":"boolean","default":true},"space-between":{"type":"number","default":null},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1},"selected":{"type":"list","default":[],"of":"number"}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}},"select":{"carries":{"selected":{"type":"list","of":"number"},"count":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{},"clear-selection":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.4.1","kind":"leaf","settings":{"layout":{"type":"enum","values":["grid","thumbnails","masonry"],"default":"grid"},"tile-size":{"type":"enum","values":["s","m","l"],"default":"m"},"ratio":{"type":"enum","values":["1/1","4/3","16/9","auto"],"default":"1/1"},"caption":{"type":"enum","values":["viewer","under"],"default":"viewer"},"selection":{"type":"enum","values":["none","many"],"default":"none"},"heading":{"type":"string","default-from":"runtime.heading"},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"modal-id":{"type":"id","default":""},"text":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":true},"thumbs":{"type":"boolean","default":true},"space-between":{"type":"number","default":null},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1},"selected":{"type":"list","default":[],"of":"number"}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}},"select":{"carries":{"selected":{"type":"list","of":"number"},"count":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{},"clear-selection":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

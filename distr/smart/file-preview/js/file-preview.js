@@ -115,7 +115,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
 /* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
 /* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
 /* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
@@ -144,8 +146,10 @@ function hasDateStyle(style) {
  *
  * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
  * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
  */
 
 
@@ -153,6 +157,7 @@ function formatDate(value, {
   date = 'medium',
   time = null,
   intl = null,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -167,23 +172,107 @@ function formatDate(value, {
     if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
   }
 
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
   return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
 }
 /**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
  */
 
 function calendarDayOffset(value, {
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
   if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
   return Math.round((day - base) / DAY_MS);
 }
 /**
@@ -193,10 +282,26 @@ function calendarDayOffset(value, {
  * draws them again; «сегодня» said yesterday is wrong by morning.
  */
 
-function msUntilNextDay(now = new Date()) {
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -214,25 +319,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4294700087dc");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // File sizes in the page's language («1,4 МБ»), with no top-level side
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
- // The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
+ // The four words of a size live in core's language files
+// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
+// other language takes the words a product registers for `sf-file-size`
+// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// English words with its own digits. A component with words of its own passes
+// them as `units`. The registry is read from the shared global the page
+// language keeps (core/js/page-language.js), so this module still runs
+// nothing on load.
+
+
+const UNIT_KEYS = /* @__PURE__ */Object.freeze(['b', 'kb', 'mb', 'gb']);
+
+function unitsOf(words) {
+  return Object.freeze(UNIT_KEYS.map(key => words[key]));
+}
 
 const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
+  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
 });
-/** The unit words for a locale: its language's, else English. */
+
+function registeredUnits(code) {
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
+  return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
+}
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
+
 
 function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
+    if (units) return units;
+  }
+
+  return registeredUnits('en') ?? FILE_SIZE_UNITS.en;
 }
 /**
  * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
@@ -499,6 +629,8 @@ function capitalise(text, locale) {
  * `weekday: false` goes from yesterday straight to the date; `capital: true`
  * starts the word with a capital, as a heading or a divider does.
  *
+ * `timeZone` counts the days and writes them on that zone's clock.
+ *
  * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
  * says when.
  */
@@ -511,6 +643,7 @@ function formatRelativeDay(value, {
   tomorrow,
   weekday = true,
   capital = false,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -518,8 +651,12 @@ function formatRelativeDay(value, {
   if (!moment) return gap;
   const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
   const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
-    now
+    now,
+    timeZone
   });
+  const zone = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.knownTimeZone)(timeZone) ? {
+    timeZone
+  } : {};
   const own = {
     0: today,
     [-1]: yesterday,
@@ -535,7 +672,8 @@ function formatRelativeDay(value, {
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
-      weekday: 'long'
+      weekday: 'long',
+      ...zone
     }).format(moment);
   } else {
     const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
@@ -544,7 +682,8 @@ function formatRelativeDay(value, {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
       day: 'numeric',
       month: 'long',
-      ...year
+      ...year,
+      ...zone
     }).format(moment);
   }
 
@@ -700,7 +839,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-file-preview from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+}; // sf-file-preview from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8; vocabulary 1.1.5 §5 download and detach): its settings
 // are attributes and properties made by core/js/element-manifest.js, its words
 // are lang/<locale>.json (a product adds a language through
@@ -711,8 +858,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const FilePreviewElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
@@ -1711,10 +1858,43 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "4294700087dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
+// The unit words of a file size (localization study LC-3), for the bundle and
+// for Node alike: the runtime words of the language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
 /***/ "9bbeb11fb966"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The kinds of an entry and the extensions of a name that say them: one map for every SIMAI Framework part that shows a file or a page by its type -- sf-tree\'s rows today; sf-file-upload, sf-file-download and sf-view\'s file cells to follow; Docara\'s static tree, Larena\'s files and ui-mail read the same words (owner decision C102, 2026-11-12; research ui-control control/research/2026-11-12-tree.md section 7 items 2-3). A kind is one of twelve words; its icon is a Material Symbols name of the Framework\'s icon font. An extension is matched on the name\'s last dot, in lower case. A kind without extensions is said by the host (kind) or by the entry\'s place (folder: it has children). Keep the words: they are public (an entry\'s kind).","schema":"simai.framework.file-types","version":1,"kinds":{"folder":{"icon":"folder","open-icon":"folder_open","extensions":[]},"file":{"icon":"draft","extensions":[]},"page":{"icon":"article","extensions":[]},"document":{"icon":"description","extensions":["md","txt","doc","docx","pdf","rtf","odt"]},"image":{"icon":"image","extensions":["png","jpg","jpeg","gif","svg","webp","ico","avif"]},"code":{"icon":"code","extensions":["js","mjs","ts","css","scss","html","php","py","sh","vue"]},"data":{"icon":"data_object","extensions":["json","yml","yaml","xml","toml","lock","ini","env"]},"table":{"icon":"table_chart","extensions":["csv","xls","xlsx","ods"]},"archive":{"icon":"folder_zip","extensions":["zip","tar","gz","rar","7z"]},"video":{"icon":"movie","extensions":["mp4","mov","webm"]},"audio":{"icon":"audio_file","extensions":["mp3","wav","ogg","m4a"]},"link":{"icon":"link","extensions":[]}}}');
+
+/***/ },
+
+/***/ "3694b5e2bf39"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB","gb":"GB"}}');
+
+/***/ },
+
+/***/ "220979cc98c6"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
 
 /***/ },
 
@@ -1728,7 +1908,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.4.1","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.4.2","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

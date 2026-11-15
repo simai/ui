@@ -136,7 +136,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8):
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+}; // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8):
 // the settings are attributes and properties made by
 // core/js/element-manifest.js, open, close and toggle answer outcomes, and the
 // old event name sf-accordion:toggle is a dated alias of sf-accordion-toggle.
@@ -144,8 +152,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const AccordionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
@@ -928,7 +936,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-accor
 /***/ "f733ebfdf5a9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"flush"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"link":{"type":"boolean","default":false},"expand-all":{"type":"boolean","default":false}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.2.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"flush"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"link":{"type":"boolean","default":false},"expand-all":{"type":"boolean","default":false}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

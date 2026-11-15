@@ -117,8 +117,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //
 // The bar is a frame. Its brand, navigation, actions and tools are the page's
 // own markup in slots, drawn with the Framework's components; the bar gives
-// them one row on the container's width and, below the `collapse` breakpoint,
-// a menu button that opens the navigation and the actions as a side panel.
+// them one row on the container's width and, below the `collapse` step of
+// its own width (a container condition, C181 (2)), a menu button that opens the navigation and the actions as a side panel.
 //
 // The side panel is a layer of the shared stack (standard simai.smart-component
 // 1.3.11 §19, core/js/layer-stack.js), registered the way sf-drawer registers:
@@ -126,7 +126,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // holds the one page lock and gives focus back when it closes. The panel is
 // the header's own element: wide it is display: contents, so the slot nodes
 // stand in the row; collapsed it is the panel. The nodes are placed once and
-// never move or get copied (§4.5).
+// never get copied (§4.5); only the settings among the tools -- the language
+// and the theme switch -- move, between the bar's tools and the panel's
+// «Настройки» group, when the bar crosses its breakpoint (owner decision C161
+// (8)): a phone's bar keeps the menu button, the brand, search and profile.
 //
 // From its component.json (§3, §4, §8): the settings are made by
 // core/js/element-manifest.js, open, close and toggle are the actions and
@@ -139,11 +142,31 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
 
 const SLOTS = ['brand', 'nav', 'actions', 'tools', 'sheet'];
 const TAGS = ['sf-header-site', 'sf-site-header'];
-const SWITCH_OPERATIONS = ['toggle', 'open', 'close'];
+const SWITCH_OPERATIONS = ['toggle', 'open', 'close']; // A tool that is a setting of the page rather than a tool of the site: the
+// language (sf-language) and the theme switch (any element with theme-switch).
+// On a collapsed bar these stand in the panel under the sections (C161 (8)).
+
+const SETTING_TOOLS = 'sf-language, [theme-switch]';
+
+function settingKind(node) {
+  if (node?.nodeType !== 1) return null;
+  const setting = node.matches(SETTING_TOOLS) ? node : node.querySelector?.(SETTING_TOOLS);
+  if (!setting) return null;
+  return setting.localName === 'sf-language' ? 'language' : 'theme';
+}
+
 let sequence = 0; // A switch of the page's own (owner decision C104, as sf-drawer's
 // data-drawer): an element with data-header-site="toggle", "open" or "close"
 // naming the bar's id in aria-controls. sf-button carries its data-* and
@@ -185,8 +208,8 @@ function bindSwitches() {
 const SiteHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru',
   // The events of the former tag name (sf-site-header-*) follow the current
@@ -226,8 +249,13 @@ class SfSiteHeader extends SiteHeaderElement {
     this.isOpen = false;
     this._media = null;
 
-    this._onMedia = () => this.syncCollapsed();
+    this._onMedia = () => this.syncCollapsed(); // The bar's own width decides (the sheet's container condition); the
+    // observer tells the script when it changed. undefined: not answered yet.
 
+
+    this._collapsedNow = undefined;
+    this._sizeObserver = null;
+    this._observedHeader = null;
     this._outsideSwitch = false;
     this._switchFrame = 0;
 
@@ -275,7 +303,11 @@ class SfSiteHeader extends SiteHeaderElement {
       passive: true
     });
     this._offSwitches?.();
-    this._offSwitches = this.onAfterRender(() => this.syncSwitches(), {
+    this._offSwitches = this.onAfterRender(() => {
+      this.observeSize();
+      this.syncCollapsed();
+      this.syncSwitches();
+    }, {
       once: false
     });
   }
@@ -287,6 +319,10 @@ class SfSiteHeader extends SiteHeaderElement {
     });
     this._media?.removeEventListener?.('change', this._onMedia);
     this._media = null;
+    this._sizeObserver?.disconnect();
+    this._sizeObserver = null;
+    this._observedHeader = null;
+    this._collapsedNow = undefined;
     this.unwatchScroll();
     if (typeof globalThis.removeEventListener === 'function') globalThis.removeEventListener('resize', this._onResize);
     if (this._switchFrame) globalThis.cancelAnimationFrame?.(this._switchFrame);
@@ -298,32 +334,69 @@ class SfSiteHeader extends SiteHeaderElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
-    if (name === 'collapse' && oldValue !== newValue && this._isMounted) this.watchCollapse();
+
+    if (name === 'collapse' && oldValue !== newValue && this._isMounted) {
+      this._collapsedNow = undefined;
+      this.watchCollapse();
+    }
+
     if (name === 'sticky' && oldValue !== newValue && this._isMounted) this.watchScroll();
-  } // Whether the bar is collapsed now: the same answer as the sheet's media rule.
+  } // Whether the bar is collapsed now: the sheet's own answer. The bar is the
+  // container of its parts, and below the `collapse` step of its width the
+  // sheet's container condition gives the row --sf-site-header--collapsed: 1
+  // (C181 (2), C104): the bar and the sf-menu in it read one width, the bar's,
+  // so a bar narrower than the window -- a column, a card, an example frame --
+  // collapses with its nav instead of leaving the nav to fold into its own
+  // button over the actions. Before the row is drawn, the window's step is the
+  // guess (core/js/breakpoints.js): a full-width bar gives the same answer.
 
 
   get collapsed() {
     if (this.collapse === 'always') return true;
     if (this.collapse === 'none') return false;
+    const row = this.header()?.querySelector(':scope > .sf-site-header-row');
+
+    if (row && typeof globalThis.getComputedStyle === 'function') {
+      return globalThis.getComputedStyle(row).getPropertyValue('--sf-site-header--collapsed').trim() === '1';
+    }
+
     return this._media ? !this._media.matches : false;
   }
 
   watchCollapse() {
-    this._media?.removeEventListener?.('change', this._onMedia); // Collapsed below the Framework's step (core/js/breakpoints.js, the sheet's
-    // own ladder; reuse audit 2026-11-02, finding 6); none has no step.
+    this._media?.removeEventListener?.('change', this._onMedia); // The guess before the row is drawn, and a wake-up when the window
+    // crosses the step (the bar's width moves with it); none has no step.
 
     this._media = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__.breakpointMedia)(this.collapse);
     this._media?.addEventListener?.('change', this._onMedia);
     this.syncCollapsed();
-  } // The window crossed the breakpoint: the host says so, a horizontal sf-menu
-  // in the nav turns into a column while it stands in the panel, and an open
-  // panel the wide bar no longer has closes.
+  } // The bar's width is watched where it is drawn: the <header> is the
+  // container the sheet's condition reads.
+
+
+  observeSize() {
+    const header = this.header();
+    if (!header || header === this._observedHeader || typeof ResizeObserver === 'undefined') return;
+    this._sizeObserver?.disconnect();
+    this._sizeObserver = new ResizeObserver(() => this.syncCollapsed());
+
+    this._sizeObserver.observe(header);
+
+    this._observedHeader = header;
+  } // The bar crossed its step: the host says so, a horizontal sf-menu in the
+  // nav turns into a column while it stands in the panel, and an open panel
+  // the wide bar no longer has closes. Only a change acts, so the observer,
+  // the drawing and the window can all ask.
 
 
   syncCollapsed() {
     const collapsed = this.collapsed;
-    this.sfHostState('data-collapsed', collapsed);
+    if (collapsed === this._collapsedNow) return;
+    this._collapsedNow = collapsed;
+    this.sfHostState('data-collapsed', collapsed); // The settings among the tools stand in the bar or in the panel by the
+    // bar's form: a change of form draws them again in their place.
+
+    if (this._drawnCollapsed !== undefined && this._drawnCollapsed !== collapsed) this.requestComponentUpdate('collapse');
 
     for (const menu of this.navMenus()) {
       if (collapsed) {
@@ -584,9 +657,31 @@ class SfSiteHeader extends SiteHeaderElement {
       reason: 'api',
       restoreFocus: false
     });
+  } // The tools split by the bar's form (C161 (8)): wide, every tool in the
+  // bar in the page's order; collapsed, the settings (language, theme) in the
+  // panel's «Настройки» group, each with its word, and the rest in the bar.
+
+
+  toolParts(collapsed) {
+    const nodes = [].concat(this.hasSlotContent('tools') ? this.getSlotContent('tools') : []).filter(node => node && typeof node === 'object' && 'nodeType' in node);
+    if (!collapsed) return {
+      bar: nodes,
+      settings: []
+    };
+    const settings = nodes.filter(node => settingKind(node)).map(node => ({
+      node,
+      label: this.sfWord(settingKind(node))
+    }));
+    return {
+      bar: nodes.filter(node => !settingKind(node)),
+      settings
+    };
   }
 
   templateContext() {
+    const collapsed = this.collapsed;
+    this._drawnCollapsed = collapsed;
+    const tools = this.toolParts(collapsed);
     return this.createTemplateContext({ ...this.getPropsContext(),
       component: this,
       id: this._id,
@@ -599,6 +694,8 @@ class SfSiteHeader extends SiteHeaderElement {
       navigationAlign: this.navigationAlign,
       label: this.label,
       menuLabel: this.menuLabel,
+      tools,
+      settingsLabel: this.sfWord('settings'),
       closeLabel: this.closeLabel,
       slot: name => this.getSlotContent(name),
       hasSlot: name => SLOTS.includes(name) && this.hasSlotContent(name),
@@ -641,8 +738,12 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // over a scrim, named by its heading. The button is in the DOM where it is
 // shown, so the reading and Tab order follow what is seen. While a switch of
 // the page's own is on screen (data-header-site, C104) the bar draws none.
+// The panel's close is sf-button-close, the one close button (C14), at the
+// bar's size, ghost on the panel's surface.
 // The page's slot nodes are placed once and stay where they are in both
-// forms.
+// forms, but for the settings among the tools (language, theme): collapsed,
+// they stand in the panel's «Настройки» group under the sections, each on a
+// row with its word, and the bar keeps the rest of the tools (C161 (8)).
 
 function renderSiteHeaderTemplate(context) {
   const {
@@ -650,6 +751,8 @@ function renderSiteHeaderTemplate(context) {
     id,
     open,
     collapse,
+    tools,
+    settingsLabel,
     menuPlacement,
     ownMenuButton,
     sticky,
@@ -681,16 +784,23 @@ function renderSiteHeaderTemplate(context) {
         @click=${event => component.onPanelClick(event)}>
         <div class="sf-site-header-panel-head">
           <span class="sf-site-header-panel-heading" id=${headingId}>${label}</span>
-          <sf-button-icon class="sf-site-header-close-button" icon="close" size=${size} appearance="ghost" scheme="on-surface"
+          <sf-button-close class="sf-site-header-close-button" size=${size}
             aria-label=${closeLabel} @click=${() => component.close({
     reason: 'close'
-  })}></sf-button-icon>
+  })}></sf-button-close>
         </div>
         ${hasSlot('nav') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-nav">${slot('nav')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${hasSlot('actions') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-actions">${slot('actions')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${tools?.settings.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-settings" role="group" aria-labelledby=${`${id}-settings`}>
+          <span class="sf-site-header-settings-heading" id=${`${id}-settings`}>${settingsLabel}</span>
+          ${tools.settings.map(({
+    node,
+    label: word
+  }) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-setting"><span class="sf-site-header-setting-label" aria-hidden="true">${word}</span>${node}</div>`)}
+        </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${hasSlot('sheet') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-sheet">${slot('sheet')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
-      ${hasSlot('tools') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-tools">${slot('tools')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${tools ? tools.bar.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-tools">${tools.bar}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing : hasSlot('tools') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-site-header-tools">${slot('tools')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${ownMenuButton && menuPlacement === 'inline-end' ? menuButton : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   </header>`;
@@ -747,21 +857,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "3b2d3ad548e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.10.2","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.11.1","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 
 /***/ "298b141c5283"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Site header","runtime":{"label":"Menu","menu-label":"Open menu","close-label":"Close menu"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Site header","runtime":{"label":"Menu","menu-label":"Open menu","close-label":"Close menu","settings":"Settings","language":"Language","theme":"Theme"}}');
 
 /***/ },
 
 /***/ "72ed3243e073"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Шапка сайта","runtime":{"label":"Меню","menu-label":"Открыть меню","close-label":"Закрыть меню"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Шапка сайта","runtime":{"label":"Меню","menu-label":"Открыть меню","close-label":"Закрыть меню","settings":"Настройки","language":"Язык","theme":"Тема"}}');
 
 /***/ }
 

@@ -84,6 +84,48 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "2ee7a47e9b10"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MOTION_ATTRIBUTE: () => (/* binding */ MOTION_ATTRIBUTE),
+/* harmony export */   MOTION_CHANGE: () => (/* binding */ MOTION_CHANGE),
+/* harmony export */   reducedMotion: () => (/* binding */ reducedMotion),
+/* harmony export */   watchMotion: () => (/* binding */ watchMotion)
+/* harmony export */ });
+// Whether to keep things still: the device asks for less motion
+// (prefers-reduced-motion: reduce), or the person stopped motion on this site
+// (<html data-sf-motion="reduce">, written by the sf-display-settings panel
+// through SF.displaySettings; owner decision C196, 2026-11-15). Core's own
+// scripts read this one function; the core sheet stops CSS animations and
+// transitions under the same mark (core/scss/_sf_css__display.scss).
+//
+// No state and no side effect, so every bundle may carry it.
+const MOTION_ATTRIBUTE = 'data-sf-motion';
+const MOTION_CHANGE = 'sf-display-change';
+function reducedMotion(root = globalThis.document?.documentElement, win = globalThis) {
+  try {
+    if (win.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return true;
+  } catch {// No media queries here: only the page's own mark.
+  }
+
+  return root?.getAttribute?.(MOTION_ATTRIBUTE) === 'reduce';
+} // Calls `listener` when either source changes; returns the stop.
+
+function watchMotion(listener, win = globalThis) {
+  const media = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+  const doc = win.document;
+  media?.addEventListener?.('change', listener);
+  doc?.addEventListener?.(MOTION_CHANGE, listener);
+  return () => {
+    media?.removeEventListener?.('change', listener);
+    doc?.removeEventListener?.(MOTION_CHANGE, listener);
+  };
+}
+
+/***/ },
+
 /***/ "6978f1cc153b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -97,6 +139,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   scrollerOf: () => (/* binding */ scrollerOf),
 /* harmony export */   watchEdge: () => (/* binding */ watchEdge)
 /* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
 // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): what a feed, a log, a conversation or a long list does to keep a
 // person's place while its content changes under them. It was written in
@@ -121,17 +164,17 @@ __webpack_require__.r(__webpack_exports__);
 // Nothing here keeps state at module scope: each column gets its own
 // controller, so the copies of this module that every bundle carries cannot
 // disagree (bundles each carry their own module copy).
-// Within this distance of the end counts as being there. 96px is about two
+// The device's reduced motion or the site's «остановить движение» (C196).
+ // Within this distance of the end counts as being there. 96px is about two
 // lines of text and an entry's action row: closer than that, a person reading
 // the end of a column is reading the end.
+
 const NEAR_END = 96; // The start is "reached" a little before it is reached, so an earlier page is
 // usually there by the time the person scrolls into it.
 
 const NEAR_START = 240; // The end of a list asks for its next page this far before it is in view.
 
 const EDGE_MARGIN = '200px';
-
-const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 const frame = callback => typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(callback) : setTimeout(callback, 16);
 /**
@@ -204,7 +247,7 @@ function readingPosition(scroller, {
       frame(() => {
         if (element) element.scrollTo({
           top: element.scrollHeight,
-          behavior: instant || reducedMotion() ? 'instant' : 'smooth'
+          behavior: instant || (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? 'instant' : 'smooth'
         });
         then?.();
         if (settle) frame(() => {
@@ -777,7 +820,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+};
  // The ids of a run's parts, one set per run on the page (the same on every
 // render, so a first-paint snapshot is stable).
 
@@ -1076,8 +1127,8 @@ function normalizeErrors(value, limit = ERRORS_SHOWN) {
 const ProgressRunElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
@@ -2251,7 +2302,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.4.3","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.4.4","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
 
 /***/ },
 

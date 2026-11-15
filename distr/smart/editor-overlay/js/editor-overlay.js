@@ -2,6 +2,857 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
+/***/ "557c99eb8f3a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   focusTarget: () => (/* binding */ focusTarget),
+/* harmony export */   roving: () => (/* binding */ roving)
+/* harmony export */ });
+// One Tab stop for a row of controls, and the arrows between them (owner
+// decision C184 (1)-(3), 2026-11-14; study control/research/2026-11-14-
+// toolbar-menu-open.md, K-02). A toolbar is not a component of its own
+// (C155 (8): no sf-toolbar): it is ordinary sf-button-icon groups, 4 apart
+// inside a group and a separator between groups (C144), and this helper gives
+// them the keyboard of the WAI-ARIA toolbar pattern:
+//
+// - the row is one Tab stop; Tab comes back to the control the person left
+//   (memory, C184 (3)), or to the first one (memory: false);
+// - the arrows of the row's orientation move between the controls, in the
+//   row's direction (right-to-left reverses ← and →), Home and End go to the
+//   ends, and the walk wraps;
+// - a control that cannot be used now (aria-disabled) stays in the walk,
+//   dimmed by its component, with its reason as a tooltip (C184 (2), as
+//   C164 (4) does for a menu row); disabled: 'skip' leaves it out. A control
+//   with the native disabled attribute cannot take the focus and is skipped;
+// - a control inside «Ещё» (the C155 row engine marks the part that left the
+//   row with .out or [hidden]) is not in the walk;
+// - ↓ (↑) on a menu button of a horizontal row opens its menu, as the
+//   pattern's menu button does.
+//
+// It is also the list's keyboard (C184 (5)): a list is one Tab stop and ↑ ↓
+// move between its rows (orientation 'vertical').
+//
+// roving(container, options) -> {refresh, set, current, items, destroy}.
+// The look stays with the components; this module holds no state of its own
+// outside the controller it returns, so every bundle may carry its own copy.
+const NATIVE_FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex], [contenteditable=""], [contenteditable="true"]';
+const OUT = '.out, [hidden], [data-sf-out], [inert]'; // The element that takes the focus for an item: the item itself when it can
+// (a <button>, a row with a tabindex), else the control inside it -- an
+// sf-button-icon host draws a <button> and is display: contents.
+
+function focusTarget(item) {
+  if (!item) return null;
+  if (item.matches?.(NATIVE_FOCUSABLE)) return item;
+  return item.querySelector?.('button, a[href], [role="button"], [tabindex]') ?? item;
+}
+
+const isUnavailable = target => target.getAttribute?.('aria-disabled') === 'true';
+
+const isDisabled = target => Boolean(target.disabled) || target.matches?.(':disabled');
+
+function roving(container, {
+  items: itemsOf = 'button',
+  orientation = 'horizontal',
+  wrap = true,
+  disabled = 'focusable',
+  memory = true,
+  out = OUT,
+  onMove = null,
+  observe = true
+} = {}) {
+  let current = null; // Every item of the row, in order, as the targets that take the focus.
+
+  const all = () => {
+    const found = typeof itemsOf === 'function' ? itemsOf() : [...container.querySelectorAll(itemsOf)];
+    const targets = [];
+
+    for (const item of found) {
+      const target = focusTarget(item);
+      if (!target || !container.contains(target) || targets.includes(target)) continue; // Out of the row: a part inside it that left (into «Ещё») or is
+      // hidden. The row itself being hidden for now does not count.
+
+      const away = target.closest(out);
+      if (away && away !== container && container.contains(away)) continue;
+      targets.push(target);
+    }
+
+    return targets;
+  }; // The items the walk stops on.
+
+
+  const items = () => all().filter(target => !isDisabled(target) && (disabled === 'focusable' || !isUnavailable(target)));
+
+  function set(element) {
+    const target = focusTarget(element);
+    const every = all();
+    if (!target || !every.includes(target)) return;
+    current = target;
+
+    for (const other of every) {
+      const next = other === target ? '0' : '-1';
+      if (other.getAttribute('tabindex') !== next) other.setAttribute('tabindex', next);
+    }
+  } // After a drawing or a change of the row: the one Tab stop is the item
+  // remembered, or the first one when it is gone (or the row forgets).
+
+
+  function refresh() {
+    const list = items();
+
+    if (!list.length) {
+      // Nothing to stop on: no item keeps a stop either (a disabled field's
+      // toolbar is not a Tab stop).
+      for (const other of all()) if (other.getAttribute('tabindex') !== '-1') other.setAttribute('tabindex', '-1');
+
+      current = null;
+      return;
+    }
+
+    set(current && list.includes(current) ? current : list[0]);
+  }
+
+  const vertical = orientation === 'vertical';
+  const both = orientation === 'both';
+
+  function onKeydown(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    const list = items();
+    const target = list.find(one => one === event.target || one.contains(event.target));
+    if (!target) return; // A field inside an item (a link's address) keeps its own keys.
+
+    if (event.target !== target && event.target.matches?.('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) return;
+    const rtl = getComputedStyle(container).direction === 'rtl';
+    const forward = vertical ? ['ArrowDown'] : both ? ['ArrowDown', rtl ? 'ArrowLeft' : 'ArrowRight'] : [rtl ? 'ArrowLeft' : 'ArrowRight'];
+    const back = vertical ? ['ArrowUp'] : both ? ['ArrowUp', rtl ? 'ArrowRight' : 'ArrowLeft'] : [rtl ? 'ArrowRight' : 'ArrowLeft'];
+    const at = list.indexOf(target);
+    let next = null;
+
+    if (!vertical && !both && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && target.getAttribute('aria-haspopup') === 'menu' && !isUnavailable(target)) {
+      event.preventDefault();
+      target.click();
+      return;
+    }
+
+    if (forward.includes(event.key)) next = at + 1 < list.length ? list[at + 1] : wrap ? list[0] : null;else if (back.includes(event.key)) next = at > 0 ? list[at - 1] : wrap ? list[list.length - 1] : null;else if (event.key === 'Home') next = list[0];else if (event.key === 'End') next = list[list.length - 1];else return;
+    event.preventDefault();
+    if (!next || next === target) return;
+    set(next);
+    next.focus();
+    onMove?.(next, event.key);
+  }
+
+  function onFocusIn(event) {
+    const target = all().find(one => one === event.target);
+    if (!target || target === current) return;
+    set(target);
+    onMove?.(target, 'focus');
+  }
+
+  function onFocusOut(event) {
+    if (memory || container.contains(event.relatedTarget)) return;
+    const list = items();
+    if (list.length) set(list[0]);
+  }
+
+  container.addEventListener('keydown', onKeydown);
+  container.addEventListener('focusin', onFocusIn);
+  container.addEventListener('focusout', onFocusOut); // Items drawn later -- a host that draws its <button> on its own schedule
+  // (sf-button-icon), a row added -- join the walk with tabindex -1 at once:
+  // the row stays one Tab stop whatever draws when.
+
+  let queued = false;
+  const watcher = observe && typeof MutationObserver === 'function' ? new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      refresh();
+    });
+  }) : null;
+  watcher?.observe(container, {
+    childList: true,
+    subtree: true
+  });
+  refresh();
+  return {
+    refresh,
+    set,
+    items,
+
+    get current() {
+      return current;
+    },
+
+    destroy() {
+      watcher?.disconnect();
+      container.removeEventListener('keydown', onKeydown);
+      container.removeEventListener('focusin', onFocusIn);
+      container.removeEventListener('focusout', onFocusOut);
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (roving);
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -418,7 +1269,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
 
 globalThis.SF = globalThis.SF || {};
 globalThis.SF.CompositionOverlay = Object.freeze({
@@ -432,12 +1291,16 @@ globalThis.SF.CompositionOverlay = Object.freeze({
 // the runtime gives each the object form of §4.4 as well (setNodes({nodes,
 // options}), setMessages({messages})).
 
-const positional = ['attach', 'attach-frame', 'set-document', 'set-nodes', 'set-drop-filter', 'set-actions', 'set-messages', 'set-insertion-target', 'select', 'edit'];
+const positional = ['attach', 'attach-frame', 'set-document', 'set-nodes', 'set-drop-filter', 'set-actions', 'set-messages', 'set-insertion-target', 'select', 'edit']; // An editor page draws parameter forms: the composition editor words, no
+// longer part of every page's core (localization study LC-1), are fetched
+// once now, so SF.Composition.editorFieldMessages() answers in full.
+
+globalThis.SF.Composition?.loadEditorWords?.();
 (0,_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.defineCompositionOverlay)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
     lang: {
-      en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-      ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+      en,
+      ru
     },
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
@@ -633,9 +1496,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("7c1f9c2b36da");
-/* harmony import */ var _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_2__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__, _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__]);
-([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_2__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__, _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _overflow_row_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("bf0cea966575");
+/* harmony import */ var _roving_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("557c99eb8f3a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_2__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__, _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_2__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__, _open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
 
 
 
@@ -700,12 +1569,18 @@ const LEGACY_DETAIL = {
 };
 
 const MESSAGES = {
-  ru: { picked: 'Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.', cancelled: 'Перемещение отменено.', tree: 'Структура страницы', toolbar: 'Действия', insert: 'Вставить', insertAt: 'Вставить в «{slot}», позиция {index}', position: '{index} из {total}', selected: 'Выбрано: {label}', editing: 'Редактирование: {label}. Enter — сохранить, Escape — отменить.' },
-  en: { picked: 'Moving {label}. Arrows choose a place, Enter drops, Escape cancels.', cancelled: 'Move cancelled.', tree: 'Page structure', toolbar: 'Actions', insert: 'Insert', insertAt: 'Insert into “{slot}”, position {index}', position: '{index} of {total}', selected: 'Selected: {label}', editing: 'Editing {label}. Enter saves, Escape cancels.' },
+  ru: { picked: 'Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.', cancelled: 'Перемещение отменено.', tree: 'Структура страницы', toolbar: 'Действия', insert: 'Вставить', insertAt: 'Вставить в «{slot}», позиция {index}', position: '{index} из {total}', selected: 'Выбрано: {label}', editing: 'Редактирование: {label}. Enter — сохранить, Escape — отменить.', more: 'Ещё', insertAfter: 'Вставить после «{label}»', dropped: 'Перемещено: {label}. {place}.' },
+  en: { picked: 'Moving {label}. Arrows choose a place, Enter drops, Escape cancels.', cancelled: 'Move cancelled.', tree: 'Page structure', toolbar: 'Actions', insert: 'Insert', insertAt: 'Insert into “{slot}”, position {index}', position: '{index} of {total}', selected: 'Selected: {label}', editing: 'Editing {label}. Enter saves, Escape cancels.', more: 'More', insertAfter: 'Insert after “{label}”', dropped: 'Moved {label}. {place}.' },
 };
 
 const ACTION_ID = /^[a-z][a-z0-9-]{0,63}$/u;
-const ACTION_KEYS = new Set(['id', 'label', 'icon', 'shortcut', 'disabled', 'tone']);
+const ACTION_KEYS = new Set(['id', 'label', 'icon', 'shortcut', 'disabled', 'tone', 'priority']);
+// The toolbar shows up to this many icon actions (owner decision C170 (1));
+// the rest, and every action without an icon, are in «⋯».
+const ROW_ICONS = 5;
+// The toolbar is a phone's bottom bar below the sm breakpoint (C170 (4)).
+const PHONE_BELOW = 'sm';
+const OUT = 'sf-composition-overlay-out';
 const ICON_NAME = /^[a-z][a-z0-9_]{0,63}$/u;
 // The action a drag starts from is the one drawn as a grip.
 const GRIP_ICON = 'drag_indicator';
@@ -749,11 +1624,12 @@ function checkOverlayActions(actions) {
     if ((action.icon !== undefined && !ICON_NAME.test(String(action.icon)))
       || (action.shortcut !== undefined && (typeof action.shortcut !== 'string' || !action.shortcut.trim()))
       || (action.disabled !== undefined && typeof action.disabled !== 'boolean')
-      || (action.tone !== undefined && action.tone !== 'danger')) {
-      throw new TypeError(`Overlay action ${action.id} has an icon name, a shortcut string, a boolean disabled and the tone "danger" at most`);
+      || (action.tone !== undefined && action.tone !== 'danger')
+      || (action.priority !== undefined && action.priority !== 'pin' && !(Number.isSafeInteger(action.priority) && action.priority >= 1))) {
+      throw new TypeError(`Overlay action ${action.id} has an icon name, a shortcut string, a boolean disabled, the tone "danger" and a priority (a whole number from 1, or "pin") at most`);
     }
     const checked = { id: action.id, label: action.label };
-    for (const key of ['icon', 'shortcut', 'disabled', 'tone']) if (action[key] !== undefined) checked[key] = action[key];
+    for (const key of ['icon', 'shortcut', 'disabled', 'tone', 'priority']) if (action[key] !== undefined) checked[key] = action[key];
     return Object.freeze(checked);
   });
 }
@@ -897,6 +1773,11 @@ function frameRectToHost(box, view) {
 
 const plainText = (element) => (element.textContent || '').replace(/\s+/gu, ' ').trim();
 const px = (value) => Number.parseFloat(value) || 0;
+// Puts children in a parent only when they differ: a focused button that is not
+// moved keeps its focus.
+function sync(parent, children) {
+  if (children.length !== parent.children.length || children.some((child, at) => child !== parent.children[at])) parent.replaceChildren(...children);
+}
 const intersect = (a, b) => ({ left: Math.max(a.left, b.left), top: Math.max(a.top, b.top), right: Math.min(a.right, b.right), bottom: Math.min(a.bottom, b.bottom) });
 const calm = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
@@ -974,6 +1855,11 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.seamTimer = 0;
       this.gripDrag = null;
       this.actionParts = new Map();
+      this.groupParts = [];
+      this.toolGroups = [];
+      this.menuOnly = [];
+      this.toolsOut = new Set();
+      this.phoneQuery = null;
       // The node a first click opened, so the double click it begins opens it once.
       this.openedByClick = null;
       // Whether the selection was made by a pointer on a 'for' canvas: the
@@ -1089,6 +1975,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.toolbar.className = 'sf-composition-overlay-toolbar';
       this.toolbar.setAttribute('role', 'toolbar');
       this.toolbar.hidden = true;
+      this.buildToolbarParts();
       // The rail holds the toolbar's sticky range in the scrolled content.
       this.rail = doc.createElement('div');
       this.rail.className = 'sf-composition-overlay-rail';
@@ -1108,14 +1995,41 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       const frame = globalThis.document.createElement('div');
       frame.className = `sf-composition-overlay-frame sf-composition-overlay-frame--${kind}`;
       frame.hidden = true;
-      // Hover is a bare frame; only the selection carries the move handle.
-      if (kind === 'selected') {
-        const label = globalThis.document.createElement('span');
-        label.className = 'sf-composition-overlay-label';
-        label.hidden = true;
-        frame.append(label);
-      }
+      // No label above the frame (owner decision C170 (2), revised after R253):
+      // the block's kind and name start the toolbar.
       return frame;
+    }
+
+    // The toolbar's own parts, made once: the block's kind icon and name at its
+    // start, «⋯» «Ещё» at its end with the separator before it, and on a phone
+    // the «+» that adds after the selected block (C170 (1), (2a), (4)).
+    buildToolbarParts() {
+      const doc = globalThis.document;
+      this.nameItem = doc.createElement('span');
+      this.nameItem.className = 'sf-composition-overlay-name';
+      this.nameIcon = doc.createElement('i');
+      this.nameIcon.className = 'sf-icon';
+      this.nameIcon.setAttribute('aria-hidden', 'true');
+      this.nameText = doc.createElement('span');
+      this.nameText.className = 'sf-composition-overlay-name-text';
+      this.nameItem.append(this.nameIcon, this.nameText);
+      this.nameSeparator = this.separator();
+      this.moreSeparator = this.separator();
+      this.moreSeparator.classList.add('sf-composition-overlay-more-separator', OUT);
+      this.moreTool = this.createTool({ icon: 'more_horiz', label: this.messages.more });
+      this.moreTool.root.classList.add(OUT);
+      this.moreTool.root.setAttribute('data-sf-overlay-more', '');
+      this.moreTool.button.setAttribute('aria-haspopup', 'menu');
+      this.addTool = this.createTool({ icon: 'add', label: this.messages.insert, appearance: 'default' });
+      this.addTool.root.setAttribute('data-sf-overlay-add', '');
+    }
+
+    separator() {
+      const line = globalThis.document.createElement('span');
+      line.className = 'sf-composition-overlay-separator';
+      line.setAttribute('role', 'separator');
+      line.setAttribute('aria-orientation', 'vertical');
+      return line;
     }
 
     /** Binds the overlay to a rendered canvas; the canvas is never modified. */
@@ -1174,6 +2088,11 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.tree.addEventListener('blur', () => this.removeAttribute('data-sf-overlay-focus'), options);
       this.toolbar.addEventListener('click', (event) => this.onToolbarClick(event), options);
       this.toolbar.addEventListener('keydown', (event) => this.onToolbarKey(event), options);
+      // One Tab stop that comes back to the action left, Home and End (core's
+      // roving helper, owner decision C184 (1), (3)); the arrows stay
+      // onToolbarKey's, which knows the bar's side.
+      this.toolbarKeys?.destroy();
+      this.toolbarKeys = (0,_roving_js__WEBPACK_IMPORTED_MODULE_7__.roving)(this.toolbar, { items: 'button[data-action]' });
       this.insertionLayer.addEventListener('click', (event) => this.onInsertionClick(event), options);
       this.toolbar.addEventListener('pointerdown', (event) => this.onToolbarPointerDown(event), options);
       this.insertionLayer.addEventListener('pointerover', () => this.holdSeam(), passive);
@@ -1191,7 +2110,9 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
         drop: (dragSession, descriptor) => this.emit(OVERLAY_EVENTS.insert, { ...descriptor, parent: descriptor.parent_id ?? null, item: dragSession.item, from: dragSession.from, mode: dragSession.mode }),
         leave: () => this.showDropHint(null),
       });
-      this.selectedFrame.firstChild.addEventListener('pointerdown', (event) => this.onHandleDown(event), options);
+      this.phoneQuery = (0,_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__.breakpointMedia)(PHONE_BELOW, { below: true });
+      this.phoneQuery?.addEventListener?.('change', () => this.applyPhone(), options);
+      this.applyPhone();
       this.setAttribute('data-sf-overlay', 'connected');
       this.renderTree();
       if (this.iframe) this.bindFrameDocument();
@@ -1419,7 +2340,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
           const descriptor = { parent_id: parent, slot, index };
           if (!this.dropFilter(descriptor, moving ? { node_id: moving } : (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_3__.activeSortableSession)())) continue;
           const rect = this.placeRect(parent, slot, index, remaining);
-          if (rect) places.push({ descriptor, rect, label: format(this.messages.insertAt, { slot, index: index + 1 }) });
+          if (rect) places.push({ descriptor, rect, label: format(this.messages.insertAt, { slot: this.placeName(parent, slot), index: index + 1 }) });
         }
       }
       return places;
@@ -1442,7 +2363,9 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       const box = before || this.nodeBox(children[index - 1]) || this.nodeBox(parentId);
       if (!box) return null;
       const y = before ? box.top : box.bottom;
-      return { left: box.left, top: y - 1, width: box.width, height: 3 };
+      // The one drop line of the kit (owner decision C171 (4)): the drag module's
+      // thickness, centred on the seam.
+      return { left: box.left, top: y - _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__.SORTABLE_DROP_LINE / 2, width: box.width, height: _sortable_mjs__WEBPACK_IMPORTED_MODULE_3__.SORTABLE_DROP_LINE };
     }
 
     resolveDrop(x, y, moving) {
@@ -1471,7 +2394,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
           if (remaining.length === 0 && allowed(descriptor)) {
             const rect = this.placeRect(node.id, slot, 0, remaining);
             this.showDropHint(rect);
-            return { descriptor, rect, label: format(this.messages.insertAt, { slot, index: 1 }) };
+            return { descriptor, rect, label: format(this.messages.insertAt, { slot: this.placeName(node.id, slot), index: 1 }) };
           }
         }
         if (!node.parent) break;
@@ -1486,7 +2409,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
           if (allowed(descriptor)) {
             const rect = this.placeRect(node.parent, node.slot, index, remaining);
             this.showDropHint(rect);
-            return { descriptor, rect, label: format(this.messages.insertAt, { slot: node.slot, index: index + 1 }) };
+            return { descriptor, rect, label: format(this.messages.insertAt, { slot: this.placeName(node.parent, node.slot), index: index + 1 }) };
           }
         }
         id = node.parent;
@@ -1498,7 +2421,10 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     showDropHint(rect) {
       if (!this.dropHint) {
         this.dropHint = globalThis.document.createElement('div');
-        this.dropHint.className = 'sf-composition-overlay-drop';
+        // The drag module's line, drawn by its sheet (a relation of this rule);
+        // the overlay owns this one, so the drag module never takes it over.
+        this.dropHint.className = 'sf-composition-overlay-drop sf-sortable-indicator';
+        this.dropHint.setAttribute('data-sf-drop-line-owner', 'overlay');
         this.layer?.append(this.dropHint);
       }
       this.dropHint.hidden = !rect;
@@ -1586,47 +2512,23 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       if (drop && drag.started && drag.place && !drag.place.own) this.emit(OVERLAY_EVENTS.move, moveDetail(drag.id, drag.place.descriptor));
     }
 
-    // Moving a canvas node: pointer via the selected label, keyboard via the tree.
-    onHandleDown(event) {
-      if (this.iframe || this.isPassive()) return;
-      if (event.button !== 0 || !this.selectedId || !this.byId.get(this.selectedId)?.parent) return;
-      event.preventDefault();
-      const moving = this.selectedId;
-      this.pointerDrag?.abort();
-      const pending = new AbortController();
-      this.pointerDrag = pending;
-      let place = null;
-      globalThis.addEventListener('keydown', (keyEvent) => {
-        if (keyEvent.key !== 'Escape') return;
-        keyEvent.preventDefault();
-        pending.abort();
-        this.showDropHint(null);
-      }, { signal: pending.signal, capture: true });
-      globalThis.addEventListener('pointermove', (moveEvent) => {
-        place = this.resolveDrop(moveEvent.clientX, moveEvent.clientY, moving);
-      }, { signal: pending.signal });
-      globalThis.addEventListener('pointerup', () => {
-        pending.abort();
-        this.showDropHint(null);
-        if (place) this.emit(OVERLAY_EVENTS.move, moveDetail(moving, place.descriptor));
-      }, { signal: pending.signal });
-      globalThis.addEventListener('pointercancel', () => { pending.abort(); this.showDropHint(null); }, { signal: pending.signal });
-    }
-
+    // Moving a canvas node: by the grip action, or from the keyboard via the tree
+    // (C170 (5)); the label it was once dragged by is gone with the label (C170 (2)).
     startKeyboardMove() {
       const node = this.byId.get(this.selectedId);
       if (!node?.parent) return;
       const places = this.dropTargets(node.id);
       if (!places.length) return;
       this.moving = { node: node.id, places, index: 0 };
-      this.live.textContent = format(this.messages.picked, { label: this.info(node).label });
-      this.showKeyboardPlace();
+      // Picked and the first place in one message: a second write at once would
+      // replace the first before it is read (CO-6).
+      this.showKeyboardPlace(format(this.messages.picked, { label: this.info(node).label }));
     }
 
-    showKeyboardPlace() {
+    showKeyboardPlace(lead = '') {
       const place = this.moving.places[this.moving.index];
       this.showDropHint(place.rect);
-      this.live.textContent = place.label;
+      this.live.textContent = lead ? `${lead} ${place.label}` : place.label;
     }
 
     onMoveKey(event) {
@@ -1643,6 +2545,8 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
         const place = moving.places[moving.index];
         this.moving = null;
         this.showDropHint(null);
+        const node = this.byId.get(moving.node);
+        if (node) this.live.textContent = format(this.messages.dropped, { label: this.info(node).label, place: place.label });
         this.emit(OVERLAY_EVENTS.move, moveDetail(moving.node, place.descriptor));
         return true;
       }
@@ -1680,7 +2584,31 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       const described = this.describe(node) || {};
       const label = typeof described.label === 'string' && described.label.trim() ? described.label : node.id;
       const badges = Array.isArray(described.badges) ? described.badges.filter((badge) => typeof badge === 'string' && badge.trim()).slice(0, 4) : [];
-      return { label, badges };
+      // The kind's icon the toolbar starts with (C170 (2a)): a Material Symbols name.
+      const icon = typeof described.icon === 'string' && ICON_NAME.test(described.icon) ? described.icon : null;
+      return { label, badges, icon };
+    }
+
+    // A list of places by the words a person knows: its parent block's name, the
+    // slot's id only beside it when the block has more than one (CO-6).
+    placeName(parentId, slot) {
+      const parent = parentId ? this.byId.get(parentId) : null;
+      if (!parent) return this.getAttribute('label') || this.messages.tree;
+      const { label } = this.info(parent);
+      return Object.keys(parent.slots).length > 1 ? `${label} · ${slot}` : label;
+    }
+
+    // The place after the selected block: where its «+» adds (C170 (3), (4)).
+    afterSelected() {
+      const selected = this.selectedId && !this.isPassive() ? this.byId.get(this.selectedId) : null;
+      if (!selected) return null;
+      const parent = selected.parent ?? (selected.flat ? '' : null);
+      if (parent !== null) {
+        const place = { parent_id: parent, slot: selected.slot, index: selected.index + 1 };
+        return this.placeAllowed(place) ? place : null;
+      }
+      const [slot, children] = Object.entries(selected.slots)[0] ?? [];
+      return slot === undefined ? null : { parent_id: selected.id, slot, index: children.length };
     }
 
     select(id, { focus = false, emit = true } = {}) {
@@ -1934,7 +2862,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       else if (event.key === 'End') next = this.nodes.at(-1);
       else if (event.key === 'ArrowLeft' && current?.parent) next = this.byId.get(current.parent);
       else if (event.key === 'ArrowRight' && current) next = this.nodes.find((node) => node.parent === current.id) || null;
-      else if (event.key === 'Escape' && this.selectedId !== null && (!this.iframe || (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__.isTopOpenSurface)(this))) {
+      else if (event.key === 'Escape' && this.selectedId !== null && (!this.iframe || (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__.isTopOpenSurface)(this))) {
         event.preventDefault();
         this.select(null);
         return;
@@ -1961,7 +2889,8 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     }
 
     onToolbarKey(event) {
-      const buttons = [...this.toolbar.querySelectorAll('button:not(:disabled)')];
+      // Only what the row shows: a group that left for «⋯» is out of the arrows' way.
+      const buttons = [...this.toolbar.querySelectorAll('button:not(:disabled)')].filter((button) => !button.closest(`.${OUT}`));
       const index = buttons.indexOf(globalThis.document.activeElement);
       // Enter and Space press the button in focus; the other shortcuts work here too.
       if (event.key !== 'Enter' && event.key !== ' ' && this.runShortcut(event)) return;
@@ -1979,7 +2908,17 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     }
 
     onToolbarClick(event) {
-      const button = event.target instanceof globalThis.Element ? event.target.closest('button[data-action]') : null;
+      const target = event.target instanceof globalThis.Element ? event.target : null;
+      if (target?.closest('[data-sf-overlay-more]')) {
+        this.openMore();
+        return;
+      }
+      if (target?.closest('[data-sf-overlay-add]')) {
+        const place = this.afterSelected();
+        if (place) this.insertAt(place);
+        return;
+      }
+      const button = target ? target.closest('button[data-action]') : null;
       if (!button || !this.selectedId) return;
       // The grip is pressed to drag; a click from the keyboard still reaches the host.
       if (event.detail > 0 && this.actions.find((entry) => entry.id === button.dataset.action)?.icon === GRIP_ICON) return;
@@ -1989,10 +2928,61 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     onInsertionClick(event) {
       const button = event.target instanceof globalThis.Element ? event.target.closest('button[data-parent]') : null;
       if (!button) return;
-      const target = { parent_id: button.dataset.parent, slot: button.dataset.slot, index: Number(button.dataset.index) };
+      this.insertAt({ parent_id: button.dataset.parent, slot: button.dataset.slot, index: Number(button.dataset.index) });
+    }
+
+    insertAt(target) {
       this.setInsertionTarget(target);
       this.positionInsertions();
       this.emit(OVERLAY_EVENTS.insert, { ...target, parent: target.parent_id });
+    }
+
+    // «⋯» lists what the row does not show, in the actions' order, a separator
+    // between groups: the groups that left, the icons past the fifth and every
+    // action without an icon (C170 (1), C155; CO-1). A choice is an action.
+    openMore() {
+      if (!this.selectedId) return null;
+      const entries = [];
+      let last = null;
+      for (const action of this.actions) {
+        const group = this.toolGroups.find((entry) => entry.ids.includes(action.id));
+        const out = !group || this.toolsOut.has(group);
+        // A phone has no drag: the grip is neither in its bar nor in «⋯» (C170 (4)).
+        if (!out || (group?.grip && this.isPhone())) continue;
+        // One priority, one group of rows: a separator only where it changes.
+        const key = group ? group.key : `p:${action.priority ?? ''}`;
+        if (last !== null && key !== last) entries.push({ type: 'separator' });
+        last = key;
+        const entry = { id: action.id, text: action.label };
+        if (action.icon) entry.icon = action.icon;
+        if (action.shortcut) entry.shortcut = action.shortcut;
+        if (action.disabled) entry.disabled = true;
+        if (action.tone === 'danger') entry.danger = true;
+        entries.push(entry);
+      }
+      const anchor = this.moreTool.button.querySelector?.('button') || this.moreTool.button;
+      return (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.openRowMenu)(this, {
+        anchor,
+        entries,
+        label: this.messages.more,
+        size: this.isPhone() ? '1' : '1/2',
+        select: (id) => {
+          if (id && this.selectedId) this.sendRenamed('action', { action: id, scope: 'entry', ids: [this.selectedId] });
+        },
+      });
+    }
+
+    isPhone() {
+      return this.hasAttribute('data-sf-overlay-phone');
+    }
+
+    applyPhone() {
+      const phone = Boolean(this.phoneQuery?.matches);
+      if (phone === this.isPhone() && this.phoneApplied) return;
+      this.phoneApplied = true;
+      this.toggleAttribute('data-sf-overlay-phone', phone);
+      this.renderToolbar();
+      this.schedule();
     }
 
     renderTree() {
@@ -2025,6 +3015,11 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       else this.tree?.removeAttribute('aria-activedescendant');
     }
 
+    // The toolbar (owner decision C170 (1), (2a); C144; C155): the block's kind
+    // icon and name, a separator, then the icon actions in groups -- neighbours
+    // of one priority are a group, the grip is a group of its own -- 4 apart
+    // with a separator between groups, and «⋯» last. Up to five icons stand in
+    // the row; the rest, and every action without an icon, are in «⋯» (CO-1).
     // Buttons stay where they are: each is kept by its action's id, updated in
     // place, and an unavailable one dims, so focus and neighbours never move.
     renderToolbar() {
@@ -2032,40 +3027,90 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.toolbar.setAttribute('aria-label', this.messages.toolbar);
       const active = globalThis.document.activeElement;
       const focused = this.toolbar.contains(active) ? active : null;
+      const phone = this.isPhone();
       const previous = this.actionParts;
       this.actionParts = new Map();
+      this.menuOnly = [];
+      const groups = [];
+      let icons = 0;
       for (const action of this.actions) {
-        const kept = previous.get(action.id);
-        const parts = kept && Boolean(kept.action.icon) === Boolean(action.icon) ? kept : this.createAction(action);
-        this.updateAction(parts, action);
+        if (!action.icon || icons >= ROW_ICONS) {
+          this.menuOnly.push(action);
+          continue;
+        }
+        icons += 1;
+        const parts = previous.get(action.id) || this.createTool(action);
+        this.updateAction(parts, action, phone);
         this.actionParts.set(action.id, parts);
+        const grip = action.icon === GRIP_ICON;
+        const key = grip ? 'grip' : `p:${action.priority ?? ''}`;
+        const last = groups[groups.length - 1];
+        if (last && last.key === key && !grip) last.parts.push(parts);
+        else groups.push({ key, grip, priority: grip ? 'pin' : action.priority, parts: [parts] });
       }
-      const roots = [...this.actionParts.values()].map((parts) => parts.root);
-      if (roots.length !== this.toolbar.children.length || roots.some((root, index) => root !== this.toolbar.children[index])) this.toolbar.replaceChildren(...roots);
+      // Group boxes are kept by their place, so a stable row moves nothing.
+      this.groupParts.length = Math.min(this.groupParts.length, groups.length);
+      this.toolGroups = groups.map((group, at) => {
+        let parts = this.groupParts[at];
+        if (!parts) {
+          const element = globalThis.document.createElement('span');
+          element.className = 'sf-composition-overlay-group';
+          parts = { element, separator: this.separator() };
+          this.groupParts[at] = parts;
+        }
+        sync(parts.element, group.parts.map((tool) => tool.root));
+        parts.element.toggleAttribute('data-sf-overlay-grip-group', group.grip);
+        parts.separator.toggleAttribute('data-sf-overlay-grip-group', group.grip);
+        return { ...group, element: parts.element, separator: parts.separator, ids: group.parts.map((tool) => tool.action.id) };
+      });
+      this.toolsOut = new Set();
+      this.updateName();
+      this.updateTool(this.moreTool, { icon: 'more_horiz', label: this.messages.more }, phone);
+      const after = this.afterSelected();
+      this.updateTool(this.addTool, { icon: 'add', label: format(this.messages.insertAfter, { label: this.selectedId ? this.info(this.byId.get(this.selectedId)).label : '' }), appearance: 'default' }, phone);
+      this.addTool.button.toggleAttribute('disabled', !after);
+      const roots = [this.nameItem, this.nameSeparator];
+      this.toolGroups.forEach((group, at) => {
+        roots.push(group.element);
+        if (at < this.toolGroups.length - 1) roots.push(group.separator);
+      });
+      if (phone) roots.push(this.addTool.root);
+      roots.push(this.moreSeparator, this.moreTool.root);
+      sync(this.toolbar, roots);
+      // Until it is laid out the row shows every group and no «⋯».
+      this.moreTool.root.classList.toggle(OUT, this.menuOnly.length === 0);
+      this.moreSeparator.classList.toggle(OUT, this.menuOnly.length === 0 || this.toolGroups.length === 0);
+      this.rowKey = '';
       if (focused && (!focused.isConnected || focused.disabled)) (this.toolbar.querySelector('button:not(:disabled)') || this.tree)?.focus();
+      this.toolbarKeys?.refresh();
       if (!this.selectedId || this.actions.length === 0) this.toolbar.hidden = true;
     }
 
-    // With an icon: sf-icon-button at size 1/2, its label the name, and sf-tooltip
-    // holding the label and the shortcut (its shortcut setting: the kbd
-    // component's quiet keys). The tooltip is the plain one, its defaults. In the DOM from setActions on, so both
-    // load before the first selection needs them.
-    createAction(action) {
+    // The start of the toolbar: what the host's describe() calls the block, with
+    // the icon of its kind (C170 (2a)).
+    updateName() {
+      const node = this.selectedId ? this.byId.get(this.selectedId) : null;
+      const { label = '', icon = null } = node ? this.info(node) : {};
+      if (this.nameText.textContent !== label) this.nameText.textContent = label;
+      this.nameIcon.textContent = icon || '';
+      this.nameIcon.hidden = !icon;
+      this.nameItem.title = label;
+    }
+
+    // An icon action: sf-button-icon at size 1/2 (2 on a phone, 44), its label
+    // the name, and sf-tooltip holding the label and the shortcut (its shortcut
+    // setting: the kbd component's quiet keys). The tooltip is the plain one,
+    // its defaults. In the DOM from setActions on, so both load before the
+    // first selection needs them.
+    createTool(action) {
       const doc = globalThis.document;
-      if (!action.icon) {
-        const button = doc.createElement('button');
-        button.type = 'button';
-        button.className = 'sf-composition-overlay-action';
-        button.dataset.action = action.id;
-        return { root: button, button, action };
-      }
       const root = doc.createElement('span');
       root.className = 'sf-composition-overlay-tool sf-tooltip-anchor';
       const button = doc.createElement('sf-button-icon');
       button.setAttribute('size', '1/2');
-      button.setAttribute('appearance', 'ghost');
-      button.setAttribute('scheme', 'on-surface-variant');
-      button.setAttribute('data-action', action.id);
+      button.setAttribute('appearance', action.appearance || 'ghost');
+      if (!action.appearance) button.setAttribute('scheme', 'on-surface-variant');
+      if (action.id) button.setAttribute('data-action', action.id);
       button.setAttribute('data-tooltip', '');
       const tooltip = doc.createElement('sf-tooltip');
       tooltip.setAttribute('arrow', 'bottom-center');
@@ -2074,22 +3119,76 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       return { root, button, tooltip, action };
     }
 
-    updateAction(parts, action) {
-      const { root, button, tooltip } = parts;
-      parts.action = action;
-      if (action.tone) root.dataset.tone = action.tone;
-      else delete root.dataset.tone;
-      button.toggleAttribute('disabled', action.disabled === true);
-      if (!action.icon) {
-        if (button.textContent !== action.label) button.textContent = action.label;
-        return;
-      }
+    updateTool(parts, action, phone) {
+      const { button, tooltip } = parts;
+      button.setAttribute('size', phone ? '2' : '1/2');
       button.setAttribute('icon', action.icon);
       button.setAttribute('aria-label', action.label);
       tooltip.setAttribute('text', action.label);
       if (action.shortcut) tooltip.setAttribute('shortcut', action.shortcut);
       else tooltip.removeAttribute('shortcut');
+    }
+
+    updateAction(parts, action, phone = this.isPhone()) {
+      const { root, button } = parts;
+      parts.action = action;
+      if (action.tone) root.dataset.tone = action.tone;
+      else delete root.dataset.tone;
+      button.toggleAttribute('disabled', action.disabled === true);
+      this.updateTool(parts, action, phone);
       root.toggleAttribute('data-sf-overlay-grip', action.icon === GRIP_ICON);
+    }
+
+    // The row in the room it has (C155's engine): whole groups leave for «⋯»,
+    // the biggest priority number first, the grip never; the name gives way
+    // first, down to its icon, so the toolbar is never wider than its port (CO-3).
+    layoutToolbar(width) {
+      const phone = this.isPhone();
+      const key = `${Math.round(width)}|${phone}|${this.actions.length}|${this.toolGroups.length}`;
+      this.toolbar.style.maxInlineSize = `${width / this.layerOrigin().scaleX}px`;
+      if (key === this.rowKey) return;
+      this.rowKey = key;
+      const groups = this.toolGroups.filter((group) => !(phone && group.grip));
+      for (const group of this.toolGroups) {
+        const hide = phone && group.grip;
+        group.element.classList.toggle(OUT, hide);
+        group.separator.classList.toggle(OUT, hide);
+      }
+      const style = globalThis.getComputedStyle(this.toolbar);
+      const { scaleX } = this.layerOrigin();
+      const gap = px(style.columnGap) * scaleX;
+      const fixed = (px(style.paddingInlineStart) + px(style.paddingInlineEnd) + px(globalThis.getComputedStyle(this.nameItem).minInlineSize)) * scaleX
+        + gap + (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.drawnBox)(this.nameSeparator).width + gap
+        + (phone ? (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.drawnBox)(this.addTool.root).width + gap : 0);
+      const units = groups.map((group, at) => {
+        const { rank, pin } = (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.readPriority)(group.priority);
+        return { element: group.element, rank, pin, group: at };
+      });
+      const separators = groups.slice(0, -1).map((group) => group.separator);
+      // C155's engine (fitByPriority) over the row's measures, as layoutActionRow
+      // does it, with one difference: «⋯» may stand for good, when actions live
+      // in it whatever the room (the icons past the fifth, those without one).
+      const widths = (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.measureShown)([...units.map((unit) => unit.element), this.moreTool.root, this.moreSeparator, ...separators], OUT);
+      const separator = Math.max(0, ...widths.slice(units.length + 1));
+      const moreSpan = widths[units.length] + gap + (phone ? 0 : separator + gap);
+      const always = this.menuOnly.length > 0;
+      const { out } = (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.fitByPriority)({
+        units: units.map((unit, at) => ({ ...unit, width: widths[at] })),
+        gap,
+        separator,
+        room: width - fixed - (always ? moreSpan : 0),
+        more: always ? 0 : moreSpan,
+      });
+      const gone = new Set(out);
+      units.forEach((unit, at) => unit.element.classList.toggle(OUT, gone.has(at)));
+      // A separator stands between two groups that both keep something.
+      const keeps = (at) => !gone.has(at);
+      separators.forEach((element, at) => element.classList.toggle(OUT, !(keeps(at) && units.some((_, later) => later > at && keeps(later)))));
+      const more = always || out.length > 0;
+      this.moreTool.root.classList.toggle(OUT, !more);
+      this.moreSeparator.classList.toggle(OUT, !more || gone.size === units.length);
+      this.toolsOut = new Set(out.map((at) => groups[at]));
+      for (const group of this.toolGroups) if (phone && group.grip) this.toolsOut.add(group);
     }
 
     schedule() {
@@ -2132,13 +3231,6 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       }
       frame.hidden = false;
       Object.assign(frame.style, this.onLayer(box));
-      const label = frame.firstChild;
-      if (label) {
-        // The label is the move handle of a canvas whose host gives no grip.
-        label.hidden = Boolean(this.iframe) || this.isPassive() || this.actions.some((action) => action.icon === GRIP_ICON);
-        const { label: text, badges } = this.info(this.byId.get(id));
-        label.textContent = badges.length ? `${text} · ${badges.join(' · ')}` : text;
-      }
       return box;
     }
 
@@ -2212,6 +3304,15 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       else if (this.isPassive() || !this.toolbar.contains(globalThis.document.activeElement)) this.toolbar.hidden = true;
       if (!visible || this.toolbar.hidden) return;
       const port = travels ? this.scrollPort() : this.followPort();
+      if (this.isPhone()) {
+        // A phone's bottom bar, the screen's width (C170 (4)): placed by the sheet.
+        this.toolbar.setAttribute('aria-orientation', 'horizontal');
+        this.toggleAttribute('data-sf-overlay-side', false);
+        Object.assign(this.toolbar.style, { left: '', top: '' });
+        this.layoutToolbar(globalThis.document.documentElement.clientWidth);
+        return;
+      }
+      this.layoutToolbar(port.right - port.left);
       // The side only where the room for it is; otherwise above, as the docs say.
       const wantsSide = this.getAttribute('placement') === 'side';
       this.toggleAttribute('data-sf-overlay-side', wantsSide);
@@ -2301,12 +3402,10 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       const target = this.isPassive() ? null : this.insertionTarget;
       if (this.seam && !this.isPassive()) add(this.seam.parent, this.seam.slot, this.seam.index, true);
       if (target) add(target.parent_id, target.slot, target.index, true);
-      const selected = this.selectedId && !this.isPassive() ? this.byId.get(this.selectedId) : null;
-      if (selected) {
-        const parent = selected.parent ?? (selected.flat ? '' : null);
-        if (parent !== null && this.placeAllowed({ parent_id: parent, slot: selected.slot, index: selected.index + 1 })) add(parent, selected.slot, selected.index + 1, false);
-        else if (parent === null) for (const [slot, children] of Object.entries(selected.slots)) add(selected.id, slot, children.length, false);
-      }
+      // The «+» stands under the selected block at all times (C170 (3)); on a
+      // phone it is in the bottom bar, and the place stays for the keyboard.
+      const after = this.afterSelected();
+      if (after) add(after.parent_id, after.slot, after.index, !this.isPhone());
       // Buttons are reused by key so keyboard focus and marks survive repositioning.
       const existing = new Map([...this.insertionLayer.children].map((button) => [button.dataset.key, button]));
       const keep = new Set();
@@ -2325,16 +3424,25 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
           button.dataset.parent = point.parent;
           button.dataset.slot = point.slot;
           button.dataset.index = String(point.index);
+          // The icon button's own look, round, above the line (owner R246).
           const mark = globalThis.document.createElement('span');
-          mark.className = 'sf-composition-overlay-insert-mark';
+          mark.className = 'sf-composition-overlay-insert-mark sf-icon-button sf-icon-button--icon sf-icon-button--default sf-icon-button--primary sf-icon-button--size-1/3';
           mark.setAttribute('aria-hidden', 'true');
+          const icon = globalThis.document.createElement('i');
+          icon.className = 'sf-icon';
+          icon.textContent = 'add';
+          mark.append(icon);
           button.append(mark);
           this.insertionLayer.append(button);
         }
         const marked = Boolean(target && target.parent_id === point.parent && target.slot === point.slot && target.index === point.index);
         button.setAttribute('aria-pressed', marked ? 'true' : 'false');
-        button.setAttribute('aria-label', format(this.messages.insertAt, { slot: point.slot, index: point.index + 1 }));
+        button.setAttribute('aria-label', format(this.messages.insertAt, { slot: this.placeName(point.parent, point.slot), index: point.index + 1 }));
         button.toggleAttribute('data-sf-insert-shown', point.shown);
+        // Under the selected block the «+» stands alone on the frame's edge; the
+        // line is drawn where a place is pointed at, marked or focused.
+        const own = Boolean(after && after.parent_id === point.parent && after.slot === point.slot && after.index === point.index);
+        button.toggleAttribute('data-sf-insert-after', own && !marked && !(this.seam && this.seam.parent === point.parent && this.seam.slot === point.slot && this.seam.index === point.index));
         Object.assign(button.style, this.onLayer(line));
       }
       for (const [key, button] of existing) if (!keep.has(key)) button.remove();
@@ -2623,7 +3731,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
         }, options);
       }
       this.editing = { id, element, saved: element.cloneNode(true), previous: plainText(element), attribute, connection, returnFocus };
-      (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(this, true);
+      (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__.holdOpenSurfaceMark)(this, true);
       this.setAttribute('data-sf-overlay-editing', '');
       element.focus({ preventScroll: true });
       const selection = doc.defaultView?.getSelection();
@@ -2644,7 +3752,7 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       if (!editing) return;
       this.editing = null;
       editing.connection.abort();
-      (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(this, false);
+      (0,_open_surface_mark_js__WEBPACK_IMPORTED_MODULE_6__.holdOpenSurfaceMark)(this, false);
       this.removeAttribute('data-sf-overlay-editing');
       const { element } = editing;
       if (editing.attribute === null) element.removeAttribute('contenteditable');
@@ -2691,6 +3799,7 @@ __webpack_async_result__();
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SORTABLE_DROP_LINE: () => (/* binding */ SORTABLE_DROP_LINE),
 /* harmony export */   SORTABLE_INTENT_EVENT: () => (/* binding */ SORTABLE_INTENT_EVENT),
 /* harmony export */   SORTABLE_MOVE_EVENT: () => (/* binding */ SORTABLE_MOVE_EVENT),
 /* harmony export */   SORTABLE_STATE_EVENT: () => (/* binding */ SORTABLE_STATE_EVENT),
@@ -2699,6 +3808,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineSortable: () => (/* binding */ defineSortable),
 /* harmony export */   registerSortableDropTarget: () => (/* binding */ registerSortableDropTarget),
+/* harmony export */   requestSortableMove: () => (/* binding */ requestSortableMove),
 /* harmony export */   sortableIndexAt: () => (/* binding */ sortableIndexAt)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
@@ -2736,6 +3846,21 @@ function nextHelpId() {
 }
 const DRAG_THRESHOLD = 4;
 const EDGE = 32;
+// A row without a handle is taken by a finger only after a long press (owner
+// C171 (2), 2026-11-14): a plain swipe over the list scrolls the page, as any
+// list does. Moving further than the slop before the time is a scroll.
+const LONG_PRESS = 500;
+const LONG_PRESS_SLOP = 8;
+/**
+ * The drop line: one line two pixels thick for every place something lands --
+ * a list's gap, a grid cell's side, a canvas seam of the editor overlay (owner
+ * C171 (4), 2026-11-14: the overlay drew three). Its look is one rule,
+ * .sf-sortable-indicator, in sf-sortable's sheet, which the overlay's rule
+ * loads with it.
+ */
+const SORTABLE_DROP_LINE = 2;
+const LINE = SORTABLE_DROP_LINE;
+const HALF = SORTABLE_DROP_LINE / 2;
 
 const MESSAGES = {
   ru: {
@@ -2745,6 +3870,7 @@ const MESSAGES = {
     dropped: 'Положено: {item}, позиция {index} в «{list}».',
     cancelled: 'Перемещение отменено.',
     target: 'Цель: {target}.',
+    roledescription: 'перемещаемый',
   },
   en: {
     instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
@@ -2753,6 +3879,7 @@ const MESSAGES = {
     dropped: 'Dropped {item} at position {index} in “{list}”.',
     cancelled: 'Move cancelled.',
     target: 'Target: {target}.',
+    roledescription: 'draggable',
   },
 };
 
@@ -2815,7 +3942,7 @@ function scrollContainer(element) {
 }
 
 function indicator() {
-  let line = globalThis.document.querySelector('.sf-sortable-indicator');
+  let line = globalThis.document.querySelector('.sf-sortable-indicator:not([data-sf-drop-line-owner])');
   if (!line) {
     line = globalThis.document.createElement('div');
     line.className = 'sf-sortable-indicator';
@@ -2954,13 +4081,13 @@ function wrappedIndicatorRect(list, all, index) {
   const after = all[index - 1];
   if (before) {
     const target = before.getBoundingClientRect();
-    return { left: target.left - 1, top: target.top, width: 2, height: target.height };
+    return { left: target.left - HALF, top: target.top, width: LINE, height: target.height };
   }
   if (after) {
     const target = after.getBoundingClientRect();
-    return { left: target.right - 1, top: target.top, width: 2, height: target.height };
+    return { left: target.right - HALF, top: target.top, width: LINE, height: target.height };
   }
-  return { left: box.left, top: box.top, width: 2, height: box.height };
+  return { left: box.left, top: box.top, width: LINE, height: box.height };
 }
 
 function listIndicatorRect(list, all, index, horizontal) {
@@ -2969,10 +4096,76 @@ function listIndicatorRect(list, all, index, horizontal) {
   const after = all[index - 1];
   if (horizontal) {
     const x = before ? before.getBoundingClientRect().left : after ? after.getBoundingClientRect().right : box.left;
-    return { left: x - 1, top: box.top, width: 2, height: box.height };
+    return { left: x - HALF, top: box.top, width: LINE, height: box.height };
   }
   const y = before ? before.getBoundingClientRect().top : after ? after.getBoundingClientRect().bottom : box.top;
-  return { left: box.left, top: y - 1, width: box.width, height: 2 };
+  return { left: box.left, top: y - HALF, width: box.width, height: LINE };
+}
+
+/**
+ * The copy that follows the pointer: whole, not see-through (owner C171 (3),
+ * 2026-11-14: a 40 % copy -- the dimming of the item it was cloned from -- was
+ * hard to read), standing over the page on the overlay shadow (C20). The clone
+ * keeps its own look; a frame of the popup surface under it gives a row with
+ * no fill of its own a body, with the item's own corners.
+ */
+function ghostOf(item, box) {
+  const doc = globalThis.document;
+  const copy = item.cloneNode(true);
+  copy.removeAttribute('id');
+  for (const element of copy.querySelectorAll('[id]')) element.removeAttribute('id');
+  for (const name of ['data-sf-sortable-dragging', 'data-sf-sortable-lifted', 'data-sf-sortable-column-source', 'tabindex']) copy.removeAttribute(name);
+  copy.classList.add('sf-sortable-ghost-item');
+  Object.assign(copy.style, { margin: '0', inlineSize: '100%', boxSizing: 'border-box' });
+  const ghost = doc.createElement('div');
+  ghost.className = 'sf-sortable-ghost';
+  ghost.setAttribute('aria-hidden', 'true');
+  ghost.inert = true;
+  const style = globalThis.getComputedStyle(item);
+  ghost.style.borderRadius = style.borderRadius;
+  ghost.style.direction = style.direction;
+  Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
+  ghost.append(copy);
+  doc.body.append(ghost);
+  return ghost;
+}
+
+// A pointer drag ends with a click on what was under it (the handle, or a link
+// in a row): that click is the drop, not a press, and the handle's menu or the
+// link must not answer it. It comes in the same task as the pointerup.
+function swallowNextClick() {
+  const swallow = (event) => { event.preventDefault(); event.stopImmediatePropagation(); };
+  globalThis.addEventListener('click', swallow, { capture: true, once: true });
+  globalThis.setTimeout(() => globalThis.removeEventListener('click', swallow, { capture: true }), 0);
+}
+
+// What a reader says an item is (SO-1): a row that is a plain box takes a role
+// -- a button when nothing inside it is a control, a group when it holds one
+// (a control inside a button is not reachable) -- and every item says it can be
+// moved, in the page's language. A host's own role and description stay.
+const GENERIC = new Set(['DIV', 'SPAN', 'SECTION', 'ARTICLE', 'P']);
+function describeItem(item) {
+  if (!item.hasAttribute('role') && GENERIC.has(item.tagName)) {
+    const holdsControl = item.querySelector(`${INTERACTIVE},${HANDLE},[tabindex]`);
+    item.setAttribute('role', holdsControl ? 'group' : 'button');
+  }
+  if (!item.hasAttribute('aria-roledescription')) item.setAttribute('aria-roledescription', messages().roledescription);
+}
+
+/**
+ * A move a host asks for without dragging (the handle's menu): the same request
+ * and the same "dropped" words a drag ends with. index is the place the item
+ * takes once moved, as a drag's is.
+ */
+function requestSortableMove(list, item, index) {
+  const all = items(list);
+  const id = item?.getAttribute?.('data-sf-sortable-item');
+  const from = all.indexOf(item);
+  if (!id || from < 0 || index < 0 || index >= all.length || index === from) return false;
+  const name = list.getAttribute('id') || list.group || list.getAttribute('group') || '';
+  emitIntent(list, { item: id, from: name, to: name, index, mode: 'move' });
+  list.announce?.(format(messages().dropped, { item: itemLabel(item), index: index + 1, list: listName(list) }));
+  return true;
 }
 
 // An sf-sortable list sends the new name and its aliases.json sends the old
@@ -3081,7 +4274,11 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       if (!item.hasAttribute('tabindex') && !item.matches(INTERACTIVE)) item.tabIndex = 0;
       const described = (item.getAttribute('aria-describedby') || '').split(/\s+/u);
       if (this.instructions && !described.includes(this.instructions.id)) item.setAttribute('aria-describedby', [...described.filter(Boolean), this.instructions.id].join(' '));
-      if (!item.querySelector(HANDLE)) item.style.touchAction = 'none';
+      describeItem(item);
+      // A row without a handle is the handle itself; a finger takes it by a long
+      // press, so the page keeps scrolling over it (SO-3: touch-action none on
+      // the whole row stopped that).
+      item.toggleAttribute('data-sf-sortable-whole', !item.querySelector(HANDLE));
     }
 
     // The list keeps its live region and its instructions among its own
@@ -3140,24 +4337,37 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       const pointer = event.pointerId;
       let started = false;
       const pending = new AbortController();
+      // A finger on a row without a handle: the drag waits for a long press.
+      const longPress = !handle && event.pointerType === 'touch';
+      let timer = 0;
+      const lift = (at) => {
+        if (!this.begin(item, at.pointerType || event.pointerType || 'mouse')) { pending.abort(); return false; }
+        started = true;
+        item.setPointerCapture?.(pointer);
+        shared.session.ghost = this.ghost(item, at);
+        // The item leaves the flow only once its copy is on screen; a copy
+        // library (mode copy) keeps its item where it is.
+        if (silhouetteFor(this) && this.mode !== 'copy') {
+          shared.session.silhouette = true;
+          // Asked before the item leaves the flow: with it gone, a grid of
+          // two cells is one cell and does not look like a grid.
+          shared.session.wrappedLists = new Set(isWrapped(items(this)) ? [this] : []);
+          item.setAttribute('data-sf-sortable-lifted', '');
+          this.retarget(at.clientX, at.clientY);
+        }
+        return true;
+      };
       const move = (moveEvent) => {
         if (moveEvent.pointerId !== pointer) return;
         if (!started) {
-          if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
-          if (!this.begin(item, moveEvent.pointerType || 'mouse')) { pending.abort(); return; }
-          started = true;
-          item.setPointerCapture?.(pointer);
-          shared.session.ghost = this.ghost(item, moveEvent);
-          // The item leaves the flow only once its copy is on screen; a copy
-          // library (mode copy) keeps its item where it is.
-          if (silhouetteFor(this) && this.mode !== 'copy') {
-            shared.session.silhouette = true;
-            // Asked before the item leaves the flow: with it gone, a grid of
-            // two cells is one cell and does not look like a grid.
-            shared.session.wrappedLists = new Set(isWrapped(items(this)) ? [this] : []);
-            item.setAttribute('data-sf-sortable-lifted', '');
-            this.retarget(moveEvent.clientX, moveEvent.clientY);
+          const distance = Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y);
+          if (longPress) {
+            // The finger moved before the press was long: it scrolls the page.
+            if (distance > LONG_PRESS_SLOP) pending.abort();
+            return;
           }
+          if (distance < DRAG_THRESHOLD) return;
+          if (!lift(moveEvent)) return;
         }
         moveEvent.preventDefault();
         this.track(moveEvent.clientX, moveEvent.clientY);
@@ -3165,12 +4375,25 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       const up = (upEvent) => {
         if (upEvent.pointerId !== pointer) return;
         pending.abort();
-        if (started) this.drop();
+        if (started) { swallowNextClick(); this.drop(); }
       };
       const cancel = () => {
         pending.abort();
         if (started) finish(this, 'cancelled');
       };
+      pending.signal.addEventListener('abort', () => globalThis.clearTimeout(timer));
+      if (longPress) {
+        timer = globalThis.setTimeout(() => {
+          if (pending.signal.aborted || shared.session) return;
+          if (!lift(event)) return;
+          this.track(event.clientX, event.clientY);
+          // From here the finger moves the row, not the page: a touchmove
+          // the page does not scroll by, and no menu of the long press.
+          const hold = (touchEvent) => { if (touchEvent.cancelable) touchEvent.preventDefault(); };
+          globalThis.addEventListener('touchmove', hold, { signal: pending.signal, passive: false });
+          globalThis.addEventListener('contextmenu', hold, { signal: pending.signal, capture: true });
+        }, LONG_PRESS);
+      }
       globalThis.addEventListener('pointermove', move, { signal: pending.signal, passive: false });
       globalThis.addEventListener('pointerup', up, { signal: pending.signal });
       globalThis.addEventListener('pointercancel', cancel, { signal: pending.signal });
@@ -3180,16 +4403,8 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
 
     ghost(item, event) {
       const box = item.getBoundingClientRect();
-      const ghost = item.cloneNode(true);
-      ghost.removeAttribute('id');
-      for (const element of ghost.querySelectorAll('[id]')) element.removeAttribute('id');
-      ghost.classList.add('sf-sortable-ghost');
-      ghost.setAttribute('aria-hidden', 'true');
-      ghost.inert = true;
-      Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
       shared.session.offset = { x: event.clientX - box.left, y: event.clientY - box.top };
-      globalThis.document.body.append(ghost);
-      return ghost;
+      return ghostOf(item, box);
     }
 
     track(x, y) {
@@ -3466,11 +4681,11 @@ function attachSortable(container, options = {}) {
       if (index > session.originalIndex && after) left = after.right - width;
       else left = before ? before.left : (after ? after.right - width : extent.left);
     } else {
-      left = (before ? before.left : after ? after.right : extent.left) - 1;
+      left = (before ? before.left : after ? after.right : extent.left) - HALF;
     }
     Object.assign(outline().style, {
       left: `${left}px`, top: `${extent.top}px`,
-      width: preview === 'column' ? `${width}px` : '2px', height: `${extent.height}px`,
+      width: preview === 'column' ? `${width}px` : `${LINE}px`, height: `${extent.height}px`,
     });
   };
 
@@ -3528,14 +4743,8 @@ function attachSortable(container, options = {}) {
         if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
         session.started = true;
         doc.documentElement.setAttribute('data-sf-sortable-active', '');
-        const ghost = item.cloneNode(true);
-        ghost.removeAttribute('id');
-        for (const element of ghost.querySelectorAll('[id]')) element.removeAttribute('id');
-        ghost.classList.add('sf-sortable-ghost');
-        ghost.setAttribute('aria-hidden', 'true');
-        ghost.inert = true;
-        Object.assign(ghost.style, {width: `${box.width}px`, height: `${box.height}px`, left: `${box.left}px`, top: `${box.top}px`});
-        doc.body.append(ghost);
+        const ghost = ghostOf(item, box);
+        ghost.style.height = `${box.height}px`;
         session.ghost = ghost;
         session.offset = {x: start.x - box.left, y: start.y - box.top};
         session.cells = cellsOf(item).filter(Boolean);
@@ -3561,7 +4770,7 @@ function attachSortable(container, options = {}) {
   };
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, sortableIndexAt });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_DROP_LINE, SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, requestSortableMove, sortableIndexAt });
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3578,21 +4787,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "7e115d411c69"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.9.1","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.11.1","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true},"priority":{"type":"number|string","optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
 
 /***/ },
 
 /***/ "5842a411d855"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Composition overlay","runtime":{"cancelled":"Move cancelled.","editing":"Editing {label}. Enter saves, Escape cancels.","insert":"Insert","insert-at":"Insert into “{slot}”, position {index}","picked":"Moving {label}. Arrows choose a place, Enter drops, Escape cancels.","position":"{index} of {total}","selected":"Selected: {label}","toolbar":"Actions","tree":"Page structure"},"events":{"insert":{"label":"Insert"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Composition overlay","runtime":{"cancelled":"Move cancelled.","dropped":"Moved {label}. {place}.","editing":"Editing {label}. Enter saves, Escape cancels.","insert":"Insert","insert-after":"Insert after “{label}”","insert-at":"Insert into “{slot}”, position {index}","more":"More","picked":"Moving {label}. Arrows choose a place, Enter drops, Escape cancels.","position":"{index} of {total}","selected":"Selected: {label}","toolbar":"Actions","tree":"Page structure"},"events":{"insert":{"label":"Insert"}}}');
 
 /***/ },
 
 /***/ "9e4c4cb2370f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слой редактора","runtime":{"cancelled":"Перемещение отменено.","editing":"Редактирование: {label}. Enter — сохранить, Escape — отменить.","insert":"Вставить","insert-at":"Вставить в «{slot}», позиция {index}","picked":"Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.","position":"{index} из {total}","selected":"Выбрано: {label}","toolbar":"Действия","tree":"Структура страницы"},"events":{"insert":{"label":"Вставить"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Слой редактора","runtime":{"cancelled":"Перемещение отменено.","dropped":"Перемещено: {label}. {place}.","editing":"Редактирование: {label}. Enter — сохранить, Escape — отменить.","insert":"Вставить","insert-after":"Вставить после «{label}»","insert-at":"Вставить в «{slot}», позиция {index}","more":"Ещё","picked":"Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.","position":"{index} из {total}","selected":"Выбрано: {label}","toolbar":"Действия","tree":"Структура страницы"},"events":{"insert":{"label":"Вставить"}}}');
 
 /***/ }
 

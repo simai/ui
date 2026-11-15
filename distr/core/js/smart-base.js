@@ -1205,6 +1205,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   followDensity: () => (/* binding */ followDensity),
 /* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
 /* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
 /* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
 /* harmony export */ });
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
@@ -1301,6 +1303,40 @@ function densityOf(from) {
   }
 
   return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
 }
 
 /***/ },
@@ -3091,10 +3127,17 @@ const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
  */
 
 const FOCUSABLE = ['a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])'].join(',');
-/** The focusable nodes inside these roots that are drawn and not inert, in order. */
+/**
+ * The focusable nodes inside these roots that are drawn and not inert, in
+ * order. A control taken out of the Tab order (tabindex -1: the other
+ * segments of a roving group such as sf-segmented, a menu's rows) is no Tab
+ * stop: counted, it was the trap's last stop that Tab never reaches, and Tab
+ * from the group's current segment left the layer (sf-header-site's panel
+ * with the theme switch in its settings group, owner decision C161 (8)).
+ */
 
 function focusablesIn(...roots) {
-  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]'));
+  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]') && node.tabIndex >= 0);
 }
 
 function stack() {
@@ -4257,7 +4300,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
-/* harmony export */   pageWord: () => (/* binding */ pageWord)
+/* harmony export */   pageWord: () => (/* binding */ pageWord),
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -4312,14 +4356,42 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
+// built in is one file per language and delivery, fetched only by a page that
+// speaks it. A pack's words go into the same registry as words registered one
+// by one -- so a bundle built before packs existed reads them too -- a
+// Framework pack's beneath what is there, any other pack's over it: a product
+// overrides a Framework word whichever arrived first. The fetching is core's
+// (core/js/language-packs.js); each bundle only asks for a language. A STORE
+// made by an older bundle has no packs yet: they are added here.
+
+const PACKS = STORE.packs ??= {
+  loaded: new Map(),
+  pending: new Map(),
+  request: null
+};
+
+const isBuiltIn = code => code === 'ru' || code === 'en';
+/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+
+
+function needPack(code) {
+  const wanted = normalise(code);
+  const base = wanted.split('-')[0];
+  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  PACKS.request(base);
+  if (wanted !== base) PACKS.request(wanted);
+} // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
 // with (core/js/tag-aliases.js).
 
+
 const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
 
-const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
+function normalise(value) {
+  return String(value ?? '').trim().toLowerCase().replace('_', '-');
+}
 /** The languages to try, most specific first, English last. */
 
 
@@ -4477,7 +4549,16 @@ function within(target, node) {
 
   return false;
 }
+/**
+ * Tell the page's components that words changed without a registration: the
+ * composition editor words arrive in a chunk of their own (LC-1) and the
+ * forms drawn before them draw again.
+ */
 
+
+function refreshLanguage() {
+  announce();
+}
 function isRussianPage(node) {
   return pageLanguage(node) === 'ru';
 }
@@ -4500,17 +4581,52 @@ function pageText(dictionary, key, node, component) {
  */
 
 function localeText(dictionary, key, locale, component) {
-  for (const candidate of chain(locale || 'en')) {
+  const order = chain(locale || 'en');
+  needPack(order[0]);
+
+  for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
-    if (added !== undefined) return added;
+
+    if (added !== undefined) {
+      if (candidate === 'en' && added !== '') warnFallback(order, component, key);
+      return added;
+    }
+
     const shipped = dictionary?.[candidate]?.[key];
-    if (shipped !== undefined) return shipped;
+
+    if (shipped !== undefined) {
+      if (candidate === 'en' && shipped !== '') warnFallback(order, component, key);
+      return shipped;
+    }
   }
 
   return key;
+} // A language the Framework does not ship (owner decision C177 (4)) may come
+// partly translated: a word it lacks is said in the fallback language,
+// English, and that is shown, not silent (localization study LC-6). One
+// warning per page and language (de-AT and de are one), naming the first word
+// missed; every word missed is kept by language for SF.language.missing(),
+// and the language files' coverage is scripts/language-coverage.mjs. Kept on
+// the shared global, because every bundle carries this module.
+
+function warnFallback(order, owner, key) {
+  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+
+  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  const root = globalThis;
+  if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
+  const seen = root.__sfMissingWords;
+
+  if (!seen.has(wanted)) {
+    seen.set(wanted, new Set());
+    root.console?.warn?.(`[SIMAI Framework] "${wanted}": words missing, said in English (first: ${owner || 'component'} "${key}"); SF.language.missing('${wanted}') lists them`);
+  }
+
+  seen.get(wanted).add(`${owner || 'component'}|${key}`);
 } // Missing words are said once per component, word and language: a page that
 // draws a hundred rows must not print a hundred warnings. The marks are kept on
 // the shared global, because every bundle carries this module.
+
 
 function warnWord(owner, key, locale, said) {
   const root = typeof globalThis !== 'undefined' ? globalThis : {};
@@ -4571,6 +4687,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
+  needPack(locale);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -4588,6 +4705,7 @@ function pageWord(dictionary, key, node, {
     const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
     if (word === undefined || word === null) continue;
     if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+    if (candidate === 'en' && word !== '') warnFallback(chain(locale), owner, key);
 
     if (typeof word === 'object') {
       let form = 'other';
@@ -4625,7 +4743,8 @@ const language = {
   use(value) {
     const next = value === null || value === undefined ? null : normalise(value);
     if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    STORE.chosen = next;
+    if (next) needPack(next); // The choice is the page's language: <html lang> says it too (§11.1), so
     // the browser, a screen reader and CSS :lang() agree with the words.
     // use(null) gives the markup's own language back.
 
@@ -4666,6 +4785,72 @@ const language = {
     return this;
   },
 
+  /**
+   * A language pack (schema simai.language-pack, schema_version 1; schema
+   * core/contracts/language-pack.v1.schema.json): every word of one language
+   * for one delivery, by component. A Framework pack's words go beneath the
+   * words already registered, any other pack's over them, as register() does.
+   * The page draws again once. Answers what was taken, or null for something
+   * that is not a pack.
+   */
+  registerPack(pack, url = null) {
+    const code = normalise(pack?.lang);
+
+    if (pack?.schema !== 'simai.language-pack' || pack.schema_version !== 1 || !code || !pack.words || typeof pack.words !== 'object') {
+      globalThis.console?.warn?.(`[SIMAI Framework] not a language pack (simai.language-pack, schema_version 1)${url ? `: ${url}` : ''}`);
+      return null;
+    }
+
+    const under = (pack.delivery ?? 'framework') === 'framework';
+    let words = 0;
+
+    for (const [component, byKey] of Object.entries(pack.words)) {
+      if (!byKey || typeof byKey !== 'object') continue;
+      const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component);
+      if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
+      const byLanguage = REGISTERED.get(name);
+      const now = byLanguage.get(code) ?? {};
+      byLanguage.set(code, under ? { ...byKey,
+        ...now
+      } : { ...now,
+        ...byKey
+      });
+      words += Object.keys(byKey).length;
+    }
+
+    const info = {
+      lang: code,
+      delivery: pack.delivery ?? 'framework',
+      status: pack.status ?? null,
+      coverage: pack.coverage ?? null,
+      words,
+      url
+    };
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
+    announce();
+    return info;
+  },
+
+  /**
+   * Name a pack file to fetch when the page needs its language: one line for
+   * a product or a page (also SF_BOOT_CONFIG.languages = {code: url}). Core
+   * fetches it once, with the Framework's own pack of that language.
+   */
+  addPack(value, url) {
+    return PACKS.add ? PACKS.add(normalise(value), url) : false;
+  },
+
+  /** Fetch the packs of a language now; resolves when they are registered. */
+  load(value) {
+    return PACKS.load ? PACKS.load(normalise(value)) : Promise.resolve([]);
+  },
+
+  /** The packs on the page: {code: [{lang, delivery, status, coverage, words, url}]}. */
+  packs() {
+    return Object.fromEntries([...PACKS.loaded].map(([code, list]) => [code, list.map(info => ({ ...info
+    }))]));
+  },
+
   /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
@@ -4678,6 +4863,17 @@ const language = {
   /** The languages something has registered words for. */
   known(component) {
     return [...(wordsOf(component ?? '')?.keys() ?? [])];
+  },
+
+  /**
+   * The words the page has said in English so far for want of one in
+   * `value` (C177 (4): a language may ship partly; what it lacks is visible).
+   * `['sf-pagination|pages-label', ...]`; every language's when none is named.
+   */
+  missing(value) {
+    const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
+    if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
+    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -4698,6 +4894,7 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
+    PACKS.loaded.clear();
     STORE.chosen = null;
     announce();
     return this;
@@ -4709,8 +4906,27 @@ const language = {
 // composing its own elements gets the same rule here.
 
 if (typeof window !== 'undefined') {
-  window.SF = window.SF || {};
-  window.SF.language = language;
+  window.SF = window.SF || {}; // Every bundle publishes its copy; they share one store, so any copy
+  // answers alike -- except that a bundle built before language packs
+  // (an older package on the page) has no registerPack, addPack, load or
+  // packs. Once a copy with them is published, an older one does not
+  // replace it (C177).
+
+  const holder = window.SF;
+
+  if (!Object.getOwnPropertyDescriptor(holder, 'language')?.set) {
+    let published = holder.language;
+    Object.defineProperty(holder, 'language', {
+      configurable: true,
+      enumerable: true,
+      get: () => published,
+      set: value => {
+        if (typeof value?.registerPack === 'function' || typeof published?.registerPack !== 'function') published = value;
+      }
+    });
+  }
+
+  holder.language = language;
   window.SF.pageLanguage = pageLanguage;
   window.SF.pageText = pageText;
 }
@@ -5083,7 +5299,18 @@ function anchor(reference, floating, options = {}) {
   };
 
   const heightCap = cap(floatingStyle.maxHeight, document.documentElement.clientHeight);
-  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth);
+  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth); // A point -- a reference that draws a box of no size: a fixed span where a
+  // right-click or a long press was (sf-menu-context, C164 (1)) -- is not a
+  // control the panel hangs from but a corner, as system menus open: the panel
+  // flips to the other side of the point on both axes when it does not fit,
+  // left of it at the right edge (right of it in RTL), above it at the bottom.
+  // Shifted, it covered the point and stood 36 px off it on a phone (ui-view
+  // K1 follow-ups, 2026-11-15). Only when it fits on neither side is it
+  // shifted, to the viewport's edge less the padding (--sf-space-1/2), on the
+  // side with more room. A box of any size keeps its alignment and is shifted.
+
+  const pointBox = reference.getBoundingClientRect();
+  const atPoint = pointBox.width === 0 && pointBox.height === 0 && reference.getClientRects().length > 0;
   const controller = {
     side: settings.side,
     stopped: false
@@ -5208,20 +5435,23 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = referenceRect(reference);
+    const box = referenceRect(reference); // A point is not a field at a frame's edge: it keeps the whole padding.
+
     const edges = {
       top: padding,
       bottom: padding,
-      left: Math.min(padding, Math.max(0, box.left)),
-      right: Math.min(padding, Math.max(0, clientWidth - box.right))
+      left: atPoint ? padding : Math.min(padding, Math.max(0, box.left)),
+      right: atPoint ? padding : Math.min(padding, Math.max(0, clientWidth - box.right))
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
       alignmentAxis: alignment
-    })];
+    })]; // crossAxis: a point also flips its alignment (start <-> end) when the
+    // panel overflows the inline edge; a box only flips its side.
+
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
-      crossAxis: false
+      crossAxis: atPoint
     })); // Shift before size: a panel near the inline edge moves inside the viewport
     // instead of being squeezed to the space left of its field.
 

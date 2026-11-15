@@ -1988,6 +1988,154 @@ if (typeof window !== 'undefined') publishCoreModules(window);
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2105,6 +2253,462 @@ if (typeof globalThis !== 'undefined') {
   api.note = noteDeprecated;
   globalThis.SF.deprecations = api;
 }
+
+/***/ },
+
+/***/ "4fa740738112"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DEFAULTS: () => (/* binding */ DEFAULTS),
+/* harmony export */   FONTS: () => (/* binding */ FONTS),
+/* harmony export */   IMAGES: () => (/* binding */ IMAGES),
+/* harmony export */   LEGACY_REMOVE_AFTER: () => (/* binding */ LEGACY_REMOVE_AFTER),
+/* harmony export */   LEGACY_SCHEMES: () => (/* binding */ LEGACY_SCHEMES),
+/* harmony export */   LEGACY_SINCE: () => (/* binding */ LEGACY_SINCE),
+/* harmony export */   SCHEMES: () => (/* binding */ SCHEMES),
+/* harmony export */   STORAGE_KEY: () => (/* binding */ STORAGE_KEY),
+/* harmony export */   TEXT_SCALES: () => (/* binding */ TEXT_SCALES),
+/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   applySettings: () => (/* binding */ applySettings),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   forcedColors: () => (/* binding */ forcedColors),
+/* harmony export */   fromRoot: () => (/* binding */ fromRoot),
+/* harmony export */   installSkipLink: () => (/* binding */ installSkipLink),
+/* harmony export */   isDefault: () => (/* binding */ isDefault),
+/* harmony export */   normalize: () => (/* binding */ normalize),
+/* harmony export */   readStored: () => (/* binding */ readStored),
+/* harmony export */   reducedMotion: () => (/* reexport safe */ _motion_js__WEBPACK_IMPORTED_MODULE_2__.reducedMotion),
+/* harmony export */   resetSettings: () => (/* binding */ resetSettings),
+/* harmony export */   schemeName: () => (/* binding */ schemeName),
+/* harmony export */   writeSettings: () => (/* binding */ writeSettings)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2ee7a47e9b10");
+// SF.displaySettings: how a person asked this site to be shown (owner decision
+// C196, 2026-11-15; research ui-control
+// control/research/2026-11-15-accessibility-worldwide.md).
+//
+// The settings are root attributes the core sheet reads
+// (core/scss/_sf_css__display.scss): data-sf-scheme, data-sf-text-scale,
+// data-sf-text-spacing, data-sf-images, data-sf-motion, data-sf-font and
+// data-sf-links. Core applies the person's choice on every page of the site,
+// whether the page carries the sf-display-settings panel or not; the panel
+// only writes it.
+//
+// - The device first: a text step multiplies the browser's own size; under
+//   forced-colors the colours are the system's (the panel's colour group is
+//   off); reducedMotion() is true when the device or the person asks.
+// - The choice is kept in this browser only: localStorage
+//   `sf-display-settings`, no cookie, nothing sent to a server (C196 (5)).
+//   A browser that refuses storage keeps it for the page.
+// - Nothing here claims that a site meets a standard (C196 (6)).
+//
+// Also the link «Перейти к содержимому» / «Skip to content» (C196, core on
+// every site): written first in <body> when the page has a main region and no
+// such link of its own; <html data-sf-skip-link="off"> leaves it out.
+//
+// The state is on the shared global: every bundle carries its own copy of
+// this module.
+
+
+
+const STORAGE_KEY = 'sf-display-settings';
+const SCHEMES = Object.freeze(['black-on-white', 'white-on-black', 'yellow-on-black', 'blue-on-sky', 'brown-on-cream']);
+const TEXT_SCALES = Object.freeze([100, 125, 150, 175, 200]);
+const IMAGES = Object.freeze(['colour', 'grey', 'hide']);
+const FONTS = Object.freeze(['site', 'sans', 'serif']); // The legacy low-vision version's scheme names (src/component/special, SF4
+// cookies `specialcolor`), each to the nearest new scheme until 2027-01-01
+// (C196 (3), (7); journal display-settings-replaces-special).
+
+const LEGACY_SCHEMES = Object.freeze({
+  white: 'black-on-white',
+  black: 'white-on-black',
+  yellow: 'yellow-on-black',
+  blue: 'blue-on-sky',
+  green: 'yellow-on-black'
+});
+const LEGACY_SINCE = '2026-11-15';
+const LEGACY_REMOVE_AFTER = '2027-01-01'; // The words core says itself; the same as sf-display-settings' language files
+// (tests/display-settings.contract.test.mjs holds them equal).
+
+const WORDS = {
+  en: {
+    'skip-link-text': 'Skip to content'
+  },
+  ru: {
+    'skip-link-text': 'Перейти к содержимому'
+  }
+};
+const DEFAULTS = Object.freeze({
+  scheme: '',
+  textScale: 100,
+  textSpacing: 'normal',
+  images: 'colour',
+  motion: 'system',
+  font: 'site',
+  links: 'site'
+});
+const ATTRIBUTES = Object.freeze({
+  scheme: 'data-sf-scheme',
+  textScale: 'data-sf-text-scale',
+  textSpacing: 'data-sf-text-spacing',
+  images: 'data-sf-images',
+  motion: 'data-sf-motion',
+  font: 'data-sf-font',
+  links: 'data-sf-links'
+});
+const CAPTION = 'sf-image-caption';
+
+function state() {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.displaySettings ||= {
+    listeners: new Set(),
+    memory: null,
+    observer: null,
+    skipClick: false
+  };
+}
+
+function storage() {
+  try {
+    return globalThis.localStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+/** A scheme name as core knows it: a new name, a legacy name aliased, else ''. */
+
+
+function schemeName(value) {
+  const name = String(value ?? '').trim().toLowerCase().replace(/^special/u, '');
+  if (SCHEMES.includes(name)) return name;
+  const to = LEGACY_SCHEMES[name];
+  if (!to) return '';
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: 'sf-display-settings',
+    kind: 'value',
+    attribute: 'scheme',
+    from: String(value),
+    to,
+    since: LEGACY_SINCE,
+    remove_after: LEGACY_REMOVE_AFTER,
+    expired: Date.now() > Date.parse(`${LEGACY_REMOVE_AFTER}T23:59:59Z`)
+  });
+  return to;
+}
+/** The settings made safe: every field one of its values, unknown fields gone. */
+
+function normalize(value) {
+  const given = value && typeof value === 'object' ? value : {};
+  const scale = Number(given.textScale);
+  return {
+    scheme: schemeName(given.scheme),
+    textScale: TEXT_SCALES.includes(scale) ? scale : 100,
+    textSpacing: given.textSpacing === 'wide' ? 'wide' : 'normal',
+    images: IMAGES.includes(given.images) ? given.images : given.images === 'gray' ? 'grey' : 'colour',
+    motion: given.motion === 'reduce' ? 'reduce' : 'system',
+    font: FONTS.includes(given.font) ? given.font : 'site',
+    links: given.links === 'underline' ? 'underline' : 'site'
+  };
+}
+/** Whether nothing is changed. */
+
+function isDefault(settings) {
+  const value = normalize(settings);
+  return Object.keys(DEFAULTS).every(key => value[key] === DEFAULTS[key]);
+} // The root attribute of each field; a default is no attribute.
+
+function attributeValue(key, value) {
+  if (value === DEFAULTS[key]) return null;
+  return String(value);
+}
+/** The settings the root shows now (a page or a server may have set them). */
+
+
+function fromRoot(root = globalThis.document?.documentElement) {
+  if (!root?.getAttribute) return normalize({});
+
+  const read = key => root.getAttribute(ATTRIBUTES[key]);
+
+  return normalize({
+    scheme: read('scheme'),
+    textScale: read('textScale') ?? 100,
+    textSpacing: read('textSpacing'),
+    images: read('images'),
+    motion: read('motion'),
+    font: read('font'),
+    links: read('links')
+  });
+}
+/** The person's choice kept in this browser, or null. */
+
+function readStored() {
+  const store = storage();
+
+  if (store) {
+    try {
+      const raw = store.getItem(STORAGE_KEY);
+      if (raw !== null) return normalize(JSON.parse(raw));
+    } catch {// Not JSON, or storage refused: as if nothing was kept.
+    }
+  }
+
+  return state().memory ? normalize(state().memory) : null;
+}
+
+function captionImages(doc) {
+  for (const image of doc.querySelectorAll('img[alt], svg[role="img"][aria-label]')) {
+    const text = (image.getAttribute('alt') ?? image.getAttribute('aria-label') ?? '').trim();
+    if (!text) continue;
+    const anchor = image.parentElement?.localName === 'picture' ? image.parentElement : image;
+    const next = anchor.nextElementSibling;
+
+    if (next?.classList.contains(CAPTION)) {
+      if (next.textContent !== text) next.textContent = text;
+      continue;
+    }
+
+    const caption = doc.createElement('span');
+    caption.className = CAPTION;
+    caption.textContent = text;
+    anchor.after(caption);
+  }
+}
+
+function followImages(doc, hide) {
+  const held = state();
+
+  if (!hide) {
+    held.observer?.disconnect();
+    held.observer = null;
+    return;
+  }
+
+  if (doc.body) captionImages(doc);
+  if (held.observer || !doc.defaultView?.MutationObserver || !doc.documentElement) return;
+  let queued = false;
+  held.observer = new doc.defaultView.MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      captionImages(doc);
+    });
+  });
+  held.observer.observe(doc.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['alt', 'aria-label']
+  });
+}
+/** Writes the settings on the root (no storage). */
+
+
+function applySettings(settings, root = globalThis.document?.documentElement) {
+  if (!root?.setAttribute) return normalize(settings);
+  const value = normalize(settings);
+
+  for (const [key, name] of Object.entries(ATTRIBUTES)) {
+    const next = attributeValue(key, value[key]);
+    if (next === null) root.removeAttribute(name);else if (root.getAttribute(name) !== next) root.setAttribute(name, next);
+  }
+
+  if (root.ownerDocument) followImages(root.ownerDocument, value.images === 'hide');
+  return value;
+}
+
+function announce(value, root) {
+  for (const listener of state().listeners) {
+    try {
+      listener({ ...value
+      });
+    } catch (error) {
+      console.error('SF.displaySettings listener failed', error);
+    }
+  }
+
+  const View = root?.ownerDocument?.defaultView;
+  if (View?.CustomEvent) root.ownerDocument.dispatchEvent(new View.CustomEvent('sf-display-change', {
+    detail: { ...value
+    }
+  }));
+}
+/** Keeps the choice in this browser and shows it. */
+
+
+function writeSettings(settings, root = globalThis.document?.documentElement) {
+  const value = normalize(settings);
+  const store = storage();
+  const plain = isDefault(value) ? null : value;
+  state().memory = plain;
+
+  if (store) {
+    try {
+      if (plain) store.setItem(STORAGE_KEY, JSON.stringify(plain));else store.removeItem(STORAGE_KEY);
+    } catch {// A full or refused storage keeps the choice for this page only.
+    }
+  }
+
+  applySettings(value, root);
+  announce(value, root);
+  return value;
+}
+/** «Обычная версия»: everything back to the site's own look. */
+
+function resetSettings(root = globalThis.document?.documentElement) {
+  return writeSettings(DEFAULTS, root);
+}
+
+function matches(query) {
+  try {
+    return Boolean(globalThis.matchMedia?.(query).matches);
+  } catch {
+    return false;
+  }
+}
+/** True when the device asks for less motion or the person stopped it here. */
+
+
+
+/** True when the system sets the colours (Windows contrast themes). */
+
+function forcedColors() {
+  return matches('(forced-colors: active)');
+} // ---------------------------------------------------------------------------
+// «Перейти к содержимому»
+// ---------------------------------------------------------------------------
+
+function focusable(element) {
+  return element.matches?.('a[href], button, input, select, textarea, [tabindex], [contenteditable="true"]');
+}
+
+function skipTarget(link) {
+  const hash = link.getAttribute('href') ?? '';
+  if (!hash.startsWith('#') || hash.length < 2) return null;
+
+  try {
+    return link.ownerDocument.getElementById(decodeURIComponent(hash.slice(1)));
+  } catch {
+    return null;
+  }
+} // The keyboard follows the link: the target takes the focus (Safari and some
+// screen readers leave it where it was on a jump to a non-focusable element).
+
+
+function followSkip(event) {
+  const link = event.target?.closest?.('a.sf-skip-link');
+  if (!link) return;
+  const target = skipTarget(link);
+  if (!target) return;
+  if (!focusable(target)) target.setAttribute('tabindex', '-1');
+  target.focus({
+    preventScroll: false
+  });
+}
+/** Writes the skip link when the page has a main region and none of its own. */
+
+
+function installSkipLink(doc = globalThis.document) {
+  if (!doc?.body || !doc.documentElement) return null;
+  const held = state();
+
+  if (!held.skipClick) {
+    held.skipClick = true;
+    doc.addEventListener('click', followSkip);
+  }
+
+  if (doc.documentElement.getAttribute('data-sf-skip-link') === 'off') return null;
+  if (doc.querySelector('a.sf-skip-link, a[data-sf-skip-link]')) return null;
+  const main = doc.querySelector('main, [role="main"]');
+  if (!main) return null;
+
+  if (!main.id) {
+    let id = 'sf-main';
+
+    for (let n = 2; doc.getElementById(id); n += 1) id = `sf-main-${n}`;
+
+    main.id = id;
+  }
+
+  const link = doc.createElement('a');
+  link.className = 'sf-skip-link';
+  link.href = `#${main.id}`;
+  link.setAttribute('data-sf-skip-link', 'core');
+  link.textContent = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, 'skip-link-text', doc.documentElement, {
+    component: 'sf-display-settings',
+    source: 'ru'
+  });
+  doc.body.prepend(link);
+  return link;
+} // ---------------------------------------------------------------------------
+
+function subscribe(listener) {
+  if (typeof listener !== 'function') return () => {};
+  state().listeners.add(listener);
+  return () => state().listeners.delete(listener);
+}
+
+function start() {
+  const doc = globalThis.document;
+  const root = doc?.documentElement;
+  if (!root) return; // The person's choice, before the page draws what core draws. A setting the
+  // page printed on the root itself stays when the person chose nothing.
+
+  const stored = readStored();
+  if (stored) applySettings(stored, root);else if (root.getAttribute(ATTRIBUTES.images) === 'hide') followImages(doc, true);
+
+  const ready = () => {
+    installSkipLink(doc);
+    if (root.getAttribute(ATTRIBUTES.images) === 'hide') followImages(doc, true);
+  };
+
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', ready, {
+    once: true
+  });else ready(); // Another tab of the site changed the choice.
+
+  globalThis.addEventListener?.('storage', event => {
+    if (event.key !== STORAGE_KEY || event.storageArea !== storage()) return;
+    let next = null;
+
+    try {
+      next = event.newValue === null ? null : JSON.parse(event.newValue);
+    } catch {
+      next = null;
+    }
+
+    announce(applySettings(next ?? DEFAULTS, root), root);
+  });
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+
+  if (!globalThis.SF.displaySettings) {
+    globalThis.SF.displaySettings = Object.freeze({
+      storageKey: STORAGE_KEY,
+      schemes: SCHEMES,
+      textScales: TEXT_SCALES,
+      defaults: DEFAULTS,
+      read: () => readStored() ?? fromRoot(),
+      current: () => fromRoot(),
+      write: settings => writeSettings(settings),
+      reset: () => resetSettings(),
+      subscribe,
+      reducedMotion: () => (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.reducedMotion)(),
+      forcedColors: () => forcedColors(),
+      installSkipLink: doc => installSkipLink(doc)
+    });
+    start();
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (globalThis.SF?.displaySettings);
 
 /***/ },
 
@@ -2719,6 +3323,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _composition_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ac24888e7d3e");
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2ee7a47e9b10");
 // Background effects (simai.effect 1.1.0; Larena's design of 2026-10-14,
 // larena-specs docs/architecture/2026-10-14-background-effects.md). An effect
 // is an animated background drawn into one area of a page; its manifest
@@ -2757,6 +3362,8 @@ __webpack_require__.r(__webpack_exports__);
 // option-sf-boot-config-effects-to-package). Only security fixes land here;
 // every other change goes to the set. Each use is noted in SF.deprecations.
 
+
+ // The device's reduced motion or the site's «остановить движение» (C196).
 
  // The fields a writer of an effect.json emits: the format named without a
 // version, with schema_version beside it (format-names-without-version). A
@@ -3048,8 +3655,6 @@ function effectSchemes(manifest) {
 // foreign, and runs only in a sandbox (pair-under-the-same-trust).
 
 const pairIsForeign = manifest => typeof manifest?.pair === 'string' && PAIR_URL.test(manifest.pair);
-
-const reducedMotion = () => Boolean(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 
 const capabilities = manifest => Array.isArray(manifest?.capabilities) ? manifest.capabilities : [];
 
@@ -3386,7 +3991,7 @@ function mountModule(host, {
   let drawn = pick(scheme);
 
   const context = () => Object.freeze({
-    reducedMotion: reducedMotion(),
+    reducedMotion: (0,_motion_js__WEBPACK_IMPORTED_MODULE_3__.reducedMotion)(),
     locale: locale ?? (document.documentElement.getAttribute('lang') || 'en'),
     scheme: drawn
   });
@@ -3424,8 +4029,6 @@ function mountModule(host, {
   document.addEventListener('visibilitychange', sync); // A person who turns reduced motion on is given a still frame at once: the
   // effect is mounted again with the context that says so.
 
-  const motion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
-
   const onMotion = () => {
     if (destroyed) return;
     call('destroy');
@@ -3435,7 +4038,7 @@ function mountModule(host, {
     sync();
   };
 
-  motion?.addEventListener?.('change', onMotion); // Off screen it asks for no frames either.
+  const stopMotion = (0,_motion_js__WEBPACK_IMPORTED_MODULE_3__.watchMotion)(onMotion); // Off screen it asks for no frames either.
 
   const Sight = globalThis.IntersectionObserver;
   const sight = Sight ? new Sight(entries => {
@@ -3479,7 +4082,7 @@ function mountModule(host, {
       if (destroyed) return;
       destroyed = true;
       document.removeEventListener('visibilitychange', sync);
-      motion?.removeEventListener?.('change', onMotion);
+      stopMotion();
       sight?.disconnect();
       call('destroy'); // Whatever the effect left behind goes with it.
 
@@ -5042,7 +5645,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
 /* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
 /* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
 /* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
@@ -5068,8 +5673,10 @@ function hasDateStyle(style) {
  *
  * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
  * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
  */
 
 
@@ -5077,6 +5684,7 @@ function formatDate(value, {
   date = 'medium',
   time = null,
   intl = null,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -5091,23 +5699,107 @@ function formatDate(value, {
     if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
   }
 
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
   return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
 }
 /**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
  */
 
 function calendarDayOffset(value, {
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
   if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
   return Math.round((day - base) / DAY_MS);
 }
 /**
@@ -5117,10 +5809,26 @@ function calendarDayOffset(value, {
  * draws them again; «сегодня» said yesterday is wrong by morning.
  */
 
-function msUntilNextDay(now = new Date()) {
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
 }
 
 /***/ },
@@ -5136,22 +5844,47 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4294700087dc");
 // File sizes in the page's language («1,4 МБ»), with no top-level side
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
- // The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
+ // The four words of a size live in core's language files
+// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
+// other language takes the words a product registers for `sf-file-size`
+// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// English words with its own digits. A component with words of its own passes
+// them as `units`. The registry is read from the shared global the page
+// language keeps (core/js/page-language.js), so this module still runs
+// nothing on load.
+
+
+const UNIT_KEYS = /* @__PURE__ */Object.freeze(['b', 'kb', 'mb', 'gb']);
+
+function unitsOf(words) {
+  return Object.freeze(UNIT_KEYS.map(key => words[key]));
+}
 
 const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
+  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
 });
-/** The unit words for a locale: its language's, else English. */
+
+function registeredUnits(code) {
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
+  return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
+}
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
+
 
 function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
+    if (units) return units;
+  }
+
+  return registeredUnits('en') ?? FILE_SIZE_UNITS.en;
 }
 /**
  * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
@@ -5403,6 +6136,8 @@ function capitalise(text, locale) {
  * `weekday: false` goes from yesterday straight to the date; `capital: true`
  * starts the word with a capital, as a heading or a divider does.
  *
+ * `timeZone` counts the days and writes them on that zone's clock.
+ *
  * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
  * says when.
  */
@@ -5415,6 +6150,7 @@ function formatRelativeDay(value, {
   tomorrow,
   weekday = true,
   capital = false,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -5422,8 +6158,12 @@ function formatRelativeDay(value, {
   if (!moment) return gap;
   const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
   const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
-    now
+    now,
+    timeZone
   });
+  const zone = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.knownTimeZone)(timeZone) ? {
+    timeZone
+  } : {};
   const own = {
     0: today,
     [-1]: yesterday,
@@ -5439,7 +6179,8 @@ function formatRelativeDay(value, {
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
-      weekday: 'long'
+      weekday: 'long',
+      ...zone
     }).format(moment);
   } else {
     const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
@@ -5448,7 +6189,8 @@ function formatRelativeDay(value, {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
       day: 'numeric',
       month: 'long',
-      ...year
+      ...year,
+      ...zone
     }).format(moment);
   }
 
@@ -6736,31 +7478,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9770341d4bfa");
 /* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ff34a74152a4");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("0730c3d86f4b");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("a30ed252d965");
-/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("43cada8855de");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("5b8371b87515");
-/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("1446153b1a96");
-/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("effedf2a2981");
-/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("a1e33ce15a5e");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _composition_editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("bd04957f6bb9");
+/* harmony import */ var _language_packs_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("a55e8fb038a2");
+/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ff34a74152a4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _display_settings_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("4fa740738112");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("0730c3d86f4b");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("a30ed252d965");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("5b8371b87515");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("1446153b1a96");
+/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("effedf2a2981");
+/* harmony import */ var _new_tab_link_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("a583dcca136f");
+/* harmony import */ var _menu_open_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("8d229b7c92e9");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("a1e33ce15a5e");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__("6c7f357fe960");
  // The text faces the page needs, started before anything else runs, so a
 // quick network brings Inter in before the first frame (core/js/text-fonts.js).
 
@@ -6773,8 +7520,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // The composition editor words are a chunk of their own, fetched by
+// SF.Composition.loadEditorWords() on a page that draws an editor form, not
+// part of every page (localization study LC-1, 2026-11-14).
 
 
+(0,_composition_editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_9__.setEditorWordsLoader)(() => __webpack_require__.e(/* import() | core-editor-words */ 109341761891229).then(__webpack_require__.bind(__webpack_require__, "fe90f998a31d"))); // Every language but ru and en is a pack of its own, fetched only by a page
+// that speaks it (owner decision C177, 2026-11-14): core/js/language-packs.js.
+
+
+(0,_language_packs_js__WEBPACK_IMPORTED_MODULE_10__.installLanguagePacks)();
+
+
+ // What a person asked this site to look like (owner decision C196): the root
+// attributes, the motion mark and the skip link, before anything draws.
 
 
 
@@ -6799,6 +7558,11 @@ __webpack_require__.r(__webpack_exports__);
  // Copy on click for code in running text, where a container opts in with
 // data-sf-code-copy (owner, 2026-11-07, R024): SF.codeCopy.
 
+ // A link that opens a new tab shows arrow_outward and says «(откроется в
+// новой вкладке)» to a screen reader (owner decision C186 (3)): SF.newTabLink.
+
+ // The page's one menu of actions (owner decision C184 (4)): SF.menu.open.
+
  // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): SF.readingPosition, which sf-list-feed and sf-list keep a place by.
 
@@ -6817,7 +7581,8 @@ __webpack_require__.r(__webpack_exports__);
 
  // SF.format, before anything below can be asked to format.
 
-(0,_format_js__WEBPACK_IMPORTED_MODULE_19__.publishFormat)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
+(0,_format_js__WEBPACK_IMPORTED_MODULE_22__.publishFormat)();
+(0,_menu_open_js__WEBPACK_IMPORTED_MODULE_28__.publishMenu)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
 // core.js, holding the modules the Smart bundles are built against (they carry
 // no lit or smart-base of their own). Asked for by the bundles and by the
 // Loader as soon as it queues a Smart element. A page that included the script
@@ -6832,10 +7597,10 @@ if (typeof window !== 'undefined') {
 
   if (SF.deprecations && !('warn' in SF.deprecations)) SF.deprecations.warn = false; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_27__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_32__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_30__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_35__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -6899,9 +7664,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -6987,10 +7752,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_28__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_33__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_29__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_34__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -7096,12 +7861,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   // them at once and is left alone, as it was.
 
   const holdUndefinedUntilDefined = () => {
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) {
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_32__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_32__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_37__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_37__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -7109,12 +7874,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: var(--sf-layer--window, 9000);background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_33__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_33__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_38__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_38__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
@@ -7122,8 +7887,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return; // Preloaded modules draw their elements before this runs: nothing is
     // left for a preloader to stand in for (input-choice audit 2026-11-11).
 
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.createPreloaderContent)(cfg);
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) return;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -7143,7 +7908,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -7153,7 +7918,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // Read when the preloader would show, after its delay, when the
       // server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -7175,10 +7940,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
       // preloader over drawn content (R216, any site).
 
-      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.watchForContent)(() => {
+      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.watchForContent)(() => {
         preloaderRun = false;
         stopAnimation();
         hide();
@@ -7223,7 +7988,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageShowsContent)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageShowsContent)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -7410,6 +8175,154 @@ if (typeof globalThis !== 'undefined') installInternal(globalThis);
 
 /***/ },
 
+/***/ "a55e8fb038a2"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   installLanguagePacks: () => (/* binding */ installLanguagePacks)
+/* harmony export */ });
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e15813114531");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+// Fetching language packs (owner decision C177, 2026-11-14; format
+// docs/developer/language-packs.md, schema core/contracts/language-pack.v1.schema.json).
+//
+// ru and en are built into every component. Any other language is one file
+// per language and delivery: the Framework's own are core/lang/<code>.json,
+// listed in core/lang/index.json (written by scripts/build-language-packs.mjs),
+// so a page asks only for a pack that exists. A page fetches a pack only when
+// it speaks that language: <html lang> when core starts, SF.language.use(),
+// or the first word a component looks up in it (a part of the page with a
+// [lang] of its own). A product names its own pack the same way, one line:
+// SF.language.addPack('kk', '/assets/product/lang/kk.json') or
+// SF_BOOT_CONFIG.languages = {kk: '/assets/product/lang/kk.json'}.
+//
+// Only core fetches: every bundle carries page-language.js, which asks through
+// the shared store (globalThis.__sfPageLanguage.packs) and reads the words.
+
+
+const STORE = globalThis.__sfPageLanguage;
+const PACKS = STORE?.packs; // Where core came from (public-path.js): core/lang/ beside core/js/.
+
+function coreRoot() {
+  try {
+    // eslint-disable-next-line no-undef
+    return  true && __webpack_require__.p ? __webpack_require__.p : '';
+  } catch {
+    return '';
+  }
+}
+
+function resolve(url) {
+  try {
+    return new URL(url, globalThis.document?.baseURI ?? undefined).href;
+  } catch {
+    return String(url);
+  }
+}
+
+function installLanguagePacks({
+  root = coreRoot(),
+  packs = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"],
+  fetchJson,
+  again = false
+} = {}) {
+  // Once per page: a second core (two pairs on one page) leaves the first's.
+  // `again` is for tests.
+  if (!PACKS || PACKS.request && !again) return PACKS;
+  const sources = new Map();
+  const asked = new Set();
+  const fetched = new Set();
+
+  const get = fetchJson ?? (url => globalThis.fetch(url, {
+    credentials: 'same-origin'
+  }).then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }));
+
+  const fetchSome = code => {
+    const urls = (sources.get(code) ?? []).filter(url => !fetched.has(url));
+    if (!urls.length) return PACKS.pending.get(code) ?? Promise.resolve([]);
+
+    for (const url of urls) fetched.add(url);
+
+    const before = PACKS.pending.get(code) ?? Promise.resolve([]);
+    const run = before.then(() => Promise.all(urls.map(url => get(url).then(pack => ({
+      pack,
+      url
+    }), error => {
+      globalThis.console?.warn?.(`[SIMAI Framework] language pack ${url} not loaded (${error?.message ?? error}); its words are said in English`);
+      return null;
+    })))).then(arrived => {
+      // No longer pending before the words are taken: the drawing that
+      // registering starts reports what the packs still lack (C177 (4)).
+      if (PACKS.pending.get(code) === run) PACKS.pending.delete(code);
+      const taken = arrived.filter(Boolean).map(({
+        pack,
+        url
+      }) => _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.registerPack(pack, url));
+      if (!taken.some(Boolean)) (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.refreshLanguage)();
+      return taken;
+    });
+    PACKS.pending.set(code, run);
+    return run;
+  };
+
+  PACKS.add = (code, url) => {
+    if (!code || !url) return false;
+    const href = resolve(url);
+    if (!sources.has(code)) sources.set(code, []);
+    if (!sources.get(code).includes(href)) sources.get(code).push(href); // A pack named after its language was asked for is fetched now.
+
+    if (asked.has(code)) fetchSome(code);
+    return true;
+  };
+
+  PACKS.load = code => {
+    const codes = [...new Set([code.split('-')[0], code])];
+
+    for (const one of codes) asked.add(one);
+
+    return Promise.all(codes.map(fetchSome)).then(lists => lists.flat());
+  };
+
+  PACKS.request = code => {
+    if (asked.has(code)) return;
+    asked.add(code);
+    if (sources.has(code)) fetchSome(code);
+  };
+
+  for (const code of packs?.languages ?? []) PACKS.add(code, `${root}lang/${code}.json`);
+
+  const configured = globalThis.SF_BOOT_CONFIG?.languages;
+
+  if (configured && typeof configured === 'object') {
+    for (const [code, urls] of Object.entries(configured)) {
+      for (const url of [].concat(urls)) PACKS.add(String(code).trim().toLowerCase(), url);
+    }
+  } // The page's own language, as soon as core runs, so the words are usually
+  // here before the first component draws.
+
+
+  const lang = globalThis.document?.documentElement?.getAttribute('lang');
+
+  if (lang) {
+    const wanted = String(lang).trim().toLowerCase().replace('_', '-');
+    const base = wanted.split('-')[0];
+
+    if (base !== 'ru' && base !== 'en') {
+      PACKS.request(base);
+      if (wanted !== base) PACKS.request(wanted);
+    }
+  }
+
+  return PACKS;
+}
+
+/***/ },
+
 /***/ "78628e837a32"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -7489,10 +8402,17 @@ const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
  */
 
 const FOCUSABLE = ['a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])'].join(',');
-/** The focusable nodes inside these roots that are drawn and not inert, in order. */
+/**
+ * The focusable nodes inside these roots that are drawn and not inert, in
+ * order. A control taken out of the Tab order (tabindex -1: the other
+ * segments of a roving group such as sf-segmented, a menu's rows) is no Tab
+ * stop: counted, it was the trap's last stop that Tab never reaches, and Tab
+ * from the group's current segment left the layer (sf-header-site's panel
+ * with the theme switch in its settings group, owner decision C161 (8)).
+ */
 
 function focusablesIn(...roots) {
-  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]'));
+  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]') && node.tabIndex >= 0);
 }
 
 function stack() {
@@ -8706,6 +9626,468 @@ if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'functi
 
 /***/ },
 
+/***/ "8d229b7c92e9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   menuOpen: () => (/* binding */ menuOpen),
+/* harmony export */   publishMenu: () => (/* binding */ publishMenu)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// SF.menu.open: the page's one menu of actions (owner decision C184 (4),
+// 2026-11-14; the public name is the owner's; study control/research/
+// 2026-11-14-toolbar-menu-open.md, K-03).
+//
+// A row's «⋯», a toolbar's «Ещё», the right button and the menu key on a row
+// all open the standard menu -- sf-menu-context -- and every component used to
+// place its own and wait for it (nine in SIMAI Pro, more in the Framework).
+// Now one call opens the one menu of the page:
+//
+//   const choice = await SF.menu.open({anchor, entries, label});
+//   const choice = await SF.menu.open({x, y, entries, label, returnTo: row});
+//   // choice: {id, entry} of the row chosen, or null (closed without one)
+//
+// - anchor: the control the menu hangs from (a press on the same control
+//   while its menu is open closes it, as a toggle); or x, y: a point in the
+//   window -- where a right-click was, or a row's corner for Shift+F10 -- the
+//   menu's corner exactly there;
+// - entries: the rows, as sf-menu-context takes them;
+// - label: the menu's name, read by a screen reader;
+// - size: the menu's size step, as sf-menu-context's size attribute; left
+//   out, the step of what opens it (the anchor's, its component's or the
+//   Smart component holding it: a row menu of a table of size 1 is size 1);
+// - returnTo: where the focus goes when the menu closes (the row it acted
+//   on); left out, the menu gives the focus back to where it was, or to the
+//   anchor.
+//
+// The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
+// the page -- on the body, or in the open modal dialog the anchor is in, since
+// a modal dialog makes the rest of the page inert. A second opening while one
+// is open closes the first, which answers null. The answer never rejects:
+// without a menu (no Loader, no sf-menu-context) it is null.
+//
+// Every bundle may carry a copy of this module (bundles each carry their own
+// module copy), so the one menu and its pending answer live behind the shared
+// global: the first copy to run publishes SF.menu.open and every other copy
+// calls the published one.
+
+const SHARED = 'data-sf-menu-shared';
+
+function installMenuOpen() {
+  let pending = null;
+  let point = null; // The opening the menu belongs to now, kept past its answer: a choice
+  // answers before the menu closes, and the focus goes back on closing.
+
+  let shown = null;
+
+  const settle = value => {
+    const waiting = pending;
+    pending = null;
+    waiting?.resolve(value);
+    return waiting;
+  };
+
+  function sharedMenu(anchor) {
+    const doc = globalThis.document;
+    let menu = doc.querySelector(`[${SHARED}]`);
+
+    if (!menu) {
+      menu = doc.createElement('sf-menu-context');
+      menu.setAttribute('popup', '');
+      menu.setAttribute(SHARED, '');
+      menu.addEventListener('sf-menu-context-select', event => {
+        if (event.target !== menu) return;
+        settle({
+          id: event.detail?.id ?? null,
+          entry: event.detail?.entry ?? null
+        });
+      });
+      menu.addEventListener('sf-menu-context-closed', event => {
+        if (event.target !== menu) return;
+        settle(null);
+        const opening = shown;
+        shown = null;
+        const back = opening?.returnTo;
+        if (!back?.isConnected) return; // After the menu's own return: the row the person acted on, when the
+        // focus fell to the page, stayed in the closed menu or went back to
+        // the «⋯» that opened it (a pointer's control, not a Tab stop).
+
+        const anchor = opening.anchor;
+        setTimeout(() => {
+          const active = doc.activeElement;
+
+          if (!active || active === doc.body || active === doc.documentElement || menu.contains(active) || anchor && (active === anchor || anchor.contains?.(active))) {
+            back.focus?.({
+              preventScroll: true
+            });
+          }
+        }, 0);
+      });
+    } // In the open modal dialog the opener is in, or on the body.
+
+
+    const home = anchor?.closest?.('dialog[open]') || doc.body;
+    if (menu.parentNode !== home && !menu.isOpen) home.append(menu);
+    return menu;
+  } // A point in the window as an anchor of no size: sf-menu-context hangs its
+  // corner exactly there and reads the page under it (density, focus back).
+
+
+  function pointAnchor(x, y, near) {
+    const doc = globalThis.document;
+
+    if (!point?.isConnected) {
+      point = doc.createElement('span');
+      point.setAttribute('aria-hidden', 'true');
+      point.setAttribute('data-sf-menu-point', '');
+    }
+
+    const home = near?.closest?.('dialog[open]') || doc.body;
+    if (point.parentNode !== home) home.append(point);
+    point.style.cssText = `position:fixed;left:${x}px;top:${y}px;inline-size:0;block-size:0;pointer-events:none;overflow:hidden`;
+    return point;
+  }
+
+  return async function open(options = {}) {
+    const {
+      anchor = null,
+      x,
+      y,
+      entries = [],
+      label = '',
+      size = '',
+      returnTo = null
+    } = options || {};
+    const atPoint = !(anchor instanceof Element);
+    if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
+    const doc = globalThis.document;
+    if (!doc) return null;
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!globalThis.customElements?.get('sf-menu-context')) return null;
+    const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
+
+    if (!atPoint && menu.isOpen && pending?.anchor === anchor) {
+      menu.close({
+        reason: 'api'
+      });
+      return null;
+    }
+
+    if (menu.isOpen) {
+      settle(null);
+      shown = null;
+      menu.close({
+        restoreFocus: false,
+        reason: 'api',
+        ask: false
+      });
+    }
+
+    if (label) menu.setAttribute('aria-label', label);else menu.removeAttribute('aria-label');
+    if (size) menu.setAttribute('size', String(size));else {
+      menu.removeAttribute('size');
+      menu.removeAttribute(_density_js__WEBPACK_IMPORTED_MODULE_0__.RELATIVE);
+    } // In the density of the control or the row it opens from (C22, C79), not
+    // of the body it stands on.
+
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, atPoint ? returnTo : anchor);
+    menu.search = null;
+    menu.entries = Array.isArray(entries) ? entries : [];
+    return new Promise(resolve => {
+      pending = {
+        resolve,
+        anchor,
+        returnTo: returnTo instanceof Element ? returnTo : null
+      };
+      shown = pending;
+      const mine = pending;
+      const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
+        target: returnTo ?? undefined
+      }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      }) : menu.openFor(anchor, {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      });
+      Promise.resolve(opening).then(answer => {
+        // Refused (a listener kept it closed) or no surface: nothing chosen.
+        if (pending === mine && answer && answer !== true && answer.outcome !== 'applied') settle(null);
+      }, () => {
+        if (pending === mine) settle(null);
+      });
+    });
+  };
+} // The published one, or this copy published.
+
+
+function publishMenu() {
+  const SF = globalThis.SF = globalThis.SF || {};
+  SF.menu = SF.menu || {};
+  if (typeof SF.menu.open !== 'function') SF.menu.open = installMenuOpen();
+  return SF.menu;
+}
+function menuOpen(options) {
+  return publishMenu().open(options);
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuOpen);
+
+/***/ },
+
+/***/ "2ee7a47e9b10"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MOTION_ATTRIBUTE: () => (/* binding */ MOTION_ATTRIBUTE),
+/* harmony export */   MOTION_CHANGE: () => (/* binding */ MOTION_CHANGE),
+/* harmony export */   reducedMotion: () => (/* binding */ reducedMotion),
+/* harmony export */   watchMotion: () => (/* binding */ watchMotion)
+/* harmony export */ });
+// Whether to keep things still: the device asks for less motion
+// (prefers-reduced-motion: reduce), or the person stopped motion on this site
+// (<html data-sf-motion="reduce">, written by the sf-display-settings panel
+// through SF.displaySettings; owner decision C196, 2026-11-15). Core's own
+// scripts read this one function; the core sheet stops CSS animations and
+// transitions under the same mark (core/scss/_sf_css__display.scss).
+//
+// No state and no side effect, so every bundle may carry it.
+const MOTION_ATTRIBUTE = 'data-sf-motion';
+const MOTION_CHANGE = 'sf-display-change';
+function reducedMotion(root = globalThis.document?.documentElement, win = globalThis) {
+  try {
+    if (win.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return true;
+  } catch {// No media queries here: only the page's own mark.
+  }
+
+  return root?.getAttribute?.(MOTION_ATTRIBUTE) === 'reduce';
+} // Calls `listener` when either source changes; returns the stop.
+
+function watchMotion(listener, win = globalThis) {
+  const media = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+  const doc = win.document;
+  media?.addEventListener?.('change', listener);
+  doc?.addEventListener?.(MOTION_CHANGE, listener);
+  return () => {
+    media?.removeEventListener?.('change', listener);
+    doc?.removeEventListener?.(MOTION_CHANGE, listener);
+  };
+}
+
+/***/ },
+
+/***/ "a583dcca136f"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ATTRIBUTE: () => (/* binding */ ATTRIBUTE),
+/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   install: () => (/* binding */ install),
+/* harmony export */   opensNewTab: () => (/* binding */ opensNewTab),
+/* harmony export */   refresh: () => (/* binding */ refresh)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+// A link that opens a new tab says so (owner decision C186 (3), 2026-11-14;
+// C147 (4) for the reference link, C25 for a file). Every link in text with
+// target="_blank" -- a plain <a>, an <a> with a link-* utility, an sf-link --
+// gets, after its last word:
+//
+//   - arrow_outward, the text's size, --sf-space-1/4 (4, C173 «icon in text»)
+//     from the word; the last word and the sign are one unbreakable run
+//     ([data-sf-new-tab="tail"], white-space: nowrap), so the sign never
+//     starts a line of its own (a word joiner does not hold an inline-flex
+//     icon to its word in Chromium); not underlined, not copied, hidden from
+//     a screen reader;
+//   - «(откроется в новой вкладке)» for a screen reader only, in the page's
+//     language (sf-file-download's word new-tab-text, read through the page's
+//     language: a product that registers that word for sf-file-download is
+//     heard here too).
+//
+// Core draws them (core/scss/_sf_css__link.scss, [data-sf-new-tab]). A link
+// that is part of a component -- a class of its own beyond sf-link and the
+// link-* utilities, or a parent with an sf- class -- is left alone: the
+// component says it in its own way (sf-reference-link, sf-file-download). So
+// is a link that already shows a new-tab icon. The marks follow the link:
+// a link that stops opening a new tab loses them.
+
+const ATTRIBUTE = 'data-sf-new-tab'; // sf-file-download's words (src/smart/file-download/lang/*.json, new-tab-text);
+// tests/plain-group-3-c186.contract.test.mjs holds them equal.
+
+const WORDS = {
+  en: {
+    'new-tab-text': '(opens in a new tab)'
+  },
+  ru: {
+    'new-tab-text': '(откроется в новой вкладке)'
+  }
+};
+const GLYPH = 'arrow_outward';
+const NEW_TAB_GLYPHS = new Set(['arrow_outward', 'open_in_new', 'launch', 'north_east']);
+
+const classes = element => String(element?.getAttribute?.('class') ?? '').split(/\s+/).filter(Boolean);
+
+const isLinkClass = name => name === 'sf-link' || name.startsWith('link-') || /^[a-z]{2,3}:link-/.test(name);
+/** Whether `link` is a link in text that opens a new tab. */
+
+
+function opensNewTab(link) {
+  if (!link || link.localName !== 'a' || !link.hasAttribute('href')) return false;
+  if (String(link.getAttribute('target') ?? '').toLowerCase() !== '_blank') return false;
+  if (!classes(link).every(isLinkClass)) return false;
+  const parent = link.parentElement;
+  if (parent && classes(parent).some(name => name.startsWith('sf-') && !name.startsWith('sf-link'))) return false;
+  return true;
+}
+
+const ownMarks = link => [...link.querySelectorAll(`[${ATTRIBUTE}]`)];
+
+const showsNewTabIcon = link => [...link.querySelectorAll('.sf-icon')].some(icon => !icon.hasAttribute(ATTRIBUTE) && NEW_TAB_GLYPHS.has(String(icon.textContent ?? '').trim()));
+
+function unmark(link) {
+  for (const node of ownMarks(link)) {
+    if (!node.isConnected) continue;
+
+    if (node.getAttribute(ATTRIBUTE) === 'tail') {
+      // The word goes back into the text it was taken from.
+      node.querySelectorAll(`[${ATTRIBUTE}]`).forEach(inner => inner.remove());
+      const parent = node.parentNode;
+      node.replaceWith(...node.childNodes);
+      parent?.normalize?.();
+    } else {
+      node.remove();
+    }
+  }
+} // The last text of the link with something to read, outside the marks.
+
+
+function lastText(link) {
+  const walker = link.ownerDocument.createTreeWalker(link, 4);
+  let last = null;
+
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.parentElement?.closest(`[${ATTRIBUTE}]`)) continue;
+    if (node.data.trim()) last = node;
+  }
+
+  return last;
+}
+
+function mark(link) {
+  const doc = link.ownerDocument;
+  const words = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageWord)(WORDS, 'new-tab-text', link, {
+    component: 'sf-file-download',
+    source: 'ru'
+  });
+  const existing = ownMarks(link);
+  const said = existing.find(node => node.getAttribute(ATTRIBUTE) === 'words');
+
+  if (existing.some(node => node.getAttribute(ATTRIBUTE) === 'mark') && said) {
+    if (said.textContent !== ` ${words}`) said.textContent = ` ${words}`;
+    return;
+  }
+
+  unmark(link);
+  if (showsNewTabIcon(link)) return;
+  const icon = doc.createElement('i');
+  icon.className = 'sf-icon';
+  icon.setAttribute(ATTRIBUTE, 'mark');
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = GLYPH;
+  const text = doc.createElement('span');
+  text.setAttribute(ATTRIBUTE, 'words');
+  text.textContent = ` ${words}`; // A flex sf-link without a content part has no line to break: the sign is
+  // one more item of the link's row.
+
+  const flexRow = link.classList.contains('sf-link') && !link.querySelector(':scope > :is(.sf-link__content, .sf-link-content)');
+  const last = flexRow ? null : lastText(link);
+
+  if (!last) {
+    link.append(icon, text);
+    return;
+  } // The last word and the sign: one run that does not break.
+
+
+  const data = last.data.replace(/\s+$/u, '');
+  const cut = Math.max(data.search(/\S+$/u), 0);
+  const word = cut > 0 ? last.splitText(cut) : last;
+  if (word.data.length > data.length - cut) word.splitText(data.length - cut);
+  const tail = doc.createElement('span');
+  tail.setAttribute(ATTRIBUTE, 'tail');
+  word.replaceWith(tail);
+  tail.append(word, icon);
+  link.append(text);
+}
+/** Marks or unmarks every link in `root` (a document, an element or a link). */
+
+
+function refresh(root = globalThis.document) {
+  if (!root) return;
+  const links = [];
+  if (root.localName === 'a') links.push(root);
+  root.querySelectorAll?.('a[href]').forEach(link => links.push(link));
+
+  for (const link of links) {
+    if (opensNewTab(link)) mark(link);else if (ownMarks(link).length) unmark(link);
+  }
+}
+/** Starts watching `doc`: marks what is there and follows what is added. Once per document. */
+
+function install(doc = globalThis.document) {
+  if (!doc?.documentElement || doc.__sfNewTabLink) return;
+  doc.__sfNewTabLink = true;
+
+  const start = () => {
+    refresh(doc);
+    const View = doc.defaultView?.MutationObserver ?? globalThis.MutationObserver;
+    if (!View) return;
+    new View(records => {
+      for (const record of records) {
+        if (record.type === 'attributes') {
+          const target = record.target;
+          if (target.localName === 'a') refresh(target);else if (record.attributeName === 'lang') refresh(target);
+          continue;
+        }
+
+        for (const node of record.addedNodes) {
+          if (node.nodeType !== 1 || node.hasAttribute?.(ATTRIBUTE)) continue;
+          if (node.localName === 'a' || node.querySelector('a[target]')) refresh(node);
+        }
+      }
+    }).observe(doc.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['target', 'href', 'class', 'lang']
+    });
+  };
+
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, {
+    once: true
+  });else start();
+}
+
+if (typeof globalThis !== 'undefined' && globalThis.document) {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.newTabLink) globalThis.SF.newTabLink = {
+    refresh,
+    opensNewTab
+  };
+  install(globalThis.document);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (install);
+
+/***/ },
+
 /***/ "b4bff8456ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -8717,6 +10099,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _layer_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2ee7a47e9b10");
 // One way to tell a person something happened: SF.notify. Every component and
 // every product used to raise its own toast where it stood -- over a card, in a
 // corner of its own, for its own time -- so messages turned up anywhere and
@@ -8739,6 +10122,8 @@ __webpack_require__.r(__webpack_exports__);
 // open; Escape closes the message in focus and moves the focus to the next.
 // The list of earlier pairs, every message whole with a gap, is a setting:
 // SF.notifications.configure({layout: 'list'}).
+
+ // The device's reduced motion or the site's «остановить движение» (C196).
 
 
 const NOTIFY_TEXT = {
@@ -8793,10 +10178,7 @@ const state = {
   returnFocus: null,
   frame: 0,
   resize: null
-};
-
-const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false; // The messages on view, newest first, without the ones leaving.
-
+}; // The messages on view, newest first, without the ones leaving.
 
 function onView() {
   return state.shown.map(entry => entry.toast).filter(toast => toast?.isConnected && !toast.classList.contains('closing')).reverse();
@@ -9268,7 +10650,7 @@ async function display(entry) {
   showRegion(); // The newest at the edge the area grows from: nearest the edge it sits on.
 
   const area = region();
-  const stack = state.layout === 'stack' && !reducedMotion(); // In a stack the newest comes in from outside the edge and fades in; the
+  const stack = state.layout === 'stack' && !(0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.reducedMotion)(); // In a stack the newest comes in from outside the edge and fades in; the
   // first frame stands it there, the next lets it move (no jump: every move
   // is a transition from where the message stood).
   // layout() reads every height, and that read commits the styles: the
@@ -9485,12 +10867,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   installOnView: () => (/* binding */ installOnView),
 /* harmony export */   onViewSeen: () => (/* binding */ onViewSeen)
 /* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
 // Animate when scrolled into view (utility.animation 1.1.0; step 2 of the
 // legacy-units plan, owner decision q-410df7e4b5). An element with the
 // animation utility's classes and `animation-on-view` holds its animation at
 // the first frame until it enters the viewport, then plays it once:
 //
-//   <div class="animation animation-from-bottom animation-on-view">...</div>
+//   <div class="animation animation-on-view">...</div>
+//
+// (animation-from-left, -right and -bottom are former names until 2027-01-01,
+// owner decision C187 (6); the Loader notes them in SF.deprecations.)
 //
 // Core marks such an element data-sf-on-view="waiting" -- the utility's sheet
 // pauses the animation there, so the element keeps its from-state and never
@@ -9509,6 +10895,8 @@ __webpack_require__.r(__webpack_exports__);
 // its own: the Loader's scan is debounced and runs after the element may
 // already have painted, while a mutation callback marks it before the first
 // frame (the same reason effects.js watches its declarations itself).
+// The device's reduced motion or the site's «остановить движение» (C196).
+
 const ON_VIEW_CLASS = 'animation-on-view';
 const ON_VIEW_STATE = 'data-sf-on-view';
 const ON_VIEW_THRESHOLD = 0.15;
@@ -9529,7 +10917,9 @@ function installOnView(win = globalThis) {
   if (win.__sfOnView?.document === doc) return win.__sfOnView;
   const Sight = win.IntersectionObserver;
   const Changes = win.MutationObserver;
-  const motion = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+
+  const still = () => (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)(doc.documentElement, win);
+
   let sight = null;
   let waiting = 0;
 
@@ -9553,7 +10943,7 @@ function installOnView(win = globalThis) {
   };
 
   const mark = element => {
-    if (typeof Sight !== 'function' || motion?.matches) return;
+    if (typeof Sight !== 'function' || still()) return;
     element.setAttribute(ON_VIEW_STATE, 'waiting');
     waiting += 1;
     observer().observe(element);
@@ -9596,10 +10986,10 @@ function installOnView(win = globalThis) {
   });
 
   const onMotion = () => {
-    if (motion.matches) showAll();
+    if (still()) showAll();
   };
 
-  motion?.addEventListener?.('change', onMotion);
+  const stopMotion = (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.watchMotion)(onMotion, win);
   const handle = Object.freeze({
     document: doc,
     scan,
@@ -9611,7 +11001,7 @@ function installOnView(win = globalThis) {
     stop() {
       changes?.disconnect();
       sight?.disconnect();
-      motion?.removeEventListener?.('change', onMotion);
+      stopMotion();
       if (win.__sfOnView === handle) delete win.__sfOnView;
     }
 
@@ -9859,7 +11249,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
-/* harmony export */   pageWord: () => (/* binding */ pageWord)
+/* harmony export */   pageWord: () => (/* binding */ pageWord),
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -9914,14 +11305,42 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
+// built in is one file per language and delivery, fetched only by a page that
+// speaks it. A pack's words go into the same registry as words registered one
+// by one -- so a bundle built before packs existed reads them too -- a
+// Framework pack's beneath what is there, any other pack's over it: a product
+// overrides a Framework word whichever arrived first. The fetching is core's
+// (core/js/language-packs.js); each bundle only asks for a language. A STORE
+// made by an older bundle has no packs yet: they are added here.
+
+const PACKS = STORE.packs ??= {
+  loaded: new Map(),
+  pending: new Map(),
+  request: null
+};
+
+const isBuiltIn = code => code === 'ru' || code === 'en';
+/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+
+
+function needPack(code) {
+  const wanted = normalise(code);
+  const base = wanted.split('-')[0];
+  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  PACKS.request(base);
+  if (wanted !== base) PACKS.request(wanted);
+} // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
 // with (core/js/tag-aliases.js).
 
+
 const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
 
-const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
+function normalise(value) {
+  return String(value ?? '').trim().toLowerCase().replace('_', '-');
+}
 /** The languages to try, most specific first, English last. */
 
 
@@ -10079,7 +11498,16 @@ function within(target, node) {
 
   return false;
 }
+/**
+ * Tell the page's components that words changed without a registration: the
+ * composition editor words arrive in a chunk of their own (LC-1) and the
+ * forms drawn before them draw again.
+ */
 
+
+function refreshLanguage() {
+  announce();
+}
 function isRussianPage(node) {
   return pageLanguage(node) === 'ru';
 }
@@ -10102,17 +11530,52 @@ function pageText(dictionary, key, node, component) {
  */
 
 function localeText(dictionary, key, locale, component) {
-  for (const candidate of chain(locale || 'en')) {
+  const order = chain(locale || 'en');
+  needPack(order[0]);
+
+  for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
-    if (added !== undefined) return added;
+
+    if (added !== undefined) {
+      if (candidate === 'en' && added !== '') warnFallback(order, component, key);
+      return added;
+    }
+
     const shipped = dictionary?.[candidate]?.[key];
-    if (shipped !== undefined) return shipped;
+
+    if (shipped !== undefined) {
+      if (candidate === 'en' && shipped !== '') warnFallback(order, component, key);
+      return shipped;
+    }
   }
 
   return key;
+} // A language the Framework does not ship (owner decision C177 (4)) may come
+// partly translated: a word it lacks is said in the fallback language,
+// English, and that is shown, not silent (localization study LC-6). One
+// warning per page and language (de-AT and de are one), naming the first word
+// missed; every word missed is kept by language for SF.language.missing(),
+// and the language files' coverage is scripts/language-coverage.mjs. Kept on
+// the shared global, because every bundle carries this module.
+
+function warnFallback(order, owner, key) {
+  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+
+  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  const root = globalThis;
+  if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
+  const seen = root.__sfMissingWords;
+
+  if (!seen.has(wanted)) {
+    seen.set(wanted, new Set());
+    root.console?.warn?.(`[SIMAI Framework] "${wanted}": words missing, said in English (first: ${owner || 'component'} "${key}"); SF.language.missing('${wanted}') lists them`);
+  }
+
+  seen.get(wanted).add(`${owner || 'component'}|${key}`);
 } // Missing words are said once per component, word and language: a page that
 // draws a hundred rows must not print a hundred warnings. The marks are kept on
 // the shared global, because every bundle carries this module.
+
 
 function warnWord(owner, key, locale, said) {
   const root = typeof globalThis !== 'undefined' ? globalThis : {};
@@ -10173,6 +11636,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
+  needPack(locale);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -10190,6 +11654,7 @@ function pageWord(dictionary, key, node, {
     const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
     if (word === undefined || word === null) continue;
     if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+    if (candidate === 'en' && word !== '') warnFallback(chain(locale), owner, key);
 
     if (typeof word === 'object') {
       let form = 'other';
@@ -10227,7 +11692,8 @@ const language = {
   use(value) {
     const next = value === null || value === undefined ? null : normalise(value);
     if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    STORE.chosen = next;
+    if (next) needPack(next); // The choice is the page's language: <html lang> says it too (§11.1), so
     // the browser, a screen reader and CSS :lang() agree with the words.
     // use(null) gives the markup's own language back.
 
@@ -10268,6 +11734,72 @@ const language = {
     return this;
   },
 
+  /**
+   * A language pack (schema simai.language-pack, schema_version 1; schema
+   * core/contracts/language-pack.v1.schema.json): every word of one language
+   * for one delivery, by component. A Framework pack's words go beneath the
+   * words already registered, any other pack's over them, as register() does.
+   * The page draws again once. Answers what was taken, or null for something
+   * that is not a pack.
+   */
+  registerPack(pack, url = null) {
+    const code = normalise(pack?.lang);
+
+    if (pack?.schema !== 'simai.language-pack' || pack.schema_version !== 1 || !code || !pack.words || typeof pack.words !== 'object') {
+      globalThis.console?.warn?.(`[SIMAI Framework] not a language pack (simai.language-pack, schema_version 1)${url ? `: ${url}` : ''}`);
+      return null;
+    }
+
+    const under = (pack.delivery ?? 'framework') === 'framework';
+    let words = 0;
+
+    for (const [component, byKey] of Object.entries(pack.words)) {
+      if (!byKey || typeof byKey !== 'object') continue;
+      const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component);
+      if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
+      const byLanguage = REGISTERED.get(name);
+      const now = byLanguage.get(code) ?? {};
+      byLanguage.set(code, under ? { ...byKey,
+        ...now
+      } : { ...now,
+        ...byKey
+      });
+      words += Object.keys(byKey).length;
+    }
+
+    const info = {
+      lang: code,
+      delivery: pack.delivery ?? 'framework',
+      status: pack.status ?? null,
+      coverage: pack.coverage ?? null,
+      words,
+      url
+    };
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
+    announce();
+    return info;
+  },
+
+  /**
+   * Name a pack file to fetch when the page needs its language: one line for
+   * a product or a page (also SF_BOOT_CONFIG.languages = {code: url}). Core
+   * fetches it once, with the Framework's own pack of that language.
+   */
+  addPack(value, url) {
+    return PACKS.add ? PACKS.add(normalise(value), url) : false;
+  },
+
+  /** Fetch the packs of a language now; resolves when they are registered. */
+  load(value) {
+    return PACKS.load ? PACKS.load(normalise(value)) : Promise.resolve([]);
+  },
+
+  /** The packs on the page: {code: [{lang, delivery, status, coverage, words, url}]}. */
+  packs() {
+    return Object.fromEntries([...PACKS.loaded].map(([code, list]) => [code, list.map(info => ({ ...info
+    }))]));
+  },
+
   /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
@@ -10280,6 +11812,17 @@ const language = {
   /** The languages something has registered words for. */
   known(component) {
     return [...(wordsOf(component ?? '')?.keys() ?? [])];
+  },
+
+  /**
+   * The words the page has said in English so far for want of one in
+   * `value` (C177 (4): a language may ship partly; what it lacks is visible).
+   * `['sf-pagination|pages-label', ...]`; every language's when none is named.
+   */
+  missing(value) {
+    const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
+    if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
+    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -10300,6 +11843,7 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
+    PACKS.loaded.clear();
     STORE.chosen = null;
     announce();
     return this;
@@ -10311,8 +11855,27 @@ const language = {
 // composing its own elements gets the same rule here.
 
 if (typeof window !== 'undefined') {
-  window.SF = window.SF || {};
-  window.SF.language = language;
+  window.SF = window.SF || {}; // Every bundle publishes its copy; they share one store, so any copy
+  // answers alike -- except that a bundle built before language packs
+  // (an older package on the page) has no registerPack, addPack, load or
+  // packs. Once a copy with them is published, an older one does not
+  // replace it (C177).
+
+  const holder = window.SF;
+
+  if (!Object.getOwnPropertyDescriptor(holder, 'language')?.set) {
+    let published = holder.language;
+    Object.defineProperty(holder, 'language', {
+      configurable: true,
+      enumerable: true,
+      get: () => published,
+      set: value => {
+        if (typeof value?.registerPack === 'function' || typeof published?.registerPack !== 'function') published = value;
+      }
+    });
+  }
+
+  holder.language = language;
   window.SF.pageLanguage = pageLanguage;
   window.SF.pageText = pageText;
 }
@@ -10956,7 +12519,18 @@ function anchor(reference, floating, options = {}) {
   };
 
   const heightCap = cap(floatingStyle.maxHeight, document.documentElement.clientHeight);
-  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth);
+  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth); // A point -- a reference that draws a box of no size: a fixed span where a
+  // right-click or a long press was (sf-menu-context, C164 (1)) -- is not a
+  // control the panel hangs from but a corner, as system menus open: the panel
+  // flips to the other side of the point on both axes when it does not fit,
+  // left of it at the right edge (right of it in RTL), above it at the bottom.
+  // Shifted, it covered the point and stood 36 px off it on a phone (ui-view
+  // K1 follow-ups, 2026-11-15). Only when it fits on neither side is it
+  // shifted, to the viewport's edge less the padding (--sf-space-1/2), on the
+  // side with more room. A box of any size keeps its alignment and is shifted.
+
+  const pointBox = reference.getBoundingClientRect();
+  const atPoint = pointBox.width === 0 && pointBox.height === 0 && reference.getClientRects().length > 0;
   const controller = {
     side: settings.side,
     stopped: false
@@ -11081,20 +12655,23 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = referenceRect(reference);
+    const box = referenceRect(reference); // A point is not a field at a frame's edge: it keeps the whole padding.
+
     const edges = {
       top: padding,
       bottom: padding,
-      left: Math.min(padding, Math.max(0, box.left)),
-      right: Math.min(padding, Math.max(0, clientWidth - box.right))
+      left: atPoint ? padding : Math.min(padding, Math.max(0, box.left)),
+      right: atPoint ? padding : Math.min(padding, Math.max(0, clientWidth - box.right))
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
       alignmentAxis: alignment
-    })];
+    })]; // crossAxis: a point also flips its alignment (start <-> end) when the
+    // panel overflows the inline edge; a box only flips its side.
+
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
-      crossAxis: false
+      crossAxis: atPoint
     })); // Shift before size: a panel near the inline edge moves inside the viewport
     // instead of being squeezed to the space left of its field.
 
@@ -11693,9 +13270,11 @@ function startPreloaderMotion(container, isActive = () => true, options = {}) {
 
   if (marks.length !== 2 || typeof marks[0].animate !== 'function') {
     return () => {};
-  }
+  } // The device's reduced motion or the site's «остановить движение» (C196;
+  // core/js/motion.js -- not imported: this file is also loaded on its own).
 
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || container.ownerDocument?.documentElement?.getAttribute?.('data-sf-motion') === 'reduce') {
     container.style.transition = 'none';
     container.style.transform = 'rotate(0deg)';
     marks.forEach(mark => {
@@ -11877,6 +13456,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   scrollerOf: () => (/* binding */ scrollerOf),
 /* harmony export */   watchEdge: () => (/* binding */ watchEdge)
 /* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
 // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): what a feed, a log, a conversation or a long list does to keep a
 // person's place while its content changes under them. It was written in
@@ -11901,17 +13481,17 @@ __webpack_require__.r(__webpack_exports__);
 // Nothing here keeps state at module scope: each column gets its own
 // controller, so the copies of this module that every bundle carries cannot
 // disagree (bundles each carry their own module copy).
-// Within this distance of the end counts as being there. 96px is about two
+// The device's reduced motion or the site's «остановить движение» (C196).
+ // Within this distance of the end counts as being there. 96px is about two
 // lines of text and an entry's action row: closer than that, a person reading
 // the end of a column is reading the end.
+
 const NEAR_END = 96; // The start is "reached" a little before it is reached, so an earlier page is
 // usually there by the time the person scrolls into it.
 
 const NEAR_START = 240; // The end of a list asks for its next page this far before it is in view.
 
 const EDGE_MARGIN = '200px';
-
-const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 const frame = callback => typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(callback) : setTimeout(callback, 16);
 /**
@@ -11984,7 +13564,7 @@ function readingPosition(scroller, {
       frame(() => {
         if (element) element.scrollTo({
           top: element.scrollHeight,
-          behavior: instant || reducedMotion() ? 'instant' : 'smooth'
+          behavior: instant || (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? 'instant' : 'smooth'
         });
         then?.();
         if (settle) frame(() => {
@@ -12203,6 +13783,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   enable: () => (/* binding */ enable),
 /* harmony export */   navigate: () => (/* binding */ navigate)
 /* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
 // Region navigation (simai.interface-fragment 1.0.0, region-navigation and
 // full-load-fallback; Larena handoff 2026-10-15). A link inside the shell
 // changes one region of the page instead of the page: the shell (a menu, a
@@ -12230,6 +13811,8 @@ __webpack_require__.r(__webpack_exports__);
 // again, whether it came in `assets` or as a <link>/<script src> in the html;
 // the elements that leave are disconnected, so their routes and listeners go
 // with them.
+// The device's reduced motion or the site's «остановить движение» (C196).
+
 const SKELETON_DELAY_MS = 150;
 const TIMEOUT_MS = 15000;
 let config = null;
@@ -12498,7 +14081,7 @@ async function navigate(url, {
     if (typeof answer.title === 'string' && answer.title) globalThis.document.title = answer.title;
   };
 
-  const transition = typeof globalThis.document.startViewTransition === 'function' && !globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? globalThis.document.startViewTransition(swap) : null;
+  const transition = typeof globalThis.document.startViewTransition === 'function' && !(0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? globalThis.document.startViewTransition(swap) : null;
   if (transition) await transition.updateCallbackDone.catch(() => {});else swap();
 
   for (const asset of assets.filter(entry => entry.kind === 'javascript')) await loadAsset(asset);
@@ -12803,7 +14386,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.56.0';
+const CORE_RUNTIME = '1.57.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -21683,18 +23266,22 @@ function checkSourceAnswer(request, answer, options = {}) {
 
 /***/ },
 
-/***/ "fe90f998a31d"
+/***/ "bd04957f6bb9"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EDITOR_FIELD_WORDS: () => (/* binding */ EDITOR_FIELD_WORDS),
+/* harmony export */   EDITOR_FIELD_WORDS_LIVE: () => (/* binding */ EDITOR_FIELD_WORDS_LIVE),
 /* harmony export */   EDITOR_WORDS_OWNER: () => (/* binding */ EDITOR_WORDS_OWNER),
 /* harmony export */   catalogueWordKeys: () => (/* binding */ catalogueWordKeys),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   editorFieldKeys: () => (/* binding */ editorFieldKeys),
-/* harmony export */   editorFieldMessages: () => (/* binding */ editorFieldMessages)
+/* harmony export */   editorFieldMessages: () => (/* binding */ editorFieldMessages),
+/* harmony export */   editorWords: () => (/* binding */ editorWords),
+/* harmony export */   editorWordsReady: () => (/* binding */ editorWordsReady),
+/* harmony export */   installEditorWords: () => (/* binding */ installEditorWords),
+/* harmony export */   loadEditorWords: () => (/* binding */ loadEditorWords),
+/* harmony export */   setEditorWordsLoader: () => (/* binding */ setEditorWordsLoader)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("08e5033c490a");
@@ -21703,872 +23290,97 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// The words of the built-in editor manifests (simai/ui-source#65): every
-// label_key, help_key and `<label_key>.<choice>` of a choice that is a stable
-// segment, in English and Russian. A choice that is not a stable segment
-// (`16/9`) is shown as it is, by the field kinds' localization rule.
+// The editor words without the words (localization study LC-1, 2026-11-14).
 //
-// The words belong to the registry owner `sf-composition`, so a product adds a
-// language or corrects one word the way it does for any component:
+// The words of the built-in editor manifests (editor-words.mjs, ru + en,
+// 8.7 KB gzip) were part of core.min.js, so every page paid for them though
+// only a page that draws a parameters form reads them. Core now carries this
+// module only: the keys a field reads, the lookup and a shared slot the words
+// are installed into. The words themselves are a chunk of their own
+// (core-editor-words), loaded by SF.Composition.loadEditorWords(), which the
+// editors (sf-editor-inline, sf-editor-overlay) call when they are defined;
+// a bundle that imports editor-words.mjs from source (the Pro editor) carries
+// them inside itself.
 //
-//   SF.language.register('sf-composition', 'de', {'sf.composition.content_figure.src': 'Bildadresse'});
-//
-// src/core/contracts/composition-editor-words.v1.json is generated from this
-// file (scripts/generate-composition-contracts.mjs) for a host without
-// JavaScript, which reads the same keys.
+// The slot is on the shared global: core, each smart component and each
+// package are separate bundles, and each carries its own copy of this module.
 
 const EDITOR_WORDS_OWNER = 'sf-composition';
 
-const words = (prefix, entries) => Object.fromEntries(Object.entries(entries).map(([key, value]) => [`sf.composition.${prefix}.${key}`, value]));
+const EMPTY = Object.freeze({ en: Object.freeze({}), ru: Object.freeze({}) });
 
-const EN = {
-  ...words('layout_section', {
-    surface: 'Background',
-    surface_help: 'How the section stands out from the page',
-    'surface.surface': 'Regular',
-    'surface.contrast': 'Contrasting',
-  }),
-  ...words('layout_columns', {
-    columns: 'Columns',
-    columns_help: 'How many columns the content is split into',
-    gap: 'Gap',
-    gap_help: 'Space between the columns, from 0 to 8 steps',
-  }),
-  // Parameter sets (parameter-sets.mjs), shared by every type that takes them.
-  ...words('set_background', {
-    background: 'Background',
-    background_help: 'The fill behind the block',
-    'background.surface': 'Page',
-    'background.container': 'Container',
-    'background.primary': 'Primary',
-    'background.secondary': 'Secondary',
-    'background.tertiary': 'Tertiary',
-    'background.accent': 'Accent',
-  }),
-  ...words('set_spacing', {
-    padding_y: 'Space above and below',
-    padding_y_help: 'From 0 to 8 steps, per screen',
-    padding_x: 'Space at the sides',
-    padding_x_help: 'From 0 to 8 steps, per screen',
-  }),
-  ...words('set_width', {
-    width: 'Width',
-    width_help: 'How wide the content stands on the page',
-    'width.narrow': 'Narrow',
-    'width.normal': 'Normal',
-    'width.wide': 'Wide',
-    'width.full': 'Full width',
-  }),
-  ...words('set_grid', {
-    columns: 'Columns',
-    columns_help: 'How many columns the content is split into, per screen',
-    gap: 'Gap',
-    gap_help: 'Space between the columns, from 0 to 8 steps',
-  }),
-  ...words('set_alignment', {
-    align: 'Alignment',
-    align_help: 'How the text lines up, per screen',
-    'align.start': 'Start',
-    'align.center': 'Centre',
-    'align.end': 'End',
-  }),
-  ...words('set_breakout', {
-    breakout: 'Edge to edge',
-    breakout_help: 'The block spans the whole page width',
-  }),
-  ...words('set_visibility', {
-    hidden: 'Hidden',
-    hidden_help: 'The block is not shown on this screen',
-  }),
-  ...words('layout_area', {
-    content: 'Text',
-    empty: 'Start writing or press / for a block',
-    padding: 'Padding',
-    padding_help: 'Space inside the area, from 0 to 8 steps',
-    hidden: 'Hidden',
-    hidden_help: 'The area is not shown on this screen',
-  }),
-  ...words('content_heading', {
-    level: 'Heading level',
-    level_help: 'From 1, the page title, to 6',
-  }),
-  ...words('layout_region', {
-    placement: 'Placement',
-    placement_help: 'Where the area stands in the layout',
-    'placement.block': 'Full width',
-    'placement.start': 'At the start',
-    'placement.center': 'In the centre',
-    'placement.end': 'At the end',
-    label: 'Name',
-    label_help: 'The area\'s name for screen readers',
-    landmark: 'Landmark',
-    landmark_help: 'The area\'s role in the page structure for assistive technology',
-    'landmark.banner': 'Header',
-    'landmark.navigation': 'Navigation',
-    'landmark.main': 'Main content',
-    'landmark.complementary': 'Sidebar',
-    'landmark.contentinfo': 'Footer',
-    'landmark.region': 'Region',
-    'landmark.none': 'None',
-    sticky: 'Sticky',
-    sticky_help: 'The area stays in view while the page scrolls',
-  }),
-  ...words('content_list', {
-    ordered: 'Numbered',
-    ordered_help: 'Numbers instead of bullets',
-    start: 'Start at',
-    start_help: 'The number of the first item',
-  }),
-  ...words('content_code', {
-    lang: 'Language',
-    lang_help: 'The programming language, for highlighting',
-    title: 'Caption',
-    title_help: 'A file name or a short caption above the code',
-    numbers: 'Line numbers',
-    numbers_help: 'Number every line',
-  }),
-  ...words('content_table', {
-    header: 'Table headers',
-    header_help: 'Which cells are headers',
-    'header.row': 'First row',
-    'header.column': 'First column',
-    'header.both': 'Row and column',
-    'header.none': 'None',
-  }),
-  ...words('content_figure', {
-    src: 'Picture address',
-    src_help: 'A link to the image: http(s) or a path on the site',
-    alt: 'Picture description',
-    alt_help: 'What the picture shows, for those who cannot see it',
-    ratio: 'Ratio',
-    ratio_help: 'The picture\'s width to its height',
-    'ratio.auto': 'As it is',
-    fit: 'Fit',
-    fit_help: 'How the picture fills its frame',
-    'fit.cover': 'Fill',
-    'fit.contain': 'Whole',
-  }),
-  ...words('content_alert', {
-    status: 'Kind',
-    status_help: 'What the message is about',
-    'status.neutral': 'Plain',
-    'status.info': 'Information',
-    'status.success': 'Success',
-    'status.warning': 'Warning',
-    'status.error': 'Error',
-    appearance: 'Look',
-    appearance_help: 'Filled, outlined or flat',
-    'appearance.default': 'Filled',
-    'appearance.outlined': 'Outlined',
-    'appearance.flat': 'Flat',
-  }),
-  ...words('content_details', {
-    open: 'Open at first',
-    open_help: 'The block is shown open when the page loads',
-    layout: 'Look',
-    layout_help: 'A filled box or lines between blocks',
-    'layout.surface': 'Filled',
-    'layout.lines': 'Lines',
-  }),
-  ...words('content_tabs', {
-    label: 'Name',
-    label_help: 'The name of the row of tabs for screen readers',
-  }),
-  ...words('content_tab', {
-    label: 'Tab name',
-    label_help: 'The text on the tab',
-  }),
-  ...words('content_steps', {
-    current: 'Current step',
-    current_help: 'The number of the step in progress',
-    layout: 'Look',
-    layout_help: 'A timeline or a numbered list',
-    'layout.timeline': 'Timeline',
-    'layout.list': 'List',
-  }),
-  ...words('content_grid', {
-    columns: 'Columns',
-    columns_help: 'How many columns on a wide screen; a narrow one shows fewer',
-    gap: 'Gap',
-    gap_help: 'The space between the cells, from 0 to 4',
-  }),
-  ...words('content_card', {
-    variant: 'Look',
-    variant_help: 'A card with a background or without one',
-    'variant.default': 'Card',
-    'variant.plain': 'No background',
-  }),
-  ...words('content_media', {
-    src: 'Picture address',
-    src_help: 'A link to the image: http(s) or a path on the site',
-    alt: 'Picture description',
-    alt_help: 'What the picture shows, for those who cannot see it',
-    side: 'Picture',
-    side_help: 'Which side the picture stands on',
-    'side.left': 'Left',
-    'side.right': 'Right',
-    ratio: 'Ratio',
-    ratio_help: 'The picture\'s width to its height',
-  }),
-  ...words('content_file', {
-    label: 'File name',
-    label_help: 'The name shown; when empty, the last part of the address',
-    href: 'File address',
-    href_help: 'A link to the file to download',
-  }),
-  ...words('content_diagram', {
-    title: 'Caption',
-    title_help: 'The diagram\'s name, also for screen readers',
-    engine: 'Engine',
-    engine_help: 'What draws the diagram',
-    'engine.mermaid': 'Mermaid',
-  }),
-  ...words('content_math', {
-    label: 'Caption',
-    label_help: 'The formula\'s name for screen readers',
-  }),
-  // The layout and element types of the one block editor (2026-11-04).
-  ...words('layout_spacer', {
-    size: 'Height',
-    size_help: 'From 1 to 8 steps, per screen',
-  }),
-  ...words('element_button', {
-    text: 'Text',
-    text_help: 'The words on the button',
-    href: 'Link',
-    href_help: 'Where the button leads; empty, it is a button',
-    appearance: 'Look',
-    appearance_help: 'How the button stands out',
-    'appearance.default': 'Filled',
-    'appearance.tonal': 'Tonal',
-    'appearance.outline': 'Outlined',
-    'appearance.link': 'Link',
-    'appearance.surface': 'On the surface',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-    icon: 'Icon',
-    icon_help: 'A SIMAI Framework icon name, such as arrow_forward',
-    icon_position: 'Icon side',
-    icon_position_help: 'Before or after the words',
-    'icon_position.start': 'Before',
-    'icon_position.end': 'After',
-    scheme: 'Colour',
-    scheme_help: 'The colour role of the button',
-    'scheme.primary': 'Primary',
-    'scheme.secondary': 'Secondary',
-  }),
-  ...words('element_button_icon', {
-    icon: 'Icon',
-    icon_help: 'A SIMAI Framework icon name, such as favorite',
-    label: 'Label for screen readers',
-    label_help: 'What the button does, said aloud',
-    appearance: 'Look',
-    appearance_help: 'How the button stands out',
-    'appearance.default': 'Filled',
-    'appearance.tonal': 'Tonal',
-    'appearance.outline': 'Outlined',
-    'appearance.surface': 'On the surface',
-    'appearance.ghost': 'No background',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-    scheme: 'Colour',
-    scheme_help: 'The colour role of the button',
-    'scheme.primary': 'Primary',
-    'scheme.secondary': 'Secondary',
-  }),
-  ...words('element_badge', {
-    text: 'Text',
-    text_help: 'The words on the badge',
-    appearance: 'Look',
-    appearance_help: 'How the badge stands out',
-    'appearance.main': 'Filled',
-    'appearance.tonal': 'Tonal',
-    'appearance.outline': 'Outlined',
-    scheme: 'Colour',
-    scheme_help: 'The colour role of the badge',
-    'scheme.neutral': 'Neutral',
-    'scheme.primary': 'Primary',
-    'scheme.secondary': 'Secondary',
-    'scheme.tertiary': 'Tertiary',
-    size: 'Size',
-    size_help: 'From small to regular',
-    icon: 'Icon',
-    icon_help: 'A SIMAI Framework icon name before the words',
-  }),
-  ...words('element_icon', {
-    icon: 'Icon',
-    icon_help: 'A SIMAI Framework icon name, such as star',
-    size: 'Size',
-    size_help: 'A step of the size ladder',
-    label: 'Label for screen readers',
-    label_help: 'Leave empty when the icon only decorates',
-  }),
-  // Forms (2026-11-04).
-  ...words('form_form', {
-    action: 'Where to send',
-    action_help: "The address the form is sent to; the host's",
-    method: 'Method',
-    method_help: 'How the form is sent',
-    'method.post': 'In the body (POST)',
-    'method.get': 'In the address (GET)',
-  }),
-  ...words('form_input', {
-    label: 'Label',
-    label_help: 'The words above the field',
-    placeholder: 'Placeholder',
-    placeholder_help: 'A hint inside the empty field',
-    input_type: 'Kind',
-    input_type_help: 'What the field takes',
-    'input_type.text': 'Text',
-    'input_type.email': 'Email',
-    'input_type.tel': 'Phone',
-    'input_type.url': 'Address',
-    required: 'Required',
-    required_help: 'The form is not sent without it',
-    hint: 'Hint',
-    hint_help: 'A line under the field',
-    name: 'Field name',
-    name_help: 'What the form sends the value under',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  ...words('form_textarea', {
-    label: 'Label',
-    label_help: 'The words above the field',
-    placeholder: 'Placeholder',
-    placeholder_help: 'A hint inside the empty field',
-    rows: 'Rows',
-    rows_help: 'How many lines the field shows, from 2 to 12',
-    required: 'Required',
-    required_help: 'The form is not sent without it',
-    hint: 'Hint',
-    hint_help: 'A line under the field',
-    name: 'Field name',
-    name_help: 'What the form sends the value under',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  ...words('form_checkbox', {
-    label: 'Label',
-    label_help: 'The words beside the box',
-    hint: 'Hint',
-    hint_help: 'A line under the label',
-    checked: 'On at first',
-    checked_help: 'Whether it starts ticked',
-    name: 'Field name',
-    name_help: 'What the form sends the value under',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  ...words('form_switch', {
-    label: 'Label',
-    label_help: 'The words beside the box',
-    hint: 'Hint',
-    hint_help: 'A line under the label',
-    checked: 'On at first',
-    checked_help: 'Whether it starts ticked',
-    name: 'Field name',
-    name_help: 'What the form sends the value under',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  ...words('form_select', {
-    label: 'Label',
-    label_help: 'The words above the field',
-    options: 'Options',
-    options_help: 'The choices, separated by commas',
-    placeholder: 'Placeholder',
-    placeholder_help: 'A hint inside the empty field',
-    required: 'Required',
-    required_help: 'The form is not sent without it',
-    name: 'Field name',
-    name_help: 'What the form sends the value under',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  ...words('form_button_submit', {
-    text: 'Text',
-    text_help: 'The words on the button',
-    appearance: 'Look',
-    appearance_help: 'How the button stands out',
-    'appearance.default': 'Filled',
-    'appearance.tonal': 'Tonal',
-    'appearance.outline': 'Outlined',
-    size: 'Size',
-    size_help: 'Small, regular or large',
-  }),
-  // The catalogue: groups, the built-in types that name themselves, variants.
-  ...words('catalogue.group', {
-    text: 'Text',
-    media: 'Media',
-    elements: 'Elements',
-    layout: 'Layout',
-    page_parts: 'Page parts',
-    marketing: 'Marketing',
-    data: 'Data',
-    forms: 'Forms',
-  }),
-  ...words('catalogue.type', {
-    layout_container: 'Container',
-    layout_grid: 'Grid',
-    layout_spacer: 'Empty space',
-    element_button: 'Button',
-    element_button_icon: 'Icon button',
-    element_badge: 'Badge',
-    element_icon: 'Icon',
-    form_form: 'Form',
-    form_input: 'Field',
-    form_textarea: 'Text area',
-    form_checkbox: 'Checkbox',
-    form_switch: 'Switch',
-    form_select: 'List',
-    form_button_submit: 'Send button',
-  }),
-  ...words('catalogue.variant', {
-    'layout_section.plain': 'Empty',
-    'layout_section.soft': 'On a soft background',
-    'layout_section.accent': 'On an accent background',
-    'layout_section.text': 'With a text area',
-    'layout_section.two_columns': 'Two columns',
-    'layout_container.narrow': 'Narrow, for text',
-    'layout_container.normal': 'Page width',
-    'layout_container.soft': 'On a soft background',
-    'layout_grid.cards_2': 'Two cards',
-    'layout_grid.cards_3': 'Three cards',
-    'layout_grid.cards_4': 'Four cards',
-    'element_button.plain': 'Button',
-    'element_button.icon': 'With an icon',
-    'element_button.outline': 'Outlined',
-    'form_form.request': 'Request: name and phone',
-    'form_form.message': 'Message: name, email and text',
-  }),
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfCompositionEditorWords';
+  if (!root[key]) root[key] = { words: null, loader: null, loading: null };
+  return root[key];
+})();
+
+/** The words now installed, or empty tables while none are. */
+function editorWords() {
+  return STORE.words || EMPTY;
+}
+
+/** Whether the editor words are on the page. */
+function editorWordsReady() {
+  return Boolean(STORE.words);
+}
+
+/**
+ * Install the words `{en: {...}, ru: {...}}`; the first install wins, and the
+ * page's components are told, as for a registered language, so a form drawn
+ * before the words arrived draws again.
+ */
+function installEditorWords(words) {
+  if (!STORE.words && words && typeof words.en === 'object' && typeof words.ru === 'object') {
+    STORE.words = words;
+    (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.refreshLanguage)();
+  }
+  return editorWords();
+}
+
+/** Core names how the words chunk is fetched (core/js/index.js). */
+function setEditorWordsLoader(load) {
+  if (typeof load === 'function' && !STORE.loader) STORE.loader = load;
+}
+
+/**
+ * The words, once they are on the page: resolves at once when they already
+ * are, else fetches the core-editor-words chunk once. Resolves to the empty
+ * tables when there is nothing to fetch them with (core not on the page).
+ */
+function loadEditorWords() {
+  if (STORE.words) return Promise.resolve(STORE.words);
+  if (!STORE.loader) return Promise.resolve(EMPTY);
+  if (!STORE.loading) {
+    STORE.loading = Promise.resolve()
+      .then(STORE.loader)
+      .then((module) => installEditorWords(module?.EDITOR_FIELD_WORDS ?? module?.default?.EDITOR_FIELD_WORDS))
+      .catch((error) => {
+        STORE.loading = null;
+        globalThis.console?.warn?.('[SIMAI Framework] sf-composition: the editor words did not load', error);
+        return EMPTY;
+      });
+  }
+  return STORE.loading;
+}
+
+/**
+ * `{en, ru}` that reads whatever is installed: SF.Composition.EDITOR_FIELD_WORDS
+ * as it was. Empty until the words are on the page; the first read starts
+ * loading them, and the page's components are told when they arrive.
+ */
+const readWords = (locale) => {
+  if (!STORE.words) loadEditorWords();
+  return editorWords()[locale];
 };
-
-const RU = {
-  ...words('layout_section', {
-    surface: 'Фон',
-    surface_help: 'Как раздел выделяется на странице',
-    'surface.surface': 'Обычный',
-    'surface.contrast': 'Контрастный',
-  }),
-  ...words('layout_columns', {
-    columns: 'Колонки',
-    columns_help: 'На сколько колонок делится содержимое',
-    gap: 'Промежуток',
-    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
-  }),
-  ...words('set_background', {
-    background: 'Фон',
-    background_help: 'Заливка под блоком',
-    'background.surface': 'Страница',
-    'background.container': 'Контейнер',
-    'background.primary': 'Основной',
-    'background.secondary': 'Дополнительный',
-    'background.tertiary': 'Третий',
-    'background.accent': 'Акцент',
-  }),
-  ...words('set_spacing', {
-    padding_y: 'Отступ сверху и снизу',
-    padding_y_help: 'От 0 до 8 шагов, для каждого экрана',
-    padding_x: 'Отступ по бокам',
-    padding_x_help: 'От 0 до 8 шагов, для каждого экрана',
-  }),
-  ...words('set_width', {
-    width: 'Ширина',
-    width_help: 'Насколько широко стоит содержимое на странице',
-    'width.narrow': 'Узкая',
-    'width.normal': 'Обычная',
-    'width.wide': 'Широкая',
-    'width.full': 'Во всю ширину',
-  }),
-  ...words('set_grid', {
-    columns: 'Колонки',
-    columns_help: 'На сколько колонок делится содержимое, для каждого экрана',
-    gap: 'Промежуток',
-    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
-  }),
-  ...words('set_alignment', {
-    align: 'Выравнивание',
-    align_help: 'Как выравнивается текст, для каждого экрана',
-    'align.start': 'К началу',
-    'align.center': 'По центру',
-    'align.end': 'К концу',
-  }),
-  ...words('set_breakout', {
-    breakout: 'От края до края',
-    breakout_help: 'Блок занимает всю ширину страницы',
-  }),
-  ...words('set_visibility', {
-    hidden: 'Скрыт',
-    hidden_help: 'Блок не показывается на этом экране',
-  }),
-  ...words('layout_area', {
-    content: 'Текст',
-    empty: 'Начните писать или нажмите / для блока',
-    padding: 'Отступ',
-    padding_help: 'Пространство внутри области, от 0 до 8 шагов',
-    hidden: 'Скрыть',
-    hidden_help: 'Область не показывается на этом экране',
-  }),
-  ...words('content_heading', {
-    level: 'Уровень заголовка',
-    level_help: 'От 1 (заголовок страницы) до 6',
-  }),
-  ...words('layout_region', {
-    placement: 'Расположение',
-    placement_help: 'Где область стоит в макете',
-    'placement.block': 'Во всю ширину',
-    'placement.start': 'В начале',
-    'placement.center': 'По центру',
-    'placement.end': 'В конце',
-    label: 'Название',
-    label_help: 'Название области для программ чтения с экрана',
-    landmark: 'Ориентир',
-    landmark_help: 'Роль области в структуре страницы для вспомогательных технологий',
-    'landmark.banner': 'Шапка',
-    'landmark.navigation': 'Навигация',
-    'landmark.main': 'Основное содержимое',
-    'landmark.complementary': 'Боковая колонка',
-    'landmark.contentinfo': 'Подвал',
-    'landmark.region': 'Область',
-    'landmark.none': 'Нет',
-    sticky: 'Закрепить',
-    sticky_help: 'Область остаётся на виду при прокрутке страницы',
-  }),
-  ...words('content_list', {
-    ordered: 'Нумерованный',
-    ordered_help: 'Номера вместо маркеров',
-    start: 'Начать с',
-    start_help: 'Номер первого пункта',
-  }),
-  ...words('content_code', {
-    lang: 'Язык',
-    lang_help: 'Язык программирования для подсветки',
-    title: 'Подпись',
-    title_help: 'Имя файла или короткая подпись над кодом',
-    numbers: 'Номера строк',
-    numbers_help: 'Нумеровать каждую строку',
-  }),
-  ...words('content_table', {
-    header: 'Заголовки таблицы',
-    header_help: 'Какие ячейки — заголовки',
-    'header.row': 'Первая строка',
-    'header.column': 'Первый столбец',
-    'header.both': 'Строка и столбец',
-    'header.none': 'Нет',
-  }),
-  ...words('content_figure', {
-    src: 'Адрес картинки',
-    src_help: 'Ссылка на изображение: http(s) или путь на сайте',
-    alt: 'Описание картинки',
-    alt_help: 'Что на картинке — для тех, кто её не видит',
-    ratio: 'Пропорции',
-    ratio_help: 'Соотношение ширины и высоты картинки',
-    'ratio.auto': 'Как есть',
-    fit: 'Вписать',
-    fit_help: 'Как картинка заполняет рамку',
-    'fit.cover': 'Заполнить',
-    'fit.contain': 'Целиком',
-  }),
-  ...words('content_alert', {
-    status: 'Вид',
-    status_help: 'О чём сообщение',
-    'status.neutral': 'Обычная',
-    'status.info': 'Сведения',
-    'status.success': 'Успех',
-    'status.warning': 'Внимание',
-    'status.error': 'Ошибка',
-    appearance: 'Оформление',
-    appearance_help: 'Заливка, рамка или без фона',
-    'appearance.default': 'Заливка',
-    'appearance.outlined': 'Рамка',
-    'appearance.flat': 'Плоско',
-  }),
-  ...words('content_details', {
-    open: 'Открыт сразу',
-    open_help: 'Блок показан раскрытым при загрузке страницы',
-    layout: 'Оформление',
-    layout_help: 'Заливка или линии между блоками',
-    'layout.surface': 'Заливка',
-    'layout.lines': 'Линии',
-  }),
-  ...words('content_tabs', {
-    label: 'Название',
-    label_help: 'Название ряда вкладок для программ чтения с экрана',
-  }),
-  ...words('content_tab', {
-    label: 'Название вкладки',
-    label_help: 'Текст на вкладке',
-  }),
-  ...words('content_steps', {
-    current: 'Текущий шаг',
-    current_help: 'Номер шага, который выполняется сейчас',
-    layout: 'Оформление',
-    layout_help: 'Линия или нумерованный список',
-    'layout.timeline': 'Линия',
-    'layout.list': 'Список',
-  }),
-  ...words('content_grid', {
-    columns: 'Колонки',
-    columns_help: 'Сколько колонок на широком экране; на узком их меньше',
-    gap: 'Промежуток',
-    gap_help: 'Расстояние между ячейками, от 0 до 4',
-  }),
-  ...words('content_card', {
-    variant: 'Оформление',
-    variant_help: 'Карточка с фоном или без него',
-    'variant.default': 'Карточка',
-    'variant.plain': 'Без фона',
-  }),
-  ...words('content_media', {
-    src: 'Адрес картинки',
-    src_help: 'Ссылка на изображение: http(s) или путь на сайте',
-    alt: 'Описание картинки',
-    alt_help: 'Что на картинке — для тех, кто её не видит',
-    side: 'Картинка',
-    side_help: 'С какой стороны стоит картинка',
-    'side.left': 'Слева',
-    'side.right': 'Справа',
-    ratio: 'Пропорции',
-    ratio_help: 'Соотношение ширины и высоты картинки',
-  }),
-  ...words('content_file', {
-    label: 'Название файла',
-    label_help: 'Показываемое название; если пусто — последняя часть адреса',
-    href: 'Адрес файла',
-    href_help: 'Ссылка на файл для скачивания',
-  }),
-  ...words('content_diagram', {
-    title: 'Подпись',
-    title_help: 'Название схемы, в том числе для программ чтения с экрана',
-    engine: 'Движок',
-    engine_help: 'Чем рисуется схема',
-    'engine.mermaid': 'Mermaid',
-  }),
-  ...words('content_math', {
-    label: 'Подпись',
-    label_help: 'Название формулы для программ чтения с экрана',
-  }),
-  ...words('layout_spacer', {
-    size: 'Высота',
-    size_help: 'От 1 до 8 шагов, для каждого экрана',
-  }),
-  ...words('element_button', {
-    text: 'Текст',
-    text_help: 'Слова на кнопке',
-    href: 'Ссылка',
-    href_help: 'Куда ведёт кнопка; пусто — это просто кнопка',
-    appearance: 'Вид',
-    appearance_help: 'Насколько кнопка заметна',
-    'appearance.default': 'Заливка',
-    'appearance.tonal': 'Тональная',
-    'appearance.outline': 'Контур',
-    'appearance.link': 'Ссылка',
-    'appearance.surface': 'На поверхности',
-    size: 'Размер',
-    size_help: 'Маленькая, обычная или крупная',
-    icon: 'Значок',
-    icon_help: 'Имя значка SIMAI Framework, например arrow_forward',
-    icon_position: 'Где значок',
-    icon_position_help: 'До или после слов',
-    'icon_position.start': 'Слева',
-    'icon_position.end': 'Справа',
-    scheme: 'Цвет',
-    scheme_help: 'Цветовая роль кнопки',
-    'scheme.primary': 'Основной',
-    'scheme.secondary': 'Дополнительный',
-  }),
-  ...words('element_button_icon', {
-    icon: 'Значок',
-    icon_help: 'Имя значка SIMAI Framework, например favorite',
-    label: 'Подпись для экранного диктора',
-    label_help: 'Что делает кнопка, вслух',
-    appearance: 'Вид',
-    appearance_help: 'Насколько кнопка заметна',
-    'appearance.default': 'Заливка',
-    'appearance.tonal': 'Тональная',
-    'appearance.outline': 'Контур',
-    'appearance.surface': 'На поверхности',
-    'appearance.ghost': 'Без фона',
-    size: 'Размер',
-    size_help: 'Маленькая, обычная или крупная',
-    scheme: 'Цвет',
-    scheme_help: 'Цветовая роль кнопки',
-    'scheme.primary': 'Основной',
-    'scheme.secondary': 'Дополнительный',
-  }),
-  ...words('element_badge', {
-    text: 'Текст',
-    text_help: 'Слова на метке',
-    appearance: 'Вид',
-    appearance_help: 'Насколько метка заметна',
-    'appearance.main': 'Заливка',
-    'appearance.tonal': 'Тональная',
-    'appearance.outline': 'Контур',
-    scheme: 'Цвет',
-    scheme_help: 'Цветовая роль метки',
-    'scheme.neutral': 'Нейтральный',
-    'scheme.primary': 'Основной',
-    'scheme.secondary': 'Дополнительный',
-    'scheme.tertiary': 'Третий',
-    size: 'Размер',
-    size_help: 'От маленькой до обычной',
-    icon: 'Значок',
-    icon_help: 'Имя значка SIMAI Framework перед словами',
-  }),
-  ...words('element_icon', {
-    icon: 'Значок',
-    icon_help: 'Имя значка SIMAI Framework, например star',
-    size: 'Размер',
-    size_help: 'Шаг шкалы размеров',
-    label: 'Подпись для экранного диктора',
-    label_help: 'Оставьте пустой, если значок только украшает',
-  }),
-  // Формы (2026-11-04).
-  ...words('form_form', {
-    action: 'Куда отправить',
-    action_help: 'Адрес, на который уходит форма; его даёт сайт',
-    method: 'Способ',
-    method_help: 'Как отправляется форма',
-    'method.post': 'В теле запроса (POST)',
-    'method.get': 'В адресе (GET)',
-  }),
-  ...words('form_input', {
-    label: 'Подпись',
-    label_help: 'Слова над полем',
-    placeholder: 'Подсказка в поле',
-    placeholder_help: 'Текст внутри пустого поля',
-    input_type: 'Вид',
-    input_type_help: 'Что поле принимает',
-    'input_type.text': 'Текст',
-    'input_type.email': 'Почта',
-    'input_type.tel': 'Телефон',
-    'input_type.url': 'Адрес',
-    required: 'Обязательное',
-    required_help: 'Без него форма не отправится',
-    hint: 'Пояснение',
-    hint_help: 'Строка под полем',
-    name: 'Имя поля',
-    name_help: 'Под каким именем форма отправит значение',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('form_textarea', {
-    label: 'Подпись',
-    label_help: 'Слова над полем',
-    placeholder: 'Подсказка в поле',
-    placeholder_help: 'Текст внутри пустого поля',
-    rows: 'Строк',
-    rows_help: 'Сколько строк видно, от 2 до 12',
-    required: 'Обязательное',
-    required_help: 'Без него форма не отправится',
-    hint: 'Пояснение',
-    hint_help: 'Строка под полем',
-    name: 'Имя поля',
-    name_help: 'Под каким именем форма отправит значение',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('form_checkbox', {
-    label: 'Подпись',
-    label_help: 'Слова рядом с флажком',
-    hint: 'Подсказка',
-    hint_help: 'Строка под подписью',
-    checked: 'Включено сразу',
-    checked_help: 'Отмечено ли с самого начала',
-    name: 'Имя поля',
-    name_help: 'Под каким именем форма отправит значение',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('form_switch', {
-    label: 'Подпись',
-    label_help: 'Слова рядом с флажком',
-    hint: 'Подсказка',
-    hint_help: 'Строка под подписью',
-    checked: 'Включено сразу',
-    checked_help: 'Отмечено ли с самого начала',
-    name: 'Имя поля',
-    name_help: 'Под каким именем форма отправит значение',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('form_select', {
-    label: 'Подпись',
-    label_help: 'Слова над полем',
-    options: 'Варианты',
-    options_help: 'Варианты через запятую',
-    placeholder: 'Подсказка в поле',
-    placeholder_help: 'Текст внутри пустого поля',
-    required: 'Обязательное',
-    required_help: 'Без него форма не отправится',
-    name: 'Имя поля',
-    name_help: 'Под каким именем форма отправит значение',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('form_button_submit', {
-    text: 'Текст',
-    text_help: 'Слова на кнопке',
-    appearance: 'Вид',
-    appearance_help: 'Как выделяется кнопка',
-    'appearance.default': 'Залитая',
-    'appearance.tonal': 'Тоновая',
-    'appearance.outline': 'Контурная',
-    size: 'Размер',
-    size_help: 'Маленький, обычный или большой',
-  }),
-  ...words('catalogue.group', {
-    text: 'Текст',
-    media: 'Медиа',
-    elements: 'Элементы',
-    layout: 'Макет',
-    page_parts: 'Части страницы',
-    marketing: 'Маркетинг',
-    data: 'Данные',
-    forms: 'Формы',
-  }),
-  ...words('catalogue.type', {
-    layout_container: 'Контейнер',
-    layout_grid: 'Сетка',
-    layout_spacer: 'Пустое место',
-    element_button: 'Кнопка',
-    element_button_icon: 'Кнопка-значок',
-    element_badge: 'Метка',
-    element_icon: 'Значок',
-    form_form: 'Форма',
-    form_input: 'Поле',
-    form_textarea: 'Многострочное поле',
-    form_checkbox: 'Флажок',
-    form_switch: 'Переключатель',
-    form_select: 'Список',
-    form_button_submit: 'Кнопка отправки',
-  }),
-  ...words('catalogue.variant', {
-    'layout_section.plain': 'Пустая',
-    'layout_section.soft': 'На мягком фоне',
-    'layout_section.accent': 'На акцентном фоне',
-    'layout_section.text': 'С областью текста',
-    'layout_section.two_columns': 'Две колонки',
-    'layout_container.narrow': 'Узкий, для текста',
-    'layout_container.normal': 'Шириной страницы',
-    'layout_container.soft': 'На мягком фоне',
-    'layout_grid.cards_2': 'Две карточки',
-    'layout_grid.cards_3': 'Три карточки',
-    'layout_grid.cards_4': 'Четыре карточки',
-    'element_button.plain': 'Кнопка',
-    'element_button.icon': 'Со значком',
-    'element_button.outline': 'Контурная',
-    'form_form.request': 'Заявка: имя и телефон',
-    'form_form.message': 'Сообщение: имя, почта и текст',
-  }),
-};
-
-const EDITOR_FIELD_WORDS = Object.freeze({ en: Object.freeze(EN), ru: Object.freeze(RU) });
+const EDITOR_FIELD_WORDS_LIVE = Object.freeze({
+  get en() { return readWords('en'); },
+  get ru() { return readWords('ru'); },
+});
 
 const STABLE_SEGMENT = /^[a-z][a-z0-9_]*$/u;
 
-/** Every word key a field reads: its label, its help and its stable choices. */
 /** The keys of the catalogue's words: the fixed groups, and the built-in types and variants that name one. */
 function catalogueWordKeys() {
   const keys = Object.values(_catalogue_mjs__WEBPACK_IMPORTED_MODULE_2__.CATALOGUE_GROUP_TABLE).map(({ label_key: key }) => key);
@@ -22579,6 +23391,7 @@ function catalogueWordKeys() {
   return [...new Set(keys)];
 }
 
+/** Every word key a field reads: its label, its help and its stable choices. */
 function editorFieldKeys(field) {
   if (!field || typeof field.label_key !== 'string') return [];
   const keys = [field.label_key];
@@ -22596,33 +23409,39 @@ function editorFieldKeys(field) {
  * nearest [lang], SF.language.use(), <html lang>), else English. A word
  * registered for `sf-composition` wins over the shipped one; a key with no
  * word in any language is left out, so the host's own words or the key show.
+ *
+ * `words` are the tables to read; by default the installed ones. While none
+ * are installed the call starts loading them (SF.Composition.loadEditorWords)
+ * and answers with the registered words only; the components are told when
+ * the words arrive, as for a registered language.
  */
-function editorFieldMessages(manifests, { node = null, locale } = {}) {
+function editorFieldMessages(manifests, { node = null, locale, words } = {}) {
+  const table = words || editorWords();
+  if (!words && !STORE.words) loadEditorWords();
   const list = manifests === undefined ? _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_EDITOR_MANIFESTS : Array.isArray(manifests) ? manifests : [manifests];
   const language = locale || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
   const messages = {};
+  const read = (key) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(table, key, language, EDITOR_WORDS_OWNER);
   // Without a manifest, the words of the built-in types' named places too
   // (a slot's label_key and empty_key; one block editor, 2026-11-03).
   // And the catalogue's words (2026-11-04): each group's name, and the name
   // of each built-in type and variant that gives a label_key.
   if (manifests === undefined) {
     for (const slot of _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_TYPE_MANIFESTS.flatMap((manifest) => Object.values(manifest.slots || {}))) {
-      for (const key of [slot.label_key, slot.empty_key].filter(Boolean)) messages[key] = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+      for (const key of [slot.label_key, slot.empty_key].filter(Boolean)) messages[key] = read(key);
     }
-    for (const key of catalogueWordKeys()) messages[key] = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+    for (const key of catalogueWordKeys()) messages[key] = read(key);
   }
   for (const manifest of list) {
     for (const field of manifest?.fields || []) {
       for (const key of editorFieldKeys(field)) {
-        const word = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+        const word = read(key);
         if (word !== key) messages[key] = word;
       }
     }
   }
   return messages;
 }
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ EDITOR_FIELD_WORDS, EDITOR_WORDS_OWNER, catalogueWordKeys, editorFieldKeys, editorFieldMessages });
 
 
 /***/ },
@@ -23008,7 +23827,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "sf-button": {
     "inputs": {
@@ -23208,7 +24027,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.0"
+    "version": "1.16.1"
   },
   "sf-button-icon": {
     "inputs": {
@@ -23374,6 +24193,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "tooltip": {
+          "default": "",
+          "type": "string"
+        },
         "value": {
           "default": "",
           "type": "string"
@@ -23383,7 +24206,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.10.1"
+    "version": "1.11.0"
   },
   "sf-checkbox": {
     "inputs": {
@@ -23396,6 +24219,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "checked": {
           "default": false,
           "type": "boolean"
+        },
+        "controls": {
+          "default": "",
+          "type": "string"
         },
         "description": {
           "default": "",
@@ -23451,7 +24278,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.4.1"
+    "version": "1.5.0"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -23496,6 +24323,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -23582,7 +24413,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.13.0"
+    "version": "1.16.0"
   },
   "sf-icon": {
     "inputs": {
@@ -23674,7 +24505,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.3.0"
+    "version": "1.3.1"
   },
   "sf-input": {
     "inputs": {
@@ -23701,6 +24532,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "counter": {
+          "default": false,
+          "type": "boolean"
+        },
         "default-value": {
           "default": "",
           "type": "string"
@@ -23710,6 +24545,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -23862,6 +24701,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "text-start": {
+          "default": "",
+          "type": "string"
+        },
         "value": {
           "default": "",
           "type": "string"
@@ -23871,7 +24714,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.10.1"
+    "version": "1.13.0"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -23911,6 +24754,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "boolean"
         },
         "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "help": {
           "default": "",
           "type": "string"
         },
@@ -24043,7 +24890,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.10.1"
+    "version": "1.12.1"
   },
   "sf-switch": {
     "inputs": {
@@ -24111,7 +24958,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.5.3"
+    "version": "1.7.1"
   }
 });
 
@@ -25804,8 +26651,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Composition: () => (/* binding */ Composition),
 /* harmony export */   DATA_EXTENSION: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_EXTENSION),
 /* harmony export */   DATA_SHAPES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES),
-/* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS),
-/* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER),
+/* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS_LIVE),
+/* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER),
 /* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA),
 /* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.INLINE_MARKS),
 /* harmony export */   MODIFIERS_EXTENSION: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.MODIFIERS_EXTENSION),
@@ -25842,7 +26689,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost),
 /* harmony export */   demoData: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData),
 /* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions),
-/* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
+/* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
 /* harmony export */   effectiveProps: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps),
 /* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs),
 /* harmony export */   entryGroups: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups),
@@ -25851,6 +26698,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
 /* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText),
 /* harmony export */   instantiateVariant: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant),
+/* harmony export */   loadEditorWords: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEditorWords),
 /* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
 /* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline),
@@ -25890,7 +26738,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   withParameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.withParameterSetFields)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
-/* harmony import */ var _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fe90f998a31d");
+/* harmony import */ var _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("bd04957f6bb9");
 /* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e19611ff78cb");
 /* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fb0bdf7719f0");
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6f489cc65b77");
@@ -25909,6 +26757,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _composed_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("e2cb52b018e5");
 /* harmony import */ var _data_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("c6b53a101be9");
 
+// The editor words are not part of core (localization study LC-1): the
+// runtime reads the installed words, SF.Composition.loadEditorWords() fetches
+// them. EDITOR_FIELD_WORDS here reads the installed words and starts loading
+// them on first read; the words module itself is editor-words.mjs.
 
 
 
@@ -27134,11 +27986,12 @@ const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
   BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  EDITOR_FIELD_WORDS: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS,
-  EDITOR_WORDS_OWNER: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER,
+  EDITOR_FIELD_WORDS: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS_LIVE,
+  EDITOR_WORDS_OWNER: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER,
   Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe,
   applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue,
-  editorFieldMessages: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages,
+  editorFieldMessages: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages,
+  loadEditorWords: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEditorWords,
   parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission,
   renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.renderFieldFallback,
   resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind,
@@ -27226,6 +28079,7 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
+
 
 
 
@@ -29901,6 +30755,69 @@ function withClasses(html, id, classes) {
 }
 
 
+/***/ },
+
+/***/ "4294700087dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
+// The unit words of a file size (localization study LC-3), for the bundle and
+// for Node alike: the runtime words of the language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "e15813114531"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _index_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("160cc5905145");
+// The languages the Framework has a pack of, for core (core/js/language-packs.js):
+// index.json is written by scripts/build-language-packs.mjs. A module, as the
+// components' lang/index.mjs, so the bundle and Node read the JSON alike.
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_index_json__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/***/ },
+
+/***/ "3694b5e2bf39"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB","gb":"GB"}}');
+
+/***/ },
+
+/***/ "220979cc98c6"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
+
+/***/ },
+
+/***/ "160cc5905145"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["kk"]}');
+
 /***/ }
 
 /******/ 	});
@@ -29996,7 +30913,7 @@ function withClasses(html, id, classes) {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + {"80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader"}[chunkId] + ".js";
+/******/ 			return "js/" + {"109341761891229":"core-editor-words","80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/

@@ -2,6 +2,92 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "51250bf01ab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -288,10 +374,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2f8a34e9c9c5");
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c784a72456f7");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("79fe483bc03d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4415f022eb61");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("97e6d3ece1f6");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c784a72456f7");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("79fe483bc03d");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4415f022eb61");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("97e6d3ece1f6");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -313,9 +400,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // The wizard keeps nothing the host must know: the states are the steps'
 // attributes, the answers its value, and every move and press an event.
 //
-// Places: inline, modal (an sf-modal the wizard composes) and pages (the
-// server's page per step: the footer's submit buttons post the step's form
-// with their word, sf-button 1.5.0 form/name/value).
+// Places: inline, modal (an sf-modal the wizard composes), drawer (an
+// sf-drawer it composes, owner decision C179 (3)) and pages (the server's
+// page per step: the footer's submit buttons post the step's form with their
+// word, sf-button 1.5.0 form/name/value).
+//
+// The draft (C179 (6)): the wizard keeps its place, the steps' states and
+// the answers itself, after every move and a moment after every edit, under
+// remember -- else the element's id -- in SF.Preferences (the browser's copy
+// is localStorage sf-pref:sf-wizard/<key>; a product that keeps preferences
+// for its user, SF.Preferences, gets it too). Closing a window is «continue
+// later»: no question, the draft stays, and close says where it stopped.
 
 
 
@@ -323,11 +418,25 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
 
 const TYPES = ['info', 'form', 'action', 'review', 'result'];
-const STATES = ['done', 'skipped', 'running', 'error']; // The progress draws a row up to this many steps, the count above (owner).
+const STATES = ['done', 'skipped', 'running', 'error']; // The progress draws a row up to this many steps, the count above (owner);
+// auto also draws the count where the row does not fit (C101 (4), fitProgress).
 
-const ROW_LIMIT = 7; // sf-steps' word for each state of a step.
+const ROW_LIMIT = 7; // Rounding slack only: the row's steps do not shrink, so a row wider than its
+// place by half a pixel already cuts its last label (measured at the switch
+// point: 717.53 in 717 cut «Готово» by 0.53 px).
+
+const FIT_SLACK = 0.05; // sf-steps' word for each state of a step.
 
 const STAGES = {
   done: 'completed',
@@ -339,7 +448,9 @@ const STAGES = {
 // browser's copy is localStorage sf-pref:sf-wizard/<key>; a host that keeps
 // preferences for its user gets it too).
 
-const STORE = 'sf-wizard/';
+const STORE = 'sf-wizard/'; // The draft is kept this long after the last edit (C179 (6)).
+
+const DRAFT_DELAY = 400;
 
 const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_3__["default"]; // One wizard id per instance, the same on every render (a first-paint
 // snapshot stays stable).
@@ -431,6 +542,21 @@ function primaryOf(step, last) {
   };
 } // A node inside a [hidden] element that stands within root (root's own
 // hidden, a closed step, does not count).
+// A Framework field that draws its own errors (C153 (3), the ShownValidity
+// mixin of smart/helpers/form-field.js): it has the shown-message reader.
+
+function showsOwnErrors(field) {
+  return typeof field?.sfShownMessage === 'function';
+} // The message the wizard writes on a field that does not draw its own errors.
+
+
+function fieldMessage(control, word) {
+  const validity = control?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.valueMissing) return word('required');
+  if (validity.customError) return control.validationMessage || word('invalid');
+  return word('invalid');
+}
 
 function hiddenWithin(node, root) {
   const hidden = node.parentElement?.closest('[hidden]');
@@ -488,11 +614,11 @@ function answersOf(root) {
 
   return values;
 }
-const WizardElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const WizardElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
   actions: {
@@ -529,8 +655,9 @@ class SfWizard extends WizardElement {
     this._steps = [];
     this._id = `sf-wizard-${++sequence}`;
     this._listOpen = false;
-    this._asking = null;
     this._dirty = false;
+    this._savedAt = 0;
+    this._draftTimer = 0;
     this._announce = '';
     this._marked = new Set();
     this._restored = false;
@@ -546,6 +673,12 @@ class SfWizard extends WizardElement {
     this._onTrigger = event => this.onTrigger(event);
 
     this._onModal = event => this.onModalClose(event);
+
+    this._onPhone = () => this.requestComponentUpdate('phone');
+
+    this._onStepsDrawn = event => {
+      if (event.target?.classList?.contains('sf-wizard-steps')) this.fitProgress();
+    };
   } // ------------------------------------------------------------ the steps
   // The steps: the sf-wizard-step elements of this wizard, wherever they
   // stand -- direct children, inside the printed picture (first paint), or in
@@ -597,8 +730,20 @@ class SfWizard extends WizardElement {
 
   get place() {
     const value = this.getAttribute('place');
-    return ['inline', 'modal', 'pages'].includes(value) ? value : 'inline';
-  } // The value open (place modal); the action open() is the method of that name.
+    return ['inline', 'modal', 'drawer', 'pages'].includes(value) ? value : 'inline';
+  } // A window place: an sf-modal or an sf-drawer the wizard composes.
+
+
+  get inWindow() {
+    return this.place === 'modal' || this.place === 'drawer';
+  } // A phone (below sm, the step the windows' sheets read, C159 (2)): the
+  // window takes the whole screen and the footer stays at its bottom
+  // (C179 (4)).
+
+
+  get onPhone() {
+    return Boolean(this._phoneQuery?.matches);
+  } // The value open (places modal and drawer); the action open() is the method of that name.
 
 
   get isOpen() {
@@ -658,6 +803,10 @@ class SfWizard extends WizardElement {
     super.onConnected?.();
     this.listen(this);
     this.bindTriggers();
+    this._phoneQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__.breakpointMedia)('sm', {
+      below: true
+    });
+    this._phoneQuery?.addEventListener?.('change', this._onPhone);
     this.restore();
     if (this.isPages && this.focusTitle) this.whenDrawn(() => this.focusStepTitle(), {
       first: true
@@ -669,6 +818,15 @@ class SfWizard extends WizardElement {
     this.listen(null);
     this._stepObserver?.disconnect();
     this.unbindTriggers();
+    this._phoneQuery?.removeEventListener?.('change', this._onPhone);
+    this._phoneQuery = null;
+    this.unobserveFit();
+
+    if (this._draftTimer) {
+      clearTimeout(this._draftTimer);
+      this._draftTimer = 0;
+      this.keep();
+    }
   } // The steps' events reach the wizard where the frame stands: in the host,
   // or in a window's portal at the end of the body (place modal).
 
@@ -727,14 +885,21 @@ class SfWizard extends WizardElement {
 
     this.addEventListener('sf-after-render', done);
   } // ------------------------------------------------------------ remember
+  // The draft's key (C179 (6)): remember, else the element's id; none, the
+  // draft lives as long as the page (the steps keep their fields).
 
 
   get storeKey() {
-    const key = text(this.remember);
+    const key = text(this.remember) || text(this.id);
     return key && !this.isPages ? `${STORE}${key}` : '';
   }
 
   keep() {
+    if (this._draftTimer) {
+      clearTimeout(this._draftTimer);
+      this._draftTimer = 0;
+    }
+
     const key = this.storeKey;
     if (!key) return;
     preferences()?.write(key, {
@@ -742,6 +907,43 @@ class SfWizard extends WizardElement {
       current: this.currentStep?.name ?? '',
       steps: this.stepStates,
       value: this.value
+    });
+
+    const minute = at => Math.floor(at / 60000);
+
+    const shown = this._savedAt;
+    this._savedAt = Date.now();
+    if (!shown || minute(shown) !== minute(this._savedAt)) this.requestComponentUpdate('draft');
+  } // A moment after an edit the draft is kept (one write per pause).
+
+
+  keepSoon() {
+    if (!this.storeKey) return;
+    if (this._draftTimer) clearTimeout(this._draftTimer);
+    this._draftTimer = setTimeout(() => {
+      this._draftTimer = 0;
+      this.keep();
+    }, DRAFT_DELAY);
+  } // «Черновик сохранён в 12:04» in the page's language, once kept.
+
+
+  get savedLine() {
+    if (!this._savedAt || !this.storeKey) return '';
+    let time = '';
+
+    try {
+      time = new Intl.DateTimeFormat(this.closest('[lang]')?.getAttribute('lang') || undefined, {
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(this._savedAt);
+    } catch {
+      time = '';
+    }
+
+    return this.sfWord('saved', {
+      vars: {
+        time
+      }
     });
   }
 
@@ -810,7 +1012,6 @@ class SfWizard extends WizardElement {
     this._dirty = false;
     this.sfHostState('data-dirty', false);
     this._listOpen = false;
-    this._asking = null;
     this._announce = this.sfWord('moved', {
       vars: {
         n: index + 1,
@@ -932,15 +1133,26 @@ class SfWizard extends WizardElement {
   }
 
   markInvalid(control) {
-    const field = this.fieldOf(control);
+    const field = this.fieldOf(control); // A field that shows its own errors (owner decision C153 (3): sf-input
+    // and its family) says them in the Framework's words on its own invalid
+    // event, which the check above fired; it is not marked from outside, so
+    // the browser's words never stand in its message (study WZ-6).
+
+    if (field && showsOwnErrors(field)) {
+      this._marked.add(field);
+
+      return;
+    }
 
     if (field) {
       if (!field.hasAttribute('invalid')) {
         field.setAttribute('invalid', '');
-        field.setAttribute('data-sf-wizard-invalid', ''); // An empty required field says it in the page's language; any other
-        // failure keeps the browser's own words (they name the rule).
+        field.setAttribute('data-sf-wizard-invalid', ''); // The Framework's words in the page's language (C153 (3)): an empty
+        // required field says «required», the page's own custom error stays
+        // as written, any other failure says «invalid» -- never the
+        // browser's validationMessage.
 
-        const message = control.validity?.valueMissing ? this.sfWord('required') : control.validationMessage;
+        const message = fieldMessage(control, key => this.sfWord(key));
 
         if (!field.getAttribute('error-message') && message) {
           field.setAttribute('error-message', message);
@@ -1012,6 +1224,8 @@ class SfWizard extends WizardElement {
       this._dirty = true;
       this.sfHostState('data-dirty', true);
     }
+
+    this.keepSoon();
   } // ------------------------------------------------------------ presses
   // The primary button: validation, the request, then the move (inline,
   // modal) or the post (pages, the browser's own submit of the button).
@@ -1056,11 +1270,12 @@ class SfWizard extends WizardElement {
       if (step.state !== 'done') step.element.setAttribute('state', 'done');
       const value = this.value;
       this.forget();
+      this._savedAt = 0;
       this.sfEmit('completed', {
         steps: this.stepStates,
         value
       });
-      if (this.place === 'modal') this.finishWindow('close');
+      if (this.inWindow) this.finishWindow('close');
       return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     }
 
@@ -1223,15 +1438,11 @@ class SfWizard extends WizardElement {
     this._listOpen = force === undefined ? !this._listOpen : Boolean(force);
     this.requestComponentUpdate('list');
   } // ------------------------------------------------------------ leaving
+  // «Продолжить позже», and every close of a window (C179 (6)): the draft
+  // is kept, nothing is asked.
 
 
   continueLater(event) {
-    if (this._dirty && !this._asking) {
-      event?.preventDefault();
-      this.ask('later');
-      return;
-    }
-
     this.leave('later', event);
   }
 
@@ -1251,38 +1462,15 @@ class SfWizard extends WizardElement {
     }
 
     this.keep();
-    this._asking = null;
-    if (this.place === 'modal') this.finishWindow(reason);else if (!event && this.laterHref && reason === 'later') globalThis.location?.assign(this.laterHref);
+    if (this.inWindow) this.finishWindow(reason);else if (!event && this.laterHref && reason === 'later') globalThis.location?.assign(this.laterHref);
     this.requestComponentUpdate('leave');
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
-  }
-
-  ask(reason) {
-    this._asking = reason;
-    this.requestComponentUpdate('ask');
-    this.whenDrawn(() => this.find('.sf-wizard-confirm button')?.focus());
-  }
-
-  answer(event) {
-    const reason = this._asking;
-    if (!reason) return;
-    const accepted = Boolean(event?.detail?.accepted);
-    this._asking = null;
-    this.requestComponentUpdate('answer');
-
-    if (!accepted) {
-      this.whenDrawn(() => this.focusStepTitle());
-      return;
-    }
-
-    this._dirty = false;
-    this.sfHostState('data-dirty', false);
-    this.leave(reason);
   } // ------------------------------------------------------------ the window
+  // The window the wizard composes: its sf-modal or sf-drawer.
 
 
   get modal() {
-    return this.querySelector(':scope > sf-modal.sf-wizard-modal') ?? this._modal ?? null;
+    return this.querySelector(':scope > :is(sf-modal.sf-wizard-modal, sf-drawer.sf-wizard-drawer)') ?? this._modal ?? null;
   }
 
   triggers() {
@@ -1291,7 +1479,7 @@ class SfWizard extends WizardElement {
   }
 
   bindTriggers() {
-    if (this.place !== 'modal') return;
+    if (!this.inWindow) return;
 
     for (const trigger of this.triggers()) {
       trigger.addEventListener('click', this._onTrigger);
@@ -1309,7 +1497,7 @@ class SfWizard extends WizardElement {
   }
 
   openWindow() {
-    if (this.place !== 'modal') return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('place');
+    if (!this.inWindow) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('place');
     if (this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('open');
     if (!this.sfEmit('open', {}, {
       cancelable: true
@@ -1321,13 +1509,7 @@ class SfWizard extends WizardElement {
   }
 
   closeWindow(reason = 'api') {
-    if (this.place !== 'modal' || !this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
-
-    if (this._dirty) {
-      this.ask(reason);
-      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('asking');
-    }
-
+    if (!this.inWindow || !this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
     return this.leave(reason);
   }
 
@@ -1339,20 +1521,16 @@ class SfWizard extends WizardElement {
     });
     this._closing = false;
     this.requestComponentUpdate('close');
-  } // sf-modal asks before it closes (its close, Escape, the scrim): with
-  // input on the step the wizard asks first; else it is the wizard's close.
+  } // The window asks before it closes (its ×, Escape, the scrim): it is the
+  // wizard's close, «continue later» (C179 (6)) -- the draft is kept and
+  // nothing is asked, so the window's own question about changes (C159 (6))
+  // does not come either.
 
 
   onModalClose(event) {
     if (event.target !== this.modal || this._closing) return;
     const reason = event.detail?.reason === 'escape' || event.detail?.reason === 'outside' ? event.detail.reason : 'close';
     event.preventDefault();
-
-    if (this._dirty) {
-      this.ask(reason);
-      return;
-    }
-
     this.leave(reason);
   } // ------------------------------------------------------------ drawing
 
@@ -1373,7 +1551,8 @@ class SfWizard extends WizardElement {
     steps.forEach(one => {
       one.element.hidden = one.index !== index;
       one.element.sfWizard = this;
-    }); // The drawn progress: auto resolves to a row up to ROW_LIMIT steps, the count above.
+    }); // The drawn progress: auto resolves to a row up to ROW_LIMIT steps, the
+    // count above; a row that does not fit draws the count too (fitProgress).
 
     const shape = this.progress === 'auto' || !this.progress ? count > ROW_LIMIT ? 'count' : 'row' : this.progress;
     const primary = primaryOf(step, last);
@@ -1401,7 +1580,8 @@ class SfWizard extends WizardElement {
       last,
       busy: this.busy,
       listOpen: this._listOpen,
-      asking: this._asking,
+      phone: this.onPhone,
+      saved: this.savedLine,
       announce: this._announce,
       form: this.isPages ? this.formOf(step) : null,
       stepNodes: this._steps,
@@ -1427,10 +1607,7 @@ class SfWizard extends WizardElement {
         allSteps: word('all-steps'),
         hideSteps: word('hide-steps'),
         progress: word('progress'),
-        running: step?.message || this.runningText || word('running-text'),
-        question: word('close-question'),
-        accept: word('close-accept'),
-        decline: word('close-decline')
+        running: step?.message || this.runningText || word('running-text')
       },
       rootClass: this.getRootClass()
     });
@@ -1442,12 +1619,13 @@ class SfWizard extends WizardElement {
 
   afterRender(changedAttributes) {
     super.afterRender?.(changedAttributes);
-    const modal = this.querySelector('sf-modal.sf-wizard-modal');
+    const modal = this.querySelector(':scope > :is(sf-modal.sf-wizard-modal, sf-drawer.sf-wizard-drawer)');
 
     if (modal && modal !== this._modal) {
       this._modal?.removeEventListener('sf-modal-close', this._onModal);
+      this._modal?.removeEventListener('sf-drawer-close', this._onModal);
       this._modal = modal;
-      modal.addEventListener('sf-modal-close', this._onModal);
+      modal.addEventListener(modal.localName === 'sf-drawer' ? 'sf-drawer-close' : 'sf-modal-close', this._onModal);
     }
 
     if (modal) {
@@ -1459,6 +1637,90 @@ class SfWizard extends WizardElement {
     }
 
     this.revealInColumn();
+    this.fitProgress();
+  } // ------------------------------------------------------------ the row's fit
+
+  /**
+   * progress auto (owner decision C101 (4)): the row of steps while it fits
+   * the wizard's own width, else the count line «Шаг N из M» over the bar.
+   * The row is laid out at its one-line width for a moment (data-sf-measure
+   * on the frame and on sf-steps' root, in the same task, never painted) and
+   * compared with the room the head gives it; where it is wider the frame
+   * is marked data-sf-progress-fit="count" and the sheet draws the count
+   * line (the mark goes when the row fits). The row stays in the markup, out of view, so a wider wizard
+   * measures it again. Measured after each drawing of the wizard and of its
+   * sf-steps (before the first paint of the row: sf-steps' after-render), when
+   * the fonts are in, and when the wizard's own width changes (a
+   * ResizeObserver on the frame, the change applied in the next frame so the
+   * observer never sees its own change).
+   */
+
+
+  fitProgress() {
+    const frame = this.frameRoot;
+    if (!frame || !this.isConnected) return;
+    this.observeFit(frame);
+    const auto = this.progress === 'auto' || !this.progress;
+
+    if (!auto || !frame.classList.contains('sf-wizard--progress-row')) {
+      frame.removeAttribute('data-sf-progress-fit');
+      return;
+    }
+
+    const root = frame.querySelector('.sf-wizard-steps > .sf-steps');
+    const list = root?.querySelector(':scope > .sf-steps-container'); // sf-steps has not drawn yet: its after-render comes back here.
+
+    if (!root || !list) return;
+    frame.setAttribute('data-sf-measure', '');
+    root.setAttribute('data-sf-measure', '');
+    const room = root.getBoundingClientRect().width;
+    const need = list.getBoundingClientRect().width;
+    root.removeAttribute('data-sf-measure');
+    frame.removeAttribute('data-sf-measure');
+    this._fitWidth = frame.getBoundingClientRect().width; // Not laid out (a closed window, display none): nothing to decide.
+
+    if (!room) return; // Only the count is marked: a row that fits is the frame as drawn, so a
+    // printed first paint (snapshot) carries nothing measured.
+
+    const fit = need > room + FIT_SLACK ? 'count' : 'row';
+
+    if (fit === 'count') {
+      if (frame.getAttribute('data-sf-progress-fit') !== fit) frame.setAttribute('data-sf-progress-fit', fit);
+    } else {
+      frame.removeAttribute('data-sf-progress-fit');
+    }
+  }
+
+  observeFit(frame) {
+    if (frame === this._fitFrame) return;
+    this.unobserveFit();
+    this._fitFrame = frame;
+    frame.addEventListener('sf-after-render', this._onStepsDrawn);
+    if (typeof ResizeObserver !== 'function') return;
+
+    if (!this._fitObserver) {
+      this._fitObserver = new ResizeObserver(() => {
+        const seen = this._fitFrame?.getBoundingClientRect().width;
+        if (!seen || Math.abs(seen - (this._fitWidth ?? 0)) < 0.5 || this._fitQueued) return;
+        this._fitQueued = true;
+
+        const settle = () => {
+          this._fitQueued = false;
+          this.fitProgress();
+        };
+
+        if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(settle);else Promise.resolve().then(settle);
+      });
+      globalThis.document?.fonts?.ready?.then?.(() => this.fitProgress());
+    }
+
+    this._fitObserver.observe(frame);
+  }
+
+  unobserveFit() {
+    this._fitObserver?.disconnect();
+    this._fitFrame?.removeEventListener('sf-after-render', this._onStepsDrawn);
+    this._fitFrame = null;
   }
   /**
    * Keeps the current step in view in the column's own scroller after a move
@@ -1530,7 +1792,9 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //     .sf-wizard-footer    Back · (Skip) · one primary
 //     a visually hidden status region that says where a move went
 //
-// Place modal draws the same frame inside an sf-modal. Place pages makes the
+// Place modal draws the same frame inside an sf-modal, place drawer inside an
+// sf-drawer; under the footer a quiet line says when the draft was kept
+// (C179 (6)). Place pages makes the
 // primary and Skip native submit buttons of the step's form (sf-button
 // 1.5.0 form, name, value) and Back a link.
 
@@ -1633,7 +1897,7 @@ function head(context) {
     component
   } = context;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-wizard-head">
-    <div class="sf-wizard-top">
+    <div class=${heading || offerLater ? 'sf-wizard-top' : 'sf-wizard-top sf-wizard-top--bare'}>
       ${heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-wizard-heading">${heading}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <span class="sf-wizard-position">${words.position}</span>
       ${offerLater ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-wizard-later" size=${size === '1' ? '1/2' : '1/3'} appearance="ghost" scheme="on-surface-variant"
@@ -1658,8 +1922,6 @@ function body(context) {
     words,
     busy,
     id,
-    component,
-    asking,
     stepNodes,
     size
   } = context;
@@ -1673,9 +1935,6 @@ function body(context) {
     </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${result(step)}
     <div class="sf-wizard-live" data-sf-live>${stepNodes}</div>
-    ${asking ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-confirm class="sf-wizard-confirm" appearance="card" destructive
-      question=${words.question} accept-text=${words.accept} decline-text=${words.decline}
-      @sf-confirm-answer=${event => component.answer(event)}></sf-confirm>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
 }
 
@@ -1728,7 +1987,7 @@ function frame(context) {
     announce,
     busy
   } = context;
-  const classes = ['sf-wizard', `sf-wizard--size-${size === '1' ? '1' : 'half'}`, `sf-wizard--progress-${shape}`, `sf-wizard--place-${place}`, busy ? 'sf-wizard--busy' : '', context.rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-wizard', `sf-wizard--size-${size === '1' ? '1' : 'half'}`, `sf-wizard--progress-${shape}`, `sf-wizard--place-${place}`, place === 'modal' || place === 'drawer' ? 'sf-wizard--window' : '', busy ? 'sf-wizard--busy' : '', context.rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} data-sf-wizard=${context.id} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="region" aria-label=${name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${head(context)}
     <div class="sf-wizard-main">
@@ -1738,15 +1997,42 @@ function frame(context) {
       ${body(context)}
     </div>
     ${footer(context)}
+    ${context.saved ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-wizard-saved"><i class="sf-icon" aria-hidden="true">cloud_done</i><span>${context.saved}</span></p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     <div class="sf-wizard-announce sr-only" role="status">${announce}</div>
   </div>`;
 }
 
 function renderWizardTemplate(context) {
-  if (context.place !== 'modal') return frame(context); // Place modal: the frame in an sf-modal; closed, nothing is drawn of it.
+  const {
+    place,
+    name
+  } = context;
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-modal class="sf-wizard-modal" heading=${context.name} show-header="false" width="min(48rem, 100%)">
-    <div class="sf-wizard-window" slot="content">${frame(context)}</div>
+  if (place === 'drawer') {
+    // Place drawer (owner decision C179 (3)): a short wizard of two to four
+    // steps in a side panel 30rem wide (sf-drawer size 2, C157 (2)) at the
+    // end edge; the panel's title is the wizard's name, its × closes it
+    // (= continue later, C179 (6)). On a phone the panel takes the screen
+    // (C157 (4)).
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-drawer class="sf-wizard-drawer" heading=${name} size="2" placement="inline-end">
+      <div class="sf-wizard-window" slot="content">${frame({ ...context,
+      heading: ''
+    })}</div>
+    </sf-drawer>`;
+  }
+
+  if (place !== 'modal') return frame(context); // Place modal: the frame in an sf-modal; closed, nothing is drawn of it.
+  // A window of the Framework (owner decisions C159, C179 (3), (4)): a size
+  // by name -- form, 36rem (32rem compact), wide 48rem only with the column
+  // of steps, the whole screen on a phone -- and the window's header with
+  // the wizard's name as its title on the h4 step (C159 (5), C179 (2)) and
+  // the ×; the frame draws no name of its own inside (heading: '').
+
+  const size = context.phone ? 'full' : context.shape === 'column' ? 'wide' : 'form';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-modal class="sf-wizard-modal" heading=${name} size=${size}>
+    <div class="sf-wizard-window" slot="content">${frame({ ...context,
+    heading: ''
+  })}</div>
   </sf-modal>`;
 }
 __webpack_async_result__();
@@ -1787,21 +2073,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "c784a72456f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.3.2","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.4.2","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","drawer","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "79fe483bc03d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Wizard","runtime":{"label":"Step-by-step setup","running-text":"Working…","position":"Step {n} of {count}","moved":"Step {n} of {count}: {step}","back":"Back","skip":"Skip","next":"Next","run":"Run","retry":"Try again","apply":"Apply","done":"Done","later":"Continue later","steps":"Steps","all-steps":"All steps","hide-steps":"Hide steps","progress":"Wizard progress","state-done":"Done","state-skipped":"Skipped","state-running":"In progress","state-error":"Error","close-question":"Close the wizard? What you entered on this step will not be saved.","close-accept":"Close","close-decline":"Stay","required":"Fill in this field."},"events":{"close":{"label":"Continue later"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Wizard","runtime":{"label":"Step-by-step setup","running-text":"Working…","position":"Step {n} of {count}","moved":"Step {n} of {count}: {step}","back":"Back","skip":"Skip","next":"Next","run":"Run","retry":"Try again","apply":"Apply","done":"Done","later":"Continue later","steps":"Steps","all-steps":"All steps","hide-steps":"Hide steps","progress":"Wizard progress","state-done":"Done","state-skipped":"Skipped","state-running":"In progress","state-error":"Error","required":"Fill in this field","invalid":"Check the value","saved":"Draft saved at {time}"},"events":{"close":{"label":"Continue later"}}}');
 
 /***/ },
 
 /***/ "4415f022eb61"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Мастер","runtime":{"label":"Пошаговая настройка","running-text":"Выполняется…","position":"Шаг {n} из {count}","moved":"Шаг {n} из {count}: {step}","back":"Назад","skip":"Пропустить","next":"Далее","run":"Запустить","retry":"Повторить","apply":"Применить","done":"Готово","later":"Продолжить позже","steps":"Шаги","all-steps":"Все шаги","hide-steps":"Скрыть шаги","progress":"Ход мастера","state-done":"Сделан","state-skipped":"Пропущен","state-running":"Выполняется","state-error":"Ошибка","close-question":"Закрыть мастер? Введённое на этом шаге не сохранится.","close-accept":"Закрыть","close-decline":"Остаться","required":"Заполните это поле."},"events":{"close":{"label":"Продолжить позже"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Мастер","runtime":{"label":"Пошаговая настройка","running-text":"Выполняется…","position":"Шаг {n} из {count}","moved":"Шаг {n} из {count}: {step}","back":"Назад","skip":"Пропустить","next":"Далее","run":"Запустить","retry":"Повторить","apply":"Применить","done":"Готово","later":"Продолжить позже","steps":"Шаги","all-steps":"Все шаги","hide-steps":"Скрыть шаги","progress":"Ход мастера","state-done":"Сделан","state-skipped":"Пропущен","state-running":"Выполняется","state-error":"Ошибка","required":"Заполните поле","invalid":"Проверьте значение","saved":"Черновик сохранён в {time}"},"events":{"close":{"label":"Продолжить позже"}}}');
 
 /***/ }
 

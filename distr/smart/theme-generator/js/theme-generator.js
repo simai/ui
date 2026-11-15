@@ -615,11 +615,67 @@ function brandVariables(theme) {
 function themeToCss(theme, selector = ':root') {
   const lines = Object.entries(themeVariables(theme)).map(([name, value]) => `  ${name}: ${value};`);
   return `${selector} {\n${lines.join('\n')}\n}\n`;
+} // The two classes that carry a scheme (core _sf_css__theme.scss): the semantic
+// roles (--sf-primary, --sf-on-secondary-container, ...) are declared on them,
+// each a light-dark() of the palette tones, so they are read again from the
+// tones of the element that carries one.
+
+const THEME_CLASSES = Object.freeze(['theme-light', 'theme-dark']); // The scheme an element stands in: the class of its nearest themed ancestor,
+// else the system's (the class the Loader would give the page).
+
+function surroundingTheme(target) {
+  const area = target.parentElement?.closest?.(THEME_CLASSES.map(name => `.${name}`).join(', '));
+  if (area) return THEME_CLASSES.find(name => area.classList.contains(name));
+  const dark = target.ownerDocument?.defaultView?.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+  return dark ? 'theme-dark' : 'theme-light';
+} // An area themed below the page (C84, RG-S3-31). Its roles are read on the
+// nearest theme class, so the area carries one: without it the tones changed
+// and the roles stayed the page's; with a fixed `theme-light` the area kept
+// the light roles on a dark page (the tonal button's ink 1.1 : 1). The area
+// takes the class of the scheme around it and follows it -- a switch of the
+// page, of a section, or of the system -- until the theme is taken off; then
+// the classes it had come back. An area meant to keep a scheme of its own
+// stands in an element that carries that class.
+
+
+function followTheme(target) {
+  const doc = target.ownerDocument;
+  const view = doc?.defaultView;
+  const had = THEME_CLASSES.filter(name => target.classList.contains(name));
+
+  const sync = () => {
+    const wanted = surroundingTheme(target);
+
+    for (const name of THEME_CLASSES) if (name !== wanted && target.classList.contains(name)) target.classList.remove(name);
+
+    if (!target.classList.contains(wanted)) target.classList.add(wanted);
+  };
+
+  sync();
+  const observer = view?.MutationObserver ? new view.MutationObserver(records => {
+    if (records.some(record => record.target !== target && record.target.contains?.(target))) sync();
+  }) : null;
+  observer?.observe(doc.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true
+  });
+  const media = view?.matchMedia?.('(prefers-color-scheme: dark)');
+  media?.addEventListener?.('change', sync);
+  return () => {
+    observer?.disconnect();
+    media?.removeEventListener?.('change', sync);
+
+    for (const name of THEME_CLASSES) target.classList.toggle(name, had.includes(name));
+  };
 }
 /**
  * Applies the theme to an element's inline style (the page by default) and
- * returns a function that takes it off again.
+ * returns a function that takes it off again. An element below the page
+ * takes the scheme around it as a theme class and follows it while the theme
+ * is on (C84): its roles are the dark theme's on a dark page.
  */
+
 
 function applyTheme(theme, target = globalThis.document?.documentElement) {
   if (!target?.style) return () => {};
@@ -628,7 +684,10 @@ function applyTheme(theme, target = globalThis.document?.documentElement) {
 
   for (const [name, value] of Object.entries(variables)) target.style.setProperty(name, value);
 
+  const area = target.classList && target !== target.ownerDocument?.documentElement ? followTheme(target) : null;
   return () => {
+    area?.();
+
     for (const [name, value] of Object.entries(before)) {
       if (value) target.style.setProperty(name, value);else target.style.removeProperty(name);
     }
@@ -714,7 +773,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
  // The journal record component-theme-generator-to-input-color-brand.
 
 const RETIRED = Object.freeze({
@@ -757,8 +824,8 @@ const themeCopy = theme => (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE
 const ThemeGeneratorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
@@ -3182,7 +3249,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-theme
 /***/ "bc9a73b2d5a7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.2.1","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.3.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

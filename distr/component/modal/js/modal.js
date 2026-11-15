@@ -55,9 +55,99 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   INITIAL_FOCUS: () => (/* binding */ INITIAL_FOCUS),
 /* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
+/* harmony export */   holdFieldsReadOnly: () => (/* binding */ holdFieldsReadOnly),
+/* harmony export */   isFieldElement: () => (/* binding */ isFieldElement),
+/* harmony export */   isOneLineField: () => (/* binding */ isOneLineField),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
-/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus)
+/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus),
+/* harmony export */   windowFields: () => (/* binding */ windowFields)
 /* harmony export */ });
+// The fields of a window (owner decision C159, 2026-11-14): a window that
+// holds fields is one form -- a press on its scrim never closes it (6), it
+// asks before its changes go (6), its main answer submits it and Enter in a
+// one-line field presses that answer (9), its first field takes the focus
+// (9), and on a phone a form of more than three fields takes the whole
+// screen (2). Shared by sf-modal and the class modal, and by sf-drawer. They live here,
+// beside the first focus that reads them, so the focus module stays one file
+// with no imports (the unit tests load it as one module).
+//
+// A field is a native control a person types or picks in, or a Framework
+// field element (sf-input*, sf-dropdown, sf-checkbox, sf-switch, sf-radio)
+// whether it has drawn its control yet or not; a field element counts once,
+// whatever it draws inside.
+const NATIVE_FIELD = ['input:not([type="hidden"], [type="button"], [type="submit"], [type="reset"], [type="image"])', 'select', 'textarea', '[contenteditable=""]', '[contenteditable="true"]'].join(', ');
+const FIELD_ELEMENTS = new Set(['sf-dropdown', 'sf-checkbox', 'sf-switch', 'sf-radio', 'sf-segmented']);
+
+const isFieldElement = node => node.localName?.startsWith('sf-input') || FIELD_ELEMENTS.has(node.localName); // One-line fields: Enter in them presses the main answer (9).
+
+
+const ONE_LINE = new Set(['', 'text', 'search', 'email', 'tel', 'url', 'password', 'number', 'date', 'datetime-local', 'month', 'time', 'week']); // The outermost field element a node stands in, under `root`.
+
+function fieldElementOf(node, root) {
+  let host = null;
+
+  for (let at = node; at && at !== root; at = at.parentElement) {
+    if (isFieldElement(at)) host = at;
+  }
+
+  return host;
+} // The window's fields in document order, each once.
+
+
+function windowFields(root) {
+  if (!root?.querySelectorAll) return [];
+  const units = [];
+  const seen = new Set();
+
+  for (const node of root.querySelectorAll('*')) {
+    if (!isFieldElement(node) && !node.matches(NATIVE_FIELD)) continue;
+    if (node.closest('[hidden]')) continue;
+    const unit = fieldElementOf(node, root) || node;
+    if (seen.has(unit)) continue;
+    seen.add(unit);
+    units.push(unit);
+  }
+
+  return units;
+}
+
+function isOneLineField(node) {
+  return node?.localName === 'input' && ONE_LINE.has((node.getAttribute('type') || '').toLowerCase());
+} // Makes the fields read-only while the window saves (9) and answers the undo:
+// only what it changed goes back.
+
+
+function holdFieldsReadOnly(fields) {
+  const changed = [];
+
+  for (const unit of fields) {
+    if (unit.localName?.startsWith('sf-')) {
+      if (!unit.hasAttribute('readonly')) {
+        unit.setAttribute('readonly', '');
+        changed.push(() => unit.removeAttribute('readonly'));
+      }
+
+      continue;
+    }
+
+    if ('readOnly' in unit && !unit.readOnly && unit.localName !== 'select') {
+      unit.readOnly = true;
+      changed.push(() => {
+        unit.readOnly = false;
+      });
+    } else if (unit.localName === 'select' && !unit.hasAttribute('aria-readonly')) {
+      unit.setAttribute('aria-readonly', 'true');
+      unit.inert = true;
+      changed.push(() => {
+        unit.removeAttribute('aria-readonly');
+        unit.inert = false;
+      });
+    }
+  }
+
+  return () => changed.forEach(undo => undo());
+}
+
 const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select', 'textarea', 'iframe', 'summary', 'audio[controls]', 'video[controls]', '[contenteditable]', '[tabindex]'].join(',');
 const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
 
@@ -166,7 +256,9 @@ function trapModalFocus(panel, event) {
 //   `autofocus` attribute, as a native <dialog> does; else, in a question
 //   window -- one whose answers hold a dangerous one (an sf-button with
 //   status="danger", its drawn .sf-button--danger, or an sf-confirm) -- its
-//   safe answer, «Отмена»; else the panel, as before. Only answers count: a red
+//   safe answer, «Отмена»; else, in a window with fields, its first field
+//   (owner decision C159 (9), 2026-11-14, as WAI-ARIA's dialog pattern
+//   advises); else the panel, as before. Only answers count: a red
 //   sf-badge or an error message in the body does not make a window a question;
 // - safe: the safe answer whenever there is one;
 // - first: the first control of the window's content (the header's buttons,
@@ -187,8 +279,10 @@ function trapModalFocus(panel, event) {
 
 const INITIAL_FOCUS = ['auto', 'safe', 'first', 'panel']; // status="error" on an sf-button is danger's dated alias (C13).
 
-const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm';
-const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button)';
+const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm'; // The header's × is excluded: its button (.sf-modal-close-button) and, since
+// sf-modal draws it as sf-button-close (C14), that element (.sf-modal-close).
+
+const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button):not(.sf-modal-close)';
 
 function takesFocus(node) {
   if (!node || node.closest('[inert]') || node.closest('[hidden]')) return null;
@@ -219,7 +313,12 @@ function firstFocus(panel, mode) {
   if (mode === 'auto') {
     const marked = panel.querySelector('[autofocus]');
     if (marked && !marked.closest('[inert], [hidden]')) return takesFocus(marked) || panel;
-    if (!panel.querySelector(DANGER_SELECTOR)) return panel;
+
+    if (!panel.querySelector(DANGER_SELECTOR)) {
+      const body = panel.querySelector('[data-sf-modal-body-scroll]') || panel;
+      const field = windowFields(body)[0];
+      return field && takesFocus(field) || panel;
+    }
   }
 
   return safeAnswer(panel) || panel;
@@ -277,6 +376,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("50d2a204ba4c");
 /* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("93025a68d8ab");
 /* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("418134b64ef5");
 
 
 
@@ -288,6 +388,9 @@ __webpack_require__.r(__webpack_exports__);
 // same attribute; the drawer's older name until 2026-12-01).
 
 const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
+
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
 
 
 
@@ -333,26 +436,14 @@ function normalizeDisplay(value) {
 
 
 const UNTITLED = {
-  en: {
-    title: 'Dialog',
-    close: 'Close',
-    loading: 'Loading…',
-    loadFailed: 'Failed to load content',
-    frameFailed: 'Failed to load iframe content'
-  },
-  ru: {
-    title: 'Окно',
-    close: 'Закрыть',
-    loading: 'Загрузка…',
-    loadFailed: 'Не удалось загрузить содержимое',
-    frameFailed: 'Не удалось загрузить встроенную страницу'
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__["default"].ru
 }; // The node the words are looked up from: the modal once it is on the page,
 // else the document, which is where a modal not yet attached will be.
 
 const modalText = (key, node) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, key, node?.isConnected ? node : document.documentElement, 'sf-modal');
 
-const untitled = root => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'title', root);
+const untitled = root => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'title', root, 'sf-modal');
 
 class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
   static componentName = 'Modal';
@@ -734,7 +825,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
         closeButton.className = joinClasses('sf-icon-button sf-modal-header-action sf-modal-close-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', params.closeClass); // The page language's word, as the Smart window has; the glyph inside is
         // decoration and carries no name of its own.
 
-        closeButton.setAttribute('aria-label', (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'close', closeButton.isConnected ? closeButton : document.documentElement));
+        closeButton.setAttribute('aria-label', (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'close', closeButton.isConnected ? closeButton : document.documentElement, 'sf-modal'));
         closeButton.setAttribute('data-sf-modal-close', this.modalId);
         closeButton.innerHTML = '            <span\n' + '              class="sf-close sf-close--size-1/3 flex justify-center items-center"\n' + '              aria-hidden="true"\n' + '            >\n' + '              <span class="sf-close-icon"></span>\n' + '            </span>';
         header.append(closeButton);
@@ -748,7 +839,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     bodyViewport.className = 'sf-modal-body-viewport min-w-0 overflow-visible';
     bodyViewport.setAttribute('data-sf-modal-body-viewport', '');
     const bodyScroll = document.createElement('div');
-    bodyScroll.className = joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', params.bodyClass);
+    bodyScroll.className = joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1', params.bodyClass);
     bodyScroll.setAttribute('data-sf-modal-body-scroll', ''); // Placeholder для ajax-контента (loading/error)
 
     const contentPlaceholder = document.createElement('div');
@@ -942,7 +1033,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
           this._finishLoading();
         }
 
-        return; // Загрузка отменена — не показываем ошибку
+        return; // The load was cancelled: no error is shown
       }
 
       this._contentError = error.message;
@@ -1574,13 +1665,48 @@ function modalTransitionDuration(style) {
 } // Measure after the Smart projection has applied the closing state. A bounded
 // timer also completes when no transitionend fires (unchanged or hidden panel).
 // Never finish on the first property/descendant transitionend.
+// The closing state's own transition is the one to wait for (a window closes
+// faster than it opens, decision C159 (8)): while the drawn root does not show
+// the closing state yet -- the Smart window projects it a little later -- the
+// measure waits a frame, a few at most.
 
+const STATE_FRAMES = 4;
 function scheduleModalClose(getRoot, finalize, view = window) {
   let timer = null,
-      cancelled = false;
-  const cancelFrame = scheduleModalFrame(() => {
+      cancelled = false,
+      frames = 0,
+      cancelFrame = () => {};
+
+  const measure = () => {
     if (cancelled) return;
     const root = getRoot();
+    const state = root?.getAttribute?.('data-sf-modal-state');
+
+    if (state && state !== 'closing' && frames++ < STATE_FRAMES) {
+      // A frame or 50 ms, whichever comes first -- not a microtask, which runs
+      // before the projection does.
+      let done = false;
+
+      const next = () => {
+        if (done) return;
+        done = true;
+        view.cancelAnimationFrame(frame);
+        view.clearTimeout(fallback);
+        measure();
+      };
+
+      const frame = view.requestAnimationFrame(next);
+      const fallback = view.setTimeout(next, 50);
+
+      cancelFrame = () => {
+        done = true;
+        view.cancelAnimationFrame(frame);
+        view.clearTimeout(fallback);
+      };
+
+      return;
+    }
+
     const nodes = root?.querySelectorAll('[data-sf-modal-panel], [data-sf-modal-overlay]') || [];
     const duration = Math.max(0, ...Array.from(nodes, node => {
       const style = view.getComputedStyle(node);
@@ -1589,7 +1715,9 @@ function scheduleModalClose(getRoot, finalize, view = window) {
     timer = view.setTimeout(() => {
       if (!cancelled) finalize();
     }, duration);
-  }, view);
+  };
+
+  cancelFrame = scheduleModalFrame(measure, view);
   return () => {
     cancelled = true;
     cancelFrame();
@@ -2562,10 +2690,17 @@ const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
  */
 
 const FOCUSABLE = ['a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])'].join(',');
-/** The focusable nodes inside these roots that are drawn and not inert, in order. */
+/**
+ * The focusable nodes inside these roots that are drawn and not inert, in
+ * order. A control taken out of the Tab order (tabindex -1: the other
+ * segments of a roving group such as sf-segmented, a menu's rows) is no Tab
+ * stop: counted, it was the trap's last stop that Tab never reaches, and Tab
+ * from the group's current segment left the layer (sf-header-site's panel
+ * with the theme switch in its settings group, owner decision C161 (8)).
+ */
 
 function focusablesIn(...roots) {
-  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]'));
+  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]') && node.tabIndex >= 0);
 }
 
 function stack() {
@@ -3322,7 +3457,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
-/* harmony export */   pageWord: () => (/* binding */ pageWord)
+/* harmony export */   pageWord: () => (/* binding */ pageWord),
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -3377,14 +3513,42 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
+// built in is one file per language and delivery, fetched only by a page that
+// speaks it. A pack's words go into the same registry as words registered one
+// by one -- so a bundle built before packs existed reads them too -- a
+// Framework pack's beneath what is there, any other pack's over it: a product
+// overrides a Framework word whichever arrived first. The fetching is core's
+// (core/js/language-packs.js); each bundle only asks for a language. A STORE
+// made by an older bundle has no packs yet: they are added here.
+
+const PACKS = STORE.packs ??= {
+  loaded: new Map(),
+  pending: new Map(),
+  request: null
+};
+
+const isBuiltIn = code => code === 'ru' || code === 'en';
+/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+
+
+function needPack(code) {
+  const wanted = normalise(code);
+  const base = wanted.split('-')[0];
+  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  PACKS.request(base);
+  if (wanted !== base) PACKS.request(wanted);
+} // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
 // with (core/js/tag-aliases.js).
 
+
 const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
 
-const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
+function normalise(value) {
+  return String(value ?? '').trim().toLowerCase().replace('_', '-');
+}
 /** The languages to try, most specific first, English last. */
 
 
@@ -3542,7 +3706,16 @@ function within(target, node) {
 
   return false;
 }
+/**
+ * Tell the page's components that words changed without a registration: the
+ * composition editor words arrive in a chunk of their own (LC-1) and the
+ * forms drawn before them draw again.
+ */
 
+
+function refreshLanguage() {
+  announce();
+}
 function isRussianPage(node) {
   return pageLanguage(node) === 'ru';
 }
@@ -3565,17 +3738,52 @@ function pageText(dictionary, key, node, component) {
  */
 
 function localeText(dictionary, key, locale, component) {
-  for (const candidate of chain(locale || 'en')) {
+  const order = chain(locale || 'en');
+  needPack(order[0]);
+
+  for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
-    if (added !== undefined) return added;
+
+    if (added !== undefined) {
+      if (candidate === 'en' && added !== '') warnFallback(order, component, key);
+      return added;
+    }
+
     const shipped = dictionary?.[candidate]?.[key];
-    if (shipped !== undefined) return shipped;
+
+    if (shipped !== undefined) {
+      if (candidate === 'en' && shipped !== '') warnFallback(order, component, key);
+      return shipped;
+    }
   }
 
   return key;
+} // A language the Framework does not ship (owner decision C177 (4)) may come
+// partly translated: a word it lacks is said in the fallback language,
+// English, and that is shown, not silent (localization study LC-6). One
+// warning per page and language (de-AT and de are one), naming the first word
+// missed; every word missed is kept by language for SF.language.missing(),
+// and the language files' coverage is scripts/language-coverage.mjs. Kept on
+// the shared global, because every bundle carries this module.
+
+function warnFallback(order, owner, key) {
+  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+
+  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  const root = globalThis;
+  if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
+  const seen = root.__sfMissingWords;
+
+  if (!seen.has(wanted)) {
+    seen.set(wanted, new Set());
+    root.console?.warn?.(`[SIMAI Framework] "${wanted}": words missing, said in English (first: ${owner || 'component'} "${key}"); SF.language.missing('${wanted}') lists them`);
+  }
+
+  seen.get(wanted).add(`${owner || 'component'}|${key}`);
 } // Missing words are said once per component, word and language: a page that
 // draws a hundred rows must not print a hundred warnings. The marks are kept on
 // the shared global, because every bundle carries this module.
+
 
 function warnWord(owner, key, locale, said) {
   const root = typeof globalThis !== 'undefined' ? globalThis : {};
@@ -3636,6 +3844,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
+  needPack(locale);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -3653,6 +3862,7 @@ function pageWord(dictionary, key, node, {
     const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
     if (word === undefined || word === null) continue;
     if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+    if (candidate === 'en' && word !== '') warnFallback(chain(locale), owner, key);
 
     if (typeof word === 'object') {
       let form = 'other';
@@ -3690,7 +3900,8 @@ const language = {
   use(value) {
     const next = value === null || value === undefined ? null : normalise(value);
     if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    STORE.chosen = next;
+    if (next) needPack(next); // The choice is the page's language: <html lang> says it too (§11.1), so
     // the browser, a screen reader and CSS :lang() agree with the words.
     // use(null) gives the markup's own language back.
 
@@ -3731,6 +3942,72 @@ const language = {
     return this;
   },
 
+  /**
+   * A language pack (schema simai.language-pack, schema_version 1; schema
+   * core/contracts/language-pack.v1.schema.json): every word of one language
+   * for one delivery, by component. A Framework pack's words go beneath the
+   * words already registered, any other pack's over them, as register() does.
+   * The page draws again once. Answers what was taken, or null for something
+   * that is not a pack.
+   */
+  registerPack(pack, url = null) {
+    const code = normalise(pack?.lang);
+
+    if (pack?.schema !== 'simai.language-pack' || pack.schema_version !== 1 || !code || !pack.words || typeof pack.words !== 'object') {
+      globalThis.console?.warn?.(`[SIMAI Framework] not a language pack (simai.language-pack, schema_version 1)${url ? `: ${url}` : ''}`);
+      return null;
+    }
+
+    const under = (pack.delivery ?? 'framework') === 'framework';
+    let words = 0;
+
+    for (const [component, byKey] of Object.entries(pack.words)) {
+      if (!byKey || typeof byKey !== 'object') continue;
+      const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component);
+      if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
+      const byLanguage = REGISTERED.get(name);
+      const now = byLanguage.get(code) ?? {};
+      byLanguage.set(code, under ? { ...byKey,
+        ...now
+      } : { ...now,
+        ...byKey
+      });
+      words += Object.keys(byKey).length;
+    }
+
+    const info = {
+      lang: code,
+      delivery: pack.delivery ?? 'framework',
+      status: pack.status ?? null,
+      coverage: pack.coverage ?? null,
+      words,
+      url
+    };
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
+    announce();
+    return info;
+  },
+
+  /**
+   * Name a pack file to fetch when the page needs its language: one line for
+   * a product or a page (also SF_BOOT_CONFIG.languages = {code: url}). Core
+   * fetches it once, with the Framework's own pack of that language.
+   */
+  addPack(value, url) {
+    return PACKS.add ? PACKS.add(normalise(value), url) : false;
+  },
+
+  /** Fetch the packs of a language now; resolves when they are registered. */
+  load(value) {
+    return PACKS.load ? PACKS.load(normalise(value)) : Promise.resolve([]);
+  },
+
+  /** The packs on the page: {code: [{lang, delivery, status, coverage, words, url}]}. */
+  packs() {
+    return Object.fromEntries([...PACKS.loaded].map(([code, list]) => [code, list.map(info => ({ ...info
+    }))]));
+  },
+
   /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
@@ -3743,6 +4020,17 @@ const language = {
   /** The languages something has registered words for. */
   known(component) {
     return [...(wordsOf(component ?? '')?.keys() ?? [])];
+  },
+
+  /**
+   * The words the page has said in English so far for want of one in
+   * `value` (C177 (4): a language may ship partly; what it lacks is visible).
+   * `['sf-pagination|pages-label', ...]`; every language's when none is named.
+   */
+  missing(value) {
+    const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
+    if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
+    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -3763,6 +4051,7 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
+    PACKS.loaded.clear();
     STORE.chosen = null;
     announce();
     return this;
@@ -3774,8 +4063,27 @@ const language = {
 // composing its own elements gets the same rule here.
 
 if (typeof window !== 'undefined') {
-  window.SF = window.SF || {};
-  window.SF.language = language;
+  window.SF = window.SF || {}; // Every bundle publishes its copy; they share one store, so any copy
+  // answers alike -- except that a bundle built before language packs
+  // (an older package on the page) has no registerPack, addPack, load or
+  // packs. Once a copy with them is published, an older one does not
+  // replace it (C177).
+
+  const holder = window.SF;
+
+  if (!Object.getOwnPropertyDescriptor(holder, 'language')?.set) {
+    let published = holder.language;
+    Object.defineProperty(holder, 'language', {
+      configurable: true,
+      enumerable: true,
+      get: () => published,
+      set: value => {
+        if (typeof value?.registerPack === 'function' || typeof published?.registerPack !== 'function') published = value;
+      }
+    });
+  }
+
+  holder.language = language;
   window.SF.pageLanguage = pageLanguage;
   window.SF.pageText = pageText;
 }
@@ -4170,6 +4478,39 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "418134b64ef5"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba28adb07617");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0a23ed889a9d");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "ba28adb07617"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"title":"Dialog","close":"Close","loading":"Loading…","loadFailed":"Failed to load content","frameFailed":"Failed to load iframe content"}}');
+
+/***/ },
+
+/***/ "0a23ed889a9d"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"title":"Окно","close":"Закрыть","loading":"Загрузка…","loadFailed":"Не удалось загрузить содержимое","frameFailed":"Не удалось загрузить встроенную страницу"}}');
 
 /***/ }
 

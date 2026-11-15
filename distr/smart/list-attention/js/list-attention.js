@@ -468,7 +468,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
  // The heading's id, one per list on the page (stable across renders).
 
 let sequence = 0;
@@ -673,8 +681,8 @@ const NARROW_PARTS = ['.sf-list-attention-summary-line', '.sf-list-attention-qui
 const ListAttentionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru'
 });
@@ -1446,7 +1454,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "565cca359e31"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.3.3","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.3.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

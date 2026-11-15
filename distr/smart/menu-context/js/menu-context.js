@@ -347,6 +347,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   followDensity: () => (/* binding */ followDensity),
 /* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
 /* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
 /* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
 /* harmony export */ });
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
@@ -443,6 +445,263 @@ function densityOf(from) {
   }
 
   return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "42f1649d1a1b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SWIPE_SHARE: () => (/* binding */ SWIPE_SHARE),
+/* harmony export */   SWIPE_SPEED: () => (/* binding */ SWIPE_SPEED),
+/* harmony export */   handleRowHeight: () => (/* binding */ handleRowHeight),
+/* harmony export */   inHandleRow: () => (/* binding */ inHandleRow),
+/* harmony export */   scrollsAlong: () => (/* binding */ scrollsAlong),
+/* harmony export */   startsOnControl: () => (/* binding */ startsOnControl),
+/* harmony export */   swipeToClose: () => (/* binding */ swipeToClose),
+/* harmony export */   trackSwipe: () => (/* binding */ trackSwipe)
+/* harmony export */ });
+// A finger closing a panel by pushing it toward its edge (owner decision C157
+// (4) and (5), 2026-11-14): the bottom sheet -- sf-drawer placement="bottom"
+// and every phone sheet drawn from core/scss/mix/_mix__sheet.scss -- follows
+// a drag down and closes past a quarter of its height or on a quick flick; a
+// side panel on a phone does the same toward its own edge. The panel follows
+// the finger through a length in a custom property the owner's rule reads
+// (translate), and settles back when the drag stops short.
+//
+//   const stop = trackSwipe(pointerdownEvent, {
+//     surface,                      the box that moves
+//     direction: 'down' | 'left' | 'right' | 'up',
+//     variable: '--sf-sheet--drag', the property set on the surface
+//     onEnd: ({dismiss, back}) => ...,
+//   });
+//
+// dismiss: the drag passed the share or the speed toward the edge; back: it
+// did so the other way (a sheet at rest may open further). A drag along the
+// other axis is let go at once (a list scrolling inside a side panel), and a
+// drag shorter than the slop is a press, not a swipe.
+const SWIPE_SHARE = 0.25;
+const SWIPE_SPEED = 0.5;
+const SLOP = 4;
+const AXES = {
+  down: {
+    axis: 'y',
+    sign: 1
+  },
+  up: {
+    axis: 'y',
+    sign: -1
+  },
+  right: {
+    axis: 'x',
+    sign: 1
+  },
+  left: {
+    axis: 'x',
+    sign: -1
+  }
+}; // What a swipe must not start on: a control keeps its own presses, a field
+// its text selection, a box that scrolls along the swipe's axis its scroll.
+
+const KEEPS_PRESS = 'button, a[href], input, select, textarea, [contenteditable="true"], [role="slider"], [role="scrollbar"], [draggable="true"], sf-resizer';
+function startsOnControl(target) {
+  return Boolean(target instanceof Element && target.closest(KEEPS_PRESS));
+} // Whether something between the target and the surface scrolls along this
+// axis toward the swipe (a wide table in a side panel, a carousel).
+
+function scrollsAlong(target, surface, axis) {
+  for (let node = target instanceof Element ? target : null; node && node !== surface; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    const overflow = axis === 'x' ? style.overflowX : style.overflowY;
+    if (!/(auto|scroll)/u.test(overflow)) continue;
+    if (axis === 'x' ? node.scrollWidth > node.clientWidth + 1 : node.scrollHeight > node.clientHeight + 1) return true;
+  }
+
+  return false;
+}
+function trackSwipe(event, {
+  surface,
+  direction = 'down',
+  variable = '--sf-sheet--drag',
+  onEnd,
+  onMove
+} = {}) {
+  const spec = AXES[direction] || AXES.down;
+  if (!surface || !event) return () => {};
+  const grip = event.currentTarget instanceof Element ? event.currentTarget : surface;
+  const start = {
+    x: event.clientX,
+    y: event.clientY,
+    t: event.timeStamp
+  };
+  const rect = surface.getBoundingClientRect();
+  const size = (spec.axis === 'y' ? rect.height : rect.width) || 1; // The owner names the physical edge: a length along x is left-to-right
+  // whatever the page's direction.
+
+  const physical = spec.sign;
+  let moved = false;
+  let given = false;
+  let delta = 0;
+
+  const along = e => spec.axis === 'y' ? e.clientY - start.y : e.clientX - start.x;
+
+  const across = e => spec.axis === 'y' ? e.clientX - start.x : e.clientY - start.y; // The moves are heard on the document, not the grip: a pointer that leaves
+  // the grip before it is captured (a quick drag off a handle row) still
+  // reports to it.
+
+
+  const doc = grip.ownerDocument || document;
+
+  const clear = () => {
+    doc.removeEventListener('pointermove', move, true);
+    doc.removeEventListener('pointerup', end, true);
+    doc.removeEventListener('pointercancel', end, true);
+    surface.classList.remove('is-dragging');
+    surface.style.removeProperty(variable);
+  };
+
+  const move = e => {
+    if (given || e.pointerId !== event.pointerId) return;
+    const a = along(e);
+
+    if (!moved) {
+      if (Math.abs(a) < SLOP && Math.abs(across(e)) < SLOP) return; // Across the axis first: a scroll or a selection, not this swipe.
+
+      if (Math.abs(across(e)) > Math.abs(a)) {
+        given = true;
+        clear();
+        return;
+      }
+
+      moved = true;
+      surface.classList.add('is-dragging'); // Captured only once it is a swipe: captured at the press, the click
+      // of a tap went to the grip instead of what was tapped.
+
+      try {
+        grip.setPointerCapture?.(event.pointerId);
+      } catch {
+        /* a synthetic event has no pointer */
+      }
+    }
+
+    delta = a; // The panel follows toward its edge only; the other way it holds.
+
+    const toward = Math.max(0, delta * physical);
+    surface.style.setProperty(variable, `${toward * physical}px`);
+    onMove?.(toward);
+  };
+
+  function end(e) {
+    if (e.pointerId !== event.pointerId) return;
+    clear();
+    if (given || !moved || e.type === 'pointercancel') return; // A drag that ends on the grip is not also a press of it.
+    // The click, if any, comes in the same task as the release; one that
+    // never comes must not eat a later press.
+
+    const swallow = click => click.stopImmediatePropagation();
+
+    grip.addEventListener('click', swallow, {
+      capture: true,
+      once: true
+    });
+    setTimeout(() => grip.removeEventListener('click', swallow, {
+      capture: true
+    }));
+    const toward = delta * physical;
+    const speed = toward / Math.max(1, e.timeStamp - start.t);
+    const dismiss = toward > size * SWIPE_SHARE || speed > SWIPE_SPEED;
+    const back = !dismiss && (-toward > size * SWIPE_SHARE || speed < -SWIPE_SPEED);
+    onEnd?.({
+      dismiss,
+      back,
+      distance: toward
+    });
+  }
+
+  doc.addEventListener('pointermove', move, true);
+  doc.addEventListener('pointerup', end, true);
+  doc.addEventListener('pointercancel', end, true);
+  return clear;
+} // The handle row of a sheet drawn by the mixin's ::before: a press within it
+// -- from the sheet's top, the 1/2 control's height (the row the bar is
+// centred in) -- starts the swipe.
+
+function handleRowHeight(surface) {
+  const value = getComputedStyle(surface).getPropertyValue('--sf-ui-1/2--control-height').trim();
+  const match = /^(-?\d*\.?\d+)(px|rem|em)?$/u.exec(value);
+  if (!match) return 32;
+  const unit = match[2] || 'px';
+  const base = unit === 'px' ? 1 : parseFloat(getComputedStyle(unit === 'rem' ? document.documentElement : surface).fontSize) || 16;
+  return Number(match[1]) * base;
+}
+function inHandleRow(event, surface) {
+  const top = surface.getBoundingClientRect().top;
+  return event.clientY >= top && event.clientY - top <= handleRowHeight(surface);
+} // A sheet that a swipe down from its handle row closes: binds the press on
+// the surface and answers the unbinding. `when` says whether the surface is
+// a sheet now (a form anchored on a wide screen is not); a press on a
+// control keeps the control's own press.
+//
+//   const unbind = swipeToClose(surface, {when: () => owned.sheet, onDismiss: () => close()});
+
+function swipeToClose(surface, {
+  when = () => true,
+  onDismiss
+} = {}) {
+  if (!surface) return () => {};
+
+  const onPress = event => {
+    if (event.button !== 0 || !when()) return;
+    if (startsOnControl(event.target) || !inHandleRow(event, surface)) return;
+    trackSwipe(event, {
+      surface,
+      direction: 'down',
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss) onDismiss?.();
+      }
+    });
+  };
+
+  surface.addEventListener('pointerdown', onPress);
+  return () => surface.removeEventListener('pointerdown', onPress);
 }
 
 /***/ },
@@ -1212,10 +1471,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cb6d39a52a42");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4ff97a05802b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("25e9776cb404");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c19f070ad532");
+/* harmony import */ var _core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("42f1649d1a1b");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4ff97a05802b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("68b68beb66a3");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("25e9776cb404");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c19f070ad532");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1235,23 +1495,32 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-menu-context from its component.json (standard simai.smart-component 1.3.8
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
+}; // sf-menu-context from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
-const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en,
+    ru
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
-  // openFor(anchor, options), toggleFor(anchor, options) and chooseTab(index)
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
+  // openFor(anchor, options), toggleFor(anchor, options), openAt(x, y, options) and chooseTab(index)
   // take their fields in order; the runtime gives them the object form of
   // §4.4 as well: openFor({anchor, options}), chooseTab({index}).
-  positional: ["open-for", "toggle-for", "choose-tab"]
+  positional: ["open-for", "toggle-for", "open-at", "choose-tab"]
 }); // Prefer the helper Core published; a bundle loaded without core.js still
 // positions with its own copy.
 
@@ -1305,7 +1574,9 @@ function focusLent(element, options) {
   element.focus(options);
 }
 
-const TYPEAHEAD_MS = 500; // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
+const TYPEAHEAD_MS = 500; // The menus' own numbers for the ids of their icon options' tooltips.
+
+let menuTips = 0; // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
 // class sheet sizes each from core's --sf-popup-*-width steps, which follow
 // the density. "content" (the default) is the menu's rule.
 
@@ -1328,7 +1599,27 @@ const TABBABLE = 'input:not([type="hidden"]), select, textarea, button, a[href],
 
 const ROW_MARK = 'input[type="checkbox"], [role="checkbox"], [role="switch"]';
 
-const editable = element => Boolean(element?.matches?.('input, select, textarea, [contenteditable=""], [contenteditable="true"]')); // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
+const editable = element => Boolean(element?.matches?.('input, select, textarea, [contenteditable=""], [contenteditable="true"]')); // ─── the menu of an object (owner decision C164, 2026-11-14) ───────────────
+// `for` names the page's areas -- a list, a table, a tree, a canvas -- whose
+// objects open this menu by the right button, the menu key (Shift+F10 too)
+// and a long press on a touch screen: one setting, one menu, the same list
+// the object's «⋯» opens (C164 (1), (2)). The object is the row the event
+// came from: a table body's row, an element with a row, option, tree item or
+// list item role, or a list item; an area without rows is one object itself.
+
+
+const TARGETS = 'tbody > tr, [role="row"]:not(:has(> [role="columnheader"])), [role="option"], [role="treeitem"], [role="listitem"], li'; // Where the browser's own menu stays: a link, a field and text being edited,
+// selected text and the right button with Shift (C164 (1)).
+
+const BROWSER_KEEPS = 'a[href], input, select, textarea, [contenteditable=""], [contenteditable="true"]'; // A long press: half a second, the finger still within ten pixels (the
+// platforms' own slop); a move further is a scroll.
+
+const LONG_PRESS_MS = 500;
+const LONG_PRESS_SLOP = 10;
+
+const ids = value => String(value ?? "").trim().split(/\s+/u).filter(Boolean);
+
+const selected = element => element?.getAttribute?.("aria-selected") === "true"; // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
 // A row's path in the tree, the way the template writes it into the markup:
 // "2" is a row of the level and "2/1" a row inside that row -- its submenu, or
 // the items of a group. The step says it went one list in, so the depth and the
@@ -1506,7 +1797,9 @@ function pathOf(entries, id, prefix = "") {
 // and its side arrows, so it is a stop rather than an item.
 
 
-const STOPS = ".sf-context-menu-item, .sf-context-menu-stop";
+const STOPS = ".sf-context-menu-item, .sf-context-menu-stop"; // The page's events the areas named by `for` open the menu by (C164).
+
+const AREA_EVENTS = ["contextmenu", "keydown", "pointerdown", "pointermove", "pointerup", "pointercancel", "click"];
 const POSITION_ALIASES = {
   start: "inline-start",
   end: "inline-end",
@@ -1541,7 +1834,12 @@ class SfContextMenu extends ContextMenuElement {
     this.addEventListener("keydown", this.handleMenuKeyDown);
     this.addEventListener("keydown", this.handleOwnedKeyDown);
     this.addEventListener("click", this.handleEntryClick);
-    this.addEventListener("pointerover", this.handleEntryHover);
+    this.addEventListener("pointerover", this.handleEntryHover); // The objects of the areas named by `for` (C164): the page's events,
+    // heard on the document while the menu is in the page.
+
+    this._onAreaEvent = event => this.handleAreaEvent(event);
+
+    this._press = null;
     this._owned = null;
     this._typeahead = {
       text: "",
@@ -1625,7 +1923,14 @@ class SfContextMenu extends ContextMenuElement {
     const run = this._afterRender;
     this._afterRender = null;
     run?.();
-    this.watchScrollbar();
+    this.watchScrollbar(); // An icon option names itself by the Framework's tooltip (C160 (1)):
+    // the controller is a lazy plugin, asked for once a menu draws one.
+
+    if (!this._tipsAsked && this.querySelector(".sf-context-menu-choice-option[data-tooltip]")) {
+      this._tipsAsked = true;
+      globalThis.SF?.Loader?.ensurePlugin?.("tooltip");
+    }
+
     const content = this.querySelector(".sf-context-menu-content");
     if (content) this._itemObserver.observe(content, {
       childList: true,
@@ -1657,8 +1962,19 @@ class SfContextMenu extends ContextMenuElement {
     this._scrollbar.watch(area, name);
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    for (const type of AREA_EVENTS) document.addEventListener(type, this._onAreaEvent, type === "click");
+  }
+
   disconnectedCallback() {
-    // Taken out of the page, it closes without asking: nothing is left to keep.
+    for (const type of AREA_EVENTS) document.removeEventListener(type, this._onAreaEvent, type === "click");
+
+    this.cancelPress();
+    this._point?.remove();
+    this._point = null; // Taken out of the page, it closes without asking: nothing is left to keep.
+
     if (this._owned) this.close({
       restoreFocus: false,
       ask: false
@@ -1689,10 +2005,14 @@ class SfContextMenu extends ContextMenuElement {
       const role = item.getAttribute("role");
       return !role || role === "menuitem" ? [item] : [];
     });
-  }
+  } // A row the menu drew from a disabled entry is dimmed but stays in the
+  // walk, so its reason -- the caption -- is read (owner decision C164 (4);
+  // APG: disabled menu items are focusable but cannot be activated). It is
+  // aria-disabled, never disabled, and a press on it does nothing.
+
 
   availableMenuItems() {
-    return this.menuItems().filter(item => !item.matches(":disabled") && !item.closest('[hidden], [inert], [aria-disabled="true"], sf-button[disabled]') && item.getClientRects().length > 0 && getComputedStyle(item).visibility !== "hidden");
+    return this.menuItems().filter(item => !item.matches(":disabled") && (item.matches(".sf-context-menu-item--disabled") || !item.closest('[aria-disabled="true"]')) && !item.closest('[hidden], [inert], sf-button[disabled]') && item.getClientRects().length > 0 && getComputedStyle(item).visibility !== "hidden");
   }
 
   ownItemAttribute(item, name, value) {
@@ -2330,7 +2650,13 @@ class SfContextMenu extends ContextMenuElement {
 
   handleEntryClick(event) {
     const row = event.target?.closest?.(".sf-context-menu-item");
-    if (!row || !this.contains(row) || row.matches(":disabled")) return;
+    if (!row || !this.contains(row) || row.matches(":disabled")) return; // A dimmed row is read, not chosen (C164 (4)).
+
+    if (row.getAttribute("aria-disabled") === "true") {
+      event.preventDefault();
+      return;
+    }
+
     const entry = this.entryOf(row);
     if (!entry) return;
 
@@ -2407,7 +2733,7 @@ class SfContextMenu extends ContextMenuElement {
       if (this.drill) return;
       const entry = this.entryOf(row);
 
-      if (entry && submenuOf(entry) && !row.matches(":disabled")) {
+      if (entry && submenuOf(entry) && !row.matches(':disabled, [aria-disabled="true"]')) {
         this.openSubmenu(row, entry, {
           focus: "none"
         });
@@ -2441,6 +2767,247 @@ class SfContextMenu extends ContextMenuElement {
 
   get isOpen() {
     return Boolean(this._owned);
+  } // The menu takes the size step of what opens it (owner remark 2026-11-15):
+  // the opener's size, else its component's or the Smart component holding
+  // it (core density.js sizeOf); its two steps are "1/2" for an opener below
+  // 1 and "1" from 1 up, as sf-button's own menu reads its size. A size the
+  // page or a host gave the menu wins: the menu takes the opener's only while
+  // its size attribute is the one it wrote itself, and writes it again on
+  // every opening, so one menu opened from two tables follows each.
+
+
+  followOpenerSize(place) {
+    if (this.hasAttribute("size") && this._openerSize === undefined) return;
+    const step = (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.sizeStep)((0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.sizeOf)(place));
+    const size = Number.isNaN(step) ? null : step < 1 ? "1/2" : "1";
+    this._writingSize = true;
+
+    try {
+      if (size === null) this.removeAttribute("size");else if (this.getAttribute("size") !== size) this.setAttribute("size", size);
+    } finally {
+      this._writingSize = false;
+    }
+
+    this._openerSize = size === null ? undefined : size;
+  } // A size written by anyone but the menu itself is the menu's own: it wins
+  // over the opener's from then on.
+
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "size" && !this._writingSize) this._openerSize = undefined;
+    super.attributeChangedCallback(name, oldValue, newValue);
+  } // Open with the menu's corner exactly at a point of the screen -- the
+  // pointer's -- with no gap (CM-5), flipping at the edges. `target` is the
+  // object it acts on: the focus goes back to it, and on a phone the menu is
+  // the sheet at the bottom (C164 (6)). The options are openFor()'s.
+
+
+  openAt(x, y, options = {}) {
+    if (!Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) return Promise.resolve({
+      outcome: "refused",
+      reason: "invalid"
+    });
+
+    if (!this._point) {
+      this._point = document.createElement("span");
+
+      this._point.setAttribute("aria-hidden", "true");
+
+      this._point.className = "sf-context-menu-point";
+    } // Where the menu is, so a dialog's top layer holds it as it holds the menu.
+
+
+    (this.closest("dialog[open]") || document.body).append(this._point); // The point is drawn by the menu's sheet (.sf-context-menu-point): a
+    // zero box fixed to the screen; only where it stands is set here.
+
+    this._point.style.left = `${Number(x)}px`;
+    this._point.style.top = `${Number(y)}px`;
+    return this.openFor(this._point, {
+      side: "block-end",
+      align: "start",
+      offset: "0px",
+      ...options
+    });
+  } // ─── the areas named by `for` (C164) ─────────────────────────────────────
+
+
+  areas() {
+    return ids(this.getAttribute("for") ?? this.for).map(id => document.getElementById(id)).filter(Boolean);
+  } // The object a node of the page stands in: {area, target}, or null outside
+  // every area.
+
+
+  targetOf(node) {
+    if (!(node instanceof Element)) return null;
+
+    for (const area of this.areas()) {
+      if (!area.contains(node)) continue;
+      const row = node.closest(TARGETS);
+      return {
+        area,
+        target: row && row !== area && area.contains(row) ? row : area
+      };
+    }
+
+    return null;
+  } // Which objects the menu acts on (C164 (3)): every selected row of the
+  // area when the row is selected (aria-selected="true"); a row that can be
+  // selected and is not is selected alone first (`select` lists the rows
+  // that lose their selection); any other object is acted on alone.
+
+
+  selectionOf({
+    area,
+    target
+  }) {
+    if (!area || target === area) return {
+      targets: [target],
+      select: null
+    };
+    const rows = Array.from(area.querySelectorAll(TARGETS));
+
+    if (selected(target)) {
+      const all = rows.filter(selected);
+      return {
+        targets: all.length ? all : [target],
+        select: null
+      };
+    }
+
+    if (target.hasAttribute("aria-selected")) return {
+      targets: [target],
+      select: rows.filter(row => row !== target && selected(row))
+    };
+    return {
+      targets: [target],
+      select: null
+    };
+  } // The rows the open menu acts on (empty when it is not open for an object).
+
+
+  get targets() {
+    return this._targets ?? [];
+  } // The right button with Shift, a link, a field and selected text keep the
+  // browser's own menu (C164 (1)).
+
+
+  browserKeeps(event, target) {
+    if (event.shiftKey && event.type === "contextmenu" && event.button === 2) return true;
+    if (event.target?.closest?.(BROWSER_KEEPS) && target.contains(event.target.closest(BROWSER_KEEPS))) return true;
+    const selection = document.getSelection?.();
+    return Boolean(selection && !selection.isCollapsed && String(selection).trim() && selection.anchorNode && target.contains(selection.anchorNode));
+  } // The menu at an object opened from the keyboard: under its start.
+
+
+  openAtTarget(target, options = {}) {
+    const rect = target.getBoundingClientRect();
+    const rtl = getComputedStyle(target).direction === "rtl";
+    return this.openAt(rtl ? rect.right : rect.left, Math.min(rect.bottom, window.innerHeight), { ...options,
+      target
+    });
+  }
+
+  cancelPress() {
+    if (this._press?.timer) clearTimeout(this._press.timer);
+    this._press = null;
+  }
+
+  handleAreaEvent(event) {
+    const {
+      type
+    } = event;
+
+    if (type === "pointermove") {
+      const press = this._press;
+      if (press && !press.fired && Math.hypot(event.clientX - press.x, event.clientY - press.y) > LONG_PRESS_SLOP) this.cancelPress();
+      return;
+    }
+
+    if (type === "pointerup" || type === "pointercancel") {
+      if (this._press && !this._press.fired) this.cancelPress();
+      return;
+    }
+
+    if (type === "click") {
+      // The lift after a long press is not a press on the row.
+      if (this._press?.fired) {
+        const {
+          at
+        } = this._press;
+        this._press = null;
+
+        if (Date.now() - at < 2000) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+
+      return;
+    } // The menu's own rows, when the page placed the menu inside its area,
+    // are not objects of the area.
+
+
+    if (event.defaultPrevented || this.contains(event.target)) return;
+    const found = this.targetOf(event.target);
+    if (!found) return;
+
+    if (type === "pointerdown") {
+      this.cancelPress();
+      if (event.pointerType !== "touch" || event.button > 0 || !event.isPrimary) return;
+      if (event.target.closest?.(BROWSER_KEEPS)) return;
+      const press = {
+        x: event.clientX,
+        y: event.clientY,
+        fired: false,
+        at: 0
+      };
+      press.timer = setTimeout(() => {
+        if (this._press !== press) return;
+        press.fired = true;
+        press.at = Date.now();
+        this.openAt(press.x, press.y, {
+          target: found.target
+        });
+      }, LONG_PRESS_MS);
+      this._press = press;
+      return;
+    }
+
+    if (type === "keydown") {
+      if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return;
+      if (event.target.closest?.(BROWSER_KEEPS)) return;
+      event.preventDefault();
+      this._keyAt = Date.now();
+      this.openAtTarget(found.target);
+      return;
+    } // contextmenu: a long press that opened the menu already, a key the
+    // keydown answered, the right button, or a phone's own long press.
+
+
+    if (this._press?.fired || Date.now() - (this._keyAt ?? 0) < 500) {
+      event.preventDefault();
+      return;
+    }
+
+    if (this.browserKeeps(event, found.target)) return;
+    event.preventDefault();
+    this.cancelPress();
+
+    if (event.pointerType === "touch") {
+      this._press = {
+        fired: true,
+        at: Date.now()
+      };
+      this.openAt(event.clientX, event.clientY, {
+        target: found.target
+      });
+    } else if (event.button === 2) {
+      this.openAt(event.clientX, event.clientY, {
+        target: found.target
+      });
+    } else {
+      this.openAtTarget(found.target);
+    }
   }
 
   surface() {
@@ -2463,7 +3030,8 @@ class SfContextMenu extends ContextMenuElement {
     parentMenu = null,
     alignmentOffset = 0,
     offset = undefined,
-    width = this.width
+    width = this.width,
+    target = undefined
   } = {}) {
     if (!(anchor instanceof Element)) return {
       outcome: "refused",
@@ -2472,30 +3040,66 @@ class SfContextMenu extends ContextMenuElement {
     if (this._owned) this.close({
       restoreFocus: false,
       ask: false
-    }); // The request first (§19, vocabulary §4): a listener that prevents it keeps
-    // the menu closed.
+    }); // The object the menu acts on (C164): the row of an area named by `for`
+    // that holds the anchor -- the row's «⋯» opens the same menu the right
+    // button does -- or the one openAt() was given; on a selected row every
+    // selected row of its area (C164 (3)).
 
-    if (!this.sfEmit("open", {}, {
+    const found = target instanceof Element ? this.targetOf(target) ?? {
+      area: null,
+      target
+    } : this.targetOf(anchor);
+    const selection = found ? this.selectionOf(found) : null; // The request first (§19, vocabulary §4): a listener that prevents it keeps
+    // the menu closed. It names the object and the objects, so the host gives
+    // the entries for them, in one place for every way in (C164 (2)).
+
+    if (!this.sfEmit("open", {
+      target: found?.target ?? null,
+      targets: selection?.targets ?? []
+    }, {
       cancelable: true
-    })) return {
-      outcome: "refused",
-      reason: "prevented"
-    };
+    })) {
+      return {
+        outcome: "refused",
+        reason: "prevented"
+      };
+    } // An unselected row is selected alone before the menu acts on it (C164 (3)).
+
+
+    if (selection?.select) {
+      for (const row of selection.select) row.setAttribute("aria-selected", "false");
+
+      found.target.setAttribute("aria-selected", "true");
+    }
+
+    const targets = selection?.targets ?? [];
+
+    if (targets.length || this._targets?.length) {
+      this._targets = targets;
+      this.requestComponentUpdate("targets");
+    } // An anchor the size of nothing is a point: where a right-click was (a
+    // host's contextmenu, SF.Effects). The menu's corner is the point itself,
+    // not --sf-space-1/4 below it (CM-5, as system menus open), and what
+    // stands under the point is the place the menu belongs to: its density
+    // (C22/C79), its size and where the focus goes back (CM-2). A point
+    // appended to <body> had neither, so the menu came out normal in a compact
+    // table and the focus fell to <body>. Where it does not fit, core
+    // positioning turns it to the other side of the point (C164 (1)): left of
+    // it at the right edge, above it at the bottom edge.
+
+
+    const point = pointOf(anchor, this);
+    const place = point?.under ?? anchor; // The size of what opens it, on every opening (owner remark 2026-11-15):
+    // a menu without a size of its own is drawn where it stands -- often on
+    // <body> -- so the row menu of a table of size 1 opened at 1/2.
+
+    this.followOpenerSize(place);
     await this.whenRendered();
     const surface = this.surface();
     if (!surface) return {
       outcome: "unavailable",
       reason: "no-surface"
-    }; // An anchor the size of nothing is a point: where a right-click was (a
-    // host's contextmenu, SF.Effects). The menu's corner is the point itself,
-    // not --sf-space-1/4 below it (CM-5, as system menus open), and what
-    // stands under the point is the place the menu belongs to: its density
-    // (C22/C79) and where the focus goes back (CM-2). A point appended to
-    // <body> had neither, so the menu came out normal in a compact table and
-    // the focus fell to <body>.
-
-    const point = pointOf(anchor, this);
-    const place = point?.under ?? anchor; // Focus goes back where it was, or to the control that opened the menu
+    }; // Focus goes back where it was, or to the control that opened the menu
     // when it was nowhere -- a press on an sf-button leaves it on the body in
     // some browsers, and the menu returned it there. A host element is not
     // itself focusable; its native control is.
@@ -2503,11 +3107,18 @@ class SfContextMenu extends ContextMenuElement {
     const focusable = element => element?.matches?.("button, a[href], input, select, textarea, [tabindex]") ? element : element?.querySelector?.("button, a[href], input, select, textarea, [tabindex]") ?? element;
 
     const active = document.activeElement;
+    const somewhere = active instanceof HTMLElement && active !== document.body && active !== document.documentElement; // Opened at the pointer for an object (openAt, C164), the focus goes back
+    // to the object it acted on -- where it was inside it, else the object
+    // itself, lent a tabindex when it takes none (CM-2: it fell to the page).
+
+    const forObject = anchor === this._point && Boolean(found);
+    const back = forObject && !(somewhere && found.target.contains(active));
     this._owned = {
       anchor,
       parentMenu,
-      returnTo: active instanceof HTMLElement && active !== document.body && active !== document.documentElement ? active : point ? point.focusable : focusable(anchor),
-      lent: Boolean(point?.lent) && !(active instanceof HTMLElement && active !== document.body && active !== document.documentElement),
+      target: found?.target ?? null,
+      returnTo: back ? found.target : somewhere ? active : point ? point.focusable : focusable(anchor),
+      lent: back ? !found.target.matches(FOCUSABLE) : Boolean(point?.lent) && !somewhere,
       expanded: anchor.getAttribute("aria-expanded"),
       haspopup: anchor.getAttribute("aria-haspopup")
     };
@@ -2544,9 +3155,14 @@ class SfContextMenu extends ContextMenuElement {
     if (content) {
       if (kind) content.setAttribute("data-sf-width", kind);else content.removeAttribute("data-sf-width");
       this._owned.kindContent = content;
-    }
+    } // A form, the menu of an object (C164 (6)) and a drilling popup -- a
+    // settings menu, the person menu with its settings rows (owner decision
+    // C176, defect SM-3) -- are the one sheet on a phone (C157 (5)): its levels
+    // open inside the same sheet with the way back in its head (C157 (6)).
 
-    const sheet = FORM_KINDS.has(kind) && onPhone();
+
+    const sheets = FORM_KINDS.has(kind) || Boolean(found) || this.drill && !parentMenu;
+    const sheet = sheets && onPhone();
     const sized = width && width !== "content" && !kind;
 
     if (sized && content) {
@@ -2598,10 +3214,18 @@ class SfContextMenu extends ContextMenuElement {
       });
     };
 
-    placeAt(sheet); // A form stays what the screen makes it: opened wide and the window
+    placeAt(sheet); // The one sheet (owner decision C157 (5)): a swipe down from its handle
+    // row closes the form, as Escape does.
+
+    owned.unswipe = (0,_core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_9__.swipeToClose)(surface, {
+      when: () => owned.sheet && this._owned === owned,
+      onDismiss: () => this.close({
+        reason: "close"
+      })
+    }); // A form stays what the screen makes it: opened wide and the window
     // narrowed to a phone, it becomes the sheet; widened, it is anchored again.
 
-    if (FORM_KINDS.has(kind)) {
+    if (sheets) {
       owned.onResize = () => {
         if (this._owned === owned && onPhone() !== owned.sheet) placeAt(onPhone());
       };
@@ -2690,6 +3314,7 @@ class SfContextMenu extends ContextMenuElement {
     const surface = this.surface();
 
     if (surface) {
+      owned.unswipe?.();
       if (surface.matches?.(":popover-open")) surface.hidePopover();
       surface.removeAttribute("popover");
       surface.classList.remove("sf-context-menu--open");
@@ -2714,6 +3339,11 @@ class SfContextMenu extends ContextMenuElement {
       });else (owned.returnTo?.isConnected ? owned.returnTo : anchor)?.focus?.({
         preventScroll: true
       });
+    }
+
+    if (this._targets?.length) {
+      this._targets = [];
+      this.requestComponentUpdate("targets");
     }
 
     this.sfEmit("closed", {
@@ -2914,7 +3544,7 @@ class SfContextMenu extends ContextMenuElement {
 
     const entry = this.entryOf(event.target);
 
-    if (event.key === inward && (this.drill ? drillable(entry) : submenuOf(entry))) {
+    if (event.key === inward && (this.drill ? drillable(entry) : submenuOf(entry)) && event.target.getAttribute?.("aria-disabled") !== "true") {
       event.preventDefault();
       const row = event.target.closest(".sf-context-menu-item");
       if (this.drill) this.drillInto(row);else this.openSubmenu(row, entry, {
@@ -3182,13 +3812,22 @@ class SfContextMenu extends ContextMenuElement {
       onLabel: this.sfWord("on"),
       offLabel: this.sfWord("off"),
       drill: this.drill,
+      // The ids of the icon options' name tooltips (C160 (1)): one prefix per menu.
+      tipPrefix: this._tipPrefix ??= `sf-menu-tip-${++menuTips}`,
       level,
       role: this.menuRole,
       panel: this.panel,
       position: this.position,
       size: this.size,
       component: this,
-      rootClass: this.getRootClass()
+      rootClass: this.getRootClass(),
+      // On a selection the menu acts on every selected row and says how many
+      // (C164 (3)).
+      selectionLabel: this.targets.length > 1 ? this.sfWord("selected", {
+        vars: {
+          count: this.targets.length
+        }
+      }) : ""
     });
   }
 
@@ -3356,6 +3995,37 @@ function renderHeader(entry) {
             ${lines.map(line => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-header-caption">${line}</span>`)}
         </span>
     </div>`;
+} // A meter row (owner decision C191 (4)-(6)): an amount within a known range,
+// such as the account's tariff remainder in a person menu -- read, not
+// chosen, so it is a block between rows, not a row. The bar is
+// sf-progress-bar's meter and shows the share used, so the page's thresholds
+// fire (warning-at, error-at; C131 (7)); the words over it are the page's
+// value-text (the remainder: «Осталось 1,7 из 10 ГБ»), else the percentage,
+// on one line with the name as the bar's own «top» text (C131 (4)). That line
+// is aria-hidden: the bar says the name and the words once.
+
+
+function renderMeter(entry) {
+  const number = Number(entry.value);
+  const value = Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : 0;
+  const words = entry.valueText ?? entry["value-text"] ?? "";
+  const warningAt = entry.warningAt ?? entry["warning-at"];
+  const errorAt = entry.errorAt ?? entry["error-at"];
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-meter" role="none">
+        <div class="sf-context-menu-meter-head" aria-hidden="true">
+            <span class="sf-context-menu-meter-name">${entry.text ?? ""}</span>
+            <span class="sf-context-menu-meter-value">${words || `${value}%`}</span>
+        </div>
+        <sf-progress-bar
+                class="sf-context-menu-meter-bar"
+                meter
+                value=${String(value)}
+                label=${entry.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                value-text=${words || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                warning-at=${warningAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                error-at=${errorAt ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ></sf-progress-bar>
+    </div>`;
 } // The text of a row: its label, the value under it where the row shows one (a
 // drilling row), and the caption. A long label wraps and a long value is cut
 // with the whole of it in `title`, so neither widens the panel.
@@ -3368,21 +4038,28 @@ function renderItemText(entry, under = "") {
             ${entry.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-caption">${entry.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </span>`;
 } // The options of a choice, side by side. Each is a menuitemradio of the menu,
-// so the arrows walk through them as through any row.
+// so the arrows walk through them as through any row. An option drawn as an
+// icon alone shows its name as the Framework's tooltip (owner decision C160
+// (1), C176 defect SM-6), not a browser title: the tooltip's surface stands
+// beside it, named by data-tooltip, and the tooltip controller (component
+// tooltip, loaded by the menu when it draws one) shows it on hover, focus or
+// a long press.
 
 
-function renderChoiceOptions(entry, path, iconsOnly) {
+function renderChoiceOptions(entry, path, iconsOnly, context) {
+  const tip = at => `${context?.tipPrefix ?? "sf-menu-tip"}-${String(path).replace(/[^\w-]/gu, "-")}-${at}`;
+
   return (entry.options ?? []).map((option, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
             type="button"
             class="sf-context-menu-item sf-context-menu-choice-option"
             role="menuitemradio"
             data-sf-entry=${path}
             data-sf-option=${at}
+            data-tooltip=${iconsOnly && option.text ? tip(at) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-checked=${String(Boolean(option.checked))}
             aria-label=${option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            title=${iconsOnly ? option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ?disabled=${Boolean(option.disabled)}
-    >${hasSwatch(option) ? swatch(option.swatch) : option.icon ? icon(option.icon, "") : option.text ?? ""}</button>`);
+    >${hasSwatch(option) ? swatch(option.swatch) : option.icon ? icon(option.icon, "") : option.text ?? ""}</button>${iconsOnly && option.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tooltip sf-tooltip--dark sf-context-menu-choice-tooltip" id=${tip(at)} hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${option.text}</span></span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`);
 } // A choice of a few options -- the theme in a profile menu, a setting in a
 // panel. The quiet form, the default since 1.5.0 (owner, 2026-10-30): the
 // label on its own row with the options at its end, sized to their content,
@@ -3450,7 +4127,7 @@ function renderChoice(entry, path, lead, context) {
 
   if (entry.view === "band") {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-choice sf-context-menu-choice--band" role="group" aria-label=${entry.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-            ${renderChoiceOptions(entry, path, iconsOnly)}
+            ${renderChoiceOptions(entry, path, iconsOnly, context)}
         </div>`;
   }
 
@@ -3459,7 +4136,7 @@ function renderChoice(entry, path, lead, context) {
         ${renderItemText(entry)}
         <span class=${joinClasses("sf-context-menu-choice", iconsOnly ? "sf-context-menu-choice--icons" : "")}
                 role="group" aria-label=${entry.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-            ${renderChoiceOptions(entry, path, iconsOnly)}
+            ${renderChoiceOptions(entry, path, iconsOnly, context)}
         </span>
     </div>`;
 } // A boolean setting's control: the Framework switch's track and thumb, drawn.
@@ -3570,6 +4247,8 @@ function renderEntry(entry, path, lead, context, query) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note">${entry.text ?? ""}</p>`;
   }
 
+  if (entry?.type === "meter") return renderMeter(entry);
+
   if (entry?.type === "separator") {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-separator" role="separator"></div>`;
   }
@@ -3590,8 +4269,11 @@ function renderEntry(entry, path, lead, context, query) {
   const submenu = Array.isArray(entry.submenu) && entry.submenu.length > 0; // A drilling row shows its value under the name, where a long one is cut
   // instead of pushing the row's end about (owner, 2026-10-30).
 
-  const under = context?.drill && submenu ? entry.value ?? "" : "";
-  const classes = joinClasses("sf-context-menu-item", toggle ? "sf-context-menu-item--switch" : "", isDestructive(entry) ? "sf-context-menu-item--danger" : "", entry.current ? "sf-context-menu-item--current" : "", chosen ? "sf-context-menu-item--chosen" : "");
+  const under = context?.drill && submenu ? entry.value ?? "" : ""; // A disabled row is dimmed but stays in the walk with its reason, the
+  // caption (owner decision C164 (4)): aria-disabled, never disabled.
+
+  const dimmed = Boolean(entry.disabled);
+  const classes = joinClasses("sf-context-menu-item", toggle ? "sf-context-menu-item--switch" : "", dimmed ? "sf-context-menu-item--disabled" : "", isDestructive(entry) ? "sf-context-menu-item--danger" : "", entry.current ? "sf-context-menu-item--current" : "", chosen ? "sf-context-menu-item--chosen" : "");
   const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         ${renderLeadPlace(entry, lead)}
         ${renderItemText(entry, under)}
@@ -3614,15 +4296,41 @@ function renderEntry(entry, path, lead, context, query) {
             aria-checked=${toggle ? String(Boolean(entry.value)) : checkable ? String(Boolean(entry.checked)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-haspopup=${submenu ? "menu" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-expanded=${submenu ? "false" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            ?disabled=${Boolean(entry.disabled)}
+            aria-disabled=${dimmed ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >${body}</button>`;
+} // The order a level's rows are drawn in (owner decision C164 (5)): a
+// destructive row -- «Удалить» -- is always last, after a line, whatever
+// place the host gave it. A line left at either end, or doubled where a row
+// moved away, is not drawn. Each row keeps its own path.
+
+
+function actionOrder(shown) {
+  const destructive = entry => ROWS(entry) && entry.type !== "group" && (Boolean(entry.danger) || entry.status === "danger" || entry.status === "error");
+
+  const danger = shown.filter(([entry]) => destructive(entry));
+  if (!danger.length) return shown;
+
+  const separator = pair => pair[0]?.type === "separator";
+
+  const rest = [];
+
+  for (const pair of shown.filter(one => !danger.includes(one))) {
+    if (separator(pair) && (!rest.length || separator(rest[rest.length - 1]))) continue;
+    rest.push(pair);
+  }
+
+  while (rest.length && separator(rest[rest.length - 1])) rest.pop();
+
+  return rest.length ? [...rest, [{
+    type: "separator"
+  }, -1], ...danger] : danger;
 } // What is not a row: the blocks that stand between rows. A choice row is a
 // row since 1.5.0 (the quiet form, owner 2026-10-30): it has a lead, a label
 // and a value of its own, so it keeps the level's leading column and a search
 // narrows to it. A group holds rows, so it counts as rows.
 
 
-const BLOCKS = new Set(["separator", "heading", "header", "note"]);
+const BLOCKS = new Set(["separator", "heading", "header", "note", "meter"]);
 
 const ROWS = entry => entry && !BLOCKS.has(entry.type); // A row that keeps the level's leading column: one with an icon or a picture,
 // and one that can be ticked, whose check stands there.
@@ -3704,11 +4412,16 @@ function renderEntries(context) {
   // query can arrive after the field was cleared -- so its note shows then too.
 
   const remote = Boolean(context.search?.remote);
-  const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => remote || matches(entry, query));
+  let shown = actionOrder(entries.map((entry, index) => [entry, index]).filter(([entry]) => remote || matches(entry, query))); // On a selection the top level says how many rows it acts on, «Выбрано N»,
+  // in place of a heading the host gave the one object (C164 (3)).
+
+  const selection = level.depth === 0 && context.selectionLabel;
+  if (selection && shown[0]?.[0]?.type === "heading") shown = shown.slice(1);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         ${level.depth > 0 ? renderDrillHead(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${context.search ? renderSearch(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${searchList(context, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            ${selection ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-heading sf-context-menu-heading--selection" role="presentation">${context.selectionLabel}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${shown.map(([entry, index]) => renderEntry(entry, `${prefix}${index}`, lead, context, remote ? "" : query))}
             ${context.search && (query || remote) && !shown.some(([entry]) => ROWS(entry)) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         `)}
@@ -3804,7 +4517,7 @@ function renderContextMenuTemplate(context) {
                 class=${rootClasses}
                 style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 role=${context.role || "menu"}
-                aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${(context.selectionLabel ? [context.ariaLabel || context.component?.getAttribute?.("aria-label"), context.selectionLabel].filter(Boolean).join(", ") : context.ariaLabel) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
             <div class="sf-context-menu-frame">
                 ${renderTooltip(context)}
@@ -3973,21 +4686,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.22.1","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.25.3","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "25e9776cb404"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Context Menu","runtime":{"close":"Close","back":"Back","on":"On","off":"Off"},"events":{"search":{"label":"Search the menu"},"tab":{"label":"Choose a tab"},"reset":{"label":"Put the settings back"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Context Menu","runtime":{"close":"Close","back":"Back","on":"On","off":"Off","selected":"{count} selected"},"events":{"search":{"label":"Search the menu"},"tab":{"label":"Choose a tab"},"reset":{"label":"Put the settings back"}}}');
 
 /***/ },
 
 /***/ "c19f070ad532"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Контекстное меню","runtime":{"close":"Закрыть","back":"Назад","on":"Вкл.","off":"Выкл."},"events":{"search":{"label":"Искать в меню"},"tab":{"label":"Выбрать вкладку"},"reset":{"label":"Вернуть настройки"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Контекстное меню","runtime":{"close":"Закрыть","back":"Назад","on":"Вкл.","off":"Выкл.","selected":"Выбрано {count}"},"events":{"search":{"label":"Искать в меню"},"tab":{"label":"Выбрать вкладку"},"reset":{"label":"Вернуть настройки"}}}');
 
 /***/ }
 

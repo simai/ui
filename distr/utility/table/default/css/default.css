@@ -40,7 +40,7 @@
     --sf-table-active-color: var(--sf-on-surface);
     --sf-table-active-bg: var(--sf-surface-state-select);
     --sf-table-hover-color: var(--sf-on-surface);
-    --sf-table-hover-bg: var(--sf-surface-state-hover);
+    --sf-table-hover-bg: var(--sf-surface-state-select);
     width: 100%;
     inline-size: 100%;
     margin-bottom: var(--sf-b6);
@@ -160,6 +160,18 @@
     color: var(--sf-table-hover-color);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table > tbody > tr[aria-selected=true] > * {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table > tbody > tr[aria-selected=true] > :first-child {
+    box-shadow: inset calc(var(--sf-px) * 2) 0 0 var(--sf-primary);
+  }
+  .table > tbody > tr[aria-selected=true] > :first-child:dir(rtl) {
+    box-shadow: inset calc(-1 * calc(var(--sf-px) * 2)) 0 0 var(--sf-primary);
   }
   .table > :not(caption) > * > :where(:has(> sf-checkbox:not(.does-not-exist):only-child)) {
     width: 0;

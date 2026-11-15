@@ -83,6 +83,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   followDensity: () => (/* binding */ followDensity),
 /* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
 /* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
 /* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
 /* harmony export */ });
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
@@ -179,6 +181,40 @@ function densityOf(from) {
   }
 
   return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
 }
 
 /***/ },
@@ -445,6 +481,229 @@ if (typeof globalThis !== 'undefined') {
 const Preferences = globalThis.SF?.Preferences;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preferences);
 
+
+/***/ },
+
+/***/ "42f1649d1a1b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SWIPE_SHARE: () => (/* binding */ SWIPE_SHARE),
+/* harmony export */   SWIPE_SPEED: () => (/* binding */ SWIPE_SPEED),
+/* harmony export */   handleRowHeight: () => (/* binding */ handleRowHeight),
+/* harmony export */   inHandleRow: () => (/* binding */ inHandleRow),
+/* harmony export */   scrollsAlong: () => (/* binding */ scrollsAlong),
+/* harmony export */   startsOnControl: () => (/* binding */ startsOnControl),
+/* harmony export */   swipeToClose: () => (/* binding */ swipeToClose),
+/* harmony export */   trackSwipe: () => (/* binding */ trackSwipe)
+/* harmony export */ });
+// A finger closing a panel by pushing it toward its edge (owner decision C157
+// (4) and (5), 2026-11-14): the bottom sheet -- sf-drawer placement="bottom"
+// and every phone sheet drawn from core/scss/mix/_mix__sheet.scss -- follows
+// a drag down and closes past a quarter of its height or on a quick flick; a
+// side panel on a phone does the same toward its own edge. The panel follows
+// the finger through a length in a custom property the owner's rule reads
+// (translate), and settles back when the drag stops short.
+//
+//   const stop = trackSwipe(pointerdownEvent, {
+//     surface,                      the box that moves
+//     direction: 'down' | 'left' | 'right' | 'up',
+//     variable: '--sf-sheet--drag', the property set on the surface
+//     onEnd: ({dismiss, back}) => ...,
+//   });
+//
+// dismiss: the drag passed the share or the speed toward the edge; back: it
+// did so the other way (a sheet at rest may open further). A drag along the
+// other axis is let go at once (a list scrolling inside a side panel), and a
+// drag shorter than the slop is a press, not a swipe.
+const SWIPE_SHARE = 0.25;
+const SWIPE_SPEED = 0.5;
+const SLOP = 4;
+const AXES = {
+  down: {
+    axis: 'y',
+    sign: 1
+  },
+  up: {
+    axis: 'y',
+    sign: -1
+  },
+  right: {
+    axis: 'x',
+    sign: 1
+  },
+  left: {
+    axis: 'x',
+    sign: -1
+  }
+}; // What a swipe must not start on: a control keeps its own presses, a field
+// its text selection, a box that scrolls along the swipe's axis its scroll.
+
+const KEEPS_PRESS = 'button, a[href], input, select, textarea, [contenteditable="true"], [role="slider"], [role="scrollbar"], [draggable="true"], sf-resizer';
+function startsOnControl(target) {
+  return Boolean(target instanceof Element && target.closest(KEEPS_PRESS));
+} // Whether something between the target and the surface scrolls along this
+// axis toward the swipe (a wide table in a side panel, a carousel).
+
+function scrollsAlong(target, surface, axis) {
+  for (let node = target instanceof Element ? target : null; node && node !== surface; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    const overflow = axis === 'x' ? style.overflowX : style.overflowY;
+    if (!/(auto|scroll)/u.test(overflow)) continue;
+    if (axis === 'x' ? node.scrollWidth > node.clientWidth + 1 : node.scrollHeight > node.clientHeight + 1) return true;
+  }
+
+  return false;
+}
+function trackSwipe(event, {
+  surface,
+  direction = 'down',
+  variable = '--sf-sheet--drag',
+  onEnd,
+  onMove
+} = {}) {
+  const spec = AXES[direction] || AXES.down;
+  if (!surface || !event) return () => {};
+  const grip = event.currentTarget instanceof Element ? event.currentTarget : surface;
+  const start = {
+    x: event.clientX,
+    y: event.clientY,
+    t: event.timeStamp
+  };
+  const rect = surface.getBoundingClientRect();
+  const size = (spec.axis === 'y' ? rect.height : rect.width) || 1; // The owner names the physical edge: a length along x is left-to-right
+  // whatever the page's direction.
+
+  const physical = spec.sign;
+  let moved = false;
+  let given = false;
+  let delta = 0;
+
+  const along = e => spec.axis === 'y' ? e.clientY - start.y : e.clientX - start.x;
+
+  const across = e => spec.axis === 'y' ? e.clientX - start.x : e.clientY - start.y; // The moves are heard on the document, not the grip: a pointer that leaves
+  // the grip before it is captured (a quick drag off a handle row) still
+  // reports to it.
+
+
+  const doc = grip.ownerDocument || document;
+
+  const clear = () => {
+    doc.removeEventListener('pointermove', move, true);
+    doc.removeEventListener('pointerup', end, true);
+    doc.removeEventListener('pointercancel', end, true);
+    surface.classList.remove('is-dragging');
+    surface.style.removeProperty(variable);
+  };
+
+  const move = e => {
+    if (given || e.pointerId !== event.pointerId) return;
+    const a = along(e);
+
+    if (!moved) {
+      if (Math.abs(a) < SLOP && Math.abs(across(e)) < SLOP) return; // Across the axis first: a scroll or a selection, not this swipe.
+
+      if (Math.abs(across(e)) > Math.abs(a)) {
+        given = true;
+        clear();
+        return;
+      }
+
+      moved = true;
+      surface.classList.add('is-dragging'); // Captured only once it is a swipe: captured at the press, the click
+      // of a tap went to the grip instead of what was tapped.
+
+      try {
+        grip.setPointerCapture?.(event.pointerId);
+      } catch {
+        /* a synthetic event has no pointer */
+      }
+    }
+
+    delta = a; // The panel follows toward its edge only; the other way it holds.
+
+    const toward = Math.max(0, delta * physical);
+    surface.style.setProperty(variable, `${toward * physical}px`);
+    onMove?.(toward);
+  };
+
+  function end(e) {
+    if (e.pointerId !== event.pointerId) return;
+    clear();
+    if (given || !moved || e.type === 'pointercancel') return; // A drag that ends on the grip is not also a press of it.
+    // The click, if any, comes in the same task as the release; one that
+    // never comes must not eat a later press.
+
+    const swallow = click => click.stopImmediatePropagation();
+
+    grip.addEventListener('click', swallow, {
+      capture: true,
+      once: true
+    });
+    setTimeout(() => grip.removeEventListener('click', swallow, {
+      capture: true
+    }));
+    const toward = delta * physical;
+    const speed = toward / Math.max(1, e.timeStamp - start.t);
+    const dismiss = toward > size * SWIPE_SHARE || speed > SWIPE_SPEED;
+    const back = !dismiss && (-toward > size * SWIPE_SHARE || speed < -SWIPE_SPEED);
+    onEnd?.({
+      dismiss,
+      back,
+      distance: toward
+    });
+  }
+
+  doc.addEventListener('pointermove', move, true);
+  doc.addEventListener('pointerup', end, true);
+  doc.addEventListener('pointercancel', end, true);
+  return clear;
+} // The handle row of a sheet drawn by the mixin's ::before: a press within it
+// -- from the sheet's top, the 1/2 control's height (the row the bar is
+// centred in) -- starts the swipe.
+
+function handleRowHeight(surface) {
+  const value = getComputedStyle(surface).getPropertyValue('--sf-ui-1/2--control-height').trim();
+  const match = /^(-?\d*\.?\d+)(px|rem|em)?$/u.exec(value);
+  if (!match) return 32;
+  const unit = match[2] || 'px';
+  const base = unit === 'px' ? 1 : parseFloat(getComputedStyle(unit === 'rem' ? document.documentElement : surface).fontSize) || 16;
+  return Number(match[1]) * base;
+}
+function inHandleRow(event, surface) {
+  const top = surface.getBoundingClientRect().top;
+  return event.clientY >= top && event.clientY - top <= handleRowHeight(surface);
+} // A sheet that a swipe down from its handle row closes: binds the press on
+// the surface and answers the unbinding. `when` says whether the surface is
+// a sheet now (a form anchored on a wide screen is not); a press on a
+// control keeps the control's own press.
+//
+//   const unbind = swipeToClose(surface, {when: () => owned.sheet, onDismiss: () => close()});
+
+function swipeToClose(surface, {
+  when = () => true,
+  onDismiss
+} = {}) {
+  if (!surface) return () => {};
+
+  const onPress = event => {
+    if (event.button !== 0 || !when()) return;
+    if (startsOnControl(event.target) || !inHandleRow(event, surface)) return;
+    trackSwipe(event, {
+      surface,
+      direction: 'down',
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss) onDismiss?.();
+      }
+    });
+  };
+
+  surface.addEventListener('pointerdown', onPress);
+  return () => surface.removeEventListener('pointerdown', onPress);
+}
 
 /***/ },
 
@@ -855,21 +1114,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("116963e5e31b");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("cb6d39a52a42");
-/* harmony import */ var _js_settings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("bb67a9697f33");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("72cabd0f91e5");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("e1c707506370");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("fb3a1cbd7459");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("0eadcd89fc76");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("42f1649d1a1b");
+/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _js_settings__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("bb67a9697f33");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("72cabd0f91e5");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("686f52293091");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("e1c707506370");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("fb3a1cbd7459");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("0eadcd89fc76");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__);
 // sf-settings: compact settings -- a few settings a person changes on the
 // spot, a reader's theme and text size, a table's density, a chat's sound.
+// Where a product has a sign-in, the person's own settings (theme, language,
+// text size) are rows of the person menu (owner decision C176 (1)); this
+// element is the gear of a screen's view (a table, reading) and of a site
+// without a sign-in.
 // The items are data, each holding its own value:
 //
 //   <sf-settings look="rows">
@@ -879,9 +1146,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //
 // It composes sf-menu-context and draws nothing of its own (owner decision
 // 2026-11-06): the items become the menu's entries, laid out by one attribute,
-// look -- drill (the value under the name, the options in the same panel),
-// rows (the name at the start, the control at the end) or tiles (the switches
-// used most as tiles on top, the rest as rows). With a trigger (the trigger
+// look -- drill (the value under the name, the options in the same panel) or
+// rows (the name at the start, the control at the end; a choice whose options
+// do not fit beside its name becomes a drill row by itself, C176 (3)). The
+// tiles look left (C176 (5)): tiles is a dated former name of drill until
+// 2027-01-01, its switches rows. With a trigger (the trigger
 // slot, the children without a slot, or for="<id>") the panel opens over the
 // page against it; without one it stands open in the page's flow.
 //
@@ -904,11 +1173,22 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+
+
  // The panel look's sheet (C106); the menu looks draw nothing of their own.
 
 
 
- // The menu it draws, found under its current name and its former one.
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_16__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_17__.runtime
+}; // The menu it draws, found under its current name and its former one.
 
 const MENU = `:scope > .sf-settings-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`; // The colour window of the colour rows (C85): sf-input-color's own, opened on «Своё».
 
@@ -917,7 +1197,7 @@ const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]';
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 
-const same = _js_settings__WEBPACK_IMPORTED_MODULE_10__.sameValue; // The anchored positioning Core published, or the bundle's own copy.
+const same = _js_settings__WEBPACK_IMPORTED_MODULE_12__.sameValue; // The anchored positioning Core published, or the bundle's own copy.
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default()); // On a phone -- below the md breakpoint, where core declares
 // --sf-breakpoint-md -- the panel is a sheet at the bottom of the screen
@@ -928,7 +1208,13 @@ const onPhone = () => !getComputedStyle(document.documentElement).getPropertyVal
 
 
 const PANEL = ':scope > .sf-settings-parts > .sf-settings-panel';
-const ROW = '.sf-settings-row-main';
+const ROW = '.sf-settings-row-main'; // A pin is sf-button-icon (ST-2, C166): the host lays out as display:contents
+// and hands its data-* and tabindex to its native button, which is what takes
+// the focus and carries the row's setting and option.
+
+const PIN = '.sf-settings-row-pin';
+
+const pinButton = pin => (pin?.matches?.('button') ? pin : pin?.querySelector?.('button')) ?? null;
 
 const rowKey = main => main?.dataset.sfOption ?? main?.dataset.sfSetting ?? ''; // The values are a preference of the person (SF.Preferences, owner
 // 2026-10-14): in the browser under sf-pref:sf-settings/<remember>, and by a
@@ -941,14 +1227,35 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 
 
 const rememberKey = name => text(name) ? `sf-settings/${text(name)}` : '';
-const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
+    en,
+    ru
   },
-  source: 'ru'
-});
+  source: 'ru',
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__
+}); // A row of the rows look fits when its name stands on one line, whole, and its
+// options on one line beside it, none of them cut (C176 (3), defect SM-8: in
+// an 18rem menu three Russian words broke «Плотность» inside the word and
+// left «Размер текста» without its name).
+
+function lineCount(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return new Set([...range.getClientRects()].filter(rect => rect.width > 0).map(rect => Math.round(rect.top))).size;
+}
+
+function choiceFits(row) {
+  const label = row.querySelector('.sf-context-menu-item-label');
+  const choice = row.querySelector('.sf-context-menu-choice');
+  if (!choice) return true;
+  if (label && (lineCount(label) > 1 || label.scrollWidth > label.clientWidth + 1)) return false;
+  if (choice.scrollWidth > choice.clientWidth + 1) return false;
+  const options = [...choice.querySelectorAll('.sf-context-menu-choice-option')];
+  if (new Set(options.map(option => Math.round(option.getBoundingClientRect().top))).size > 1) return false;
+  return options.every(option => option.scrollWidth <= option.clientWidth + 1 && lineCount(option) <= 1);
+}
 
 class SfSettings extends SettingsElement {
   constructor() {
@@ -959,9 +1266,16 @@ class SfSettings extends SettingsElement {
     this._entries = {
       items: null,
       look: '',
-      label: '',
+      folded: null,
       list: []
+    }; // The rows look's choices that did not fit beside their names (C176 (3)),
+    // measured for the panel's width and text size they were drawn at.
+
+    this._fit = {
+      key: '',
+      ids: new Set()
     };
+    this._watched = null;
 
     this._onDocumentClick = event => this.onDocumentClick(event);
 
@@ -975,7 +1289,7 @@ class SfSettings extends SettingsElement {
     this._tab = 0;
     this._draft = null;
     this._current = new Map();
-    this._scrollbar = new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_9__.PanelScrollbar();
+    this._scrollbar = new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_11__.PanelScrollbar();
 
     this._onPanelKeyDown = event => this.onPanelKeyDown(event);
 
@@ -1039,7 +1353,7 @@ class SfSettings extends SettingsElement {
 
   declaredValues() {
     if (this._declaredFor !== this.items) {
-      this._declared = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
+      this._declared = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
       this._declaredFor = this.items;
     }
 
@@ -1060,7 +1374,7 @@ class SfSettings extends SettingsElement {
 
   get values() {
     this.restore();
-    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
+    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
   } // A remembered element puts the person's values back into the items the
   // first time it meets them -- before its first drawing, so the panel never
   // shows one value and then another. Nothing is announced: the page reads
@@ -1085,7 +1399,7 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(items, item => Object.hasOwn(kept, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, kept[item.id]) : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(items, item => Object.hasOwn(kept, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, kept[item.id]) : null);
     if (!count) return;
     this._declaredFor = list;
     this._restoredFor = list;
@@ -1097,7 +1411,7 @@ class SfSettings extends SettingsElement {
     if (!key) return;
 
     try {
-      preferences().write(key, (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items));
+      preferences().write(key, (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items));
     } catch {// A page without storage (private mode, blocked) still changes the value.
     }
   } // A person asks the menu for a value: the page is asked first, by this
@@ -1111,11 +1425,11 @@ class SfSettings extends SettingsElement {
       value,
       previous
     } = event.detail ?? {};
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
     if (!item) return; // «Свой цвет…» is not a value: it closes the menu and opens the colour
     // window on «Своё»; what is chosen there is the change.
 
-    if (item.type === 'color' && value === _js_settings__WEBPACK_IMPORTED_MODULE_10__.OWN_COLOR) {
+    if (item.type === 'color' && value === _js_settings__WEBPACK_IMPORTED_MODULE_12__.OWN_COLOR) {
       event.preventDefault();
 
       this._openOwnColor(item);
@@ -1123,11 +1437,11 @@ class SfSettings extends SettingsElement {
       return;
     }
 
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
     const detail = {
       id,
       value,
-      previous: previous ?? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item),
+      previous: previous ?? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item),
       item: { ...item,
         ...(patch ?? {})
       }
@@ -1146,13 +1460,13 @@ class SfSettings extends SettingsElement {
       value,
       previous
     } = event.detail ?? {};
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
     if (!item) return;
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
     if (!patch) return;
     const {
       list
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, one => one.id === id ? patch : null);
     this.writeItems(list);
     this.sfEmit('changed', {
       id,
@@ -1178,20 +1492,20 @@ class SfSettings extends SettingsElement {
       id: target,
       value: given
     };
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
     if (!item) return {
       outcome: 'refused',
       reason: 'not-found'
     };
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
     if (!patch) return {
       outcome: 'refused',
       reason: 'invalid'
     };
-    if (same((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item), patch.value)) return {
+    if (same((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item), patch.value)) return {
       outcome: 'applied'
     };
-    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
     return {
       outcome: 'applied'
     };
@@ -1208,7 +1522,7 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, item => Object.hasOwn(map, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, map[item.id]) : null);
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, item => Object.hasOwn(map, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, map[item.id]) : null);
     if (!count) return {
       outcome: 'refused',
       reason: 'not-found',
@@ -1238,12 +1552,12 @@ class SfSettings extends SettingsElement {
     const {
       list,
       count
-    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, item => {
+    } = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, item => {
       if (!Object.hasOwn(declared, item.id)) return null;
-      const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
+      const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item);
       const value = declared[item.id];
       if (same(previous, value)) return null;
-      const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+      const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
       if (patch) facts.push({
         id: item.id,
         value,
@@ -1271,7 +1585,7 @@ class SfSettings extends SettingsElement {
 
   async show(given) {
     const id = given && typeof given === 'object' ? given.id : given;
-    if (!(0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id)) return {
+    if (!(0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id)) return {
       outcome: 'refused',
       reason: 'not-found'
     };
@@ -1299,7 +1613,7 @@ class SfSettings extends SettingsElement {
       };
     }
 
-    if (this.look === 'drill') {
+    if (this.shownLook === 'drill' || this._fit.ids.has(id)) {
       const result = menu.show(id);
       if (result?.outcome !== 'applied') return result;
       return {
@@ -1340,7 +1654,7 @@ class SfSettings extends SettingsElement {
 
   async _openOwnColor(given) {
     const id = given && typeof given === 'object' ? given.id : given;
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
     if (!item || item.type !== 'color') return {
       outcome: 'refused',
       reason: 'not-found'
@@ -1364,7 +1678,7 @@ class SfSettings extends SettingsElement {
     await customElements.whenDefined('sf-input-color');
     this._colorItem = item.id;
     picker.setAttribute('aria-label', item.text ?? '');
-    picker.value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.colorCode)((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item));
+    picker.value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.colorCode)((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item));
     await picker.whenRendered?.();
     const holder = picker.parentElement;
     holder.inert = false;
@@ -1404,12 +1718,12 @@ class SfSettings extends SettingsElement {
   _onColorPicked(event) {
     event.stopPropagation();
     if (event.type !== 'change') return;
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, this._colorItem);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, this._colorItem);
     const value = event.detail?.value;
     if (!item || !value) return;
-    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
-    if (!patch || patch.value === (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item)) return;
-    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
+    const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
+    if (!patch || patch.value === (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item)) return;
+    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item);
     const asked = {
       id: item.id,
       value: patch.value,
@@ -1421,7 +1735,7 @@ class SfSettings extends SettingsElement {
     if (!this.sfEmit('change', asked, {
       cancelable: true
     })) return;
-    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === item.id ? patch : null).list);
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, one => one.id === item.id ? patch : null).list);
     this.sfEmit('changed', asked);
   } // ------------------------------------------------------------- the popup
 
@@ -1503,10 +1817,11 @@ class SfSettings extends SettingsElement {
   // snapshot) on every drawing.
 
 
-  entries(look, tilesLabel) {
+  entries(look) {
     const cache = this._entries;
+    const folded = this._fit.ids;
 
-    if (cache.items !== this.items || cache.look !== look || cache.label !== tilesLabel) {
+    if (cache.items !== this.items || cache.look !== look || cache.folded !== folded) {
       const word = (key, vars) => this.sfWord(key, vars ? {
         vars
       } : undefined);
@@ -1514,21 +1829,109 @@ class SfSettings extends SettingsElement {
       this._entries = {
         items: this.items,
         look,
-        label: tilesLabel,
-        list: (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.entriesFor)(this.items, look, {
-          tilesLabel,
-          word
+        folded,
+        list: (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.entriesFor)(this.items, look, {
+          word,
+          folded
         })
       };
     }
 
     return this._entries.list;
+  } // The look drawn: a former name (tiles, C176 (5)) draws the look it became
+  // and is noted once, as the dated alias of the attribute is.
+
+
+  get shownLook() {
+    const written = this.look;
+
+    if (Object.hasOwn(_js_settings__WEBPACK_IMPORTED_MODULE_12__.FORMER_LOOKS, written)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__.noteDeprecated)({
+        component: 'sf-settings',
+        tag: this.localName,
+        kind: 'value',
+        attribute: 'look',
+        from: written,
+        to: _js_settings__WEBPACK_IMPORTED_MODULE_12__.FORMER_LOOKS[written],
+        since: '2026-11-14',
+        remove_after: '2027-01-01'
+      });
+    }
+
+    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.lookOf)(written);
+  } // ─── the rows look: a choice that does not fit (C176 (3))
+  // The menu is measured as it is drawn: in the flow after each drawing, a
+  // popup when it opens (closed, it has no box). A choice row whose options do
+  // not fit beside its name is given to the menu again as a drill row -- the
+  // value under the name, the options a level deeper -- before the frame is
+  // painted (the drawings are microtasks). The rows are measured anew when
+  // the panel's width or text size changes (a density, a sheet).
+
+
+  measureFit() {
+    if (this.shownLook !== 'rows') return false;
+    const menu = this.menu;
+    const content = menu?.querySelector('.sf-context-menu-content');
+    if (!content || !content.getClientRects().length || !content.clientWidth) return false;
+    const key = `${content.clientWidth}|${getComputedStyle(content).fontSize}`;
+
+    if (key !== this._fit.key) {
+      const had = this._fit.ids.size > 0 && this._fit.key !== '';
+      this._fit = {
+        key,
+        ids: new Set()
+      };
+
+      if (had) {
+        this.requestComponentUpdate('fit');
+        return true;
+      }
+    }
+
+    const add = [];
+
+    for (const row of content.querySelectorAll('.sf-context-menu-value-row--choice')) {
+      const option = row.querySelector('.sf-context-menu-choice-option');
+      const id = option ? menu.entryOf?.(option)?.id : null;
+      if (id && !this._fit.ids.has(id) && !choiceFits(row)) add.push(id);
+    }
+
+    if (!add.length) return false;
+    this._fit = {
+      key,
+      ids: new Set([...this._fit.ids, ...add])
+    };
+    this.requestComponentUpdate('fit');
+    return true;
+  } // The menu tells when it has drawn and when it has opened; a row that held
+  // the focus and became a drill row gives it to the level's first row.
+
+
+  watchMenu() {
+    const menu = this.menu;
+    if (!menu || this._watched === menu) return;
+    this._watched = menu;
+    menu.addEventListener('sf-after-render', event => {
+      if (event.target === menu) this.measureFit();
+    });
+    menu.addEventListener('sf-menu-context-opened', event => {
+      if (event.target !== menu || !this.measureFit()) return;
+      menu.whenRendered?.(null, {
+        next: true
+      }).then(() => {
+        if (menu.contains(document.activeElement)) return;
+        menu.syncMenuItems?.();
+        menu.availableMenuItems?.()[0]?.focus({
+          preventScroll: true
+        });
+      });
+    });
   }
 
   templateContext() {
     this.restore();
-    const look = _js_settings__WEBPACK_IMPORTED_MODULE_10__.LOOKS.includes(this.look) ? this.look : 'drill';
-    const size = _js_settings__WEBPACK_IMPORTED_MODULE_10__.SIZES.includes(this.size) ? this.size : '1/2';
+    const look = this.shownLook;
+    const size = _js_settings__WEBPACK_IMPORTED_MODULE_12__.SIZES.includes(this.size) ? this.size : _js_settings__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_SIZE;
     const popup = this.popup;
     this.sfHostState('data-look', look);
     return this.createTemplateContext({ ...this.getPropsContext(),
@@ -1538,7 +1941,7 @@ class SfSettings extends SettingsElement {
       size,
       popup,
       label: this.label,
-      entries: look === 'panel' ? [] : this.entries(look, this.sfWord('tiles')),
+      entries: look === 'panel' ? [] : this.entries(look),
       hasColor: this._hasColor,
       slot: name => this.getSlotContent(name),
       hasSlot: name => name === 'trigger' && this.hasSlotContent(name),
@@ -1553,7 +1956,12 @@ class SfSettings extends SettingsElement {
   afterRender(changed) {
     super.afterRender?.(changed);
     this.syncTriggers();
-    if (this.isPanel) this.afterPanelRender();else this._scrollbar.disconnect();
+    if (this.isPanel) this.afterPanelRender();else {
+      this._scrollbar.disconnect();
+
+      this.watchMenu();
+      this.measureFit();
+    }
   } // ─────────────────────────────────────────── the panel look (C106)
   // A list's view settings in a panel of this element's own: groups as
   // sections in one scroll or as tabs, fields lists with a check, a handle, a
@@ -1563,7 +1971,7 @@ class SfSettings extends SettingsElement {
 
 
   get isPanel() {
-    return this.look === 'panel';
+    return (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.lookOf)(this.look) === 'panel';
   }
 
   get panel() {
@@ -1573,7 +1981,7 @@ class SfSettings extends SettingsElement {
 
 
   get applyMode() {
-    return _js_settings__WEBPACK_IMPORTED_MODULE_10__.APPLY.includes(this.apply) ? this.apply : 'instant';
+    return _js_settings__WEBPACK_IMPORTED_MODULE_12__.APPLY.includes(this.apply) ? this.apply : 'instant';
   } // What the rows show: the values a button-applied panel holds until
   // «Применить», else the items.
 
@@ -1584,8 +1992,8 @@ class SfSettings extends SettingsElement {
 
   panelContext() {
     const items = this.shownItems();
-    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelGroups)(items);
-    const layout = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelLayout)(items, {
+    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelGroups)(items);
+    const layout = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelLayout)(items, {
       search: Boolean(this.search)
     });
     const tab = Math.min(this._tab, Math.max(0, groups.length - 1));
@@ -1594,7 +2002,7 @@ class SfSettings extends SettingsElement {
 
     const rowsOf = list => list.flatMap(item => item.type === 'fields' || item.type === 'choice' ? (item.options ?? []).map(option => [item.type === 'choice' ? item.text : '', option.text]) : [[item.text, item.caption]]);
 
-    const nothingFound = Boolean(query) && !shown.some(group => rowsOf(group.items.filter(item => item.type !== 'heading' && item.type !== 'separator')).some(words => (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.matches)(query, ...words)));
+    const nothingFound = Boolean(query) && !shown.some(group => rowsOf(group.items.filter(item => item.type !== 'heading' && item.type !== 'separator')).some(words => (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.matches)(query, ...words)));
     return {
       groups,
       layout,
@@ -1604,7 +2012,7 @@ class SfSettings extends SettingsElement {
       open: Boolean(this._open),
       search: Boolean(this.search),
       apply: this.applyMode,
-      count: (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.applyCount)(items),
+      count: (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.applyCount)(items),
       current: this._current,
       words: {
         label: this.sfWord('label'),
@@ -1634,10 +2042,10 @@ class SfSettings extends SettingsElement {
   async commitValue(id, value) {
     if (this.applyMode === 'button') {
       const draft = this.shownItems();
-      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(draft, id);
-      const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(draft, id);
+      const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
       if (!patch) return false;
-      this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(draft, one => one.id === id ? patch : null).list;
+      this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(draft, one => one.id === id ? patch : null).list;
       this.requestComponentUpdate('draft');
       await this.whenRendered?.();
       return true;
@@ -1648,14 +2056,14 @@ class SfSettings extends SettingsElement {
 
 
   writeAsked(id, value) {
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.items, id);
-    const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, value);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
+    const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, value);
     if (!patch) return false;
     const next = { ...item,
       ...patch
     };
-    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item);
-    const asked = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(next);
+    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item);
+    const asked = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(next);
     if (same(previous, asked)) return true;
 
     if (!this.sfEmit('change', {
@@ -1670,7 +2078,7 @@ class SfSettings extends SettingsElement {
       return false;
     }
 
-    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
     this.sfEmit('changed', {
       id,
       value: asked,
@@ -1687,8 +2095,8 @@ class SfSettings extends SettingsElement {
     this._draft = null;
 
     if (draft) {
-      const wanted = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(draft);
-      const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
+      const wanted = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(draft);
+      const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
 
       for (const [id, value] of Object.entries(wanted)) if (!same(now[id], value)) this.writeAsked(id, value);
     }
@@ -1708,7 +2116,7 @@ class SfSettings extends SettingsElement {
     }
 
     const declared = this.declaredValues();
-    this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.rewriteValues)(this.shownItems(), item => Object.hasOwn(declared, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valuePatch)(item, declared[item.id]) : null).list;
+    this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.shownItems(), item => Object.hasOwn(declared, item.id) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valuePatch)(item, declared[item.id]) : null).list;
     this.requestComponentUpdate('draft');
   }
   /** A tab of the panel chosen (the groups shown as tabs). */
@@ -1740,7 +2148,7 @@ class SfSettings extends SettingsElement {
       return;
     }
 
-    const pin = target.closest('.sf-settings-row-pin');
+    const pin = target.closest(PIN);
 
     if (pin) {
       this.togglePin(pin);
@@ -1761,24 +2169,26 @@ class SfSettings extends SettingsElement {
   activate(main) {
     if (main.getAttribute('aria-disabled') === 'true') return;
     const id = main.dataset.sfSetting;
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
     if (!item) return;
-    if (item.type === 'switch') this.commitValue(id, !(0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item));else if (item.type === 'choice') this.commitValue(id, main.dataset.sfOption);else if (item.type === 'fields') {
-      const value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.toggledField)(item, main.dataset.sfOption, 'checked');
+    if (item.type === 'switch') this.commitValue(id, !(0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item));else if (item.type === 'choice') this.commitValue(id, main.dataset.sfOption);else if (item.type === 'fields') {
+      const value = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.toggledField)(item, main.dataset.sfOption, 'checked');
       if (value) this.commitValue(id, value);
     }
   }
 
   async togglePin(pin) {
-    const id = pin.dataset.sfSetting;
-    const option = pin.dataset.sfOption;
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
-    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.toggledField)(item, option, 'pinned');
+    const button = pinButton(pin);
+    if (!button) return;
+    const id = button.dataset.sfSetting;
+    const option = button.dataset.sfOption;
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
+    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.toggledField)(item, option, 'pinned');
     if (!value) return;
-    const focused = pin === document.activeElement;
+    const focused = button === document.activeElement;
     await this.commitValue(id, value);
     await this.whenRendered?.();
-    if (focused) this.rowControl(id, option, '.sf-settings-row-pin')?.focus({
+    if (focused) this.rowControl(id, option, `${PIN} button`)?.focus({
       preventScroll: true
     });
   } // A row's control or pin by its setting and option, after a drawing.
@@ -1854,7 +2264,7 @@ class SfSettings extends SettingsElement {
       return;
     }
 
-    const pin = target.closest('.sf-settings-row-pin');
+    const pin = target.closest(PIN);
     const main = pin ? pin.parentElement?.querySelector(`:scope > ${ROW}`) : target.closest(ROW);
     if (!main) return;
     const list = main.closest('.sf-settings-list');
@@ -1868,7 +2278,7 @@ class SfSettings extends SettingsElement {
       } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         const next = rows[(at + (event.key === 'ArrowDown' ? 1 : rows.length - 1)) % rows.length];
-        next?.parentElement?.querySelector(':scope > .sf-settings-row-pin')?.focus() ?? next?.focus();
+        pinButton(next?.parentElement?.querySelector(`:scope > ${PIN}`))?.focus() ?? next?.focus();
       }
 
       return;
@@ -1903,7 +2313,7 @@ class SfSettings extends SettingsElement {
     }
 
     if (event.key === inward) {
-      const own = main.parentElement?.querySelector(':scope > .sf-settings-row-pin');
+      const own = pinButton(main.parentElement?.querySelector(`:scope > ${PIN}`));
 
       if (own) {
         event.preventDefault();
@@ -1917,8 +2327,8 @@ class SfSettings extends SettingsElement {
   async moveRow(main, step) {
     const id = main.dataset.sfSetting;
     const option = main.dataset.sfOption;
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
-    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.movedField)(item, option, step);
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
+    const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.movedField)(item, option, step);
     if (!value) return;
     await this.commitValue(id, value);
     await this.whenRendered?.();
@@ -1932,8 +2342,8 @@ class SfSettings extends SettingsElement {
     if (document.activeElement !== main) main.focus({
       preventScroll: false
     });
-    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
-    const options = item ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.itemValue)(item) : [];
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
+    const options = item ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item) : [];
     const index = options.findIndex(one => one.id === option) + 1;
     const label = main.querySelector('.sf-settings-row-label')?.textContent ?? '';
     this.announce(this.sfWord('position', {
@@ -1995,8 +2405,8 @@ class SfSettings extends SettingsElement {
 
       for (const one of marks()) one.classList.remove('sf-settings-row--drop-before', 'sf-settings-row--drop-after');
 
-      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.shownItems(), id);
-      const value = before === undefined || !item ? null : (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.placedField)(item, option, before);
+      const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
+      const value = before === undefined || !item ? null : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.placedField)(item, option, before);
       if (!value) return;
       await this.commitValue(id, value);
       await this.whenRendered?.();
@@ -2039,7 +2449,16 @@ class SfSettings extends SettingsElement {
     if (typeof panel.showPopover === 'function') {
       panel.setAttribute('popover', 'manual');
       if (!panel.matches(':popover-open')) panel.showPopover();
-    }
+    } // The one sheet (owner decision C157 (5)): a swipe down from its handle
+    // row closes it, as Escape does.
+
+
+    owned.unswipe = (0,_core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_10__.swipeToClose)(panel, {
+      when: () => owned.sheet && this._open === owned,
+      onDismiss: () => this.closePanel({
+        reason: 'close'
+      })
+    });
 
     const place = sheet => {
       owned.position?.stop();
@@ -2134,6 +2553,7 @@ class SfSettings extends SettingsElement {
     const panel = this.panel;
 
     if (panel) {
+      owned.unswipe?.();
       if (panel.matches?.(':popover-open')) panel.hidePopover();
       panel.removeAttribute('popover');
       panel.removeAttribute('data-sf-sheet');
@@ -2156,8 +2576,8 @@ class SfSettings extends SettingsElement {
 
   draftMoved() {
     if (!this._draft) return false;
-    const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this.items);
-    return Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.valueMap)(this._draft)).some(([id, value]) => !same(now[id], value));
+    const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
+    return Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this._draft)).some(([id, value]) => !same(now[id], value));
   } // show(id) in the panel: a popup opens, the tab that holds the setting is
   // chosen, the focus goes to its row.
 
@@ -2174,9 +2594,9 @@ class SfSettings extends SettingsElement {
       };
     }
 
-    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelGroups)(this.shownItems());
-    const at = groups.findIndex(group => (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.findItem)(group.items, id));
-    if (at >= 0 && (0,_js_settings__WEBPACK_IMPORTED_MODULE_10__.panelLayout)(this.shownItems(), {
+    const groups = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelGroups)(this.shownItems());
+    const at = groups.findIndex(group => (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(group.items, id));
+    if (at >= 0 && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelLayout)(this.shownItems(), {
       search: Boolean(this.search)
     }) === 'tabs') this.chooseGroup(at);
     await this.whenRendered?.();
@@ -2210,6 +2630,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   APPLY: () => (/* binding */ APPLY),
 /* harmony export */   COLOR_OPTIONS: () => (/* binding */ COLOR_OPTIONS),
+/* harmony export */   DEFAULT_SIZE: () => (/* binding */ DEFAULT_SIZE),
+/* harmony export */   FORMER_LOOKS: () => (/* binding */ FORMER_LOOKS),
 /* harmony export */   HUES: () => (/* binding */ HUES),
 /* harmony export */   LOOKS: () => (/* binding */ LOOKS),
 /* harmony export */   OWN_COLOR: () => (/* binding */ OWN_COLOR),
@@ -2224,6 +2646,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   folded: () => (/* binding */ folded),
 /* harmony export */   holdsValue: () => (/* binding */ holdsValue),
 /* harmony export */   itemValue: () => (/* binding */ itemValue),
+/* harmony export */   lookOf: () => (/* binding */ lookOf),
 /* harmony export */   matches: () => (/* binding */ matches),
 /* harmony export */   movedField: () => (/* binding */ movedField),
 /* harmony export */   panelGroups: () => (/* binding */ panelGroups),
@@ -2231,7 +2654,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   placedField: () => (/* binding */ placedField),
 /* harmony export */   rewriteValues: () => (/* binding */ rewriteValues),
 /* harmony export */   sameValue: () => (/* binding */ sameValue),
-/* harmony export */   tileItems: () => (/* binding */ tileItems),
 /* harmony export */   toggledField: () => (/* binding */ toggledField),
 /* harmony export */   valueMap: () => (/* binding */ valueMap),
 /* harmony export */   valuePatch: () => (/* binding */ valuePatch)
@@ -2255,8 +2677,20 @@ __webpack_require__.r(__webpack_exports__);
 // owner decision C106) keeps its value in its options: their order, which are
 // checked and which are pinned; its value reads them as [{id, checked, pinned}]
 // in order, the pinned ones first.
-const LOOKS = ['drill', 'rows', 'tiles', 'panel'];
-const SIZES = ['1/2', '1'];
+const LOOKS = ['drill', 'rows', 'panel']; // The tiles look left (owner decision C176 (5), 2026-11-14): its switches are
+// rows. tiles stays a dated former name of drill until 2027-01-01
+// (component.json aliases); a page that still writes it gets the drill look.
+
+const FORMER_LOOKS = Object.freeze({
+  tiles: 'drill'
+});
+/** The look a written value draws: a look, a former name's look, else drill. */
+
+const lookOf = value => LOOKS.includes(value) ? value : FORMER_LOOKS[value] ?? 'drill';
+const SIZES = ['1/2', '1']; // The size a page that writes none gets (C176, defect SM-1; owner decision
+// C22): the ordinary step; compactness is the density of the region.
+
+const DEFAULT_SIZE = '1';
 const APPLY = ['instant', 'button'];
 const TYPES = ['switch', 'choice', 'range', 'color', 'heading', 'separator', 'group', 'fields'];
 const VALUE_TYPES = new Set(['switch', 'choice', 'range', 'color', 'fields']); // ─── the colour row (owner decision C85) ─────────────────────────────────
@@ -2544,10 +2978,14 @@ const plainWord = (key, vars = {}) => {
   if (key === 'own-color-value') return `Own: ${vars.value ?? ''}`;
   return key.replace(/^hue-/u, '');
 }; // One setting as a menu entry. A choice's value becomes its options' checked
-// marks, the way the menu reads it; drill opens its options in the panel.
+// marks, the way the menu reads it; drill opens its options in the panel, and
+// so does a choice of the rows look whose options did not fit beside its name
+// (owner decision C176 (3)): the row becomes a drill row by itself, the value
+// under the name, the options a level deeper.
 
 
-function settingEntry(item, look, word = plainWord) {
+function settingEntry(item, look, word = plainWord, folded = NONE) {
+  if (look === 'rows' && folded.has(item.id) && (item.type === 'choice' || item.type === 'color')) look = 'drill';
   const base = { ...own(item, ['id', 'text', 'caption', 'icon', 'keywords']),
     type: item.type
   };
@@ -2573,11 +3011,12 @@ function settingEntry(item, look, word = plainWord) {
     } : {}),
     options
   };
-} // The entries of a list of items: a group is its title (a heading) and its
+}
+
+const NONE = new Set(); // The entries of a list of items: a group is its title (a heading) and its
 // rows; an item of no known type is left out.
 
-
-function entriesOf(items, look, skip, word) {
+function entriesOf(items, look, word, folded = NONE) {
   const out = [];
 
   for (const item of Array.isArray(items) ? items : []) {
@@ -2593,7 +3032,7 @@ function entriesOf(items, look, skip, word) {
         type: 'separator'
       });
     } else if (item.type === 'group') {
-      const rows = entriesOf(item.items, look, skip, word);
+      const rows = entriesOf(item.items, look, word, folded);
       if (!rows.length) continue;
       if (item.text) out.push({
         type: 'heading',
@@ -2604,9 +3043,9 @@ function entriesOf(items, look, skip, word) {
         ...own(item, ['text']),
         items: rows
       });
-    } else if (holdsValue(item) && item.type !== 'fields' && !skip.has(item.id)) {
+    } else if (holdsValue(item) && item.type !== 'fields') {
       // A fields list is the panel look's alone: a menu has no row for it.
-      out.push(settingEntry(item, look, word));
+      out.push(settingEntry(item, look, word, folded));
     }
   } // A separator does not open or close the list, and two do not stand together.
 
@@ -2614,52 +3053,22 @@ function entriesOf(items, look, skip, word) {
   return out.filter((entry, index, list) => entry.type !== 'separator' || index > 0 && index < list.length - 1 && list[index + 1].type !== 'separator');
 }
 /**
- * The switches the tiles look puts on top: those marked tile: true, at any
- * depth; when none is marked, the switches of the top level.
- */
-
-
-function tileItems(items) {
-  const marked = [];
-
-  const walk = list => {
-    for (const item of Array.isArray(list) ? list : []) {
-      if (holdsValue(item) && item.type === 'switch' && item.tile === true) marked.push(item);
-      if (item?.type === 'group') walk(item.items);
-    }
-  };
-
-  walk(items);
-  if (marked.length) return marked;
-  return (Array.isArray(items) ? items : []).filter(item => holdsValue(item) && item.type === 'switch');
-}
-/**
  * The menu's entries for a look:
  *   drill  every choice opens its options in the panel (view: drill), the
  *          value under the name; the menu is submenu="drill";
- *   rows   the name at the start, the control at the end: quiet pills, a
- *          switch, a slider;
- *   tiles  the tile switches as tiles on top (a group with view: tiles named
- *          tilesLabel), the rest as rows below a separator.
+ *   rows   the name at the start, the control at the end: quiet options, a
+ *          switch, a slider; a choice named in `folded` -- its options did
+ *          not fit beside its name -- is a drill row instead (C176 (3)).
+ * A former look (tiles) draws the look it became (lookOf). A switch is a row
+ * in every look (C176 (5)); `tile` on an item is no longer read.
  */
 
+
 function entriesFor(items, look = 'drill', {
-  tilesLabel = '',
-  word = plainWord
+  word = plainWord,
+  folded = NONE
 } = {}) {
-  if (look !== 'tiles') return entriesOf(items, look, new Set(), word);
-  const tiles = tileItems(items);
-  if (!tiles.length) return entriesOf(items, 'rows', new Set(), word);
-  const rest = entriesOf(items, 'rows', new Set(tiles.map(item => item.id)), word);
-  const top = {
-    type: 'group',
-    view: 'tiles',
-    text: tilesLabel,
-    items: tiles.map(item => settingEntry(item, 'rows'))
-  };
-  return rest.length ? [top, {
-    type: 'separator'
-  }, ...rest] : [top];
+  return entriesOf(items, lookOf(look), word, folded instanceof Set ? folded : new Set(folded ?? []));
 } // ─── the panel look (owner decision C106) ─────────────────────────────────
 
 /**
@@ -2809,7 +3218,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
  // sf-settings' markup: sf-menu-context with the items as its entries, and,
-// in a popup, the page's trigger beside it. In the drill, rows and tiles looks
+// in a popup, the page's trigger beside it. In the drill and rows looks
 // the element draws nothing of its own; the panel look draws its panel
 // (templates/panel.js) with the element's sheet.
 //
@@ -2823,6 +3232,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // 2026-11-09): it is given to the menu as its lower and upper bound, so a
 // long name wraps and a value ends in an ellipsis rather than the panel
 // growing.
+//
+// The menu drills in both looks: the drill look's choices open a level, and so
+// does a rows-look choice whose options did not fit beside its name (C176
+// (3)); a drilling popup is the one sheet on a phone (C157 (5), SM-3). The
+// look's rows carry no submenus of their own, so nothing flies out.
 //
 // The menu's value events stay inside (stopPropagation): the page hears
 // sf-settings-change, -changed and -reset, never the menu's.
@@ -2839,7 +3253,7 @@ function renderMenu(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-menu-context
       class=${['sf-settings', context.rootClass].filter(Boolean).join(' ')}
       ?popup=${context.popup}
-      submenu=${context.look === 'drill' ? 'drill' : 'flyout'}
+      submenu="drill"
       size=${context.size}
       aria-label=${context.label}
       style=${PANEL}
@@ -2944,7 +3358,8 @@ function mark(kind, checked) {
 
 function renderRow(row, context) {
   const {
-    words
+    words,
+    size
   } = context;
   const main = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-main" role=${row.role}
             aria-checked=${row.checked ? 'true' : 'false'}
@@ -2959,14 +3374,20 @@ function renderRow(row, context) {
             </span>
             ${row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-pin-place" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${mark(row.kind, row.checked)}
-        </span>`;
-  const pin = row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" class="sf-settings-row-pin" tabindex="-1"
-                aria-pressed=${row.pinned ? 'true' : 'false'}
+        </span>`; // The pin is the Framework's icon button (defect ST-2, owner decision
+  // C166; C160 (1)): it shows its name as the Framework tooltip (the short
+  // word, its title), and its accessible name says what a press does with
+  // the row («Закрепить: Тёги», «Открепить: Тёги»). Its icon is the row's
+  // line: the panel's size, height low (1/2: 20 in 28; 1: 24 in 32). One Tab stop with the
+  // rows: the arrow inward reaches it (tabindex -1 on its button). Its
+  // data-* go down to the native button with the host's other attributes.
+
+  const pin = row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-row-pin" icon="push_pin" appearance="ghost"
+                scheme=${row.pinned ? 'primary' : 'on-surface-variant'} size=${size === '1' ? '1' : '1/2'} height="low"
+                tabindex="-1"
                 aria-label=${`${row.pinned ? words.unpin : words.pin}: ${row.text}`}
                 title=${row.pinned ? words.unpin : words.pin}
-                data-sf-setting=${row.setting} data-sf-option=${row.option}>
-                <i class="sf-icon" aria-hidden="true">push_pin</i>
-            </button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+                data-sf-setting=${row.setting} data-sf-option=${row.option}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${['sf-settings-row', `sf-settings-row--${row.kind}`, row.pin ? 'sf-settings-row--pins' : ''].filter(Boolean).join(' ')}
             ?hidden=${row.hidden}
             ?data-checked=${row.checked}
@@ -3252,24 +3673,31 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "686f52293091"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-settings for the shim (core/js/aliases.js, standard §16 item 20).","component":"sf-settings","since":"2026-11-14","remove_after":"2027-01-01","aliases":[{"from":"tiles","to":"drill","kind":"value","setting":"look","component":"sf-settings","since":"2026-11-14","remove_after":"2027-01-01","section":"§16 item 20","note":"owner decision C176 (5): the tiles look left; its switches are rows of the drill look"}]}');
+
+/***/ },
+
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.4.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","tiles","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.6.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
 /***/ "fb3a1cbd7459"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings","runtime":{"label":"Settings","tiles":"Quick settings","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","own-color":"Own colour…","own-color-value":"Own: {value}","close":"Close","reset":"Reset","apply":"Apply","search":"Find","empty":"Nothing found","pin":"Pin","unpin":"Unpin","move-hint":"Alt with the up and down arrows changes the order","position":"{text}: {index} of {count}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings","runtime":{"label":"Settings","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","own-color":"Own colour…","own-color-value":"Own: {value}","close":"Close","reset":"Reset","apply":"Apply","search":"Find","empty":"Nothing found","pin":"Pin","unpin":"Unpin","move-hint":"Alt with the up and down arrows changes the order","position":"{text}: {index} of {count}"}}');
 
 /***/ },
 
 /***/ "0eadcd89fc76"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки","runtime":{"label":"Настройки","tiles":"Быстрые настройки","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","own-color":"Свой цвет…","own-color-value":"Свой: {value}","close":"Закрыть","reset":"Сбросить","apply":"Применить","search":"Найти","empty":"Ничего не найдено","pin":"Закрепить","unpin":"Открепить","move-hint":"Alt и стрелки вверх и вниз меняют порядок","position":"{text}: {index} из {count}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки","runtime":{"label":"Настройки","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","own-color":"Свой цвет…","own-color-value":"Свой: {value}","close":"Закрыть","reset":"Сбросить","apply":"Применить","search":"Найти","empty":"Ничего не найдено","pin":"Закрепить","unpin":"Открепить","move-hint":"Alt и стрелки вверх и вниз меняют порядок","position":"{text}: {index} из {count}"}}');
 
 /***/ }
 

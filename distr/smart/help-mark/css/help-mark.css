@@ -177,6 +177,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);

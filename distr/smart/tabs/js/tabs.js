@@ -99,6 +99,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   followDensity: () => (/* binding */ followDensity),
 /* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
 /* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
 /* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
 /* harmony export */ });
 // Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
@@ -195,7 +197,253 @@ function densityOf(from) {
   }
 
   return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
 }
+
+/***/ },
+
+/***/ "8d229b7c92e9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   menuOpen: () => (/* binding */ menuOpen),
+/* harmony export */   publishMenu: () => (/* binding */ publishMenu)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// SF.menu.open: the page's one menu of actions (owner decision C184 (4),
+// 2026-11-14; the public name is the owner's; study control/research/
+// 2026-11-14-toolbar-menu-open.md, K-03).
+//
+// A row's «⋯», a toolbar's «Ещё», the right button and the menu key on a row
+// all open the standard menu -- sf-menu-context -- and every component used to
+// place its own and wait for it (nine in SIMAI Pro, more in the Framework).
+// Now one call opens the one menu of the page:
+//
+//   const choice = await SF.menu.open({anchor, entries, label});
+//   const choice = await SF.menu.open({x, y, entries, label, returnTo: row});
+//   // choice: {id, entry} of the row chosen, or null (closed without one)
+//
+// - anchor: the control the menu hangs from (a press on the same control
+//   while its menu is open closes it, as a toggle); or x, y: a point in the
+//   window -- where a right-click was, or a row's corner for Shift+F10 -- the
+//   menu's corner exactly there;
+// - entries: the rows, as sf-menu-context takes them;
+// - label: the menu's name, read by a screen reader;
+// - size: the menu's size step, as sf-menu-context's size attribute; left
+//   out, the step of what opens it (the anchor's, its component's or the
+//   Smart component holding it: a row menu of a table of size 1 is size 1);
+// - returnTo: where the focus goes when the menu closes (the row it acted
+//   on); left out, the menu gives the focus back to where it was, or to the
+//   anchor.
+//
+// The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
+// the page -- on the body, or in the open modal dialog the anchor is in, since
+// a modal dialog makes the rest of the page inert. A second opening while one
+// is open closes the first, which answers null. The answer never rejects:
+// without a menu (no Loader, no sf-menu-context) it is null.
+//
+// Every bundle may carry a copy of this module (bundles each carry their own
+// module copy), so the one menu and its pending answer live behind the shared
+// global: the first copy to run publishes SF.menu.open and every other copy
+// calls the published one.
+
+const SHARED = 'data-sf-menu-shared';
+
+function installMenuOpen() {
+  let pending = null;
+  let point = null; // The opening the menu belongs to now, kept past its answer: a choice
+  // answers before the menu closes, and the focus goes back on closing.
+
+  let shown = null;
+
+  const settle = value => {
+    const waiting = pending;
+    pending = null;
+    waiting?.resolve(value);
+    return waiting;
+  };
+
+  function sharedMenu(anchor) {
+    const doc = globalThis.document;
+    let menu = doc.querySelector(`[${SHARED}]`);
+
+    if (!menu) {
+      menu = doc.createElement('sf-menu-context');
+      menu.setAttribute('popup', '');
+      menu.setAttribute(SHARED, '');
+      menu.addEventListener('sf-menu-context-select', event => {
+        if (event.target !== menu) return;
+        settle({
+          id: event.detail?.id ?? null,
+          entry: event.detail?.entry ?? null
+        });
+      });
+      menu.addEventListener('sf-menu-context-closed', event => {
+        if (event.target !== menu) return;
+        settle(null);
+        const opening = shown;
+        shown = null;
+        const back = opening?.returnTo;
+        if (!back?.isConnected) return; // After the menu's own return: the row the person acted on, when the
+        // focus fell to the page, stayed in the closed menu or went back to
+        // the «⋯» that opened it (a pointer's control, not a Tab stop).
+
+        const anchor = opening.anchor;
+        setTimeout(() => {
+          const active = doc.activeElement;
+
+          if (!active || active === doc.body || active === doc.documentElement || menu.contains(active) || anchor && (active === anchor || anchor.contains?.(active))) {
+            back.focus?.({
+              preventScroll: true
+            });
+          }
+        }, 0);
+      });
+    } // In the open modal dialog the opener is in, or on the body.
+
+
+    const home = anchor?.closest?.('dialog[open]') || doc.body;
+    if (menu.parentNode !== home && !menu.isOpen) home.append(menu);
+    return menu;
+  } // A point in the window as an anchor of no size: sf-menu-context hangs its
+  // corner exactly there and reads the page under it (density, focus back).
+
+
+  function pointAnchor(x, y, near) {
+    const doc = globalThis.document;
+
+    if (!point?.isConnected) {
+      point = doc.createElement('span');
+      point.setAttribute('aria-hidden', 'true');
+      point.setAttribute('data-sf-menu-point', '');
+    }
+
+    const home = near?.closest?.('dialog[open]') || doc.body;
+    if (point.parentNode !== home) home.append(point);
+    point.style.cssText = `position:fixed;left:${x}px;top:${y}px;inline-size:0;block-size:0;pointer-events:none;overflow:hidden`;
+    return point;
+  }
+
+  return async function open(options = {}) {
+    const {
+      anchor = null,
+      x,
+      y,
+      entries = [],
+      label = '',
+      size = '',
+      returnTo = null
+    } = options || {};
+    const atPoint = !(anchor instanceof Element);
+    if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
+    const doc = globalThis.document;
+    if (!doc) return null;
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!globalThis.customElements?.get('sf-menu-context')) return null;
+    const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
+
+    if (!atPoint && menu.isOpen && pending?.anchor === anchor) {
+      menu.close({
+        reason: 'api'
+      });
+      return null;
+    }
+
+    if (menu.isOpen) {
+      settle(null);
+      shown = null;
+      menu.close({
+        restoreFocus: false,
+        reason: 'api',
+        ask: false
+      });
+    }
+
+    if (label) menu.setAttribute('aria-label', label);else menu.removeAttribute('aria-label');
+    if (size) menu.setAttribute('size', String(size));else {
+      menu.removeAttribute('size');
+      menu.removeAttribute(_density_js__WEBPACK_IMPORTED_MODULE_0__.RELATIVE);
+    } // In the density of the control or the row it opens from (C22, C79), not
+    // of the body it stands on.
+
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, atPoint ? returnTo : anchor);
+    menu.search = null;
+    menu.entries = Array.isArray(entries) ? entries : [];
+    return new Promise(resolve => {
+      pending = {
+        resolve,
+        anchor,
+        returnTo: returnTo instanceof Element ? returnTo : null
+      };
+      shown = pending;
+      const mine = pending;
+      const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
+        target: returnTo ?? undefined
+      }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      }) : menu.openFor(anchor, {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      });
+      Promise.resolve(opening).then(answer => {
+        // Refused (a listener kept it closed) or no surface: nothing chosen.
+        if (pending === mine && answer && answer !== true && answer.outcome !== 'applied') settle(null);
+      }, () => {
+        if (pending === mine) settle(null);
+      });
+    });
+  };
+} // The published one, or this copy published.
+
+
+function publishMenu() {
+  const SF = globalThis.SF = globalThis.SF || {};
+  SF.menu = SF.menu || {};
+  if (typeof SF.menu.open !== 'function') SF.menu.open = installMenuOpen();
+  return SF.menu;
+}
+function menuOpen(options) {
+  return publishMenu().open(options);
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuOpen);
 
 /***/ },
 
@@ -204,15 +452,27 @@ function densityOf(from) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
 /* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
 /* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
 /* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
 /* harmony export */   rowRoom: () => (/* binding */ rowRoom),
 /* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
 /* harmony export */   standardMenu: () => (/* binding */ standardMenu),
 /* harmony export */   textWidth: () => (/* binding */ textWidth),
 /* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
 /* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
 // One row of items that do not all fit, and a trailing «Ещё (n)» that holds
 // the rest (owner decision C54): the items in their order up to the first
 // that does not fit, each whole in the row or in «Ещё»; the items that must
@@ -225,6 +485,7 @@ __webpack_require__.r(__webpack_exports__);
 // so a second row (sf-contents layout="bar", CT-05) lays out by the same
 // rules instead of a copy of them. Every number is a width in CSS pixels,
 // fractional; half a pixel is the tolerance, as the tabs measured it.
+
 const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
 // their indices, or null when every item fits.
 
@@ -362,6 +623,246 @@ async function standardMenu(owner, field, select) {
   menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
   (owner.closest('dialog[open]') || document.body).append(menu);
   owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
   return menu;
 }
 
@@ -770,13 +1271,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2db3a835ac11");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("795a53b0bbe9");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("84d032c55810");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("51b106697124");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("33cd7c3c3aca");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("90473944857f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8d229b7c92e9");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("795a53b0bbe9");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("84d032c55810");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("51b106697124");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("33cd7c3c3aca");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("90473944857f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
@@ -795,20 +1297,29 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
- // sf-tabs from its component.json (standard simai.smart-component 1.3.8 §3,
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__.runtime
+}; // sf-tabs from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §7.2.1, §7.2.3, §8, §11): the settings are attributes and properties
 // made by core/js/element-manifest.js, the words are lang/<locale>.json, the
 // actions answer outcomes, and the old event name sf-tab-change is a dated
 // alias of sf-tabs-change.
 
-const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
+    en,
+    ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__,
   // setData(data, reason) and setPanels(panels, reason) take their fields in
   // order; the runtime gives them the object form of §4.4 as well.
   positional: ['set-data', 'set-panels']
@@ -2068,7 +2579,7 @@ class SfTabs extends TabsElement {
       if (text) text.after(badge);else button.append(badge);
     }
 
-    badge.className = `${(0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.errorBadgeClasses)(errors)} sf-tabs-more-errors`;
+    badge.className = `${(0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.errorBadgeClasses)(errors)} sf-tabs-more-errors`;
     badge.querySelector('.sf-badge-text').textContent = String(errors);
     return badge.getBoundingClientRect().width !== before;
   }
@@ -2082,15 +2593,18 @@ class SfTabs extends TabsElement {
       disabled: item.disabled,
       value: item.count === null || item.count === undefined ? undefined : String(item.count)
     }));
-    if (!entries.length) return;
-    const menu = await this.standardMenu('_moreMenu', id => this.activate(Number(id), null, {
+    if (!entries.length) return; // The page's one menu (core SF.menu.open, owner decision C184 (4)); a
+    // second press on «Ещё» closes it.
+
+    const choice = await (0,_core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_9__.menuOpen)({
+      anchor,
+      entries,
+      label: this.text('more'),
+      size: this.menuSize()
+    });
+    if (choice?.id != null && this.isConnected) this.activate(Number(choice.id), null, {
       person: true
-    }));
-    menu.setAttribute('aria-label', this.text('more'));
-    menu.setAttribute('size', this.menuSize());
-    (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.followDensity)(menu, this);
-    menu.entries = entries;
-    menu.toggleFor(anchor);
+    });
   } // The standard menu «Ещё» and the settings open (core/js/overflow-row.js).
 
 
@@ -2252,7 +2766,7 @@ class SfTabs extends TabsElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.renderTabsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.renderTabsTemplate)(this.templateContext());
   }
 
   get state() {
@@ -2924,7 +3438,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.2","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

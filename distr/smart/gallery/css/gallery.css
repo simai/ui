@@ -189,7 +189,11 @@
      Full screen and black in both themes: pictures are judged on black. The
      place is the media glass's (.sf-surface-media): white ink and the alpha
      steps of white for the controls on it. */
+  /* The viewer is the place its phone layout reads (C181 (2), DEV GB5
+     answers): a container as wide as the screen it covers, fixed, so the
+     containment takes no width from its content. */
   .sf-gallery-viewer {
+    container: sf-gallery-viewer/inline-size;
     position: fixed;
     top: var(--sf-0);
     right: var(--sf-0);
@@ -411,8 +415,10 @@
     line-height: var(--sf-text-height-1\/2);
     text-align: center;
   }
-  /* A phone pages by swipe: no side arrows, the picture edge to edge. */
-  @media not all and (min-width: 44rem) {
+  /* A viewer narrower than the container step h1 (44rem, the md step it
+     read from the screen before) pages by swipe: no side arrows, the picture
+     edge to edge (C150 (7)). */
+  @container sf-gallery-viewer (width < 44rem) {
     .sf-gallery-viewer-stage {
       padding-left: var(--sf-0);
       padding-right: var(--sf-0);

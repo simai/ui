@@ -103,7 +103,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
 /* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
 /* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
 /* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
@@ -132,8 +134,10 @@ function hasDateStyle(style) {
  *
  * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
  * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
  */
 
 
@@ -141,6 +145,7 @@ function formatDate(value, {
   date = 'medium',
   time = null,
   intl = null,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -155,23 +160,107 @@ function formatDate(value, {
     if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
   }
 
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
   return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
 }
 /**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
  */
 
 function calendarDayOffset(value, {
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
   if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
   return Math.round((day - base) / DAY_MS);
 }
 /**
@@ -181,10 +270,26 @@ function calendarDayOffset(value, {
  * draws them again; «сегодня» said yesterday is wrong by morning.
  */
 
-function msUntilNextDay(now = new Date()) {
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -670,6 +775,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ab3947ea3647");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("354525e80715");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -685,6 +791,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+
+ // The set's words and the property types' names live in its language files
+// (localization study LC-5), as a Smart component keeps them.
 
  // The Framework's field renderers, addressed by a property type and a template
 // rather than by a control name.
@@ -1522,7 +1631,7 @@ function renderCellField(field = {}, value, host) {
 // value control reports a committed change as `change` on its host, once per
 // change the user makes, with each older name kept as an alias the manifest
 // marks `alias_of`. So the set binds the canonical name for all of them --
-// sf-input, sf-textarea, sf-switch, sf-dropdown, sf-button-group and
+// sf-input, sf-textarea, sf-switch, sf-checkbox, sf-dropdown, sf-segmented and
 // sf-datepicker -- where it bound three different alias names before. The one
 // event this file still binds under its own name is sf-file-upload:select,
 // which is not a value change but a selection; the `change` on that component
@@ -2135,17 +2244,23 @@ function renderTimeEdit(field, value, host) {
   }}
         ></sf-input-date>
     `;
-} // A required boolean is a switch: two states are all it has. An optional one is
-// a pair of buttons with nothing chosen while the value is absent -- the
-// consumer owner's decision of 2026-10-06, and the reason is that a switch
-// cannot say «не задано»: rendering one over an absent value would write false
-// on the first save, a value nobody chose.
+} // A required boolean has two states and nothing else. In a form saved with a
+// button it is a checkbox, and a switch only where the change acts at once
+// (owner decision C165 (4), form study FM-6): a switch says «on now», which a
+// form that has not been saved has not done. The host says it acts at once with
+// renderEditField(…, {apply: 'instant'}). The checkbox carries no `required`:
+// a required yes/no is one with a value, and an unticked box is «Нет», not an
+// empty answer. An optional one is a pair of buttons with nothing chosen while
+// the value is absent -- the consumer owner's decision of 2026-10-06, and the
+// reason is that neither a switch nor a checkbox can say «не задано»: rendering
+// one over an absent value would write false on the first save, a value nobody
+// chose.
 
 
 function renderBooleanEdit(field, value, host) {
   const optional = field.required !== true;
 
-  if (!optional) {
+  if (!optional && EDIT_APPLY === 'instant') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <sf-switch
                     size=${EDIT_SIZE}
@@ -2154,6 +2269,18 @@ function renderBooleanEdit(field, value, host) {
                     aria-label=${field.label || field.key || ''}
                     @change=${event => host.setFieldValue(field, Boolean(event.target?.checked))}
             ></sf-switch>
+        `;
+  }
+
+  if (!optional) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-checkbox
+                    size=${EDIT_SIZE}
+                    name=${fieldName(field)}
+                    ?checked=${value === true}
+                    aria-label=${field.label || field.key || ''}
+                    @change=${event => host.setFieldValue(field, Boolean(event.target?.checked ?? event.detail?.checked))}
+            ></sf-checkbox>
         `;
   }
 
@@ -2407,79 +2534,8 @@ function renderChoicesEdit(field, value, host) {
 
 
 const SET_TEXT = {
-  en: {
-    yes: 'Yes',
-    no: 'No',
-    searchInList: 'Find in the list',
-    // A text filter is a text the value contains, not a list to search.
-    containsText: 'Contains…',
-    fileKind_image: 'Images',
-    fileKind_document: 'Documents',
-    fileKind_archive: 'Archives',
-    fileKind_other: 'Other files',
-    operator: 'Operator',
-    rangeFrom: 'From',
-    rangeTo: 'To',
-    loadingOptions: 'Loading the options',
-    optionsError: 'The options could not be loaded',
-    pickRecord: 'Choose a record',
-    pickFromList: 'Choose from the list',
-    searchRecords: 'Find a record',
-    loadingRecords: 'Loading records',
-    recordsError: 'The records could not be loaded',
-    retry: 'Try again',
-    loadMore: 'Load more',
-    removeFile: 'Remove',
-    fileRemoved: 'File removed',
-    undo: 'Undo',
-    passwordSet: 'Set',
-    passwordUnset: 'Not set',
-    passwordKeep: 'Set; type a new one to replace it',
-    maskIncomplete: 'Complete the field',
-    notNumber: 'Enter a number',
-    precisionMax: 'At most {n} digits after the point',
-    rowCount: {
-      one: '{n} row',
-      other: '{n} rows'
-    }
-  },
-  ru: {
-    yes: 'Да',
-    no: 'Нет',
-    searchInList: 'Найти в списке',
-    containsText: 'Содержит…',
-    fileKind_image: 'Изображения',
-    fileKind_document: 'Документы',
-    fileKind_archive: 'Архивы',
-    fileKind_other: 'Прочие файлы',
-    operator: 'Оператор',
-    rangeFrom: 'От',
-    rangeTo: 'До',
-    loadingOptions: 'Загрузка вариантов',
-    optionsError: 'Не удалось загрузить варианты',
-    pickRecord: 'Выберите запись',
-    pickFromList: 'Выберите из списка',
-    searchRecords: 'Найти запись',
-    loadingRecords: 'Загрузка записей',
-    recordsError: 'Не удалось загрузить записи',
-    retry: 'Повторить',
-    loadMore: 'Загрузить ещё',
-    removeFile: 'Убрать',
-    fileRemoved: 'Файл убран',
-    undo: 'Вернуть',
-    passwordSet: 'Задан',
-    passwordUnset: 'Не задан',
-    passwordKeep: 'Задан; введите новый, чтобы заменить',
-    maskIncomplete: 'Заполните поле полностью',
-    notNumber: 'Введите число',
-    precisionMax: 'Не больше {n} знаков после запятой',
-    rowCount: {
-      one: '{n} строка',
-      few: '{n} строки',
-      many: '{n} строк',
-      other: '{n} строки'
-    }
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].ru
 }; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
@@ -3065,10 +3121,24 @@ function renderFileEdit(field, value, host) {
 // type yet.
 
 
-const sizeOption = options => options?.size === '1/2' ? '1/2' : '1'; // A control that stays a control when it may not be changed: a choice as
+const sizeOption = options => options?.size === '1/2' ? '1/2' : '1'; // `options.density`: 'compact' or 'normal', the density the control is drawn in
+// (owner decision C22; form study FM-5). Without it the control follows the
+// region it stands in, as every component does; with it the host sets the
+// region for this field alone -- a compact panel asks for 'compact' instead of
+// shrinking the field with size '1/2', which C22 forbids. Anything else is no
+// density at all.
+
+
+const DENSITIES = new Set(['compact', 'normal']);
+
+const densityOption = options => DENSITIES.has(options?.density) ? options.density : ''; // `options.apply`: 'instant' when a change acts at once (a settings panel, the
+// parameters of a block), anything else for a form saved with a button. Read by
+// the yes/no field only: a switch at once, a checkbox in a form (C165 (4)).
+
+
+let EDIT_APPLY = ''; // A control that stays a control when it may not be changed: a choice as
 // buttons shows which button is chosen, which is what it is for, where the
 // view's badge would show a different thing (port 1.16.0).
-
 
 const keepsControlWhenLocked = (asked, field) => asked === 'choice' && isChoiceButtons(field); // `options.disabled`: the control is drawn disabled, not read-only -- a field a
 // condition turns off for now (port 1.14.0 `when.enabled`), which the host
@@ -3092,19 +3162,32 @@ function renderEditField(field = {}, value, host, options = {}) {
   const outer = EDIT_SIZE;
   const outerDisabled = EDIT_DISABLED;
   const outerPicker = EDIT_PICKER;
+  const outerApply = EDIT_APPLY;
   EDIT_SIZE = sizeOption(options);
   EDIT_DISABLED = disabled; // `options.picker: 'dropdown'`: the record, relation, user and paged lookup
   // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
 
   EDIT_PICKER = options?.picker === 'dropdown' ? 'dropdown' : '';
+  EDIT_APPLY = options?.apply === 'instant' ? 'instant' : '';
 
   try {
-    return renderer(field, value, host);
+    return inDensity(renderer(field, value, host), densityOption(options));
   } finally {
     EDIT_SIZE = outer;
     EDIT_DISABLED = outerDisabled;
     EDIT_PICKER = outerPicker;
+    EDIT_APPLY = outerApply;
   }
+} // A density asked for one field is a region around it that draws no box of its
+// own: the variables of the density rules (core/scss/_sf_css__density.scss)
+// stand on it and every part of the control inherits them, the popups it opens
+// read it (core/js/density.js densityOf), and the control lays out in the
+// host's flex or grid as if the wrapper were not there. No density, no wrapper:
+// what a host had is unchanged.
+
+function inDensity(content, density) {
+  if (!density || content == null) return content;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-density" style="display: contents" data-sf-density=${density}>${content}</div>`;
 } // The view template: a field shown and not edited, which is the fourth of the
 // four the assignment names and the last one the set was missing.
 //
@@ -3121,6 +3204,7 @@ function renderEditField(field = {}, value, host, options = {}) {
 // has no visual size at all, its `size` being a legacy name for the file's size
 // as text.
 // The line a viewed value is drawn on: 1, or 1/2 with {size: '1/2'}, as above.
+
 
 let VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
 // host's own formatting of it. The consumer asked for the second and they are
@@ -3415,7 +3499,7 @@ function renderViewField(field = {}, value, host, options = {}) {
   VIEW_LINE = sizeOption(options);
 
   try {
-    return renderer(field, value, host);
+    return inDensity(renderer(field, value, host), densityOption(options));
   } finally {
     VIEW_LINE = outer;
   }
@@ -3591,6 +3675,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PROPERTY_TYPES: () => (/* binding */ PROPERTY_TYPES),
 /* harmony export */   modesOf: () => (/* binding */ modesOf)
 /* harmony export */ });
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("354525e80715");
 // The registry of universal properties (owner, 2026-10-15): every property
 // type the Framework renders, or a component set renders beside it (`set`),
 // its variants and the parameters a field of it reads -- one list a host
@@ -3605,28 +3690,29 @@ __webpack_require__.r(__webpack_exports__);
 // what is read). A record, a relation and a user hold one value and take their
 // candidates from the host, not from `options`; a constraint other than a
 // choice's options is the host's to enforce, not a renderer's.
+// The names of the types and variants live in the set's language files
+// (localization study LC-5); `label` keeps its {ru, en} shape for the hosts
+// that read it.
+
+
+const typeLabel = key => ({
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].ru[key],
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
+});
+
 const PROPERTY_TYPES = Object.freeze([{
   type: 'string',
-  label: {
-    ru: 'Строка',
-    en: 'String'
-  },
+  label: typeLabel('type-string'),
   // password: write-only. The host never sends the password; the value it
   // sends is {set: true} or {set: false} (null reads as not set), and the
   // set shows only «задан»/«не задан». An edit writes the typed text through
   // setFieldValue and writes nothing for a field nobody typed in.
   variants: [{
     id: 'phone',
-    label: {
-      ru: 'Телефон',
-      en: 'Phone'
-    }
+    label: typeLabel('variant-string-phone')
   }, {
     id: 'password',
-    label: {
-      ru: 'Пароль',
-      en: 'Password'
-    },
+    label: typeLabel('variant-string-password'),
     writeOnly: true
   }],
   // mask (property-view port 1.16.0): the Framework mask grammar of
@@ -3637,10 +3723,7 @@ const PROPERTY_TYPES = Object.freeze([{
   params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
 }, {
   type: 'text',
-  label: {
-    ru: 'Текст',
-    en: 'Text'
-  },
+  label: typeLabel('type-text'),
   variants: [],
   params: ['placeholder', 'required', 'readonly']
 }, // html (property-view port 1.17.0): formatted text, an HTML string of
@@ -3648,54 +3731,33 @@ const PROPERTY_TYPES = Object.freeze([{
 // component's own rule, a cell its text on one line, filtered as text.
 {
   type: 'html',
-  label: {
-    ru: 'Форматированный текст',
-    en: 'Formatted text'
-  },
+  label: typeLabel('type-html'),
   variants: [],
   params: ['placeholder', 'required', 'readonly']
 }, // stepper: edited with sf-quantity, «−» and «+» and the arrow keys; min,
 // max and step (and a number's precision) are read by that variant alone.
 {
   type: 'integer',
-  label: {
-    ru: 'Целое число',
-    en: 'Integer'
-  },
+  label: typeLabel('type-integer'),
   variants: [{
     id: 'stepper',
-    label: {
-      ru: 'Кнопками «−» и «+»',
-      en: 'With steppers'
-    }
+    label: typeLabel('variant-integer-stepper')
   }],
   params: ['unit', 'min', 'max', 'step', 'required', 'readonly']
 }, {
   type: 'number',
-  label: {
-    ru: 'Число',
-    en: 'Number'
-  },
+  label: typeLabel('type-number'),
   variants: [{
     id: 'scale',
-    label: {
-      ru: 'Шкала 0–100',
-      en: 'Scale 0–100'
-    }
+    label: typeLabel('variant-number-scale')
   }, {
     id: 'stepper',
-    label: {
-      ru: 'Кнопками «−» и «+»',
-      en: 'With steppers'
-    }
+    label: typeLabel('variant-number-stepper')
   }],
   params: ['unit', 'min', 'max', 'step', 'precision', 'required', 'readonly']
 }, {
   type: 'date',
-  label: {
-    ru: 'Дата',
-    en: 'Date'
-  },
+  label: typeLabel('type-date'),
   variants: [],
   params: ['required', 'readonly']
 }, // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
@@ -3703,26 +3765,17 @@ const PROPERTY_TYPES = Object.freeze([{
 // hh:mm for a time -- and step is the minute step, 1 to 60.
 {
   type: 'datetime',
-  label: {
-    ru: 'Дата и время',
-    en: 'Date and time'
-  },
+  label: typeLabel('type-datetime'),
   variants: [],
   params: ['min', 'max', 'step', 'required', 'readonly']
 }, {
   type: 'time',
-  label: {
-    ru: 'Время',
-    en: 'Time'
-  },
+  label: typeLabel('type-time'),
   variants: [],
   params: ['min', 'max', 'step', 'required', 'readonly']
 }, {
   type: 'boolean',
-  label: {
-    ru: 'Да или нет',
-    en: 'Yes or no'
-  },
+  label: typeLabel('type-boolean'),
   variants: [],
   params: ['trueText', 'falseText', 'required', 'readonly']
 }, // buttons (property-view port 1.16.0): one segmented button group, a
@@ -3731,68 +3784,41 @@ const PROPERTY_TYPES = Object.freeze([{
 // required. The dropdown stays the default.
 {
   type: 'choice',
-  label: {
-    ru: 'Одно из списка',
-    en: 'One of a list'
-  },
+  label: typeLabel('type-choice'),
   variants: [{
     id: 'buttons',
-    label: {
-      ru: 'Кнопками',
-      en: 'As buttons'
-    }
+    label: typeLabel('variant-choice-buttons')
   }],
   params: ['options', 'badgeAppearance', 'size', 'required', 'readonly']
 }, {
   type: 'choices',
-  label: {
-    ru: 'Несколько из списка',
-    en: 'Several of a list'
-  },
+  label: typeLabel('type-choices'),
   // badges: the view; checklist and select: the edit control (a list of
   // 13 or more is a checklist unless select is asked for).
   variants: [{
     id: 'badges',
-    label: {
-      ru: 'Значками',
-      en: 'As badges'
-    }
+    label: typeLabel('variant-choices-badges')
   }, {
     id: 'checklist',
-    label: {
-      ru: 'Флажками',
-      en: 'As a checklist'
-    }
+    label: typeLabel('variant-choices-checklist')
   }, {
     id: 'select',
-    label: {
-      ru: 'Выпадающим списком',
-      en: 'As a dropdown'
-    }
+    label: typeLabel('variant-choices-select')
   }],
   params: ['options', 'badgeAppearance', 'required', 'readonly']
 }, {
   type: 'user',
-  label: {
-    ru: 'Пользователь',
-    en: 'User'
-  },
+  label: typeLabel('type-user'),
   variants: [],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'record',
-  label: {
-    ru: 'Запись',
-    en: 'Record'
-  },
+  label: typeLabel('type-record'),
   variants: [],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'relation',
-  label: {
-    ru: 'Связь',
-    en: 'Relation'
-  },
+  label: typeLabel('type-relation'),
   variants: [],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, // lookup: a value chosen from a reference list the host keeps -- a country,
@@ -3803,54 +3829,33 @@ const PROPERTY_TYPES = Object.freeze([{
 // host reads and no renderer does).
 {
   type: 'lookup',
-  label: {
-    ru: 'Из справочника',
-    en: 'From a reference list'
-  },
+  label: typeLabel('type-lookup'),
   variants: [],
   params: ['options', 'multiple', 'placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'file',
-  label: {
-    ru: 'Файл',
-    en: 'File'
-  },
+  label: typeLabel('type-file'),
   variants: [{
     id: 'image',
-    label: {
-      ru: 'Изображение',
-      en: 'Image'
-    }
+    label: typeLabel('variant-file-image')
   }, {
     id: 'image-card',
-    label: {
-      ru: 'Изображение карточкой',
-      en: 'Image card'
-    }
+    label: typeLabel('variant-file-image-card')
   }, {
     id: 'image-list',
-    label: {
-      ru: 'Изображения списком',
-      en: 'Image list'
-    }
+    label: typeLabel('variant-file-image-list')
   }],
   // required: read by the image variant alone, whose control is
   // sf-image-field -- a required, empty one keeps its form from submitting.
   params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'required', 'readonly']
 }, {
   type: 'color',
-  label: {
-    ru: 'Цвет',
-    en: 'Colour'
-  },
+  label: typeLabel('type-color'),
   variants: [],
   params: ['swatches', 'required', 'readonly']
 }, {
   type: 'include',
-  label: {
-    ru: 'Код',
-    en: 'Code'
-  },
+  label: typeLabel('type-include'),
   variants: [],
   params: ['language', 'required', 'readonly']
 }, // The types a component set draws (property-view port 1.18.0; Larena
@@ -3862,46 +3867,31 @@ const PROPERTY_TYPES = Object.freeze([{
 // number is a decimal string, never a float.
 {
   type: 'money',
-  label: {
-    ru: 'Деньги',
-    en: 'Money'
-  },
+  label: typeLabel('type-money'),
   set: 'view',
   variants: [],
   params: ['currency', 'min', 'max', 'required', 'readonly']
 }, {
   type: 'percent',
-  label: {
-    ru: 'Процент',
-    en: 'Percent'
-  },
+  label: typeLabel('type-percent'),
   set: 'view',
   variants: [],
   params: ['min', 'max', 'required', 'readonly']
 }, {
   type: 'items',
-  label: {
-    ru: 'Строки',
-    en: 'Rows'
-  },
+  label: typeLabel('type-items'),
   set: 'view',
   variants: [],
   params: ['columns', 'minRows', 'maxRows', 'required', 'readonly']
 }, {
   type: 'compound',
-  label: {
-    ru: 'Составное',
-    en: 'Compound'
-  },
+  label: typeLabel('type-compound'),
   set: 'view',
   variants: [],
   params: ['parts', 'required', 'readonly']
 }, {
   type: 'ru.requisites',
-  label: {
-    ru: 'Реквизиты',
-    en: 'Requisites (Russia)'
-  },
+  label: typeLabel('type-ru.requisites'),
   set: 'view',
   variants: [],
   params: ['parts', 'required', 'readonly']
@@ -4989,6 +4979,25 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 
 /***/ },
 
+/***/ "354525e80715"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f050502c25f8");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a54dc147fac3");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
 /***/ "4f56033a1eae"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -5015,6 +5024,20 @@ __webpack_require__.r(__webpack_exports__);
 // cleaner: src/core/js/composition/html-subset.mjs.
 
 
+
+/***/ },
+
+/***/ "f050502c25f8"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
+
+/***/ },
+
+/***/ "a54dc147fac3"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет","searchInList":"Найти в списке","containsText":"Содержит…","fileKind_image":"Изображения","fileKind_document":"Документы","fileKind_archive":"Архивы","fileKind_other":"Прочие файлы","operator":"Оператор","rangeFrom":"От","rangeTo":"До","loadingOptions":"Загрузка вариантов","optionsError":"Не удалось загрузить варианты","pickRecord":"Выберите запись","pickFromList":"Выберите из списка","searchRecords":"Найти запись","loadingRecords":"Загрузка записей","recordsError":"Не удалось загрузить записи","retry":"Повторить","loadMore":"Загрузить ещё","removeFile":"Убрать","fileRemoved":"Файл убран","undo":"Вернуть","passwordSet":"Задан","passwordUnset":"Не задан","passwordKeep":"Задан; введите новый, чтобы заменить","maskIncomplete":"Заполните поле полностью","notNumber":"Введите число","precisionMax":"Не больше {n} знаков после запятой","rowCount":{"one":"{n} строка","few":"{n} строки","many":"{n} строк","other":"{n} строки"},"type-string":"Строка","variant-string-phone":"Телефон","variant-string-password":"Пароль","type-text":"Текст","type-html":"Форматированный текст","type-integer":"Целое число","variant-integer-stepper":"Кнопками «−» и «+»","type-number":"Число","variant-number-scale":"Шкала 0–100","variant-number-stepper":"Кнопками «−» и «+»","type-date":"Дата","type-datetime":"Дата и время","type-time":"Время","type-boolean":"Да или нет","type-choice":"Одно из списка","variant-choice-buttons":"Кнопками","type-choices":"Несколько из списка","variant-choices-badges":"Значками","variant-choices-checklist":"Флажками","variant-choices-select":"Выпадающим списком","type-user":"Пользователь","type-record":"Запись","type-relation":"Связь","type-lookup":"Из справочника","type-file":"Файл","variant-file-image":"Изображение","variant-file-image-card":"Изображение карточкой","variant-file-image-list":"Изображения списком","type-color":"Цвет","type-include":"Код","type-money":"Деньги","type-percent":"Процент","type-items":"Строки","type-compound":"Составное","type-ru.requisites":"Реквизиты"}}');
 
 /***/ }
 

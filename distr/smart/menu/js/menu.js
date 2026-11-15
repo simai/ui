@@ -88,6 +88,574 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
 /***/ "3267d93fb0d3"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -102,22 +670,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("116963e5e31b");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e29406217b0b");
-/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7332c9a6d69c");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("831ef45545b2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e0fa46ed075f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("97168578e30d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("33262fd5308c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("15d5a97ca4e8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e29406217b0b");
+/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7332c9a6d69c");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("831ef45545b2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e0fa46ed075f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("97168578e30d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("33262fd5308c");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("15d5a97ca4e8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__);
 // sf-menu: site navigation built from data -- a site's sections, a cabinet's
 // pages, a documentation tree -- drawn as the class menu (src/component/menu),
 // so its styles apply and nothing of them is forked (owner, 2026-10-25). The
@@ -142,11 +711,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // An item spelled the first release's way (key, text, title) is noted on the
 // page's deprecation list until the date it leaves (journal record
 // sf-menu-item-field-aliases).
 
-(0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.onItemAlias)((from, to) => (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({
+(0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.onItemAlias)((from, to) => (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
   component: 'sf-menu',
   kind: 'property',
   attribute: 'items',
@@ -158,7 +728,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // Prefer the helper Core published; an isolated bundle uses its own copy.
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__.runtime
+}; // Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default()); // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8,
 // §11): the settings are attributes and properties made by
@@ -167,14 +745,14 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 // sf-menu:toggle are dated aliases of sf-menu-navigate and sf-menu-toggle.
 
 
-const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
+    en,
+    ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 }); // open('catalog') and open({id: 'catalog'}) both name an item (§4.4).
 // How many levels of panels an item opens: 0 for a leaf.
 
@@ -194,11 +772,11 @@ class SfSmartMenu extends MenuElement {
       },
       orientation: {
         default: 'vertical',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_ORIENTATIONS
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_ORIENTATIONS
       },
       appearance: {
         default: 'default',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_APPEARANCES
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_APPEARANCES
       },
       current: {
         default: ''
@@ -210,11 +788,11 @@ class SfSmartMenu extends MenuElement {
       },
       collapse: {
         default: 'auto',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_COLLAPSE
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_COLLAPSE
       },
       overflow: {
         default: 'collapse',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_OVERFLOW
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_OVERFLOW
       },
       moreLabel: {
         attribute: 'more-label',
@@ -223,11 +801,11 @@ class SfSmartMenu extends MenuElement {
       openOn: {
         attribute: 'open-on',
         default: 'hover',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_OPEN_ON
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_OPEN_ON
       },
       indicator: {
         default: 'line',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MENU_INDICATORS
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_INDICATORS
       },
       label: {
         default: ''
@@ -296,7 +874,7 @@ class SfSmartMenu extends MenuElement {
     if (Object.prototype.hasOwnProperty.call(this, 'items')) {
       const early = this.items;
       delete this.items;
-      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseItems)(early);
+      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(early);
     }
 
     this.addEventListener('click', this.onClick);
@@ -330,7 +908,7 @@ class SfSmartMenu extends MenuElement {
     const nav = children.find(child => child.localName === 'nav');
     const list = children.find(child => child.localName === 'ul') || nav?.querySelector(':scope > ul');
     if (!list) return;
-    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.itemsFromList)(list));
+    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.itemsFromList)(list));
     this._childLabel = nav?.getAttribute('aria-label') || list.getAttribute('aria-label') || '';
     (list.parentElement === nav ? nav : list).remove();
   }
@@ -342,14 +920,16 @@ class SfSmartMenu extends MenuElement {
 
     window.addEventListener('popstate', this._onLocation);
     window.addEventListener('hashchange', this._onLocation); // The phone's width, as the sheets switch on it (core/js/breakpoints).
+    // Inside sf-header-site the bar's own width stands for the window's (see
+    // readNarrow), so the bar and its row read one width (C104, C181 (2)).
 
     this._narrowMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__.breakpointMedia)('md', {
       below: true
     });
-    this._narrow = this._narrowMedia?.matches === true;
+    this._narrow = this.readNarrow();
 
     this._onNarrow = () => {
-      const narrow = this._narrowMedia?.matches === true;
+      const narrow = this.readNarrow();
       if (narrow === this._narrow) return;
       this._narrow = narrow;
       if (this.collapse === 'narrow') this.requestComponentUpdate('narrow'); // A row's deeper levels open in place below md and to the side above
@@ -363,7 +943,8 @@ class SfSmartMenu extends MenuElement {
       }
     };
 
-    this._narrowMedia?.addEventListener?.('change', this._onNarrow); // The words of a row change their width when the font arrives: «Ещё» is
+    this._narrowMedia?.addEventListener?.('change', this._onNarrow);
+    this.watchFrame(); // The words of a row change their width when the font arrives: «Ещё» is
     // measured again then.
 
     this._onFonts = () => this.measureFit();
@@ -378,6 +959,9 @@ class SfSmartMenu extends MenuElement {
     window.removeEventListener('hashchange', this._onLocation);
     this._narrowMedia?.removeEventListener?.('change', this._onNarrow);
     this._narrowMedia = null;
+    this._frameObserver?.disconnect();
+    this._frameObserver = null;
+    this._frame = null;
     document.fonts?.removeEventListener?.('loadingdone', this._onFonts);
 
     for (const timer of this._hoverTimers.values()) clearTimeout(timer);
@@ -400,11 +984,11 @@ class SfSmartMenu extends MenuElement {
 
   get items() {
     if (this._items !== undefined) return this._items;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseItems)(this.getAttribute('items'));
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(this.getAttribute('items'));
   }
 
   set items(next) {
-    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseItems)(next);
+    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(next);
     this._autoCollapsed = false;
     this.requestComponentUpdate('items');
   }
@@ -434,17 +1018,17 @@ class SfSmartMenu extends MenuElement {
   get treeItems() {
     const items = this.menuItems;
     if (!this.moreActive) return items;
-    const row = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.withoutGroups)(items);
+    const row = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(items);
     const hidden = new Set(this._overflowHidden);
     return [...row.filter(item => !hidden.has(item.id)), this.moreItem(row.filter(item => hidden.has(item.id)))];
   } // «Ещё» -- the more-label words -- or «Меню» when no item stays in the row.
 
 
   moreItem(children = []) {
-    const none = children.length > 0 && children.length === (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.withoutGroups)(this.menuItems).length;
+    const none = children.length > 0 && children.length === (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(this.menuItems).length;
     const label = none ? this.getAttribute('toggle-label') || this.sfWord('toggle-label') : this.getAttribute('more-label') || this.sfWord('more-label');
     return {
-      id: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MORE_ID,
+      id: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MORE_ID,
       label,
       href: '',
       icon: '',
@@ -468,7 +1052,7 @@ class SfSmartMenu extends MenuElement {
 
 
   get horizontal() {
-    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_8__.ROW_APPEARANCES.includes(this.appearance);
+    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_9__.ROW_APPEARANCES.includes(this.appearance);
   } // The row became a button that opens the same links as a column.
 
 
@@ -496,7 +1080,7 @@ class SfSmartMenu extends MenuElement {
 
   get currentId() {
     const here = globalThis.location;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.currentItemId)(this.menuItems, {
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.currentItemId)(this.menuItems, {
       current: this.getProp('current'),
       pathname: here?.pathname || '',
       hash: here?.hash || '',
@@ -508,7 +1092,7 @@ class SfSmartMenu extends MenuElement {
 
   get openIds() {
     this.syncMode();
-    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.openBranches)(this.treeItems, this._openState, this.currentId, !this.flyouts)];
+    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.openBranches)(this.treeItems, this._openState, this.currentId, !this.flyouts)];
   }
 
   isOpen(id) {
@@ -516,7 +1100,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   item(id) {
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.findItem)(this.treeItems, id);
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.findItem)(this.treeItems, id);
   } // The actions open, close and toggle {id} and close-all (§4.4): each
   // answers an outcome, applied or refused with a reason.
 
@@ -586,7 +1170,7 @@ class SfSmartMenu extends MenuElement {
     const after = new Set(before);
 
     if (this.flyouts) {
-      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.pathTo)(this.treeItems, item.id) || []);
+      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, item.id) || []);
 
       for (const other of before) if (!above.has(other)) after.delete(other);
 
@@ -613,7 +1197,7 @@ class SfSmartMenu extends MenuElement {
 
   applyOpen(before, after, source, asked) {
     const changed = [];
-    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.walkItems)(this.treeItems, one => {
+    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.walkItems)(this.treeItems, one => {
       if (one.children.length && before.has(one.id) !== after.has(one.id)) changed.push(one);
     });
     if (!changed.length) return false;
@@ -622,7 +1206,7 @@ class SfSmartMenu extends MenuElement {
 
     this.requestComponentUpdate('open'); // The branch asked for first, then the ones it closed, innermost first.
 
-    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.pathTo)(this.treeItems, one.id) || []).length;
+    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, one.id) || []).length;
 
     changed.sort((a, b) => a.id === asked ? -1 : b.id === asked ? 1 : depth(b) - depth(a)); // sf-menu-toggle, then its old name sf-menu:toggle with the same detail
     // (aliases.json, until 2026-12-01).
@@ -766,7 +1350,7 @@ class SfSmartMenu extends MenuElement {
     const [id] = chain;
     const item = id ? this.item(id) : null;
     if (!item?.children.length || item.disabled || this.isOpen(id)) return;
-    const delay = this.flyoutRegion(item) ? _items_mjs__WEBPACK_IMPORTED_MODULE_8__.HOVER_REGION_OPEN_DELAY : _items_mjs__WEBPACK_IMPORTED_MODULE_8__.HOVER_OPEN_DELAY;
+    const delay = this.flyoutRegion(item) ? _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_REGION_OPEN_DELAY : _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_OPEN_DELAY;
     this.hoverTimer(`open\u0000${id}`, delay, () => this.setOpen(id, true, 'user'));
   };
   onPointerOut = event => {
@@ -780,7 +1364,7 @@ class SfSmartMenu extends MenuElement {
 
     for (const id of this.openIds) {
       if (next.has(id)) continue;
-      this.hoverTimer(`close\u0000${id}`, _items_mjs__WEBPACK_IMPORTED_MODULE_8__.HOVER_CLOSE_DELAY, () => {
+      this.hoverTimer(`close\u0000${id}`, _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_CLOSE_DELAY, () => {
         if (this.isOpen(id)) this.setOpen(id, false, 'user');
       });
     }
@@ -1019,7 +1603,7 @@ class SfSmartMenu extends MenuElement {
     const open = new Set(this.openIds);
     if (!open.size) return null;
 
-    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.pathTo)(this.treeItems, id) || []).length;
+    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, id) || []).length;
 
     const focused = document.activeElement;
     const ids = [...open].sort((a, b) => depth(b) - depth(a));
@@ -1055,7 +1639,7 @@ class SfSmartMenu extends MenuElement {
     const query = this.searchQuery;
     if (!query) return null;
     const all = this.menuItems;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.filterItems)(this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.withoutGroups)(all), query);
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.filterItems)(this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(all), query);
   }
 
   searchField() {
@@ -1152,7 +1736,7 @@ class SfSmartMenu extends MenuElement {
 
 
   syncSearchHighlight() {
-    const query = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.foldWords)(this.searchQuery).trim();
+    const query = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.foldWords)(this.searchQuery).trim();
     const ranges = [];
 
     if (query) {
@@ -1160,7 +1744,7 @@ class SfSmartMenu extends MenuElement {
         // The words are a text node between the template's markers.
         for (const words of node.childNodes) {
           if (words.nodeType !== 3) continue;
-          const folded = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.foldWords)(words.data);
+          const folded = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.foldWords)(words.data);
           let at = folded.indexOf(query);
 
           while (at !== -1) {
@@ -1371,9 +1955,45 @@ class SfSmartMenu extends MenuElement {
     this._anchors.delete(submenu);
   } // A row that does not fit the width it is given becomes the button; it is
   // a row again once the width it needed is there.
+  // The width the phone's step is read on. A row in sf-header-site reads the
+  // bar's own width: the bar collapses on it (a container condition), and a
+  // row that read the window instead stayed a wide row of «Ещё» in a bar
+  // narrower than the window -- a column, a card, an example frame -- where
+  // its «Меню» branch ran over the bar's actions (C104). Elsewhere the window.
 
+
+  readNarrow() {
+    const frame = this.closest?.('.sf-site-header');
+    const width = frame?.getBoundingClientRect?.().width;
+
+    if (frame && width > 0) {
+      const rem = Number.parseFloat(globalThis.getComputedStyle?.(document.documentElement).fontSize) || 16;
+      return width < Number.parseFloat(_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__.BREAKPOINTS.md) * rem;
+    }
+
+    return this._narrowMedia?.matches === true;
+  } // The bar the row stands in, watched while it is there: the menu is placed
+  // into the bar's nav after the bar draws, so each drawing looks again.
+
+
+  watchFrame() {
+    const frame = this.closest?.('.sf-site-header') || null;
+    if (frame === this._frame) return;
+    this._frameObserver?.disconnect();
+    this._frameObserver = null;
+    this._frame = frame;
+
+    if (frame && typeof ResizeObserver !== 'undefined') {
+      this._frameObserver = new ResizeObserver(() => this._onNarrow?.());
+
+      this._frameObserver.observe(frame);
+    }
+
+    this._onNarrow?.();
+  }
 
   observeWidth() {
+    this.watchFrame();
     const nav = this.querySelector(':scope > nav.sf-smart-menu');
     if (!nav || typeof ResizeObserver === 'undefined') return;
 
@@ -1449,9 +2069,13 @@ class SfSmartMenu extends MenuElement {
     const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
     const ids = tops.map(li => li.dataset.sfMenuItem || li.dataset.sfMenuPlaceholder);
     const currentId = this.currentId;
-    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.pathTo)(this.menuItems, currentId) || [])] : [];
-    const keep = ids.findIndex(id => above.includes(id));
-    const stays = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.fitRow)(widths, moreWidth, nav.clientWidth, gap, keep));
+    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.menuItems, currentId) || [])] : [];
+    const keep = ids.findIndex(id => above.includes(id)); // The room in fractional pixels (the row engine's rowRoom; clientWidth
+    // is a whole pixel, the C54 return), the arithmetic the shared engine's
+    // (fitRow, owner decision C155 (1)).
+
+    const room = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.rowRoom)(nav);
+    const stays = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.fitRow)(widths, moreWidth, room, gap, keep));
     this.setOverflowHidden(ids.filter((_, at) => !stays.has(at)), nav.clientWidth);
   }
 
@@ -1510,7 +2134,7 @@ class SfSmartMenu extends MenuElement {
     this.syncMode();
     const all = this.menuItems;
     const result = this.searchResult();
-    const items = result ? result.items : this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.withoutGroups)(all);
+    const items = result ? result.items : this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(all);
     const currentId = this.currentId;
     const tree = this.treeItems;
     const moreActive = this.moreActive;
@@ -1528,17 +2152,17 @@ class SfSmartMenu extends MenuElement {
       open: result ? result.open : new Set(this.openIds),
       currentId,
       // The branches above the current page: a closed one draws the bar (C23).
-      holding: new Set(currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.pathTo)(tree, currentId) || [] : []),
+      holding: new Set(currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(tree, currentId) || [] : []),
       // overflow more: the first-level items that left the row (drawn there
       // as placeholders) and the «Ещё» branch that holds them.
       hidden: new Set(moreActive ? this._overflowHidden : []),
       moreItem: moreActive ? tree[tree.length - 1] : null,
       moreShown: moreActive && this._overflowHidden.length > 0,
-      moreId: _items_mjs__WEBPACK_IMPORTED_MODULE_8__.MORE_ID,
+      moreId: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MORE_ID,
       regionContent: name => this.regionNodes(name),
       // collapse narrow: the button is a selector showing the current item.
       selector,
-      selectedItem: selector && currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_8__.findItem)(all, currentId) : null,
+      selectedItem: selector && currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.findItem)(all, currentId) : null,
       statusWord: status => this.sfWord(`status-${status}`),
       // A split row's chevron is named after its section: «Каталог: подразделы».
       subsectionsName: label => `${label}: ${this.sfWord('subsections')}`,
@@ -1579,7 +2203,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderMenuTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderMenuTemplate)(this.templateContext());
   }
 
 }
@@ -1992,11 +2616,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   walkItems: () => (/* binding */ walkItems),
 /* harmony export */   withoutGroups: () => (/* binding */ withoutGroups)
 /* harmony export */ });
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2db3a835ac11");
 // The parts of sf-menu that are about data, not the page: the shape an item
 // takes, from the items a host gives or from the links written in the markup,
 // which item is the current page, and which branches lead to it. Kept apart
 // from the element so the contract tests can run them in Node, as
 // sf-accordion's sections.mjs is.
+
 
 // The class menu's orientations: a column for a side panel, a row for a page
 // header (sf-menu--horizontal, the first level only).
@@ -2314,23 +2940,17 @@ function withoutGroups(items) {
 // holds the current page) first of all -- unless it does not fit beside the
 // button either. Widths are each item's own, `gap` the row's gap. Answers the
 // indexes that stay, in order; none means the button alone, then «Меню».
+// Since sf-menu 1.10.0 (owner decision C155 (1)) this is the Framework's one
+// row engine (core/js/overflow-row.js), the rule sf-tabs and sf-contents lay
+// their rows out by: the items in order up to the first that does not fit,
+// the current section put back in while the last others give way to it.
 function fitRow(widths, moreWidth, available, gap = 0, keep = -1) {
-  const count = widths.length;
-  const all = widths.reduce((sum, width) => sum + width, 0) + gap * Math.max(0, count - 1);
-  if (all <= available + 0.5) return widths.map((_, index) => index);
-  const stays = [];
-  let used = moreWidth;
-  if (keep >= 0 && keep < count && used + gap + widths[keep] <= available + 0.5) {
-    used += gap + widths[keep];
-    stays.push(keep);
-  }
-  for (let index = 0; index < count; index += 1) {
-    if (index === keep) continue;
-    if (used + gap + widths[index] > available + 0.5) break;
-    used += gap + widths[index];
-    stays.push(index);
-  }
-  return stays.sort((a, b) => a - b);
+  if (!(0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_0__.fitInOrder)(widths, gap, available)) return widths.map((_, index) => index);
+  const room = available - moreWidth - (widths.length ? gap : 0);
+  // The current section stays only while it fits beside «Ещё» itself; when
+  // it does not, the row is the items that fit in order.
+  const must = keep >= 0 && keep < widths.length && (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_0__.spanOf)(widths, gap, [keep]) <= room + 0.5 ? [keep] : [];
+  return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_0__.chooseBeside)({widths, gap, available: room, must, current: -1});
 }
 
 // Search in a column (C30 amended 2026-11-09, R071 a). Words are compared
@@ -2405,7 +3025,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.10.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.11.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -737,7 +737,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-checkbox from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+}; // sf-checkbox from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §17.1, §17.2). The settings and the values checked and
 // indeterminate are made by core/js/element-manifest.js; `error` is a dated
 // alias of `invalid` (§17.2, aliases.json); the host is the form control
@@ -748,8 +756,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
@@ -773,6 +781,110 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
   constructor() {
     super();
     this._inputElement = null;
+    this._parentWatch = null;
+  } // The checkboxes a parent stands for (controls, owner decision C165 (2)):
+  // the elements its ids name now -- sf-checkbox hosts or plain checkbox
+  // inputs -- in the page or the shadow root the parent stands in.
+
+
+  controlledBoxes() {
+    const ids = String(this.getAttribute('controls') || '').split(/\s+/u).filter(Boolean);
+    if (!ids.length) return [];
+    const root = this.getRootNode?.() || document;
+    return ids.map(id => root.getElementById?.(id) || document.getElementById(id)).filter(node => node && node !== this && (node.localName === 'sf-checkbox' || node.matches?.('input[type="checkbox"]')));
+  }
+
+  static boxInput(node) {
+    return node.localName === 'sf-checkbox' ? node.querySelector('.sf-checkbox input[type="checkbox"]') : node;
+  }
+
+  static boxChecked(node) {
+    if (node.localName === 'sf-checkbox') return node.hasAttribute('checked') || Boolean(SfCheckbox.boxInput(node)?.checked);
+    return Boolean(node.checked);
+  } // The parent's own state from its children: all, some, none.
+
+
+  syncFromControlled() {
+    const boxes = this.controlledBoxes();
+    if (!boxes.length || this._parentPressing) return;
+    const on = boxes.filter(node => SfCheckbox.boxChecked(node)).length;
+    const all = on === boxes.length;
+    const some = on > 0 && !all;
+
+    if (this.hasAttribute('checked') !== all || this.hasAttribute('indeterminate') !== some) {
+      this.setState({
+        checked: all,
+        indeterminate: some
+      });
+    }
+
+    const input = this.getInputElement();
+    if (input) input.setAttribute('aria-controls', boxes.map(node => node.id).join(' '));
+  } // A press on the parent: all of them checked, or all unchecked when all
+  // were; each one that changes says change, as a press of it would.
+
+
+  pressControlled() {
+    const boxes = this.controlledBoxes();
+    if (!boxes.length) return; // A disabled child is counted in the state and never changed; the press
+    // turns on the ones that can change unless all of those are already on.
+
+    const free = boxes.filter(node => !SfCheckbox.boxInput(node)?.disabled);
+    const next = !free.every(node => SfCheckbox.boxChecked(node));
+    this._parentPressing = true;
+
+    try {
+      for (const node of boxes) {
+        const input = SfCheckbox.boxInput(node);
+        if (!input || input.disabled || Boolean(input.checked) === next) continue;
+        input.checked = next;
+        input.dispatchEvent(new Event('input', {
+          bubbles: true,
+          composed: true
+        }));
+        input.dispatchEvent(new Event('change', {
+          bubbles: true
+        }));
+      }
+    } finally {
+      this._parentPressing = false;
+    }
+
+    this.syncFromControlled();
+  } // Watches the children while controls names some: a change event from the
+  // page (heard at the document, so a child drawn later counts too) and the
+  // checked and indeterminate attributes a property or a page sets.
+
+
+  watchControlled() {
+    this._parentWatch?.();
+    this._parentWatch = null;
+    if (!this.getAttribute('controls')) return;
+    const doc = this.ownerDocument;
+
+    const ids = () => new Set(String(this.getAttribute('controls') || '').split(/\s+/u).filter(Boolean));
+
+    const onChange = event => {
+      const host = event.target?.closest?.('sf-checkbox') || event.target;
+      if (host && ids().has(host.id) && host !== this) this.syncFromControlled();
+    };
+
+    doc.addEventListener('change', onChange);
+    const observer = new MutationObserver(records => {
+      if (records.some(record => record.target !== this && ids().has(record.target.id))) this.syncFromControlled();
+    });
+    observer.observe(doc.documentElement, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['checked', 'disabled']
+    });
+    const late = requestAnimationFrame(() => this.syncFromControlled());
+
+    this._parentWatch = () => {
+      doc.removeEventListener('change', onChange);
+      observer.disconnect();
+      cancelAnimationFrame(late);
+    };
   } // A checkbox with no visible label still needs a name: a table's row and
   // select-all boxes are the common case. Like sf-button, the name comes from
   // the host's aria-label or the ariaLabel prop and lands on the native input.
@@ -826,10 +938,28 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
       this._inputElement = input;
     }
 
-    this.sfSyncFormState();
+    this.sfSyncFormState(); // A parent (controls, C165 (2)): its state from its children.
+
+    if (this.getAttribute('controls')) {
+      if (!this._parentWatch || this._parentWatchFor !== this.getAttribute('controls')) {
+        this._parentWatchFor = this.getAttribute('controls');
+        this.watchControlled();
+      }
+
+      this.syncFromControlled();
+    } else if (this._parentWatch) {
+      this._parentWatch();
+
+      this._parentWatch = null;
+      this._parentWatchFor = null;
+      input.removeAttribute('aria-controls');
+    }
   }
 
   onDisconnected() {
+    this._parentWatch?.();
+    this._parentWatch = null;
+    this._parentWatchFor = null;
     this._releaseReset?.();
     this._releaseReset = null;
 
@@ -842,7 +972,13 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
 
   _handleChange = () => {
     const input = this.getInputElement();
-    if (!input) return;
+    if (!input) return; // A parent's press is for its children (controls, C165 (2)).
+
+    if (this.getAttribute('controls') && !this._parentPressing) {
+      this.pressControlled();
+      this.sfSyncFormState();
+      return;
+    }
 
     if (input.checked) {
       this.setAttribute('checked', '');
@@ -1114,11 +1250,25 @@ function renderCheckableHelp(context, className) {
   const component = context.component;
   if (component?.hasSlotContent?.('help')) return component.getSlotContent('help');
   if (!context.help) return '';
+  sayBareHelp(context.help, component);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class=${className} size=${CHECKABLE_HELP_SIZE[context.size] || '1/3'} text=${context.help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>`;
+} // The help is an explanation the «?» opens, not a label: a single lowercase
+// word such as help="info" is almost always a placeholder (checks study CK-7).
+// The development warning says so once per page.
+
+const BARE_HELP_SAID = Symbol.for('sf.checkable.bare-help-said');
+
+function sayBareHelp(help, component) {
+  const global = globalThis;
+  if (global[BARE_HELP_SAID] || !/^[a-z]+$/u.test(String(help).trim())) return;
+  global[BARE_HELP_SAID] = true;
+  const name = component?.id ? `#${component.id}` : component?.localName || 'help';
+  console.warn(`SIMAI Framework: ${name} has help="${String(help).trim()}". The help is the explanation the «?» opens: write a sentence, or leave help out.`);
 } // The text column: the label row (the name), then the description.
 //   parts.column  the column's class      (.sf-checkbox-container)
 //   parts.top     the label row's class   (.sf-checkbox-top)
 //   parts.wrap    a class the label text sits in inside the row, if any
+
 
 function renderCheckableText(parts, labelContent, descriptionContent) {
   if (!labelContent && !descriptionContent) return '';
@@ -1177,10 +1327,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -1394,72 +1552,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -1526,7 +1921,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

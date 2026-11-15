@@ -1,16 +1,24 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .theme-light,
   .theme-dark {
     --sf-highlight-text: var(--sf-on-surface);
     --sf-highlight-background: transparent;
-    --sf-highlight-keyword: var(--sf-error);
-    --sf-highlight-title: var(--sf-tertiary);
-    --sf-highlight-attribute: var(--sf-primary);
-    --sf-highlight-string: var(--sf-info);
-    --sf-highlight-built-in: var(--sf-warning);
+    /* The hues of code are the static palette's (owner decision C186 (11),
+       2026-11-14; C13, C17), not the status roles: red said «error» on every
+       keyword and a string was the link's blue exactly. Keyword violet, string
+       and tag green, attribute (and number) blue, title amber, built-in teal,
+       at tone 40 on the light theme and 80 on the dark, as the link: each
+       holds 4.5:1 or more on the block's plate. The names are the same; a
+       project that set one keeps its value. */
+    --sf-highlight-keyword: light-dark(var(--sf-violet-40), var(--sf-violet-80));
+    --sf-highlight-title: light-dark(var(--sf-amber-40), var(--sf-amber-80));
+    --sf-highlight-attribute: light-dark(var(--sf-blue-40), var(--sf-blue-80));
+    --sf-highlight-string: light-dark(var(--sf-green-40), var(--sf-green-80));
+    --sf-highlight-built-in: light-dark(var(--sf-teal-40), var(--sf-teal-80));
     --sf-highlight-comment: var(--sf-on-surface-variant);
-    --sf-highlight-tag: var(--sf-success);
+    --sf-highlight-tag: light-dark(var(--sf-green-40), var(--sf-green-80));
     --sf-highlight-section: var(--sf-primary);
     --sf-highlight-bullet: var(--sf-warning);
     --sf-highlight-punctuation: var(--sf-on-surface-variant);
@@ -230,48 +238,48 @@
   .sf-code-line {
     display: flex;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
     padding-right: var(--sf-space-1\/2);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-code-line__number {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-code-line__number{
     padding-right: var(--sf-space-1\/2);
     }
   }
-  .sf-code-line__number:where(:dir(ltr)) {
+  .sf-code-line__number:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number{
     padding-left: var(--sf-space-1\/2);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-code-line__number {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-code-line__number{
     padding-left: var(--sf-space-1\/2);
     }
   }
-  .sf-code-line__number:where(:dir(rtl)) {
+  .sf-code-line__number:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
     text-align: right;
   }
-  @supports not (text-align: end) {
-  html:not([dir="rtl"]) .sf-code-line__number {
+  @supports not (text-align: end){
+  html:not([dir="rtl"]) .sf-code-line__number{
     text-align: right;
     }
   }
-  .sf-code-line__number:where(:dir(ltr)) {
+  .sf-code-line__number:where(:dir(ltr)){
     text-align: right;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number{
     text-align: left;
   }
-  @supports not (text-align: end) {
-  [dir="rtl"] .sf-code-line__number {
+  @supports not (text-align: end){
+  [dir="rtl"] .sf-code-line__number{
     text-align: left;
     }
   }
-  .sf-code-line__number:where(:dir(rtl)) {
+  .sf-code-line__number:where(:dir(rtl)){
     text-align: left;
   }
   .sf-code-line__number {
@@ -312,26 +320,26 @@
   /* Wrapped lines (the head's wrap toggle, or data-wrap="true"): long lines
      break inside the block instead of scrolling sideways. The toggle stands
      with copy at the end of the head. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight__wrap-toggle {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight__wrap-toggle{
     margin-left: auto;
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-highlight__wrap-toggle {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-highlight__wrap-toggle{
     margin-left: auto;
     }
   }
-  .sf-highlight__wrap-toggle:where(:dir(ltr)) {
+  .sf-highlight__wrap-toggle:where(:dir(ltr)){
     margin-left: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight__wrap-toggle {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight__wrap-toggle{
     margin-right: auto;
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-highlight__wrap-toggle {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-highlight__wrap-toggle{
     margin-right: auto;
     }
   }
-  .sf-highlight__wrap-toggle:where(:dir(rtl)) {
+  .sf-highlight__wrap-toggle:where(:dir(rtl)){
     margin-right: auto;
   }
   .sf-highlight__wrap-toggle {
@@ -464,26 +472,26 @@
     -webkit-border-after: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
             border-block-end: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-surface__scroll {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-surface__scroll{
     text-align: left;
   }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .sf-code-surface__scroll {
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .sf-code-surface__scroll{
     text-align: left;
     }
   }
-  .sf-code-surface__scroll:where(:dir(ltr)) {
+  .sf-code-surface__scroll:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-surface__scroll {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-code-surface__scroll{
     text-align: right;
   }
-  @supports not (text-align: start) {
-  [dir="rtl"] .sf-code-surface__scroll {
+  @supports not (text-align: start){
+  [dir="rtl"] .sf-code-surface__scroll{
     text-align: right;
     }
   }
-  .sf-code-surface__scroll:where(:dir(rtl)) {
+  .sf-code-surface__scroll:where(:dir(rtl)){
     text-align: right;
   }
   .sf-code-surface__scroll {
@@ -567,48 +575,48 @@
     vertical-align: top;
     /* your custom style here */
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
     border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  @supports not (border-inline-end: initial) {
-  html:not([dir="rtl"]) .hljs-ln-numbers div {
+  @supports not (border-inline-end: initial){
+  html:not([dir="rtl"]) .hljs-ln-numbers div{
     border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
     }
   }
-  .hljs-ln-numbers div:where(:dir(ltr)) {
+  .hljs-ln-numbers div:where(:dir(ltr)){
     border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div {
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
     border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  @supports not (border-inline-end: initial) {
-  [dir="rtl"] .hljs-ln-numbers div {
+  @supports not (border-inline-end: initial){
+  [dir="rtl"] .hljs-ln-numbers div{
     border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
     }
   }
-  .hljs-ln-numbers div:where(:dir(rtl)) {
+  .hljs-ln-numbers div:where(:dir(rtl)){
     border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
     padding-right: var(--sf-a5);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .hljs-ln-numbers div {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .hljs-ln-numbers div{
     padding-right: var(--sf-a5);
     }
   }
-  .hljs-ln-numbers div:where(:dir(ltr)) {
+  .hljs-ln-numbers div:where(:dir(ltr)){
     padding-right: var(--sf-a5);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div {
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
     padding-left: var(--sf-a5);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .hljs-ln-numbers div {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .hljs-ln-numbers div{
     padding-left: var(--sf-a5);
     }
   }
-  .hljs-ln-numbers div:where(:dir(rtl)) {
+  .hljs-ln-numbers div:where(:dir(rtl)){
     padding-left: var(--sf-a5);
   }
   .hljs-ln-numbers div {
@@ -618,26 +626,26 @@
             padding-inline-end: var(--sf-a5);
   }
   /* for block of code */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-code {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-code{
     padding-left: var(--sf-b0);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .hljs-ln-code {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .hljs-ln-code{
     padding-left: var(--sf-b0);
     }
   }
-  .hljs-ln-code:where(:dir(ltr)) {
+  .hljs-ln-code:where(:dir(ltr)){
     padding-left: var(--sf-b0);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-code {
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-code{
     padding-right: var(--sf-b0);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .hljs-ln-code {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .hljs-ln-code{
     padding-right: var(--sf-b0);
     }
   }
-  .hljs-ln-code:where(:dir(rtl)) {
+  .hljs-ln-code:where(:dir(rtl)){
     padding-right: var(--sf-b0);
   }
   .hljs-ln-code {
@@ -658,59 +666,71 @@
   .source pre {
     overflow: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight code {
+  /* Code in a block is one step below the text (owner decision C186 (10),
+     2026-11-14): step 1/2, 14/20 on a desktop (12/16 on a phone), as the
+     world sets code at 85-87 % of the text; it was the text's own step, on a
+     line height read from a variable declared nowhere
+     (--sf-text-medium--line-height). The face is the system mono
+     (--sf-code--font-family, --sf-mono; C18): the base code rule leaves a
+     block's code alone, so it fell to the browser's monospace (Courier, its
+     Cyrillic in Times). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight code{
     text-align: left;
   }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .sf-highlight code {
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .sf-highlight code{
     text-align: left;
     }
   }
-  .sf-highlight code:where(:dir(ltr)) {
+  .sf-highlight code:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight code {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight code{
     text-align: right;
   }
-  @supports not (text-align: start) {
-  [dir="rtl"] .sf-highlight code {
+  @supports not (text-align: start){
+  [dir="rtl"] .sf-highlight code{
     text-align: right;
     }
   }
-  .sf-highlight code:where(:dir(rtl)) {
+  .sf-highlight code:where(:dir(rtl)){
     text-align: right;
   }
   .sf-highlight code {
-    font-size: var(--sf-text-medium--size);
-    line-height: var(--sf-text-medium--line-height);
+    font-family: var(--sf-code--font-family);
+    font-family: var(--sf-code-font-family, var(--sf-code--font-family));
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
     direction: ltr;
     text-align: start;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .source code {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .source code{
     text-align: left;
   }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .source code {
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .source code{
     text-align: left;
     }
   }
-  .source code:where(:dir(ltr)) {
+  .source code:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .source code {
+  _:-ms-input-placeholder, [dir="rtl"] .source code{
     text-align: right;
   }
-  @supports not (text-align: start) {
-  [dir="rtl"] .source code {
+  @supports not (text-align: start){
+  [dir="rtl"] .source code{
     text-align: right;
     }
   }
-  .source code:where(:dir(rtl)) {
+  .source code:where(:dir(rtl)){
     text-align: right;
   }
   .source code {
-    font-size: var(--sf-text-medium--size);
-    line-height: var(--sf-text-medium--line-height);
+    font-family: var(--sf-code--font-family);
+    font-family: var(--sf-code-font-family, var(--sf-code--font-family));
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
     direction: ltr;
     text-align: start;
   }

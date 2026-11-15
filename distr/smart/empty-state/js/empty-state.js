@@ -31,7 +31,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
  // From its component.json (standard simai.smart-component 1.3.8 §3, §4,
 // §7.4.1, §8): settings are attributes and properties made by
 // core/js/element-manifest.js, the words are lang/<locale>.json (a product
@@ -41,8 +49,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const EmptyStateElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
@@ -433,7 +441,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.4.1","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.4.2","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

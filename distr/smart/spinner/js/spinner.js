@@ -271,7 +271,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _spinner_draw__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8f5c27126ee2");
+/* harmony import */ var _spinner_draw__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
@@ -279,15 +280,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
+
 
 
 const SPINNER_TEXT = {
-  en: {
-    label: 'Loading…'
-  },
-  ru: {
-    label: 'Загрузка…'
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].ru
 };
 const SPINNER_SELECTOR = '.sf-loader-container';
 const SPINNER_BOUND_FLAG = 'sfSpinnerBound';
@@ -341,22 +341,22 @@ function createSpinnerArcSvg(options = {}) {
     const value = options?.[key];
     return value !== undefined && value !== null && value !== '';
   });
-  return pixel ? createPixelSpinnerSvg(options) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createLadderSpinnerSvg)(options);
+  return pixel ? createPixelSpinnerSvg(options) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_5__.createLadderSpinnerSvg)(options);
 }
 
 function createPixelSpinnerSvg({
   width = 58,
   height = 58,
   strokeWidth = 4,
-  dots = _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS,
-  filled = _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS_FILLED,
+  dots = _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS,
+  filled = _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS_FILLED,
   dotRadius = null,
   direction = 'clockwise'
 } = {}) {
   const safeWidth = clamp(toNumber(width, 58), 16, 256);
   const safeHeight = clamp(toNumber(height, safeWidth), 16, 256);
   const safeStroke = clamp(toNumber(strokeWidth, 4), 1, Math.min(safeWidth, safeHeight) / 2);
-  return (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSpinnerSvg)({
+  return (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_5__.createSpinnerSvg)({
     width: safeWidth,
     height: safeHeight,
     stroke: safeStroke,
@@ -384,7 +384,7 @@ function createSpinnerDotsSvg({
   const orbitRadius = Math.max(resolvedDotRadius, Math.min(safeWidth, safeHeight) / 2 - resolvedDotRadius - 1);
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
-  const svg = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('svg', {
+  const svg = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_5__.createSvgNode)('svg', {
     class: 'sf-loader-svg',
     viewBox: `0 0 ${safeWidth} ${safeHeight}`,
     width: safeWidth,
@@ -398,7 +398,7 @@ function createSpinnerDotsSvg({
     const dotCx = cx + orbitRadius * Math.cos(angle);
     const dotCy = cy + orbitRadius * Math.sin(angle);
     const animationIndex = direction === 'counterclockwise' ? index : (count - index) % count;
-    const dot = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('circle', {
+    const dot = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_5__.createSvgNode)('circle', {
       class: `sf-loader-dot${index < activeDots ? ' sf-loader-dot--active' : ''}`,
       cx: dotCx,
       cy: dotCy,
@@ -466,8 +466,8 @@ function getSpinnerConfig(root) {
   const strokeWidth = root.dataset.strokeWidth ? clamp(toNumber(root.dataset.strokeWidth, 4), 1, Math.min(width, height) / 2) : null; // The dots look on the ladder (simai/ui-source#11): eight dots, three of them
   // lit, as big as the ring allows; data-dots and data-filled still choose.
 
-  const dots = clamp(Math.floor(toNumber(root.dataset.dots, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS)), 3, 32);
-  const filled = clamp(Math.floor(toNumber(root.dataset.filled, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS_FILLED)), 1, dots);
+  const dots = clamp(Math.floor(toNumber(root.dataset.dots, _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS)), 3, 32);
+  const filled = clamp(Math.floor(toNumber(root.dataset.filled, _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS_FILLED)), 1, dots);
   const dotRadius = root.dataset.dotRadius ? clamp(toNumber(root.dataset.dotRadius, 1), 1, Math.min(width, height) / 4) : null;
   const direction = normalizeChoice(root.dataset.direction, ['clockwise', 'counterclockwise'], 'clockwise'); // One look, the arc (owner decision C130 (5)). A former look named by the
   // spinner (data-variant: breathing, comet, dots, or the .sf-loader--circles
@@ -475,7 +475,7 @@ function getSpinnerConfig(root) {
   // draws the arc and is noted until the journal's date
   // (value-spinner-one-look); the sheet draws the arc whatever the name.
 
-  const named = root.dataset.variant ? normalizeChoice(root.dataset.variant, _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_LOOKS, 'arc') : circles ? 'dots' : '';
+  const named = root.dataset.variant ? normalizeChoice(root.dataset.variant, _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_LOOKS, 'arc') : circles ? 'dots' : '';
   noteFormerLook(root, named);
   const variant = named ? 'arc' : '';
   return {
@@ -596,7 +596,7 @@ function renderSpinner(root) {
   const label = config.label || config.labelNode ? ensureSpinnerPart(root, '.sf-loader--text', 'sf-loader--text') : null;
   const svg = config.pixel ? createPixelSpinnerSvg({ ...config,
     strokeWidth: config.strokeWidth ?? 4
-  }) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createLadderSpinnerSvg)(config);
+  }) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_5__.createLadderSpinnerSvg)(config);
   visual.append(svg);
 
   if (label) {
@@ -642,11 +642,11 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       // overrode every size class.
       width,
       height,
-      label = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(SPINNER_TEXT, 'label', props?.root ?? document.documentElement),
+      label = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(SPINNER_TEXT, 'label', props?.root ?? document.documentElement, 'sf-spinner'),
       // No look unless one is asked for: the page's (data-sf-spinner) applies.
       variant,
-      dots = _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS,
-      filled = _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_DOTS_FILLED,
+      dots = _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS,
+      filled = _spinner_draw__WEBPACK_IMPORTED_MODULE_5__.SPINNER_DOTS_FILLED,
       strokeWidth = null,
       dotRadius = null,
       infinite = false,
@@ -894,7 +894,15 @@ const SPINNER_KINDS = ['', 'arc'];
 
 
 
- // sf-spinner from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+}; // sf-spinner from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §4.8): its settings are attributes and properties made by
 // core/js/element-manifest.js, its one word («Загрузка…») is lang/<locale>.json
 // (a product adds a language through SF.language.register("sf-spinner", code,
@@ -904,8 +912,8 @@ const SPINNER_KINDS = ['', 'arc'];
 const SpinnerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
@@ -1119,6 +1127,39 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "8f5c27126ee2"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e56111faf8e4");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b6daee30ac8b");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "e56111faf8e4"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Loading…"}}');
+
+/***/ },
+
+/***/ "b6daee30ac8b"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Загрузка…"}}');
+
+/***/ },
+
 /***/ "446b69079a47"
 (module) {
 
@@ -1129,7 +1170,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinn
 /***/ "4f18051b2e24"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"delay":{"type":"number","default":1000,"integer":true,"min":0},"label-hidden":{"type":"boolean","default":false},"kind":{"type":"enum","values":["","arc"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"delay":{"type":"number","default":1000,"integer":true,"min":0},"label-hidden":{"type":"boolean","default":false},"kind":{"type":"enum","values":["","arc"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

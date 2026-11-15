@@ -60,6 +60,90 @@
     opacity: 0;
     cursor: inherit;
   }
+  /* A box at the row's end (position="end": the box after the text column)
+     has no room past it: a hit area that grew evenly stood 2px past the row
+     on a 20 box (4 on a 16), and a box at the end of a full-width line made
+     the page scroll sideways at 390 (docs batch B, FW-B-4, as on the radio).
+     There the hit area keeps its 24px but grows towards the text: its end
+     stays on the box's outer edge. The inline axis only; logical, so RTL
+     needs nothing. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: auto;
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: auto;
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
+    left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: auto;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: auto;
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
+    right: auto;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox] {
+    inset-inline-start: auto;
+    inset-inline-end: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    inset-inline-end: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
   /* The help mark («?», sf-help-mark) is the help's own button: it stands
      above the native control's hit area, which reaches past a small box, so
      a press on it is never a press on the box. */

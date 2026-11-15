@@ -44,7 +44,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
  // A value longer than this (in graphemes, roughly characters) is not put in a sentence.
 
 const LONG = 80; // The reveal's ids, one per element on the page (stable across renders).
@@ -85,8 +93,8 @@ function isLong(text) {
 const ChangeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en,
+    ru
   },
   source: 'ru'
 });
@@ -316,7 +324,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "ad38f797cd15"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.0.4","kind":"leaf","settings":{"before":{"type":"string","default":""},"after":{"type":"string","default":""},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.0.5","kind":"leaf","settings":{"before":{"type":"string","default":""},"after":{"type":"string","default":""},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

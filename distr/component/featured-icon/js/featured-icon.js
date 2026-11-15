@@ -21,12 +21,17 @@ __webpack_require__.r(__webpack_exports__);
 const DEPRECATED = Object.freeze({
   since: '2026-11-14',
   remove_after: '2027-01-01'
-});
+}); // Owner decision C188 (8), same day: two looks, tonal (soft) and solid;
+// medium draws tonal and elevated retires, so both and their second names
+// point to soft.
+
 const FEATURED_ICON_LOOK_ALIASES = Object.freeze({
   light: 'soft',
-  mid: 'medium',
+  medium: 'soft',
+  mid: 'soft',
+  elevated: 'soft',
+  modern: 'soft',
   dark: 'solid',
-  modern: 'elevated',
   clear: 'neutral'
 });
 const pending = new Set(Object.keys(FEATURED_ICON_LOOK_ALIASES));

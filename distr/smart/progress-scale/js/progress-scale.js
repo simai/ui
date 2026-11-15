@@ -115,7 +115,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getProgressScaleState: () => (/* binding */ getProgressScaleState),
 /* harmony export */   initExistingProgressScales: () => (/* binding */ initExistingProgressScales),
 /* harmony export */   normalizeProgressScaleStep: () => (/* binding */ normalizeProgressScaleStep),
+/* harmony export */   normalizeProgressScaleSteps: () => (/* binding */ normalizeProgressScaleSteps),
 /* harmony export */   normalizeProgressScaleValue: () => (/* binding */ normalizeProgressScaleValue),
+/* harmony export */   progressScaleLit: () => (/* binding */ progressScaleLit),
 /* harmony export */   setProgressScaleState: () => (/* binding */ setProgressScaleState),
 /* harmony export */   unbindProgressScale: () => (/* binding */ unbindProgressScale)
 /* harmony export */ });
@@ -142,6 +144,30 @@ function normalizeProgressScaleValue(value) {
 
 function normalizeProgressScaleStep(value) {
   return Math.floor(normalizeProgressScaleValue(value) / 10 + 1e-9) * 10;
+} // A level of N (owner decision C185 (5)): the scale draws 2 to 10 steps, 10
+// when none is given. A scale given its steps is a level -- «4 из 5», a
+// password's strength -- and says so at the end of its row.
+
+
+const STEPS_DEFAULT = 10;
+
+function normalizeProgressScaleSteps(value) {
+  const parsed = Math.trunc(Number(value));
+  if (!Number.isFinite(parsed)) return STEPS_DEFAULT;
+  return Math.max(2, Math.min(10, parsed));
+} // The steps a value lights, rounded down as the tenths are (PG-12): 79 % of
+// 5 steps lights 3, not 4.
+
+
+function progressScaleLit(value, steps) {
+  return Math.floor(normalizeProgressScaleValue(value) / 100 * steps + 1e-9);
+} // «4 из 5» in the page's language: the scale's own words, as the Smart
+// element's (lang/*.json «of-steps»).
+
+
+function levelWords(lit, steps) {
+  const lang = String(globalThis.document?.documentElement?.lang || '').toLowerCase();
+  return lang.startsWith('ru') ? `${lit} из ${steps}` : `${lit} of ${steps}`;
 }
 
 function normalizeProgressScaleSize(value) {
@@ -160,25 +186,28 @@ function normalizeBoolean(value, fallback = true) {
   return !['false', '0', 'no', 'off'].includes(String(value).toLowerCase());
 }
 
-function ensureScaleStructure(root) {
+function ensureScaleStructure(root, steps = STEPS_DEFAULT) {
   let container = root.querySelector('.sf-progress-scale-container');
 
   if (!container) {
     container = document.createElement('div');
-    container.className = 'sf-progress-scale-container grid grid-col-10 overflow-hidden';
+    container.className = 'sf-progress-scale-container grid overflow-hidden';
     root.prepend(container);
   }
 
-  container.setAttribute('aria-hidden', 'true');
+  container.setAttribute('aria-hidden', 'true'); // Ten steps keep the grid utility they always had; any other count lays
+  // its blocks out by the component's own columns (one per block).
+
+  container.classList.toggle('grid-col-10', steps === STEPS_DEFAULT);
   const blocks = [...container.querySelectorAll('.sf-progress-scale-block')];
 
-  for (let index = blocks.length; index < 10; index += 1) {
+  for (let index = blocks.length; index < steps; index += 1) {
     const block = document.createElement('div');
     block.className = 'sf-progress-scale-block';
     container.append(block);
   }
 
-  blocks.slice(10).forEach(block => block.remove());
+  blocks.slice(steps).forEach(block => block.remove());
 }
 
 function ensureScaleText(root) {
@@ -207,32 +236,41 @@ function syncScaleClasses(root, step, size, tone) {
 }
 
 function renderProgressScale(root) {
-  if (!root) return false;
-  ensureScaleStructure(root);
+  if (!root) return false; // A level scale is one given its steps (C185 (5)).
+
+  const level = root.dataset.steps !== undefined && root.dataset.steps !== '';
+  const steps = level ? normalizeProgressScaleSteps(root.dataset.steps) : STEPS_DEFAULT;
+  ensureScaleStructure(root, steps);
   const value = normalizeProgressScaleValue(root.dataset.value);
-  const step = normalizeProgressScaleStep(value);
+  const lit = progressScaleLit(value, steps); // The class lights the first n blocks (sf-progress-scale--<n*10>).
+
+  const step = lit * 10;
   const size = normalizeProgressScaleSize(root.dataset.size);
   const tone = normalizeProgressScaleTone(root.dataset.tone);
-  const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line lays its track and value out in a row; any other
-  // scale stands its value under the track.
+  const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line, and a level scale, lay their track and value out
+  // in a row, the value at the row's end (C185 (5)); any other scale stands
+  // its value under the track.
 
-  const onLine = /(^|\s)sf-progress-scale--line-/.test(root.className);
-  root.classList.add('sf-progress-scale', 'flex', onLine ? 'flex-row' : 'flex-col');
-  if (onLine) root.classList.remove('flex-col');
+  const onRow = level || /(^|\s)sf-progress-scale--line-/.test(root.className);
+  root.classList.add('sf-progress-scale', 'flex', onRow ? 'flex-row' : 'flex-col');
+  root.classList.remove(onRow ? 'flex-col' : 'flex-row');
+  root.classList.toggle('sf-progress-scale--level', level);
   syncScaleClasses(root, step, size, tone);
   root.dataset.value = String(value);
   root.dataset.size = size;
   root.dataset.tone = tone;
   root.dataset.showText = String(showText); // Meter (C131 (7)): an amount within a known range, not a task's progress.
 
-  root.setAttribute('role', root.dataset.meter === 'true' ? 'meter' : 'progressbar');
+  root.setAttribute('role', root.dataset.meter === 'true' ? 'meter' : 'progressbar'); // A level is read in its steps: «4 из 5», or the page's level word.
+
+  const words = level ? levelWords(lit, steps) : '';
   root.setAttribute('aria-valuemin', '0');
-  root.setAttribute('aria-valuemax', '100');
-  root.setAttribute('aria-valuenow', String(value));
+  root.setAttribute('aria-valuemax', level ? String(steps) : '100');
+  root.setAttribute('aria-valuenow', level ? String(lit) : String(value));
   if (root.dataset.label) root.setAttribute('aria-label', root.dataset.label);
-  if (root.dataset.valueText) root.setAttribute('aria-valuetext', root.dataset.valueText);else root.removeAttribute('aria-valuetext');
+  if (root.dataset.valueText || words) root.setAttribute('aria-valuetext', root.dataset.valueText || words);else root.removeAttribute('aria-valuetext');
   const text = ensureScaleText(root);
-  text.textContent = `${value}%`;
+  text.textContent = level ? root.dataset.valueText || words : `${value}%`;
   text.hidden = !showText;
   return true;
 }
@@ -295,6 +333,10 @@ function setProgressScaleState(target, state = {}) {
     if (state.meter) root.dataset.meter = 'true';else delete root.dataset.meter;
   }
 
+  if (Object.prototype.hasOwnProperty.call(state, 'steps')) {
+    if (state.steps === null || state.steps === undefined || state.steps === '') delete root.dataset.steps;else root.dataset.steps = String(normalizeProgressScaleSteps(state.steps));
+  }
+
   return renderProgressScale(root);
 }
 
@@ -309,7 +351,8 @@ function getProgressScaleState(target) {
     showText: normalizeBoolean(root.dataset.showText, true),
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
-    meter: root.dataset.meter === 'true'
+    meter: root.dataset.meter === 'true',
+    steps: root.dataset.steps ? normalizeProgressScaleSteps(root.dataset.steps) : null
   };
 }
 
@@ -327,7 +370,8 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
       showText = true,
       label = '',
       valueText = '',
-      meter = false
+      meter = false,
+      steps = null
     } = this.params || {};
     const root = document.createElement('div');
     root.className = 'sf-progress-scale flex flex-col';
@@ -338,6 +382,7 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
     if (String(label).trim()) root.dataset.label = String(label).trim();
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     if (meter) root.dataset.meter = 'true';
+    if (steps !== null && steps !== undefined && steps !== '') root.dataset.steps = String(normalizeProgressScaleSteps(steps));
     this.template = root;
   }
 
@@ -564,7 +609,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
 
 function normalizeProgressValue(value) {
   const parsed = Number(value);
@@ -584,8 +637,8 @@ function normalizeProgressValue(value) {
 const ProgressScaleElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
@@ -666,6 +719,24 @@ class SfProgressScale extends ProgressScaleElement {
 
   get status() {
     return this.getProp('status');
+  } // A level of N (C185 (5)): the steps the page gave, 2..10, or none (a
+  // percent scale of ten).
+
+
+  get levelSteps() {
+    if (!this.hasAttribute('steps')) return null;
+    const parsed = Math.trunc(Number(this.getAttribute('steps')));
+    return Number.isFinite(parsed) ? Math.max(2, Math.min(10, parsed)) : 10;
+  } // «4 из 5» in the element's language.
+
+
+  levelWords(lit, steps) {
+    return this.sfWord('of-steps', {
+      vars: {
+        value: lit,
+        total: steps
+      }
+    });
   } // A threshold holds only where the page set it.
 
 
@@ -697,7 +768,9 @@ class SfProgressScale extends ProgressScaleElement {
       component: this,
       line: this.line,
       label: this.accessibleLabel,
-      value: normalizeProgressValue(props.value)
+      value: normalizeProgressValue(props.value),
+      steps: this.levelSteps,
+      levelWords: (lit, steps) => this.levelWords(lit, steps)
     });
   }
 
@@ -714,6 +787,7 @@ class SfProgressScale extends ProgressScaleElement {
       status: this.status,
       drawnStatus: this.drawnStatus,
       meter: Boolean(this.meter),
+      steps: this.levelSteps,
       label: this.label,
       valueText: this.valueText
     };
@@ -746,14 +820,18 @@ class SfProgressScale extends ProgressScaleElement {
   updateDom() {
     const root = this.querySelector('.sf-progress-scale');
     if (!root) return false;
-    this.sfHostState('data-status', this.drawnStatus);
+    this.sfHostState('data-status', this.drawnStatus); // A level reads in the element's own words, not the page's (C185 (5)).
+
+    const steps = this.levelSteps;
+    const lit = steps ? Math.floor(this.value / 100 * steps + 1e-9) : 0;
     return (0,_component_progress_scale_js_progress_scale__WEBPACK_IMPORTED_MODULE_4__.setProgressScaleState)(root, {
       value: this.value,
       showText: this.showText,
       tone: this.drawnStatus,
       meter: Boolean(this.meter),
       label: this.accessibleLabel,
-      valueText: this.valueText
+      valueText: this.valueText || (steps ? this.levelWords(lit, steps) : ''),
+      steps
     });
   }
 
@@ -811,17 +889,32 @@ function normalizeStatus(value) {
   return ['neutral', 'info', 'success', 'warning', 'error'].includes(normalized) ? normalized : '';
 }
 
-const on = value => value === true || value === '' || value === 'true';
+const on = value => value === true || value === '' || value === 'true'; // A level of N (owner decision C185 (5)): 2..10 steps, or none (ten, a
+// percent scale). The value lights the steps it reaches, rounded down.
+
+
+function normalizeSteps(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Math.trunc(Number(value));
+  return Number.isFinite(parsed) ? Math.max(2, Math.min(10, parsed)) : 10;
+}
 
 function renderProgressScaleTemplate(context) {
   const size = normalizeSize(context.size);
   const value = normalizeProgressValue(context.value);
-  const step = normalizeScaleStep(value);
+  const levelSteps = normalizeSteps(context.steps);
+  const steps = levelSteps ?? 10; // The class lights the first n blocks (sf-progress-scale--<n*10>).
+
+  const step = levelSteps ? Math.floor(value / 100 * steps + 1e-9) * 10 : normalizeScaleStep(value);
+  const lit = step / 10;
+  const words = levelSteps ? typeof context.levelWords === 'function' ? context.levelWords(lit, steps) : `${lit} / ${steps}` : '';
+  const valueText = context.valueText || words;
   const tone = normalizeStatus(context.drawnStatus ?? context.status ?? context.tone);
   const meter = on(context.meter);
-  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, tone ? `sf-progress-scale--${tone}` : '', // On a text line the track and the value share the line; otherwise the
-  // value stands under the track.
-  ...(context.line ? [`sf-progress-scale--line-${context.line}`, 'flex', 'flex-row', 'items-cross-center'] : ['flex', 'flex-col']), context.rootClass].filter(Boolean);
+  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, tone ? `sf-progress-scale--${tone}` : '', // On a text line the track and the value share the line, and a level's
+  // value stands at the row's end; otherwise the value stands under the
+  // track.
+  levelSteps ? 'sf-progress-scale--level' : '', ...(context.line ? [`sf-progress-scale--line-${context.line}`, 'flex', 'flex-row', 'items-cross-center'] : levelSteps ? ['flex', 'flex-row'] : ['flex', 'flex-col']), context.rootClass].filter(Boolean);
 
   if (step > 0) {
     rootClasses.push(`sf-progress-scale--${step}`);
@@ -835,22 +928,23 @@ function renderProgressScaleTemplate(context) {
       data-size=${size}
       data-tone=${tone || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-meter=${meter ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-steps=${levelSteps ? String(levelSteps) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-show-text=${String(Boolean(context.showText))}
       data-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value-text=${context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       role=${meter ? 'meter' : 'progressbar'}
       aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow=${String(value)}
-      aria-valuetext=${context.valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-valuemax=${levelSteps ? String(steps) : '100'}
+      aria-valuenow=${levelSteps ? String(lit) : String(value)}
+      aria-valuetext=${valueText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
-      <div class="sf-progress-scale-container grid grid-col-10 overflow-hidden">
+      <div class=${steps === 10 ? 'sf-progress-scale-container grid grid-col-10 overflow-hidden' : 'sf-progress-scale-container grid overflow-hidden'}>
         ${Array.from({
-    length: 10
+    length: steps
   }, () => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-block"></div>`)}
       </div>
-      ${context.showText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-text">${value}%</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${context.showText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-text">${levelSteps ? valueText : `${value}%`}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -897,21 +991,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 
 /***/ "726336abdcb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Scale"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Scale","runtime":{"of-steps":"{value} of {total}"}}');
 
 /***/ },
 
 /***/ "7f722ca0ec9d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Шкала прогресса"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Шкала прогресса","runtime":{"of-steps":"{value} из {total}"}}');
 
 /***/ }
 

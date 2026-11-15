@@ -55,9 +55,99 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   INITIAL_FOCUS: () => (/* binding */ INITIAL_FOCUS),
 /* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
+/* harmony export */   holdFieldsReadOnly: () => (/* binding */ holdFieldsReadOnly),
+/* harmony export */   isFieldElement: () => (/* binding */ isFieldElement),
+/* harmony export */   isOneLineField: () => (/* binding */ isOneLineField),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
-/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus)
+/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus),
+/* harmony export */   windowFields: () => (/* binding */ windowFields)
 /* harmony export */ });
+// The fields of a window (owner decision C159, 2026-11-14): a window that
+// holds fields is one form -- a press on its scrim never closes it (6), it
+// asks before its changes go (6), its main answer submits it and Enter in a
+// one-line field presses that answer (9), its first field takes the focus
+// (9), and on a phone a form of more than three fields takes the whole
+// screen (2). Shared by sf-modal and the class modal, and by sf-drawer. They live here,
+// beside the first focus that reads them, so the focus module stays one file
+// with no imports (the unit tests load it as one module).
+//
+// A field is a native control a person types or picks in, or a Framework
+// field element (sf-input*, sf-dropdown, sf-checkbox, sf-switch, sf-radio)
+// whether it has drawn its control yet or not; a field element counts once,
+// whatever it draws inside.
+const NATIVE_FIELD = ['input:not([type="hidden"], [type="button"], [type="submit"], [type="reset"], [type="image"])', 'select', 'textarea', '[contenteditable=""]', '[contenteditable="true"]'].join(', ');
+const FIELD_ELEMENTS = new Set(['sf-dropdown', 'sf-checkbox', 'sf-switch', 'sf-radio', 'sf-segmented']);
+
+const isFieldElement = node => node.localName?.startsWith('sf-input') || FIELD_ELEMENTS.has(node.localName); // One-line fields: Enter in them presses the main answer (9).
+
+
+const ONE_LINE = new Set(['', 'text', 'search', 'email', 'tel', 'url', 'password', 'number', 'date', 'datetime-local', 'month', 'time', 'week']); // The outermost field element a node stands in, under `root`.
+
+function fieldElementOf(node, root) {
+  let host = null;
+
+  for (let at = node; at && at !== root; at = at.parentElement) {
+    if (isFieldElement(at)) host = at;
+  }
+
+  return host;
+} // The window's fields in document order, each once.
+
+
+function windowFields(root) {
+  if (!root?.querySelectorAll) return [];
+  const units = [];
+  const seen = new Set();
+
+  for (const node of root.querySelectorAll('*')) {
+    if (!isFieldElement(node) && !node.matches(NATIVE_FIELD)) continue;
+    if (node.closest('[hidden]')) continue;
+    const unit = fieldElementOf(node, root) || node;
+    if (seen.has(unit)) continue;
+    seen.add(unit);
+    units.push(unit);
+  }
+
+  return units;
+}
+
+function isOneLineField(node) {
+  return node?.localName === 'input' && ONE_LINE.has((node.getAttribute('type') || '').toLowerCase());
+} // Makes the fields read-only while the window saves (9) and answers the undo:
+// only what it changed goes back.
+
+
+function holdFieldsReadOnly(fields) {
+  const changed = [];
+
+  for (const unit of fields) {
+    if (unit.localName?.startsWith('sf-')) {
+      if (!unit.hasAttribute('readonly')) {
+        unit.setAttribute('readonly', '');
+        changed.push(() => unit.removeAttribute('readonly'));
+      }
+
+      continue;
+    }
+
+    if ('readOnly' in unit && !unit.readOnly && unit.localName !== 'select') {
+      unit.readOnly = true;
+      changed.push(() => {
+        unit.readOnly = false;
+      });
+    } else if (unit.localName === 'select' && !unit.hasAttribute('aria-readonly')) {
+      unit.setAttribute('aria-readonly', 'true');
+      unit.inert = true;
+      changed.push(() => {
+        unit.removeAttribute('aria-readonly');
+        unit.inert = false;
+      });
+    }
+  }
+
+  return () => changed.forEach(undo => undo());
+}
+
 const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select', 'textarea', 'iframe', 'summary', 'audio[controls]', 'video[controls]', '[contenteditable]', '[tabindex]'].join(',');
 const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
 
@@ -166,7 +256,9 @@ function trapModalFocus(panel, event) {
 //   `autofocus` attribute, as a native <dialog> does; else, in a question
 //   window -- one whose answers hold a dangerous one (an sf-button with
 //   status="danger", its drawn .sf-button--danger, or an sf-confirm) -- its
-//   safe answer, «Отмена»; else the panel, as before. Only answers count: a red
+//   safe answer, «Отмена»; else, in a window with fields, its first field
+//   (owner decision C159 (9), 2026-11-14, as WAI-ARIA's dialog pattern
+//   advises); else the panel, as before. Only answers count: a red
 //   sf-badge or an error message in the body does not make a window a question;
 // - safe: the safe answer whenever there is one;
 // - first: the first control of the window's content (the header's buttons,
@@ -187,8 +279,10 @@ function trapModalFocus(panel, event) {
 
 const INITIAL_FOCUS = ['auto', 'safe', 'first', 'panel']; // status="error" on an sf-button is danger's dated alias (C13).
 
-const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm';
-const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button)';
+const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm'; // The header's × is excluded: its button (.sf-modal-close-button) and, since
+// sf-modal draws it as sf-button-close (C14), that element (.sf-modal-close).
+
+const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button):not(.sf-modal-close)';
 
 function takesFocus(node) {
   if (!node || node.closest('[inert]') || node.closest('[hidden]')) return null;
@@ -219,7 +313,12 @@ function firstFocus(panel, mode) {
   if (mode === 'auto') {
     const marked = panel.querySelector('[autofocus]');
     if (marked && !marked.closest('[inert], [hidden]')) return takesFocus(marked) || panel;
-    if (!panel.querySelector(DANGER_SELECTOR)) return panel;
+
+    if (!panel.querySelector(DANGER_SELECTOR)) {
+      const body = panel.querySelector('[data-sf-modal-body-scroll]') || panel;
+      const field = windowFields(body)[0];
+      return field && takesFocus(field) || panel;
+    }
   }
 
   return safeAnswer(panel) || panel;
@@ -320,13 +419,48 @@ function modalTransitionDuration(style) {
 } // Measure after the Smart projection has applied the closing state. A bounded
 // timer also completes when no transitionend fires (unchanged or hidden panel).
 // Never finish on the first property/descendant transitionend.
+// The closing state's own transition is the one to wait for (a window closes
+// faster than it opens, decision C159 (8)): while the drawn root does not show
+// the closing state yet -- the Smart window projects it a little later -- the
+// measure waits a frame, a few at most.
 
+const STATE_FRAMES = 4;
 function scheduleModalClose(getRoot, finalize, view = window) {
   let timer = null,
-      cancelled = false;
-  const cancelFrame = scheduleModalFrame(() => {
+      cancelled = false,
+      frames = 0,
+      cancelFrame = () => {};
+
+  const measure = () => {
     if (cancelled) return;
     const root = getRoot();
+    const state = root?.getAttribute?.('data-sf-modal-state');
+
+    if (state && state !== 'closing' && frames++ < STATE_FRAMES) {
+      // A frame or 50 ms, whichever comes first -- not a microtask, which runs
+      // before the projection does.
+      let done = false;
+
+      const next = () => {
+        if (done) return;
+        done = true;
+        view.cancelAnimationFrame(frame);
+        view.clearTimeout(fallback);
+        measure();
+      };
+
+      const frame = view.requestAnimationFrame(next);
+      const fallback = view.setTimeout(next, 50);
+
+      cancelFrame = () => {
+        done = true;
+        view.cancelAnimationFrame(frame);
+        view.clearTimeout(fallback);
+      };
+
+      return;
+    }
+
     const nodes = root?.querySelectorAll('[data-sf-modal-panel], [data-sf-modal-overlay]') || [];
     const duration = Math.max(0, ...Array.from(nodes, node => {
       const style = view.getComputedStyle(node);
@@ -335,7 +469,9 @@ function scheduleModalClose(getRoot, finalize, view = window) {
     timer = view.setTimeout(() => {
       if (!cancelled) finalize();
     }, duration);
-  }, view);
+  };
+
+  cancelFrame = scheduleModalFrame(measure, view);
   return () => {
     cancelled = true;
     cancelFrame();
@@ -471,225 +607,6 @@ __webpack_async_result__();
 
 /***/ },
 
-/***/ "50d2a204ba4c"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   SPINNER_DEFAULT_LOOK: () => (/* binding */ SPINNER_DEFAULT_LOOK),
-/* harmony export */   SPINNER_DOTS: () => (/* binding */ SPINNER_DOTS),
-/* harmony export */   SPINNER_DOTS_FILLED: () => (/* binding */ SPINNER_DOTS_FILLED),
-/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
-/* harmony export */   SPINNER_LIVE_AREA: () => (/* binding */ SPINNER_LIVE_AREA),
-/* harmony export */   SPINNER_LOOKS: () => (/* binding */ SPINNER_LOOKS),
-/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
-/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
-/* harmony export */   createLadderSpinnerSvg: () => (/* binding */ createLadderSpinnerSvg),
-/* harmony export */   createSpinnerSvg: () => (/* binding */ createSpinnerSvg),
-/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode),
-/* harmony export */   normalizeSpinnerLook: () => (/* binding */ normalizeSpinnerLook)
-/* harmony export */ });
-// The spinner's drawing, without the component's side effects (no registry, no
-// observer), so a control that shows work in place of its icon -- a button, an
-// icon button, a group's segment, a modal waiting for its content -- draws the
-// one spinner of the Framework without loading or binding the spinner
-// component (simai/ui-source#10).
-//
-// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
-// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
-// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
-// the icons of that step do, and needs no stroke of its own per step.
-//
-// The ring is drawn inside the icon's live area, not across its box (docs
-// review R027, owner decision C11, 2026-11-07): Material Symbols draw in 20 of
-// their 24 units and leave 2 of air on every side, so a ring that filled the
-// box stood larger than the icon beside it. On the grid the ring's outer edge
-// is the live area -- radius 9 at stroke 2, 20 units across -- and the box
-// stays the icon's box, so a control that swaps its icon for the spinner moves
-// nothing. The proportion is the grid's, the same at every step.
-//
-// The looks (simai/ui-source#11): every spinner carries the four looks on the
-// same ring -- the arc and the breathing arc (one circle, two motions), the
-// comet and the dots -- and the spinner sheet shows the one the page asks for:
-// data-sf-spinner on html, body or any block (the nearest wins), data-variant on
-// the spinner itself above both. The choice is CSS alone, so a page that
-// changes the attribute changes every spinner at once, drawn or not yet drawn.
-// Without the spinner sheet only the arc is shown, still.
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const SPINNER_GRID = 24;
-const SPINNER_STROKE = 2;
-const SPINNER_LIVE_AREA = 20;
-const SPINNER_LOOKS = ['arc', 'breathing', 'comet', 'dots'];
-const SPINNER_DEFAULT_LOOK = 'arc'; // The dots look on the grid: a ring of dots as big as the stroke allows, so at
-// every step the dots are the step's and no attribute sizes them.
-
-const SPINNER_DOTS = 8;
-const SPINNER_DOTS_FILLED = 3; // The comet: a head and a tail a little under half the ring, in segments whose
-// opacity falls towards the end of the tail. Segments rather than a gradient,
-// because an SVG gradient cannot follow a circle and a CSS one would leave the
-// ring and its stroke; each segment strokes in the current ink.
-
-const COMET_SEGMENTS = 10;
-const COMET_LENGTH = 40;
-function normalizeSpinnerLook(value, fallback = SPINNER_DEFAULT_LOOK) {
-  const look = String(value ?? '').trim().toLowerCase();
-  return SPINNER_LOOKS.includes(look) ? look : fallback;
-}
-function createSvgNode(tagName, attributes = {}) {
-  const node = document.createElementNS(SVG_NS, tagName);
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === '') {
-      return;
-    }
-
-    node.setAttribute(key, String(value));
-  });
-  return node;
-}
-
-const round = value => Math.round(value * 1000) / 1000; // The four looks in one drawing. On the ladder it is the 24-unit grid with
-// stroke 2, every look on the ring of the live area (`inset` 2 units from the
-// edge of the box); a spinner still drawn in pixels (the deprecated attributes) passes
-// its own width, height and stroke. The circles carry presentation attributes
-// as well as their classes: the spinner sheet styles them (track colour, the
-// motion of each look, the still frame under reduced motion), and until that
-// sheet has arrived they draw a faint ring and the arc in the current ink
-// rather than a filled black disc; the comet and the dots wait hidden. The arc
-// is a fixed 30% of the ring (simai/ui-source#13): the sheet turns the drawing,
-// the arc itself never changes length.
-
-
-function createSpinnerSvg({
-  width = SPINNER_GRID,
-  height = SPINNER_GRID,
-  stroke = SPINNER_STROKE,
-  dots = SPINNER_DOTS,
-  filled = SPINNER_DOTS_FILLED,
-  dotRadius = null,
-  direction = 'clockwise',
-  pixel = false,
-  inset = 0
-} = {}) {
-  const cx = width / 2;
-  const cy = height / 2; // The outer edge of every look: the track, the arc, the comet and the dots.
-
-  const half = Math.max(stroke, Math.min(width, height) / 2 - inset);
-  const radius = Math.max(1, half - stroke / 2);
-  const svg = createSvgNode('svg', {
-    class: 'sf-loader-svg',
-    viewBox: `0 0 ${width} ${height}`,
-    width: pixel ? width : null,
-    height: pixel ? height : null,
-    'aria-hidden': 'true',
-    focusable: 'false'
-  });
-  const ring = {
-    cx,
-    cy,
-    r: round(radius),
-    fill: 'none',
-    stroke: 'currentColor',
-    'stroke-width': stroke
-  };
-  const track = createSvgNode('circle', {
-    class: 'sf-loader-ring-filled',
-    ...ring,
-    opacity: '0.3'
-  });
-  const accent = createSvgNode('circle', {
-    class: 'sf-loader-ring-accent',
-    ...ring,
-    'stroke-linecap': 'round',
-    pathLength: 100,
-    'stroke-dasharray': '30 70',
-    transform: `rotate(90 ${cx} ${cy})`
-  }); // The comet starts at the top and runs clockwise: segment 0 is the end of the
-  // tail, the last one the head, drawn last and with a round cap.
-
-  const comet = createSvgNode('g', {
-    class: 'sf-loader-comet',
-    display: 'none',
-    transform: `rotate(-90 ${cx} ${cy})`
-  });
-  const segment = COMET_LENGTH / COMET_SEGMENTS;
-
-  for (let index = 0; index < COMET_SEGMENTS; index += 1) {
-    const head = index === COMET_SEGMENTS - 1;
-    comet.append(createSvgNode('circle', {
-      class: `sf-loader-comet-segment${head ? ' sf-loader-comet-head' : ''}`,
-      ...ring,
-      'stroke-linecap': head ? 'round' : 'butt',
-      pathLength: 100,
-      'stroke-dasharray': `${round(segment)} ${round(100 - segment)}`,
-      'stroke-dashoffset': round(-segment * index),
-      opacity: round(((index + 1) / COMET_SEGMENTS) ** 1.6)
-    }));
-  } // The dots sit on the same ring: a dot as wide as the stroke allows without
-  // touching its neighbours, so fewer dots are bigger ones.
-
-
-  const count = Math.max(3, Math.min(32, Math.floor(Number(dots) || SPINNER_DOTS)));
-  const active = Math.max(1, Math.min(count, Math.floor(Number(filled) || SPINNER_DOTS_FILLED)));
-  const fitted = Math.min(stroke, 0.7 * Math.PI * (half - stroke) / count);
-  const dotR = dotRadius === null || dotRadius === undefined || dotRadius === '' ? fitted : Math.max(1, Math.min(Number(dotRadius) || fitted, half / 4));
-  const orbit = Math.max(dotR, half - dotR);
-  const dotsGroup = createSvgNode('g', {
-    class: 'sf-loader-dots',
-    display: 'none',
-    style: `--sf-loader-dot-count:${count}; --sf-loader-dot-filled:${active};`
-  });
-
-  for (let index = 0; index < count; index += 1) {
-    const angle = Math.PI * 2 / count * index - Math.PI / 2;
-    const step = direction === 'counterclockwise' ? index : (count - index) % count;
-    dotsGroup.append(createSvgNode('circle', {
-      class: `sf-loader-dot${index < active ? ' sf-loader-dot--active' : ''}`,
-      cx: round(cx + orbit * Math.cos(angle)),
-      cy: round(cy + orbit * Math.sin(angle)),
-      r: round(dotR),
-      fill: 'currentColor',
-      style: `--sf-loader-dot-index:${index}; --sf-loader-dot-step:${step};`
-    }));
-  }
-
-  svg.append(track, accent, comet, dotsGroup);
-  return svg;
-} // The drawing on the icon grid, the one every spinner on the ladder uses: the
-// ring in the icon's live area, 20 of the 24 units.
-
-function createLadderSpinnerSvg(options = {}) {
-  return createSpinnerSvg({ ...options,
-    width: SPINNER_GRID,
-    height: SPINNER_GRID,
-    stroke: SPINNER_STROKE,
-    dotRadius: null,
-    pixel: false,
-    inset: (SPINNER_GRID - SPINNER_LIVE_AREA) / 2
-  });
-} // A spinner that stands in a control: endless, decorative (the control keeps
-// its label and says aria-busy), and marked bound so the spinner component,
-// when it is on the page, leaves it as drawn. `className` names the control's
-// slot for it; `overlay` lays it over the control's hidden label instead of in
-// the place of an icon. Its look is the page's, as every spinner's.
-
-function createInlineSpinner({
-  className = '',
-  overlay = false
-} = {}) {
-  const root = document.createElement('span');
-  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
-  root.dataset.sfSpinnerBound = '1';
-  root.dataset.infinite = 'true';
-  root.setAttribute('aria-hidden', 'true');
-  const indicator = document.createElement('span');
-  indicator.className = 'sf-loader--loading-indicator';
-  indicator.append(createLadderSpinnerSvg());
-  root.append(indicator);
-  return root;
-}
-
-/***/ },
-
 /***/ "1373e294ec38"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -776,6 +693,229 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "42f1649d1a1b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SWIPE_SHARE: () => (/* binding */ SWIPE_SHARE),
+/* harmony export */   SWIPE_SPEED: () => (/* binding */ SWIPE_SPEED),
+/* harmony export */   handleRowHeight: () => (/* binding */ handleRowHeight),
+/* harmony export */   inHandleRow: () => (/* binding */ inHandleRow),
+/* harmony export */   scrollsAlong: () => (/* binding */ scrollsAlong),
+/* harmony export */   startsOnControl: () => (/* binding */ startsOnControl),
+/* harmony export */   swipeToClose: () => (/* binding */ swipeToClose),
+/* harmony export */   trackSwipe: () => (/* binding */ trackSwipe)
+/* harmony export */ });
+// A finger closing a panel by pushing it toward its edge (owner decision C157
+// (4) and (5), 2026-11-14): the bottom sheet -- sf-drawer placement="bottom"
+// and every phone sheet drawn from core/scss/mix/_mix__sheet.scss -- follows
+// a drag down and closes past a quarter of its height or on a quick flick; a
+// side panel on a phone does the same toward its own edge. The panel follows
+// the finger through a length in a custom property the owner's rule reads
+// (translate), and settles back when the drag stops short.
+//
+//   const stop = trackSwipe(pointerdownEvent, {
+//     surface,                      the box that moves
+//     direction: 'down' | 'left' | 'right' | 'up',
+//     variable: '--sf-sheet--drag', the property set on the surface
+//     onEnd: ({dismiss, back}) => ...,
+//   });
+//
+// dismiss: the drag passed the share or the speed toward the edge; back: it
+// did so the other way (a sheet at rest may open further). A drag along the
+// other axis is let go at once (a list scrolling inside a side panel), and a
+// drag shorter than the slop is a press, not a swipe.
+const SWIPE_SHARE = 0.25;
+const SWIPE_SPEED = 0.5;
+const SLOP = 4;
+const AXES = {
+  down: {
+    axis: 'y',
+    sign: 1
+  },
+  up: {
+    axis: 'y',
+    sign: -1
+  },
+  right: {
+    axis: 'x',
+    sign: 1
+  },
+  left: {
+    axis: 'x',
+    sign: -1
+  }
+}; // What a swipe must not start on: a control keeps its own presses, a field
+// its text selection, a box that scrolls along the swipe's axis its scroll.
+
+const KEEPS_PRESS = 'button, a[href], input, select, textarea, [contenteditable="true"], [role="slider"], [role="scrollbar"], [draggable="true"], sf-resizer';
+function startsOnControl(target) {
+  return Boolean(target instanceof Element && target.closest(KEEPS_PRESS));
+} // Whether something between the target and the surface scrolls along this
+// axis toward the swipe (a wide table in a side panel, a carousel).
+
+function scrollsAlong(target, surface, axis) {
+  for (let node = target instanceof Element ? target : null; node && node !== surface; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    const overflow = axis === 'x' ? style.overflowX : style.overflowY;
+    if (!/(auto|scroll)/u.test(overflow)) continue;
+    if (axis === 'x' ? node.scrollWidth > node.clientWidth + 1 : node.scrollHeight > node.clientHeight + 1) return true;
+  }
+
+  return false;
+}
+function trackSwipe(event, {
+  surface,
+  direction = 'down',
+  variable = '--sf-sheet--drag',
+  onEnd,
+  onMove
+} = {}) {
+  const spec = AXES[direction] || AXES.down;
+  if (!surface || !event) return () => {};
+  const grip = event.currentTarget instanceof Element ? event.currentTarget : surface;
+  const start = {
+    x: event.clientX,
+    y: event.clientY,
+    t: event.timeStamp
+  };
+  const rect = surface.getBoundingClientRect();
+  const size = (spec.axis === 'y' ? rect.height : rect.width) || 1; // The owner names the physical edge: a length along x is left-to-right
+  // whatever the page's direction.
+
+  const physical = spec.sign;
+  let moved = false;
+  let given = false;
+  let delta = 0;
+
+  const along = e => spec.axis === 'y' ? e.clientY - start.y : e.clientX - start.x;
+
+  const across = e => spec.axis === 'y' ? e.clientX - start.x : e.clientY - start.y; // The moves are heard on the document, not the grip: a pointer that leaves
+  // the grip before it is captured (a quick drag off a handle row) still
+  // reports to it.
+
+
+  const doc = grip.ownerDocument || document;
+
+  const clear = () => {
+    doc.removeEventListener('pointermove', move, true);
+    doc.removeEventListener('pointerup', end, true);
+    doc.removeEventListener('pointercancel', end, true);
+    surface.classList.remove('is-dragging');
+    surface.style.removeProperty(variable);
+  };
+
+  const move = e => {
+    if (given || e.pointerId !== event.pointerId) return;
+    const a = along(e);
+
+    if (!moved) {
+      if (Math.abs(a) < SLOP && Math.abs(across(e)) < SLOP) return; // Across the axis first: a scroll or a selection, not this swipe.
+
+      if (Math.abs(across(e)) > Math.abs(a)) {
+        given = true;
+        clear();
+        return;
+      }
+
+      moved = true;
+      surface.classList.add('is-dragging'); // Captured only once it is a swipe: captured at the press, the click
+      // of a tap went to the grip instead of what was tapped.
+
+      try {
+        grip.setPointerCapture?.(event.pointerId);
+      } catch {
+        /* a synthetic event has no pointer */
+      }
+    }
+
+    delta = a; // The panel follows toward its edge only; the other way it holds.
+
+    const toward = Math.max(0, delta * physical);
+    surface.style.setProperty(variable, `${toward * physical}px`);
+    onMove?.(toward);
+  };
+
+  function end(e) {
+    if (e.pointerId !== event.pointerId) return;
+    clear();
+    if (given || !moved || e.type === 'pointercancel') return; // A drag that ends on the grip is not also a press of it.
+    // The click, if any, comes in the same task as the release; one that
+    // never comes must not eat a later press.
+
+    const swallow = click => click.stopImmediatePropagation();
+
+    grip.addEventListener('click', swallow, {
+      capture: true,
+      once: true
+    });
+    setTimeout(() => grip.removeEventListener('click', swallow, {
+      capture: true
+    }));
+    const toward = delta * physical;
+    const speed = toward / Math.max(1, e.timeStamp - start.t);
+    const dismiss = toward > size * SWIPE_SHARE || speed > SWIPE_SPEED;
+    const back = !dismiss && (-toward > size * SWIPE_SHARE || speed < -SWIPE_SPEED);
+    onEnd?.({
+      dismiss,
+      back,
+      distance: toward
+    });
+  }
+
+  doc.addEventListener('pointermove', move, true);
+  doc.addEventListener('pointerup', end, true);
+  doc.addEventListener('pointercancel', end, true);
+  return clear;
+} // The handle row of a sheet drawn by the mixin's ::before: a press within it
+// -- from the sheet's top, the 1/2 control's height (the row the bar is
+// centred in) -- starts the swipe.
+
+function handleRowHeight(surface) {
+  const value = getComputedStyle(surface).getPropertyValue('--sf-ui-1/2--control-height').trim();
+  const match = /^(-?\d*\.?\d+)(px|rem|em)?$/u.exec(value);
+  if (!match) return 32;
+  const unit = match[2] || 'px';
+  const base = unit === 'px' ? 1 : parseFloat(getComputedStyle(unit === 'rem' ? document.documentElement : surface).fontSize) || 16;
+  return Number(match[1]) * base;
+}
+function inHandleRow(event, surface) {
+  const top = surface.getBoundingClientRect().top;
+  return event.clientY >= top && event.clientY - top <= handleRowHeight(surface);
+} // A sheet that a swipe down from its handle row closes: binds the press on
+// the surface and answers the unbinding. `when` says whether the surface is
+// a sheet now (a form anchored on a wide screen is not); a press on a
+// control keeps the control's own press.
+//
+//   const unbind = swipeToClose(surface, {when: () => owned.sheet, onDismiss: () => close()});
+
+function swipeToClose(surface, {
+  when = () => true,
+  onDismiss
+} = {}) {
+  if (!surface) return () => {};
+
+  const onPress = event => {
+    if (event.button !== 0 || !when()) return;
+    if (startsOnControl(event.target) || !inHandleRow(event, surface)) return;
+    trackSwipe(event, {
+      surface,
+      direction: 'down',
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss) onDismiss?.();
+      }
+    });
+  };
+
+  surface.addEventListener('pointerdown', onPress);
+  return () => surface.removeEventListener('pointerdown', onPress);
+}
+
+/***/ },
+
 /***/ "f98b7a216869"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -791,23 +931,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c8d66dd2c299");
 /* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3f3a6e2680d5");
 /* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("afc57055d2cc");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("85cdf307b188");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("66be591d2d06");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("be0bc1a67e65");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("afc57055d2cc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("85cdf307b188");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("66be591d2d06");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("be0bc1a67e65");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("42f1649d1a1b");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("1373e294ec38");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__);
 
 
 
@@ -821,8 +961,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
- // A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
+}; // A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
 // name came first and is read until the change journal retires it.
 
 const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]"; // Below the Framework's sm breakpoint (32rem) a question window is a bottom
@@ -833,9 +980,23 @@ const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-containe
 // The questions a window holds that a reopening puts again (sf-confirm's
 // answeredNo: it declined, or its decline is on its way and no outcome came).
 
-const QUESTIONS = "sf-confirm, sf-confirm-change";
+const QUESTIONS = "sf-confirm, sf-confirm-change"; // The window sizes by name (decision C159 (1)); anything else, `auto` among
+// them, is the default, a form.
+
+const SIZES = ["question", "form", "wide", "full"]; // The ways a person closes a window; with unsaved changes in its fields they
+// ask first (C159 (6)). A script's close (api) and an accepted answer do not.
+
+const PERSON_CLOSES = ["escape", "close", "cancelled", "outside"]; // At most two windows, the second only a question (C159 (7)).
+
+const STACK_LIMIT = 2;
 
 
+ // A side window or a sheet is sf-drawer's (owner decision C157 (1),
+// 2026-11-14): sf-modal position="inline-start|inline-end|left|right|bottom"
+// is its old name until this date, noted once per value.
+
+const EDGE_POSITIONS = ["inline-start", "inline-end", "left", "right", "bottom"];
+const EDGE_POSITIONS_UNTIL = "2027-01-01";
  // sf-modal from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8, §19): the settings are attributes and properties made by
 // core/js/element-manifest.js, the words are lang/<locale>.json (the header's
@@ -843,18 +1004,18 @@ const QUESTIONS = "sf-confirm, sf-confirm-change";
 // page's language), and the old names -- title, blur, hide, unclose, the
 // modal:* events, hide() and show() -- are dated aliases in aliases.json.
 
-const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
+    en,
+    ru
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
 }); // The public variables the manifest declares; a window drawn at the end of the
 // body carries their values from where its host stands (§19.1).
 
-const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_11__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
+const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_10__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each use is noted with it.
 
 function noteRetired(kind, from) {
@@ -864,8 +1025,8 @@ function noteRetired(kind, from) {
     kind,
     from,
     to: null,
-    since: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.since,
-    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.remove_after
+    since: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.since,
+    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.remove_after
   });
 } // A lifecycle copy (modal:ready, modal:update) is still sent until its date; a
 // listener that reads it is a use (§4.1, §16.13).
@@ -930,17 +1091,17 @@ class SfModal extends ModalElement {
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document: a drawer or a list
   // opened from it stands above it and takes the keys while it does.
 
 
   static isTopModal(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.isTopModalLayer)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.isTopModalLayer)(modal);
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -954,7 +1115,7 @@ class SfModal extends ModalElement {
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(modal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.addModalLayer)(modal);
     }
   }
 
@@ -965,7 +1126,7 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -975,11 +1136,11 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.updateModalLayers)();
   } // The manifest's settings, and the base's own template name.
 
 
@@ -1024,6 +1185,7 @@ class SfModal extends ModalElement {
     this._answer = null;
     this.onKeyDown = this.onKeyDown.bind(this);
     this.handleOverlayClick = this.handleOverlayClick.bind(this);
+    this.handleSheetPointerDown = this.handleSheetPointerDown.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
     this.handleHideClick = this.handleHideClick.bind(this);
   }
@@ -1051,22 +1213,96 @@ class SfModal extends ModalElement {
     this._phoneQuery = query;
 
     this._onPhoneChange = () => {
-      if (this.size === "question") this.requestComponentUpdate("phone");
+      if (this.display !== "inline") this.requestComponentUpdate("phone");
     };
 
     query.addEventListener?.("change", this._onPhoneChange);
-  } // The position the window stands in: the page's, except that a question
-  // window left at the centre opens as a bottom sheet on a phone.
+  } // The window's size by name (C159 (1)): question, form, wide or full; no
+  // size, or `auto`, is a form.
+
+
+  get windowSize() {
+    const size = String(this.size || "").trim().toLowerCase();
+    return SIZES.includes(size) ? size : "form";
+  } // On a phone (below sm) a window left at the centre (decision C159 (2)):
+  // a question and a form stand as a sheet at the bottom, full width, the
+  // answers sharing the row; a wide or full window and a form of more than
+  // three fields take the whole screen. A question was the only sheet (C39).
+
+
+  get onPhone() {
+    return this.display !== "inline" && Boolean(this._phoneQuery?.matches);
+  }
+
+  get phoneFullScreen() {
+    if (!this.onPhone || this.position !== "center") return false;
+    const size = this.windowSize;
+    return size === "wide" || size === "full" || size === "form" && this.contentFields().length > 3;
+  } // The position the window stands in: the page's, except that a window left
+  // at the centre opens as a bottom sheet on a phone (above).
 
 
   get shownPosition() {
     const position = this.position;
 
-    if (this.size === "question" && position === "center" && this.display !== "inline" && this._phoneQuery?.matches) {
+    if (position === "center" && this.onPhone && !this.phoneFullScreen) {
       return "bottom";
     }
 
     return position;
+  }
+
+  get shownFullscreen() {
+    return Boolean(this.fullscreen) || this.windowSize === "full" || this.phoneFullScreen;
+  } // The window's content fields (component/modal/js/_focus.js): drawn, or
+  // still the page's nodes before the first drawing.
+
+
+  contentFields() {
+    const body = this._root()?.querySelector("[data-sf-modal-body-scroll]");
+    if (body) return (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.windowFields)(body); // Before the first drawing: the page's content nodes, each under a
+    // detached holder of its own so the node itself counts too.
+
+    const fields = [];
+
+    for (const node of this._liveSlotNodes?.get("content") || []) {
+      if (node.nodeType !== Node.ELEMENT_NODE) continue;
+      const holder = {
+        querySelectorAll: () => [node, ...node.querySelectorAll("*")]
+      };
+      fields.push(...(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.windowFields)(holder));
+    }
+
+    return fields;
+  } // A question -- size="question", or a window holding sf-confirm -- is not
+  // a form: its typed name confirms, and it closes as a question does.
+
+
+  get isQuestionWindow() {
+    return this.windowSize === "question" || Boolean(this._renderTarget?.querySelector?.(QUESTIONS));
+  } // A window with fields is one form (C159 (6), (9)).
+
+
+  get hasFields() {
+    return !this.isQuestionWindow && this.contentFields().length > 0;
+  } // The footer's main answer (C159 (4), (9)): its first answer that is not
+  // quiet (ghost or link: «Отмена») and not the record's own apart action.
+
+
+  mainAnswer() {
+    const footer = this._root()?.querySelector(".sf-modal-footer");
+    if (!footer) return null;
+
+    for (const node of footer.querySelectorAll("sf-button, button, a[href], input[type=\"submit\"]")) {
+      if (node.localName !== "sf-button" && node.closest("sf-button")) continue; // sf-button hands its data-* attributes and its look to its button.
+
+      const drawn = node.localName === "sf-button" ? node.querySelector(":scope > button, :scope > a") : node;
+      if (node.closest("[data-apart]") || drawn?.matches?.("[data-apart]")) continue;
+      if (["ghost", "link"].includes(node.getAttribute("appearance")) || drawn?.matches?.(".sf-button--ghost, .sf-button--link")) continue;
+      return node;
+    }
+
+    return null;
   } // A reopened window puts its question again: an sf-confirm in it that took
   // the decline (Escape, «Отмена») with no outcome from the host would show
   // its answers greyed (recipes gaps D4 follow-up, DEV 2026-11-10).
@@ -1167,8 +1403,8 @@ class SfModal extends ModalElement {
         attribute: "unclose",
         from: "unclose",
         to: "dismissible",
-        since: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.since,
-        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.remove_after
+        since: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.since,
+        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.remove_after
       });
       return false;
     }
@@ -1301,7 +1537,7 @@ class SfModal extends ModalElement {
       return "";
     }
 
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.layerZIndexAt)(this._stackIndex);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.layerZIndexAt)(this._stackIndex);
   }
 
   get remoteContent() {
@@ -1340,35 +1576,28 @@ class SfModal extends ModalElement {
     }
 
     if (this._isLoadingRemote) {
-      // The Framework's one spinner, in the page's look (simai/ui-source#11),
-      // kept across renders so its motion does not restart; the modal sheet
-      // draws its slot. The words are the page's language's, and the state
-      // is a status region named by them, so it is announced, not only seen.
+      // A skeleton of text lines in the window's own width (decision C159
+      // (9)): the window keeps its size while the content comes, where a
+      // spinner in a box of its own made it jump (209 x 240, then 194 x 132).
+      // The words are the page's language's, and the state is a status
+      // region named by them, so it is announced, not only seen.
       const loading = this.sfWord("loading");
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
-          class="sf-modal-loading flex flex-col gap-2 items-cross-center content-main-center p-4"
+          class="sf-modal-loading sf-modal-skeleton"
           data-sf-modal-state="loading"
           role="status"
           aria-label=${loading}
+          aria-busy="true"
         >
-          ${this._loadingSpinnerNode()}
-          <p class="m-0 text-2 color-on-surface-variant">${loading}</p>
+          <span class="sf-modal-skeleton-line" aria-hidden="true"></span>
+          <span class="sf-modal-skeleton-line" aria-hidden="true"></span>
+          <span class="sf-modal-skeleton-line" aria-hidden="true"></span>
         </div>
       `;
     }
 
     return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  }
-
-  _loadingSpinnerNode() {
-    if (!this._loadingSpinner) {
-      this._loadingSpinner = (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_10__.createInlineSpinner)({
-        className: "sf-modal-spinner"
-      });
-    }
-
-    return this._loadingSpinner;
   }
 
   templateContext() {
@@ -1392,9 +1621,11 @@ class SfModal extends ModalElement {
       rootId: this.id === this.modalId ? "" : this.modalId,
       open: this.renderOpenState,
       modalState: this.renderModalState,
-      // A question window opens as a bottom sheet on a phone (C39).
+      // A window at the centre opens as a bottom sheet or full screen on a
+      // phone (C39, C159 (2)); its size is one of the named four (C159 (1)).
       position: this.shownPosition,
-      size: this.size === "question" ? "question" : "auto",
+      size: this.windowSize,
+      fullscreen: this.shownFullscreen,
       animate: this._animatePanel && this.display !== "inline",
       modalZIndex: this.modalZIndex,
       hide: this.minimizable,
@@ -1588,13 +1819,14 @@ class SfModal extends ModalElement {
     // block's retuned roles and its parts' public variables reach the window
     // and its content, but none of the window's own --sf-modal-* names.
 
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.carryLayerOrigin)(this._portalRoot, this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.carryLayerOrigin)(this._portalRoot, this, {
       variables: MODAL_VARIABLES,
       area: true,
       except: ["--sf-modal-"]
     });
     this._renderTarget = this._portalRoot;
     this.listenForAnswers(this._portalRoot);
+    this.listenForFields(this._portalRoot);
     return this._portalRoot;
   } // «Отмена» of the window's own question (sf-confirm appearance="window",
   // decision C39) closes the window, as the window's × does: the question is
@@ -1618,6 +1850,168 @@ class SfModal extends ModalElement {
 
     target.addEventListener("sf-confirm-answer", this._onAnswer);
     this._answersTarget = target;
+  } // The window as a form (decision C159 (6), (9)), read where it draws:
+  // - a change in a field marks the window edited, so closing it asks first;
+  // - Enter in a one-line field presses the main answer, and the main answer
+  //   submits the <form> of the content, if there is one;
+  // - while the main answer shows loading (sf-button loading, set by the
+  //   page as it saves) the window saves: its fields are read-only and only
+  //   a script closes it.
+
+
+  listenForFields(target) {
+    if (!target || this._fieldsTarget === target) return;
+
+    if (this._fieldsTarget) {
+      for (const [type, listener] of this._fieldListeners) this._fieldsTarget.removeEventListener(type, listener);
+
+      this._savingObserver?.disconnect();
+    }
+
+    const inBody = node => Boolean(node?.closest?.("[data-sf-modal-body-scroll]"));
+
+    const edited = event => {
+      if (this._isOpen && !this._saving && inBody(event.target) && !this.isQuestionWindow) this._edited = true;
+    };
+
+    const keydown = event => {
+      if (event.key !== "Enter" || event.defaultPrevented || event.isComposing || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey || !this._isOpen) return;
+      const field = event.composedPath?.()[0] || event.target;
+      if (!(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.isOneLineField)(field) || !inBody(field) || field.getAttribute("aria-expanded") === "true") return;
+      if (!this.hasFields) return;
+      const main = this.mainAnswer();
+      if (!main) return;
+      event.preventDefault();
+      if (this._saving) return;
+      const control = main.localName === "sf-button" ? main.querySelector("button, a") : main;
+      control?.click();
+    };
+
+    const click = event => {
+      const main = this.mainAnswer();
+      if (!main || !this._isOpen || !main.contains(event.target) || !this.hasFields) return;
+      const control = event.target.closest("button, a, input");
+      if (control?.type === "submit" && control.form) return;
+      const form = this._root()?.querySelector("[data-sf-modal-body-scroll] form");
+      if (form && !event.defaultPrevented) form.requestSubmit();
+    };
+
+    this._fieldListeners = [["input", edited], ["change", edited], ["keydown", keydown], ["click", click]];
+
+    for (const [type, listener] of this._fieldListeners) target.addEventListener(type, listener);
+
+    this._savingObserver = new MutationObserver(() => this.syncSaving());
+
+    this._savingObserver.observe(target, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["loading"]
+    });
+
+    this._fieldsTarget = target;
+  } // The window saves while its main answer shows loading (C159 (9); the
+  // button keeps its colour, C36).
+
+
+  syncSaving() {
+    const saving = Boolean(this._isOpen && this.hasFields && this.mainAnswer()?.hasAttribute("loading"));
+    if (saving === Boolean(this._saving)) return;
+    this._saving = saving;
+
+    const root = this._root();
+
+    if (saving) {
+      this._releaseSaving = (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.holdFieldsReadOnly)(this.contentFields());
+      root?.setAttribute("aria-busy", "true");
+    } else {
+      this._releaseSaving?.();
+      this._releaseSaving = null;
+      root?.removeAttribute("aria-busy");
+    }
+  } // the discard question, lang discard-heading (decision C159 (6), with C25 and C39): a
+  // question window over this one -- «Не сохранять», red, first; «Продолжить
+  // правку», quiet, with the focus. Not saving closes this window for the
+  // reason it was asked; continuing gives the focus back to the field.
+
+
+  askDiscard(reason) {
+    let question = this._discardQuestion;
+
+    if (!question?.isConnected) {
+      question = document.createElement("sf-modal");
+      question.setAttribute("size", "question");
+      question.setAttribute("initial-focus", "safe");
+      question.setAttribute("data-sf-modal-discard", "");
+      question.setAttribute("heading", this.sfWord("discard-heading"));
+      const footer = document.createElement("div");
+      footer.setAttribute("slot", "footer");
+      const discard = document.createElement("sf-button");
+      discard.setAttribute("status", "danger");
+      discard.setAttribute("text", this.sfWord("discard"));
+      discard.setAttribute("data-sf-modal-discard-answer", "");
+      const keep = document.createElement("sf-button");
+      keep.setAttribute("appearance", "ghost");
+      keep.setAttribute("scheme", "on-surface");
+      keep.setAttribute("text", this.sfWord("keep-editing"));
+      keep.setAttribute("data-sf-modal-close", "");
+      footer.append(discard, keep);
+      question.append(footer);
+      discard.addEventListener("click", () => {
+        const asked = this._discardReason || "cancelled";
+        question.addEventListener("sf-modal-closed", () => {
+          this._discardAgreed = true;
+          this.close({
+            reason: asked
+          });
+        }, {
+          once: true
+        });
+        question.close({
+          reason: "api"
+        });
+      });
+      question.setAttribute("open", "");
+      this._discardReason = reason;
+      this._discardQuestion = question;
+      this.overlayHome.append(question);
+      return;
+    }
+
+    this._discardReason = reason;
+    question.open();
+  } // The body's edges (decision C159 (3)): a hairline over the body while text
+  // is above what shows, under it while text is below.
+
+
+  watchBodyEdges() {
+    const root = this._root();
+
+    const body = root?.querySelector("[data-sf-modal-body-scroll]");
+    if (!body) return;
+
+    const update = () => {
+      const top = body.scrollTop > 0;
+      const end = body.scrollTop + body.clientHeight < body.scrollHeight - 1;
+      root.toggleAttribute("data-sf-modal-more-start", top);
+      root.toggleAttribute("data-sf-modal-more-end", end);
+    };
+
+    if (this._edgesBody !== body) {
+      this._edgesObserver?.disconnect();
+      this._edgesBody?.removeEventListener("scroll", this._onEdgesScroll);
+      this._onEdgesScroll = update;
+      body.addEventListener("scroll", update, {
+        passive: true
+      });
+      this._edgesObserver = typeof ResizeObserver === "function" ? new ResizeObserver(update) : null;
+      this._edgesObserver?.observe(body);
+
+      for (const child of body.children) this._edgesObserver?.observe(child);
+
+      this._edgesBody = body;
+    }
+
+    update();
   } // The box the modal is rendered into: the end of the body, above the page --
   // or, when the modal stands inside a [data-sf-overlay-container], the end of
   // that box, which then frames its backdrop and surface (contain: layout makes
@@ -1681,7 +2075,11 @@ class SfModal extends ModalElement {
     }
 
     root.style.setProperty("--sf-modal-stack-index", String(index));
-    root.style.zIndex = String(this.modalZIndex);
+    root.style.zIndex = String(this.modalZIndex); // One scrim (decision C159 (7)): a window over another open window lays
+    // none of its own.
+
+    const at = SfModal.stack.indexOf(this);
+    root.toggleAttribute("data-sf-modal-stacked", SfModal.stack.slice(0, Math.max(0, at)).some(modal => modal.openState && !modal.hiddenState));
     return this;
   } // Opens the window, or raises an open one to the top. Answers an outcome
   // (§4.4): refused when a listener prevents sf-modal-open. Asked by an
@@ -1704,6 +2102,17 @@ class SfModal extends ModalElement {
       this.cancelCloseTransition();
       SfModal.bringToFront(this);
       return asked ? this.waitForAnswer(signal) : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
+    } // At most two windows, and the second only a question (decision C159
+    // (7)): a third window, or a second that is not a question, is refused.
+
+
+    if (!wasClosing && this.display !== "inline") {
+      const below = SfModal.stack.filter(modal => modal !== this && modal.openState && !modal.hiddenState && modal._modalState !== "closing");
+
+      if (below.length >= STACK_LIMIT || below.length && this.windowSize !== "question") {
+        console.warn(`sf-modal "${this.modalId}": not opened -- at most two windows, the second only a question (size="question"), SIMAI Framework decision C159 (7).`);
+        return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("stacked");
+      }
     }
 
     if (!this.emitModalEvent("open", {
@@ -1715,7 +2124,7 @@ class SfModal extends ModalElement {
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -1725,6 +2134,8 @@ class SfModal extends ModalElement {
     }
 
     this._isOpen = true;
+    this._edited = false;
+    this._discardAgreed = false;
     this.reopenQuestions();
     this._closeReason = "";
     this._answer = null;
@@ -1819,16 +2230,35 @@ class SfModal extends ModalElement {
       return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("closed");
     }
 
-    const reason = typeof options?.reason === "string" ? options.reason : "api";
+    const reason = typeof options?.reason === "string" ? options.reason : "api"; // While the window saves (its main answer shows loading), only a script
+    // closes it: Escape, x and «Отмена» wait (decision C159 (9)).
+
+    if (this._saving && reason !== "api") {
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("busy");
+    }
+
+    const unsaved = Boolean(this.unsaved) || Boolean(this._edited);
 
     if (!this.emitModalEvent("close", {
       cancelable: true,
       phase: "before-close",
       reason,
-      unsaved: Boolean(this.unsaved)
+      unsaved
     })) {
       this._answer = null;
       return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("prevented");
+    } // Changes in a window with fields are not lost on Escape, x, «Отмена»
+    // or a press outside: the Framework's discard question (lang discard-heading)
+    // comes first (decision C159 (6)), unless the page took the request
+    // above. The main answer, an accepted answer and a script close as asked.
+
+
+    const pressedMain = this._mainPressed;
+    this._mainPressed = false;
+
+    if (unsaved && PERSON_CLOSES.includes(reason) && !pressedMain && !this._answer?.accepted && !this._discardAgreed && this.hasFields) {
+      this.askDiscard(reason);
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("unsaved");
     }
 
     this._closeReason = reason;
@@ -1917,9 +2347,9 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -1931,7 +2361,7 @@ class SfModal extends ModalElement {
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.addModalLayer)(this);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -1970,9 +2400,14 @@ class SfModal extends ModalElement {
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
+    this._edited = false;
+    this._discardAgreed = false;
+    this._releaseSaving?.();
+    this._releaseSaving = null;
+    this._saving = false;
     this.requestComponentUpdate("after-close");
     const reason = this._closeReason || "api";
     this.emitModalEvent("closed", {
@@ -2049,7 +2484,7 @@ class SfModal extends ModalElement {
       // page's own markup has no opener.
       const active = document.activeElement;
       this._lastActive = active instanceof HTMLElement && active !== document.body && active !== document.documentElement && !this.contains(active) && !this._root()?.contains(active) ? active : null;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.captureModalFocusAncestors)(this._lastActive);
       this._isOpen = true;
       this._modalState = "open";
 
@@ -2061,16 +2496,17 @@ class SfModal extends ModalElement {
       this.loadRemoteContentIfNeeded();
     }
 
-    this.applyStackPosition(); // Projection can replace the panel while an existing layer remains open.
+    this.applyStackPosition();
+    if (this.display !== "inline") this.watchBodyEdges(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
     // the Loader leaves it until the window opens (its root is inert), and a
     // page that waited for a tag in it before opening the window waited for
     // ever (layer-stack.js startClosedLayerContent).
 
     if (this.display !== "inline" && !this.openState && !this._closedContentStarted) {
       this._closedContentStarted = true;
-      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.startClosedLayerContent)(() => this._root());
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.startClosedLayerContent)(() => this._root());
     }
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
@@ -2092,6 +2528,52 @@ class SfModal extends ModalElement {
 
     root.removeEventListener("click", this.handleOverlayClick);
     root.addEventListener("click", this.handleOverlayClick);
+    root.removeEventListener("pointerdown", this.handleSheetPointerDown);
+    root.addEventListener("pointerdown", this.handleSheetPointerDown);
+    this.noteEdgePosition();
+  } // The old name of a side panel or a sheet (C157 (1)): written by the page,
+  // not the phone's own sheet of a centred window (shownPosition).
+
+
+  noteEdgePosition() {
+    const position = this.getAttribute("position") || "";
+    if (!EDGE_POSITIONS.includes(position)) return;
+    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+      component: "sf-modal",
+      tag: "sf-modal",
+      kind: "value",
+      attribute: "position",
+      from: position,
+      to: position === "bottom" ? "sf-drawer placement=\"bottom\"" : "sf-drawer",
+      since: "2026-11-14",
+      remove_after: EDGE_POSITIONS_UNTIL
+    });
+  } // A window at the bottom is the one sheet (owner decision C157 (5)): a
+  // swipe down from its handle row closes it as the x does -- a window with
+  // changed fields asks first (C159 (6)), a saving one waits.
+
+
+  handleSheetPointerDown(event) {
+    if (event.button !== 0 || !this._isOpen || this.shownPosition !== "bottom" || this.shownFullscreen) return;
+
+    const root = this._root();
+
+    const surface = root?.querySelector("[data-sf-modal-surface]");
+    const panel = root?.querySelector("[data-sf-modal-panel]");
+    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.startsOnControl)(event.target)) return;
+    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.inHandleRow)(event, surface)) return;
+    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.trackSwipe)(event, {
+      surface: panel,
+      direction: "down",
+      variable: "--sf-sheet--drag",
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss && this.dismissible) this.close({
+          reason: "close"
+        });
+      }
+    });
   }
 
   bindSlotEventHandlers() {
@@ -2119,8 +2601,9 @@ class SfModal extends ModalElement {
 
   handleOverlayClick(event) {
     const isOverlay = event.target === this._root()?.querySelector("[data-sf-modal-overlay]"); // A press outside is the top layer's only.
+    // A window with fields never closes on its scrim (C159 (6)).
 
-    if (isOverlay && this.closeOnOverlay && this.dismissible && SfModal.isTopModal(this)) {
+    if (isOverlay && this.closeOnOverlay && this.dismissible && !this.hasFields && SfModal.isTopModal(this)) {
       this.close({
         reason: "outside"
       });
@@ -2383,6 +2866,12 @@ class SfModal extends ModalElement {
 
   teardownModal() {
     const wasTop = SfModal.isTopModal(this);
+    this._discardQuestion?.remove();
+    this._discardQuestion = null;
+    this._edgesObserver?.disconnect();
+    this._savingObserver?.disconnect();
+    this._fieldsTarget = null;
+    this._edgesBody = null;
     this.abortRemoteContent();
     this.cancelCloseTransition();
 
@@ -2397,7 +2886,7 @@ class SfModal extends ModalElement {
     if (this.display !== "inline") this.returnSlotNodes();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -2519,9 +3008,13 @@ class SfModal extends ModalElement {
       }
 
       const id = closeEl.getAttribute("data-sf-modal-close") || closeEl.closest(".sf-modal")?.getAttribute("data-sf-modal-id"); // The window's own close button closed it already, as `close`; a page
-      // control that closes it is a cancel.
+      // control that closes it is a cancel -- unless it is the window's main
+      // answer, which does not ask about unsaved changes (C159 (6)).
 
-      SfModal.registry.get(id)?.close({
+      const modal = SfModal.registry.get(id);
+      const main = modal?.mainAnswer?.();
+      if (modal && main && (main === closeEl || main.contains(closeEl) || closeEl.contains(main))) modal._mainPressed = true;
+      modal?.close({
         reason: "cancelled"
       });
     });
@@ -2531,7 +3024,7 @@ class SfModal extends ModalElement {
 
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.lockPageScroll)({
+    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.lockPageScroll)({
       preserveScrollGap
     });
   }
@@ -2574,10 +3067,12 @@ function overlayClasses(context) {
 }
 
 function renderModalTemplate(context) {
-  const isInline = context.display === 'inline'; // A question window (size="question", decision C39): its own width, frame
-  // and title; see component/modal/scss/_css__modal_custom.scss.
+  const isInline = context.display === 'inline'; // The window's size by name (decision C159 (1)): question (its own frame
+  // and title too, C39), form -- the default -- wide, full; see
+  // component/modal/scss/_css__modal_custom.scss.
 
-  const isQuestion = context.size === 'question';
+  const size = ['question', 'form', 'wide', 'full'].includes(context.size) ? context.size : 'form';
+  const isQuestion = size === 'question';
   const hasRemoteContent = Boolean(context.src) && (context.mode === 'ajax' || context.mode === 'iframe');
   const showHeader = context.showHeader !== false;
   const hasHeaderSlot = context.hasHeaderContent; // A path id (standard 1.3.8 §7.1.1), not the modal id: two windows with
@@ -2595,7 +3090,7 @@ function renderModalTemplate(context) {
                 id=${context.rootId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 class=${joinClasses('sf-modal', `sf-modal--position-${context.position}`, // Legacy alias: the misspelt class the modal wrote before;
   // kept until contracts/changes/journal.json removes it.
-  `sf-modal--positon-${context.position}`, isQuestion && 'sf-modal--size-question', isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
+  `sf-modal--positon-${context.position}`, `sf-modal--size-${size}`, isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
                 style=${modalStyle}
                 role=${isInline ? 'region' : 'dialog'}
                 aria-modal=${isInline || context.minimized ? 'false' : 'true'}
@@ -2605,7 +3100,7 @@ function renderModalTemplate(context) {
                 aria-labelledby=${accessibleLabel ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : titleId}
                 data-sf-modal-id=${context.modalId}
                 data-sf-modal-position=${context.position}
-                data-sf-modal-size=${context.size || 'auto'}
+                data-sf-modal-size=${size}
                 data-sf-modal-fullscreen=${String(context.fullscreen)}
                 data-sf-modal-display=${context.display}
                 data-sf-modal-state=${isInline ? 'inline' : context.modalState}
@@ -2649,20 +3144,14 @@ function renderModalTemplate(context) {
                                                 </button>
                                             ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                                     ${context.showClose ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                                                <button
-                                                        type="button"
-                                                        class=${joinClasses('sf-icon-button sf-modal-header-action sf-modal-close-button sf-modal-close-button--inline-end sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', context.closeClass)}
+                                                <sf-button-close
+                                                        size="1/3"
+                                                        class="sf-modal-close"
+                                                        root-class=${joinClasses('sf-modal-header-action sf-modal-close-button sf-modal-close-button--inline-end m-0', context.closeClass)}
                                                         aria-label=${context.closeText}
                                                         data-sf-modal-close=${context.modalId}
                                                         @click=${context.onCloseClick}
-                                                >
-                          <span
-                                  class="sf-close sf-close--size-1/3 flex justify-center items-center"
-                                  aria-hidden="true"
-                          >
-                            <span class="sf-close-icon"></span>
-                          </span>
-                                                </button>
+                                                ></sf-button-close>
                                             ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                                 </header>
                             ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2676,7 +3165,7 @@ function renderModalTemplate(context) {
                                 data-sf-modal-body-viewport
                         >
                             <div
-                                    class=${joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', context.bodyClass)}
+                                    class=${joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1', context.bodyClass)}
                                     data-sf-modal-body-scroll
                             >
                                 ${hasRemoteContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -2773,21 +3262,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.7.2","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["auto","question"],"default":"auto","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.10.0","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["form","question","wide","full","auto"],"default":"form","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "66be591d2d06"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Modal","runtime":{"close":"Close","frame-failed":"Failed to load iframe content","load-failed":"Failed to load content","loading":"Loading…","minimize":"Minimize","title":"Dialog"},"events":{"content-upload":{"label":"Load content"},"content-uploaded":{"label":"Content loaded"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Modal","runtime":{"close":"Close","discard":"Don\'t save","discard-heading":"Close without saving?","frame-failed":"Failed to load iframe content","keep-editing":"Keep editing","load-failed":"Failed to load content","loading":"Loading…","minimize":"Minimize","title":"Dialog"},"events":{"content-upload":{"label":"Load content"},"content-uploaded":{"label":"Content loaded"}}}');
 
 /***/ },
 
 /***/ "be0bc1a67e65"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Модальное окно","runtime":{"close":"Закрыть","frame-failed":"Не удалось загрузить встроенную страницу","load-failed":"Не удалось загрузить содержимое","loading":"Загрузка…","minimize":"Свернуть","title":"Окно"},"events":{"content-upload":{"label":"Загрузить содержимое"},"content-uploaded":{"label":"Содержимое загружено"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Модальное окно","runtime":{"close":"Закрыть","discard":"Не сохранять","discard-heading":"Закрыть без сохранения?","frame-failed":"Не удалось загрузить встроенную страницу","keep-editing":"Продолжить правку","load-failed":"Не удалось загрузить содержимое","loading":"Загрузка…","minimize":"Свернуть","title":"Окно"},"events":{"content-upload":{"label":"Загрузить содержимое"},"content-uploaded":{"label":"Содержимое загружено"}}}');
 
 /***/ }
 

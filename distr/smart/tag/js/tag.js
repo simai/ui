@@ -2,6 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "a2a9d3c2841e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
+/* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
+/* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
+/* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
+/* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
+/* harmony export */ });
+const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
+const DEFAULT_BADGE_SCHEME = 'neutral';
+const DEFAULT_BADGE_SIZE = '1/3';
+
+const normalizeEnum = (value, allowed, fallback) => {
+  const normalized = String(value ?? fallback).trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
+
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+  type,
+  scheme,
+  size
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
+function normalizeBadgeContract({
+  type,
+  scheme,
+  size
+} = {}) {
+  let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
+
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
+  }
+
+  return {
+    type: normalizedType,
+    scheme: normalizedScheme,
+    size: normalizedSize
+  };
+}
+
+/***/ },
+
 /***/ "e6d86f2cd058"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -1095,6 +1188,135 @@ function preloadSwitchIcons(host, options = {}) {
 
 /***/ },
 
+/***/ "b30ec5bc0edb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
+/* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
+/* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps)
+/* harmony export */ });
+/* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i; // The hues of the static palette (owner decision C17), each with the OKLCH hue
+// angle of its tone 50 (src/core/scss/_sf_static_palette.scss, rounded to the
+// degree; tests/option-badge-palette.contract.test.mjs holds the two equal).
+// Brown and gray are not reached from a hex: brown sits between orange and
+// amber and differs from them by chroma alone, which a light or a dark hex
+// does not keep; a colour with less chroma than GREY_CHROMA is gray. Both are
+// reached by name.
+
+const OPTION_BADGE_HUES = Object.freeze({
+  red: 28,
+  orange: 47,
+  amber: 60,
+  yellow: 89,
+  lime: 119,
+  green: 144,
+  teal: 173,
+  cyan: 203,
+  sky: 232,
+  blue: 259,
+  indigo: 279,
+  violet: 299,
+  purple: 320,
+  pink: 347
+});
+const OPTION_BADGE_PALETTE = Object.freeze([...Object.keys(OPTION_BADGE_HUES), "brown", "gray"]);
+const GREY_CHROMA = 0.03;
+
+const linear = channel => {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}; // {chroma, hue} in OKLCH of a #rgb[a] / #rrggbb[aa]; the alpha is not read.
+
+
+function oklchOf(hex) {
+  let digits = hex.slice(1);
+  if (digits.length < 6) digits = [...digits].map(digit => digit + digit).join("");
+  const [r, g, b] = [0, 2, 4].map(at => linear(parseInt(digits.slice(at, at + 2), 16)));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    chroma: Math.hypot(a, bb),
+    hue: (Math.atan2(bb, a) * 180 / Math.PI + 360) % 360
+  };
+}
+/** The static palette hue nearest a hex colour: gray when it has no hue to speak of. */
+
+
+function nearestPaletteHue(hex) {
+  const {
+    chroma,
+    hue
+  } = oklchOf(hex);
+  if (chroma < GREY_CHROMA) return "gray";
+  let best = "gray";
+  let distance = Infinity;
+
+  for (const [name, angle] of Object.entries(OPTION_BADGE_HUES)) {
+    const apart = Math.abs((hue - angle + 540) % 360 - 180);
+
+    if (apart < distance) {
+      best = name;
+      distance = apart;
+    }
+  }
+
+  return best;
+} // The fill of a hue: tone 50 at the fill step 24 (C43: no new tones or steps;
+// the alpha scale's fill family), over the place in both themes, as the 24 %
+// mix of the data's hex was. The text stays on the surface colour, so the
+// label reads the same in both themes. Written to the badge's public
+// variables, --sf-badge-background-color and --sf-badge-color (owner decision
+// C140 (2), BG-7): a colour from data reaches the badge only through them and
+// only as a palette step, never the author's hex.
+
+const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--alfa-24); --sf-badge-color: var(--sf-on-surface)`;
+/**
+ * Badge look for a filter option with optionRenderer 'badge'. option.color is
+ * a Framework badge scheme (success, error, info...), a hue of the static
+ * palette (red, teal, gray...; C17) or a hex colour. A hue tints the badge with
+ * its own palette step; a hex is drawn in the palette hue nearest it, never as
+ * the raw colour (C18, C43; badges study BG-7), so the label stays readable in
+ * both themes. Anything else is neutral.
+ */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
+
+
+function optionBadgeProps(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    rootStyle: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(name)
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(nearestPaletteHue(color))
+  };
+  return {
+    scheme: "neutral",
+    rootStyle: ""
+  };
+}
+
+/***/ },
+
 /***/ "cbce4a5232a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1200,6 +1422,10 @@ function getInitials(value = "", options = {}) {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   tagHref: () => (/* binding */ tagHref),
+/* harmony export */   tagHue: () => (/* binding */ tagHue)
+/* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
@@ -1208,10 +1434,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("550ba610396b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7eee137ec5ff");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e01b02206b25");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d65b1989605d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("277f66a1ef9b");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7eee137ec5ff");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e01b02206b25");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d65b1989605d");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("277f66a1ef9b");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1230,13 +1457,25 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+};
 const TAG_KINDS = ['checkbox', 'icon', 'default', 'color', 'avatar']; // The glyphs the template draws in sf-icon: an icon tag's icon (sell when
 // none is named) and an avatar tag's placeholder; a slot drawn instead asks
 // for nothing. Read from the element, so it can be asked before it draws.
 
 function drawnIcons(host) {
-  const slotted = name => host.hasSlotContent?.(name);
+  const slotted = name => host.hasSlotContent?.(name); // A filter tag's check mark is drawn when it is chosen (C145 (2)); it is
+  // asked for with the tag, so a press never shows a blank glyph.
 
+
+  if (host.type === 'checkbox' && !slotted('leading') && !host.href) return ['check'];
   if (host.type === 'icon' && !slotted('leading')) return [host.icon || 'sell'];
   if (host.type === 'avatar' && !slotted('avatar') && !host.avatarImageUrl && !host.avatarText) return ['person'];
   return [];
@@ -1255,6 +1494,31 @@ const preloadTagIcons = host => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.p
 })));
 
 const TAG_STATUSES = ['', 'info', 'success', 'warning', 'error'];
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/iu; // The hue of the colour dot (owner decision C145 (7); C140 BG-7): a hue of
+// the static palette by name, or the hue nearest a hex colour from data --
+// never the raw colour. Anything else: no hue (color-class may still paint).
+
+function tagHue(value) {
+  const color = String(value ?? '').trim();
+  if (!color) return '';
+  const name = color.toLowerCase();
+  if (_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_8__.OPTION_BADGE_PALETTE.includes(name)) return name;
+  return HEX_COLOR.test(color) ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_8__.nearestPaletteHue)(color) : '';
+} // A link's address (owner decision C145 (6)): a relative address, a path, a
+// fragment or a query is kept; an address with a scheme only when it is http,
+// https, mailto or tel. javascript:, data: and the rest lead nowhere.
+
+const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']); // eslint-disable-next-line no-control-regex -- matching control characters is the point
+
+const CONTROLS = /[\u0000- \u007f-\u009f]/gu;
+function tagHref(value) {
+  const given = String(value ?? '').trim();
+  if (!given) return '';
+  const compact = given.replace(CONTROLS, '');
+  const scheme = /^([a-z][a-z0-9+.-]*):/iu.exec(compact);
+  if (!scheme) return given;
+  return SAFE_SCHEMES.has(`${scheme[1].toLowerCase()}:`) ? given : '';
+}
 
 const normalize = value => String(value ?? '').trim().toLowerCase(); // `type` answered two questions from one list: what the tag carries (kind)
 // and what it reports (status). It is not a setting any more and not a dated
@@ -1380,14 +1644,14 @@ function resolveTagStatus(element, raw, fallback) {
 // {active}; close is sf-tag-close, the old name close its dated alias.
 
 
-const TagElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const TagElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en,
+    ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
 
 class SfTag extends TagElement {
@@ -1491,6 +1755,8 @@ class SfTag extends TagElement {
   }
 
   get closable() {
+    // A link is removed by no one (C145 (6)).
+    if (this.href) return false;
     if (this.type === 'checkbox') return this.hasAttribute('closable') && this.getBooleanAttr('closable', true);
 
     if (this.hasAttribute('closable')) {
@@ -1504,7 +1770,16 @@ class SfTag extends TagElement {
 
 
   get interactive() {
-    return this.type !== 'checkbox' && super.interactive;
+    return this.type !== 'checkbox' && !this.href && super.interactive;
+  } // The address the tag leads to, made safe (tagHref): empty, it is no link.
+
+
+  get href() {
+    return tagHref(super.href);
+  }
+
+  set href(value) {
+    super.href = value;
   }
 
   set interactive(value) {
@@ -1528,6 +1803,8 @@ class SfTag extends TagElement {
       rootClass: this.rootClass,
       closable: this.closable,
       interactive: this.interactive,
+      href: this.href,
+      hue: tagHue(this.color),
       closeLabel: this.closeLabel,
       active: this.active,
       ariaLabel: this.getAttribute('aria-label') || '',
@@ -1544,6 +1821,12 @@ class SfTag extends TagElement {
   cutText() {
     const label = this.querySelector(':scope > .sf-tag .sf-tag-container');
     return String(label?.textContent ?? this.text ?? '').trim();
+  } // The tag's id in a group (sf-tag-group's selected and selected-ids): its
+  // key, else its text.
+
+
+  get groupKey() {
+    return String(this.key || this.text || this.textContent || '').trim();
   } // Whether the drawn label is cut: read from the label, since the column,
   // the font and the row decide it, not the length of the text.
 
@@ -1573,7 +1856,9 @@ class SfTag extends TagElement {
     this.measureCut(); // The row the tag stands in shows what fits and «+N», and walks closable
     // tags in a field by keys (js/tag-row.js).
 
-    if (!this.hasAttribute('data-sf-tag-more')) (0,_js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__.tagInRow)(this);
+    if (!this.hasAttribute('data-sf-tag-more')) (0,_js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__.tagInRow)(this); // A group's «+N» stands in its popover; its button exists only once it
+    // drew, so the group walks it from then on (one Tab stop, C145 (4)).
+    else this.closest('sf-tag-group')?.sfTagDrew?.();
     this._sfRow = this.parentElement;
     return result;
   }
@@ -1588,7 +1873,7 @@ class SfTag extends TagElement {
   }
 
   onToggle() {
-    if (this.disabled || this.type !== 'checkbox') return;
+    if (this.disabled || this.type !== 'checkbox' || this.href) return;
     const active = !this.active;
     this.toggleAttribute('active', active); // §8: a person's change, under the browser's name, with data only.
 
@@ -1637,6 +1922,9 @@ class SfTag extends TagElement {
       active: this.active,
       disabled: this.disabled,
       closable: this.closable,
+      href: this.href,
+      color: this.color,
+      key: this.key,
       ariaLabel: this.getAttribute('aria-label') || '',
       closeLabel: this.closeLabel
     };
@@ -1680,6 +1968,14 @@ function closeSize() {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   boxesOf: () => (/* binding */ boxesOf),
+/* harmony export */   nameOf: () => (/* binding */ nameOf),
+/* harmony export */   oneRow: () => (/* binding */ oneRow),
+/* harmony export */   overflows: () => (/* binding */ overflows),
+/* harmony export */   said: () => (/* binding */ said),
+/* harmony export */   setAttr: () => (/* binding */ setAttr),
+/* harmony export */   stopOf: () => (/* binding */ stopOf),
+/* harmony export */   stopsIn: () => (/* binding */ stopsIn),
 /* harmony export */   tagInRow: () => (/* binding */ tagInRow),
 /* harmony export */   tagLeftRow: () => (/* binding */ tagLeftRow)
 /* harmony export */ });
@@ -1709,7 +2005,9 @@ _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependenc
 //   is an open owner question (tags study #q-keys).
 //
 // A host that lays out its own chips (sf-input-lookup, sf-dropdown) keeps its
-// own rules: its rows are left alone.
+// own rules: its rows are left alone. So does sf-tag-group (owner decision
+// C145 (3)-(5)): the group owns its row -- one Tab stop for every tag, «+N»
+// that opens the hidden tags -- with the helpers exported here.
 //
 // Every bundle that carries sf-tag carries a copy of this module; the rows
 // are kept on one shared record.
@@ -1721,7 +2019,7 @@ const rows = () => globalThis[ROWS] || (globalThis[ROWS] = new WeakMap());
 const OVER = 'data-sf-tag-over';
 const SHRINK = 'data-sf-tag-shrink';
 const MORE = 'data-sf-tag-more';
-const MANAGED = 'sf-input-lookup, sf-lookup, sf-dropdown, .sf-dropdown';
+const MANAGED = 'sf-input-lookup, sf-lookup, sf-dropdown, .sf-dropdown, sf-tag-group';
 
 const isTag = node => node?.localName === 'sf-tag';
 
@@ -1740,12 +2038,10 @@ function boxesOf(row) {
 
   return out;
 }
-
 function oneRow(row) {
   const view = getComputedStyle(row);
   return /flex/u.test(view.display) && view.flexWrap === 'nowrap' && view.flexDirection.startsWith('row');
 } // Whether anything the row lays out passes its content box, on either side.
-
 
 function overflows(row) {
   const view = getComputedStyle(row);
@@ -1757,12 +2053,10 @@ function overflows(row) {
     return rect.width > 0 && (rect.right > end + 0.5 || rect.left < start - 0.5);
   });
 }
-
 function setAttr(element, name, on) {
   if (on && !element.hasAttribute(name)) element.setAttribute(name, '');else if (!on && element.hasAttribute(name)) element.removeAttribute(name);
 } // The «+N» count: class markup of a default tag of the row's size, so it is
 // drawn the moment it is placed and measured in the same pass.
-
 
 function moreFor(row, state, tags) {
   let more = state.more;
@@ -1855,11 +2149,10 @@ function groupOf(row) {
 const crossButton = () => `:scope > .sf-tag > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.tagSelector)('sf-button-close')} button, :scope > .sf-tag > .sf-icon-button`;
 
 function stopOf(tag) {
-  return tag.querySelector(':scope > button.sf-tag, :scope > .sf-tag > .sf-tag-action') || tag.querySelector(crossButton());
+  return tag.querySelector(':scope > button.sf-tag, :scope > a.sf-tag[href], :scope > .sf-tag > .sf-tag-action') || tag.querySelector(crossButton());
 }
-
 function stopsIn(tag) {
-  return [...tag.querySelectorAll('button')];
+  return [...tag.querySelectorAll('button, a[href]')];
 }
 
 function untab(row, state) {
@@ -2031,7 +2324,13 @@ function forget(row) {
 
 function tagInRow(tag) {
   const row = tag.parentElement;
-  if (!row || typeof requestAnimationFrame !== 'function') return;
+  if (!row || typeof requestAnimationFrame !== 'function') return; // A group lays out and walks its own tags (sf-tag-group): it is told.
+
+  if (row.localName === 'sf-tag-group') {
+    row.sfTagDrew?.();
+    return;
+  }
+
   let state = rows().get(row);
 
   if (!state) {
@@ -2109,10 +2408,16 @@ const LARGE_SIZES = new Set(['1', '2', '3']);
 
 function dotSize(size) {
   return LARGE_SIZES.has(size) ? '1/2' : '1/3';
-}
+} // A filter tag shows no mark until it is chosen; chosen, a check mark stands
+// before the label on the primary container fill (owner decision C145 (2),
+// tags study #q-selected B). The empty checkbox square on every tag is gone:
+// the row read as a form of check boxes. The mark is an sf-icon, the picture
+// of the tag's size (tag - 8, C58), so its name joins the icon request.
+
 
 function renderCheckboxIcon(context) {
-  return context.component?.hasSlotContent?.('leading') ? context.component.getSlotContent('leading') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-check" aria-hidden="true"></span>`;
+  if (context.component?.hasSlotContent?.('leading')) return context.component.getSlotContent('leading');
+  return context.active ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon="check" root-class="sf-tag-icon sf-tag-check" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // The icon is an sf-icon, as in every other component: the element tells the
 // Loader its name, so the name joins the icon font request. A bare
 // <i class="sf-icon"> drawn here after the page's scan never did -- its glyph
@@ -2122,11 +2427,17 @@ function renderCheckboxIcon(context) {
 function renderGenericIcon(context) {
   const iconName = context.icon || 'sell';
   return context.component?.hasSlotContent?.('leading') ? context.component.getSlotContent('leading') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${iconName} root-class="sf-tag-icon" aria-hidden="true"></sf-icon>`;
-}
+} // A colour from data is a dot of the static palette before the label; the
+// tag itself stays neutral (owner decision C145 (7), tags study #q-color B):
+// selection and hover read the same on every tag, and a label colour never
+// mimics a status. The hue's role set (.sf-hue-<name>, core) gives the dot its
+// strong fill in both themes.
+
 
 function renderColorIcon(context) {
-  const extraClass = context.colorClass || '';
-  return context.component?.hasSlotContent?.('leading') ? context.component.getSlotContent('leading') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${['sf-tag-color-icon', extraClass].filter(Boolean).join(' ')} aria-hidden="true"></span>`;
+  if (context.component?.hasSlotContent?.('leading')) return context.component.getSlotContent('leading');
+  const classes = ['sf-tag-color-icon', context.hue ? `sf-tag-color-icon--hue sf-hue-${context.hue}` : '', context.colorClass || ''].filter(Boolean);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes.join(' ')} aria-hidden="true"></span>`;
 }
 
 function renderStatusDot(context) {
@@ -2153,6 +2464,9 @@ function renderAvatar(context) {
 }
 
 function renderLeading(context) {
+  // A link carries no check mark (C145 (6)).
+  if (context.href && context.type === 'checkbox') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
   switch (context.type) {
     case 'checkbox':
       return renderCheckboxIcon(context);
@@ -2223,6 +2537,23 @@ function renderStatusBadge(context, textContent) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes.join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><span
         class="sf-badge-text-container flex items-center"><span
         class="sf-badge-text">${textContent}</span></span></span>`;
+} // A tag that leads to a page (owner decision C145 (6), tags study #q-link B):
+// the whole tag is one native link, with no check mark and no cross; its
+// label underlines on hover like any link (component.tags, .sf-tag--link).
+// A tag list of an article (Docara, Larena sites) is the use.
+
+
+function renderLinkTag(context, textContent) {
+  const classes = ['sf-tag', `sf-tag--${context.status || (context.kind === 'checkbox' ? 'default' : context.kind) || 'default'}`, context.appearance && context.appearance !== 'default' ? `sf-tag--appearance-${context.appearance}` : '', `sf-tag--size-${context.size}`, context.height && context.height !== 'default' ? `sf-tag--height-${context.height}` : '', context.inline ? 'sf-tag--inline' : '', context.line ? `sf-tag--line-${context.line}` : '', 'sf-tag--link', 'inline-flex', 'flex-row', 'flex-nowrap', 'items-center', `${context.rootClass}`, context.disabled ? 'disabled' : ''].filter(Boolean); // A disabled link leads nowhere: no href, aria-disabled, out of the Tab order.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+            class=${classes.join(' ')}
+            style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            href=${context.disabled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.href}
+            aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            data-tooltip=${context.cutTooltipId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    >${renderLeading(context)}<span class="sf-tag-container pointer-events-none">${textContent}</span>${renderCount(context)}${renderCutTooltip(context)}</a>`;
 } // The Framework's plain tooltip (component.tooltip, class markup), hidden
 // until the tooltip controller shows it on hover or keyboard focus of the
 // trigger: a name cut with an ellipsis says itself whole (owner decision C58;
@@ -2236,7 +2567,9 @@ function renderCutTooltip(context) {
 }
 
 function renderTagTemplate(context) {
-  const textContent = context.component?.hasSlotContent?.('text') ? context.component.getSlotContent('text') : context.text;
+  const textContent = context.component?.hasSlotContent?.('text') ? context.component.getSlotContent('text') : context.text; // A tag with an address is a link first (C145 (6)), whatever its status.
+
+  if (context.href) return renderLinkTag(context, textContent);
 
   if (context.status && !context.interactive && !context.closable) {
     return renderStatusBadge(context, textContent);
@@ -2485,7 +2818,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.9.1","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.11.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

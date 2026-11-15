@@ -1,0 +1,6631 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "a2a9d3c2841e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
+/* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
+/* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
+/* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
+/* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
+/* harmony export */ });
+const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
+const DEFAULT_BADGE_SCHEME = 'neutral';
+const DEFAULT_BADGE_SIZE = '1/3';
+
+const normalizeEnum = (value, allowed, fallback) => {
+  const normalized = String(value ?? fallback).trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
+
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+  type,
+  scheme,
+  size
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
+function normalizeBadgeContract({
+  type,
+  scheme,
+  size
+} = {}) {
+  let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
+
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
+  }
+
+  return {
+    type: normalizedType,
+    scheme: normalizedScheme,
+    size: normalizedSize
+  };
+}
+
+/***/ },
+
+/***/ "e577837dd70a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Dates in the page's language: formatDate, the calendar day offset and the
+// next midnight, with no top-level side effects (format-intl.js). The same
+// functions as core/js/format.js and SF.format; relative days and times are
+// format-relative.js, so a bundle that writes a date does not carry them.
+
+
+const DAY_MS = 86400000;
+
+function hasDateStyle(style) {
+  return style === 'short' || style === 'medium' || style === 'long' || style === 'full';
+}
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
+ */
+
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  timeZone = '',
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (hasDateStyle(date)) options.dateStyle = date;
+    if (hasDateStyle(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+}
+/**
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date(),
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !today) return Number.NaN;
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "9ce1a42b2a85"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DATE_TIME_RE: () => (/* binding */ DATE_TIME_RE),
+/* harmony export */   composeDateTime: () => (/* binding */ composeDateTime),
+/* harmony export */   composeTime: () => (/* binding */ composeTime),
+/* harmony export */   normalizeTime: () => (/* binding */ normalizeTime),
+/* harmony export */   splitDateTime: () => (/* binding */ splitDateTime),
+/* harmony export */   splitTime: () => (/* binding */ splitTime)
+/* harmony export */ });
+// A datetime's value, read and written back: plain functions, no rendering.
+// The edit renderers (renderDateTimeEdit and renderTimeEdit in index.js) use them, the contract
+// test runs them without a DOM, and SF.fieldRenderers.dateTime publishes them
+// so a host that draws its own pair reads and writes the same way.
+//
+// Lifted from ui-admin's property view (src/smart/property-view/js/
+// datetime-value.js, Larena acceptance 2026-10-22: «Дата и время» kept only
+// the day, so a new record could not get a time and «15.11.2026 10:30» was
+// saved as «15.11.2026»).
+//
+// The value is the host's text, in the host's time zone, as it reads it. The
+// round trip is lossless: a field whose day and time come back to what they
+// were writes back exactly the text it read. A changed day keeps the record's
+// clock (seconds, fraction) and zone; a changed time is hh:mm:00 with the
+// record's zone; a new value has no zone and is the host's local time.
+// The forms a datetime arrives in: a day, or a day and a time separated by T or
+// a space, with optional seconds, fraction and zone.
+const DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}):(\d{2})((?::\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/u;
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/u; // The value without the host's formatting ({value, text} carries both).
+
+function rawValue(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value) && 'value' in value) return value.value;
+  return value;
+} // What a stored value is made of. `known` is false for a value that is not a
+// datetime at all: the controls start empty and, untouched, nothing is written.
+
+
+function splitDateTime(value) {
+  const raw = rawValue(value);
+  if (raw === null || raw === undefined || raw === '') return {
+    raw: raw ?? null,
+    known: true,
+    date: '',
+    time: '',
+    rest: '',
+    zone: ''
+  };
+  const match = typeof raw === 'string' ? raw.trim().match(DATE_TIME_RE) : null;
+  if (!match) return {
+    raw,
+    known: false,
+    date: '',
+    time: '',
+    rest: '',
+    zone: ''
+  };
+  return {
+    raw,
+    known: true,
+    date: match[1],
+    time: match[2] ? `${match[2]}:${match[3]}` : '',
+    rest: match[4] || '',
+    zone: match[5] || ''
+  };
+} // A time as the person typed it, as hh:mm, or null when it is not one. The
+// mask gives «10:30»; without it «1030», «9:30» and «9.30» are read too.
+
+function normalizeTime(text) {
+  const value = String(text ?? '').trim().replace(/[_\s]/gu, '');
+  if (value === '' || value === ':') return '';
+  const match = value.match(/^(\d{1,2})[:.]?(\d{2})$/u);
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) return null;
+  return `${String(hours).padStart(2, '0')}:${match[2]}`;
+} // The value to write for a day and a time, against what the field held.
+// {value} -- the text to write (null clears), or {error} -- the key of the
+// sentence that says what is missing: dateMissing, dateInvalid, timeMissing,
+// timeInvalid.
+
+function composeDateTime(original, draft) {
+  const date = String(draft?.date ?? '').trim();
+  const time = normalizeTime(draft?.time);
+  if (time === null) return {
+    error: 'timeInvalid'
+  };
+  if (!date && !time) return {
+    value: null
+  };
+  if (!DAY_RE.test(date)) return {
+    error: date ? 'dateInvalid' : 'dateMissing'
+  };
+  if (!time) return {
+    error: 'timeMissing'
+  };
+  const before = original?.known ? original : null; // Back to what it was: the very text it read, separator and all.
+
+  if (before && before.date === date && before.time === time) return {
+    value: before.raw
+  }; // The clock below the minute and the zone are the record's while the
+  // person did not change the time; a time they typed is to the minute.
+
+  const sameTime = before && before.time === time;
+  const rest = sameTime ? before.rest : ':00';
+  const zone = before && before.time ? before.zone : '';
+  return {
+    value: `${date}T${time}${rest}${zone}`
+  };
+} // A time of day as a host stores it: hh:mm, or with seconds and a fraction.
+
+const TIME_RE = /^(\d{2}):(\d{2})((?::\d{2})(?:\.\d+)?)?$/u; // What a stored time is made of, as splitDateTime says it for a datetime.
+
+function splitTime(value) {
+  const raw = rawValue(value);
+  if (raw === null || raw === undefined || raw === '') return {
+    raw: raw ?? null,
+    known: true,
+    time: '',
+    rest: ''
+  };
+  const match = typeof raw === 'string' ? raw.trim().match(TIME_RE) : null;
+  if (!match || normalizeTime(`${match[1]}:${match[2]}`) === null) return {
+    raw,
+    known: false,
+    time: '',
+    rest: ''
+  };
+  return {
+    raw,
+    known: true,
+    time: `${match[1]}:${match[2]}`,
+    rest: match[3] || ''
+  };
+} // The value to write for a time, against what the field held: {value} (null
+// clears) or {error: 'timeInvalid'}. The same minute writes back the very
+// text it read; a changed one keeps the stored shape (hh:mm:00 where the
+// host stores seconds), and a new one is hh:mm.
+
+function composeTime(original, text) {
+  const time = normalizeTime(text);
+  if (time === null) return {
+    error: 'timeInvalid'
+  };
+  if (!time) return {
+    value: null
+  };
+  const before = original?.known ? original : null;
+  if (before && before.time === time) return {
+    value: before.raw
+  };
+  return {
+    value: before?.rest ? `${time}:00` : time
+  };
+}
+
+/***/ },
+
+/***/ "ab3947ea3647"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDecimal: () => (/* binding */ formatDecimal),
+/* harmony export */   formatMoney: () => (/* binding */ formatMoney),
+/* harmony export */   formatPercent: () => (/* binding */ formatPercent),
+/* harmony export */   fractionDigits: () => (/* binding */ fractionDigits),
+/* harmony export */   moneyParts: () => (/* binding */ moneyParts),
+/* harmony export */   readDecimal: () => (/* binding */ readDecimal)
+/* harmony export */ });
+/* harmony import */ var _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Decimal numbers as strings, never as floats (simai.property-view-port
+// 1.18.0; Larena property types standard, notes of 2026-11-03: «Never a float
+// on the wire»). What a person typed is read into a canonical decimal string,
+// and a decimal, a money amount and a percent are shown in the page's language
+// through Intl, which formats a string by its digits: «1500.10» never passes
+// through a float on the way to «1 500,10 ₽». Pure, so the unit suite reads it
+// without a browser; the View set draws the editors of money, percent and
+// items with its own copy of the same rules.
+
+const TYPED = /^([+-]?)(\d*)(?:[.,](\d*))?$/u; // Spaces a person or a formatter puts between groups of digits: the plain
+// space, the no-break space and the narrow no-break space ru-RU writes, and
+// the apostrophe some locales group with.
+
+const GROUP_SPACES = /[\s  ']/gu;
+/**
+ * What a person typed, read as a decimal: `{ok: true, value}` with the
+ * canonical string (an optional minus, the integer digits without leading
+ * zeros, the fraction digits as typed; null for nothing typed), or
+ * `{ok: false}` for text that is not a number. A comma and a point both
+ * separate the fraction. A JSON integer is read as its digits; a float is not
+ * a decimal and is refused rather than guessed at.
+ */
+
+function readDecimal(text) {
+  if (text === null || typeof text === 'undefined') return {
+    ok: true,
+    value: null
+  };
+
+  if (typeof text === 'number') {
+    return Number.isSafeInteger(text) ? {
+      ok: true,
+      value: String(text)
+    } : {
+      ok: false
+    };
+  }
+
+  const plain = String(text).replace(GROUP_SPACES, '');
+  if (plain === '') return {
+    ok: true,
+    value: null
+  };
+  const match = TYPED.exec(plain);
+  if (!match) return {
+    ok: false
+  };
+  const [, sign, whole, fraction] = match;
+  if (whole === '' && (fraction ?? '') === '') return {
+    ok: false
+  };
+  const integer = whole.replace(/^0+(?=\d)/u, '') || '0';
+  const digits = fraction ?? '';
+  const zero = /^0*$/u.test(integer + digits);
+  return {
+    ok: true,
+    value: `${sign === '-' && !zero ? '-' : ''}${integer}${digits ? `.${digits}` : ''}`
+  };
+}
+/** How many digits a canonical decimal string has after its point. */
+
+function fractionDigits(value) {
+  const at = String(value ?? '').indexOf('.');
+  return at === -1 ? 0 : String(value).length - at - 1;
+} // A float a host sent anyway is shown, not refused: a cell is not the place to
+// argue with a stored value. Only what reads as a decimal is formatted.
+
+function decimalOf(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : null;
+  const read = readDecimal(value);
+  return read.ok ? read.value : null;
+}
+/** A decimal string in the locale's digits, with every digit it has: «1 500,5». */
+
+
+function formatDecimal(value, locale) {
+  const decimal = decimalOf(value);
+  if (decimal === null) return '';
+  const digits = Math.min(20, fractionDigits(decimal));
+  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(decimal);
+}
+/** A money value as {amount, currency}; a field that fixes the currency takes a bare amount. */
+
+function moneyParts(value, fixed) {
+  const currency = typeof fixed === 'string' && fixed ? fixed : null;
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return {
+      amount: value.amount ?? null,
+      currency: currency || (value.currency ?? null)
+    };
+  }
+
+  if (value === null || typeof value === 'undefined' || value === '') return {
+    amount: null,
+    currency
+  };
+  return {
+    amount: value,
+    currency
+  };
+}
+/**
+ * An amount with its currency, as a person reads it: «1 500,50 ₽», «$1,500.50».
+ * The digits after the point are at least the currency's minor units (ISO
+ * 4217) and every digit the amount has. Without a currency, the amount alone.
+ */
+
+function formatMoney(value, field = {}, locale = 'en') {
+  const {
+    amount,
+    currency
+  } = moneyParts(value, field.currency);
+  const decimal = decimalOf(amount);
+  if (decimal === null) return '';
+  if (!currency) return formatDecimal(decimal, locale);
+  const minor = (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    style: 'currency',
+    currency
+  }).resolvedOptions().maximumFractionDigits ?? 2;
+  const digits = Math.min(20, Math.max(minor, fractionDigits(decimal)));
+  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    style: 'currency',
+    currency,
+    currencyDisplay: 'narrowSymbol',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(decimal);
+}
+/** A percent, «12,5 %» or «12.5%»: the value is the percent ("20" is 20 %), never the share. */
+
+function formatPercent(value, locale = 'en') {
+  const decimal = decimalOf(value);
+  if (decimal === null) return '';
+  const digits = Math.min(20, fractionDigits(decimal));
+  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    style: 'unit',
+    unit: 'percent',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(decimal);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "01ae054f01b4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   cleanHtml: () => (/* binding */ cleanHtml),
+/* harmony export */   htmlText: () => (/* binding */ htmlText)
+/* harmony export */ });
+/* harmony import */ var _input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4f56033a1eae");
+// Formatted text (property-view port 1.17.0, propertyType `html`; Larena,
+// 2026-10-30): a value that is an HTML string of sf-input-rich's subset. The
+// subset's rule is sf-input-rich's own module, not a second one written here:
+// what the editor writes and what a record shows are cleaned by the same
+// function, so the two cannot disagree about what a value may hold.
+//
+// A value is never drawn as it arrives. The host's value may have been stored
+// by something other than this editor -- an import, an API, an older site --
+// so the view draws only what `cleanHtml` returns, and a table cell draws only
+// the text. Both take any value: a string, {value, text} as a host formats a
+// scalar, or nothing.
+
+
+const source = value => {
+  const raw = value && typeof value === 'object' && !Array.isArray(value) && 'value' in value ? value.value : value;
+  return typeof raw === 'string' ? raw : '';
+};
+/** The value in the subset: everything else removed, every text escaped; "" when there is no text. */
+
+
+function cleanHtml(value) {
+  const html = source(value);
+  return html ? (0,_input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.sanitizeRichText)(html, {
+    mode: 'value'
+  }) : '';
+}
+/** The value's visible text on one line, for a table cell: blocks and line breaks become spaces. */
+
+function htmlText(value) {
+  const html = source(value);
+  return html ? (0,_input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.plainText)(html).replace(/\s+/gu, ' ').trim() : '';
+}
+
+/***/ },
+
+/***/ "e5483002f3ea"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
+/* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
+/* harmony export */   propertyModes: () => (/* binding */ propertyModes),
+/* harmony export */   renderCellField: () => (/* binding */ renderCellField),
+/* harmony export */   renderEditField: () => (/* binding */ renderEditField),
+/* harmony export */   renderFilterField: () => (/* binding */ renderFilterField),
+/* harmony export */   renderViewField: () => (/* binding */ renderViewField)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ab3947ea3647");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("354525e80715");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__);
+
+
+
+
+
+
+
+
+
+
+ // The set's words and the property types' names live in its language files
+// (localization study LC-5), as a Smart component keeps them.
+
+ // The Framework's field renderers, addressed by a property type and a template
+// rather than by a control name.
+//
+// Larena asked for one set of renderers shared by the record view and the
+// table's cells (their request of 2026-10-05, part B6). The Framework already
+// had type-aware rendering in exactly one place -- the table's filter controls
+// -- and a second map would have drifted from it, so this module is that map
+// with the filter controls moved into it unchanged. The table now asks the set
+// instead of answering itself.
+//
+// The renderers take a host rather than `this`: a small interface the caller
+// implements, so the same function serves a table's filter window, a record
+// view and anything else that renders a field.
+//
+//   getFilterControlValue(key)            the value a control shows
+//   patchTempFilterValue(key, patch)      the value a control writes
+//   getFilterOperatorLabel(operator)      the word for an operator
+//   getFilterOptionSearch(key)            what is typed in an option search
+//   patchTempFilterOptionSearch(key, s)   what that search writes
+//   getVisibleFilterOptions(field)        the options to draw
+//   renderFilterOption(field, option)     one option row
+//   getEndpointFilterPage(field)          the page of options a host returned
+//   loadEndpointFilterPage(field, cursor, search)   ask the host for a page
+//
+// Every prop below names the axis it answers -- appearance, status, kind -- and
+// never `type`, which contracts/public-api-axes.json retires. The names were
+// read from each component's description rather than from the property's name:
+// `size` on sf-file-preview is the file's size as text, not a rung of the
+// ladder, and `type` on sf-list-item answers `kind` while on sf-input it
+// answers `appearance`.
+// The filter controls take the size of the list they filter: the table's
+// size, when it has one. They were written at 1, so a table at the dense
+// step 1/2 opened filter fields, buttons and tabs a step larger than itself.
+
+function filterSize(host) {
+  const size = String(host?.size || '').trim();
+  return size || '1';
+}
+
+function renderTextFilterControl(field, host) {
+  const value = host.getFilterControlValue(field.key);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${filterSize(host)}
+                appearance="filled"
+                placeholder="${setText(host, 'containsText')}"
+                value="${value.value || ''}"
+                name="sf_filter_${field.key || 'text'}"
+                @change=${event => {
+    host.patchTempFilterValue(field.key, {
+      value: event.target?.value || '',
+      operator: value.operator || field.filter?.defaultOperator || 'contains'
+    });
+  }}
+        ></sf-input>
+    `;
+}
+
+function renderRangeFilterControl(field, host) {
+  const control = host.getFilterControlValue(field.key);
+  const operators = field.filter?.operators || ['eq'];
+  const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
+  const isBetween = selectedOperator === 'between';
+  const rangeValue = isBetween ? control.value : Array.isArray(control.value) ? control.value[0] : control.value;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="flex gap-1/3 flex-col">
+            <div class="sf-filter-operator-range flex gap-1/3 items-cross-center">
+                <sf-slider-range
+                        id="smart-range-slider-single"
+                        min="0"
+                        label="tooltip"
+                        suffix="%"
+                        max="100"
+                        multiple=${String(isBetween)}
+                        .value=${rangeValue}
+                        @onSliderEnd=${e => {
+    host.patchTempFilterValue(field.key, {
+      value: isBetween ? e.detail.values || [] : e.detail.value,
+      operator: selectedOperator
+    });
+  }}
+                ></sf-slider-range>
+            </div>
+            <sf-dropdown
+                    size=${filterSize(host)}
+                    appearance="outlined"
+                    mode="select"
+                    placeholder="${setText(host, 'operator')}"
+                    root-class="flex-1"
+                    search="false"
+                    @change=${event => {
+    const operator = event.detail?.values?.[0] || event.detail?.value || selectedOperator;
+    host.patchTempFilterValue(field.key, {
+      operator
+    });
+  }}
+            >
+                ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                    <sf-list-item
+                            kind="text"
+                            size=${filterSize(host)}
+                            text="${host.getFilterOperatorLabel(operator)}"
+                            value="${operator}"
+                            ?selected=${operator === selectedOperator}
+                    ></sf-list-item>
+                `)}
+            </sf-dropdown>
+        </div>
+    `;
+}
+
+function renderNumberFilterControl(field, host) {
+  const control = host.getFilterControlValue(field.key);
+  const operators = field.filter?.operators || ['eq'];
+  const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
+  const isBetween = selectedOperator === 'between';
+  const rawValue = control.value;
+  const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue || '', ''];
+
+  const patchNumberValue = (index, nextInputValue) => {
+    if (!isBetween) {
+      host.patchTempFilterValue(field.key, {
+        value: nextInputValue || '',
+        operator: selectedOperator
+      });
+      return;
+    }
+
+    const nextValue = [...rangeValue];
+    nextValue[index] = nextInputValue || '';
+    host.patchTempFilterValue(field.key, {
+      value: nextValue,
+      operator: selectedOperator
+    });
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="flex gap-1/3 flex-col">
+            <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-center">
+                <sf-input
+                        size=${filterSize(host)}
+                        appearance="bordered"
+                        root-class="flex-1 min-w-0"
+                        label="${isBetween ? setText(host, 'rangeFrom') : host.getFilterOperatorLabel(selectedOperator)}"
+                        value="${isBetween ? rangeValue[0] || '' : rawValue || ''}"
+                        name="sf_filter_${field.key || 'number'}"
+                        @change=${event => {
+    patchNumberValue(0, event.target?.value);
+  }}
+                ></sf-input>
+                ${isBetween ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                    <sf-input
+                            size=${filterSize(host)}
+                            appearance="bordered"
+                            label="${setText(host, 'rangeTo')}"
+                            root-class="flex-1 min-w-0"
+                            value="${rangeValue[1] || ''}"
+                            name="sf_filter_${field.key || 'number'}_second"
+                            @change=${event => {
+    patchNumberValue(1, event.target?.value);
+  }}
+                    ></sf-input>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            </div>
+            <sf-dropdown
+                    size=${filterSize(host)}
+                    appearance="outlined"
+                    mode="select"
+                    placeholder="${setText(host, 'operator')}"
+                    root-class="flex-1"
+                    search="false"
+                    @change=${event => {
+    const operator = event.detail?.values?.[0] || event.detail?.value || selectedOperator;
+    host.patchTempFilterValue(field.key, {
+      operator
+    });
+  }}
+            >
+                ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                    <sf-list-item
+                            kind="text"
+                            size=${filterSize(host)}
+                            text="${host.getFilterOperatorLabel(operator)}"
+                            value="${operator}"
+                            ?selected=${operator === selectedOperator}
+                    ></sf-list-item>
+                `)}
+            </sf-dropdown>
+        </div>
+    `;
+}
+
+function renderDateFilterControl(field, host) {
+  const control = host.getFilterControlValue(field.key);
+  const operators = field.filter?.operators || ['eq'];
+  const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
+  const isBetween = selectedOperator === 'between';
+  const dateValue = isBetween && Array.isArray(control.value) ? control.value : isBetween ? ['', ''] : control.value || '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="flex flex-col gap-1/3">
+            <sf-input-date
+                    .value=${dateValue}
+                    ?range=${isBetween}
+                    name="sf_filter_${field.key || 'date'}"
+                    locale="ru-Ru"
+                    @change=${event => {
+    host.patchTempFilterValue(field.key, {
+      value: event.detail.value,
+      operator: selectedOperator
+    });
+  }}
+            ></sf-input-date>
+            <sf-dropdown
+                    size=${filterSize(host)}
+                    appearance="outlined"
+                    mode="select"
+                    placeholder="${setText(host, 'operator')}"
+                    root-class="flex-1"
+                    search="false"
+                    @change=${event => {
+    const operator = event.detail?.values?.[0] || event.detail?.value || selectedOperator;
+    host.patchTempFilterValue(field.key, {
+      operator
+    });
+  }}
+            >
+                ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                    <sf-list-item
+                            kind="text"
+                            size=${filterSize(host)}
+                            text="${host.getFilterOperatorLabel(operator)}"
+                            value="${operator}"
+                            ?selected=${operator === selectedOperator}
+                    ></sf-list-item>
+                `)}
+            </sf-dropdown>
+        </div>
+    `;
+}
+
+function renderMultiSelectFilterControl(field, host) {
+  const endpointPage = host.getEndpointFilterPage(field);
+  const options = host.getVisibleFilterOptions(field);
+  const value = host.getFilterControlValue(field.key);
+  const search = host.getFilterOptionSearch(field.key);
+  const selected = new Set(value.values || []); // A list of options scrolls down, never sideways: a checkbox's ring a pixel
+  // or two past the edge drew a horizontal bar under the list (owner,
+  // 2026-10-15).
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="flex flex-col gap-1/2 overflow-x-hidden">
+            ${field.filter?.searchable && (!endpointPage || endpointPage.searchable) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <sf-input
+                        size=${filterSize(host)}
+                        appearance="filled"
+                        placeholder="${setText(host, 'searchInList')}"
+                        value="${search}"
+                        name="sf_filter_${field.key || 'list'}_search"
+                        @input=${event => {
+    host.patchTempFilterOptionSearch(field.key, event.target?.value || '');
+  }}
+                        @change=${event => {
+    host.patchTempFilterOptionSearch(field.key, event.target?.value || '');
+  }}
+                ></sf-input>
+            ` : ''}
+            <div class="flex flex-col gap-1/2 overflow-x-hidden" data-size="4.5">
+                ${options.map(option => host.renderFilterOption(field, option, selected))}
+            </div>
+            ${!options.length && endpointPage?.status !== 'loading' && endpointPage?.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <!-- A list with nothing in it says why, in one line, as every
+                     list does (simai.interaction-rules, five states). -->
+                <sf-empty-state layout="inline" size="1/2" kind=${search ? 'nothing-found' : 'no-data'}></sf-empty-state>` : ''}
+            ${endpointPage ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div role="status" aria-live="polite" class="sf-text-1">
+                    ${endpointPage.status === 'loading' ? setText(host, 'loadingOptions') : ''}
+                </div>
+                ${endpointPage.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-empty-state layout="inline" size="1/2" kind="error" text=${setText(host, 'optionsError')}
+                    @sf-empty-state-action=${event => {
+    if (event.detail?.id === 'retry') host.loadEndpointFilterPage(field, null, search);
+  }}></sf-empty-state>` : ''}
+                ${endpointPage.nextCursor && endpointPage.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button appearance="outline" size=${filterSize(host)} text="${setText(host, 'loadMore')}"
+                    ?disabled=${endpointPage.status === 'loading'}
+                    @click=${() => host.loadEndpointFilterPage(field, endpointPage.nextCursor, search)}></sf-button>` : ''}
+            ` : ''}
+        </div>
+    `;
+}
+
+function renderEntityMultiSelectFilterControl(field, host) {
+  // The host travels with the call. It was lost here when these functions were
+  // moved out of the table: as a method, `this.renderMultiSelectFilterControl(field)`
+  // carried the receiver by itself, and as a function it has to be handed on.
+  // The source suite renders no entity control, so nothing in it noticed; the
+  // filter-endpoint probe did, with "Cannot read properties of undefined".
+  return renderMultiSelectFilterControl(field, host);
+} // The filter template, addressed by the property type. The nine control names
+// the table used are kept as aliases of the types they serve, so a host that
+// declares a control by name keeps working while a host that declares a
+// property type gets the same renderer.
+// A file is filtered by its kind, a colour by the field's palette (owner,
+// 2026-10-15): both fell back to a text search. The filter's values are the
+// kinds -- image, document, archive, other -- or the colours, with the
+// operator «in»; what a kind holds is the host's to say.
+
+
+function renderFileFilterControl(field, host) {
+  const options = field.filter?.options ?? ['image', 'document', 'archive', 'other'].map(kind => ({
+    value: kind,
+    label: setText(host, `fileKind_${kind}`)
+  }));
+  return renderMultiSelectFilterControl({ ...field,
+    filter: { ...(field.filter || {}),
+      options,
+      defaultOperator: field.filter?.defaultOperator ?? 'in'
+    }
+  }, host);
+}
+
+function renderColorFilterControl(field, host) {
+  const palette = field.filter?.options ?? (Array.isArray(field.swatches) ? field.swatches : []).map(swatch => typeof swatch === 'string' ? {
+    value: swatch,
+    label: swatch
+  } : swatch).filter(swatch => swatch?.value).map(swatch => ({
+    value: swatch.value,
+    label: swatch.label ?? swatch.value,
+    color: swatch.value
+  })); // No palette, nothing to choose from: the value is searched as text.
+
+  if (!palette.length) return renderTextFilterControl(field, host);
+  return renderMultiSelectFilterControl({ ...field,
+    filter: { ...(field.filter || {}),
+      options: palette,
+      optionRenderer: field.filter?.optionRenderer ?? 'swatch',
+      defaultOperator: field.filter?.defaultOperator ?? 'in'
+    }
+  }, host);
+}
+
+const FILTER_RENDERERS = {
+  text: renderTextFilterControl,
+  string: renderTextFilterControl,
+  number: renderNumberFilterControl,
+  integer: renderNumberFilterControl,
+  date: renderDateFilterControl,
+  datetime: renderDateFilterControl,
+  range: renderRangeFilterControl,
+  'date-range': renderDateFilterControl,
+  'multi-select': renderMultiSelectFilterControl,
+  'single-select': renderMultiSelectFilterControl,
+  choice: renderMultiSelectFilterControl,
+  choices: renderMultiSelectFilterControl,
+  boolean: renderMultiSelectFilterControl,
+  user: renderMultiSelectFilterControl,
+  'entity-multi-select': renderEntityMultiSelectFilterControl,
+  'entity-single-select': renderEntityMultiSelectFilterControl,
+  record: renderEntityMultiSelectFilterControl,
+  relation: renderEntityMultiSelectFilterControl,
+  lookup: renderEntityMultiSelectFilterControl,
+  file: renderFileFilterControl,
+  color: renderColorFilterControl,
+  // The types a component set draws (property-view port 1.18.0): a money
+  // amount and a percent are filtered as numbers (the host compares the
+  // amount, as a decimal), and an items field by its number of rows.
+  money: renderNumberFilterControl,
+  percent: renderNumberFilterControl,
+  items: renderNumberFilterControl
+}; // What a field asks to be filtered by: its own declared control if it has one,
+// otherwise its property type, otherwise text.
+
+function renderFilterField(field = {}, host) {
+  const asked = field.filter?.control || field.propertyType || field.type || field.dataType || 'text';
+  const renderer = FILTER_RENDERERS[asked] || FILTER_RENDERERS.text;
+  return renderer(field, host);
+} // The cell template. A cell is text unless the Framework has a component that
+// says more than the text would, and the set renders one only when it can state
+// the shape the value must have. Anything else falls back to the value itself,
+// so a host that stores a plain string keeps seeing a plain string.
+//
+// The value shapes are the consumer's, agreed with Larena on 2026-10-06: a
+// renderer cannot turn an opaque reference into a name, and resolving one needs
+// an access check, so the host sends what it has resolved.
+//
+//   choice              a value matching one of the column's options
+//   integer / number    a number, and with the `scale` variant a number 0..100
+//   boolean             true or false
+//   user                {value, label, avatarText}
+//   record / relation   {value, label, href?} -- href only when it may be opened
+//   lookup              {value, label}, or a list of them when multiple; the
+//                       labels on one line
+//   file                {value, label, mime?, href?} -- an icon from the mime
+//                       type and the label, a link when it may be opened
+//   choices             a list of option values; one tag per value on the line
+//   html                an HTML string of sf-input-rich's subset; its text, on one line
+//
+// Every element here takes `line`, not `size`: a line element is the row's text
+// line, where a control height would make the row grow. That was measured --
+// with size-1/2 components a default row went from 57 to 61 on desktop and 45 to
+// 51 on mobile.
+
+const CELL_LINE = '1/2'; // A choice badge in a cell is tonal (sf-badge's default since 1.6.0, C140; it
+// was main, so the cells shipped filled and the consumer's owner asked for the
+// calmer one) -- and a table row is the place for it: a column of
+// filled badges reads as a column of buttons. A field may still ask for another
+// of the three, which is the same arrangement as the boolean's words: the set
+// carries a sensible default, not a decision nobody can change.
+//
+// It composes with colour rather than replacing it. A scheme name reaches the
+// scheme's tonal badge; a hue or a hex colour writes the public
+// --sf-badge-background-color as the nearest palette hue's fill step (BG-7,
+// C140 (2)) and its own text colour, so the tint survives the appearance
+// untouched. Both are measured on the built bytes.
+
+const CELL_BADGE_APPEARANCE = 'tonal'; // A file cell is a reference link with an icon chosen from the mime type: the
+// consumer asked for an icon and the label and nothing else -- no size as text
+// and no download button, which the record view will carry -- and the component
+// that owns that shape already exists. sf-file-preview detects only image/*, so
+// this small map lives here until a second caller needs it, which is the session
+// that owns that component's own judgement.
+
+const FILE_ICONS = [[/^image\//u, 'image'], [/^video\//u, 'movie'], [/^audio\//u, 'audiotrack'], [/^text\/(csv|tab-separated-values)$/u, 'table'], [/^text\//u, 'description'], [/pdf$/u, 'picture_as_pdf'], [/(zip|compressed|tar|rar|7z)/u, 'folder_zip'], [/(sheet|excel|spreadsheet)/u, 'table'], [/(word|document)$/u, 'description'], [/(presentation|powerpoint)/u, 'slideshow']];
+
+function fileIcon(mime) {
+  const value = String(mime || '').toLowerCase();
+  const match = FILE_ICONS.find(([pattern]) => pattern.test(value));
+  return match ? match[1] : 'attach_file';
+} // A colour has the same four faces as every other property. It was absent while a
+// running Larena site declares fourteen colours, so a theme colour had nowhere to
+// be shown and nowhere to be changed.
+//
+// `inheritedValue` matters here as much as the value: the site's own colours are
+// inherited from the theme until somebody chooses one, and a cell that drew the
+// inherited colour as the value would say a record had decided something it had
+// not.
+
+
+function renderColorCell(field, value) {
+  const hex = scalarValue(value);
+  if (!hex) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The component, not a span with classes of its own: the renderer set has no
+  // stylesheet, so markup invented here would reach no rules at all -- and a
+  // colour should look the same in a cell as it does in a card, which is what a
+  // general part is for.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-color size="1/2" appearance="plain" value=${String(hex)}
+                  aria-label=${field.label || field.key || ''} disabled></sf-input-color>
+    `;
+} // Reads what port 1.8.0 declares: `inherited` says a value comes from somewhere
+// else, `inheritedValue` says what it is. A view that drew the inherited colour as
+// the value would make «not set» and «set to the same colour» look identical, and
+// only the first follows the theme when the theme moves.
+
+
+function renderColorView(field, value) {
+  const hex = scalarValue(value);
+  const inherited = field.inheritedValue ?? '';
+  if (!hex && !inherited) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-color
+                size="1"
+                appearance="plain"
+                value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                disabled
+        ></sf-input-color>
+    `;
+}
+
+function renderColorEdit(field, value, host) {
+  const hex = scalarValue(value);
+  const inherited = field.inheritedValue ?? '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-color
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                swatches=${field.swatches ? String(field.swatches) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?clearable=${Boolean(inherited) || field.required !== true}
+                ?disabled=${field.readonly === true}
+                aria-label=${field.label || field.key || ''}
+                @change=${event => host.setFieldValue(field, event.detail?.value ?? '')}
+        ></sf-input-color>
+    `;
+}
+
+function renderFileCell(field, value) {
+  if (!value || typeof value !== 'object' || !value.label) return null; // A column the host says holds images shows each as a thumbnail; any other
+  // file as a tile with its extension. Which files are images is the host's
+  // to say through the variant, never guessed from a name.
+
+  if (isImageField(field)) return renderFilePreviewCell(value);
+  return {
+    component: {
+      type: 'reference-link',
+      props: {
+        line: CELL_LINE,
+        label: String(value.label),
+        icon: fileIcon(value.mime),
+        ...(value.href ? {
+          href: String(value.href)
+        } : {})
+      }
+    }
+  };
+} // A file as a thumbnail on the row's line: the image when the host gave its
+// address and its type is an image, the extension in a tile otherwise. It is
+// sf-file-preview told to show nothing but its leading visual, so a file looks
+// the same in a row as in the record that holds it.
+
+
+function renderFilePreviewCell(value) {
+  const mime = String(value.mime ?? value.mimeType ?? '');
+  const image = Boolean(value.href) && /^image\//u.test(mime);
+  return {
+    component: {
+      type: 'file-preview',
+      props: {
+        compact: true,
+        fileName: String(value.label),
+        mimeType: mime,
+        icon: fileIcon(mime),
+        ...(value.href ? {
+          href: String(value.href)
+        } : {}),
+        ...(image ? {
+          imageUrl: String(value.href),
+          kind: 'image'
+        } : {
+          kind: 'icon'
+        }),
+        actions: false,
+        downloadAction: false,
+        removeAction: false
+      }
+    }
+  };
+} // Several values in one cell: one tag per value, each on the row's text line.
+// The tag's `line` resolves its own size and inline mode, so neither is passed
+// -- the session that owns it fixed the template to read the resolved values
+// rather than the attributes, which is what makes that true.
+
+
+function renderChoicesCell(field, value) {
+  if (!Array.isArray(value) || !value.length) return null;
+  if (String(field.variant ?? '') === 'badges') return renderChoicesBadgesCell(field, value);
+  const options = field.options || field.filter?.options || field.constraints?.options;
+
+  const label = item => {
+    const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(item)) : null;
+    return String(option?.label ?? option?.text ?? item);
+  };
+
+  return value.map(item => ({
+    component: {
+      type: 'tag',
+      props: {
+        line: CELL_LINE,
+        kind: 'default',
+        text: label(item)
+      }
+    }
+  }));
+} // Several values as tonal badges, each coloured by its option's scheme -- a
+// page's publication in each language. A value may be {value, text}: the host
+// says more in that one cell than the option's label («ru · 14.10 09:00»), which
+// is the host's to format, so the set does not.
+
+
+function renderChoicesBadgesCell(field, value) {
+  const options = field.options || field.filter?.options || field.constraints?.options;
+  return value.map(item => {
+    const key = item && typeof item === 'object' ? item.value : item;
+    const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(key)) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    const text = item && typeof item === 'object' && item.text !== undefined ? String(item.text) : String(option?.label ?? option?.text ?? key);
+    return {
+      component: {
+        type: 'badge',
+        props: {
+          line: CELL_LINE,
+          text,
+          appearance: field.badgeAppearance ?? CELL_BADGE_APPEARANCE,
+          ...(badge?.scheme ? {
+            scheme: badge.scheme
+          } : {}),
+          ...(badge?.rootStyle ? {
+            rootStyle: badge.rootStyle
+          } : {})
+        }
+      }
+    };
+  });
+}
+
+const CELL_RENDERERS = {
+  // A string is its own text in a row -- except a password, which is never
+  // shown anywhere: a row says whether one is set.
+  string: renderStringCell,
+  // A date in a row used to be whatever the host had stored, printed --
+  // «2026-09-25T07:12:00+03:00» beside the same value reading «25 сентября
+  // 2026» in the record panel, with no way for a consumer to change the
+  // first. These two ask the host and fall through to the stored value when
+  // it has nothing to say.
+  date: renderDateCell,
+  datetime: renderDateCell,
+  time: renderHostFormattedCell,
+  boolean: renderBooleanCell,
+  choices: renderChoicesCell,
+  file: renderFileCell,
+  color: renderColorCell,
+  include: renderIncludeCell,
+  choice: renderChoiceCell,
+  integer: renderNumericCell,
+  number: renderNumericCell,
+  user: renderUserCell,
+  record: renderReferenceCell,
+  relation: renderReferenceCell,
+  lookup: renderLookupCell,
+  html: renderHtmlCell,
+  money: renderMoneyCell,
+  percent: renderPercentCell,
+  items: renderItemsCell
+}; // A consumer found this on their stand: the words were written into the set, so
+// an English admin saw «Да». The set must not decide what a value is called in
+// anyone's language. They come from the field, which is where the rest of the
+// Framework keeps its text -- sf-view-table declares fourteen such inputs -- and the
+// Russian stays only as the fallback, so nothing already published changes.
+// The field's own words win, as they must: what «true» is called belongs to
+// whoever owns the interface. The fallback used to be Russian whatever the page
+// was -- an English admin saw «Да» -- so it follows the page's language now.
+
+function booleanWords(field, host) {
+  return {
+    yes: field.trueText ?? field.labels?.true ?? setText(host, 'yes'),
+    no: field.falseText ?? field.labels?.false ?? setText(host, 'no')
+  };
+}
+
+function renderBooleanCell(field, value, host) {
+  if (typeof value !== 'boolean') return null;
+  const words = booleanWords(field, host);
+  return value ? words.yes : words.no;
+}
+
+function renderChoiceCell(field, value) {
+  const options = field.options || field.filter?.options || field.constraints?.options;
+  if (!Array.isArray(options)) return null;
+  const option = options.find(item => String(item?.value) === String(value));
+  if (!option) return null;
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option);
+  return {
+    component: {
+      type: 'badge',
+      props: {
+        line: CELL_LINE,
+        text: option.label ?? option.text ?? String(value),
+        appearance: field.badgeAppearance ?? CELL_BADGE_APPEARANCE,
+        ...(badge?.scheme ? {
+          scheme: badge.scheme
+        } : {}),
+        ...(badge?.rootStyle ? {
+          rootStyle: badge.rootStyle
+        } : {})
+      }
+    }
+  };
+} // The scale is the `scale` variant of a number, and sf-progress-scale takes a
+// value between 0 and 100 with no bounds of its own -- which is why the request
+// asks for the variant on a field declaring exactly min 0 and max 100. A value
+// outside that range is left as text rather than clamped: a clamped number is a
+// wrong number drawn confidently.
+// A cell the host has formatted. Null when it has not, so the value falls
+// through to the plain one the table already prints: the set does not invent a
+// format, and «798700» is a better answer than a thousands separator somebody
+// did not ask for. What it does not do is leave a consumer no way to say
+// «798 700 ₽» -- which was the state of a list until the host reached the cells.
+
+
+function renderHostFormattedCell(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  return typeof formatted === 'string' && formatted !== '' ? formatted : null;
+} // The types a component set draws (property-view port 1.18.0) have their
+// cells here, so a table shows them wherever the set's editors live. A host's
+// formatFieldValue wins, as for a date; otherwise the page's language:
+//
+//   money     {amount, currency} or a bare amount under a fixed `currency`;
+//             «1 500,50 ₽», every digit the amount has and at least the
+//             currency's minor units, formatted from the digits, never a float
+//   percent   a decimal string of the percent, «12,5 %»
+//   items     a list of rows; how many, «3 строки»
+//
+// A value that is not one of these shapes falls through to the plain value.
+
+
+function renderMoneyCell(field, value, host) {
+  const formatted = renderHostFormattedCell(field, value, host);
+  if (formatted !== null) return formatted;
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  return text || null;
+}
+
+function renderPercentCell(field, value, host) {
+  const formatted = renderHostFormattedCell(field, value, host);
+  if (formatted !== null) return formatted;
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  return text || null;
+}
+
+function renderItemsCell(field, value, host) {
+  const formatted = renderHostFormattedCell(field, value, host);
+  if (formatted !== null) return formatted;
+  if (!Array.isArray(value)) return null;
+  return value.length ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'rowCount', host ?? null, {
+    component: SET_NAME,
+    count: value.length
+  }) : '';
+} // A date in a row reads as it does in the record panel: the host's text, else
+// the page's reading of the day (simai/ui-source#34); null for a value that is
+// not a date, which the table prints as it came.
+
+
+function renderDateCell(field, value, host) {
+  const formatted = renderHostFormattedCell(field, value, host);
+  if (formatted !== null) return formatted;
+  return defaultDateText(field, value, host);
+}
+
+function renderNumericCell(field, value, host) {
+  const variant = field.variant || field.filter?.variant;
+  const number = Number(scalarValue(value));
+
+  if (variant !== 'scale' || !Number.isFinite(number)) {
+    return renderHostFormattedCell(field, value, host);
+  }
+
+  if (number < 0 || number > 100) return null;
+  return {
+    component: {
+      type: 'progress-scale',
+      props: {
+        line: CELL_LINE,
+        value: String(number)
+      }
+    }
+  };
+} // A reference in a cell is a link and nothing else: the arrow a reference card
+// carries said «goes somewhere» a second time beside a label that is already a
+// link, and on a dense row it was the widest thing in the cell. Without an href
+// the label is plain text -- a link that leads nowhere is not drawn as one.
+
+
+function referenceLink(value) {
+  return {
+    component: {
+      type: 'reference-link',
+      props: {
+        line: CELL_LINE,
+        appearance: 'plain',
+        icon: '',
+        label: String(value.label),
+        ...(value.href ? {
+          href: String(value.href)
+        } : {})
+      }
+    }
+  };
+} // A person: the avatar and the name, the name a link to the profile when the
+// host gives its href.
+
+
+function renderUserCell(field, value) {
+  if (!value || typeof value !== 'object' || !value.label) return null;
+  return [// The person's name is the avatar's heading: its accessible name and
+  // the source of its initials (sf-avatar 1.6.0; avatar study AV-2).
+  {
+    component: {
+      type: 'avatar',
+      props: {
+        line: CELL_LINE,
+        text: value.avatarText || '',
+        heading: String(value.label)
+      }
+    }
+  }, value.href ? referenceLink(value) : String(value.label)];
+}
+
+function renderReferenceCell(field, value) {
+  if (!value || typeof value !== 'object' || !value.label) return null;
+  return referenceLink(value);
+} // A value from a reference list is its label, and several are their labels in
+// a row: nothing opens from a country or a status, so there is no link to draw.
+
+
+function renderLookupCell(field, value) {
+  const items = lookupItems(field, value);
+  return items.length ? items.map(item => item.label).join(', ') : null;
+} // Formatted text in a row is its text, as a text cell is: the markup is for a
+// record, and a row of headings and lists would not be a row. A string, so the
+// table draws and cuts it exactly as it does any text value.
+
+
+function renderHtmlCell(field, value) {
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.htmlText)(value) || null;
+} // What a cell should hold for a field, in the same shape a host would pass: a
+// string, an object with a component, or a list of those. Null means the value
+// is better off as itself. Returning the host's own shape is deliberate -- the
+// table renders it through the path it already had, so the set adds no second
+// way to draw a cell.
+
+
+function renderCellField(field = {}, value, host) {
+  const asked = field.propertyType || field.type || field.dataType;
+  const renderer = CELL_RENDERERS[asked];
+  if (!renderer) return null; // `host` is for one thing, as in the view: formatFieldValue, where a
+  // consumer's own formatting of a number or a date belongs. A cell had no way
+  // to reach it, so a list could not be formatted at all while the record
+  // panel beside it could.
+
+  const rendered = renderer(field, value, host);
+  return rendered === null || typeof rendered === 'undefined' ? null : rendered;
+} // The edit template. A field being edited is a control of the form scale, not of
+// a row: these take `size`, where the cell template takes `line`.
+//
+// The host supplies the value and takes the change, through two methods, because
+// a renderer must not decide where a value lives:
+//
+//   getFieldValue(field)          what the control shows
+//   setFieldValue(field, value)   what the control writes
+//
+// Every event bound here is `change`, and that is a rule now rather than a
+// coincidence: contracts/public-api-axes.json `change_event` says every form
+// value control reports a committed change as `change` on its host, once per
+// change the user makes, with each older name kept as an alias the manifest
+// marks `alias_of`. So the set binds the canonical name for all of them --
+// sf-input, sf-textarea, sf-switch, sf-checkbox, sf-dropdown, sf-segmented and
+// sf-datepicker -- where it bound three different alias names before. The one
+// event this file still binds under its own name is sf-file-upload:select,
+// which is not a value change but a selection; the `change` on that component
+// is its inner input's.
+// The size the controls are drawn at: 1, or 1/2 when the host asks for it
+// with renderEditField(…, {size: '1/2'}) -- a record view beside a table at
+// 1/2 read a step larger than it (owner, 2026-10-14). Set for the duration of
+// one synchronous render.
+
+let EDIT_SIZE = '1';
+const EDIT_RENDERERS = {
+  record: renderRecordLookup,
+  relation: renderRecordLookup,
+  user: renderRecordLookup,
+  lookup: renderLookupEdit,
+  string: renderTextEdit,
+  text: renderTextAreaEdit,
+  html: renderHtmlEdit,
+  integer: renderNumberEdit,
+  number: renderNumberEdit,
+  date: renderDateEdit,
+  datetime: renderDateTimeEdit,
+  time: renderTimeEdit,
+  boolean: renderBooleanEdit,
+  choice: renderChoiceEdit,
+  choices: renderChoicesEdit,
+  file: renderFileEdit,
+  color: renderColorEdit,
+  include: renderIncludeEdit
+};
+
+function fieldName(field) {
+  return `sf_field_${field.key || 'value'}`;
+} // A telephone is a string with a shape, not a type of its own: the Framework
+// already has a control that knows country codes, dial prefixes and masks, so a
+// `string` whose variant is `phone` gets it and everything else about a string
+// stays true. Counted on a running Larena site, which declares one.
+
+
+function renderPhoneEdit(field, value, host) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-country
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                value=${scalarValue(value) ?? ''}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                ?disabled=${field.readonly === true}
+                use-mask="true"
+                show-code="true"
+                @change=${event => host.setFieldValue(field, event.detail?.value ?? event.target?.value ?? '')}
+        ></sf-input-country>
+    `;
+} // A password is a string the set never shows (owner, 2026-10-19; Larena's
+// storage settings). The host never sends one: the value of a `password`
+// variant is {set: true} or {set: false}, and null or an absent value reads as
+// not set. View, cell and a read-only field say «задан» or «не задан» in the
+// page's language and nothing else. A host that sends a string by mistake gets
+// «задан» for it, and the string is still not drawn.
+//
+// The edit control starts empty whatever is stored, and it writes only what a
+// person types: an untouched field calls nothing, so a save carries no value for
+// it and can neither clear nor echo a password. Typing and then erasing writes
+// `undefined` -- the person took the change back, and a host drops the key.
+// Clearing a set password is not offered: an empty field means «keep».
+//
+// The typed text lives in the input and nowhere else: no `value` attribute on
+// sf-input, no data-*, no text node, no log. The eye that shows the password is
+// sf-input's own (C123 (4): a glyph inside the field, the crossed eye after a
+// press); the set drew a second one beside the field until the text inputs
+// study (TI-7), so a record card showed two.
+
+
+function isPasswordField(field) {
+  return String(field.variant ?? '') === 'password';
+}
+
+function passwordIsSet(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) return value.set === true;
+  return typeof value === 'string' && value !== '';
+}
+
+function passwordState(host, value) {
+  return setText(host, passwordIsSet(value) ? 'passwordSet' : 'passwordUnset');
+}
+
+function renderPasswordEdit(field, value, host) {
+  const set = passwordIsSet(value);
+  const placeholder = field.placeholder || (set ? setText(host, 'passwordKeep') : '');
+
+  const write = event => {
+    const typed = event.target?.value ?? '';
+    host.setFieldValue(field, typed === '' ? undefined : typed);
+  }; // A set password is not required again: an empty field keeps it. Spellcheck
+  // is off on the wrapper: the attribute is inherited, and sf-input does not
+  // declare it (a shown password would otherwise be sent to a spellchecker).
+
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-password flex items-cross-center gap-1/3 min-w-0" spellcheck="false">
+            <sf-input
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    root-class="flex-1 min-w-0"
+                    input-type="password"
+                    autocomplete="new-password"
+                    name=${fieldName(field)}
+                    placeholder=${placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ?required=${Boolean(field.required) && !set}
+                    aria-label=${field.label || field.key || ''}
+                    @input=${write}
+                    @change=${write}
+            ></sf-input>
+        </span>
+    `;
+}
+
+function renderStringCell(field, value, host) {
+  return isPasswordField(field) ? passwordState(host, value) : null;
+}
+
+function renderStringView(field, value, host) {
+  if (isPasswordField(field)) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${passwordState(host, value)}</span>`;
+  return renderTextView(field, value, host);
+} // A file shown as what it is. The site keeps logos, so a file whose variant says
+// image is drawn as the image rather than as a row with a paperclip -- the same
+// stored file, told apart by the host rather than guessed from a file name.
+
+
+const IMAGE_VARIANTS = new Set(['image', 'image-card', 'image-list']);
+
+function isImageField(field) {
+  return IMAGE_VARIANTS.has(String(field.variant ?? ''));
+} // A block of text or code the host keeps in a file: six of them on a running
+// Larena site -- scripts in the head, an included area. It is a property like any
+// other, so it is shown and edited here rather than behind a separate screen.
+//
+// `language` is the host's, never guessed from the text: a component that decided
+// a file was JavaScript because it saw a brace would be wrong about every template
+// that contains one. Without a language it is plain text and says so by looking
+// like text.
+//
+// No syntax colouring. That needs an editor component, which is its own part with
+// its own decision; a monospace area that keeps indentation is honest, usable and
+// does not pretend to be more.
+
+
+function renderIncludeView(field, value) {
+  const text = scalarValue(value);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <pre class="sf-field-include" data-language=${field.language ? String(field.language) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><code>${String(text)}</code></pre>
+    `;
+} // The include editor is code (C141 (8)): sf-input-textarea's text="code" --
+// the code font, spelling off, no wrapping -- at a fixed eight rows.
+
+
+function renderIncludeEdit(field, value, host) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-textarea
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                class="sf-field-include-edit"
+                name=${fieldName(field)}
+                value=${scalarValue(value) ?? ''}
+                rows="8"
+                text="code"
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                ?disabled=${field.readonly === true}
+                @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
+                @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
+        ></sf-input-textarea>
+    `;
+}
+
+function renderIncludeCell(field, value) {
+  const text = scalarValue(value);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // One line in a cell: a script in a table row is a fact about the record, not
+  // something to read there.
+
+  const first = String(text).split('\n')[0];
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<code>${first.length > 60 ? `${first.slice(0, 60)}…` : first}</code>`;
+}
+
+function renderTextEdit(field, value, host) {
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskPattern)(field);
+  if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
+  if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
+  if (mask) return renderMaskedEdit(field, value, host, mask);
+  value = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
+                @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
+        ></sf-input>
+    `;
+} // A string typed through a mask (simai.property-view-port 1.16.0, field.mask;
+// consumer simai.main, agreed contract q-b0de123841). The control is the stock
+// sf-input with its own mask -- the Framework grammar, the same mask-pattern a
+// page writes by hand -- so the typing, the caret and the fixed parts are the
+// field's and nothing here formats a character.
+//
+// What the set adds is the one thing sf-input does not say: whether the text
+// fills the pattern (./mask.js). The value written is the text as shown, fixed
+// parts included («+7 (912) 345-67-89»): the host stores what it gets. Empty is
+// not incomplete -- an optional masked field may be cleared, and writes null,
+// or "" for a field that declares `nullable: false`. Required stays a mark: an
+// empty required field is written as cleared and the host validates it.
+//
+// An incomplete text is not a value. The host hears it through the optional
+// setFieldError(field, message) on every keystroke -- null once the text is
+// complete or empty -- so a panel can hold both of its saves while any masked
+// field in it is incomplete, each field on its own. The control marks itself
+// invalid with the stock message only once the person leaves it (change):
+// shouting «Заполните поле полностью» at the first digit of a phone would be
+// an error for typing. A completed or cleared text takes the mark off at once.
+//
+// What is written while incomplete depends on the host. A host that hears
+// errors gets the text as typed, because it re-renders with the value it was
+// given and anything else would put an older text over the person's typing (a
+// value attribute that moves is written into the input). A host that does not
+// hear errors cannot hold a save, so the change is withdrawn with undefined,
+// as the datetime pair does: what it saves is never the half-typed text.
+
+
+function renderMaskedEdit(field, value, host, mask) {
+  value = scalarValue(value);
+  const cleared = field.nullable === false ? '' : null;
+
+  const write = (event, left) => {
+    const input = event.currentTarget;
+    const text = String(input?.value ?? '');
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskState)(text, mask);
+
+    if (state === 'incomplete') {
+      const message = setText(host, 'maskIncomplete');
+
+      if (left && input) {
+        input.setAttribute('error-message', message);
+        input.toggleAttribute('invalid', true);
+      }
+
+      if (typeof host.setFieldError === 'function') {
+        host.setFieldError(field, message);
+        host.setFieldValue(field, text);
+      } else {
+        host.setFieldValue(field, undefined);
+      }
+
+      return;
+    }
+
+    if (input?.hasAttribute('invalid')) {
+      input.toggleAttribute('invalid', false);
+      input.removeAttribute('error-message');
+    }
+
+    host.setFieldError?.(field, null);
+    host.setFieldValue(field, state === 'empty' ? cleared : text);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                autocomplete="off"
+                mask
+                mask-pattern=${mask}
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => write(event, false)}
+                @change=${event => write(event, true)}
+        ></sf-input>
+    `;
+}
+
+function renderTextAreaEdit(field, value, host) {
+  value = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-textarea
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
+                @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
+        ></sf-input-textarea>
+    `;
+} // Formatted text (property-view port 1.17.0): sf-input-rich, named as the
+// textarea is. The editor cleans its own value -- what it is given, every
+// paste and every edit -- so what it writes back is already the subset. The
+// value is read from the element the listener is on: sf-input-rich says input
+// and change from its editing surface inside it, which has no value of its own.
+
+
+function renderHtmlEdit(field, value, host) {
+  value = scalarValue(value);
+
+  const write = event => host.setFieldValue(field, event.currentTarget?.value ?? '');
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-rich
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${typeof value === 'string' ? value : ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?required=${Boolean(field.required)}
+                ?disabled=${EDIT_DISABLED}
+                aria-label=${field.label || field.key || ''}
+                @input=${write}
+                @change=${write}
+        ></sf-input-rich>
+    `;
+} // A number edited with steps (owner, 2026-10-25): an integer or a number whose
+// variant is `stepper` gets sf-input-quantity -- «−» and «+», the arrow keys, the
+// bounds the field names -- and every other number keeps the plain sf-input
+// below. The bounds, the step and (for a number) the digits are the field's
+// own keys, read by this variant alone: a renderer still does not enforce a
+// constraint, the stepper only stops at it and the host validates the record.
+//
+// An integer has no digits after the point, whatever the field says. A number
+// takes `precision`, else the digits its `step` implies, else two: a number
+// field whose stepper could not take a decimal mark would be an integer field.
+// The value goes out as the stepper's number, or null when the field is
+// emptied; the panel prints the label, so the control takes it as its
+// accessible name only.
+
+
+function isStepperField(field) {
+  return String(field.variant ?? '') === 'stepper';
+}
+
+function stepperNumber(raw) {
+  if (raw === null || raw === undefined || raw === '') return '';
+  const number = Number(raw);
+  return Number.isFinite(number) ? String(number) : '';
+}
+
+function renderStepperEdit(field, value, host) {
+  const decimal = (field.propertyType || field.type) === 'number';
+  const step = stepperNumber(field.step);
+  const precision = decimal ? stepperNumber(field.precision) || (step ? '' : '2') : '0';
+
+  const write = event => host.setFieldValue(field, event.detail?.value ?? null);
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-quantity
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                value=${stepperNumber(scalarValue(value))}
+                min=${stepperNumber(field.min) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max=${stepperNumber(field.max) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                precision=${precision || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                ?disabled=${field.readonly === true}
+                @input=${write}
+                @change=${write}
+        ></sf-input-quantity>
+    `;
+} // A number is a decimal (property-view port 1.18.0: «never a float on the
+// wire»). What is typed is read with a comma or a point and spaces between
+// groups. A number field whose value arrives as a string, or that declares
+// `precision`, is a decimal-string field: it writes the canonical decimal
+// string («1500.50»), never a float, and refuses more digits after the point
+// than `precision` allows. Any other number field writes a number, as before;
+// an integer field is unchanged. Text that is not a number is reported as a
+// masked string's incomplete entry is: through setFieldError, which holds the
+// save, and under the field once the person leaves it.
+
+
+function isDecimalStringField(field, value) {
+  return (field.propertyType || field.type) === 'number' && (typeof value === 'string' || Number.isInteger(field.precision));
+}
+
+function renderNumberEdit(field, value, host) {
+  if (isStepperField(field)) return renderStepperEdit(field, value, host);
+  const decimal = (field.propertyType || field.type) === 'number';
+  value = scalarValue(value);
+
+  if (!decimal) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-input
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    name=${fieldName(field)}
+                    value=${value ?? ''}
+                    inputmode="numeric"
+                    ?required=${Boolean(field.required)}
+                    aria-label=${field.label || field.key || ''}
+                    @input=${event => {
+      const next = event.target?.value ?? '';
+      host.setFieldValue(field, next === '' ? null : Number(next));
+    }}
+                    @change=${event => {
+      const next = event.target?.value ?? '';
+      host.setFieldValue(field, next === '' ? null : Number(next));
+    }}
+            ></sf-input>
+        `;
+  }
+
+  const asString = isDecimalStringField(field, value);
+
+  const write = (event, left) => {
+    const input = event.currentTarget ?? event.target;
+    const text = String(input?.value ?? '');
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(text);
+    let message = null;
+    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && Number.isInteger(field.precision) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(read.value) > field.precision) {
+      message = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
+        component: SET_NAME,
+        count: field.precision
+      });
+    }
+
+    if (message) {
+      if (left && input) {
+        input.setAttribute('error-message', message);
+        input.toggleAttribute('invalid', true);
+      }
+
+      if (typeof host.setFieldError === 'function') {
+        host.setFieldError(field, message);
+        host.setFieldValue(field, text);
+      } else {
+        host.setFieldValue(field, undefined);
+      }
+
+      return;
+    }
+
+    if (input?.hasAttribute?.('invalid')) {
+      input.toggleAttribute('invalid', false);
+      input.removeAttribute('error-message');
+    }
+
+    host.setFieldError?.(field, null);
+    if (read.value === null) host.setFieldValue(field, null);else host.setFieldValue(field, asString ? read.value : Number(read.value));
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${value ?? ''}
+                inputmode="decimal"
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => write(event, false)}
+                @change=${event => write(event, true)}
+        ></sf-input>
+    `;
+} // A date control has no clock. `sf-input-date` declares a format and a date,
+// and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
+// falls through to a loose digit scan that reads `2026-11-27T13:26:00` as day
+// 2026 of month 11 in year 27 -- an impossible date, which renders as an empty
+// input. Split the value instead: the control edits the day, and the time the
+// record already held is put back on the way out. Without that, editing the day
+// of a datetime would write a value with the clock silently zeroed, which is
+// worse than the empty control, because it looks like it worked. A `datetime`
+// field has its own editor now (renderDateTimeEdit); this keeps the clock of a
+// `date` field whose value carries one.
+
+
+const DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)(Z|[+-]\d{2}:?\d{2})?$/;
+
+function splitDateTime(value) {
+  const match = typeof value === 'string' ? value.trim().match(DATE_TIME_RE) : null;
+
+  if (!match) {
+    return {
+      date: value,
+      suffix: ''
+    };
+  }
+
+  return {
+    date: match[1],
+    suffix: `T${match[2]}${match[3] || ''}`
+  };
+}
+
+function renderDateEdit(field, value, host) {
+  value = scalarValue(value);
+  const {
+    date,
+    suffix
+  } = splitDateTime(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                value=${date ?? ''}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                @change=${event => {
+    const next = event.detail?.value ?? event.target?.value ?? null;
+    host.setFieldValue(field, next && suffix ? `${next}${suffix}` : next);
+  }}
+        ></sf-input-date>
+    `;
+} // A datetime is edited as what it is: a day and a time of day. The date
+// editor above edits the day alone and puts the record's clock back, so a new
+// record could not get a time and «15.11.2026 10:30» typed nowhere was saved
+// as «15.11.2026» (Larena acceptance, 2026-10-22). The set then drew a pair --
+// sf-input-date for the day and an sf-input masked to hh:mm for the time --
+// because the picker had no clock, and sf-view-properties drew the same pair
+// itself (duplication audit A-14). sf-input-date has a time now (1.4.0,
+// mode="datetime"), so a datetime is one control: the calendar with the time
+// row under it, typed as «15.11.2026 10:30», at the field's size, named by the
+// label.
+//
+// The value round trip (datetime.js): ISO 8601 with the time; an untouched
+// field writes nothing; a changed day keeps the stored time below the minute
+// and the zone; a changed time keeps the zone; a new value has no zone (the
+// host's local time); a cleared field writes null; coming back to what was
+// stored writes undefined -- no change. The control writes only whole values
+// (a day always has a time, a typed text that is not one is put back), so no
+// partial entry reaches the host. The day is bound as a property, so a
+// re-render with the same value does not put back what the person cleared.
+//
+// min and max (an ISO date, or a date and a time) are the control's min-date
+// and max-date; step is its minute step (1 to 60).
+
+
+function minuteStepOf(field) {
+  const step = Number(field.step);
+  return Number.isInteger(step) && step >= 1 && step <= 60 ? String(step) : '';
+}
+
+function renderDateTimeEdit(field, value, host) {
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
+  const min = typeof field.min === 'string' ? field.min : '';
+  const max = typeof field.max === 'string' ? field.max : '';
+  const step = minuteStepOf(field);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                class="sf-field-datetime"
+                mode="datetime"
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                .value=${shown}
+                min-date=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max-date=${max || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                @change=${event => {
+    // The picker's own change, not a native one from its field.
+    if (event.target !== event.currentTarget) return;
+    const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime)(stored, {
+      date,
+      time
+    });
+    if (result.error) return;
+    const same = result.value === null ? stored.known && !stored.date : result.value === stored.raw;
+    host.setFieldValue(field, same ? undefined : result.value);
+  }}
+        ></sf-input-date>
+    `;
+} // A time of day (hh:mm, or hh:mm:ss as a host stores it) is sf-input-date in
+// time mode: the time row alone, typed as «10:30». An unchanged minute writes
+// nothing and keeps the stored seconds; min and max (hh:mm) are the control's
+// min-time and max-time; step is its minute step.
+
+
+function renderTimeEdit(field, value, host) {
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime)(value);
+  const min = typeof field.min === 'string' ? field.min : '';
+  const max = typeof field.max === 'string' ? field.max : '';
+  const step = minuteStepOf(field);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                class="sf-field-time"
+                mode="time"
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                .value=${stored.time}
+                min-time=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max-time=${max || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime)(stored, String(event.detail?.value ?? ''));
+    if (result.error) return;
+    const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
+    host.setFieldValue(field, same ? undefined : result.value);
+  }}
+        ></sf-input-date>
+    `;
+} // A required boolean has two states and nothing else. In a form saved with a
+// button it is a checkbox, and a switch only where the change acts at once
+// (owner decision C165 (4), form study FM-6): a switch says «on now», which a
+// form that has not been saved has not done. The host says it acts at once with
+// renderEditField(…, {apply: 'instant'}). The checkbox carries no `required`:
+// a required yes/no is one with a value, and an unticked box is «Нет», not an
+// empty answer. An optional one is a pair of buttons with nothing chosen while
+// the value is absent -- the consumer owner's decision of 2026-10-06, and the
+// reason is that neither a switch nor a checkbox can say «не задано»: rendering
+// one over an absent value would write false on the first save, a value nobody
+// chose.
+
+
+function renderBooleanEdit(field, value, host) {
+  const optional = field.required !== true;
+
+  if (!optional && EDIT_APPLY === 'instant') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-switch
+                    size=${EDIT_SIZE}
+                    name=${fieldName(field)}
+                    ?checked=${value === true}
+                    aria-label=${field.label || field.key || ''}
+                    @change=${event => host.setFieldValue(field, Boolean(event.target?.checked))}
+            ></sf-switch>
+        `;
+  }
+
+  if (!optional) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-checkbox
+                    size=${EDIT_SIZE}
+                    name=${fieldName(field)}
+                    ?checked=${value === true}
+                    aria-label=${field.label || field.key || ''}
+                    @change=${event => host.setFieldValue(field, Boolean(event.target?.checked ?? event.detail?.checked))}
+            ></sf-checkbox>
+        `;
+  }
+
+  const words = booleanWords(field, host);
+  const items = JSON.stringify([{
+    value: 'yes',
+    label: words.yes
+  }, {
+    value: 'no',
+    label: words.no
+  }]);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-segmented
+                appearance="buttons"
+                size=${EDIT_SIZE}
+                items=${items}
+                value=${value === true ? 'yes' : value === false ? 'no' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                @change=${event => {
+    const next = event.detail?.value;
+    host.setFieldValue(field, next === 'yes' ? true : next === 'no' ? false : null);
+  }}
+        ></sf-segmented>
+    `;
+}
+
+function editOptions(field, value, multiple) {
+  const options = field.options || field.filter?.options || field.constraints?.options || [];
+  const chosen = multiple ? new Set((Array.isArray(value) ? value : []).map(item => String(item))) : new Set([String(value ?? '')]);
+  return options.map(option => ({
+    type: 'text',
+    size: '1',
+    text: option.label ?? option.text ?? String(option.value),
+    value: String(option.value),
+    selected: chosen.has(String(option.value))
+  }));
+} // A choice as buttons (simai.property-view-port 1.16.0, variant `buttons`;
+// consumer simai.main, agreed contract q-b0de123841): one segmented
+// sf-button-group, a button per option, for a short list a person reads at a
+// glance -- a kind, a tier, a yes-no-maybe. The group is the stock one: Tab
+// enters it, the arrows move and choose, Space and Enter choose, and it is a
+// radiogroup to assistive technology. It wraps when it does not fit and is
+// never replaced by a dropdown: a field that changes its control with the
+// width of a window is two fields.
+//
+// `size` is the field's own step on the ladder ("1/2", "1", "2"), absent the
+// panel's: the track of a segmented group is exactly as tall as an sf-button of
+// the same size, so the buttons stand on the line the fields beside them do.
+//
+// The value is the option's own, in its own type -- the group speaks strings,
+// so a chosen "2" is written back as the 2 the option carries -- or null.
+// Pressing the chosen button again clears it when the field is not required;
+// the group itself keeps a chosen button chosen (its select answers
+// unchanged), so the press is read in the capture phase, before the group's
+// own listener, where the value it is about to be compared with is still the
+// one shown. A required field keeps the stock behaviour: the chosen button
+// stays chosen.
+//
+// Read-only shows the chosen button chosen, in its own colours, and lets none
+// be pressed: pointer events are off on the track and a key that would choose
+// is stopped before the group hears it. Disabled is the group's own disabled,
+// in the on-disable colours. The two are different facts -- «not yours to
+// change» and «not available now» -- and drawn as the group draws them.
+
+
+const CHOICE_BUTTON_SIZES = new Set(['1/2', '1', '2']);
+const CHOOSING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ', 'Enter']);
+
+function isChoiceButtons(field) {
+  return String(field.variant ?? '') === 'buttons';
+}
+
+function renderChoiceButtons(field, value, host) {
+  value = scalarValue(value);
+  const options = (field.options || field.filter?.options || field.constraints?.options || []).filter(option => option && option.value !== null && option.value !== undefined && String(option.value) !== '');
+  const items = options.map(option => ({
+    value: String(option.value),
+    label: String(option.label ?? option.text ?? option.value),
+    ...(option.icon ? {
+      icon: String(option.icon)
+    } : {}),
+    ...(option.disabled ? {
+      disabled: true
+    } : {})
+  }));
+  const asked = String(field.size ?? '');
+  const size = CHOICE_BUTTON_SIZES.has(asked) ? asked : EDIT_SIZE;
+  const disabled = EDIT_DISABLED;
+  const locked = !disabled && field.readonly === true;
+  const clearable = field.required !== true && !locked && !disabled;
+  const chosen = value === null || value === undefined ? '' : String(value);
+
+  const optionValue = text => options.find(option => String(option.value) === text)?.value ?? text;
+
+  const press = {
+    capture: true,
+
+    handleEvent(event) {
+      const group = event.currentTarget;
+      const segment = event.target?.closest?.('[data-sf-button-group-value]');
+      if (!group || !segment || !group.contains(segment)) return;
+
+      if (locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      if (!clearable || segment.disabled) return;
+      if (segment.getAttribute('data-sf-button-group-value') !== group.value) return;
+      event.preventDefault();
+      event.stopPropagation();
+      group.clear?.();
+    }
+
+  };
+  const keys = {
+    capture: true,
+
+    handleEvent(event) {
+      if (!locked || !CHOOSING_KEYS.has(event.key)) return;
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+  };
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-segmented
+                class="sf-field-choice-buttons"
+                appearance="track"
+                size=${size}
+                root-class=${locked ? 'flex-wrap pointer-event-none' : 'flex-wrap'}
+                name=${fieldName(field)}
+                items=${JSON.stringify(items)}
+                value=${chosen || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?disabled=${disabled}
+                data-readonly=${locked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                @click=${press}
+                @keydown=${keys}
+                @change=${event => {
+    const next = String(event.detail?.value ?? '');
+    host.setFieldValue(field, next === '' ? null : optionValue(next));
+  }}
+        ></sf-segmented>
+    `;
+}
+
+function renderChoiceEdit(field, value, host) {
+  if (isChoiceButtons(field)) return renderChoiceButtons(field, value, host);
+  value = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-dropdown
+                size=${EDIT_SIZE}
+                appearance="outlined"
+                mode="select"
+                search="false"
+                name=${fieldName(field)}
+                ?required=${Boolean(field.required)}
+                value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                .options=${editOptions(field, value, false)}
+                @change=${event => host.setFieldValue(field, event.detail?.value ?? null)}
+        ></sf-dropdown>
+    `;
+} // A long list is chosen from as a checklist, not from a dropdown: a custom
+// role's 137 rights in one dropdown were a scroll inside a scroll, and what was
+// chosen could not be seen at once (Larena, 2026-10-17). The list stands in
+// two columns where the field has the room for them and in one where it does
+// not. `variant: 'checklist'` asks for it at any length; `variant: 'select'`
+// keeps the dropdown at any length.
+
+
+const CHECKLIST_FROM = 13;
+
+function renderChoicesChecklist(field, value, host) {
+  const options = field.options || field.filter?.options || field.constraints?.options || [];
+  const chosen = new Set((Array.isArray(value) ? value : []).map(item => String(item)));
+
+  const toggle = (option, on) => {
+    const next = options.filter(candidate => String(candidate.value) === String(option.value) ? on : chosen.has(String(candidate.value))).map(candidate => candidate.value);
+    host.setFieldValue(field, next);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-checklist grid gap-1/3 w-full min-w-0" role="group" aria-label=${field.label || field.key || ''}
+             style="grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr))">
+            ${options.map(option => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-checkbox size=${EDIT_SIZE}
+                    name=${fieldName(field)} value=${String(option.value)}
+                    label=${option.label ?? option.text ?? String(option.value)}
+                    .checked=${chosen.has(String(option.value))}
+                    @change=${event => toggle(option, Boolean(event.target?.checked ?? event.detail?.checked))}></sf-checkbox>`)}
+        </div>
+    `;
+}
+
+function renderChoicesEdit(field, value, host) {
+  const options = field.options || field.filter?.options || field.constraints?.options || [];
+  const variant = String(field.variant ?? '');
+
+  if (variant === 'checklist' || variant !== 'select' && options.length >= CHECKLIST_FROM) {
+    return renderChoicesChecklist(field, value, host);
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-dropdown
+                size=${EDIT_SIZE}
+                appearance="outlined"
+                mode="select"
+                multiple
+                search="false"
+                name=${fieldName(field)}
+                ?required=${Boolean(field.required)}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                .options=${editOptions(field, value, true)}
+                @change=${event => {
+    const next = event.detail?.values ?? event.detail?.value;
+    host.setFieldValue(field, Array.isArray(next) ? next : next ? [next] : []);
+  }}
+        ></sf-dropdown>
+    `;
+} // The record picker: what a record, a relation or a user is edited with.
+//
+// It is the entity-select the filter already has, pointed at records instead of
+// options and holding one value rather than several. The three cases that break
+// a picker are the ones it is built around, and the ones the probe measures
+// against the consumer's 448-target field:
+//
+//   search   hundreds of targets never fit a list, so the search is the way in
+//   paging   a page arrives with a cursor and the next is asked for
+//   off-page the chosen record is usually not on the page in front of you, so
+//            the picker shows what is chosen whether or not the page holds it
+//
+// The host does the fetching, because a page of records is a query with an
+// access check, and the renderer must not make one:
+//
+//   getFieldOptionsPage(field)                  the page the host holds
+//   loadFieldOptions(field, {cursor, search})   ask for a page
+//   getFieldOptionSearch(field) / setFieldOptionSearch(field, text)
+//
+// The value is the resolved object the consumer sends: {value, label}. The
+// picker writes the same shape back, so a host never has to re-resolve what it
+// already knew.
+// The text the set shows beyond a value: a status line, a retry, a load-more, a
+// remove label. These belong to whoever owns the interface, not to the set, so
+// the host supplies them and the Russian is only the fallback -- the same
+// arrangement as `booleanWords`, and the same reason. A host that passes nothing
+// keeps exactly what was published.
+
+
+const SET_TEXT = {
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].ru
+}; // The host's word wins, as it always did; the set's own fallback now follows
+// the page's language instead of being Russian whatever the page is. `host` is
+// the component that called the set, which is the node the rule reads from.
+// The set is not an element, so it is named here rather than taken from the
+// node: `host` is whichever component called it, and words registered for the
+// set should apply wherever it draws rather than once per host.
+
+const SET_NAME = 'sf-field-renderers';
+
+function setText(host, key) {
+  return host?.getFieldText?.(key) ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, key, host ?? null, SET_NAME);
+} // One job, one component (owner decision C139 (1), 2026-11-14): a record, a
+// relation, a user and a paged lookup are chosen with sf-input-lookup -- the
+// search the host answers, its rows with a picture and a caption, its states
+// and its chips -- where they were a searchable sf-dropdown beside a status
+// line of the set's own. sf-dropdown stays for a short list given whole (an
+// inline lookup). The dropdown path is kept until 2027-01-01 for a host that
+// asks renderEditField(…, {picker: 'dropdown'}); it is noted as deprecated.
+
+
+const DROPDOWN_PICKER_UNTIL = '2027-01-01';
+let EDIT_PICKER = '';
+
+function dropdownPicker() {
+  if (EDIT_PICKER !== 'dropdown') return false;
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__.noteDeprecated)({
+    component: 'sf-field-renderers',
+    kind: 'value',
+    attribute: 'picker',
+    from: 'dropdown',
+    to: null,
+    since: '2026-11-14',
+    remove_after: DROPDOWN_PICKER_UNTIL
+  });
+  return true;
+} // An item the lookup shows, from what the host's page holds: a user's
+// avatarText is the avatar's initials, an item's own avatar ({src} or
+// {initials}), icon, caption and match ranges travel as they are.
+
+
+function lookupItem(item) {
+  if (!item || typeof item !== 'object') return null;
+  const avatar = item.avatar && typeof item.avatar === 'object' ? item.avatar : item.avatarText ? {
+    initials: String(item.avatarText)
+  } : undefined;
+  return {
+    value: item.value,
+    label: String(item.label ?? item.text ?? item.value ?? ''),
+    ...(item.caption ? {
+      caption: String(item.caption)
+    } : {}),
+    ...(avatar ? {
+      avatar
+    } : {}),
+    ...(item.icon ? {
+      icon: String(item.icon)
+    } : {}),
+    ...(item.match ? {
+      match: item.match
+    } : {})
+  };
+} // The lookup's provider over the host's page interface (getFieldOptionsPage,
+// loadFieldOptions, getFieldOptionSearch, setFieldOptionSearch): a query is
+// one host search, a cursor its next page. The page the host already holds
+// for the same query answers at once (a record view asks the first page as
+// its group opens). A host that loads without answering a promise answers on
+// its next drawing: the page is read again until it is no longer loading.
+
+
+function hostProvider(field, host) {
+  return async (query, {
+    cursor = null,
+    signal
+  } = {}) => {
+    const text = String(query ?? '');
+    const held = host.getFieldOptionsPage(field) || null;
+    const sameSearch = (host.getFieldOptionSearch?.(field) ?? '') === text;
+    let page = held;
+    let from = 0;
+    let before = [];
+
+    if (cursor === null && sameSearch && held?.status === 'ready') {
+      page = held;
+    } else {
+      before = cursor === null || !Array.isArray(held?.items) ? [] : held.items;
+      host.setFieldOptionSearch?.(field, text);
+      await host.loadFieldOptions(field, {
+        cursor,
+        search: text
+      });
+      page = host.getFieldOptionsPage(field) || null;
+
+      for (let wait = 0; page?.status === 'loading' && wait < 100 && !signal?.aborted; wait += 1) {
+        await new Promise(done => setTimeout(done, 50));
+        page = host.getFieldOptionsPage(field) || null;
+      }
+    }
+
+    if (signal?.aborted) return {
+      items: []
+    }; // A host may join the next page to the ones it holds, or replace them
+    // with it: only what is new is answered.
+
+    const now = Array.isArray(page?.items) ? page.items : [];
+    if (before.length && now.length > before.length && now[0]?.value === before[0]?.value) from = before.length;
+    if (page?.status === 'unsupported') return {
+      status: 'unavailable'
+    };
+    if (!page || page.status === 'error' || page.status === 'loading') throw new Error(setText(host, 'recordsError'));
+    const items = (Array.isArray(page.items) ? page.items : []).slice(from).map(lookupItem).filter(Boolean);
+    return {
+      items,
+      nextCursor: page.nextCursor ?? null
+    };
+  };
+} // The page a host pages answers a hundred at most: the lookup cuts an answer
+// to max-results, and a host page is the host's own size.
+
+
+const HOST_PAGE_MOST = 100;
+
+function renderHostLookup(field, value, host, {
+  multiple,
+  placeholder
+}) {
+  // What the lookup says it chose, in the shape the set writes: {value,
+  // label}, or a list of them when multiple.
+  const resolved = item => ({
+    value: item.value,
+    label: String(item.label ?? item.value)
+  });
+
+  const write = event => {
+    if (event.target !== event.currentTarget) return;
+    const next = event.detail?.value ?? event.target?.value;
+
+    if (multiple) {
+      host.setFieldValue(field, (Array.isArray(next) ? next : []).map(resolved));
+      return;
+    }
+
+    host.setFieldValue(field, next && typeof next === 'object' ? resolved(next) : null);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            <sf-input-lookup
+                    size=${EDIT_SIZE}
+                    ?multiple=${multiple}
+                    suggest
+                    min-length="1"
+                    max-results=${String(HOST_PAGE_MOST)}
+                    name=${fieldName(field)}
+                    ?required=${Boolean(field.required)}
+                    ?disabled=${EDIT_DISABLED}
+                    placeholder=${field.placeholder || placeholder}
+                    aria-label=${field.label || field.key || ''}
+                    .value=${value ?? (multiple ? [] : null)}
+                    .provider=${hostProvider(field, host)}
+                    @change=${write}
+            ></sf-input-lookup>
+        </div>
+    `;
+} // The record picker: a record, a relation or a user, one value, searched and
+// paged by the host (C139 (1)).
+
+
+function renderRecordLookup(field, value, host) {
+  if (dropdownPicker()) return renderRecordPicker(field, value, host);
+  if (!host.loadFieldOptions || !host.getFieldOptionsPage) return null;
+  const page = host.getFieldOptionsPage(field) || null; // A host that refused this field's candidates has none to give: the field
+  // falls back to its value, read-only, as the dropdown path did.
+
+  if (page?.status === 'unsupported') return null;
+  const chosen = value && typeof value === 'object' ? value : null;
+  return renderHostLookup(field, chosen, host, {
+    multiple: false,
+    placeholder: setText(host, 'pickRecord')
+  });
+} // DEPRECATED until 2027-01-01 (C139 (1)): the record picker as a searchable
+// sf-dropdown, for a host that asks {picker: 'dropdown'}.
+
+
+function renderRecordPicker(field, value, host) {
+  if (!host.loadFieldOptions || !host.getFieldOptionsPage) return null;
+  const page = host.getFieldOptionsPage(field) || null; // A host that refused this field's candidates has none to give, now or ever.
+  // Returning nothing here puts the field on the read-only fallback, which shows
+  // the value it holds -- rather than an empty picker and a retry that cannot
+  // succeed, over a value that is actually there.
+
+  if (page?.status === 'unsupported') return null;
+  const search = host.getFieldOptionSearch?.(field) ?? '';
+  const chosen = value && typeof value === 'object' ? value : null;
+  const items = Array.isArray(page?.items) ? page.items : []; // What is chosen stays in the list even when the page does not hold it --
+  // the common case at 448 targets, and the one that makes a picker look like
+  // it has forgotten the answer.
+
+  const options = [...(chosen && !items.some(item => String(item.value) === String(chosen.value)) ? [chosen] : []), ...items].map(item => ({
+    type: 'text',
+    size: '1',
+    text: String(item.label ?? item.value),
+    value: String(item.value),
+    selected: Boolean(chosen && String(chosen.value) === String(item.value))
+  }));
+
+  const pick = next => {
+    if (!next) {
+      host.setFieldValue(field, null);
+      return;
+    }
+
+    const found = [chosen, ...items].find(item => item && String(item.value) === String(next));
+    host.setFieldValue(field, found ? {
+      value: found.value,
+      label: found.label
+    } : {
+      value: next
+    });
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            <sf-dropdown
+                    size=${EDIT_SIZE}
+                    appearance="outlined"
+                    mode="select"
+                    search="true"
+                    name=${fieldName(field)}
+                    ?required=${Boolean(field.required)}
+                    value=${chosen ? String(chosen.value) : ''}
+                    placeholder=${field.placeholder || setText(host, 'pickRecord')}
+                    search-placeholder=${field.searchPlaceholder || setText(host, 'searchRecords')}
+                    aria-label=${field.label || field.key || ''}
+                    .options=${options}
+                    @change=${event => pick(event.detail?.value ?? null)}
+                    @input=${event => {
+    const text = event.target?.value ?? '';
+    host.setFieldOptionSearch?.(field, text);
+    host.loadFieldOptions(field, {
+      cursor: null,
+      search: text
+    });
+  }}
+            ></sf-dropdown>
+            ${page ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class="sf-field-picker-state flex items-cross-center gap-1/3">
+                    <div role="status" aria-live="polite" class="sf-text-1">
+                        ${page.status === 'loading' && !page.quiet ? setText(host, 'loadingRecords') : page.status === 'error' ? setText(host, 'recordsError') : ''}
+                    </div>
+                    ${page.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-button appearance="outline" size="1" text=${setText(host, 'retry')}
+                                @click=${() => host.loadFieldOptions(field, {
+    cursor: null,
+    search
+  })}
+                        ></sf-button>
+                    ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ${page.nextCursor && page.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-button appearance="outline" size="1" text=${setText(host, 'loadMore')}
+                                ?disabled=${page.status === 'loading'}
+                                @click=${() => host.loadFieldOptions(field, {
+    cursor: page.nextCursor,
+    search
+  })}
+                        ></sf-button>
+                    ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                </div>
+            ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+} // The lookup: a value chosen from a reference list the host keeps (Larena,
+// 2026-10-23). It is the record picker's arrangement -- the host pages and
+// searches, what is chosen stays shown whether or not the page holds it -- with
+// the two things a reference list has that a record does not:
+//
+//   options   a short list arrives whole, as the field's own `options`, and is
+//             chosen from in place: no page is asked for and the dropdown's own
+//             search is right here, because the list in hand is the whole set.
+//             A page is never searched in place -- it is not the whole set.
+//   multiple  several values, each {value, label}, written back as a list.
+//
+// The value is {value, label}, or a list of them, and the control writes the
+// same shape back: the label travels with the value so the host never resolves
+// what it already knew, and a view of the value needs no second read.
+
+
+function lookupItems(field, value) {
+  const list = Array.isArray(value) ? value : [value];
+  const options = Array.isArray(field.options) ? field.options : [];
+  return list.filter(item => item !== null && typeof item !== 'undefined' && item !== '').map(item => {
+    if (typeof item === 'object') return {
+      value: item.value,
+      label: String(item.label ?? item.value ?? '')
+    }; // A bare value is read against the field's own list, so a host that
+    // sends the inline options and the value alone is still shown a name.
+
+    const option = options.find(candidate => String(candidate?.value) === String(item));
+    return {
+      value: item,
+      label: String(option?.label ?? option?.text ?? item)
+    };
+  });
+}
+
+function renderLookupEdit(field, value, host) {
+  const multiple = field.multiple === true;
+  const inline = Array.isArray(field.options) && field.options.length > 0; // A list the host pages needs a host that pages; without one the field falls
+  // back to its value, read-only, as a record does.
+
+  if (!inline && (!host.loadFieldOptions || !host.getFieldOptionsPage)) return null; // A paged list is the lookup's (C139 (1)); a short list given whole stays
+  // the dropdown's, and so does the deprecated dropdown path.
+
+  if (!inline && !dropdownPicker()) {
+    if (host.getFieldOptionsPage(field)?.status === 'unsupported') return null;
+    return renderHostLookup(field, value, host, {
+      multiple,
+      placeholder: setText(host, 'pickFromList')
+    });
+  }
+
+  const page = inline ? null : host.getFieldOptionsPage(field) || null;
+  if (page?.status === 'unsupported') return null;
+  const search = inline ? '' : host.getFieldOptionSearch?.(field) ?? '';
+  const chosen = lookupItems(field, value);
+  const candidates = (inline ? field.options : Array.isArray(page?.items) ? page.items : []).filter(item => item && typeof item === 'object').map(item => ({
+    value: item.value,
+    label: String(item.label ?? item.text ?? item.value)
+  }));
+
+  const isChosen = item => chosen.some(one => String(one.value) === String(item.value));
+
+  const options = [...chosen.filter(item => !candidates.some(candidate => String(candidate.value) === String(item.value))), ...candidates].map(item => ({
+    type: 'text',
+    size: '1',
+    text: item.label,
+    value: String(item.value),
+    selected: isChosen(item)
+  })); // What the dropdown reports is the value as a string; the label and the
+  // value's own type are taken back from what was offered.
+
+  const known = [...chosen, ...candidates];
+
+  const resolve = raw => {
+    const found = known.find(item => String(item.value) === String(raw));
+    return found ? {
+      value: found.value,
+      label: found.label
+    } : {
+      value: raw,
+      label: String(raw)
+    };
+  };
+
+  const write = event => {
+    if (multiple) {
+      const next = event.detail?.values ?? event.detail?.value;
+      const values = (Array.isArray(next) ? next : next ? [next] : []).filter(item => item !== '');
+      host.setFieldValue(field, values.map(resolve));
+      return;
+    }
+
+    const next = event.detail?.value ?? null;
+    host.setFieldValue(field, next === null || next === '' ? null : resolve(next));
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            <sf-dropdown
+                    size=${EDIT_SIZE}
+                    appearance="outlined"
+                    mode="select"
+                    ?multiple=${multiple}
+                    search="true"
+                    name=${fieldName(field)}
+                    ?required=${Boolean(field.required)}
+                    value=${multiple ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : chosen[0] ? String(chosen[0].value) : ''}
+                    placeholder=${field.placeholder || setText(host, 'pickFromList')}
+                    search-placeholder=${field.searchPlaceholder || setText(host, 'searchInList')}
+                    aria-label=${field.label || field.key || ''}
+                    .options=${options}
+                    @change=${write}
+                    @input=${inline ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : event => {
+    const text = event.target?.value ?? '';
+    host.setFieldOptionSearch?.(field, text);
+    host.loadFieldOptions(field, {
+      cursor: null,
+      search: text
+    });
+  }}
+            ></sf-dropdown>
+            ${page ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class="sf-field-picker-state flex items-cross-center gap-1/3">
+                    <div role="status" aria-live="polite" class="sf-text-1">
+                        ${page.status === 'loading' && !page.quiet ? setText(host, 'loadingOptions') : page.status === 'error' ? setText(host, 'optionsError') : ''}
+                    </div>
+                    ${page.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-button appearance="outline" size="1" text=${setText(host, 'retry')}
+                                @click=${() => host.loadFieldOptions(field, {
+    cursor: null,
+    search
+  })}
+                        ></sf-button>
+                    ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ${page.nextCursor && page.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-button appearance="outline" size="1" text=${setText(host, 'loadMore')}
+                                ?disabled=${page.status === 'loading'}
+                                @click=${() => host.loadFieldOptions(field, {
+    cursor: page.nextCursor,
+    search
+  })}
+                        ></sf-button>
+                    ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                </div>
+            ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+} // The `file` edit control, composed from the two halves that already exist:
+// sf-file-preview for what is stored, sf-file-upload for what is arriving. They
+// are not interchangeable and the split is not cosmetic -- the preview carries
+// href, download and remove, the upload zone carries progress, retry and the
+// selection itself. Neither renders the other's state, so a field that both
+// holds files and accepts new ones needs both.
+//
+// sf-file-upload transfers no bytes. It selects files, keeps an `items` list of
+// {state, progress, name, fileSize, errorMessage}, and emits events; the
+// transfer is the host's, which is why this renderer asks the host for it
+// rather than inventing an endpoint inside the set:
+//
+//   host.startFieldUpload(field, items)  -- begin transferring; the host writes
+//                                           the stored value when a file lands
+//   host.getFieldUploads(field)          -- the items in flight, upload-shaped
+//   host.retryFieldUpload(field, index)  -- optional; without it, no retry
+//   host.setFieldValue(field, next)      -- as every edit renderer
+//
+// Without the first two the zone is not rendered at all and the stored files
+// stay editable, because removing a file that is already there needs no
+// transfer. A zone that cannot upload is worse than no zone.
+//
+// `items` has one writer, and that is the host. The component fills its own
+// list the moment files are chosen, but every render writes the host's list
+// over it -- so a host that records what `startFieldUpload` was handed sees the
+// files it selected, and a host that ignores them watches its own selection
+// disappear on the next render. The selected items arrive already in the
+// component's own shape, each carrying the real File in `.file`, so recording
+// them is a push and not a conversion.
+
+
+function storedFiles(value) {
+  if (Array.isArray(value)) return value.filter(item => item && typeof item === 'object');
+  return value && typeof value === 'object' ? [value] : [];
+} // One image, edited in place (simai/ui-source#27). A `file` field whose
+// variant is `image` and which holds one file -- a logo, a cover, the picture
+// of a block -- is what sf-image-field is for: the thumbnail with the name and
+// size, «Заменить…», «Убрать», and a file dropped on it replaces the image. The
+// preview-and-zone pair below stays for everything else: a field the host
+// declares `multiple`, a list that already holds several, the card and list
+// variants, and a file that is not an image. Which fields are images is the
+// host's to say through the variant, as in the view and the cell.
+//
+// sf-image-field transfers no bytes either. Its change carries the value in the
+// file shape -- a chosen file with the File in `file` and an object URL in
+// `href`, null after «Убрать» -- and that goes through setFieldValue as every
+// other control's value does, so the record the host holds is what the person
+// sees. A host that uploads (startFieldUpload) is handed the File as well, in
+// an item carrying it in `.file` as the file control's selection does, and
+// writes the stored value with its lasting address when the file lands. A
+// value that came as a list of one goes back as a list, so a host reads back
+// the shape it sent.
+//
+// The value is bound as a property, never as the attribute: the attribute is
+// JSON, which a File does not survive, and a changed attribute releases the
+// object URL the thumbnail is showing. The panel prints the label, so the field
+// takes it as its accessible name only.
+
+
+function isSingleImageField(field, value) {
+  return String(field.variant ?? '') === 'image' && field.multiple !== true && storedFiles(value).length <= 1;
+}
+
+function renderImageEdit(field, value, host) {
+  const stored = storedFiles(value)[0] ?? null;
+  const asList = Array.isArray(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-image
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                accept=${field.accept ? String(field.accept) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                hint=${field.uploadSupportingText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                .value=${stored}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                ?readonly=${field.readonly === true}
+                @change=${event => {
+    const next = event.detail?.value ?? null;
+    host.setFieldValue(field, asList ? next ? [next] : [] : next);
+    const file = event.detail?.file;
+
+    if (file && host.startFieldUpload) {
+      host.startFieldUpload(field, [{
+        name: file.name,
+        state: 'process',
+        progress: 0,
+        file
+      }]);
+    }
+  }}
+        ></sf-input-image>
+    `;
+}
+
+function renderFileEdit(field, value, host) {
+  if (isSingleImageField(field, value)) return renderImageEdit(field, value, host);
+  const files = storedFiles(value);
+  const multiple = field.multiple === true || Array.isArray(value);
+  const canUpload = Boolean(host.startFieldUpload && host.getFieldUploads);
+  const uploads = canUpload ? host.getFieldUploads(field) : null;
+  const items = Array.isArray(uploads) ? uploads : []; // «×» takes a file out of the field at once, and the notice gives it back
+  // with «Вернуть» (decisions C25, C149 (8)): the field's value before the
+  // removal is set again.
+
+  const drop = index => {
+    const before = value;
+    const next = files.filter((_, position) => position !== index);
+    host.setFieldValue(field, multiple ? next : next[0] ?? null);
+    const removed = files[index];
+    globalThis.SF?.notify?.({
+      status: 'neutral',
+      title: setText(host, 'fileRemoved'),
+      text: String(removed?.label ?? removed?.name ?? ''),
+      source: 'sf-file-preview',
+      action: {
+        label: setText(host, 'undo'),
+        onSelect: () => host.setFieldValue(field, before)
+      }
+    });
+  };
+
+  const readonly = field.readonly === true; // download-action and remove-action both read true when the attribute is
+  // absent, so a file with no href has to say false rather than drop it.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-file flex flex-col">
+            ${files.map((file, index) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <sf-file-preview
+                        file-name=${String(file.label ?? file.name ?? 'File')}
+                        file-size=${String(file.size ?? '')}
+                        icon=${fileIcon(file.mime ?? file.mimeType)}
+                        mime-type=${String(file.mime ?? file.mimeType ?? '')}
+                        href=${file.href ? String(file.href) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        download-action=${file.href ? 'true' : 'false'}
+                        remove-action=${readonly ? 'false' : 'true'}
+                        remove-label=${`${setText(host, 'removeFile')} ${file.label ?? file.name ?? ''}`.trim()}
+                        @sf-file-preview-detach=${() => drop(index)}
+                ></sf-file-preview>
+            `)}
+
+            ${canUpload ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-file-upload
+                                size=${EDIT_SIZE}
+                                name=${fieldName(field)}
+                                accept=${String(field.accept ?? '')}
+                                formats=${String(field.formats ?? '')}
+                                link-text=${field.uploadText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                                text=${field.uploadHint || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                                supporting-text=${field.uploadSupportingText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                                ?multiple=${multiple}
+                                ?disabled=${field.readonly === true}
+                                aria-label=${field.label || field.key || ''}
+                                .items=${items}
+                                @sf-file-upload:select=${event => {
+    const picked = event.detail?.files;
+    const list = Array.isArray(picked) ? picked : [];
+    if (list.length) host.startFieldUpload(field, list);
+  }}
+                                @sf-file-upload:retry=${event => {
+    host.retryFieldUpload?.(field, Number(event.detail?.index ?? -1));
+  }}
+                        ></sf-file-upload>
+                    ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+} // The control a field is edited with, or null when the set has none for that
+// type yet.
+
+
+const sizeOption = options => options?.size === '1/2' ? '1/2' : '1'; // `options.density`: 'compact' or 'normal', the density the control is drawn in
+// (owner decision C22; form study FM-5). Without it the control follows the
+// region it stands in, as every component does; with it the host sets the
+// region for this field alone -- a compact panel asks for 'compact' instead of
+// shrinking the field with size '1/2', which C22 forbids. Anything else is no
+// density at all.
+
+
+const DENSITIES = new Set(['compact', 'normal']);
+
+const densityOption = options => DENSITIES.has(options?.density) ? options.density : ''; // `options.apply`: 'instant' when a change acts at once (a settings panel, the
+// parameters of a block), anything else for a form saved with a button. Read by
+// the yes/no field only: a switch at once, a checkbox in a form (C165 (4)).
+
+
+let EDIT_APPLY = ''; // A control that stays a control when it may not be changed: a choice as
+// buttons shows which button is chosen, which is what it is for, where the
+// view's badge would show a different thing (port 1.16.0).
+
+const keepsControlWhenLocked = (asked, field) => asked === 'choice' && isChoiceButtons(field); // `options.disabled`: the control is drawn disabled, not read-only -- a field a
+// condition turns off for now (port 1.14.0 `when.enabled`), which the host
+// knows and the field does not carry. Read by the controls that draw the two
+// differently; for every other one a disabled field is a read-only one.
+
+
+let EDIT_DISABLED = false;
+function renderEditField(field = {}, value, host, options = {}) {
+  const asked = field.propertyType || field.type || field.dataType;
+  const disabled = options?.disabled === true; // A field the person may not change is shown, not offered as a control that
+  // refuses: the same rule for every type, so `readonly` means one thing
+  // wherever the registry lists it.
+
+  if ((field.readonly === true || disabled) && VIEW_RENDERERS[asked] && !keepsControlWhenLocked(asked, field)) {
+    return renderViewField(field, value, host, options);
+  }
+
+  const renderer = EDIT_RENDERERS[asked];
+  if (!renderer || !host?.setFieldValue) return null;
+  const outer = EDIT_SIZE;
+  const outerDisabled = EDIT_DISABLED;
+  const outerPicker = EDIT_PICKER;
+  const outerApply = EDIT_APPLY;
+  EDIT_SIZE = sizeOption(options);
+  EDIT_DISABLED = disabled; // `options.picker: 'dropdown'`: the record, relation, user and paged lookup
+  // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
+
+  EDIT_PICKER = options?.picker === 'dropdown' ? 'dropdown' : '';
+  EDIT_APPLY = options?.apply === 'instant' ? 'instant' : '';
+
+  try {
+    return inDensity(renderer(field, value, host), densityOption(options));
+  } finally {
+    EDIT_SIZE = outer;
+    EDIT_DISABLED = outerDisabled;
+    EDIT_PICKER = outerPicker;
+    EDIT_APPLY = outerApply;
+  }
+} // A density asked for one field is a region around it that draws no box of its
+// own: the variables of the density rules (core/scss/_sf_css__density.scss)
+// stand on it and every part of the control inherits them, the popups it opens
+// read it (core/js/density.js densityOf), and the control lays out in the
+// host's flex or grid as if the wrapper were not there. No density, no wrapper:
+// what a host had is unchanged.
+
+function inDensity(content, density) {
+  if (!density || content == null) return content;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-density" style="display: contents" data-sf-density=${density}>${content}</div>`;
+} // The view template: a field shown and not edited, which is the fourth of the
+// four the assignment names and the last one the set was missing.
+//
+// It renders lit templates rather than the host-shaped values the cell template
+// returns, because its consumer is a record view rendering into its own layout,
+// exactly as the edit template's is. The cell template returns host shapes only
+// because sf-view-table already had a path for those.
+//
+// `line` and not `size` for everything that sits beside a label on one text
+// line -- a badge, a tag, an avatar, a reference link. A size would give those a
+// control's height and stand them taller than the words next to them, which is
+// the mistake the cell template already avoids one rung down. The two that are
+// not inline keep their own scale: a scale bar is a control, and a file preview
+// has no visual size at all, its `size` being a legacy name for the file's size
+// as text.
+// The line a viewed value is drawn on: 1, or 1/2 with {size: '1/2'}, as above.
+
+
+let VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
+// host's own formatting of it. The consumer asked for the second and they are
+// right -- the Framework has no locale and should not acquire one through a field
+// renderer. They already hold the localised text, the viewer's locale and the
+// format rules, and a second formatter here would disagree with theirs the first
+// time a format setting changed. `text` is the formatted value alone; a unit
+// stays its own field so a column of numbers can align its units.
+
+function carriesText(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value) && typeof value.text === 'string';
+}
+
+function scalarValue(value) {
+  return carriesText(value) ? value.value : value;
+}
+
+function viewText(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted;
+  if (carriesText(value)) return value.text;
+  const plain = scalarValue(value);
+  return plain === null || typeof plain === 'undefined' ? '' : String(plain);
+}
+
+function renderTextView(field, value, host) {
+  const text = viewText(field, value, host);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // Formatted text shown: the value cleaned by sf-input-rich's own rule first,
+// and only that cleaned string drawn as markup -- never the value as it came,
+// which a host may have stored from anywhere. What is left is the subset:
+// paragraphs, headings, emphasis, lists, quotes and links with a safe address.
+
+
+function renderHtmlView(field, value) {
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
+  return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // A number carries its unit when the field declares one, and nothing when it
+// does not -- the set does not guess at a unit, and «42» with an invented «шт»
+// beside it is a worse answer than «42».
+
+
+function renderNumberView(field, value, host) {
+  if (value === null || typeof value === 'undefined' || value === '') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const variant = field.variant || field.filter?.variant; // The scale needs the number, not the host's text for it.
+
+  const number = Number(scalarValue(value));
+
+  if (variant === 'scale' && Number.isFinite(number) && number >= 0 && number <= 100) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size="1" value=${String(number)}></sf-progress-scale>`;
+  }
+
+  const text = viewText(field, value, host);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${field.unit ? `${text} ${field.unit}` : text}</span>`;
+} // A date is the host's to format first: formatFieldValue wins, and so does a
+// value that carries its own text. Without it the set used to print the stored
+// form -- «2026-10-25T10:30:00+03:00» (simai/ui-source#34) -- so a host that
+// formats nothing gets the page's medium reading through core format-date:
+// «2 нояб. 2026 г.» / «Nov 2, 2026» for a date, «15 нояб. 2026 г., 10:30» /
+// «Nov 15, 2026, 10:30 AM» for a datetime, the form the View set's table
+// printed before the renderers formatted dates (C19: the set formats, the
+// table inherits). The day and the clock are the record's own (datetime.js
+// reads them as written, in the host's zone): nothing is moved to the reader's
+// time zone, which would show a different day near midnight. A value that is
+// not a date at all is shown as it came, never guessed at.
+
+
+const DATE_VIEW = {
+  dateStyle: 'medium',
+  timeZone: 'UTC'
+};
+const DATETIME_VIEW = {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: 'UTC'
+};
+
+function defaultDateText(field, value, host) {
+  if (carriesText(value)) return null;
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  if (!parts.known || !parts.date) return null;
+  const [year, month, day] = parts.date.split('-').map(Number);
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+
+  try {
+    const date = new Date(0);
+    date.setUTCFullYear(year, month - 1, day);
+    const type = field?.propertyType || field?.type || field?.dataType;
+    if (type !== 'datetime' || !parts.time) return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+      intl: DATE_VIEW,
+      locale
+    }) || null;
+    const [hours, minutes] = parts.time.split(':').map(Number);
+    date.setUTCHours(hours, minutes, 0, 0);
+    return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+      intl: DATETIME_VIEW,
+      locale
+    }) || null;
+  } catch {
+    return null;
+  }
+}
+
+function dateText(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted;
+  return defaultDateText(field, value, host) ?? viewText(field, value, null);
+} // The machine reading of a date (C40: every moment the Framework prints is a
+// time element): the record's own day and clock as written, «2026-11-15» or
+// «2026-11-15T10:30», with no zone, because the view never moves a record to
+// the reader's zone. That is also why the view is not sf-time, which reads a
+// moment in the reader's zone: a date near midnight would show another day.
+// '' when the value is no date.
+
+
+function dateTimeAttribute(field, value) {
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  if (!parts.known || !parts.date) return '';
+  const type = field?.propertyType || field?.type || field?.dataType;
+  return type === 'datetime' && parts.time ? `${parts.date}T${parts.time}` : parts.date;
+}
+
+function renderDateView(field, value, host) {
+  const text = dateText(field, value, host);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const datetime = dateTimeAttribute(field, value);
+  return datetime ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<time class="sf-field-view" datetime=${datetime}>${text}</time>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>`;
+}
+
+function renderBooleanView(field, value, host) {
+  if (typeof value !== 'boolean') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const words = booleanWords(field, host);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${value ? words.yes : words.no}</span>`;
+}
+
+function renderChoiceView(field, value) {
+  const options = field.options || field.filter?.options || field.constraints?.options;
+  const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
+  if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option); // A table cell is a dense place: the badge keeps the tight side room
+  // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-badge
+                line=${VIEW_LINE}
+                tight
+                appearance=${field.badgeAppearance ?? CELL_BADGE_APPEARANCE}
+                scheme=${badge.scheme}
+                style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text=${String(option.label ?? option.text ?? value)}
+        ></sf-badge>
+    `;
+} // The values wrap, each tag as wide as its text: on one unwrapping line a
+// role's 137 rights shrank every tag to a letter and the text ran down the
+// panel (Larena, 2026-10-17). The tag's painted root is the flex item (the
+// host is display: contents), so it is told not to shrink through root-class.
+// No disclosure for a long list here: a record's
+// field in view is the button that opens its group, and a control inside a
+// button is not one.
+
+
+function renderChoicesView(field, value) {
+  if (!Array.isArray(value) || !value.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const options = field.options || field.filter?.options || field.constraints?.options;
+
+  const label = item => {
+    const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(item)) : null;
+    return String(option?.label ?? option?.text ?? item);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
+            ${value.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`)}
+        </span>
+    `;
+} // A person, as in a cell: the name links to the person when the host gives
+// the href -- every value that points at a record opens it (owner,
+// 2026-10-14). Plain, as a reference read in a record's field is.
+
+
+function renderUserView(field, value) {
+  if (!value || typeof value !== 'object' || !value.label) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-view flex items-cross-center gap-1/3">
+            <sf-avatar line=${VIEW_LINE} text=${value.avatarText || ''} heading=${String(value.label)}></sf-avatar>
+            ${value.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-reference-link appearance="plain" icon="" line=${VIEW_LINE}
+                        label=${String(value.label)} href=${String(value.href)}></sf-reference-link>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span>${String(value.label)}</span>`}
+        </span>
+    `;
+}
+
+function renderReferenceView(field, value) {
+  if (!value || typeof value !== 'object' || !value.label) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // Plain, and without the arrow: a reference read inside a record's field is
+  // a value on a line, not a card. The card's frame and fill drew a second box
+  // around a value that already sits in one, and the arrow said «go» beside a
+  // word that is already a link (owner, 2026-10-08).
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-reference-link
+                appearance="plain"
+                icon=""
+                line=${VIEW_LINE}
+                label=${String(value.label)}
+                href=${value.href ? String(value.href) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ></sf-reference-link>
+    `;
+} // A value from a reference list reads as its label; several read as their
+// labels, each a tag as a list of choices does. Not a link: nothing opens from a
+// country or a status.
+
+
+function renderLookupView(field, value) {
+  const items = lookupItems(field, value);
+  if (!items.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (items.length === 1 && field.multiple !== true) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${items[0].label}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
+            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${item.label}></sf-tag>`)}
+        </span>
+    `;
+} // The one place the view template is not a smaller edit control: a stored file
+// is shown with its own preview, which carries the download the view wants and
+// not the remove an edit does.
+
+
+function renderFileView(field, value) {
+  const files = storedFiles(value);
+  if (!files.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // An image is shown as the image. `image-url` and `kind` are inputs the file
+  // preview already has, so this is the same component told what it is holding
+  // rather than a second way of drawing a file. Which files are images is the
+  // host's to say through the variant: guessing from a file name would be wrong
+  // for every stored file whose name does not end in a familiar three letters.
+
+  const asImage = isImageField(field);
+  const card = String(field.variant ?? '') === 'image-card';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-view flex ${card ? 'flex-row' : 'flex-col'} gap-1/3">
+            ${files.map(file => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <sf-file-preview
+                        file-name=${String(file.label ?? file.name ?? 'File')}
+                        file-size=${String(file.size ?? '')}
+                        icon=${fileIcon(file.mime ?? file.mimeType)}
+                        mime-type=${String(file.mime ?? file.mimeType ?? '')}
+                        href=${file.href ? String(file.href) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        image-url=${asImage && file.href ? String(file.href) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        kind=${asImage ? 'image' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        download-action=${file.href ? 'true' : 'false'}
+                        remove-action="false"
+                ></sf-file-preview>
+            `)}
+        </span>
+    `;
+}
+
+const VIEW_RENDERERS = {
+  string: renderStringView,
+  text: renderTextView,
+  html: renderHtmlView,
+  integer: renderNumberView,
+  number: renderNumberView,
+  date: renderDateView,
+  datetime: renderDateView,
+  time: renderDateView,
+  boolean: renderBooleanView,
+  choice: renderChoiceView,
+  choices: renderChoicesView,
+  user: renderUserView,
+  record: renderReferenceView,
+  relation: renderReferenceView,
+  lookup: renderLookupView,
+  file: renderFileView,
+  color: renderColorView,
+  include: renderIncludeView
+}; // A field shown rather than edited. `host` is optional and used for one thing
+// only -- formatFieldValue, where a consumer's own formatting of a number or a
+// date belongs. Null when the set has no view for that type.
+
+function propertyModes(type) {
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
+    view: VIEW_RENDERERS,
+    edit: EDIT_RENDERERS,
+    cell: CELL_RENDERERS,
+    filter: FILTER_RENDERERS
+  });
+}
+
+function renderViewField(field = {}, value, host, options = {}) {
+  const asked = field.propertyType || field.type || field.dataType;
+  const renderer = VIEW_RENDERERS[asked];
+  if (!renderer) return null;
+  const outer = VIEW_LINE;
+  VIEW_LINE = sizeOption(options);
+
+  try {
+    return inDensity(renderer(field, value, host), densityOption(options));
+  } finally {
+    VIEW_LINE = outer;
+  }
+} // A host has to be able to reach the set, and a module is not an element: there
+// is no tag to place and no attribute to set. The Framework already has one
+// place for what a page may call -- window.SF, where the base element, `html`,
+// `nothing` and `render` live -- so the set publishes itself there under its own
+// name. Without this the module is built, bundled and unreachable: the consumer
+// could read the mapping and not call it, which was true of this set until now.
+//
+// This is the runtime half of the discoverability question. The other half --
+// describing the module in the registry, so a host learns what it offers without
+// reading our source -- is with the registry's owner.
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.fieldRenderers = { ...(window.SF.fieldRenderers || {}),
+    renderCellField,
+    renderEditField,
+    renderFilterField,
+    renderViewField,
+    FILTER_RENDERERS,
+    // A datetime's value read and written back, for a host that draws its
+    // own control: split(value), compose(stored, {date, time}),
+    // normalizeTime(text); and a time of day's: splitTime(value),
+    // composeTime(stored, text).
+    dateTime: {
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime
+    },
+    // The universal properties, each with the modes the set draws for it.
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
+      modes: propertyModes(entry.type)
+    }))
+  }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
+
+  globalThis.document?.dispatchEvent?.(new CustomEvent('sf-field-renderers-ready'));
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "dd6973f77245"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   maskPattern: () => (/* binding */ maskPattern),
+/* harmony export */   maskState: () => (/* binding */ maskState)
+/* harmony export */ });
+// Whether a masked string is complete (simai.property-view-port 1.16.0,
+// field.mask). sf-input formats what a person types through the Framework's
+// mask (core/js/mask.js) and reports the text as shown; what the set still has
+// to know is whether that text fills every place of the pattern, because an
+// incomplete value is not a value -- «+7 (912) 3» is neither a phone nor
+// nothing -- and a panel must not send it.
+//
+// The grammar is core/js/mask.js's, read the same way: `0` a digit, `a` a
+// letter, `*` any character, `\` escapes the next character, `{` `}` mark a
+// fixed part that belongs to the value and `[` `]` an optional tail, both
+// dropped from what is shown, and every other character is a fixed part shown
+// in the field. The pattern is compiled into one expression over the shown
+// text rather than re-running the formatter: the formatter's job is to make a
+// valid prefix out of anything typed, which is exactly the question it cannot
+// answer -- every prefix is valid while it is typed. A pattern's optional tail
+// is not optional here: the contract names no optional places, and a tail
+// that may be left empty would make «complete» mean two lengths.
+//
+// The text is compared as shown, fixed parts included, because that is the
+// value the host receives. A text with the template's placeholders (a
+// mask-lazy="false" field shows «+7 (___) ___-__-__») is incomplete, and a
+// template with nothing typed into it is empty.
+const SLOT = {
+  0: '\\d',
+  a: '\\p{L}',
+  '*': '[\\s\\S]'
+};
+const TEST = {
+  0: character => /\d/u.test(character),
+  a: character => /\p{L}/u.test(character),
+  '*': () => true
+}; // Unicode mode refuses an escaped character that is not syntax, so only these.
+
+const escape = character => character.replace(/[\\^$.*+?()[\]{}|/]/gu, '\\$&');
+
+function compile(pattern) {
+  let source = '';
+  const tokens = [];
+
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+
+    if (character === '\\') {
+      index += 1;
+
+      if (index < pattern.length) {
+        source += escape(pattern[index]);
+        tokens.push({
+          fixed: pattern[index]
+        });
+      }
+    } else if (character === '{' || character === '}' || character === '[' || character === ']') {// Markers of the grammar, never shown.
+    } else if (SLOT[character]) {
+      source += SLOT[character];
+      tokens.push({
+        test: TEST[character]
+      });
+    } else {
+      source += escape(character);
+      tokens.push({
+        fixed: character
+      });
+    }
+  }
+
+  return {
+    complete: new RegExp(`^${source}$`, 'u'),
+    tokens
+  };
+} // How many places the text fills, read as core/js/mask.js reads it: a
+// character that is the fixed part expected there is that fixed part, a
+// placeholder in a place is an empty place, anything else fills the next place
+// that takes it. A «7» typed into «+7 (000)» is a digit, not the fixed 7.
+
+
+function filled(value, tokens, placeholder) {
+  let count = 0;
+  let pointer = 0;
+
+  for (const character of value) {
+    while (pointer < tokens.length && tokens[pointer].fixed !== undefined && tokens[pointer].fixed !== character) pointer += 1;
+
+    if (pointer >= tokens.length) break;
+    const token = tokens[pointer];
+    if (token.fixed !== undefined) pointer += 1;else if (character === placeholder) pointer += 1;else if (token.test(character)) {
+      count += 1;
+      pointer += 1;
+    }
+  }
+
+  return count;
+}
+
+const COMPILED = new Map();
+function maskPattern(field) {
+  const mask = field?.mask;
+  return typeof mask === 'string' && mask !== '' ? mask : null;
+} // 'empty', 'complete' or 'incomplete'. Empty is a text with nothing typed into
+// it: no text, or only the pattern's fixed parts and placeholders.
+
+function maskState(text, pattern, placeholder = '_') {
+  const value = String(text ?? '');
+  if (!COMPILED.has(pattern)) COMPILED.set(pattern, compile(pattern));
+  const {
+    complete,
+    tokens
+  } = COMPILED.get(pattern);
+  if (complete.test(value)) return 'complete';
+  return filled(value, tokens, placeholder) === 0 ? 'empty' : 'incomplete';
+}
+
+/***/ },
+
+/***/ "fc654eb7fab0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PROPERTY_TYPES: () => (/* binding */ PROPERTY_TYPES),
+/* harmony export */   modesOf: () => (/* binding */ modesOf)
+/* harmony export */ });
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("354525e80715");
+// The registry of universal properties (owner, 2026-10-15): every property
+// type the Framework renders, or a component set renders beside it (`set`),
+// its variants and the parameters a field of it reads -- one list a host
+// (Larena's fields and settings), the property workbench and the documentation
+// read, instead of each learning the types from the renderers' source. Which
+// modes a type has is not written here: it is read from the renderer maps
+// themselves (modesOf), so the registry cannot claim a mode the set does not
+// draw. A contract keeps the two the same.
+//
+// `params` are the field keys the type's renderers read -- each one, and no
+// other (the probe field-renderer-params calls them with a field that records
+// what is read). A record, a relation and a user hold one value and take their
+// candidates from the host, not from `options`; a constraint other than a
+// choice's options is the host's to enforce, not a renderer's.
+// The names of the types and variants live in the set's language files
+// (localization study LC-5); `label` keeps its {ru, en} shape for the hosts
+// that read it.
+
+
+const typeLabel = key => ({
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].ru[key],
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
+});
+
+const PROPERTY_TYPES = Object.freeze([{
+  type: 'string',
+  label: typeLabel('type-string'),
+  // password: write-only. The host never sends the password; the value it
+  // sends is {set: true} or {set: false} (null reads as not set), and the
+  // set shows only «задан»/«не задан». An edit writes the typed text through
+  // setFieldValue and writes nothing for a field nobody typed in.
+  variants: [{
+    id: 'phone',
+    label: typeLabel('variant-string-phone')
+  }, {
+    id: 'password',
+    label: typeLabel('variant-string-password'),
+    writeOnly: true
+  }],
+  // mask (property-view port 1.16.0): the Framework mask grammar of
+  // sf-input's mask-pattern; the value is the text as shown, fixed parts
+  // included, and an incomplete one is reported, not written as a value.
+  // nullable: false makes a cleared masked field write "" instead of null.
+  // Read by the plain string alone: phone and password keep their controls.
+  params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
+}, {
+  type: 'text',
+  label: typeLabel('type-text'),
+  variants: [],
+  params: ['placeholder', 'required', 'readonly']
+}, // html (property-view port 1.17.0): formatted text, an HTML string of
+// sf-input-rich's subset. Edited with sf-input-rich, shown cleaned by that
+// component's own rule, a cell its text on one line, filtered as text.
+{
+  type: 'html',
+  label: typeLabel('type-html'),
+  variants: [],
+  params: ['placeholder', 'required', 'readonly']
+}, // stepper: edited with sf-quantity, «−» and «+» and the arrow keys; min,
+// max and step (and a number's precision) are read by that variant alone.
+{
+  type: 'integer',
+  label: typeLabel('type-integer'),
+  variants: [{
+    id: 'stepper',
+    label: typeLabel('variant-integer-stepper')
+  }],
+  params: ['unit', 'min', 'max', 'step', 'required', 'readonly']
+}, {
+  type: 'number',
+  label: typeLabel('type-number'),
+  variants: [{
+    id: 'scale',
+    label: typeLabel('variant-number-scale')
+  }, {
+    id: 'stepper',
+    label: typeLabel('variant-number-stepper')
+  }],
+  params: ['unit', 'min', 'max', 'step', 'precision', 'required', 'readonly']
+}, {
+  type: 'date',
+  label: typeLabel('type-date'),
+  variants: [],
+  params: ['required', 'readonly']
+}, // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
+// and max bound the value -- an ISO date or date and time for a datetime,
+// hh:mm for a time -- and step is the minute step, 1 to 60.
+{
+  type: 'datetime',
+  label: typeLabel('type-datetime'),
+  variants: [],
+  params: ['min', 'max', 'step', 'required', 'readonly']
+}, {
+  type: 'time',
+  label: typeLabel('type-time'),
+  variants: [],
+  params: ['min', 'max', 'step', 'required', 'readonly']
+}, {
+  type: 'boolean',
+  label: typeLabel('type-boolean'),
+  variants: [],
+  params: ['trueText', 'falseText', 'required', 'readonly']
+}, // buttons (property-view port 1.16.0): one segmented button group, a
+// button per option, sized by `size` on the ladder ("1/2", "1", "2"; absent,
+// the field's); pressing the chosen one again clears a field that is not
+// required. The dropdown stays the default.
+{
+  type: 'choice',
+  label: typeLabel('type-choice'),
+  variants: [{
+    id: 'buttons',
+    label: typeLabel('variant-choice-buttons')
+  }],
+  params: ['options', 'badgeAppearance', 'size', 'required', 'readonly']
+}, {
+  type: 'choices',
+  label: typeLabel('type-choices'),
+  // badges: the view; checklist and select: the edit control (a list of
+  // 13 or more is a checklist unless select is asked for).
+  variants: [{
+    id: 'badges',
+    label: typeLabel('variant-choices-badges')
+  }, {
+    id: 'checklist',
+    label: typeLabel('variant-choices-checklist')
+  }, {
+    id: 'select',
+    label: typeLabel('variant-choices-select')
+  }],
+  params: ['options', 'badgeAppearance', 'required', 'readonly']
+}, {
+  type: 'user',
+  label: typeLabel('type-user'),
+  variants: [],
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'record',
+  label: typeLabel('type-record'),
+  variants: [],
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'relation',
+  label: typeLabel('type-relation'),
+  variants: [],
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
+}, // lookup: a value chosen from a reference list the host keeps -- a country,
+// a status, a contract type (Larena, 2026-10-23). It is not a record: the
+// value is {value, label} and nothing opens from it. Small lists arrive as
+// `options` and are chosen from in place; anything larger is paged and
+// searched by the host, from the source the field names (`source`, which the
+// host reads and no renderer does).
+{
+  type: 'lookup',
+  label: typeLabel('type-lookup'),
+  variants: [],
+  params: ['options', 'multiple', 'placeholder', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'file',
+  label: typeLabel('type-file'),
+  variants: [{
+    id: 'image',
+    label: typeLabel('variant-file-image')
+  }, {
+    id: 'image-card',
+    label: typeLabel('variant-file-image-card')
+  }, {
+    id: 'image-list',
+    label: typeLabel('variant-file-image-list')
+  }],
+  // required: read by the image variant alone, whose control is
+  // sf-image-field -- a required, empty one keeps its form from submitting.
+  params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'required', 'readonly']
+}, {
+  type: 'color',
+  label: typeLabel('type-color'),
+  variants: [],
+  params: ['swatches', 'required', 'readonly']
+}, {
+  type: 'include',
+  label: typeLabel('type-include'),
+  variants: [],
+  params: ['language', 'required', 'readonly']
+}, // The types a component set draws (property-view port 1.18.0; Larena
+// property types standard, notes of 2026-11-03): `set` names the set whose
+// components show and edit them -- the View set's sf-view-properties and
+// sf-view-flow -- and the Framework draws their table cells and filters
+// (money and percent as numbers, items by its number of rows). `params` are
+// the keys the type reads, in the set's renderers and in these. Every
+// number is a decimal string, never a float.
+{
+  type: 'money',
+  label: typeLabel('type-money'),
+  set: 'view',
+  variants: [],
+  params: ['currency', 'min', 'max', 'required', 'readonly']
+}, {
+  type: 'percent',
+  label: typeLabel('type-percent'),
+  set: 'view',
+  variants: [],
+  params: ['min', 'max', 'required', 'readonly']
+}, {
+  type: 'items',
+  label: typeLabel('type-items'),
+  set: 'view',
+  variants: [],
+  params: ['columns', 'minRows', 'maxRows', 'required', 'readonly']
+}, {
+  type: 'compound',
+  label: typeLabel('type-compound'),
+  set: 'view',
+  variants: [],
+  params: ['parts', 'required', 'readonly']
+}, {
+  type: 'ru.requisites',
+  label: typeLabel('type-ru.requisites'),
+  set: 'view',
+  variants: [],
+  params: ['parts', 'required', 'readonly']
+}]); // The modes a type has, read from the renderer maps: view and edit (a record),
+// cell (a table) and filter -- `own` when the set has a filter control for the
+// type, `text` when a filter falls back to a text search.
+
+function modesOf(type, maps) {
+  return {
+    view: Boolean(maps.view?.[type]),
+    edit: Boolean(maps.edit?.[type]),
+    cell: maps.cell?.[type] ? 'own' : 'text',
+    filter: maps.filter?.[type] ? 'own' : 'text'
+  };
+}
+
+/***/ },
+
+/***/ "8ddf99034269"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPEAKING_TAGS: () => (/* binding */ SPEAKING_TAGS),
+/* harmony export */   SfForm: () => (/* binding */ SfForm),
+/* harmony export */   WIDTHS: () => (/* binding */ WIDTHS),
+/* harmony export */   groupFields: () => (/* binding */ groupFields),
+/* harmony export */   hasValue: () => (/* binding */ hasValue),
+/* harmony export */   normalizeFields: () => (/* binding */ normalizeFields)
+/* harmony export */ });
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e5483002f3ea");
+/* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("219db2ce051d");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ae2fca904cab");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2438c5fc3777");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("99ea38208a74");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("db3a39d580e9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
+// sf-form: a form drawn from field descriptions (owner decision C182,
+// 2026-11-14; study control/research/2026-11-14-form.md, prototype
+// prototypes/form-study.html).
+//
+//   <sf-form label="Кнопка"><script type="application/json" data-sf-settings>
+//     {"fields": [{"key": "text", "label": "Текст", "propertyType": "string", "required": true}],
+//      "value": {"text": "Подробнее"}}
+//   </script></sf-form>
+//
+// The descriptor is the Framework field descriptor sf-view-properties sends:
+// the property registry's type and parameters plus key, label, hint, help,
+// width and group (C182 (3)). Every control is the field renderers' own
+// (src/smart/field-renderers, renderEditField and renderViewField); the form
+// draws only the frame around them: the label row, the hint, the error, the
+// groups, the layout, the errors summary and the buttons. The bundle carries
+// the renderers, which also publish themselves as SF.fieldRenderers.
+//
+// From its component.json (standard simai.smart-component 1.3.15 §3, §4, §8,
+// §17.4): the settings and values are made by core/js/element-manifest.js;
+// value, valid, check-validity and reset are the aggregating form's contract.
+
+
+
+
+
+
+
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
+
+const WIDTHS = ['s', 'm', 'full']; // The controls of the field family that say an error in their own message
+// line, linked to their native control (C153 (3)): the form gives them
+// invalid and error-message. Every other control gets its error line from the
+// form. Read by tag, so it is known before the control's bundle arrives.
+
+const SPEAKING_TAGS = new Set(['sf-input', 'sf-input-choice', 'sf-input-code', 'sf-input-color', 'sf-input-country', 'sf-input-date', 'sf-input-image', 'sf-input-lookup', 'sf-input-quantity', 'sf-input-rich', 'sf-input-textarea', 'sf-dropdown']);
+
+const text = value => value === undefined || value === null ? '' : String(value).trim();
+
+const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const clone = value => {
+  if (!isObject(value)) return {};
+
+  try {
+    return structuredClone(value);
+  } catch {
+    return { ...value
+    };
+  }
+};
+
+const same = (a, b) => {
+  try {
+    return JSON.stringify(a) === JSON.stringify(b);
+  } catch {
+    return a === b;
+  }
+};
+/** Whether a field's value counts as given: not absent, not empty text, not an empty list. */
+
+
+function hasValue(value) {
+  if (value === undefined || value === null) return false;
+  if (typeof value === 'string') return value.trim() !== '';
+  if (Array.isArray(value)) return value.length > 0;
+  return true;
+}
+/** The fields as given, made safe: objects with a key and a type, each key once, width one of s, m, full or none. */
+
+function normalizeFields(list) {
+  const seen = new Set();
+  const fields = [];
+
+  for (const item of Array.isArray(list) ? list : []) {
+    if (!isObject(item)) continue;
+    const key = text(item.key);
+    const type = text(item.propertyType || item.type || item.dataType);
+    if (!key || !type || seen.has(key)) continue;
+    seen.add(key);
+    const width = WIDTHS.includes(item.width) ? item.width : '';
+    fields.push({ ...item,
+      key,
+      label: text(item.label) || key,
+      propertyType: type,
+      width,
+      group: text(item.group)
+    });
+  }
+
+  return fields;
+}
+/**
+ * The groups the fields stand in, in order: the listed groups that hold a
+ * field, then one group of its own for the fields without a listed group.
+ * Each is {key, label, fields}.
+ */
+
+function groupFields(fields, groups) {
+  const listed = (Array.isArray(groups) ? groups : []).filter(isObject).map(group => ({
+    key: text(group.key),
+    label: text(group.label)
+  })).filter((group, index, all) => group.key && all.findIndex(one => one.key === group.key) === index);
+  const keys = new Set(listed.map(group => group.key));
+  const out = listed.map(group => ({ ...group,
+    fields: fields.filter(field => field.group === group.key)
+  })).filter(group => group.fields.length);
+  const rest = fields.filter(field => !keys.has(field.group));
+  if (rest.length) out.push({
+    key: '',
+    label: '',
+    fields: rest
+  });
+  return out;
+}
+const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
+  lang: {
+    en,
+    ru
+  },
+  source: 'ru',
+  actions: {
+    'check-validity'() {
+      return this.checkFields({
+        focus: false,
+        submit: false
+      }) ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+    },
+
+    reset() {
+      this.restore();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    },
+
+    'set-errors'(args = {}) {
+      const errors = isObject(args?.errors) ? args.errors : isObject(args) && !('errors' in args) ? args : {};
+      return this.applyHostErrors(errors);
+    }
+
+  }
+});
+
+class SfForm extends FormElement {
+  constructor() {
+    super(); // The saved state and what the fields hold now.
+
+    this._saved = {};
+    this._values = {}; // Shown errors by key, the host's errors by key, the fields the person
+    // changed, and whether a submit was tried since the last saved state.
+
+    this._errors = new Map();
+    this._hostErrors = new Map();
+    this._touched = new Set();
+    this._submitted = false;
+    this._dirty = false; // The mode the form returns to after a save or a cancel: view when it was
+    // opened from view.
+
+    this._fromView = false;
+    this._hosts = new Map();
+
+    this._onSubmit = event => this.onNativeSubmit(event);
+
+    this._onFocusOut = event => this.onFieldLeave(event);
+
+    this._onInput = event => this.onFieldInput(event);
+  }
+
+  onConnected() {
+    super.onConnected?.();
+    this.addEventListener('submit', this._onSubmit);
+    this.addEventListener('focusout', this._onFocusOut);
+    this.addEventListener('input', this._onInput);
+  }
+
+  onDisconnected() {
+    super.onDisconnected?.();
+    this.removeEventListener('submit', this._onSubmit);
+    this.removeEventListener('focusout', this._onFocusOut);
+    this.removeEventListener('input', this._onInput);
+  } // The ids the template writes come from the instance path (§7.1.1), never
+  // from a counter.
+
+
+  get _id() {
+    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+      kind: 'sf-form'
+    }));
+  } // ---------------------------------------------------------------- value
+  // Set from code, the value is the saved state: the form shows it, forgets
+  // the errors and is not dirty. No event, as for a native field.
+
+
+  get value() {
+    return clone(this._values);
+  }
+
+  set value(next) {
+    this._saved = clone(next);
+    this._values = clone(next);
+    this.forget();
+    this.requestComponentUpdate('value');
+  }
+
+  get valid() {
+    return this.shownFields().every(field => !this.errorOf(field));
+  }
+
+  get dirty() {
+    return this._dirty;
+  }
+
+  get list() {
+    return normalizeFields(this.fields);
+  } // The fields the form shows now: every field the renderers draw.
+
+
+  shownFields() {
+    const editing = this.isEditing;
+    return this.list.filter(field => editing ? this.drawsEdit(field) : this.drawsView(field));
+  } // A field of a type the renderers do not draw in this mode is left out.
+
+
+  drawsEdit(field) {
+    const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.propertyModes)(field.propertyType);
+    return modes.edit || field.readonly === true && modes.view;
+  }
+
+  drawsView(field) {
+    return (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.propertyModes)(field.propertyType).view;
+  }
+
+  get isEditing() {
+    return this.mode !== 'view';
+  }
+
+  get isInstant() {
+    return this.apply === 'instant';
+  }
+
+  renderOptions() {
+    return this.isInstant ? {
+      apply: 'instant'
+    } : {};
+  }
+
+  forget() {
+    this._errors.clear();
+
+    this._hostErrors.clear();
+
+    this._touched.clear();
+
+    this._submitted = false;
+    this.setDirty(false);
+  }
+
+  setDirty(dirty) {
+    this._dirty = Boolean(dirty);
+    this.sfHostState('data-dirty', this._dirty);
+  } // ---------------------------------------------------------------- the renderers' host
+  // One host per field (the field renderers' interface): setFieldValue writes
+  // the value, setFieldError says an incomplete text (a mask).
+
+
+  hostOf(field) {
+    let host = this._hosts.get(field.key);
+
+    if (!host) {
+      host = {
+        setFieldValue: (one, value) => this.writeValue(one?.key ?? field.key, value),
+        setFieldError: (one, message) => this.writeRendererError(one?.key ?? field.key, message)
+      };
+
+      this._hosts.set(field.key, host);
+    }
+
+    return host;
+  }
+
+  writeValue(key, value) {
+    if (value === undefined) delete this._values[key];else this._values[key] = value;
+
+    this._touched.add(key);
+
+    this._hostErrors.delete(key);
+
+    this.setDirty(!same(this._values, this._saved));
+    this.sfEmit('input', {
+      key,
+      value
+    });
+    if (this.isInstant) this.sfEmit('change', {
+      key,
+      value
+    }); // A shown error goes the moment the value is right, and keeps the words
+    // of what is wrong now (C153 (3)).
+
+    if (this._errors.has(key)) this.recheck(key);
+    this.requestComponentUpdate('value');
+  }
+
+  writeRendererError(key, message) {
+    const words = text(message);
+    if (words) this._rendererErrors = { ...(this._rendererErrors || {}),
+      [key]: words
+    };else if (this._rendererErrors) delete this._rendererErrors[key];
+  } // ---------------------------------------------------------------- checks
+  // What is wrong with a field now, or '' -- the host's error first, then a
+  // missing value in the form's words, then the renderer's (an incomplete
+  // mask), then the control's own validity in its own words.
+
+
+  errorOf(field) {
+    const key = field.key;
+    if (this._hostErrors.has(key)) return this._hostErrors.get(key);
+    if (field.readonly === true) return '';
+    const value = this._values[key]; // A required yes/no is answered by its value, an unticked box is «Нет».
+
+    if (field.required === true && field.propertyType !== 'boolean' && !hasValue(value)) {
+      return this.sfWord('value-missing', {
+        vars: {
+          label: field.label
+        }
+      });
+    }
+
+    const rendered = this._rendererErrors?.[key];
+    if (rendered) return rendered;
+    const control = this.controlOf(key);
+    const validity = control?.validity;
+
+    if (validity && validity.valid === false) {
+      if (validity.valueMissing) return field.required === true ? this.sfWord('value-missing', {
+        vars: {
+          label: field.label
+        }
+      }) : '';
+      return (0,_helpers_form_field_js__WEBPACK_IMPORTED_MODULE_4__.validityWords)(control) || control.validationMessage || '';
+    }
+
+    return '';
+  }
+
+  recheck(key) {
+    const field = this.list.find(one => one.key === key);
+    if (!field) return;
+    const message = this.errorOf(field);
+    if (message) this._errors.set(key, message);else this._errors.delete(key);
+    this.sfHostState('data-invalid', this._errors.size > 0);
+    this.requestComponentUpdate('validity');
+  } // A check of every field shown: each wrong one shows its error. With focus,
+  // one error moves the focus to its field and two or more to the summary.
+
+
+  checkFields({
+    focus = false
+  } = {}) {
+    this._submitted = true;
+
+    this._errors.clear();
+
+    const wrong = [];
+
+    for (const field of this.shownFields()) {
+      const message = this.errorOf(field);
+      if (!message) continue;
+
+      this._errors.set(field.key, message);
+
+      wrong.push(field.key);
+    }
+
+    this.sfHostState('data-invalid', wrong.length > 0);
+    this.requestComponentUpdate('validity');
+    if (!wrong.length) return true;
+    this.sfEmit('invalid', {
+      fields: wrong
+    });
+    if (focus) this.whenDrawn(() => wrong.length > 1 ? this.focusSummary() : this.focusField(wrong[0]));
+    return false;
+  }
+
+  applyHostErrors(errors) {
+    const shown = new Set(this.list.map(field => field.key));
+    const entries = Object.entries(errors).map(([key, message]) => [text(key), text(message)]).filter(([key, message]) => key && message);
+    if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing');
+    this._hostErrors = new Map(entries.filter(([key]) => shown.has(key)));
+
+    if (!this._hostErrors.size) {
+      for (const key of [...this._errors.keys()]) this.recheck(key);
+
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    }
+
+    if (!this.isEditing) {
+      this._fromView = true;
+      this.mode = 'edit';
+    }
+
+    this.checkFields({
+      focus: true
+    });
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+  } // ---------------------------------------------------------------- presses
+
+
+  onNativeSubmit(event) {
+    if (!event.target?.classList?.contains('sf-form')) return;
+    event.preventDefault();
+    this.submit();
+  }
+
+  submit() {
+    if (!this.isEditing || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('mode');
+    if (!this.checkFields({
+      focus: true
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+    const value = this.value;
+    if (!this.sfEmit('submit', {
+      value
+    }, {
+      cancelable: true
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
+    this._saved = clone(this._values);
+    this.forget();
+    if (this._fromView) this.toView();else this.requestComponentUpdate('saved');
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+  }
+
+  cancel() {
+    this.restore();
+    this.sfEmit('cancel', {
+      value: this.value
+    });
+    if (this._fromView) this.toView();
+  }
+
+  restore() {
+    this._values = clone(this._saved);
+    this._rendererErrors = {};
+    this.forget();
+    this.sfHostState('data-invalid', false);
+    this.requestComponentUpdate('reset');
+  }
+
+  toEdit() {
+    this._fromView = true;
+    this.mode = 'edit';
+    this.sfHostState('data-mode', 'edit');
+    this.requestComponentUpdate('mode');
+    this.whenDrawn(() => this.focusField(this.shownFields()[0]?.key));
+  }
+
+  toView() {
+    this._fromView = false;
+    this.mode = 'view';
+    this.sfHostState('data-mode', 'view');
+    this.requestComponentUpdate('mode');
+    const restore = this.contains(this.ownerDocument.activeElement) || this.ownerDocument.activeElement === this.ownerDocument.body;
+    if (restore) this.whenDrawn(() => this.querySelector('.sf-form-edit button, .sf-form-edit')?.focus({
+      preventScroll: true
+    }));
+  } // Leaving a field the person changed, or any field after a submit, checks it.
+
+
+  onFieldLeave(event) {
+    const box = event.target?.closest?.('.sf-form-field');
+    if (!box || !this.contains(box)) return;
+    if (event.relatedTarget && box.contains(event.relatedTarget)) return;
+    const key = box.getAttribute('data-key');
+    if (!key || !this.isEditing) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+    queueMicrotask(() => {
+      if (box.matches(':focus-within')) return;
+      if (!this._touched.has(key) && !this._submitted && !this._errors.has(key)) return;
+      this.recheck(key);
+    });
+  } // Typing into a field that shows an error takes the error away the moment
+  // the control says the text is right, before the control writes it.
+
+
+  onFieldInput(event) {
+    const box = event.target?.closest?.('.sf-form-field');
+    if (!box || !this.contains(box)) return;
+    const key = box.getAttribute('data-key');
+    if (!key) return;
+
+    this._touched.add(key);
+
+    if (!this._errors.has(key) || this._hostErrors.has(key)) return;
+    const control = this.controlOf(key);
+
+    if (control?.validity?.valid && control.validity.valueMissing === false) {
+      const field = this.list.find(one => one.key === key);
+
+      if (field && (field.required !== true || hasValue(control.value))) {
+        this._errors.delete(key);
+
+        this.sfHostState('data-invalid', this._errors.size > 0);
+        this.requestComponentUpdate('validity');
+      }
+    }
+  } // ---------------------------------------------------------------- focus
+
+
+  controlOf(key) {
+    const slot = this.querySelector(`.sf-form-field[data-key="${CSS.escape(String(key))}"] > .sf-form-control`);
+    if (!slot) return null;
+
+    for (const node of slot.querySelectorAll('*')) {
+      if (node.localName.startsWith('sf-') && node.localName !== 'sf-help-mark') return node;
+    }
+
+    return null;
+  }
+
+  focusField(key) {
+    if (!key) return;
+    const control = this.controlOf(key);
+    const slot = control?.closest('.sf-form-control');
+    const target = control?.focusDelegate?.() || slot?.querySelector('input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])') || control;
+
+    try {
+      target?.focus?.();
+    } catch {
+      /* a field taken out of the page */
+    }
+  }
+
+  focusSummary() {
+    this.querySelector('.sf-form-summary')?.focus();
+  } // Runs after the element's next drawing (and its controls').
+
+
+  whenDrawn(callback) {
+    const done = event => {
+      if (event.target !== this) return;
+      this.removeEventListener('sf-after-render', done);
+
+      const settle = () => callback();
+
+      if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(settle);else Promise.resolve().then(settle);
+    };
+
+    this.addEventListener('sf-after-render', done);
+  } // ---------------------------------------------------------------- drawing
+  // After each drawing, in the same task: a control of the field family says
+  // its error itself (invalid, error-message); a checkbox carries its label.
+
+
+  renderTemplateResult(templateResult) {
+    const result = super.renderTemplateResult(templateResult);
+    this.syncControls();
+    return result;
+  }
+
+  syncControls() {
+    for (const field of this.list) {
+      const control = this.controlOf(field.key);
+      if (!control) continue;
+      const message = this.isEditing ? this._errors.get(field.key) || '' : '';
+
+      if (SPEAKING_TAGS.has(control.localName)) {
+        if (message) {
+          if (control.getAttribute('error-message') !== message) control.setAttribute('error-message', message);
+          if (!control.hasAttribute('invalid')) control.setAttribute('invalid', '');
+          control.setAttribute('data-sf-form-invalid', '');
+        } else if (control.hasAttribute('data-sf-form-invalid')) {
+          control.removeAttribute('data-sf-form-invalid');
+          control.removeAttribute('invalid');
+          control.removeAttribute('error-message');
+        }
+      } else if (control.localName === 'sf-checkbox') {
+        if (control.getAttribute('label') !== field.label) control.setAttribute('label', field.label);
+        control.toggleAttribute('invalid', Boolean(message));
+      }
+    }
+  }
+
+  templateContext() {
+    const editing = this.isEditing;
+    const instant = this.isInstant;
+    const fields = this.shownFields();
+    const id = this._id;
+
+    const word = (key, options) => this.sfWord(key, options);
+
+    const groups = groupFields(fields, this.groups).map((group, index, all) => ({ ...group,
+      legend: all.length > 1 ? group.label : '',
+      fields: group.fields.map(field => this.fieldContext(field, {
+        editing,
+        instant,
+        id
+      }))
+    }));
+    const errors = editing ? fields.filter(field => this._errors.has(field.key)).map(field => ({
+      key: field.key,
+      message: this._errors.get(field.key),
+      href: `#${id}--field-${field.key}`
+    })) : [];
+    this.sfHostState('data-mode', editing ? 'edit' : 'view');
+    this.sfHostState('data-dirty', this._dirty);
+    return this.createTemplateContext({ ...this.getPropsContext(),
+      component: this,
+      id,
+      label: text(this.label),
+      editing,
+      instant,
+      labels: this.labels === 'start' ? 'start' : 'top',
+      footer: this.footer === 'sticky' ? 'sticky' : 'static',
+      groups,
+      requiredNote: editing && !instant && fields.some(field => field.required === true && field.readonly !== true && field.propertyType !== 'boolean'),
+      errorList: editing && this._submitted && errors.length > 1 ? errors : null,
+      dirty: this._dirty,
+      words: {
+        requiredNote: word('required-note'),
+        submit: word('submit'),
+        cancel: word('cancel'),
+        edit: word('edit'),
+        unsaved: word('unsaved'),
+        errorsTitle: word('errors-title', {
+          count: errors.length
+        })
+      },
+      rootClass: this.getRootClass()
+    });
+  }
+
+  fieldContext(field, {
+    editing,
+    instant,
+    id
+  }) {
+    const value = this._values[field.key];
+    const host = this.hostOf(field);
+    const control = editing ? (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderEditField)(field, value, host, this.renderOptions()) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderViewField)(field, value, host); // A required yes/no under apply submit is a checkbox, which carries its
+    // label beside the box (C165 (4)): no label row over it.
+
+    const checkbox = editing && !instant && field.propertyType === 'boolean' && field.required === true && field.readonly !== true;
+    const error = editing ? this._errors.get(field.key) || '' : '';
+    const element = this.controlOf(field.key);
+    const speaks = Boolean(element && SPEAKING_TAGS.has(element.localName));
+    return {
+      key: field.key,
+      id: `${id}--field-${field.key}`,
+      label: field.label,
+      labelRow: !checkbox,
+      required: editing && field.required === true && field.readonly !== true && field.propertyType !== 'boolean',
+      help: text(field.help),
+      helpLabel: this.sfWord('help-label', {
+        vars: {
+          label: field.label
+        }
+      }),
+      // The hint gives its place to the error (C153 (3)).
+      hint: editing && !error ? text(field.hint) : '',
+      hintId: `${id}--hint-${field.key}`,
+      // The form draws the error line only where the control does not.
+      error: error && !speaks ? error : '',
+      errorId: `${id}--error-${field.key}`,
+      width: field.width,
+      control,
+      focus: () => this.focusField(field.key)
+    };
+  }
+
+  template() {
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderFormTemplate)(this.templateContext());
+  }
+
+}
+
+SfForm.define('sf-form');
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "219db2ce051d"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   renderFormTemplate: () => (/* binding */ renderFormTemplate)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // sf-form's markup (scss/ draws it with the space system).
+//
+// - The root is a native form (novalidate: the form says the errors in its
+//   own words, never the browser's bubble), named by label so it is a form
+//   landmark; Enter in a one-line field submits it through «Сохранить», its
+//   submit button. Under apply instant and in view it has no submit button.
+// - «* — обязательные поля» over a form with a required field (C153 (2)).
+// - From two errors after a submit, the errors summary: role alert,
+//   tabindex -1 (it takes the focus), «Исправьте N поля» and one link per
+//   error to its field (C182 (6)).
+// - The groups: with two or more, each a fieldset named by its legend, else
+//   a plain block. Each field: the label row (label, «*» hidden from a screen
+//   reader, «?» as sf-help-mark), the control the field renderers drew, then
+//   the hint or the error the control does not say itself. A pressed label
+//   moves the focus to its control (the control is named by the same words
+//   through its aria-label).
+// - The footer under the fields: «Сохранить» first at the start, «Отмена»
+//   after it (C159 (4)), «Есть несохранённые изменения» under them as a
+//   polite status; in view «Изменить». footer="sticky" makes it a bar at the
+//   bottom of the scrolling place.
+
+function labelRow(field) {
+  if (!field.labelRow) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-label">
+    <span class="sf-form-label-text" @click=${field.focus}>${field.label}${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-form-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+    ${field.help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-form-help" size="1/2" text=${field.help} label=${field.helpLabel}></sf-help-mark>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </div>`;
+}
+
+function fieldBlock(field) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-field" id=${field.id} data-key=${field.key} data-width=${field.width || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    ${labelRow(field)}
+    <div class="sf-form-control">${field.control}</div>
+    ${field.error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-error" id=${field.errorId}>${field.error}</p>` : field.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-hint" id=${field.hintId}>${field.hint}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </div>`;
+}
+
+function groupBlock(group) {
+  if (group.legend) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<fieldset class="sf-form-group">
+      <legend class="sf-form-legend">${group.legend}</legend>
+      <div class="sf-form-fields">${group.fields.map(fieldBlock)}</div>
+    </fieldset>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-group"><div class="sf-form-fields">${group.fields.map(fieldBlock)}</div></div>`;
+}
+
+function summaryBlock(context) {
+  if (!context.errorList) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-summary" role="alert" tabindex="-1">
+    <p class="sf-form-summary-title">${context.words.errorsTitle}</p>
+    <ul class="sf-form-summary-list">${context.errorList.map(error => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li><a href=${error.href}
+      @click=${event => {
+    event.preventDefault();
+    context.component.focusField(error.key);
+  }}>${error.message}</a></li>`)}</ul>
+  </div>`;
+}
+
+function footerBlock(context) {
+  if (context.instant) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (!context.editing) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer">
+      <sf-button class="sf-form-edit" appearance="outline" scheme="primary" text=${context.words.edit}
+        @click=${() => context.component.toEdit()}></sf-button>
+    </div>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer" data-sticky=${context.footer === 'sticky' ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <div class="sf-form-actions">
+      <sf-button class="sf-form-submit" scheme="primary" native-type="submit" text=${context.words.submit}></sf-button>
+      <sf-button class="sf-form-cancel" appearance="ghost" scheme="on-surface" text=${context.words.cancel}
+        @click=${() => context.component.cancel()}></sf-button>
+    </div>
+    <p class="sf-form-state" role="status">${context.dirty ? context.words.unsaved : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
+  </div>`;
+}
+
+function renderFormTemplate(context) {
+  const classes = ['sf-form', context.rootClass].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<form class=${classes} novalidate
+    aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    data-labels=${context.labels}
+    data-apply=${context.instant ? 'instant' : 'submit'}>
+    ${context.editing && context.requiredNote ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-note">${context.words.requiredNote}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${summaryBlock(context)}
+    <div class="sf-form-body">${context.groups.map(groupBlock)}</div>
+    ${footerBlock(context)}
+  </form>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "38ea8d53f301"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FormField: () => (/* binding */ FormField),
+/* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
+/* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
+/* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
+/* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
+/* harmony export */ });
+// The form-control half of a field built from its component.json (standard
+// simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
+//
+// core/js/element-manifest.js makes the host form-associated and gives it
+// ElementInternals, sfFormValue() and sfSyncForm(). What a field adds is the
+// same in every member, so it is written once here:
+//
+// - validity (§17.2): the host reports what its inner native control knows
+//   (value-missing, too-short, pattern-mismatch, ...) with the control as the
+//   anchor, so reportValidity() points at the box the person types in; a
+//   custom error set with setCustomValidity() or the action set-error wins
+//   until it is cleared;
+// - the inner controls stay out of the page's form (§17.1 item 6): they carry
+//   no name while the host is the form control;
+// - a field with no inner native control to read (a list of buttons, a
+//   picker, a file area) says what it knows itself with `fieldValidity()`:
+//   value-missing while `required` and the form value is empty by default,
+//   and where the browser points;
+// - form reset and fieldset[disabled] (§17.1 items 3, 4): `form.reset()`
+//   calls the component's `fieldReset()` when it has one (its default back,
+//   without events), and the host syncs its form value and validity after the
+//   browser has reset its parts;
+// - restore: `formStateRestoreCallback` hands the saved form value to
+//   `fieldRestore(state)` when the component has one.
+//
+// Usage, over the element core/js/element-manifest.js gives:
+//
+//   const Element = elementFromManifest(manifest, {base: SfBaseElement, ...});
+//   class SfThing extends FormField(Element) { ... }
+//
+// Without ElementInternals nothing here runs, and the named inner control
+// submits as it always did (§16 item 11).
+// ValidityState's own flags, in the order of §17.2's list.
+const VALIDITY_FLAGS = Object.freeze(['valueMissing', 'typeMismatch', 'patternMismatch', 'tooShort', 'tooLong', 'rangeUnderflow', 'rangeOverflow', 'stepMismatch', 'badInput']);
+/** The name an inner native control carries: none while the host submits (§17.1 item 6). */
+
+function innerControlName(component, name) {
+  return component?.sfInternals ? '' : String(name || '');
+}
+/**
+ * The host's validity from its inner control: the control's failed flags and
+ * message, or the custom error the page set, or valid. `own` adds flags the
+ * component reads itself, {flag: message} (a number field's range and step,
+ * which its text box cannot know).
+ */
+
+function syncFieldValidity(component, control, own = {}) {
+  const internals = component?.sfInternals;
+  if (!internals) return;
+
+  try {
+    const custom = component.sfCustomError || '';
+
+    if (custom) {
+      internals.setValidity({
+        customError: true
+      }, custom, control || undefined);
+      return;
+    }
+
+    const validity = control?.validity;
+    const flags = {};
+    let message = '';
+
+    if (validity && !validity.valid && control.willValidate !== false) {
+      for (const flag of VALIDITY_FLAGS) if (validity[flag]) flags[flag] = true;
+
+      message = control.validationMessage;
+    }
+
+    for (const [flag, text] of Object.entries(own || {})) {
+      flags[flag] = true;
+      message ||= String(text || '');
+    }
+
+    if (Object.keys(flags).length) internals.setValidity(flags, message || ' ', control || undefined);else internals.setValidity({});
+  } catch (error) {
+    component.reportComponentError?.(error, 'validity');
+  }
+}
+/**
+ * The host's validity from what the component says itself (fieldValidity()):
+ * value-missing, too-long (a counted field past its limit, helpers/char-count.js)
+ * and the custom error the page set; `anchor`, when it is a part of the host,
+ * is where the browser points.
+ */
+
+function syncOwnValidity(component, {
+  valueMissing = false,
+  tooLong = false,
+  message = '',
+  anchor = null
+} = {}) {
+  const internals = component?.sfInternals;
+  if (!internals) return;
+  const custom = component.sfCustomError || '';
+  const flags = {};
+  let text = '';
+
+  if (custom) {
+    flags.customError = true;
+    text = custom;
+  }
+
+  if (valueMissing) {
+    flags.valueMissing = true;
+    text ||= message || 'value-missing';
+  }
+
+  if (tooLong) {
+    flags.tooLong = true;
+    text ||= message || 'too-long';
+  }
+
+  try {
+    if (Object.keys(flags).length) {
+      const target = anchor && component.contains?.(anchor) ? anchor : undefined;
+      internals.setValidity(flags, text, target);
+    } else {
+      internals.setValidity({});
+    }
+  } catch (error) {
+    component.reportComponentError?.(error, 'validity');
+  }
+}
+/**
+ * The field family's form plumbing over a manifest element. A component
+ * names the control its validity comes from with `sfValidityAnchor()`
+ * (default: getInputElement()).
+ */
+
+const FormField = Base => class extends Base {
+  constructor() {
+    super(); // A person's edit reaches the host as input/change; the form value and
+    // validity follow it without a redraw.
+
+    this.__sfFormSync = () => this.sfSyncFormState();
+
+    this.addEventListener('input', this.__sfFormSync);
+    this.addEventListener('change', this.__sfFormSync);
+  }
+
+  sfValidityAnchor() {
+    return this.getInputElement?.() || null;
+  }
+  /**
+   * What the component knows of its validity itself, {valueMissing, message,
+   * anchor}, or null when an inner native control's ValidityState is the
+   * answer (sfValidityAnchor()). With no such control: value-missing while
+   * `required` and the form value is empty. A component overrides it.
+   */
+
+
+  fieldValidity() {
+    if (this.sfValidityAnchor()) return null;
+    const required = this.hasAttribute('required') && this.getAttribute('required') !== 'false';
+    const value = this.sfFormValue?.();
+    const valueMissing = required && !this.disabled && (value === null || value === undefined || value === ''); // The word only when it is said: asked on every sync, a component without
+    // it warned «no word value-missing» on each optional field (simai.main,
+    // sf-button-group in property-view's choice field, 2026-10-28).
+
+    return {
+      valueMissing,
+      message: valueMissing ? this.sfWord?.('value-missing') || 'value-missing' : '',
+      anchor: null
+    };
+  }
+  /** The validity, now: the component's own account, or its inner control's. */
+
+
+  sfSyncValidity() {
+    const own = this.fieldValidity();
+    if (own) syncOwnValidity(this, own);else syncFieldValidity(this, this.sfValidityAnchor());
+  }
+  /** The form value and the validity, now. */
+
+
+  sfSyncFormState() {
+    this.sfSyncForm?.();
+    this.sfSyncValidity();
+  }
+  /** §17.2: a custom error keeps the form from submitting until it is cleared. */
+
+
+  setCustomValidity(message = '') {
+    this.sfCustomError = String(message ?? '');
+    this.sfSyncValidity();
+  } // fieldReset() puts the component's default back, without events. The
+  // browser resets the parts after it calls this: the sync waits for them,
+  // and once more for the parts that put their own default back a task later
+  // (component/form-reset-helper.js: masks, the checkables' attributes).
+
+
+  formResetCallback() {
+    if (typeof this.fieldReset === 'function') {
+      try {
+        this.fieldReset();
+      } catch (error) {
+        this.reportComponentError?.(error, 'form reset');
+      }
+    }
+
+    this.sfSyncFormState();
+    Promise.resolve().then(() => this.sfSyncFormState());
+    setTimeout(() => this.sfSyncFormState(), 0);
+  }
+
+  formStateRestoreCallback(state) {
+    if (typeof this.fieldRestore === 'function') this.fieldRestore(state);
+    this.sfSyncFormState();
+  }
+
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
+/**
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
+ */
+
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
+  constructor() {
+    super();
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
+
+
+  sfSyncFormState() {
+    super.sfSyncFormState?.();
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
+    this.requestComponentUpdate?.('value');
+  }
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
+
+
+  get sfMissingShown() {
+    return this.__sfErrorShown;
+  }
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
+
+
+  sfShownInvalid(invalid) {
+    return Boolean(invalid) || this.__sfErrorShown;
+  }
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
+
+
+  sfShownMessage(invalid, errorMessage) {
+    if (invalid) return errorMessage || '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
+  }
+
+  formResetCallback() {
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
+    super.formResetCallback?.();
+    if (shown) this.requestComponentUpdate?.('reset');
+  }
+
+};
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
+
+/***/ },
+
+/***/ "b30ec5bc0edb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
+/* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
+/* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps)
+/* harmony export */ });
+/* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i; // The hues of the static palette (owner decision C17), each with the OKLCH hue
+// angle of its tone 50 (src/core/scss/_sf_static_palette.scss, rounded to the
+// degree; tests/option-badge-palette.contract.test.mjs holds the two equal).
+// Brown and gray are not reached from a hex: brown sits between orange and
+// amber and differs from them by chroma alone, which a light or a dark hex
+// does not keep; a colour with less chroma than GREY_CHROMA is gray. Both are
+// reached by name.
+
+const OPTION_BADGE_HUES = Object.freeze({
+  red: 28,
+  orange: 47,
+  amber: 60,
+  yellow: 89,
+  lime: 119,
+  green: 144,
+  teal: 173,
+  cyan: 203,
+  sky: 232,
+  blue: 259,
+  indigo: 279,
+  violet: 299,
+  purple: 320,
+  pink: 347
+});
+const OPTION_BADGE_PALETTE = Object.freeze([...Object.keys(OPTION_BADGE_HUES), "brown", "gray"]);
+const GREY_CHROMA = 0.03;
+
+const linear = channel => {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}; // {chroma, hue} in OKLCH of a #rgb[a] / #rrggbb[aa]; the alpha is not read.
+
+
+function oklchOf(hex) {
+  let digits = hex.slice(1);
+  if (digits.length < 6) digits = [...digits].map(digit => digit + digit).join("");
+  const [r, g, b] = [0, 2, 4].map(at => linear(parseInt(digits.slice(at, at + 2), 16)));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    chroma: Math.hypot(a, bb),
+    hue: (Math.atan2(bb, a) * 180 / Math.PI + 360) % 360
+  };
+}
+/** The static palette hue nearest a hex colour: gray when it has no hue to speak of. */
+
+
+function nearestPaletteHue(hex) {
+  const {
+    chroma,
+    hue
+  } = oklchOf(hex);
+  if (chroma < GREY_CHROMA) return "gray";
+  let best = "gray";
+  let distance = Infinity;
+
+  for (const [name, angle] of Object.entries(OPTION_BADGE_HUES)) {
+    const apart = Math.abs((hue - angle + 540) % 360 - 180);
+
+    if (apart < distance) {
+      best = name;
+      distance = apart;
+    }
+  }
+
+  return best;
+} // The fill of a hue: tone 50 at the fill step 24 (C43: no new tones or steps;
+// the alpha scale's fill family), over the place in both themes, as the 24 %
+// mix of the data's hex was. The text stays on the surface colour, so the
+// label reads the same in both themes. Written to the badge's public
+// variables, --sf-badge-background-color and --sf-badge-color (owner decision
+// C140 (2), BG-7): a colour from data reaches the badge only through them and
+// only as a palette step, never the author's hex.
+
+const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--alfa-24); --sf-badge-color: var(--sf-on-surface)`;
+/**
+ * Badge look for a filter option with optionRenderer 'badge'. option.color is
+ * a Framework badge scheme (success, error, info...), a hue of the static
+ * palette (red, teal, gray...; C17) or a hex colour. A hue tints the badge with
+ * its own palette step; a hex is drawn in the palette hue nearest it, never as
+ * the raw colour (C18, C43; badges study BG-7), so the label stays readable in
+ * both themes. Anything else is neutral.
+ */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
+
+
+function optionBadgeProps(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    rootStyle: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(name)
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(nearestPaletteHue(color))
+  };
+  return {
+    scheme: "neutral",
+    rootStyle: ""
+  };
+}
+
+/***/ },
+
+/***/ "db3a39d580e9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "5b7d7695b41b"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "073f05ff1a81"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/unsafe-html.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/unsafe-html.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "2a080a730149"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "deb1a4d61565"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "e19611ff78cb"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PASTE_BLOCKS: () => (/* binding */ PASTE_BLOCKS),
+/* harmony export */   RICH_TEXT_BLOCKS: () => (/* binding */ RICH_TEXT_BLOCKS),
+/* harmony export */   RICH_TEXT_ELEMENTS: () => (/* binding */ RICH_TEXT_ELEMENTS),
+/* harmony export */   RICH_TEXT_PROFILES: () => (/* binding */ RICH_TEXT_PROFILES),
+/* harmony export */   RICH_TEXT_SCHEMES: () => (/* binding */ RICH_TEXT_SCHEMES),
+/* harmony export */   cleanTree: () => (/* binding */ cleanTree),
+/* harmony export */   decodeEntities: () => (/* binding */ decodeEntities),
+/* harmony export */   parseHtml: () => (/* binding */ parseHtml),
+/* harmony export */   plainText: () => (/* binding */ plainText),
+/* harmony export */   richTextFromPlainText: () => (/* binding */ richTextFromPlainText),
+/* harmony export */   richTextHref: () => (/* binding */ richTextHref),
+/* harmony export */   sanitizeRichText: () => (/* binding */ sanitizeRichText),
+/* harmony export */   serialize: () => (/* binding */ serialize),
+/* harmony export */   treeFromDom: () => (/* binding */ treeFromDom)
+/* harmony export */ });
+// The HTML subset of sf-rich-text: what the value may hold, and how anything
+// else is brought into it. Larena stores page text as a property of type
+// html@1, and this module is that type's rule in the browser: the editor
+// cleans the value it is given, every paste and drop, and its own DOM after
+// every edit and command, through the one function here.
+//
+// The subset:
+//
+//   p  h2  h3  h4  strong  em  a[href]  ul  ol  li  blockquote  br
+//
+// - no attribute is kept but href on <a>;
+// - href is kept for https:, mailto: and tel: URLs and for a site path
+//   ("/docs/a"), judged after removing control characters and white space, so
+//   "java\tscript:" does not pass; "//host" and "/\host" leave the site and
+//   are not kept; a link whose href is not kept becomes its text;
+// - script, style and the other containers whose content is not text for a
+//   reader (DROPPED) go with their content; any other element is unwrapped,
+//   and its text stays; one that stands as a block (div, section, table, a
+//   cell, h1, pre) still separates its text from its neighbours';
+// - b and i are strong and em, and a span whose style is bold or italic is
+//   too (a word processor's paste); a b whose style says normal is not;
+// - text outside a block is wrapped in p, a block inside a paragraph splits
+//   it, a block inside a list item becomes a line of it (br), a list holds
+//   only items, adjacent lists of one kind are one list;
+// - the value has no empty block, no line break at a block's edge and no
+//   white space between blocks; an editor with no text is "".
+//
+// Two readers feed one cleaner: `treeFromDom` reads a DOM (the editor, or a
+// paste parsed by the browser in an inert <template>), `parseHtml` reads a
+// string without a DOM (a server, a test). Neither ever assigns the input to
+// a live element. What comes out is written by `serialize` from the cleaned
+// model, every text escaped, so it holds nothing the subset does not allow
+// whatever the reader understood.
+//
+// No imports and no state: the element and the contract tests use the same
+// functions.
+//
+// The paste profile (simai/ui-source#66). html@1 is a stored type, so it does
+// not grow: a value never holds pre or table. A structured-content editor
+// reads a paste with cleanTree(tree, {profile: 'paste'}), which is html@1
+// plus two blocks the profile maps to its own types instead of flattening
+// them into paragraphs:
+//
+//   {type: 'pre', text}            a code block: its text with its line
+//                                  breaks and indentation (-> content.code)
+//   {type: 'table', caption, rows} a simple table: rows of {head, cells},
+//                                  each cell {header, leaves} with the
+//                                  subset's inline leaves (-> content.table)
+//
+// Everything inside them is cleaned by the same rule: the same marks, the
+// same href check, DROPPED goes with its content. A pre or a table inside a
+// list item, and a table inside a cell, are read as html@1 reads them.
+// serialize writes the two in html@1 terms (lines of a paragraph, a
+// paragraph per cell), so whatever comes out of it is still the subset.
+//
+// The module lives in the core runtime since content.html 1.0.0: the
+// Composition renderer sanitises a content.html block through it at render,
+// so a page that only renders a Document needs no Smart component.
+// src/smart/input-rich/js/rich-text-html.mjs re-exports it for sf-rich-text and
+// the field renderers; there is one rule, here.
+
+const RICH_TEXT_ELEMENTS = Object.freeze(['p', 'h2', 'h3', 'h4', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'br']);
+const RICH_TEXT_BLOCKS = Object.freeze(['p', 'h2', 'h3', 'h4']);
+const RICH_TEXT_SCHEMES = Object.freeze(['https:', 'mailto:', 'tel:']);
+// The profiles cleanTree reads by: html@1 itself, and the paste profile of a
+// structured-content editor, which keeps PASTE_BLOCKS as blocks of their own.
+const RICH_TEXT_PROFILES = Object.freeze(['html', 'paste']);
+const PASTE_BLOCKS = Object.freeze(['pre', 'table']);
+
+// Dropped with everything inside: their content is code, a document's head,
+// a drawing, or a control's own data, not text for a reader.
+const DROPPED = new Set([
+  'script', 'style', 'template', 'head', 'title', 'meta', 'link', 'base', 'noscript',
+  'iframe', 'frame', 'frameset', 'noembed', 'noframes', 'object', 'embed', 'applet',
+  'svg', 'math', 'canvas', 'video', 'audio', 'img', 'picture', 'source', 'track',
+  'input', 'select', 'textarea', 'xmp', 'plaintext',
+]);
+
+// Elements off the subset that stand as blocks: unwrapped, but their text is
+// not run together with the text around them.
+const BREAKING = new Set([
+  'address', 'article', 'aside', 'body', 'caption', 'center', 'dd', 'details', 'dialog', 'dir', 'div',
+  'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h5', 'h6', 'header',
+  'hgroup', 'hr', 'html', 'legend', 'listing', 'main', 'menu', 'nav', 'optgroup', 'option', 'pre',
+  'section', 'summary', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr',
+]);
+
+const LISTS = new Set(['ul', 'ol']);
+const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+// Raw text: what follows the start tag up to its end tag is not markup.
+const RAW = new Set(['script', 'style', 'textarea', 'title', 'xmp', 'iframe', 'noembed', 'noframes', 'noscript']);
+// Where an implied </p> stops looking for the paragraph (the parser's button scope).
+const P_SCOPE = new Set(['td', 'th', 'table', 'caption', 'button']);
+
+// C0 controls, DEL and C1 controls: a browser ignores them inside a scheme.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROLS = /[\u0000-\u001f\u007f-\u009f]/gu;
+// ...and white space, which a browser also skips around and inside a scheme.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROLS_AND_SPACE = /[\u0000- \u007f-\u009f\u00a0\u1680\u2000-\u200b\u2028\u2029\u202f\u205f\u3000\ufeff]/gu;
+const HREF_MAX = 2048;
+
+/**
+ * The href sf-rich-text keeps, or null: https:, mailto: and tel: URLs and a
+ * path on the site ("/docs/a", "/docs?q=1#a"). "//host", "/\host", http:,
+ * javascript:, data: and anything else are not kept.
+ * @param {unknown} value
+ * @returns {string|null}
+ */
+function richTextHref(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > HREF_MAX) return null;
+  const compact = trimmed.replace(CONTROLS_AND_SPACE, '');
+  if (!compact) return null;
+  if (compact.startsWith('/')) {
+    // A site path, but not "//host" or "/\host", which leave the site.
+    if (/^\/[/\\]/u.test(compact)) return null;
+    const path = trimmed.replace(CONTROLS, '');
+    return /^\/[/\\]/u.test(path) ? null : path;
+  }
+  const scheme = /^([a-z][a-z0-9+.-]*):/iu.exec(compact)?.[1]?.toLowerCase();
+  if (!scheme || !RICH_TEXT_SCHEMES.includes(`${scheme}:`)) return null;
+  let url;
+  try {
+    url = new globalThis.URL(trimmed.replace(CONTROLS, ''));
+  } catch {
+    return null;
+  }
+  if (url.protocol !== `${scheme}:`) return null;
+  if (url.protocol === 'https:' && !url.hostname) return null;
+  if (url.protocol !== 'https:' && url.href.length <= url.protocol.length) return null;
+  return url.href;
+}
+
+// ---------------------------------------------------------------- entities
+
+const NAMED = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0', shy: '\u00ad',
+  hellip: '\u2026', mdash: '\u2014', ndash: '\u2013', minus: '\u2212', laquo: '\u00ab', raquo: '\u00bb',
+  lsquo: '\u2018', rsquo: '\u2019', sbquo: '\u201a', ldquo: '\u201c', rdquo: '\u201d', bdquo: '\u201e',
+  bull: '\u2022', middot: '\u00b7', copy: '\u00a9', reg: '\u00ae', trade: '\u2122', deg: '\u00b0',
+  times: '\u00d7', divide: '\u00f7', plusmn: '\u00b1', euro: '\u20ac', pound: '\u00a3', yen: '\u00a5',
+  cent: '\u00a2', sect: '\u00a7', para: '\u00b6', thinsp: '\u2009', ensp: '\u2002', emsp: '\u2003',
+  zwj: '\u200d', zwnj: '\u200c', larr: '\u2190', rarr: '\u2192', uarr: '\u2191', darr: '\u2193',
+  numero: '\u2116', prime: '\u2032', Prime: '\u2033',
+};
+
+function decodeEntities(text) {
+  return String(text).replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z][a-z0-9]*);?/giu, (whole, body) => {
+    if (body[0] === '#') {
+      const code = body[1] === 'x' || body[1] === 'X' ? Number.parseInt(body.slice(2), 16) : Number.parseInt(body.slice(1), 10);
+      if (!Number.isFinite(code) || code <= 0 || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) return '\ufffd';
+      return String.fromCodePoint(code);
+    }
+    return Object.hasOwn(NAMED, body) && whole.endsWith(';') ? NAMED[body] : whole;
+  });
+}
+
+// ---------------------------------------------------------------- readers
+
+// The raw tree both readers give: {type: 'element', name, attrs, children}
+// and {type: 'text', value}. Only href and style are read from attributes.
+
+/**
+ * Reads an HTML string into the raw tree, without a DOM. Tolerant the way a
+ * browser is for what matters here: implied ends of p and li, void elements,
+ * raw-text elements, comments, entities in text and attributes.
+ * @param {string} html
+ */
+function parseHtml(html) {
+  const source = typeof html === 'string' ? html : '';
+  const root = {type: 'element', name: '#root', attrs: {}, children: []};
+  const stack = [root];
+  const top = () => stack[stack.length - 1];
+  const append = (node) => top().children.push(node);
+  const appendText = (value) => {
+    if (!value) return;
+    const last = top().children.at(-1);
+    if (last?.type === 'text') last.value += value;
+    else append({type: 'text', value});
+  };
+  const closeTo = (name, stopAt = null) => {
+    for (let index = stack.length - 1; index > 0; index -= 1) {
+      const open = stack[index].name;
+      if (stopAt && stopAt.has(open)) return false;
+      if (open === name) {
+        stack.length = index;
+        return true;
+      }
+    }
+    return false;
+  };
+  let at = 0;
+  const length = source.length;
+  while (at < length) {
+    const lt = source.indexOf('<', at);
+    if (lt < 0) {
+      appendText(decodeEntities(source.slice(at)));
+      break;
+    }
+    if (lt > at) appendText(decodeEntities(source.slice(at, lt)));
+    at = lt;
+    if (source.startsWith('<!--', at)) {
+      const end = source.indexOf('-->', at + 4);
+      at = end < 0 ? length : end + 3;
+      continue;
+    }
+    const next = source[at + 1] ?? '';
+    if (next === '!' || next === '?') {
+      const end = source.indexOf('>', at + 2);
+      at = end < 0 ? length : end + 1;
+      continue;
+    }
+    if (next === '/') {
+      const match = /^<\/([a-z][a-z0-9-]*)[^>]*>?/iu.exec(source.slice(at));
+      if (!match) {
+        // "</" not followed by a name is a bogus comment.
+        const end = source.indexOf('>', at + 2);
+        at = end < 0 ? length : end + 1;
+        continue;
+      }
+      at += match[0].length;
+      const name = match[1].toLowerCase();
+      if (name === 'br') append({type: 'element', name: 'br', attrs: {}, children: []});
+      else if (name === 'p' && !closeTo('p', P_SCOPE)) {
+        // A </p> without a <p> is an empty paragraph, as a browser reads it.
+        append({type: 'element', name: 'p', attrs: {}, children: []});
+      } else closeTo(name);
+      continue;
+    }
+    const tag = /^<([a-z][a-z0-9-]*)/iu.exec(source.slice(at));
+    if (!tag) {
+      appendText('<');
+      at += 1;
+      continue;
+    }
+    at += tag[0].length;
+    const name = tag[1].toLowerCase();
+    const attrs = {};
+    let selfClosing = false;
+    // Attributes, up to the closing ">".
+    while (at < length) {
+      const space = /^[\s/]+/u.exec(source.slice(at));
+      if (space) {
+        if (space[0].includes('/') && source[at + space[0].length] === '>') selfClosing = true;
+        at += space[0].length;
+        continue;
+      }
+      if (source[at] === '>') {
+        at += 1;
+        break;
+      }
+      const attr = /^([^\s/>"'=][^\s/>"'=]*)(?:\s*=\s*(?:"([^"]*)"?|'([^']*)'?|([^\s>]*)))?/u.exec(source.slice(at));
+      if (!attr) {
+        at += 1;
+        continue;
+      }
+      at += attr[0].length;
+      const key = attr[1].toLowerCase();
+      if (!Object.hasOwn(attrs, key)) attrs[key] = decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? '');
+    }
+    const element = {type: 'element', name, attrs, children: []};
+    if (name === 'li') closeTo('li', LISTS);
+    // A block start ends an open paragraph (the browser's implied </p>).
+    if (RICH_TEXT_BLOCKS.includes(name) || LISTS.has(name) || name === 'blockquote' || BREAKING.has(name)) closeTo('p', P_SCOPE);
+    append(element);
+    if (name === 'plaintext') {
+      at = length;
+      break;
+    }
+    if (RAW.has(name)) {
+      const close = new RegExp(`</${name}[\\s/>]`, 'iu').exec(source.slice(at));
+      const end = close ? at + close.index : length;
+      if (name === 'textarea' || name === 'title') element.children.push({type: 'text', value: decodeEntities(source.slice(at, end))});
+      else element.children.push({type: 'text', value: source.slice(at, end)});
+      const gt = close ? source.indexOf('>', end) : -1;
+      at = gt < 0 ? length : gt + 1;
+      continue;
+    }
+    if (!VOID.has(name) && !selfClosing) stack.push(element);
+  }
+  return root;
+}
+
+const HTML_NS = 'http://www.w3.org/1999/xhtml';
+
+/**
+ * Reads a DOM subtree (an element, a fragment, a template's content) into the
+ * raw tree. Elements outside the HTML namespace are dropped.
+ * @param {Node} node
+ */
+function treeFromDom(node) {
+  const read = (current) => {
+    if (current.nodeType === 3) return {type: 'text', value: current.data};
+    if (current.nodeType === 11) return {type: 'element', name: '#root', attrs: {}, children: [...current.childNodes].map(read).filter(Boolean)};
+    if (current.nodeType !== 1) return null;
+    if (current.namespaceURI && current.namespaceURI !== HTML_NS) return null;
+    const name = current.localName;
+    if (DROPPED.has(name)) return null;
+    const attrs = {};
+    const href = current.getAttribute('href');
+    if (href !== null) attrs.href = href;
+    const style = current.getAttribute('style');
+    if (style !== null) attrs.style = style;
+    const children = name === 'template' ? [] : [...current.childNodes].map(read).filter(Boolean);
+    return {type: 'element', name, attrs, children};
+  };
+  const tree = read(node);
+  if (!tree || tree.type !== 'element') return {type: 'element', name: '#root', attrs: {}, children: tree ? [tree] : []};
+  return {...tree, name: '#root'};
+}
+
+// ---------------------------------------------------------------- the cleaner
+
+// What a style says of the marks: {strong: true|false|undefined, em: ...}.
+function styleMarks(style) {
+  const out = {};
+  if (!style) return out;
+  const weight = /(?:^|;)\s*font-weight\s*:\s*([^;!]+)/iu.exec(style)?.[1]?.trim().toLowerCase();
+  if (weight) {
+    if (weight === 'bold' || weight === 'bolder' || Number(weight) >= 600) out.strong = true;
+    else if (weight === 'normal' || weight === 'lighter' || Number(weight) < 600) out.strong = false;
+  }
+  const fontStyle = /(?:^|;)\s*font-style\s*:\s*([^;!]+)/iu.exec(style)?.[1]?.trim().toLowerCase();
+  if (fontStyle) {
+    if (fontStyle === 'italic' || fontStyle.startsWith('oblique')) out.em = true;
+    else if (fontStyle === 'normal') out.em = false;
+  }
+  return out;
+}
+
+function marksOf(element, marks) {
+  const next = {...marks};
+  if (element.name === 'strong' || element.name === 'b') next.strong = true;
+  if (element.name === 'em' || element.name === 'i') next.em = true;
+  const styled = styleMarks(element.attrs?.style);
+  if (styled.strong !== undefined) next.strong = styled.strong;
+  if (styled.em !== undefined) next.em = styled.em;
+  return next;
+}
+
+// A leaf of inline content: {kind: 'text', value, strong, em, href} or
+// {kind: 'br', strong, em, href}.
+const leaf = (kind, value, context) => ({kind, value, strong: Boolean(context.marks.strong), em: Boolean(context.marks.em), href: context.href || null});
+
+// A flow (the root, a quote) collects blocks; a list item collects its own
+// content. Text comes in as leaves into the current run; a block ends the
+// run.
+class Flow {
+  constructor(kind) {
+    this.kind = kind;
+    this.blocks = [];
+    this.run = [];
+    this.types = ['p'];
+    this.starts = [0];
+    this.needBreak = false;
+  }
+
+  inline(item) {
+    if (this.kind === 'item' && this.needBreak && this.run.length > 0) {
+      if (!(item.kind === 'text' && !item.value.trim())) {
+        this.run.push({kind: 'br', strong: false, em: false, href: null});
+        this.needBreak = false;
+      }
+    }
+    this.run.push(item);
+  }
+
+  flush() {
+    if (!this.run.length) return;
+    if (this.kind === 'item') {
+      this.blocks.push({type: 'inline', leaves: this.run});
+    } else {
+      this.blocks.push({type: this.types[this.types.length - 1], leaves: this.run});
+    }
+    this.run = [];
+  }
+
+  // A paragraph or heading starts (or a block off the subset): the text so
+  // far is one block, and what follows belongs to the new one.
+  open(type) {
+    if (this.kind === 'item') {
+      this.needBreak = true;
+      return;
+    }
+    this.flush();
+    this.types.push(type);
+    this.starts.push(this.blocks.length);
+  }
+
+  // keepEmpty: a paragraph or heading of the subset that held nothing is
+  // still a block (the editing surface keeps it; the value drops it).
+  close(keepEmpty = false) {
+    if (this.kind === 'item') {
+      this.needBreak = true;
+      return;
+    }
+    const start = this.starts[this.starts.length - 1];
+    if (keepEmpty && !this.run.length && this.blocks.length === start) this.blocks.push({type: this.types[this.types.length - 1], leaves: []});
+    this.flush();
+    if (this.types.length > 1) {
+      this.types.pop();
+      this.starts.pop();
+    }
+  }
+
+  block(block) {
+    this.flush();
+    this.blocks.push(block);
+    this.needBreak = false;
+  }
+}
+
+function walkText(value, flow, context) {
+  if (context.pre) {
+    const lines = value.replace(/\r\n?/gu, '\n').split('\n');
+    lines.forEach((line, index) => {
+      if (index > 0) flow.inline(leaf('br', '', context));
+      if (line) flow.inline(leaf('text', line.replace(/[\t\f]/gu, ' '), context));
+    });
+    return;
+  }
+  const text = value.replace(/[\t\n\r\f ]+/gu, ' ');
+  if (!text) return;
+  // White space between blocks is formatting of the source, not text.
+  if (text === ' ' && !flow.run.length) return;
+  flow.inline(leaf('text', text, context));
+}
+
+function walkChildren(children, flow, context) {
+  for (const child of children) walk(child, flow, context);
+}
+
+function walk(node, flow, context) {
+  if (node.type === 'text') {
+    walkText(node.value, flow, context);
+    return;
+  }
+  const name = node.name;
+  if (DROPPED.has(name)) return;
+  if (name === 'br') {
+    flow.inline(leaf('br', '', context));
+    return;
+  }
+  const inner = {...context, marks: marksOf(node, context.marks)};
+  if (name === 'a') {
+    const href = richTextHref(node.attrs?.href);
+    walkChildren(node.children, flow, href && !context.href ? {...inner, href} : inner);
+    return;
+  }
+  if (RICH_TEXT_BLOCKS.includes(name)) {
+    flow.open(name);
+    walkChildren(node.children, flow, inner);
+    flow.close(true);
+    return;
+  }
+  if (LISTS.has(name)) {
+    const list = readList(node, inner, name);
+    if (list.items.length) flow.block(list);
+    return;
+  }
+  if (name === 'blockquote') {
+    if (flow.kind === 'item') {
+      flow.open('p');
+      walkChildren(node.children, flow, inner);
+      flow.close();
+      return;
+    }
+    const quote = new Flow('flow');
+    walkChildren(node.children, quote, inner);
+    quote.flush();
+    flow.block({type: 'blockquote', blocks: quote.blocks});
+    return;
+  }
+  if (name === 'li') {
+    // An item outside a list is a paragraph of its own.
+    flow.open('p');
+    walkChildren(node.children, flow, inner);
+    flow.close();
+    return;
+  }
+  if (context.paste && flow.kind !== 'item' && (name === 'pre' || name === 'listing')) {
+    flow.block({type: 'pre', text: preText(node)});
+    return;
+  }
+  if (context.paste && flow.kind !== 'item' && name === 'table') {
+    flow.block(readTable(node, inner));
+    return;
+  }
+  if (BREAKING.has(name)) {
+    flow.open('p');
+    walkChildren(node.children, flow, name === 'pre' || name === 'listing' ? {...inner, pre: true} : inner);
+    flow.close();
+    return;
+  }
+  // Any other element: its text, in place.
+  walkChildren(node.children, flow, inner);
+}
+
+// The text of a pre as it stands: line breaks and indentation kept, a <br> a
+// line break, what DROPPED names gone. The newline right after <pre> is the
+// markup's, as a browser reads it; trailing blank lines are not code.
+function preText(node) {
+  const read = (current) => {
+    if (current.type === 'text') return current.value;
+    if (DROPPED.has(current.name)) return '';
+    if (current.name === 'br') return '\n';
+    return current.children.map(read).join('');
+  };
+  return node.children.map(read).join('')
+    .replace(/\r\n?/gu, '\n')
+    .replace(/\u00a0/gu, ' ')
+    .replace(/^\n/u, '')
+    .replace(/\s+$/u, '');
+}
+
+// A simple table: thead, tbody, tfoot and rows straight in the table, cells
+// th and td; a cell's content is inline leaves, its paragraphs and list items
+// lines of it. colspan and rowspan are not read: a cell is one cell.
+function readTable(node, context) {
+  const table = {type: 'table', caption: [], rows: []};
+  const readRow = (row, head) => {
+    const cells = [];
+    for (const cell of row.children) {
+      if (cell.type !== 'element' || (cell.name !== 'td' && cell.name !== 'th')) continue;
+      const flow = new Flow('item');
+      walkChildren(cell.children, flow, {...context, marks: marksOf(cell, context.marks)});
+      flow.flush();
+      cells.push({header: cell.name === 'th', leaves: flatLeaves(flow.blocks)});
+    }
+    if (cells.length) table.rows.push({head, cells});
+  };
+  const readSection = (section, head) => {
+    for (const child of section.children) {
+      if (child.type === 'element' && child.name === 'tr') readRow(child, head);
+    }
+  };
+  for (const child of node.children) {
+    if (child.type !== 'element') continue;
+    if (child.name === 'caption') {
+      const flow = new Flow('item');
+      walkChildren(child.children, flow, context);
+      flow.flush();
+      table.caption = flatLeaves(flow.blocks);
+    } else if (child.name === 'thead') readSection(child, true);
+    else if (child.name === 'tbody' || child.name === 'tfoot') readSection(child, false);
+    else if (child.name === 'tr') readRow(child, false);
+  }
+  return table;
+}
+
+// An item's parts as one line of leaves: a nested list's items are lines too.
+function flatLeaves(parts) {
+  const out = [];
+  const add = (leaves) => {
+    if (!leaves.length) return;
+    if (out.length) out.push({kind: 'br', strong: false, em: false, href: null});
+    out.push(...leaves);
+  };
+  const visit = (part) => {
+    if (part.type === 'inline') add(part.leaves);
+    else for (const item of part.items) item.children.forEach(visit);
+  };
+  parts.forEach(visit);
+  return out;
+}
+
+function readItem(node, context) {
+  const flow = new Flow('item');
+  walkChildren(node.children, flow, context);
+  flow.flush();
+  return {children: flow.blocks};
+}
+
+function readList(node, context, type) {
+  const list = {type, items: []};
+  let loose = null;
+  const endLoose = () => {
+    if (loose) {
+      loose.flush();
+      list.items.push({children: loose.blocks});
+      loose = null;
+    }
+  };
+  for (const child of node.children) {
+    if (child.type === 'element' && child.name === 'li') {
+      endLoose();
+      list.items.push(readItem(child, context));
+      continue;
+    }
+    if (child.type === 'element' && LISTS.has(child.name)) {
+      endLoose();
+      // A list right inside a list (what an indent command leaves) belongs to
+      // the item before it.
+      const nested = readList(child, {...context, marks: marksOf(child, context.marks)}, child.name);
+      if (!nested.items.length) continue;
+      const previous = list.items.at(-1);
+      if (previous) previous.children.push(nested);
+      else list.items.push({children: [nested]});
+      continue;
+    }
+    if (child.type === 'text' && !child.value.trim()) continue;
+    if (child.type === 'element' && DROPPED.has(child.name)) continue;
+    // Loose content in a list is an item.
+    loose ??= new Flow('item');
+    walk(child, loose, context);
+  }
+  endLoose();
+  return list;
+}
+
+// ---------------------------------------------------------------- tidying
+
+const SPACE = ' ';
+const sameFormat = (a, b) => a.strong === b.strong && a.em === b.em && a.href === b.href;
+
+// Inline leaves made canonical: adjacent text of one format joined, runs of
+// spaces made one, spaces at the edges and around a line break removed, a link
+// with nothing but spaces made text.
+//
+// The steps run again until a pass changes nothing (2026-11-11 acceptance,
+// M2): dropping a space or an empty run makes new neighbours, so one pass left
+// "<p>a <em><br>n</em></p>" for the next load-and-save to make
+// "<p>a<em><br>n</em></p>". The stored value is the fixed point at once.
+function tidyLeaves(leaves, mode) {
+  let current = leaves;
+  let key = null;
+  for (let pass = 0; pass < 64; pass += 1) {
+    current = tidyLeavesOnce(current, mode);
+    const next = JSON.stringify(current);
+    if (next === key) break;
+    key = next;
+  }
+  return current;
+}
+
+function tidyLeavesOnce(leaves, mode) {
+  const out = [];
+  for (const item of leaves) {
+    if (item.kind === 'text' && !item.value) continue;
+    const last = out.at(-1);
+    if (item.kind === 'text' && last?.kind === 'text' && sameFormat(last, item)) {
+      last.value += item.value;
+    } else {
+      out.push({...item});
+    }
+  }
+  // One space between words, whatever the leaves.
+  for (let index = 0; index < out.length; index += 1) {
+    const item = out[index];
+    if (item.kind !== 'text') continue;
+    item.value = item.value.replace(/ {2,}/gu, SPACE);
+    const previous = out[index - 1];
+    if (item.value.startsWith(SPACE) && (!previous || previous.kind === 'br' || (previous.kind === 'text' && previous.value.endsWith(SPACE)))) {
+      item.value = item.value.slice(1);
+    }
+    const next = out[index + 1];
+    if (item.value.endsWith(SPACE) && (!next || next.kind === 'br')) item.value = item.value.slice(0, -1);
+  }
+  let kept = out.filter((item) => item.kind === 'br' || item.value);
+  if (mode === 'value') {
+    // Edge breaks and edge white space go together, until neither is left: a
+    // run of only white space (&nbsp;) at an edge hid the break behind it, so
+    // the first pass kept "<p>&nbsp;<br>a</p>" as "<p><br>a</p>" and only the
+    // next load-and-save gave "<p>a</p>" (2026-11-10 review, Q6). The value is
+    // now what that second pass gave, at once, and cleaning it again keeps it.
+    let length = -1;
+    while (length !== kept.length) {
+      length = kept.length;
+      while (kept[0]?.kind === 'br') kept.shift();
+      while (kept.at(-1)?.kind === 'br') kept.pop();
+      if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
+      const end = kept.at(-1);
+      if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
+      kept = kept.filter((item) => item.kind === 'br' || item.value);
+    }
+  }
+  // A link of nothing but spaces is not a link.
+  const groups = new Map();
+  for (const item of kept) {
+    if (!item.href) continue;
+    groups.set(item.href, (groups.get(item.href) || '') + (item.kind === 'text' ? item.value : 'x'));
+  }
+  for (const item of kept) if (item.href && !groups.get(item.href).trim()) item.href = null;
+  // Join again: dropping spaces and links may have made neighbours alike.
+  const joined = [];
+  for (const item of kept) {
+    const last = joined.at(-1);
+    if (item.kind === 'text' && last?.kind === 'text' && sameFormat(last, item)) last.value += item.value;
+    else joined.push(item);
+  }
+  return joined;
+}
+
+const hasText = (leaves) => leaves.some((item) => item.kind === 'text' && item.value.replace(/[\s\u00a0]+/gu, '') !== '');
+
+function tidyItem(item, mode) {
+  const children = [];
+  for (const part of item.children) {
+    if (part.type === 'inline') {
+      const leaves = tidyLeaves(part.leaves, mode);
+      if (!leaves.length) continue;
+      const last = children.at(-1);
+      if (last?.type === 'inline') last.leaves = tidyLeaves([...last.leaves, {kind: 'br', strong: false, em: false, href: null}, ...leaves], mode);
+      else children.push({type: 'inline', leaves});
+    } else {
+      const list = tidyList(part, mode);
+      if (!list) continue;
+      const last = children.at(-1);
+      if (last && last.type === list.type) last.items.push(...list.items);
+      else children.push(list);
+    }
+  }
+  if (mode === 'value') {
+    const filtered = children.filter((part) => part.type !== 'inline' || hasText(part.leaves));
+    return filtered.length ? {children: filtered} : null;
+  }
+  if (!children.length || children[0].type !== 'inline') children.unshift({type: 'inline', leaves: [{kind: 'br', strong: false, em: false, href: null}]});
+  return {children};
+}
+
+function tidyList(list, mode) {
+  const items = list.items.map((item) => tidyItem(item, mode)).filter(Boolean);
+  return items.length ? {type: list.type, items} : null;
+}
+
+function tidyBlocks(blocks, mode) {
+  const out = [];
+  for (const block of blocks) {
+    let tidy = null;
+    if (block.type === 'blockquote') {
+      const inner = tidyBlocks(block.blocks, mode);
+      if (inner.length) tidy = {type: 'blockquote', blocks: inner};
+      else if (mode === 'editor') tidy = {type: 'blockquote', blocks: [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}]};
+    } else if (LISTS.has(block.type)) {
+      tidy = tidyList(block, mode);
+    } else if (block.type === 'pre') {
+      if (block.text.trim()) tidy = {type: 'pre', text: block.text};
+    } else if (block.type === 'table') {
+      // A row with no text in any cell is not kept, as an empty paragraph is not.
+      const rows = block.rows.map((row) => ({head: row.head, cells: row.cells.map((cell) => ({header: cell.header, leaves: tidyLeaves(cell.leaves, 'value')}))}))
+        .filter((row) => row.cells.some((cell) => hasText(cell.leaves)));
+      if (rows.length) tidy = {type: 'table', caption: tidyLeaves(block.caption, 'value'), rows};
+    } else {
+      const leaves = tidyLeaves(block.leaves, mode);
+      if (mode === 'value') {
+        if (hasText(leaves)) tidy = {type: block.type, leaves};
+      } else {
+        tidy = {type: block.type, leaves: leaves.length ? leaves : [{kind: 'br', strong: false, em: false, href: null}]};
+      }
+    }
+    if (!tidy) continue;
+    const last = out.at(-1);
+    // Adjacent lists of one kind are one list.
+    if (last && LISTS.has(tidy.type) && last.type === tidy.type) last.items.push(...tidy.items);
+    else out.push(tidy);
+  }
+  return out;
+}
+
+/**
+ * The raw tree cleaned into blocks.
+ * mode "value": the stored form -- no empty block, no break at an edge.
+ * mode "editor": what the editing surface holds -- an empty block keeps a
+ *   <br> so the caret has a line, breaks the person typed stay.
+ */
+function cleanTree(tree, {mode = 'value', profile = 'html'} = {}) {
+  if (!RICH_TEXT_PROFILES.includes(profile)) throw new TypeError(`rich_text_profile_unknown: ${profile}`);
+  const flow = new Flow('flow');
+  walkChildren(tree.children ?? [], flow, {marks: {}, href: null, pre: false, paste: profile === 'paste'});
+  flow.flush();
+  const blocks = tidyBlocks(flow.blocks, mode);
+  if (mode === 'editor' && !blocks.length) return [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}];
+  return blocks;
+}
+
+// ---------------------------------------------------------------- writing
+
+const escapeText = (text) => text.replace(/&/gu, '&amp;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;').replace(/\u00a0/gu, '&nbsp;');
+const escapeAttribute = (text) => text.replace(/&/gu, '&amp;').replace(/"/gu, '&quot;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;').replace(/\u00a0/gu, '&nbsp;');
+
+// Leaves to markup, nested a > strong > em, each run of one format once.
+function writeLeaves(leaves) {
+  const writeGroup = (items, level) => {
+    let out = '';
+    let at = 0;
+    const key = ['href', 'strong', 'em'][level];
+    while (at < items.length) {
+      const value = key ? items[at][key] : null;
+      let end = at + 1;
+      while (end < items.length && key && items[end][key] === value) end += 1;
+      const group = items.slice(at, end);
+      if (!key) {
+        out += group.map((item) => (item.kind === 'br' ? '<br>' : escapeText(item.value))).join('');
+      } else if (key === 'href' && value) {
+        out += `<a href="${escapeAttribute(value)}">${writeGroup(group, level + 1)}</a>`;
+      } else if (key !== 'href' && value) {
+        out += `<${key}>${writeGroup(group, level + 1)}</${key}>`;
+      } else {
+        out += writeGroup(group, level + 1);
+      }
+      at = end;
+    }
+    return out;
+  };
+  return writeGroup(leaves, 0);
+}
+
+function writeList(list) {
+  return `<${list.type}>${list.items.map((item) => `<li>${item.children.map((part) => (part.type === 'inline' ? writeLeaves(part.leaves) : writeList(part))).join('')}</li>`).join('')}</${list.type}>`;
+}
+
+/** Cleaned blocks to the HTML string. */
+function serialize(blocks) {
+  return blocks.map((block) => {
+    if (block.type === 'blockquote') return `<blockquote>${serialize(block.blocks)}</blockquote>`;
+    if (LISTS.has(block.type)) return writeList(block);
+    // The paste profile's blocks in html@1 terms: never a pre or a table.
+    if (block.type === 'pre') {
+      const leaves = block.text.split('\n').flatMap((line, index) => [
+        ...(index ? [{kind: 'br', strong: false, em: false, href: null}] : []),
+        {kind: 'text', value: line.replace(/[\t\f]/gu, ' '), strong: false, em: false, href: null},
+      ]);
+      return `<p>${writeLeaves(tidyLeaves(leaves, 'value'))}</p>`;
+    }
+    if (block.type === 'table') {
+      const cells = [{leaves: block.caption}, ...block.rows.flatMap((row) => row.cells)];
+      return cells.filter((cell) => hasText(cell.leaves)).map((cell) => `<p>${writeLeaves(cell.leaves)}</p>`).join('');
+    }
+    return `<${block.type}>${writeLeaves(block.leaves)}</${block.type}>`;
+  }).join('');
+}
+
+/** The text of cleaned blocks, for counting and emptiness. */
+function plainText(html) {
+  const blocks = cleanTree(parseHtml(html), {mode: 'value'});
+  const text = (leaves) => leaves.map((item) => (item.kind === 'br' ? '\n' : item.value)).join('');
+  const list = (block) => block.items.map((item) => item.children.map((part) => (part.type === 'inline' ? text(part.leaves) : list(part))).join('\n')).join('\n');
+  const all = (items) => items.map((block) => (block.type === 'blockquote' ? all(block.blocks) : LISTS.has(block.type) ? list(block) : text(block.leaves))).join('\n\n');
+  return all(blocks);
+}
+
+/**
+ * Untrusted HTML into the subset. With a document (the browser) the string
+ * is parsed by the browser in an inert <template>; without one, by
+ * parseHtml. A DOM node may be given instead of a string.
+ * @param {string|Node|null|undefined} input
+ * @param {{mode?: 'value'|'editor', document?: Document|null}} [options]
+ * @returns {string}
+ */
+function sanitizeRichText(input, {mode = 'value', document: documentRef} = {}) {
+  let tree;
+  if (input && typeof input === 'object' && typeof input.nodeType === 'number') {
+    tree = treeFromDom(input);
+  } else {
+    const html = typeof input === 'string' ? input : '';
+    const doc = documentRef === undefined ? globalThis.document : documentRef;
+    if (html && doc?.createElement) {
+      const template = doc.createElement('template');
+      template.innerHTML = html;
+      tree = treeFromDom(template.content);
+    } else {
+      tree = parseHtml(html);
+    }
+  }
+  return serialize(cleanTree(tree, {mode}));
+}
+
+/**
+ * Plain text into the subset: paragraphs split on blank lines, a single line
+ * break a <br>.
+ * @param {string} text
+ * @param {{mode?: 'value'|'editor'}} [options]
+ */
+function richTextFromPlainText(text, {mode = 'value'} = {}) {
+  const source = String(text ?? '').replace(/\r\n?/gu, '\n');
+  const blocks = source.split(/\n[ \t\f\v\u00a0]*\n+/u).map((paragraph) => {
+    const leaves = [];
+    paragraph.split('\n').forEach((line, index) => {
+      if (index > 0) leaves.push({kind: 'br', strong: false, em: false, href: null});
+      const value = line.replace(/[\t\f\v ]+/gu, ' ');
+      if (value) leaves.push({kind: 'text', value, strong: false, em: false, href: null});
+    });
+    return {type: 'p', leaves};
+  });
+  return serialize(tidyBlocks(blocks, mode));
+}
+
+
+/***/ },
+
+/***/ "354525e80715"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f050502c25f8");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a54dc147fac3");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "4f56033a1eae"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PASTE_BLOCKS: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.PASTE_BLOCKS),
+/* harmony export */   RICH_TEXT_BLOCKS: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.RICH_TEXT_BLOCKS),
+/* harmony export */   RICH_TEXT_ELEMENTS: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.RICH_TEXT_ELEMENTS),
+/* harmony export */   RICH_TEXT_PROFILES: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.RICH_TEXT_PROFILES),
+/* harmony export */   RICH_TEXT_SCHEMES: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.RICH_TEXT_SCHEMES),
+/* harmony export */   cleanTree: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.cleanTree),
+/* harmony export */   decodeEntities: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.decodeEntities),
+/* harmony export */   parseHtml: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.parseHtml),
+/* harmony export */   plainText: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.plainText),
+/* harmony export */   richTextFromPlainText: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.richTextFromPlainText),
+/* harmony export */   richTextHref: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.richTextHref),
+/* harmony export */   sanitizeRichText: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.sanitizeRichText),
+/* harmony export */   serialize: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.serialize),
+/* harmony export */   treeFromDom: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.treeFromDom)
+/* harmony export */ });
+/* harmony import */ var _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e19611ff78cb");
+// The html@1 subset of sf-input-rich. The rule moved to the core runtime with
+// content.html 1.0.0, so the Composition renderer and this element share one
+// cleaner: src/core/js/composition/html-subset.mjs.
+
+
+
+/***/ },
+
+/***/ "f050502c25f8"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
+
+/***/ },
+
+/***/ "a54dc147fac3"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет","searchInList":"Найти в списке","containsText":"Содержит…","fileKind_image":"Изображения","fileKind_document":"Документы","fileKind_archive":"Архивы","fileKind_other":"Прочие файлы","operator":"Оператор","rangeFrom":"От","rangeTo":"До","loadingOptions":"Загрузка вариантов","optionsError":"Не удалось загрузить варианты","pickRecord":"Выберите запись","pickFromList":"Выберите из списка","searchRecords":"Найти запись","loadingRecords":"Загрузка записей","recordsError":"Не удалось загрузить записи","retry":"Повторить","loadMore":"Загрузить ещё","removeFile":"Убрать","fileRemoved":"Файл убран","undo":"Вернуть","passwordSet":"Задан","passwordUnset":"Не задан","passwordKeep":"Задан; введите новый, чтобы заменить","maskIncomplete":"Заполните поле полностью","notNumber":"Введите число","precisionMax":"Не больше {n} знаков после запятой","rowCount":{"one":"{n} строка","few":"{n} строки","many":"{n} строк","other":"{n} строки"},"type-string":"Строка","variant-string-phone":"Телефон","variant-string-password":"Пароль","type-text":"Текст","type-html":"Форматированный текст","type-integer":"Целое число","variant-integer-stepper":"Кнопками «−» и «+»","type-number":"Число","variant-number-scale":"Шкала 0–100","variant-number-stepper":"Кнопками «−» и «+»","type-date":"Дата","type-datetime":"Дата и время","type-time":"Время","type-boolean":"Да или нет","type-choice":"Одно из списка","variant-choice-buttons":"Кнопками","type-choices":"Несколько из списка","variant-choices-badges":"Значками","variant-choices-checklist":"Флажками","variant-choices-select":"Выпадающим списком","type-user":"Пользователь","type-record":"Запись","type-relation":"Связь","type-lookup":"Из справочника","type-file":"Файл","variant-file-image":"Изображение","variant-file-image-card":"Изображение карточкой","variant-file-image-list":"Изображения списком","type-color":"Цвет","type-include":"Код","type-money":"Деньги","type-percent":"Процент","type-items":"Строки","type-compound":"Составное","type-ru.requisites":"Реквизиты"}}');
+
+/***/ },
+
+/***/ "ae2fca904cab"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.0.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+
+/***/ },
+
+/***/ "2438c5fc3777"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Form","runtime":{"required-note":"* — required fields","submit":"Save","cancel":"Cancel","edit":"Edit","unsaved":"You have unsaved changes","errors-title":{"one":"Fix {n} field","other":"Fix {n} fields"},"value-missing":"Fill in the field “{label}”","help-label":"More about {label}"},"events":{"submit":{"label":"Save"},"cancel":{"label":"Cancel"}}}');
+
+/***/ },
+
+/***/ "99ea38208a74"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Форма","runtime":{"required-note":"* — обязательные поля","submit":"Сохранить","cancel":"Отмена","edit":"Изменить","unsaved":"Есть несохранённые изменения","errors-title":{"one":"Исправьте {n} поле","few":"Исправьте {n} поля","many":"Исправьте {n} полей","other":"Исправьте {n} поля"},"value-missing":"Заполните поле «{label}»","help-label":"Подробнее: {label}"},"events":{"submit":{"label":"Сохранить"},"cancel":{"label":"Отмена"}}}');
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		const hasSymbol = typeof Symbol === "function";
+/******/ 		const webpackQueues = hasSymbol ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		const webpackExports = hasSymbol ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		const webpackError = hasSymbol ? Symbol("webpack error") : "__webpack_error__";
+/******/
+/******/ 		const resolveQueue = (queue) => {
+/******/ 			if(queue?.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		const wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					const queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					const obj = {};
+/******/
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			const ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			let queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			const depQueues = new Set();
+/******/ 			const exports = module.exports;
+/******/ 			let currentDeps;
+/******/ 			let outerResolve;
+/******/ 			let reject;
+/******/ 			const promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			const handle = (deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				let fn;
+/******/ 				const getResult = () => (currentDeps.map((d) => {
+/******/
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				const promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					const fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}
+/******/ 			const done = (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue))
+/******/ 			body(handle, done);
+/******/ 			queue?.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			const getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/
+/************************************************************************/
+/******/
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	let __webpack_exports__ = __webpack_require__("8ddf99034269");
+/******/
+/******/ })()
+;

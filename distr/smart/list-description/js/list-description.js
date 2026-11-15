@@ -56,7 +56,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
 
 const STATUSES = ['success', 'warning', 'error', 'info']; // sf-alert's status icons, by the shared status words.
 
@@ -161,8 +169,8 @@ function normalizeItems(value) {
 const ListDescriptionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en,
+    ru
   },
   source: 'ru'
 });
@@ -443,7 +451,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "7c0ab7bd0a28"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.1.6","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

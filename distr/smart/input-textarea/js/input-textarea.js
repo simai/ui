@@ -1150,6 +1150,75 @@ function countAnnouncement(state, lastLevel, lastSaid, words) {
 
 /***/ },
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1157,10 +1226,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -1374,72 +1451,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -1510,11 +1824,12 @@ const INHERITED_TEXT = {
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
 // the manifest check that reads a component's props sees them.
-// The marker and the reset are one step down the ladder from the field they
-// sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
-// button (32px) with the same inset on every side.
-// sf-input's outer steps: a 3 field holds a 2 button; 1/3 is the ladder's
-// foot, so its marker and reset stay at 1/3.
+// The marker is one step down the ladder from the field it sits in, so it
+// reads as a note about the value. (The reset was a button of that step too,
+// a 32px button in a 40px field; since C123 it is the field's own action at
+// the field's glyph size, see renderInheritedSlot.)
+// sf-input's outer steps: a 3 field's marker is a 2; 1/3 is the ladder's
+// foot, so its marker stays at 1/3.
 
 const STEP_DOWN = Object.freeze({
   '1/3': '1/3',
@@ -1699,6 +2014,15 @@ const InheritedValueField = Base => class extends Base {
 /**
  * The marker and the reset, for a control's trailing slot. Nothing at all
  * without an inherited value, so a field that does not use it is unchanged.
+ *
+ * The reset is an action of the field (owner decision C123, variant A): the
+ * field layer's .sf-field-action (component.inputs), the glyph sf-input's
+ * clear and reveal draw -- no plate in any state, the quiet ink at rest and the
+ * text's ink under the pointer and on a press, the keyboard ring round the
+ * glyph, an invisible hit area. Its glyph is the field's leading-icon size
+ * (the field's text line), not a step down; the marker keeps the step down.
+ * Each field says its step through --sf-field-action--glyph, --height and
+ * --inset (inherited-value.css). It was a link icon button of the step below.
  */
 
 function renderInheritedSlot(component, {
@@ -1717,7 +2041,7 @@ function renderInheritedSlot(component, {
             ?hidden=${!inherited}>${component.inheritedText}</span>
       <button
         type="button"
-        class="sf-field-reset sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${step}"
+        class="sf-field-action sf-field-reset"
         data-inherited-reset
         aria-label=${component.resetLabel}
         title=${component.resetLabel}
@@ -1771,7 +2095,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
- // sf-input-textarea from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+}; // sf-input-textarea from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §17, §20). The settings are made by core/js/element-manifest.js;
 // `spellcheck` (a property of HTMLElement, §3.1) is spell-check, and `type`
 // (appearance) and `error` (invalid, §17.2) are dated aliases, as is the
@@ -1782,8 +2114,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 const TextareaElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
@@ -2110,11 +2442,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderTextareaTemplate: () => (/* binding */ renderTextareaTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("778671c79fa6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -2156,7 +2490,7 @@ function renderTextareaTemplate(context) {
     countSaid = '',
     code = false
   } = context;
-  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
+  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_2__.createFieldContract)(context.component, {
     prefix: 'sf-textarea',
     required,
     invalid: invalid || error,
@@ -2173,7 +2507,14 @@ function renderTextareaTemplate(context) {
   const rootClasses = ['sf-textarea', `sf-textarea--size-${size}`, `sf-textarea--${appearance ?? type}`, field.invalid ? 'error' : '', autoGrow ? 'sf-textarea--auto-grow' : '', resize && !autoGrow ? 'sf-textarea--resize' : '', code ? 'sf-textarea--code' : '', countOver ? 'sf-textarea--over' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
   const labelContent = label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-textarea-text">${label}</span>
-        ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-required">*</span>` : ''}
+        ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-required" aria-hidden="true">*</span>` : ''}
+        ${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help: context.help,
+    label,
+    size,
+    className: 'sf-textarea-help',
+    component: context.component
+  })}
       ` // A label row with nothing but a star names nothing: see sf-input.
   : ''; // The visible label names the textarea through the wrapping <label>; with no
   // visible label the host's aria-label lands on the textarea, as in sf-input.
@@ -2235,7 +2576,7 @@ function renderTextareaTemplate(context) {
         data-max-rows=${autoGrow && maxRows ? maxRows : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ></textarea>
 
-      ${(0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__.renderInheritedSlot)(context.component, {
+      ${(0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__.renderInheritedSlot)(context.component, {
     size,
     disabled: disabled || readonly,
     className: 'sf-textarea-inherited'
@@ -2318,21 +2659,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a105cae235ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.10.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"text":{"type":"enum","values":["plain","code"],"default":"plain"},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":true},"min-rows":{"type":"number","default":3},"max-rows":{"type":"number","default":10},"resize":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.12.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"text":{"type":"enum","values":["plain","code"],"default":"plain"},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":true},"min-rows":{"type":"number","default":3},"max-rows":{"type":"number","default":10},"resize":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "88be139816dd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Text area","runtime":{"value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Text area","runtime":{"value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters","too-short":"At least {min} characters","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "4ced3f61aadc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Многострочное поле","runtime":{"value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Многострочное поле","runtime":{"value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков","too-short":"Не меньше {min} знаков","help":"Подробнее: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

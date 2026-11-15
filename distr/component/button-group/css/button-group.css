@@ -12,6 +12,17 @@
     isolation: isolate;
     scrollbar-width: thin;
   }
+  /* A segmented track clips its own segments (it scrolls sideways), so a
+     segment draws its ring inside, as a tab or a menu row does: the 2 px ring
+     was cut at the track's bottom (owner report R242, DEV's audit 2026-11-14). */
+  .sf-button-group--segmented .focus-visible,
+  .sf-button-group--segmented .focus-visible {
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+  .sf-button-group--segmented :focus-visible,
+  .sf-button-group--segmented .focus-visible {
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
   .sf-button-group > sf-button,
   .sf-button-group > .sf-button {
     flex: 0 0 auto;
@@ -2705,33 +2716,38 @@
      option; then it stands under it and the option itself is clear. A new
      choice slides it (data-plate="moving", 0.2 s), never under
      prefers-reduced-motion. The plate starts at the track's inline start and
-     the element measures the offset from there, in either direction. */
+     the element measures the offset from there, in either direction.
+     A printed first paint (data-sf-static on the track) keeps the mark but
+     not the measured place (a size the code measured is the measuring
+     page's): there the selected option paints the plate itself, as before
+     the element measures, so the highlight is in the first frame and the
+     plate takes over under it without a shift. */
   .sf-button-group--segmented > .sf-button-group-plate {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group--segmented[data-plate] > .sf-button-group-plate{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate{
     left: 0;
   }
   @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-button-group--segmented[data-plate] > .sf-button-group-plate{
+  html:not([dir="rtl"]) .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate{
     left: 0;
     }
   }
-  .sf-button-group--segmented[data-plate] > .sf-button-group-plate:where(:dir(ltr)){
+  .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate:where(:dir(ltr)){
     left: 0;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group--segmented[data-plate] > .sf-button-group-plate{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate{
     right: 0;
   }
   @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-button-group--segmented[data-plate] > .sf-button-group-plate{
+  [dir="rtl"] .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate{
     right: 0;
     }
   }
-  .sf-button-group--segmented[data-plate] > .sf-button-group-plate:where(:dir(rtl)){
+  .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate:where(:dir(rtl)){
     right: 0;
   }
-  .sf-button-group--segmented[data-plate] > .sf-button-group-plate {
+  .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate {
     display: block;
     position: absolute;
     top: 0;
@@ -2771,7 +2787,7 @@
       transition-duration: 0s;
     }
   }
-  .sf-button-group--segmented[data-plate] > .sf-button-group-segment.active {
+  .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-segment.active {
     --sf-button--background-color: transparent;
     --sf-button--box-shadow: none;
   }
@@ -2827,7 +2843,7 @@
     color: var(--sf-black);
     color: var(--sf-button-group-plate-color, var(--sf-black));
   }
-  .sf-button-group--segmented.sf-button-group--backdrop-media[data-plate] > .sf-button-group-segment.active {
+  .sf-button-group--segmented.sf-button-group--backdrop-media[data-plate]:not([data-sf-static]) > .sf-button-group-segment.active {
     --sf-button--background-color: transparent;
   }
   .sf-button-group--segmented > .sf-button-group-segment.active .sf-button-group-count {
@@ -2867,7 +2883,7 @@
     }
     /* The selected option paints the system Highlight itself (below); the
        plate element would be forced to Canvas over nothing. */
-    .sf-button-group--segmented[data-plate] > .sf-button-group-plate {
+    .sf-button-group--segmented[data-plate]:not([data-sf-static]) > .sf-button-group-plate {
       display: none;
     }
     /* As strong as the scheme plates above (three classes), or a plate's
@@ -2911,5 +2927,251 @@
       outline: var(--sf-focus-outline-width) solid CanvasText;
       outline-offset: 0;
     }
+  }
+}
+/* overflow="more" (owner decision C155 (1), (8)): a horizontal group keeps one
+   row and puts what does not fit under ⋯ «Ещё», its last segment
+   (core/js/overflow-row.js). It does not scroll: until laid out it clips at its
+   box, then nothing overflows it and the focus ring is whole. A button that
+   left, and ⋯ while nothing did, are out of the row (an sf-button host writes
+   an inline display: contents, hence the weight). */
+@layer sf.components {
+  .sf-button-group[overflow=more] {
+    overflow: clip;
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid] {
+    overflow: visible;
+  }
+  /* Nothing in the row shrinks (an sf-button host is display: contents, so its
+     button is the row's item): what it measures is what it draws. */
+  .sf-button-group[overflow=more] > sf-button > button {
+    flex: none;
+  }
+  .sf-button-group[overflow=more] > sf-button > a {
+    flex: none;
+  }
+  .sf-button-group > .sf-button-group-out {
+    display: none !important;
+  }
+}
+@layer sf.override {
+  /* The joins follow the segments the group gives the buttons that stand in
+     the row, not the markup's first and last child: a button out of the row
+     is still a child (four classes and an attribute above the position rules
+     of a scheme segment). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-left-width: var(--sf-px);
+  }
+  @supports not (border-inline-start-width: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-left-width: var(--sf-px);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(ltr)){
+    border-left-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-right-width: var(--sf-px);
+  }
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-right-width: var(--sf-px);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(rtl)){
+    border-right-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-start[class*=segment-] {
+    --sf-button--border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-px);
+    border-start-start-radius: var(--sf-button--radius);
+    border-end-start-radius: var(--sf-button--radius);
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-middle[class*=segment-] {
+    border-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  .sf-button-group[overflow=more][data-sf-row-laid]:not([data-orientation=vertical]) > sf-button[segment]:not(.sf-button-group-out) > .sf-button.segment-end[class*=segment-] {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-start-end-radius: var(--sf-button--radius);
+    border-end-end-radius: var(--sf-button--radius);
   }
 }

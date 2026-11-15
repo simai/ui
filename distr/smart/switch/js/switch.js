@@ -741,11 +741,25 @@ function renderCheckableHelp(context, className) {
   const component = context.component;
   if (component?.hasSlotContent?.('help')) return component.getSlotContent('help');
   if (!context.help) return '';
+  sayBareHelp(context.help, component);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class=${className} size=${CHECKABLE_HELP_SIZE[context.size] || '1/3'} text=${context.help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-help-mark>`;
+} // The help is an explanation the «?» opens, not a label: a single lowercase
+// word such as help="info" is almost always a placeholder (checks study CK-7).
+// The development warning says so once per page.
+
+const BARE_HELP_SAID = Symbol.for('sf.checkable.bare-help-said');
+
+function sayBareHelp(help, component) {
+  const global = globalThis;
+  if (global[BARE_HELP_SAID] || !/^[a-z]+$/u.test(String(help).trim())) return;
+  global[BARE_HELP_SAID] = true;
+  const name = component?.id ? `#${component.id}` : component?.localName || 'help';
+  console.warn(`SIMAI Framework: ${name} has help="${String(help).trim()}". The help is the explanation the «?» opens: write a sentence, or leave help out.`);
 } // The text column: the label row (the name), then the description.
 //   parts.column  the column's class      (.sf-checkbox-container)
 //   parts.top     the label row's class   (.sf-checkbox-top)
 //   parts.wrap    a class the label text sits in inside the row, if any
+
 
 function renderCheckableText(parts, labelContent, descriptionContent) {
   if (!labelContent && !descriptionContent) return '';
@@ -864,11 +878,12 @@ const INHERITED_TEXT = {
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
 // the manifest check that reads a component's props sees them.
-// The marker and the reset are one step down the ladder from the field they
-// sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
-// button (32px) with the same inset on every side.
-// sf-input's outer steps: a 3 field holds a 2 button; 1/3 is the ladder's
-// foot, so its marker and reset stay at 1/3.
+// The marker is one step down the ladder from the field it sits in, so it
+// reads as a note about the value. (The reset was a button of that step too,
+// a 32px button in a 40px field; since C123 it is the field's own action at
+// the field's glyph size, see renderInheritedSlot.)
+// sf-input's outer steps: a 3 field's marker is a 2; 1/3 is the ladder's
+// foot, so its marker stays at 1/3.
 
 const STEP_DOWN = Object.freeze({
   '1/3': '1/3',
@@ -1053,6 +1068,15 @@ const InheritedValueField = Base => class extends Base {
 /**
  * The marker and the reset, for a control's trailing slot. Nothing at all
  * without an inherited value, so a field that does not use it is unchanged.
+ *
+ * The reset is an action of the field (owner decision C123, variant A): the
+ * field layer's .sf-field-action (component.inputs), the glyph sf-input's
+ * clear and reveal draw -- no plate in any state, the quiet ink at rest and the
+ * text's ink under the pointer and on a press, the keyboard ring round the
+ * glyph, an invisible hit area. Its glyph is the field's leading-icon size
+ * (the field's text line), not a step down; the marker keeps the step down.
+ * Each field says its step through --sf-field-action--glyph, --height and
+ * --inset (inherited-value.css). It was a link icon button of the step below.
  */
 
 function renderInheritedSlot(component, {
@@ -1071,7 +1095,7 @@ function renderInheritedSlot(component, {
             ?hidden=${!inherited}>${component.inheritedText}</span>
       <button
         type="button"
-        class="sf-field-reset sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${step}"
+        class="sf-field-action sf-field-reset"
         data-inherited-reset
         aria-label=${component.resetLabel}
         title=${component.resetLabel}
@@ -1121,7 +1145,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // The first component whose element plumbing comes from its component.json
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+}; // The first component whose element plumbing comes from its component.json
 // (standard simai.smart-component 1.3.8 §3, §4): the settings size, label,
 // description, help, disabled, name and value are attributes and properties
 // made by core/js/element-manifest.js, its words are lang/<locale>.json, its
@@ -1131,12 +1163,28 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const SwitchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
-});
+}); // A switch acts at once; in a form that is saved by a button the choice is
+// a checkbox (owner decision C165 (4)). The development warning says so once
+// per page, naming the first such switch; it reads only the form the switch
+// stands in, so it costs one closest() and one querySelector() per draw.
+
+const FORM_SWITCH_SAID = Symbol.for('sf.switch.form-switch-said');
+const SUBMIT_CONTROL = 'button:not([type]), button[type="submit"], input[type="submit"], input[type="image"], [type="submit"]';
+
+function sayFormSwitch(host) {
+  const global = globalThis;
+  if (global[FORM_SWITCH_SAID]) return;
+  const form = host.closest('form');
+  if (!form || !form.querySelector(SUBMIT_CONTROL)) return;
+  global[FORM_SWITCH_SAID] = true;
+  const name = host.id ? `#${host.id}` : host.getAttribute('name') ? `[name="${host.getAttribute('name')}"]` : 'sf-switch';
+  console.warn(`SIMAI Framework: ${name} is a switch in a form saved by a button. A switch acts at once; in a form with a save button use sf-checkbox (owner decision C165 (4)).`);
+}
 
 class SfSwitch extends SwitchElement {
   static get props() {
@@ -1287,6 +1335,7 @@ class SfSwitch extends SwitchElement {
 
     this.syncInheritedState();
     this.sfSyncForm();
+    sayFormSwitch(this);
   }
 
   onDisconnected() {
@@ -1544,7 +1593,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.5.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.7.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 

@@ -1,5 +1,14 @@
 @charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+/* The surface scrolls, so it clips at its edge and keeps core's ring room
+   inside it (owner report R242, DEV's audit 2026-11-14: a control on the edge
+   lost its ring). In sf.base, so a padding utility on the content (p-2) or
+   the page's own rule still sets it. */
+@layer sf.base {
+  sf-popover > [slot=content] {
+    padding: var(--sf-focus-room);
+  }
+}
 @layer sf.components {
   /* The trigger keeps its own shape and stays in the flow. */
   sf-popover > [slot=trigger] {
@@ -44,6 +53,9 @@
     max-height: var(--sf-popover-max-height, var(--sf-popover--max-height, 60vb));
     max-block-size: var(--sf-popover-max-height, var(--sf-popover--max-height, 60vb));
     overflow: auto;
+    /* Keyboard focus stops core's ring room short of the clip edge (owner
+       report R242); the room itself is the padding in sf.base above. */
+    scroll-padding: var(--sf-focus-room);
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-popover-radius, var(--sf-radius--surface));
     background-color: var(--sf-surface-popup);

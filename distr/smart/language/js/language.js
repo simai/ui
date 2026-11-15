@@ -663,10 +663,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -880,72 +888,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -1015,7 +1260,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+};
 (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_9__); // The parts it draws, found under their current names and their former ones.
 
 const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
@@ -1061,8 +1314,8 @@ const rememberKey = name => text(name) ? `sf-language/${text(name)}` : '';
 const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en,
+    ru
   },
   source: 'ru',
   actions: {
@@ -1564,7 +1817,7 @@ SfLanguage.menuEntry = function menuEntry({
   });
   const doc = globalThis.document?.documentElement;
   const pageCode = page || doc?.getAttribute('lang') || 'en';
-  const words = (String(pageCode).toLowerCase().startsWith('ru') ? _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ : _lang_en_json__WEBPACK_IMPORTED_MODULE_11__).runtime;
+  const words = (String(pageCode).toLowerCase().startsWith('ru') ? ru : en).runtime;
   const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
   const entry = {
     id: 'language',
@@ -2101,12 +2354,19 @@ function renderInline(context) {
 // in the same grid cell and hidden, so the button keeps the width of the
 // widest code whatever is chosen (C142: the width does not change with the
 // language). The hidden codes are out of the accessibility tree; the
-// button's name is its aria-label.
+// button's name is its aria-label. The cell is one text line wide (core
+// sheet), the width core holds for the trigger before this code arrives, so
+// nothing moves when it draws (C130); two capitals stand in it. A list with
+// a longer code -- more than two letters (PT-BR) or letters wider than a
+// capital (简体) -- sizes the cell to its widest code instead.
 
+
+const NARROW_CODE = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{Script=Armenian}\p{Script=Georgian}]{1,2}$/u;
 
 function renderCode(context) {
   const shown = context.current?.short ?? '';
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-language-code" style="display: inline-grid">${context.list.map(language => {
+  const wide = context.list.some(language => !NARROW_CODE.test(String(language.short ?? '')));
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-language-code" style=${wide ? 'display: inline-grid; inline-size: auto; grid-template-columns: auto' : 'display: inline-grid'}>${context.list.map(language => {
     const own = language.short === shown;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
         style=${own ? 'grid-area: 1 / 1' : 'grid-area: 1 / 1; visibility: hidden'}
@@ -2225,7 +2485,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.2","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.3","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

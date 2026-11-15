@@ -32,6 +32,9 @@
     --sf-settings-panel--line: var(--sf-text-height-1\/2);
     --sf-settings-panel--pad: var(--sf-space-1\/2);
     --sf-settings-panel--gap: var(--sf-space-1\/2);
+    /* The pin's square: sf-button-icon of the panel's size, height low -- its
+       icon (the row's line) and the low step on either side. */
+    --sf-settings-panel--pin: calc(var(--sf-text-height-1\/2) + 2 * var(--sf-ui-1\/2--space-y-tightness-low));
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -83,6 +86,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-settings-panel {
@@ -178,6 +183,7 @@
     --sf-settings-panel--text: var(--sf-text-size-1);
     --sf-settings-panel--line: var(--sf-text-height-1);
     --sf-settings-panel--pad: var(--sf-ui-1--space-x);
+    --sf-settings-panel--pin: calc(var(--sf-text-height-1) + 2 * var(--sf-ui-1--space-y-tightness-low));
   }
   /* Compact (C22): the rows and the text a step down, the H4 inset 12. */
   [data-sf-density=compact] .sf-settings-panel--size-1,
@@ -556,70 +562,53 @@
     pointer-events: none;
   }
   /* The pin's place in the control, and the pin over it: shown on the row a
-     pointer is over, on a pinned row and while it has the focus. */
+     pointer is over, on a pinned row and while it has the focus. The pin is
+     sf-button-icon of the panel's size, height low (ST-2, C166): its host is
+     display:contents, so its native button is the row's grid item, and the
+     place in the control is as wide as that button. */
   .sf-settings-row-pin-place {
     flex: none;
-    width: var(--sf-settings-panel--line);
-    inline-size: var(--sf-settings-panel--line);
+    width: var(--sf-settings-panel--pin);
+    inline-size: var(--sf-settings-panel--pin);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-pin{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-pin > .sf-icon-button{
     margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
   }
   @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-settings-row-pin{
+  html:not([dir="rtl"]) .sf-settings-row-pin > .sf-icon-button{
     margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
     }
   }
-  .sf-settings-row-pin:where(:dir(ltr)){
+  .sf-settings-row-pin > .sf-icon-button:where(:dir(ltr)){
     margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-pin{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-pin > .sf-icon-button{
     margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
   }
   @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-settings-row-pin{
+  [dir="rtl"] .sf-settings-row-pin > .sf-icon-button{
     margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
     }
   }
-  .sf-settings-row-pin:where(:dir(rtl)){
+  .sf-settings-row-pin > .sf-icon-button:where(:dir(rtl)){
     margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
   }
-  .sf-settings-row-pin {
-    display: inline-flex;
+  .sf-settings-row-pin > .sf-icon-button {
+    grid-area: row;
     justify-self: end;
-    align-items: center;
-    justify-content: center;
-    width: var(--sf-settings-panel--line);
-    inline-size: var(--sf-settings-panel--line);
-    height: var(--sf-settings-panel--line);
-    block-size: var(--sf-settings-panel--line);
-    margin: 0;
     -webkit-margin-end: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
             margin-inline-end: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-    padding: 0;
-    border: 0;
-    border-radius: var(--sf-radius--ui);
-    outline: none;
-    background-color: transparent;
-    color: var(--sf-on-surface-variant);
-    cursor: pointer;
     opacity: 0;
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
   }
-  .sf-settings-row:hover > .sf-settings-row-pin,
-  .sf-settings-row-pin[aria-pressed=true],
-  .sf-settings-row-pin.focus-visible {
+  .sf-settings-row:hover > .sf-settings-row-pin > .sf-icon-button,
+  .sf-settings-row[data-pinned] > .sf-settings-row-pin > .sf-icon-button,
+  .sf-settings-row-pin > .sf-icon-button.focus-visible {
     opacity: 1;
   }
-  .sf-settings-row:hover > .sf-settings-row-pin,
-  .sf-settings-row-pin[aria-pressed=true],
-  .sf-settings-row-pin:focus-visible {
+  .sf-settings-row:hover > .sf-settings-row-pin > .sf-icon-button,
+  .sf-settings-row[data-pinned] > .sf-settings-row-pin > .sf-icon-button,
+  .sf-settings-row-pin > .sf-icon-button:focus-visible {
     opacity: 1;
-  }
-  .sf-settings-row-pin[aria-pressed=true] {
-    color: var(--sf-primary);
   }
   /* A range: the name, the slider, the number. */
   .sf-settings-row--range {
@@ -663,11 +652,12 @@
     color: var(--sf-on-surface-variant);
   }
   /* The footer: «Сбросить», and «Применить (N)» for a filter (C106 (4)). It
-     stays under the body; its buttons share the width. */
+     stays under the body; its buttons share the width, a button group's gap
+     apart (C173 (2), C144, RT-1: 8, compact 4; it was the row gap, 12). */
   .sf-settings-panel-footer {
     display: flex;
     flex: none;
-    gap: var(--sf-settings-panel--gap);
+    gap: var(--sf-gap--actions);
     padding: var(--sf-space-1\/2);
     border-top: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
@@ -691,29 +681,54 @@
             clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* A phone (C106 (8), C32): a sheet at the bottom of the screen, the screen's
-     width up to 44rem, over the scrim, clear of the home indicator. */
+  /* A phone (C106 (8), C32): the one sheet (owner decision C157 (5), core
+     mix/_mix__sheet.scss) -- the screen's width up to 44rem, over the scrim,
+     clear of the home indicator, the sheet's grab bar (24 x 4 in the quiet
+     ink; it was 20 x 4 in the outline's colour) in a handle row a swipe down
+     starts from. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--sf-radius--surface);
   }
-  @supports not (border-end-end-radius: initial){
+  @supports not (border-start-start-radius: initial){
   html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--sf-radius--surface);
     }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
-    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--sf-radius--surface);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
+    border-top-right-radius: var(--sf-radius--surface);
   }
-  @supports not (border-end-end-radius: initial){
+  @supports not (border-start-start-radius: initial){
   [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
+    border-top-right-radius: var(--sf-radius--surface);
     }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
-    border-bottom-left-radius: 0;
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-radius--surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
     border-bottom-left-radius: 0;
@@ -736,6 +751,28 @@
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
     border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
   }
   .sf-settings-panel[data-sf-sheet] {
     position: fixed;
@@ -756,33 +793,42 @@
     margin-bottom: 0;
     -webkit-margin-after: 0;
             margin-block-end: 0;
-    padding-bottom: env(safe-area-inset-bottom, var(--sf-a0));
-    -webkit-padding-after: env(safe-area-inset-bottom, var(--sf-a0));
-            padding-block-end: env(safe-area-inset-bottom, var(--sf-a0));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-padding-after: env(safe-area-inset-bottom, 0px);
+            padding-block-end: env(safe-area-inset-bottom, 0px);
+    border-start-start-radius: var(--sf-radius--surface);
+    border-start-end-radius: var(--sf-radius--surface);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    box-shadow: var(--sf-shadow-modal);
+    translate: 0 0px;
+    translate: 0 var(--sf-sheet--drag, 0px);
     border-bottom-width: 0;
     border-block-end-width: 0;
     border-left-width: 0;
     border-right-width: 0;
     border-inline-width: 0;
-    border-end-end-radius: 0;
-    border-end-start-radius: 0;
-    box-shadow: var(--sf-shadow-modal);
+    touch-action: none;
+  }
+  .sf-settings-panel[data-sf-sheet].is-dragging {
+    transition: none;
   }
   .sf-settings-panel[data-sf-sheet]::before {
     content: "";
+    display: block;
     flex: none;
-    width: var(--sf-space-2);
-    inline-size: var(--sf-space-2);
-    height: var(--sf-space-1\/4);
-    block-size: var(--sf-space-1\/4);
-    margin-top: var(--sf-space-1\/3);
-    margin-bottom: 0;
-    margin-block: var(--sf-space-1\/3) 0;
+    width: var(--sf-c2);
+    inline-size: var(--sf-c2);
+    height: var(--sf-a4);
+    block-size: var(--sf-a4);
+    border-radius: var(--sf-radius-rounded);
+    background-color: var(--sf-on-surface-variant);
+    margin-top: calc((var(--sf-ui-1\/2--control-height) - var(--sf-a4)) / 2);
+    margin-bottom: calc((var(--sf-ui-1\/2--control-height) - var(--sf-a4)) / 2);
+    margin-block: calc((var(--sf-ui-1\/2--control-height) - var(--sf-a4)) / 2);
     margin-left: auto;
     margin-right: auto;
     margin-inline: auto;
-    border-radius: var(--sf-space-1\/4);
-    background-color: var(--sf-outline-variant);
   }
   .sf-settings-panel[data-sf-sheet]::-webkit-backdrop {
     background-color: var(--sf-scrim-color);
@@ -819,13 +865,11 @@
     cursor: default;
   }
   /* The ring turns inwards: the row stands flush against its neighbours. */
-  .sf-settings-row-main.focus-visible,
-  .sf-settings-row-pin.focus-visible {
+  .sf-settings-row-main.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));
   }
-  .sf-settings-row-main:focus-visible,
-  .sf-settings-row-pin:focus-visible {
+  .sf-settings-row-main:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));
   }

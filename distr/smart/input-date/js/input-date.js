@@ -199,10 +199,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -416,72 +424,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -531,7 +776,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__.runtime
+};
 
 const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/; // Between the two dates of a range in its one field: an en dash with a space
 // on each side, «01.09.2026 – 07.09.2026» (owner decision C62).
@@ -542,7 +795,9 @@ const RANGE_SEPARATOR = ' \u2013 '; // The ribbon of months on a phone: how many
 const RIBBON_BEFORE = 3;
 const RIBBON_AFTER = 12;
 const RIBBON_STEP = 6;
-const YEARS_PAGE_SIZE = 18;
+const YEARS_PAGE_SIZE = 18; // The kinds of a special day a site passes (owner decision C198).
+
+const HOLIDAY_KINDS = new Set(['holiday', 'day-off', 'working-day']);
 
 function padDatePart(value) {
   return String(value).padStart(2, '0');
@@ -978,8 +1233,8 @@ function getLabels(node) {
 const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
@@ -1031,16 +1286,14 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
       if (this.disabled) return 'disabled';
       if (this.valueLocked) return 'readonly';
       if (!this.range) return 'not-a-range';
-
-      this._chooseCustomRange();
-
+      if (this._sheetOpen) this.pickRibbonCustomRange();else this._chooseCustomRange();
       return 'applied';
     }
 
   }
 });
 
-class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.FormField)(DatepickerElement) {
+class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.FormField)(DatepickerElement)) {
   constructor() {
     super();
     this._input = null;
@@ -1221,7 +1474,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       },
       leftIcon: {
         attribute: 'left-icon',
-        default: 'calendar_today'
+        default: ''
       },
       inputRootClass: {
         attribute: 'input-root-class',
@@ -1256,6 +1509,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       // end-value: a stored «last-7-days» is resolved when drawn.
       preset: {
         default: ''
+      },
+      // The site's special days (owner decision C198): holidays, moved
+      // days off and moved working days, the property as a list or JSON
+      // in the attribute (see get holidays).
+      holidays: {
+        default: ''
       }
     };
   } // The panel's id comes from the instance path (§7.1.1), never from a counter.
@@ -1275,6 +1534,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
     this.upgradeProperty('value');
     this.upgradeProperty('presets');
+    this.upgradeProperty('holidays');
     super.connectedCallback();
   }
 
@@ -1445,6 +1705,131 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get preset() {
     return this.getAttribute('preset') || '';
+  } // The special days a site passes (owner decision C198, 2026-11-15,
+  // prototype calendar-holidays-and-more-study.html#q-cal-holidays,
+  // variant C; closes the open part of C62): [{date: 'YYYY-MM-DD', kind:
+  // 'holiday' | 'day-off' | 'working-day', name?}]. The Framework ships no
+  // country calendar: the dates change by decree and differ by region and
+  // company, so the site gives them. A holiday and a moved day off take the
+  // day-off ink; a working day (a moved working Saturday) the weekday's.
+  // Set as a property (a list) or as JSON in the attribute; anything else,
+  // and any entry without a date or a known kind, is no special day.
+
+
+  get holidays() {
+    if (Array.isArray(this._holidayList)) return this._holidayList;
+    const raw = this.getAttribute('holidays');
+    if (!raw) return [];
+
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  set holidays(next) {
+    if (Array.isArray(next)) {
+      this._holidayList = next;
+      this._holidayMap = null;
+      this.requestComponentUpdate('holidays');
+      return;
+    }
+
+    this._holidayList = null;
+    this._holidayMap = null;
+    this.setState({
+      holidays: typeof next === 'string' ? next : next ? JSON.stringify(next) : ''
+    });
+  } // date -> {kind, name}, read once per list.
+
+
+  get holidayDays() {
+    const list = this.holidays;
+    const key = Array.isArray(this._holidayList) ? this._holidayList : this.getAttribute('holidays');
+    if (this._holidayMap && this._holidayMapKey === key) return this._holidayMap;
+    const map = new Map();
+
+    for (const entry of list) {
+      const date = typeof entry?.date === 'string' ? entry.date.trim() : '';
+      if (!/^\d{4}-\d{2}-\d{2}$/u.test(date) || !HOLIDAY_KINDS.has(entry?.kind)) continue;
+      const name = typeof entry.name === 'string' ? entry.name.trim() : '';
+      map.set(date, {
+        kind: entry.kind,
+        name
+      });
+    }
+
+    this._holidayMap = map;
+    this._holidayMapKey = key;
+    return map;
+  } // A day as the calendar draws it: off or not, and its accessible name --
+  // the date, the special day's name, «выходной» for a day off. A day the
+  // site listed keeps its mark (the dot under the number, `special`), and
+  // its kind wins over the week's days off.
+
+
+  dayFacts(date, value, daysOff, locale = this.locale) {
+    const special = this.holidayDays.get(value) || null;
+    const weekend = special ? special.kind !== 'working-day' : daysOff.has(date.getDay());
+    const parts = [getDateLabel(date, locale)];
+    if (special?.name) parts.push(special.name);
+    if (weekend) parts.push(this.sfWord('day-off'));
+    return {
+      weekend,
+      special: Boolean(special),
+      specialName: special?.name || '',
+      label: parts.join(', ')
+    };
+  } // The line under the grid (C198): drawn only when the site gave special
+  // days, two text lines high in every month so the panel keeps its size.
+  // It names the day under the pointer, else the day with the focus, else
+  // the chosen one in the month shown, when that day has a name.
+
+
+  get dayLine() {
+    if (!this.holidayDays.size) return null;
+
+    const isoOf = date => date instanceof Date && !Number.isNaN(date.getTime()) ? formatIsoDate(date) : ''; // The chosen day only while its month is the one shown.
+
+
+    const chosen = this.selectedDate || this.startDate;
+    const shown = chosen instanceof Date && chosen.getFullYear() === this.year && chosen.getMonth() === this.month;
+    const iso = this._lineDay || (this._daysFocused ? isoOf(this.activeDate) : '') || (shown ? isoOf(chosen) : '');
+    const special = iso ? this.holidayDays.get(iso) : null;
+    if (!special?.name) return {
+      date: '',
+      name: ''
+    };
+    const date = parseDate(iso);
+    let day = iso;
+
+    try {
+      day = dateFormat(this.locale, {
+        day: 'numeric',
+        month: 'long'
+      }).format(date);
+    } catch {
+      /* the ISO date stays */
+    }
+
+    return {
+      date: day,
+      name: special.name
+    };
+  }
+
+  noteDaysFocus(focused) {
+    if (!this.holidayDays.size || this._daysFocused === focused) return;
+    this._daysFocused = focused;
+    this.requestComponentUpdate('holidays');
+  }
+
+  showDayLine(value) {
+    if (!this.holidayDays.size || this._lineDay === value) return;
+    this._lineDay = value;
+    this.requestComponentUpdate('holidays');
   }
 
   set preset(next) {
@@ -1816,11 +2201,20 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get closeOnSelect() {
     return this.getBooleanAttr('close-on-select', true);
-  }
+  } // The start of the field is for an icon that says what the date is (a
+  // meaning icon, as search is for a search field): none unless the page
+  // gives one. The calendar is the field's indicator at its end (owner
+  // decision C197, 2026-11-15); it is not this setting.
+
 
   get leftIcon() {
     if (this.hasAttribute('icon-start')) return this.getAttribute('icon-start');
-    return this.getAttribute('left-icon') || (this.mode === 'time' ? 'schedule' : 'calendar_today');
+    return this.getAttribute('left-icon') || '';
+  } // The indicator at the field's end: a clock in time mode, else a calendar.
+
+
+  get calendarIcon() {
+    return this.mode === 'time' ? 'schedule' : 'calendar_today';
   }
 
   get iconStart() {
@@ -2084,15 +2478,22 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       // or the inline one, takes no choice (see panelDisabled).
 
       const disabled = Boolean(this.disabled || minDate && time < minDate.getTime() || maxDate && time > maxDate.getTime());
-      const weekend = daysOff.has(date.getDay());
+      const value = formatIsoDate(date); // A day off says so in its name (DP-02): the ink is not the
+      // only cue. The ink is the calendar's day-off role
+      // (--sf-datepicker-day-off, C67 H2), not the error red. A special
+      // day of the site (C198) says its own name too.
+
+      const {
+        weekend,
+        special,
+        label
+      } = this.dayFacts(date, value, daysOff);
       return {
         date,
-        value: formatIsoDate(date),
+        value,
         formattedValue: formatDateValue(date, this.format),
-        // A day off says so in its name (DP-02): the ink is not the
-        // only cue. The ink is the calendar's day-off role
-        // (--sf-datepicker-day-off, C67 H2), not the error red.
-        label: weekend ? `${getDateLabel(date, this.locale)}, ${this.sfWord('day-off')}` : getDateLabel(date, this.locale),
+        label,
+        special,
         day: date.getDate(),
         today: sameDay(date, today),
         currentMonth: date.getMonth() === this.month,
@@ -2403,7 +2804,8 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       focus: formatIsoDate(anchor),
       anchor: `${anchor.getFullYear()}-${padDatePart(anchor.getMonth() + 1)}`,
       from: this.clampRibbonMonth(first),
-      count: 0
+      count: 0,
+      preset: this.activePreset?.id || ''
     };
     this._ribbon.count = this.ribbonMonthsUntil(new Date(anchor.getFullYear(), anchor.getMonth() + RIBBON_AFTER, 1));
     const sheet = this.ribbonSheet(); // The sheet's head is the ribbon's own (the title, «К сегодня», the
@@ -2573,6 +2975,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       top: month.offsetTop,
       behavior: 'instant'
     });
+    this.showRibbonPressedPreset();
     this.focusRibbonDay(); // The window grows only from here: before, the ribbon stood at its top
     // and would have asked for months it does not show.
 
@@ -2697,6 +3100,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       ribbon.end = value;
     }
 
+    ribbon.preset = '';
     ribbon.focus = value;
     this.renderRibbon();
   } // «Готово»: the period chosen is the value, said once, and the sheet closes.
@@ -2721,6 +3125,77 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     this.emitChange();
     this._sheet?.close?.({
       reason: 'close'
+    });
+  } // A quick range in the sheet (owner decision C189 (9)): the value at once,
+  // said once, as the popup's list does (_choosePreset); the sheet closes
+  // with it unless close-on-select is off, and then the draft is the range,
+  // its start month at the ribbon's top.
+
+
+  pickRibbonPreset(item) {
+    if (!this._ribbon) return;
+
+    this._choosePreset(item);
+  } // «Свой период» in the sheet: the quick range lets go of the draft and the
+  // ribbon takes the focus for two taps. The value stays as it is until
+  // «Готово», the sheet's rule (C62); the popup clears it because its grid
+  // takes every tap as the value.
+
+
+  pickRibbonCustomRange() {
+    const ribbon = this._ribbon;
+    if (!ribbon || this.disabled || this.valueLocked) return;
+
+    if (ribbon.preset) {
+      ribbon.start = '';
+      ribbon.end = '';
+      ribbon.preset = '';
+    }
+
+    this.renderRibbon();
+    this.focusRibbonDay();
+  } // The draft follows a quick range chosen while the sheet stays open: its
+  // dates, the range pressed, the ribbon on its start month.
+
+
+  showRibbonPreset(item) {
+    const ribbon = this._ribbon;
+    if (!ribbon || !item) return;
+    const start = item.from;
+    ribbon.start = formatIsoDate(start);
+    ribbon.end = formatIsoDate(item.to);
+    ribbon.preset = item.id;
+    ribbon.focus = ribbon.start;
+    const month = new Date(start.getFullYear(), start.getMonth(), 1);
+    const last = new Date(ribbon.from.getFullYear(), ribbon.from.getMonth() + ribbon.count - 1, 1);
+
+    if (month < ribbon.from || month > last) {
+      ribbon.from = this.clampRibbonMonth(new Date(month.getFullYear(), month.getMonth() - RIBBON_BEFORE, 1));
+      ribbon.count = this.ribbonMonthsUntil(new Date(month.getFullYear(), month.getMonth() + RIBBON_AFTER, 1));
+    }
+
+    this.renderRibbon();
+    const scroller = this.ribbonScroller;
+    const target = scroller?.querySelector(`[data-month="${month.getFullYear()}-${padDatePart(month.getMonth() + 1)}"]`);
+    if (scroller && target) scroller.scrollTo({
+      top: target.offsetTop,
+      behavior: 'instant'
+    });
+  } // The pressed quick range in view in its row, without moving the page.
+
+
+  showRibbonPressedPreset() {
+    const row = this._sheetBody?.querySelector('.sf-datepicker-sheet-presets');
+    const pressed = row?.querySelector('.sf-datepicker-preset[aria-pressed="true"]');
+    if (!row || !pressed) return;
+    const box = row.getBoundingClientRect();
+    const cell = pressed.getBoundingClientRect();
+    if (cell.left < box.left) row.scrollBy({
+      left: cell.left - box.left,
+      behavior: 'instant'
+    });else if (cell.right > box.right) row.scrollBy({
+      left: cell.right - box.right,
+      behavior: 'instant'
     });
   } // The ribbon's keys are the grid's (APG date picker): the arrows a day and
   // a week across the months' borders, Home and End the week's ends,
@@ -2795,16 +3270,21 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
         if (day < 1 || day > length) return null;
         const date = new Date(first.getFullYear(), first.getMonth(), day);
         const value = formatIsoDate(date);
-        const weekend = daysOff.has(date.getDay());
+        const {
+          weekend,
+          special,
+          label
+        } = this.dayFacts(date, value, daysOff, locale);
         const disabled = Boolean(minDate && compareDates(date, minDate) < 0 || maxDate && compareDates(date, maxDate) > 0);
         const both = Boolean(start && end);
         return {
           value,
           day,
           weekend,
+          special,
           disabled,
           today: sameDay(date, today),
-          label: weekend ? `${getDateLabel(date, locale)}, ${this.sfWord('day-off')}` : getDateLabel(date, locale),
+          label,
           selected: sameDay(date, start) || sameDay(date, end),
           rangeStart: both && sameDay(date, start),
           rangeEnd: both && sameDay(date, end),
@@ -2842,7 +3322,14 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       labels: this.labels,
       title: ribbon.title,
       complete: Boolean(start && end),
-      periodSummary: this.ribbonSummary(start, end)
+      periodSummary: this.ribbonSummary(start, end),
+      // The quick ranges (C189 (9)): pressed is the draft's, so a day
+      // tapped on the ribbon lets the range go, as on the popup's grid.
+      presetItems: this.presetItems.map(item => ({ ...item,
+        pressed: Boolean(ribbon.preset) && item.id === ribbon.preset
+      })),
+      customPressed: !ribbon.preset && Boolean(ribbon.start),
+      disabled: this.disabled
     };
   } // The line over «Готово»: what to do next, or the period and its length,
   // in the page's language (Intl formatRange and a unit of days).
@@ -3350,7 +3837,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     this.emitChange();
     if (this.closeOnSelect) this._closePanel({
       restoreFocus: true
-    });
+    });else if (this._sheetOpen) this.showRibbonPreset(item);
     return this;
   } // «Свой период»: the quick range lets go and the person picks on the grid.
 
@@ -3697,6 +4184,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       locale: this.locale,
       // time mode draws no grid: the time row is the panel.
       days: this.mode === 'time' ? [] : this.days,
+      dayLine: this.mode === 'time' ? null : this.dayLine,
       mode: this.mode,
       timeParts: this.timeParts,
       presetItems: this.presetItems,
@@ -3724,8 +4212,9 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       valueLocked: this.valueLocked,
       disabled: this.disabled,
       required: this.required,
-      invalid: this.invalid,
-      errorMessage: this.errorMessage,
+      // C153 (3): the page's error, or the one the field shows itself (ShownValidity).
+      invalid: this.sfShownInvalid(this.invalid),
+      errorMessage: this.sfShownMessage(this.invalid, this.errorMessage),
       // The field's own words and marker, as on sf-input: the helper text
       // under the control (which the field reads to it as its
       // description) and the marker at the field's end. The settings
@@ -3734,6 +4223,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       hint: this.hint,
       leftIcon: this.leftIcon,
       iconStart: this.leftIcon,
+      calendarIcon: this.calendarIcon,
       hintIcon: this.hintIcon,
       inputRootClass: this.inputRootClass,
       mask: this.mask,
@@ -4055,7 +4545,7 @@ function renderTop(context) {
             <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-button-icon>
-            <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
+            <div class="sf-datepicker-period flex content-main-center items-cross-center">
                 <!-- The toggles are size 1/2, as tall as the compact size 1 they were:
                      density no longer changes a button's height (C01). The arrows
                      beside them are the same size: one band of buttons, one height
@@ -4119,7 +4609,20 @@ function renderContext(context) {
   if (context.context === 'month') return renderMonthContext(context);
   if (context.context === 'year') return renderYearContext(context);
   return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-}
+} // The field's end (owner decision C197, 2026-11-15, prototype
+// date-icon-place.html#q-date-icon, variant B): from the text to the edge, by
+// the C123 (6) order, sf-input's own clear, then the hint marker, then the
+// calendar -- the field's indicator at the edge, as sf-dropdown's chevron is
+// (C123 (3)): the field layer's .sf-field-action glyph, quiet at rest, the
+// text's ink while the field is under the pointer; the whole field opens the
+// panel, so the glyph is no Tab stop of its own and is hidden from a screen
+// reader (the field is the combobox that names the dialog). The start of the
+// field stays for an icon that says what the date is (icon-start).
+// Both are the inner sf-input's end slot: it draws its actions, then the slot.
+// They are written in the field's own template, always, with no part that
+// comes and goes, because sf-input takes its slot's children once, when it
+// connects; their attributes still follow the settings.
+
 
 function renderDatepickerInput(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -4131,7 +4634,8 @@ function renderDatepickerInput(context) {
             root-class=${context.inputRootClass || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} value=${context.displayValue || ''}
             ?disabled=${context.disabled} ?required=${context.required} ?invalid=${context.invalid}
             error-message=${context.errorMessage || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            hint=${context.hint || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hint-icon=${context.hintIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            hint=${context.hint || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            help=${context.help || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ?mask=${context.mask}
             mask-pattern=${context.maskPattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} mask-lazy=${String(context.maskLazy)}
             mask-placeholder-char=${context.maskPlaceholderChar || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -4139,11 +4643,15 @@ function renderDatepickerInput(context) {
             @click=${event => context.component.handleInputClick(event)}
             @change=${event => context.component.handleInputChange(event)}
             @input=${event => context.component.handleInputInput(event)}
-            @keydown=${event => context.component.handleInputKeydown(event)}></sf-input>`;
+            @keydown=${event => context.component.handleInputKeydown(event)}
+        ><span slot="end" class=${context.hintIcon ? 'sf-input-hint flex' : 'sf-input-hint'} ?hidden=${!context.hintIcon} aria-hidden="true"
+            ><sf-icon icon=${context.hintIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-icon></span
+        ><span slot="end" class="sf-field-action sf-field-action--indicator sf-datepicker-indicator" aria-hidden="true"
+            ><sf-icon icon=${context.calendarIcon}></sf-icon></span></sf-input>`;
 }
 
 function renderDay(day, context) {
-  const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.currentMonth ? '' : 'sf-datepicker-another-month', day.disabled ? 'disabled' : '');
+  const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.currentMonth ? '' : 'sf-datepicker-another-month', day.special ? 'sf-datepicker-day-special' : '', day.disabled ? 'disabled' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button class=${classes} type="button" role="gridcell" ?disabled=${day.disabled}
             data-date=${day.value} aria-label=${day.label}
@@ -4151,6 +4659,7 @@ function renderDay(day, context) {
             aria-selected=${day.selected || day.rangeSelected ? 'true' : 'false'} tabindex=${day.tabIndex}
             @click=${() => context.component.selectDate(day)}
             @focus=${() => context.component.setActiveDate(day.value)}
+            @pointerenter=${() => context.component.showDayLine(day.value)}
             @keydown=${event => context.component.handleDayKeydown(event, day)}>
             <span class="sf-datepicker-day-date">${day.day}</span>
         </button>`;
@@ -4168,12 +4677,26 @@ function renderGrid(context) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}
-            aria-readonly=${context.valueLocked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            aria-readonly=${context.valueLocked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            @pointerleave=${() => context.component.showDayLine('')}
+            @focusin=${() => context.component.noteDaysFocus(true)}
+            @focusout=${() => context.component.noteDaysFocus(false)}>
             <div class="sf-datepicker-week" role="row">
                 ${context.weekdayNames.map(name => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only" role="columnheader">${name}</span>`)}
             </div>
             ${weeks.map(week => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-datepicker-week" role="row">${week.map(day => renderDay(day, context))}</div>`)}
         </div>`;
+} // The line under the grid (owner decision C198): only when the site gave
+// special days; the name of the day under the pointer, with the focus or
+// chosen. Two text lines high in every month, so the panel keeps its size.
+// A screen reader hears the name in the day's own label, so the line is
+// hidden from it.
+
+
+function renderDayLine(context) {
+  const line = context.dayLine;
+  if (!line) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-datepicker-dayline" aria-hidden="true">${line.name ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<b class="sf-datepicker-dayline-date">${line.date}</b> · ${line.name}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
 }
 
 function renderPresets(context) {
@@ -4283,6 +4806,7 @@ function renderDatepickerPanel(context) {
                         ${context.weekdays.map((weekday, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${context.weekdaysOff?.[at] ? 'sf-datepicker-weekday sf-datepicker-weekday-off' : 'sf-datepicker-weekday'}>${weekday}</span>`)}
                     </div>
                     ${renderGrid(context)}
+                    ${renderDayLine(context)}
                 </div>
                 ${renderTime(context)}
             </div>
@@ -4327,7 +4851,7 @@ function joinClasses(...tokens) {
 
 
 function renderRibbonDay(day, context) {
-  const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.disabled ? 'disabled' : '');
+  const classes = joinClasses('sf-datepicker-day', day.weekend ? 'sf-datepicker-day-off' : '', day.selected ? 'active' : '', day.rangeStart ? 'sf-datepicker-day-start' : '', day.rangeSelected ? 'sf-datepicker-day-selected' : '', day.rangeEnd ? 'sf-datepicker-day-end' : '', day.special ? 'sf-datepicker-day-special' : '', day.disabled ? 'disabled' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button class=${classes} type="button" role="gridcell" ?disabled=${day.disabled}
             data-date=${day.value} aria-label=${day.label}
@@ -4353,14 +4877,41 @@ function renderRibbonMonth(month, context) {
                 ${month.weeks.map(week => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-datepicker-week" role="row">${week.map(day => day ? renderRibbonDay(day, context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-datepicker-day-empty" role="gridcell"></span>`)}</div>`)}
             </div>
         </section>`;
+} // The quick ranges in the sheet (owner decision C189 (9), 2026-11-15: the
+// quick periods on a phone too): the popup's list and its buttons -- the same
+// ranges, names, one tab stop and keys (templates/default.js renderPresets) --
+// as one row between the sheet's head and the weekdays, scrolled sideways when
+// it is wider than the sheet, as the popup draws it where it has no room
+// beside the grid. A range is the value at once, as in the popup; «Свой
+// период» lets the draft go and gives the ribbon the focus.
+
+
+function renderRibbonPresets(context) {
+  const items = context.presetItems;
+  if (!items.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const focusable = context.disabled ? null : items.find(item => item.pressed && !item.disabled) ?? items.find(item => !item.disabled);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-datepicker-presets sf-datepicker-sheet-presets flex gap-1/4" role="group" aria-label=${context.labels.presets}
+            @keydown=${event => context.component.handlePresetKeydown(event)}>
+            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', item.pressed ? 'active' : '')}
+                    type="button" ?disabled=${item.disabled || context.disabled} aria-pressed=${item.pressed ? 'true' : 'false'}
+                    tabindex=${item === focusable ? '0' : '-1'} data-preset=${item.id}
+                    @click=${() => context.component.pickRibbonPreset(item)}>${item.label}</button>`)}
+            <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', context.customPressed ? 'active' : '')}
+                type="button" ?disabled=${context.disabled} aria-pressed=${context.customPressed ? 'true' : 'false'}
+                tabindex=${focusable || context.disabled ? '-1' : '0'} data-preset=""
+                @click=${() => context.component.pickRibbonCustomRange()}>${context.labels.customRange}</button>
+        </div>`;
 } // The period on a phone (owner decision C62, ui-control prototypes/
 // datepicker.html#lenta): a ribbon of months in a bottom sheet. The weekday
 // row is pinned above the ribbon, the months stand one under another and
 // scroll with a finger, and the period chosen and «Готово» are pinned under
-// it. The sheet is the Framework's (sf-drawer placement="bottom"); this is
-// its content. Its head is the ribbon's own, as in #lenta: the title,
-// «К сегодня» (today's month to the top) and the close button, which keeps
-// the value the field had, as any close but «Готово» does.
+// it, and the quick ranges, when the field has them, stand between the head
+// and the weekdays (C189 (9)). The sheet is the Framework's (sf-drawer
+// placement="bottom"); this is its content. Its head is the ribbon's own, as
+// in #lenta: the title, «К сегодня» (today's month to the top) and the close
+// button, which keeps the value the field had, as any close but «Готово» does.
 
 
 function renderDatepickerRibbon(context) {
@@ -4376,6 +4927,7 @@ function renderDatepickerRibbon(context) {
                 icon="close" aria-label=${context.labels.close}
                 @click=${() => context.component.closeRibbon()}></sf-button-icon>
         </div>
+        ${renderRibbonPresets(context)}
         <div class="sf-datepicker-sheet-weekdays" aria-hidden="true">
             ${context.weekdays.map((weekday, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${joinClasses('sf-datepicker-weekday', context.weekdaysOff[at] && 'sf-datepicker-weekday-off')}>${weekday}</span>`)}
         </div>
@@ -4477,7 +5029,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.8.2","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.11.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

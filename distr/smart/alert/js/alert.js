@@ -74,7 +74,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-alert from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+}; // sf-alert from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §4.8, §8): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // a language through SF.language.register("sf-alert", code, words)), and the
@@ -83,8 +91,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const AlertElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
@@ -448,7 +456,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.4.2","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.4.3","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

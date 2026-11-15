@@ -10,7 +10,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
 /* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
 /* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
 /* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
@@ -39,8 +41,10 @@ function hasDateStyle(style) {
  *
  * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
  * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
  */
 
 
@@ -48,6 +52,7 @@ function formatDate(value, {
   date = 'medium',
   time = null,
   intl = null,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -62,23 +67,107 @@ function formatDate(value, {
     if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
   }
 
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
   return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
 }
 /**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
  */
 
 function calendarDayOffset(value, {
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
   if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
   return Math.round((day - base) / DAY_MS);
 }
 /**
@@ -88,10 +177,26 @@ function calendarDayOffset(value, {
  * draws them again; «сегодня» said yesterday is wrong by morning.
  */
 
-function msUntilNextDay(now = new Date()) {
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -190,15 +295,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("adbddb2f4d35");
 /* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("418de662fccf");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("404cdb27f6dc");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("df2ec153edc1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ded7e3ee1d62");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("6361d98e96ea");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("404cdb27f6dc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("df2ec153edc1");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ded7e3ee1d62");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6361d98e96ea");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_6__);
 // A change somebody prepared and nobody has applied yet, put to a person to
 // confirm or decline: what each value was, what it will be, two answers of equal
 // weight and, when the offer runs out, until when.
@@ -229,7 +337,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, the actions
 // answer outcomes, and the person's answer is the vocabulary's `answer {id,
 // accepted}`; the old names sf-change-confirm-accept, -decline and -expire
-// follow until 2026-12-01 (aliases.json). It is a confirm surface in the §19.4
+// follow until 2026-12-01 (aliases.json). Since 1.8.0 its classes carry its
+// own name, .sf-confirm-change__*, and its public variables
+// --sf-confirm-change-*; the former .sf-change-confirm* classes are written
+// beside them and the former variables read under them until 2027-01-01. It is a confirm surface in the §19.4
 // sense: an assembly's `ask` opens it and waits for the answer.
 //
 // It renders into its own light DOM, like every Smart component: a document
@@ -243,18 +354,28 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const ChangeConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+};
+const ChangeConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
 const ConfirmSurface = (0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__.confirmSurface)(ChangeConfirmElement, {
   kind: "sf-confirm-change",
-  block: "sf-change-confirm",
+  block: "sf-confirm-change",
   answerId: "changeId"
 });
 
@@ -306,12 +427,34 @@ class SfChangeConfirm extends ConfirmSurface {
       changesLabel: this.sfWord("changes-label"),
       beforeText: this.sfWord("before-text"),
       afterText: this.sfWord("after-text"),
-      emptyValueText: this.sfWord("empty-value-text")
+      emptyValueText: this.sfWord("empty-value-text"),
+      // What the acceptance does (decision C25, DEV change-time study
+      // CT-4): status="danger" for a delete or anything that cannot be
+      // undone, as sf-confirm's setting.
+      danger: this.getAttribute("status") === "danger"
     };
   }
 
   template() {
     return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__.renderChangeConfirmTemplate)(this.templateContext());
+  } // The deadline is an sf-time (DEV change-time study CT-12; owner decision
+  // C183 (4)): «Подтвердить можно до 23:30» today, «… до завтра, 10:00»,
+  // «… до 17 ноября, 10:00» later, with the exact moment and its zone in
+  // the tooltip. The words around the time are the language file's
+  // until-text; the time stands where its {time} is.
+
+
+  statusText(shown) {
+    const until = this.getAttribute("expires-at");
+    if (shown !== "open" || !until || !Number.isFinite(Date.parse(until))) return super.statusText(shown);
+    const [before, after = ""] = this.sfWord("until-text", {
+      vars: {
+        time: "\u0000"
+      }
+    }).split("\u0000");
+    const today = (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__.calendarDayOffset)(until) === 0;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_6__.html)`${before}<sf-time class="sf-confirm-change__until" datetime=${until}
+            format=${today ? "time" : "auto"} threshold="PT0S"></sf-time>${after}`;
   } // answer("accept") and answer("decline") were the 1.0 form; read until the
   // aliases' day and noted, so a host sees what it still leans on.
 
@@ -328,8 +471,8 @@ class SfChangeConfirm extends ConfirmSurface {
         kind: "action",
         from: `answer("${kind}")`,
         to: `answer({accepted: ${kind === "accept"}})`,
-        since: _aliases_json__WEBPACK_IMPORTED_MODULE_6__.since,
-        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_6__.remove_after
+        since: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.since,
+        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.remove_after
       });
       return kind === "accept";
     }
@@ -374,11 +517,25 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // Черновик на Итоги» rather than a grid of loose words. A value is text, never
 // markup; an empty one reads «пусто». The group around it names the changes.
 //
-// Both answers are outlined and weigh the same: a change is decided, not
-// nudged, and a filled «Confirm» beside a quiet «Decline» is a nudge.
-// «Отклонить» is that decision, not a cancel, so it stays outlined when every
-// «Отмена» is quiet (decision C116 #q-cancel; the shared footer's
-// declineAppearance).
+// The answers weigh as a question's do (owner decision C183 (6), 1.9.0):
+// «Подтвердить» the main answer, filled primary, «Отклонить» quiet (ghost
+// on-surface). A dangerous change (status="danger": a delete, or anything
+// that cannot be undone) is the question of decision C25: the accepting
+// answer filled danger, the declining one quiet (DEV change-time study
+// CT-4). The answers stand at the start, the accepting one first, 8 apart (4
+// in a compact region) -- one rule for every question (C166, C157 (3), C159
+// (4); CT-3) -- and the status line (the deadline, the outcome) under them.
+//
+// The card is for a change someone else proposes -- an assistant, a
+// colleague, an import -- in a feed or a chat (C183 (7)). A change of one
+// field by the person's own action is a question in its row (sf-confirm
+// appearance="inline", C166) beside an sf-change; many fields or something
+// that cannot be undone is a window (sf-confirm appearance="window" or
+// sf-modal, C159) with an sf-change list.
+//
+// The classes carry the element's name, .sf-confirm-change__* (1.8.0); the
+// former .sf-change-confirm* are written beside them until 2027-01-01
+// (journal class-confirm-change-block-names).
 //
 // The status line is a polite live region and also the place focus goes when
 // the button that had it disappears (index.js, answer()).
@@ -389,20 +546,24 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 function renderChangeConfirmTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <section
-                class="sf-change-confirm sf-change-confirm--${context.state}"
+                class="sf-confirm-change sf-confirm-change--${context.state} sf-change-confirm sf-change-confirm--${context.state}"
                 aria-labelledby=${context.heading ? context.headingId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${context.heading ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.changesLabel}
                 data-state=${context.state}
                 ?hidden=${context.collapsed}
         >
-            ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-change-confirm__heading" id=${context.headingId} role="heading"
+            ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm-change__heading sf-change-confirm__heading" id=${context.headingId} role="heading"
                             aria-level=${context.headingLevel}>${context.heading}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-change-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            <div class="sf-change-confirm__changes" role="group" aria-label=${context.changesLabel}>
-                <sf-change class="sf-change-confirm__list" layout="list" .changes=${context.changes}></sf-change>
+            ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm-change__description sf-change-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            <div class="sf-confirm-change__changes sf-change-confirm__changes" role="group" aria-label=${context.changesLabel}>
+                <sf-change class="sf-confirm-change__list sf-change-confirm__list" layout="list" .changes=${context.changes}></sf-change>
             </div>
-            ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-change-confirm", {
-    declineAppearance: "outline"
+            ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-confirm-change", {
+    acceptStatus: context.danger ? "danger" : "",
+    acceptAppearance: "default",
+    declineAppearance: "ghost",
+    statusLast: true,
+    formerBlock: "sf-change-confirm"
   })}
         </section>
     `;
@@ -877,45 +1038,63 @@ function confirmSurface(Base, {
 // two answers. `block` is the drawn surface's class; `acceptStatus` "danger"
 // marks a destructive acceptance (a delete, decision C13).
 //
-// The answers (decision C25): a plain question's accepting answer is outlined;
-// a dangerous one fills it with the danger colour. The declining answer, the
+// The answers (decision C25): a dangerous question fills its accepting answer
+// with the danger colour; a plain one draws it as the template asks
+// (`acceptAppearance`, outlined by default; sf-confirm 1.3.6 asks for the
+// filled primary main answer, owner decision C183 and C176 by DEV's answer
+// msg-68999d65). The declining answer, the
 // question's «Отмена», is always the quiet one, ghost on-surface (decision
 // C116, #q-cancel: «Отмена» is quiet everywhere), so the two are told apart by
 // more than the red of a word. A surface whose declining answer is a decision
-// of its own weight rather than a cancel -- sf-confirm-change's «Отклонить» --
-// asks for `declineAppearance: "outline"`. Both stand on the element's size
+// of its own weight rather than a cancel asks for `declineAppearance:
+// "outline"`; a surface whose accepting answer is the main one (sf-confirm-change
+// 1.9.0, owner decision C183 (6): «Подтвердить» filled primary, «Отклонить»
+// quiet) for `acceptAppearance: "default"`. Both stand on the element's size
 // (context.size, 1 unless the page gives one); a size a template gives is
 // relative, so a compact region (data-sf-density, C22) moves them down a step.
 //
 // In a window (sf-confirm appearance="window", decision C39) the answers come
 // before the status line, at the start; the declining one is ghost there too
 // (C116; it was tonal, the window's quiet answer).
+// `formerBlock` writes a renamed surface's former class beside each part's;
+// `statusLast` puts the status line after the answers in the markup as well
+// as on screen (the deadline under the answers, C183 (6)).
 
 function renderConfirmFooter(context, block, {
   acceptStatus = "",
   window = false,
-  declineAppearance = "ghost"
+  acceptAppearance = "outline",
+  declineAppearance = "ghost",
+  formerBlock = "",
+  statusLast = false
 } = {}) {
   const {
     component
-  } = context;
+  } = context; // A surface whose class was renamed writes its former block beside the
+  // new one until the alias date, so a page selector that reached it still
+  // does (sf-confirm-change 1.8.0: .sf-change-confirm__* until 2027-01-01).
+
+  const part = name => formerBlock ? `${block}__${name} ${formerBlock}__${name}` : `${block}__${name}`;
+
   const danger = acceptStatus === "danger" || acceptStatus === "error";
-  const size = context.size || "1";
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <footer class="${block}__footer">
-                <!-- Always in the page, empty while there is nothing to say: a live
-                     region that appears together with its words is not heard. -->
-                <p class="${block}__status" role="status" tabindex="-1">
+  const size = context.size || "1"; // Always in the page, empty while there is nothing to say: a live region
+  // that appears together with its words is not heard. With statusLast it
+  // follows the answers in the markup too (sf-confirm-change 1.9.0: the
+  // deadline under the answers, an sf-time that may take a Tab after them).
+
+  const status = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <p class=${part("status")} role="status" tabindex="-1">
                     ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} size="1" aria-hidden="true"></sf-icon>
                             <span>${context.statusText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                </p>
-                <!-- While the answer is applied (pending) the answers stay where they
-                     were: the pressed one busy, with the button's own spinner and
-                     aria-busy, the other disabled, so the card does not jump and
-                     the person sees which answer is on its way. -->
-                <div class="${block}__actions" ?hidden=${!context.open && !context.pending}>
+                </p>`; // While the answer is applied (pending) the answers stay where they were:
+  // the pressed one busy, with the button's own spinner and aria-busy, the
+  // other disabled, so the card does not jump and the person sees which
+  // answer is on its way.
+
+  const actions = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class=${part("actions")} ?hidden=${!context.open && !context.pending}>
                     <sf-button
-                            appearance=${danger ? "default" : "outline"}
+                            appearance=${danger ? "default" : acceptAppearance}
                             scheme="primary"
                             status=${danger ? "danger" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                             size=${size}
@@ -935,7 +1114,9 @@ function renderConfirmFooter(context, block, {
                             ?disabled=${context.answersLocked && context.pressed !== false}
                             @click=${() => component.cancel()}
                     ></sf-button>
-                </div>
+                </div>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <footer class=${part("footer")}>${statusLast ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actions}${status}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${status}${actions}`}
             </footer>`;
 }
 __webpack_async_result__();
@@ -1004,7 +1185,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.7.5","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-change-confirm-radius":{"type":"length","state":"default"},"--sf-change-confirm-inset":{"type":"length","state":"default"},"--sf-change-confirm-gap":{"type":"length","state":"default"},"--sf-change-confirm-before-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-background-color":{"type":"color","state":"default"},"--sf-change-confirm-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.9.0","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-confirm-change-radius":{"type":"length","state":"default"},"--sf-confirm-change-inset":{"type":"length","state":"default"},"--sf-confirm-change-gap":{"type":"length","state":"default"},"--sf-confirm-change-before-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

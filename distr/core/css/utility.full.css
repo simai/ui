@@ -843,6 +843,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-page {
@@ -956,6 +958,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-0 {
@@ -1069,6 +1073,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-area {
@@ -1182,6 +1188,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-1 {
@@ -1295,6 +1303,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface {
@@ -1408,6 +1418,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-card {
@@ -1521,6 +1533,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-popup {
@@ -1642,6 +1656,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-popup-nested {
@@ -1755,6 +1771,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-2 {
@@ -1868,6 +1886,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .bg-surface-3 {
@@ -1981,6 +2001,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     --sf-place--found-primary: var(--sf-primary);
     --sf-place--found-primary-hover: var(--sf-primary-hover);
@@ -2119,6 +2141,8 @@
     --sf-outline-variant: light-dark(var(--sf-neutral-90--alfa-24), var(--sf-neutral-50--alfa-24));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-85), var(--sf-neutral-15));
     --sf-on-surface-active: light-dark(var(--sf-neutral-80), var(--sf-neutral-20));
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -2133,6 +2157,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
   }
   .bg-surface-inverse-fixed {
     --sf-surface-place: var(--sf-surface-inverse-fixed);
@@ -2162,6 +2207,8 @@
     --sf-outline-variant: var(--sf-neutral-90--alfa-24);
     --sf-on-surface-hover: var(--sf-neutral-85);
     --sf-on-surface-active: var(--sf-neutral-80);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
     --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
@@ -2176,6 +2223,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
   }
   .bg-primary {
     --sf-surface-place: var(--sf-primary);
@@ -2201,6 +2269,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-primary-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-primary-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-primary);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-primary-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-primary-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-primary-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2262,6 +2332,8 @@
     --sf-outline: var(--sf-primary-outline);
     --sf-outline-variant: var(--sf-primary-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-primary-container);
+    --sf-code--background: var(--sf-primary-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2298,6 +2370,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-secondary-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-secondary-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-secondary);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-secondary-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-secondary-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-secondary-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2359,6 +2433,8 @@
     --sf-outline: var(--sf-secondary-outline);
     --sf-outline-variant: var(--sf-secondary-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-secondary-container);
+    --sf-code--background: var(--sf-secondary-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2395,6 +2471,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-tertiary-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-tertiary-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-tertiary);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-tertiary-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-tertiary-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-tertiary-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2456,6 +2534,8 @@
     --sf-outline: var(--sf-tertiary-outline);
     --sf-outline-variant: var(--sf-tertiary-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-tertiary-container);
+    --sf-code--background: var(--sf-tertiary-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2492,6 +2572,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-info);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2553,6 +2635,8 @@
     --sf-outline: var(--sf-info-outline);
     --sf-outline-variant: var(--sf-info-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-info-container);
+    --sf-code--background: var(--sf-info-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2589,6 +2673,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-success-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-success-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-success);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-success-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-success-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-success-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2650,6 +2736,8 @@
     --sf-outline: var(--sf-success-outline);
     --sf-outline-variant: var(--sf-success-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-success-container);
+    --sf-code--background: var(--sf-success-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2686,6 +2774,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-warning);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2747,6 +2837,8 @@
     --sf-outline: var(--sf-warning-outline);
     --sf-outline-variant: var(--sf-warning-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-warning-container);
+    --sf-code--background: var(--sf-warning-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -2783,6 +2875,8 @@
     --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-error);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
     --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
     --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
@@ -2844,6 +2938,8 @@
     --sf-outline: var(--sf-error-outline);
     --sf-outline-variant: var(--sf-error-container-strong);
     --sf-place--container-outline: var(--sf-outline);
+    --sf-code--color: var(--sf-on-error-container);
+    --sf-code--background: var(--sf-error-container);
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
@@ -3356,6 +3452,12 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-primary-20));
     --sf-focus--color: var(--sf-focus);
   }
+  .bg-primary .color-on-primary,
+  .bg-primary .hover\:color-on-primary,
+  .bg-primary .focus\:color-on-primary,
+  .bg-primary .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
+  }
   .bg-secondary > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-secondary-20));
     --sf-primary-hover: light-dark(var(--sf-secondary-95), var(--sf-secondary-25));
@@ -3391,6 +3493,12 @@
     --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-secondary-20--alfa-80));
     --sf-focus: light-dark(var(--sf-white), var(--sf-secondary-20));
     --sf-focus--color: var(--sf-focus);
+  }
+  .bg-secondary .color-on-primary,
+  .bg-secondary .hover\:color-on-primary,
+  .bg-secondary .focus\:color-on-primary,
+  .bg-secondary .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
   }
   .bg-tertiary > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-tertiary-20));
@@ -3428,6 +3536,12 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-tertiary-20));
     --sf-focus--color: var(--sf-focus);
   }
+  .bg-tertiary .color-on-primary,
+  .bg-tertiary .hover\:color-on-primary,
+  .bg-tertiary .focus\:color-on-primary,
+  .bg-tertiary .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
+  }
   .bg-info > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-primary-hover: light-dark(var(--sf-info-95), var(--sf-info-25));
@@ -3463,6 +3577,12 @@
     --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
     --sf-focus: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-focus--color: var(--sf-focus);
+  }
+  .bg-info .color-on-primary,
+  .bg-info .hover\:color-on-primary,
+  .bg-info .focus\:color-on-primary,
+  .bg-info .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
   }
   .bg-success > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-success-20));
@@ -3500,6 +3620,12 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-success-20));
     --sf-focus--color: var(--sf-focus);
   }
+  .bg-success .color-on-primary,
+  .bg-success .hover\:color-on-primary,
+  .bg-success .focus\:color-on-primary,
+  .bg-success .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
+  }
   .bg-warning > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-primary-hover: light-dark(var(--sf-warning-95), var(--sf-warning-25));
@@ -3535,6 +3661,12 @@
     --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-focus: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-focus--color: var(--sf-focus);
+  }
+  .bg-warning .color-on-primary,
+  .bg-warning .hover\:color-on-primary,
+  .bg-warning .focus\:color-on-primary,
+  .bg-warning .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
   }
   .bg-error > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -3572,6 +3704,12 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-focus--color: var(--sf-focus);
   }
+  .bg-error .color-on-primary,
+  .bg-error .hover\:color-on-primary,
+  .bg-error .focus\:color-on-primary,
+  .bg-error .active\:color-on-primary {
+    --sf-on-primary: var(--sf-place--outer-on-primary);
+  }
   :where(.bg-surface-4 > :not(.bg-primary)) {
     --sf-primary: var(--sf-place--step-primary);
     --sf-primary-hover: var(--sf-place--step-primary-hover);
@@ -3589,6 +3727,27 @@
     --sf-primary-container-hover: light-dark(var(--sf-primary-50--alfa-28), var(--sf-primary-50--alfa-16));
     --sf-primary-container-active: light-dark(var(--sf-primary-50--alfa-32), var(--sf-primary-50--alfa-20));
     --sf-on-primary-container: light-dark(var(--sf-primary-90), var(--sf-primary-10));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-primary-70), var(--sf-primary-50));
+    --sf-on-secondary-container: light-dark(var(--sf-secondary-90), var(--sf-secondary-10));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-secondary-70), var(--sf-secondary-50));
+    --sf-on-tertiary-container: light-dark(var(--sf-tertiary-90), var(--sf-tertiary-10));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-tertiary-70), var(--sf-tertiary-50));
+    --sf-on-info-container: light-dark(var(--sf-info-90), var(--sf-info-10));
+    --sf-on-info-container-graphic: light-dark(var(--sf-info-70), var(--sf-info-50));
+    --sf-on-success-container: light-dark(var(--sf-success-90), var(--sf-success-10));
+    --sf-on-success-container-graphic: light-dark(var(--sf-success-70), var(--sf-success-50));
+    --sf-on-warning-container: light-dark(var(--sf-warning-90), var(--sf-warning-10));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-warning-70), var(--sf-warning-50));
+    --sf-on-error-container: light-dark(var(--sf-error-90), var(--sf-error-10));
+    --sf-on-error-container-graphic: light-dark(var(--sf-error-70), var(--sf-error-50));
+    --sf-on-neutral-container: light-dark(var(--sf-neutral-90), var(--sf-neutral-10));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-neutral-70), var(--sf-neutral-50));
+    --sf-link: light-dark(var(--sf-primary-80), var(--sf-primary-40));
+    --sf-link-hover: light-dark(var(--sf-primary-85), var(--sf-primary-35));
+    --sf-link-active: light-dark(var(--sf-primary-90), var(--sf-primary-30));
+    --sf-link-visited: light-dark(var(--sf-tertiary-80), var(--sf-tertiary-40));
+    --sf-focus: light-dark(var(--sf-primary-90), var(--sf-primary-50));
+    --sf-focus--color: var(--sf-focus);
   }
   .bg-surface-inverse-fixed > * {
     --sf-primary: var(--sf-primary-80);
@@ -3599,6 +3758,27 @@
     --sf-primary-container-hover: var(--sf-primary-50--alfa-28);
     --sf-primary-container-active: var(--sf-primary-50--alfa-32);
     --sf-on-primary-container: var(--sf-primary-90);
+    --sf-on-primary-container-graphic: var(--sf-primary-70);
+    --sf-on-secondary-container: var(--sf-secondary-90);
+    --sf-on-secondary-container-graphic: var(--sf-secondary-70);
+    --sf-on-tertiary-container: var(--sf-tertiary-90);
+    --sf-on-tertiary-container-graphic: var(--sf-tertiary-70);
+    --sf-on-info-container: var(--sf-info-90);
+    --sf-on-info-container-graphic: var(--sf-info-70);
+    --sf-on-success-container: var(--sf-success-90);
+    --sf-on-success-container-graphic: var(--sf-success-70);
+    --sf-on-warning-container: var(--sf-warning-90);
+    --sf-on-warning-container-graphic: var(--sf-warning-70);
+    --sf-on-error-container: var(--sf-error-90);
+    --sf-on-error-container-graphic: var(--sf-error-70);
+    --sf-on-neutral-container: var(--sf-neutral-90);
+    --sf-on-neutral-container-graphic: var(--sf-neutral-70);
+    --sf-link: var(--sf-primary-80);
+    --sf-link-hover: var(--sf-primary-85);
+    --sf-link-active: var(--sf-primary-90);
+    --sf-link-visited: var(--sf-tertiary-80);
+    --sf-focus: var(--sf-primary-90);
+    --sf-focus--color: var(--sf-focus);
   }
 }
 @layer sf.utilities {
@@ -10199,34 +10379,54 @@
 }
 @layer sf.utilities {
   .shadow-flat {
+    --sf-place-shadow: 0 0 transparent;
     box-shadow: var(--sf-shadow-flat);
+    box-shadow: var(--sf-ring-shadow, var(--sf-shadow-flat));
   }
   .shadow-raised {
-    box-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-overlay {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-modal {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-0 {
+    --sf-place-shadow: 0 0 transparent;
     box-shadow: var(--sf-shadow-flat);
+    box-shadow: var(--sf-ring-shadow, var(--sf-shadow-flat));
   }
   .shadow-1 {
-    box-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-2 {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-3 {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-4 {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .shadow-5 {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
 }
 @layer sf.utilities {
@@ -14176,39 +14376,39 @@
 @layer sf.utilities {
   .divider-opacity-1,
   .divide-opacity-1 {
-    --sf-divider--alfa: var(--sf-opacity-10, 0.1);
+    --sf-divider--alfa: 0.1;
   }
   .divider-opacity-2,
   .divide-opacity-2 {
-    --sf-divider--alfa: var(--sf-opacity-20, 0.2);
+    --sf-divider--alfa: 0.2;
   }
   .divider-opacity-3,
   .divide-opacity-3 {
-    --sf-divider--alfa: var(--sf-opacity-30, 0.3);
+    --sf-divider--alfa: 0.3;
   }
   .divider-opacity-4,
   .divide-opacity-4 {
-    --sf-divider--alfa: var(--sf-opacity-40, 0.4);
+    --sf-divider--alfa: 0.4;
   }
   .divider-opacity-5,
   .divide-opacity-5 {
-    --sf-divider--alfa: var(--sf-opacity-50, 0.5);
+    --sf-divider--alfa: 0.5;
   }
   .divider-opacity-6,
   .divide-opacity-6 {
-    --sf-divider--alfa: var(--sf-opacity-60, 0.6);
+    --sf-divider--alfa: 0.6;
   }
   .divider-opacity-7,
   .divide-opacity-7 {
-    --sf-divider--alfa: var(--sf-opacity-70, 0.7);
+    --sf-divider--alfa: 0.7;
   }
   .divider-opacity-8,
   .divide-opacity-8 {
-    --sf-divider--alfa: var(--sf-opacity-80, 0.8);
+    --sf-divider--alfa: 0.8;
   }
   .divider-opacity-9,
   .divide-opacity-9 {
-    --sf-divider--alfa: var(--sf-opacity-90, 0.9);
+    --sf-divider--alfa: 0.9;
   }
   .divider-opacity-full,
   .divide-opacity-full {
@@ -34503,13 +34703,6 @@
     grid-template-rows: subgrid;
   }
 }
-@layer sf.base {
-  .bg-surface-overlay {
-    background-color: var(--sf-surface-veil);
-    -webkit-backdrop-filter: blur(var(--sf-surface-overlay--blur));
-            backdrop-filter: blur(var(--sf-surface-overlay--blur));
-  }
-}
 @layer sf.utilities {
   h1 {
     font-size: var(--sf-heading-1--size);
@@ -49422,28 +49615,83 @@
 @layer sf.utilities {
   .ring-1 {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .ring-2 {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .ring-3 {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .ring-4 {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .ring-0 {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
 }
 @layer sf.utilities {
@@ -64013,7 +64261,7 @@
     --sf-table-active-color: var(--sf-on-surface);
     --sf-table-active-bg: var(--sf-surface-state-select);
     --sf-table-hover-color: var(--sf-on-surface);
-    --sf-table-hover-bg: var(--sf-surface-state-hover);
+    --sf-table-hover-bg: var(--sf-surface-state-select);
     width: 100%;
     inline-size: 100%;
     margin-bottom: var(--sf-b6);
@@ -64133,6 +64381,18 @@
     color: var(--sf-table-hover-color);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table > tbody > tr[aria-selected=true] > * {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table > tbody > tr[aria-selected=true] > :first-child {
+    box-shadow: inset calc(var(--sf-px) * 2) 0 0 var(--sf-primary);
+  }
+  .table > tbody > tr[aria-selected=true] > :first-child:dir(rtl) {
+    box-shadow: inset calc(-1 * calc(var(--sf-px) * 2)) 0 0 var(--sf-primary);
   }
   .table > :not(caption) > * > :where(:has(> sf-checkbox:not(.does-not-exist):only-child)) {
     width: 0;
@@ -64347,6 +64607,18 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
+  .table-stripe > tbody > tr.table-active:nth-of-type(odd) > :nth-child(n),
+  .table-stripe-col > :not(caption) > tr.table-active > :nth-child(2n) {
+    --sf-table-accent-bg: var(--sf-surface-state-active);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  tr.table-active > :first-child {
+    box-shadow: inset calc(var(--sf-px) * 2) 0 0 var(--sf-primary);
+  }
+  tr.table-active > :first-child:dir(rtl) {
+    box-shadow: inset calc(-1 * calc(var(--sf-px) * 2)) 0 0 var(--sf-primary);
+  }
 }
 @layer sf.utilities {
   .table-border > :not(caption) > * {
@@ -64372,6 +64644,7 @@
     width: 100%;
     inline-size: 100%;
     overflow: auto;
+    scroll-padding: var(--sf-focus-room);
     border: var(--sf-px) solid var(--sf-table-frame-border-color);
     border-radius: var(--sf-table-frame-radius);
     background-color: var(--sf-table-frame-background);
@@ -64635,7 +64908,7 @@
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
   .table-hover.table-stripe > tbody > tr:nth-of-type(odd):hover > * {
-    --sf-table-accent-bg: var(--sf-surface-state-select);
+    --sf-table-accent-bg: var(--sf-surface-state-active);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
@@ -64663,7 +64936,13 @@
   }
   .table-stripe > tbody > tr:nth-of-type(odd):hover > *,
   .table-stripe-col > tbody > tr:hover > :nth-child(2n) {
-    --sf-table-accent-bg: var(--sf-surface-state-select);
+    --sf-table-accent-bg: var(--sf-surface-state-active);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table-stripe > tbody > tr[aria-selected=true]:nth-of-type(odd) > *,
+  .table-stripe-col > tbody > tr[aria-selected=true] > :nth-child(2n) {
+    --sf-table-accent-bg: var(--sf-surface-state-active);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
@@ -70990,6 +71269,15 @@
   }
 }
 @layer sf.utilities {
+  .ease-enter {
+    transition-timing-function: var(--sf-ease-enter);
+  }
+  .ease-exit {
+    transition-timing-function: var(--sf-ease-exit);
+  }
+  .ease-move {
+    transition-timing-function: var(--sf-ease-move);
+  }
   .ease-linear {
     transition-timing-function: linear;
   }
@@ -71825,9 +72113,17 @@
   }
 }
 @layer sf.utilities {
+  .text-break {
+    word-wrap: anywhere;
+  }
   .text-break-normal {
     word-wrap: normal;
     word-break: normal;
+  }
+  .text-hyphens {
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+        hyphens: auto;
   }
   .text-break-word {
     word-wrap: break-word;
@@ -289588,34 +289884,54 @@
 }
 @layer sf.utilities {
   .hover\:shadow-flat:hover {
+    --sf-place-shadow: 0 0 transparent;
     box-shadow: var(--sf-shadow-flat);
+    box-shadow: var(--sf-ring-shadow, var(--sf-shadow-flat));
   }
   .hover\:shadow-raised:hover {
-    box-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-overlay:hover {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-modal:hover {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-0:hover {
+    --sf-place-shadow: 0 0 transparent;
     box-shadow: var(--sf-shadow-flat);
+    box-shadow: var(--sf-ring-shadow, var(--sf-shadow-flat));
   }
   .hover\:shadow-1:hover {
-    box-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-2:hover {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-3:hover {
-    box-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-4:hover {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
   .hover\:shadow-5:hover {
-    box-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-place-shadow: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    box-shadow: 0 0 transparent, var(--sf-place-shadow);
+    box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow);
   }
 }
 @layer sf.utilities {
@@ -290208,28 +290524,83 @@
 @layer sf.utilities {
   .hover\:ring-1:hover {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .hover\:ring-2:hover {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .hover\:ring-3:hover {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .hover\:ring-4:hover {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .hover\:ring-0:hover {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
 }
 @layer sf.utilities {
@@ -294072,28 +294443,83 @@
 @layer sf.utilities {
   .focus\:ring-1:focus {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus\:ring-2:focus {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus\:ring-3:focus {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus\:ring-4:focus {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus\:ring-0:focus {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
 }
 @layer sf.utilities {
@@ -294383,107 +294809,107 @@
 }
 @layer sf.utilities {
   .ring-opacity-1 {
-    --sf-ring--alfa: var(--sf-opacity-10, 0.1);
+    --sf-ring--alpha: 0.1;
   }
   .ring-opacity-2 {
-    --sf-ring--alfa: var(--sf-opacity-20, 0.2);
+    --sf-ring--alpha: 0.2;
   }
   .ring-opacity-3 {
-    --sf-ring--alfa: var(--sf-opacity-30, 0.3);
+    --sf-ring--alpha: 0.3;
   }
   .ring-opacity-4 {
-    --sf-ring--alfa: var(--sf-opacity-40, 0.4);
+    --sf-ring--alpha: 0.4;
   }
   .ring-opacity-5 {
-    --sf-ring--alfa: var(--sf-opacity-50, 0.5);
+    --sf-ring--alpha: 0.5;
   }
   .ring-opacity-6 {
-    --sf-ring--alfa: var(--sf-opacity-60, 0.6);
+    --sf-ring--alpha: 0.6;
   }
   .ring-opacity-7 {
-    --sf-ring--alfa: var(--sf-opacity-70, 0.7);
+    --sf-ring--alpha: 0.7;
   }
   .ring-opacity-8 {
-    --sf-ring--alfa: var(--sf-opacity-80, 0.8);
+    --sf-ring--alpha: 0.8;
   }
   .ring-opacity-9 {
-    --sf-ring--alfa: var(--sf-opacity-90, 0.9);
+    --sf-ring--alpha: 0.9;
   }
   .ring-opacity-full {
-    --sf-ring--alfa: 1;
+    --sf-ring--alpha: 1;
   }
   .ring-opacity-0 {
-    --sf-ring--alfa: 0;
+    --sf-ring--alpha: 0;
   }
 }
 @layer sf.utilities {
   .hover\:ring-opacity-1:hover {
-    --sf-ring--alfa: var(--sf-opacity-10, 0.1);
+    --sf-ring--alpha: 0.1;
   }
   .hover\:ring-opacity-2:hover {
-    --sf-ring--alfa: var(--sf-opacity-20, 0.2);
+    --sf-ring--alpha: 0.2;
   }
   .hover\:ring-opacity-3:hover {
-    --sf-ring--alfa: var(--sf-opacity-30, 0.3);
+    --sf-ring--alpha: 0.3;
   }
   .hover\:ring-opacity-4:hover {
-    --sf-ring--alfa: var(--sf-opacity-40, 0.4);
+    --sf-ring--alpha: 0.4;
   }
   .hover\:ring-opacity-5:hover {
-    --sf-ring--alfa: var(--sf-opacity-50, 0.5);
+    --sf-ring--alpha: 0.5;
   }
   .hover\:ring-opacity-6:hover {
-    --sf-ring--alfa: var(--sf-opacity-60, 0.6);
+    --sf-ring--alpha: 0.6;
   }
   .hover\:ring-opacity-7:hover {
-    --sf-ring--alfa: var(--sf-opacity-70, 0.7);
+    --sf-ring--alpha: 0.7;
   }
   .hover\:ring-opacity-8:hover {
-    --sf-ring--alfa: var(--sf-opacity-80, 0.8);
+    --sf-ring--alpha: 0.8;
   }
   .hover\:ring-opacity-9:hover {
-    --sf-ring--alfa: var(--sf-opacity-90, 0.9);
+    --sf-ring--alpha: 0.9;
   }
   .hover\:ring-opacity-full:hover {
-    --sf-ring--alfa: 1;
+    --sf-ring--alpha: 1;
   }
   .hover\:ring-opacity-0:hover {
-    --sf-ring--alfa: 0;
+    --sf-ring--alpha: 0;
   }
 }
 @layer sf.utilities {
   .focus\:ring-opacity-1:focus {
-    --sf-ring--alfa: var(--sf-opacity-10, 0.1);
+    --sf-ring--alpha: 0.1;
   }
   .focus\:ring-opacity-2:focus {
-    --sf-ring--alfa: var(--sf-opacity-20, 0.2);
+    --sf-ring--alpha: 0.2;
   }
   .focus\:ring-opacity-3:focus {
-    --sf-ring--alfa: var(--sf-opacity-30, 0.3);
+    --sf-ring--alpha: 0.3;
   }
   .focus\:ring-opacity-4:focus {
-    --sf-ring--alfa: var(--sf-opacity-40, 0.4);
+    --sf-ring--alpha: 0.4;
   }
   .focus\:ring-opacity-5:focus {
-    --sf-ring--alfa: var(--sf-opacity-50, 0.5);
+    --sf-ring--alpha: 0.5;
   }
   .focus\:ring-opacity-6:focus {
-    --sf-ring--alfa: var(--sf-opacity-60, 0.6);
+    --sf-ring--alpha: 0.6;
   }
   .focus\:ring-opacity-7:focus {
-    --sf-ring--alfa: var(--sf-opacity-70, 0.7);
+    --sf-ring--alpha: 0.7;
   }
   .focus\:ring-opacity-8:focus {
-    --sf-ring--alfa: var(--sf-opacity-80, 0.8);
+    --sf-ring--alpha: 0.8;
   }
   .focus\:ring-opacity-9:focus {
-    --sf-ring--alfa: var(--sf-opacity-90, 0.9);
+    --sf-ring--alpha: 0.9;
   }
   .focus\:ring-opacity-full:focus {
-    --sf-ring--alfa: 1;
+    --sf-ring--alpha: 1;
   }
   .focus\:ring-opacity-0:focus {
-    --sf-ring--alfa: 0;
+    --sf-ring--alpha: 0;
   }
 }
 @layer sf.utilities {
@@ -294597,83 +295023,248 @@
 @layer sf.utilities {
   .focus-visible\:ring-1.focus-visible {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-1.focus-visible {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-1:focus-visible {
     --sf-ring-width: var(--sf-a1);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-2.focus-visible {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-2.focus-visible {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-2:focus-visible {
     --sf-ring-width: var(--sf-a2);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-3.focus-visible {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-3.focus-visible {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-3:focus-visible {
     --sf-ring-width: var(--sf-a3);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-4.focus-visible {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-4.focus-visible {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-4:focus-visible {
     --sf-ring-width: var(--sf-a4);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-0.focus-visible {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-0.focus-visible {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
   .focus-visible\:ring-0:focus-visible {
     --sf-ring-width: var(--sf-0);
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + 0px) color-mix(in srgb, transparent, currentColor calc(1 * 100%)), 0 0 0 0px transparent;
-    box-shadow: var(--sf-ring-inset, ) 0 0 0 calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px)) color-mix(in srgb, transparent, var(--sf-ring-color, currentColor) calc(var(--sf-ring--alfa, 1) * 100%)), 0 0 0 var(--sf-ring-offset-width, 0px) var(--sf-ring-offset-color, transparent);
+    --sf-ring-shadow:
+        var(--sf-ring-inset, ) 0 0 0
+        calc(var(--sf-ring-width) + var(--sf-ring-offset-width, 0px))
+        color-mix(
+            in srgb,
+            transparent,
+            var(--sf-ring-color, currentColor)
+            calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
+        ),
+        0 0 0 var(--sf-ring-offset-width, 0px)
+        var(--sf-ring-offset-color, transparent);
+    box-shadow: var(--sf-ring-shadow), 0 0 transparent;
+    box-shadow: var(--sf-ring-shadow), var(--sf-place-shadow, 0 0 transparent);
   }
 }
 @layer sf.utilities {
@@ -295242,70 +295833,70 @@
 }
 @layer sf.utilities {
   .focus-visible\:ring-opacity-1.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-10, 0.1);
+    --sf-ring--alpha: 0.1;
   }
   .focus-visible\:ring-opacity-1:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-10, 0.1);
+    --sf-ring--alpha: 0.1;
   }
   .focus-visible\:ring-opacity-2.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-20, 0.2);
+    --sf-ring--alpha: 0.2;
   }
   .focus-visible\:ring-opacity-2:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-20, 0.2);
+    --sf-ring--alpha: 0.2;
   }
   .focus-visible\:ring-opacity-3.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-30, 0.3);
+    --sf-ring--alpha: 0.3;
   }
   .focus-visible\:ring-opacity-3:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-30, 0.3);
+    --sf-ring--alpha: 0.3;
   }
   .focus-visible\:ring-opacity-4.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-40, 0.4);
+    --sf-ring--alpha: 0.4;
   }
   .focus-visible\:ring-opacity-4:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-40, 0.4);
+    --sf-ring--alpha: 0.4;
   }
   .focus-visible\:ring-opacity-5.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-50, 0.5);
+    --sf-ring--alpha: 0.5;
   }
   .focus-visible\:ring-opacity-5:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-50, 0.5);
+    --sf-ring--alpha: 0.5;
   }
   .focus-visible\:ring-opacity-6.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-60, 0.6);
+    --sf-ring--alpha: 0.6;
   }
   .focus-visible\:ring-opacity-6:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-60, 0.6);
+    --sf-ring--alpha: 0.6;
   }
   .focus-visible\:ring-opacity-7.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-70, 0.7);
+    --sf-ring--alpha: 0.7;
   }
   .focus-visible\:ring-opacity-7:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-70, 0.7);
+    --sf-ring--alpha: 0.7;
   }
   .focus-visible\:ring-opacity-8.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-80, 0.8);
+    --sf-ring--alpha: 0.8;
   }
   .focus-visible\:ring-opacity-8:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-80, 0.8);
+    --sf-ring--alpha: 0.8;
   }
   .focus-visible\:ring-opacity-9.focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-90, 0.9);
+    --sf-ring--alpha: 0.9;
   }
   .focus-visible\:ring-opacity-9:focus-visible {
-    --sf-ring--alfa: var(--sf-opacity-90, 0.9);
+    --sf-ring--alpha: 0.9;
   }
   .focus-visible\:ring-opacity-full.focus-visible {
-    --sf-ring--alfa: 1;
+    --sf-ring--alpha: 1;
   }
   .focus-visible\:ring-opacity-full:focus-visible {
-    --sf-ring--alfa: 1;
+    --sf-ring--alpha: 1;
   }
   .focus-visible\:ring-opacity-0.focus-visible {
-    --sf-ring--alfa: 0;
+    --sf-ring--alpha: 0;
   }
   .focus-visible\:ring-opacity-0:focus-visible {
-    --sf-ring--alfa: 0;
+    --sf-ring--alpha: 0;
   }
 }
 @layer sf.utilities {

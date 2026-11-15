@@ -245,7 +245,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
  // The label's id, one per tile on the page (the same on every render, so a
 // first-paint snapshot is stable).
 
@@ -331,8 +339,8 @@ function changeOf({
 const TileMetricElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru'
 });
@@ -685,7 +693,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "1d705aa58430"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.5.0","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.5.1","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

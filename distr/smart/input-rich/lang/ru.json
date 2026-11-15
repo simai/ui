@@ -14,6 +14,9 @@
     "quote": "Цитата",
     "undo": "Отменить",
     "redo": "Повторить",
+    "not-in-list": "Недоступно в списке",
+    "nothing-to-undo": "Нечего отменять",
+    "nothing-to-redo": "Нечего повторять",
     "link-dialog": "Ссылка",
     "link-address": "Адрес ссылки",
     "link-hint": "https://…, mailto:, tel: или путь на этом сайте, например /about",
@@ -22,6 +25,9 @@
     "link-remove": "Убрать ссылку",
     "value-missing": "Заполните поле",
     "count-text": "{count} / {max}",
-    "too-long": "Не больше {max} знаков"
+    "too-long": "Не больше {max} знаков",
+    "help": "Подробнее: {label}",
+    "text-level": "Уровень текста",
+    "more": "Ещё"
   }
 }

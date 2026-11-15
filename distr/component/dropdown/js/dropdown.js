@@ -371,12 +371,11 @@ __webpack_require__.r(__webpack_exports__);
 
 const DROPDOWN_SELECTOR = ".sf-dropdown";
 const BOUND_FLAG = "sfDropdownBound";
-const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // From size 1 up the field has room for a compact tag of its own size, with the
-// field's own text. Size 1/2 does not (one pixel would be left), so its tag
-// goes one size down onto the field line, rendered inline: its label is one
-// text step down and it takes no block padding.
-// The tag's height is its low step (C27; the tag's spacing-compact before,
-// journal class-tag-spacing-to-height).
+const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // A tag in the field is part of the field (owner decision C145 (1), variant
+// A): inline, one size below the field, so its label is one text step under
+// the field's; the field gives it its height (the field less --sf-space-1/4
+// above and below) as its line. From size 1 up it was a low chip of the
+// field's own size (C27), 32 in a 40 field.
 
 const FIELD_TAG = Object.freeze({
   "1/2": {
@@ -384,12 +383,12 @@ const FIELD_TAG = Object.freeze({
     height: ""
   },
   "1": {
-    size: "1",
-    height: "low"
+    size: "1/2",
+    height: ""
   },
   "2": {
-    size: "2",
-    height: "low"
+    size: "1",
+    height: ""
   }
 });
 
@@ -2100,10 +2099,17 @@ const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
  */
 
 const FOCUSABLE = ['a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])'].join(',');
-/** The focusable nodes inside these roots that are drawn and not inert, in order. */
+/**
+ * The focusable nodes inside these roots that are drawn and not inert, in
+ * order. A control taken out of the Tab order (tabindex -1: the other
+ * segments of a roving group such as sf-segmented, a menu's rows) is no Tab
+ * stop: counted, it was the trap's last stop that Tab never reaches, and Tab
+ * from the group's current segment left the layer (sf-header-site's panel
+ * with the theme switch in its settings group, owner decision C161 (8)).
+ */
 
 function focusablesIn(...roots) {
-  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]'));
+  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]') && node.tabIndex >= 0);
 }
 
 function stack() {
@@ -3331,7 +3337,18 @@ function anchor(reference, floating, options = {}) {
   };
 
   const heightCap = cap(floatingStyle.maxHeight, document.documentElement.clientHeight);
-  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth);
+  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth); // A point -- a reference that draws a box of no size: a fixed span where a
+  // right-click or a long press was (sf-menu-context, C164 (1)) -- is not a
+  // control the panel hangs from but a corner, as system menus open: the panel
+  // flips to the other side of the point on both axes when it does not fit,
+  // left of it at the right edge (right of it in RTL), above it at the bottom.
+  // Shifted, it covered the point and stood 36 px off it on a phone (ui-view
+  // K1 follow-ups, 2026-11-15). Only when it fits on neither side is it
+  // shifted, to the viewport's edge less the padding (--sf-space-1/2), on the
+  // side with more room. A box of any size keeps its alignment and is shifted.
+
+  const pointBox = reference.getBoundingClientRect();
+  const atPoint = pointBox.width === 0 && pointBox.height === 0 && reference.getClientRects().length > 0;
   const controller = {
     side: settings.side,
     stopped: false
@@ -3456,20 +3473,23 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = referenceRect(reference);
+    const box = referenceRect(reference); // A point is not a field at a frame's edge: it keeps the whole padding.
+
     const edges = {
       top: padding,
       bottom: padding,
-      left: Math.min(padding, Math.max(0, box.left)),
-      right: Math.min(padding, Math.max(0, clientWidth - box.right))
+      left: atPoint ? padding : Math.min(padding, Math.max(0, box.left)),
+      right: atPoint ? padding : Math.min(padding, Math.max(0, clientWidth - box.right))
     };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
       alignmentAxis: alignment
-    })];
+    })]; // crossAxis: a point also flips its alignment (start <-> end) when the
+    // panel overflows the inline edge; a box only flips its side.
+
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
-      crossAxis: false
+      crossAxis: atPoint
     })); // Shift before size: a panel near the inline edge moves inside the viewport
     // instead of being squeezed to the space left of its field.
 

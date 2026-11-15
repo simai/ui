@@ -31,4 +31,16 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
+  .table-stripe > tbody > tr.table-active:nth-of-type(odd) > :nth-child(n),
+  .table-stripe-col > :not(caption) > tr.table-active > :nth-child(2n) {
+    --sf-table-accent-bg: var(--sf-surface-state-active);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  tr.table-active > :first-child {
+    box-shadow: inset calc(var(--sf-px) * 2) 0 0 var(--sf-primary);
+  }
+  tr.table-active > :first-child:dir(rtl) {
+    box-shadow: inset calc(-1 * calc(var(--sf-px) * 2)) 0 0 var(--sf-primary);
+  }
 }

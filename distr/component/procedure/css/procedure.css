@@ -1,7 +1,7 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-procedure {
-    --sf-procedure--marker-size: var(--sf-ui-1\/2--control-height);
+    --sf-procedure--marker-size: var(--sf-text-height-1);
     --sf-procedure--gap: var(--sf-procedure-gap, var(--sf-content--space-related));
     --sf-procedure--line-width: var(--sf-procedure-line-width, var(--sf-px));
     display: flex;
@@ -50,10 +50,9 @@
     block-size: var(--sf-procedure--marker-size);
     color: var(--sf-on-surface);
     color: var(--sf-procedure-marker-color, var(--sf-on-surface));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, var(--sf-surface-container)));
-    border: var(--sf-px) solid var(--sf-outline-variant);
+    background-color: transparent;
+    background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, transparent));
+    border: var(--sf-px) solid var(--sf-outline);
     border-radius: var(--sf-radius-circle);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-medium);

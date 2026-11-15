@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.empty-state",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "title": "Empty state",
   "summary": "What a list, a panel or a page says when it has nothing to show: no data, the first time, nothing found, no access, an error, no connection or work being prepared, with an icon, a real heading, a sentence and actions.",
   "kind": "smart",
@@ -281,7 +281,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/empty-state/index.js",
-        "sha256": "4024205279717fa4199cd3519bd0c26fb6f7d9890cfe4d06788934781b1c45db"
+        "sha256": "0403da736f1ada5df4e4e4a486a6e9b3c3ac9836b0a9437db1eaeeee2149b7d7"
       },
       {
         "path": "src/smart/empty-state/js/templates/default.js",

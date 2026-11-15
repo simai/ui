@@ -15,8 +15,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fca41e9837f0");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("46c0e03c9179");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8185ae1e4765");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("269d4777d276");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // Smart entry for sf-sortable. The loader fetches this bundle only when the
 // page has an <sf-sortable> list, so pages without an editor keep core.js small.
 //
@@ -31,16 +32,25 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
- // Defined with its insertion point and inserter (inserter-items, opt-in). They
-// come with this bundle only: the composition overlay carries the drag module
-// too and has no use for them.
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
 
-(0,_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.defineSortable)((0,_core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__.inserterRegistry)(), {
+ // Defined with its insertion point and inserter (inserter-items, opt-in) and
+// the handle's move menu (C171 (1)). They come with this bundle only: the
+// composition overlay carries the drag module too and has no use for them.
+
+(0,_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.defineSortable)((0,_core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__.moveMenuRegistry)((0,_core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__.inserterRegistry)()), {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
     lang: {
-      en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-      ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+      en,
+      ru
     },
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
@@ -350,7 +360,12 @@ function createSortableInserter(list) {
     // surface one a row action has, so it reads the same on any canvas.
     button = document_().createElement('button');
     button.type = 'button';
-    button.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--tonal sf-icon-button--on-surface sf-icon-button--size-1/3 sf-sortable-insert-button';
+    // Under a finger the point is the phone's step 36 (rung 1 at a phone's
+    // width) and answers on a 44 target (its sheet): a 24 circle was below a
+    // finger (SO-5).
+    const finger = Boolean(globalThis.matchMedia?.('(pointer: coarse)')?.matches);
+    const rung = finger ? 'sf-icon-button--size-1' : 'sf-icon-button--size-1/3';
+    button.className = `sf-icon-button sf-icon-button--icon sf-icon-button--tonal sf-icon-button--on-surface ${rung} sf-sortable-insert-button`;
     button.setAttribute('aria-haspopup', 'menu');
     button.setAttribute('aria-expanded', 'false');
     const glyph = document_().createElement('i');
@@ -728,12 +743,245 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "269d4777d276"
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createSortableMoveMenu: () => (/* binding */ createSortableMoveMenu),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   moveMenuEntries: () => (/* binding */ moveMenuEntries),
+/* harmony export */   moveMenuRegistry: () => (/* binding */ moveMenuRegistry),
+/* harmony export */   moveMenuTarget: () => (/* binding */ moveMenuTarget),
+/* harmony export */   withSortableMoveMenu: () => (/* binding */ withSortableMoveMenu)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7c1f9c2b36da");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__]);
+([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+// The handle's menu of sf-sortable (owner C171 (1), 2026-11-14): a press on a
+// row's handle -- a press that did not become a drag -- opens the standard
+// menu «Выше · Ниже · В начало · В конец». A person who cannot drag, or who
+// does not want to carry a row down a long list, moves it in one choice; the
+// keyboard path on the row stays as it was. Nothing is moved here: the choice
+// asks the host with the very request a drag ends with (sf-sortable-move) and
+// is said with the same words.
+//
+// The menu is sf-menu-context, fetched on the first press (it is a lazy
+// relation of the rule already, for the inserter), so its rows, keys, top layer
+// and Escape are every menu's. Like the inserter, this is an extension of the
+// drag element in the sf-sortable bundle only: the editor overlay's bundle
+// carries the drag module and has handles of its own.
+
+
+
+const ITEM = '[data-sf-sortable-item]';
+const HANDLE = '[data-sf-sortable-handle]';
+
+const MESSAGES = {
+  ru: {
+    'move-menu': 'Переместить «{item}»',
+    'move-up': 'Выше',
+    'move-down': 'Ниже',
+    'move-first': 'В начало',
+    'move-last': 'В конец',
+  },
+  en: {
+    'move-menu': 'Move “{item}”',
+    'move-up': 'Up',
+    'move-down': 'Down',
+    'move-first': 'To the top',
+    'move-last': 'To the bottom',
+  },
+};
+
+const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
+const text = (key) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageText)(MESSAGES, key, undefined, 'sf-sortable');
+
+function items(list) {
+  return [...list.querySelectorAll(ITEM)].filter((item) => item.closest('sf-sortable') === list);
+}
+
+function itemLabel(item) {
+  if (item.getAttribute('aria-label')) return item.getAttribute('aria-label');
+  const clone = item.cloneNode(true);
+  for (const hidden of clone.querySelectorAll('[aria-hidden="true"], .sf-sortable-live')) hidden.remove();
+  return clone.textContent.replace(/\s+/gu, ' ').trim();
+}
+
+// The control a handle is: itself when it is a button, else the button inside
+// it (sf-button-icon draws one), else the handle element.
+function controlOf(handle) {
+  if (handle.matches('button')) return handle;
+  return handle.querySelector('button') || handle;
+}
+
+/** The places a move menu offers for the item at `index` of `count`. */
+function moveMenuEntries(index, count) {
+  const last = count - 1;
+  return [
+    { id: 'up', text: text('move-up'), icon: 'arrow_upward', disabled: index <= 0 },
+    { id: 'down', text: text('move-down'), icon: 'arrow_downward', disabled: index >= last },
+    { type: 'separator' },
+    { id: 'first', text: text('move-first'), icon: 'vertical_align_top', disabled: index <= 0 },
+    { id: 'last', text: text('move-last'), icon: 'vertical_align_bottom', disabled: index >= last },
+  ];
+}
+
+/** The place an entry moves the item at `index` of `count` to. */
+function moveMenuTarget(id, index, count) {
+  return { up: index - 1, down: index + 1, first: 0, last: count - 1 }[id] ?? index;
+}
+
+function createSortableMoveMenu(list) {
+  let wiring = null;
+  let menu = null;
+  let current = null;
+  const document_ = () => globalThis.document;
+
+  function prepare(only = null) {
+    for (const item of only ? [only] : items(list)) {
+      const handle = item.querySelector(HANDLE);
+      if (!handle) continue;
+      const control = controlOf(handle);
+      if (!control.hasAttribute('aria-haspopup')) control.setAttribute('aria-haspopup', 'menu');
+      if (!control.hasAttribute('aria-expanded')) control.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  async function standardMenu() {
+    if (menu?.isConnected) return menu;
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!globalThis.customElements.get('sf-menu-context')) return null;
+    menu = document_().createElement('sf-menu-context');
+    menu.setAttribute('popup', '');
+    menu.addEventListener('sf-menu-context-select', onSelect);
+    menu.addEventListener('sf-menu-context-closed', () => {
+      if (current?.control) current.control.setAttribute('aria-expanded', 'false');
+    });
+    (list.closest('dialog[open]') || document_().body).append(menu);
+    return menu;
+  }
+
+  async function open(item, handle) {
+    if ((0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.activeSortableSession)()) return false;
+    const all = items(list);
+    const index = all.indexOf(item);
+    if (index < 0) return false;
+    const control = controlOf(handle);
+    const surface = await standardMenu();
+    if (!surface) return false;
+    if (surface.isOpen && current?.item === item) {
+      surface.close();
+      return false;
+    }
+    current = { item, control, id: item.getAttribute('data-sf-sortable-item') };
+    surface.setAttribute('aria-label', format(text('move-menu'), { item: itemLabel(item) }));
+    surface.entries = moveMenuEntries(index, all.length);
+    control.setAttribute('aria-expanded', 'true');
+    await surface.openFor(control, { side: 'block-end', align: 'start', focus: 'first' });
+    return true;
+  }
+
+  // The choice asks the host; focus comes back to the moved row's handle once
+  // the host has redrawn the list, wherever the row now stands.
+  function onSelect(event) {
+    event.preventDefault();
+    const id = event.detail?.entry?.id;
+    const chosen = current;
+    if (!chosen || !id) return;
+    const all = items(list);
+    const index = all.indexOf(chosen.item);
+    if (index >= 0) (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.requestSortableMove)(list, chosen.item, moveMenuTarget(id, index, all.length));
+    menu.close({ restoreFocus: false });
+    const back = () => {
+      const escape = globalThis.CSS?.escape ? globalThis.CSS.escape(chosen.id) : chosen.id;
+      const row = list.querySelector(`[data-sf-sortable-item="${escape}"]`);
+      const handle = row?.querySelector(HANDLE);
+      const control = handle ? controlOf(handle) : null;
+      // A handle that is a picture (a glyph, no control) gives focus to its row.
+      const target = control && (control.matches('button') || control.tabIndex >= 0) ? control : row;
+      target?.focus?.({ preventScroll: false });
+    };
+    if (typeof globalThis.requestAnimationFrame !== 'function') back();
+    else globalThis.requestAnimationFrame(() => globalThis.requestAnimationFrame(back));
+  }
+
+  // A click on a handle is a press that did not become a drag: the drag module
+  // swallows the click a drop ends with.
+  function onClick(event) {
+    const handle = event.target.closest?.(HANDLE);
+    const item = handle?.closest(ITEM);
+    if (!handle || !item || item.closest('sf-sortable') !== list) return;
+    event.preventDefault();
+    open(item, handle);
+  }
+
+  return {
+    connect() {
+      if (wiring) return;
+      wiring = new globalThis.AbortController();
+      list.addEventListener('click', onClick, { signal: wiring.signal });
+      prepare();
+    },
+    disconnect() {
+      wiring?.abort();
+      wiring = null;
+      menu?.close?.({ restoreFocus: false });
+      menu?.remove();
+      menu = null;
+    },
+    prepare,
+    open,
+  };
+}
+
+/** sf-sortable with the handle's move menu: the drag element, extended. */
+function withSortableMoveMenu(Base) {
+  return class SfSortable extends Base {
+    connectedCallback() {
+      super.connectedCallback();
+      if (!this.moveMenuController) this.moveMenuController = createSortableMoveMenu(this);
+      this.moveMenuController.connect();
+    }
+
+    disconnectedCallback() {
+      this.moveMenuController?.disconnect();
+      super.disconnectedCallback();
+    }
+
+    // Handles the host adds later say they open a menu as well.
+    prepareItem(item) {
+      super.prepareItem(item);
+      if (item && item.closest('sf-sortable') === this) this.moveMenuController?.prepare(item);
+    }
+  };
+}
+
+// A registry that defines sf-sortable with the move menu, over another one
+// (the inserter's): defineSortable takes the registry it defines into.
+function moveMenuRegistry(registry = globalThis.customElements) {
+  return {
+    get: (name) => registry.get(name),
+    define: (name, Base, options) => registry.define(name, withSortableMoveMenu(Base), options),
+  };
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ createSortableMoveMenu, moveMenuEntries, moveMenuRegistry, moveMenuTarget, withSortableMoveMenu });
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "7c1f9c2b36da"
 (__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SORTABLE_DROP_LINE: () => (/* binding */ SORTABLE_DROP_LINE),
 /* harmony export */   SORTABLE_INTENT_EVENT: () => (/* binding */ SORTABLE_INTENT_EVENT),
 /* harmony export */   SORTABLE_MOVE_EVENT: () => (/* binding */ SORTABLE_MOVE_EVENT),
 /* harmony export */   SORTABLE_STATE_EVENT: () => (/* binding */ SORTABLE_STATE_EVENT),
@@ -742,6 +990,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineSortable: () => (/* binding */ defineSortable),
 /* harmony export */   registerSortableDropTarget: () => (/* binding */ registerSortableDropTarget),
+/* harmony export */   requestSortableMove: () => (/* binding */ requestSortableMove),
 /* harmony export */   sortableIndexAt: () => (/* binding */ sortableIndexAt)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
@@ -779,6 +1028,21 @@ function nextHelpId() {
 }
 const DRAG_THRESHOLD = 4;
 const EDGE = 32;
+// A row without a handle is taken by a finger only after a long press (owner
+// C171 (2), 2026-11-14): a plain swipe over the list scrolls the page, as any
+// list does. Moving further than the slop before the time is a scroll.
+const LONG_PRESS = 500;
+const LONG_PRESS_SLOP = 8;
+/**
+ * The drop line: one line two pixels thick for every place something lands --
+ * a list's gap, a grid cell's side, a canvas seam of the editor overlay (owner
+ * C171 (4), 2026-11-14: the overlay drew three). Its look is one rule,
+ * .sf-sortable-indicator, in sf-sortable's sheet, which the overlay's rule
+ * loads with it.
+ */
+const SORTABLE_DROP_LINE = 2;
+const LINE = SORTABLE_DROP_LINE;
+const HALF = SORTABLE_DROP_LINE / 2;
 
 const MESSAGES = {
   ru: {
@@ -788,6 +1052,7 @@ const MESSAGES = {
     dropped: 'Положено: {item}, позиция {index} в «{list}».',
     cancelled: 'Перемещение отменено.',
     target: 'Цель: {target}.',
+    roledescription: 'перемещаемый',
   },
   en: {
     instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
@@ -796,6 +1061,7 @@ const MESSAGES = {
     dropped: 'Dropped {item} at position {index} in “{list}”.',
     cancelled: 'Move cancelled.',
     target: 'Target: {target}.',
+    roledescription: 'draggable',
   },
 };
 
@@ -858,7 +1124,7 @@ function scrollContainer(element) {
 }
 
 function indicator() {
-  let line = globalThis.document.querySelector('.sf-sortable-indicator');
+  let line = globalThis.document.querySelector('.sf-sortable-indicator:not([data-sf-drop-line-owner])');
   if (!line) {
     line = globalThis.document.createElement('div');
     line.className = 'sf-sortable-indicator';
@@ -997,13 +1263,13 @@ function wrappedIndicatorRect(list, all, index) {
   const after = all[index - 1];
   if (before) {
     const target = before.getBoundingClientRect();
-    return { left: target.left - 1, top: target.top, width: 2, height: target.height };
+    return { left: target.left - HALF, top: target.top, width: LINE, height: target.height };
   }
   if (after) {
     const target = after.getBoundingClientRect();
-    return { left: target.right - 1, top: target.top, width: 2, height: target.height };
+    return { left: target.right - HALF, top: target.top, width: LINE, height: target.height };
   }
-  return { left: box.left, top: box.top, width: 2, height: box.height };
+  return { left: box.left, top: box.top, width: LINE, height: box.height };
 }
 
 function listIndicatorRect(list, all, index, horizontal) {
@@ -1012,10 +1278,76 @@ function listIndicatorRect(list, all, index, horizontal) {
   const after = all[index - 1];
   if (horizontal) {
     const x = before ? before.getBoundingClientRect().left : after ? after.getBoundingClientRect().right : box.left;
-    return { left: x - 1, top: box.top, width: 2, height: box.height };
+    return { left: x - HALF, top: box.top, width: LINE, height: box.height };
   }
   const y = before ? before.getBoundingClientRect().top : after ? after.getBoundingClientRect().bottom : box.top;
-  return { left: box.left, top: y - 1, width: box.width, height: 2 };
+  return { left: box.left, top: y - HALF, width: box.width, height: LINE };
+}
+
+/**
+ * The copy that follows the pointer: whole, not see-through (owner C171 (3),
+ * 2026-11-14: a 40 % copy -- the dimming of the item it was cloned from -- was
+ * hard to read), standing over the page on the overlay shadow (C20). The clone
+ * keeps its own look; a frame of the popup surface under it gives a row with
+ * no fill of its own a body, with the item's own corners.
+ */
+function ghostOf(item, box) {
+  const doc = globalThis.document;
+  const copy = item.cloneNode(true);
+  copy.removeAttribute('id');
+  for (const element of copy.querySelectorAll('[id]')) element.removeAttribute('id');
+  for (const name of ['data-sf-sortable-dragging', 'data-sf-sortable-lifted', 'data-sf-sortable-column-source', 'tabindex']) copy.removeAttribute(name);
+  copy.classList.add('sf-sortable-ghost-item');
+  Object.assign(copy.style, { margin: '0', inlineSize: '100%', boxSizing: 'border-box' });
+  const ghost = doc.createElement('div');
+  ghost.className = 'sf-sortable-ghost';
+  ghost.setAttribute('aria-hidden', 'true');
+  ghost.inert = true;
+  const style = globalThis.getComputedStyle(item);
+  ghost.style.borderRadius = style.borderRadius;
+  ghost.style.direction = style.direction;
+  Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
+  ghost.append(copy);
+  doc.body.append(ghost);
+  return ghost;
+}
+
+// A pointer drag ends with a click on what was under it (the handle, or a link
+// in a row): that click is the drop, not a press, and the handle's menu or the
+// link must not answer it. It comes in the same task as the pointerup.
+function swallowNextClick() {
+  const swallow = (event) => { event.preventDefault(); event.stopImmediatePropagation(); };
+  globalThis.addEventListener('click', swallow, { capture: true, once: true });
+  globalThis.setTimeout(() => globalThis.removeEventListener('click', swallow, { capture: true }), 0);
+}
+
+// What a reader says an item is (SO-1): a row that is a plain box takes a role
+// -- a button when nothing inside it is a control, a group when it holds one
+// (a control inside a button is not reachable) -- and every item says it can be
+// moved, in the page's language. A host's own role and description stay.
+const GENERIC = new Set(['DIV', 'SPAN', 'SECTION', 'ARTICLE', 'P']);
+function describeItem(item) {
+  if (!item.hasAttribute('role') && GENERIC.has(item.tagName)) {
+    const holdsControl = item.querySelector(`${INTERACTIVE},${HANDLE},[tabindex]`);
+    item.setAttribute('role', holdsControl ? 'group' : 'button');
+  }
+  if (!item.hasAttribute('aria-roledescription')) item.setAttribute('aria-roledescription', messages().roledescription);
+}
+
+/**
+ * A move a host asks for without dragging (the handle's menu): the same request
+ * and the same "dropped" words a drag ends with. index is the place the item
+ * takes once moved, as a drag's is.
+ */
+function requestSortableMove(list, item, index) {
+  const all = items(list);
+  const id = item?.getAttribute?.('data-sf-sortable-item');
+  const from = all.indexOf(item);
+  if (!id || from < 0 || index < 0 || index >= all.length || index === from) return false;
+  const name = list.getAttribute('id') || list.group || list.getAttribute('group') || '';
+  emitIntent(list, { item: id, from: name, to: name, index, mode: 'move' });
+  list.announce?.(format(messages().dropped, { item: itemLabel(item), index: index + 1, list: listName(list) }));
+  return true;
 }
 
 // An sf-sortable list sends the new name and its aliases.json sends the old
@@ -1124,7 +1456,11 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       if (!item.hasAttribute('tabindex') && !item.matches(INTERACTIVE)) item.tabIndex = 0;
       const described = (item.getAttribute('aria-describedby') || '').split(/\s+/u);
       if (this.instructions && !described.includes(this.instructions.id)) item.setAttribute('aria-describedby', [...described.filter(Boolean), this.instructions.id].join(' '));
-      if (!item.querySelector(HANDLE)) item.style.touchAction = 'none';
+      describeItem(item);
+      // A row without a handle is the handle itself; a finger takes it by a long
+      // press, so the page keeps scrolling over it (SO-3: touch-action none on
+      // the whole row stopped that).
+      item.toggleAttribute('data-sf-sortable-whole', !item.querySelector(HANDLE));
     }
 
     // The list keeps its live region and its instructions among its own
@@ -1183,24 +1519,37 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       const pointer = event.pointerId;
       let started = false;
       const pending = new AbortController();
+      // A finger on a row without a handle: the drag waits for a long press.
+      const longPress = !handle && event.pointerType === 'touch';
+      let timer = 0;
+      const lift = (at) => {
+        if (!this.begin(item, at.pointerType || event.pointerType || 'mouse')) { pending.abort(); return false; }
+        started = true;
+        item.setPointerCapture?.(pointer);
+        shared.session.ghost = this.ghost(item, at);
+        // The item leaves the flow only once its copy is on screen; a copy
+        // library (mode copy) keeps its item where it is.
+        if (silhouetteFor(this) && this.mode !== 'copy') {
+          shared.session.silhouette = true;
+          // Asked before the item leaves the flow: with it gone, a grid of
+          // two cells is one cell and does not look like a grid.
+          shared.session.wrappedLists = new Set(isWrapped(items(this)) ? [this] : []);
+          item.setAttribute('data-sf-sortable-lifted', '');
+          this.retarget(at.clientX, at.clientY);
+        }
+        return true;
+      };
       const move = (moveEvent) => {
         if (moveEvent.pointerId !== pointer) return;
         if (!started) {
-          if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
-          if (!this.begin(item, moveEvent.pointerType || 'mouse')) { pending.abort(); return; }
-          started = true;
-          item.setPointerCapture?.(pointer);
-          shared.session.ghost = this.ghost(item, moveEvent);
-          // The item leaves the flow only once its copy is on screen; a copy
-          // library (mode copy) keeps its item where it is.
-          if (silhouetteFor(this) && this.mode !== 'copy') {
-            shared.session.silhouette = true;
-            // Asked before the item leaves the flow: with it gone, a grid of
-            // two cells is one cell and does not look like a grid.
-            shared.session.wrappedLists = new Set(isWrapped(items(this)) ? [this] : []);
-            item.setAttribute('data-sf-sortable-lifted', '');
-            this.retarget(moveEvent.clientX, moveEvent.clientY);
+          const distance = Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y);
+          if (longPress) {
+            // The finger moved before the press was long: it scrolls the page.
+            if (distance > LONG_PRESS_SLOP) pending.abort();
+            return;
           }
+          if (distance < DRAG_THRESHOLD) return;
+          if (!lift(moveEvent)) return;
         }
         moveEvent.preventDefault();
         this.track(moveEvent.clientX, moveEvent.clientY);
@@ -1208,12 +1557,25 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       const up = (upEvent) => {
         if (upEvent.pointerId !== pointer) return;
         pending.abort();
-        if (started) this.drop();
+        if (started) { swallowNextClick(); this.drop(); }
       };
       const cancel = () => {
         pending.abort();
         if (started) finish(this, 'cancelled');
       };
+      pending.signal.addEventListener('abort', () => globalThis.clearTimeout(timer));
+      if (longPress) {
+        timer = globalThis.setTimeout(() => {
+          if (pending.signal.aborted || shared.session) return;
+          if (!lift(event)) return;
+          this.track(event.clientX, event.clientY);
+          // From here the finger moves the row, not the page: a touchmove
+          // the page does not scroll by, and no menu of the long press.
+          const hold = (touchEvent) => { if (touchEvent.cancelable) touchEvent.preventDefault(); };
+          globalThis.addEventListener('touchmove', hold, { signal: pending.signal, passive: false });
+          globalThis.addEventListener('contextmenu', hold, { signal: pending.signal, capture: true });
+        }, LONG_PRESS);
+      }
       globalThis.addEventListener('pointermove', move, { signal: pending.signal, passive: false });
       globalThis.addEventListener('pointerup', up, { signal: pending.signal });
       globalThis.addEventListener('pointercancel', cancel, { signal: pending.signal });
@@ -1223,16 +1585,8 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
 
     ghost(item, event) {
       const box = item.getBoundingClientRect();
-      const ghost = item.cloneNode(true);
-      ghost.removeAttribute('id');
-      for (const element of ghost.querySelectorAll('[id]')) element.removeAttribute('id');
-      ghost.classList.add('sf-sortable-ghost');
-      ghost.setAttribute('aria-hidden', 'true');
-      ghost.inert = true;
-      Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
       shared.session.offset = { x: event.clientX - box.left, y: event.clientY - box.top };
-      globalThis.document.body.append(ghost);
-      return ghost;
+      return ghostOf(item, box);
     }
 
     track(x, y) {
@@ -1509,11 +1863,11 @@ function attachSortable(container, options = {}) {
       if (index > session.originalIndex && after) left = after.right - width;
       else left = before ? before.left : (after ? after.right - width : extent.left);
     } else {
-      left = (before ? before.left : after ? after.right : extent.left) - 1;
+      left = (before ? before.left : after ? after.right : extent.left) - HALF;
     }
     Object.assign(outline().style, {
       left: `${left}px`, top: `${extent.top}px`,
-      width: preview === 'column' ? `${width}px` : '2px', height: `${extent.height}px`,
+      width: preview === 'column' ? `${width}px` : `${LINE}px`, height: `${extent.height}px`,
     });
   };
 
@@ -1571,14 +1925,8 @@ function attachSortable(container, options = {}) {
         if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
         session.started = true;
         doc.documentElement.setAttribute('data-sf-sortable-active', '');
-        const ghost = item.cloneNode(true);
-        ghost.removeAttribute('id');
-        for (const element of ghost.querySelectorAll('[id]')) element.removeAttribute('id');
-        ghost.classList.add('sf-sortable-ghost');
-        ghost.setAttribute('aria-hidden', 'true');
-        ghost.inert = true;
-        Object.assign(ghost.style, {width: `${box.width}px`, height: `${box.height}px`, left: `${box.left}px`, top: `${box.top}px`});
-        doc.body.append(ghost);
+        const ghost = ghostOf(item, box);
+        ghost.style.height = `${box.height}px`;
         session.ghost = ghost;
         session.offset = {x: start.x - box.left, y: start.y - box.top};
         session.cells = cellsOf(item).filter(Boolean);
@@ -1604,7 +1952,7 @@ function attachSortable(container, options = {}) {
   };
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, sortableIndexAt });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_DROP_LINE, SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, requestSortableMove, sortableIndexAt });
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1621,21 +1969,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.3.1","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.4.0","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 
 /***/ "fca41e9837f0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Drag and drop","runtime":{"cancelled":"Move cancelled.","dropped":"Dropped {item} at position {index} in “{list}”.","empty":"Nothing found","hint":"Plus to insert after.","inserted":"Inserted {item} at position {index} in “{list}”.","instructions":"Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.","menu":"Insert","moved":"Position {index} of {total} in “{list}”.","picked":"Picked up {item}. Position {index} of {total} in “{list}”.","point":"Insert: position {index} of {total}","search":"Find","target":"Target: {target}."},"events":{"state":{"label":"Drag step"},"insert":{"label":"Insert"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Drag and drop","runtime":{"cancelled":"Move cancelled.","dropped":"Dropped {item} at position {index} in “{list}”.","empty":"Nothing found","hint":"Plus to insert after.","inserted":"Inserted {item} at position {index} in “{list}”.","instructions":"Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.","menu":"Insert","move-down":"Down","move-first":"To the top","move-last":"To the bottom","move-menu":"Move “{item}”","move-up":"Up","moved":"Position {index} of {total} in “{list}”.","picked":"Picked up {item}. Position {index} of {total} in “{list}”.","point":"Insert: position {index} of {total}","roledescription":"draggable","search":"Find","target":"Target: {target}."},"events":{"state":{"label":"Drag step"},"insert":{"label":"Insert"}}}');
 
 /***/ },
 
 /***/ "46c0e03c9179"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Перетаскивание","runtime":{"cancelled":"Перемещение отменено.","dropped":"Положено: {item}, позиция {index} в «{list}».","empty":"Ничего не найдено","hint":"Плюс — вставить после.","inserted":"Вставлено: {item}, позиция {index} в «{list}».","instructions":"Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.","menu":"Вставить","moved":"Позиция {index} из {total} в «{list}».","picked":"Взято: {item}. Позиция {index} из {total} в «{list}».","point":"Вставить: позиция {index} из {total}","search":"Найти","target":"Цель: {target}."},"events":{"state":{"label":"Шаг перетаскивания"},"insert":{"label":"Вставить"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Перетаскивание","runtime":{"cancelled":"Перемещение отменено.","dropped":"Положено: {item}, позиция {index} в «{list}».","empty":"Ничего не найдено","hint":"Плюс — вставить после.","inserted":"Вставлено: {item}, позиция {index} в «{list}».","instructions":"Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.","menu":"Вставить","move-down":"Ниже","move-first":"В начало","move-last":"В конец","move-menu":"Переместить «{item}»","move-up":"Выше","moved":"Позиция {index} из {total} в «{list}».","picked":"Взято: {item}. Позиция {index} из {total} в «{list}».","point":"Вставить: позиция {index} из {total}","roledescription":"перемещаемый","search":"Найти","target":"Цель: {target}."},"events":{"state":{"label":"Шаг перетаскивания"},"insert":{"label":"Вставить"}}}');
 
 /***/ }
 

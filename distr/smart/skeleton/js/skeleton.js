@@ -24,7 +24,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
 
 function parseItemAttrs(items) {
   if (!items) return [];
@@ -56,8 +64,8 @@ function isSafeItemAttribute(name) {
 const SkeletonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
@@ -364,7 +372,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-skele
 /***/ "1b576216d612"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.skeleton","tag":"sf-skeleton","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.skeleton","tag":"sf-skeleton","version":"1.3.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}}}');
 
 /***/ },
 

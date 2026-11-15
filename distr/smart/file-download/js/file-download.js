@@ -22,6 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8ea1dd3302c4");
 /* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c016c43b1452");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d0b5a0385ddc");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__);
@@ -29,6 +30,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
+
+
+
+const pick = (words, keys) => Object.fromEntries(keys.map(key => [key, words[key]]));
 
 const DOWNLOAD_FILE_SELECTOR = '.sf-download-file';
 const DOWNLOAD_FILE_BOUND_FLAG = 'sfDownloadFileBound';
@@ -133,72 +140,16 @@ async function resolveRemoteFileSize(href, node = null) {
 
 
 const NEW_TAB_WORDS = {
-  ru: {
-    'new-tab': '(откроется в новой вкладке)'
-  },
-  en: {
-    'new-tab': '(opens in a new tab)'
-  }
+  en: pick(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__["default"].en, ["new-tab"]),
+  ru: pick(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__["default"].ru, ["new-tab"])
 }; // The size as it is said (decision C51): the unit in words, in the page's
 // language and in the number's form -- «112 байт», «2,4 мегабайта», «1 KB» is
 // «1 kilobyte». The visible «CSV · 112 Б» is hidden from a screen reader,
 // which hears «Смета.csv, CSV, 112 байт», the commas its pauses.
 
 const SIZE_WORDS = {
-  en: {
-    byte: {
-      one: 'byte',
-      other: 'bytes'
-    },
-    kilobyte: {
-      one: 'kilobyte',
-      other: 'kilobytes'
-    },
-    megabyte: {
-      one: 'megabyte',
-      other: 'megabytes'
-    },
-    gigabyte: {
-      one: 'gigabyte',
-      other: 'gigabytes'
-    },
-    terabyte: {
-      one: 'terabyte',
-      other: 'terabytes'
-    }
-  },
-  ru: {
-    byte: {
-      one: 'байт',
-      few: 'байта',
-      many: 'байт',
-      other: 'байта'
-    },
-    kilobyte: {
-      one: 'килобайт',
-      few: 'килобайта',
-      many: 'килобайт',
-      other: 'килобайта'
-    },
-    megabyte: {
-      one: 'мегабайт',
-      few: 'мегабайта',
-      many: 'мегабайт',
-      other: 'мегабайта'
-    },
-    gigabyte: {
-      one: 'гигабайт',
-      few: 'гигабайта',
-      many: 'гигабайт',
-      other: 'гигабайта'
-    },
-    terabyte: {
-      one: 'терабайт',
-      few: 'терабайта',
-      many: 'терабайт',
-      other: 'терабайта'
-    }
-  }
+  en: pick(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__["default"].en, ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"]),
+  ru: pick(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__["default"].ru, ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"])
 };
 const SIZE_UNIT_WORDS = {
   'б': 'byte',
@@ -993,25 +944,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4294700087dc");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // File sizes in the page's language («1,4 МБ»), with no top-level side
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
- // The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
+ // The four words of a size live in core's language files
+// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
+// other language takes the words a product registers for `sf-file-size`
+// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// English words with its own digits. A component with words of its own passes
+// them as `units`. The registry is read from the shared global the page
+// language keeps (core/js/page-language.js), so this module still runs
+// nothing on load.
+
+
+const UNIT_KEYS = /* @__PURE__ */Object.freeze(['b', 'kb', 'mb', 'gb']);
+
+function unitsOf(words) {
+  return Object.freeze(UNIT_KEYS.map(key => words[key]));
+}
 
 const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
+  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
 });
-/** The unit words for a locale: its language's, else English. */
+
+function registeredUnits(code) {
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
+  return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
+}
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
+
 
 function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
+    if (units) return units;
+  }
+
+  return registeredUnits('en') ?? FILE_SIZE_UNITS.en;
 }
 /**
  * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
@@ -1169,7 +1145,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
- // sf-file-download from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+}; // sf-file-download from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8): the settings are the attributes and properties
 // core/js/element-manifest.js makes from the manifest. A press sends the
 // cancelable request sf-file-download-request {href, fileName, download}
@@ -1181,8 +1165,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 const DownloadFileElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
@@ -2160,10 +2144,76 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d0b5a0385ddc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6505fad144dc");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ec79d273e58f");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "4294700087dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
+// The unit words of a file size (localization study LC-3), for the bundle and
+// for Node alike: the runtime words of the language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
 /***/ "8ea1dd3302c4"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-e5)","justify-content/space-between (.justify-between)","align-items/center (.items-center)"],".sf-download-file .sf-download-file-wrap":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-download-file-wrap--gap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
+
+/***/ },
+
+/***/ "6505fad144dc"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"new-tab":"(opens in a new tab)","byte":{"one":"byte","other":"bytes"},"kilobyte":{"one":"kilobyte","other":"kilobytes"},"megabyte":{"one":"megabyte","other":"megabytes"},"gigabyte":{"one":"gigabyte","other":"gigabytes"},"terabyte":{"one":"terabyte","other":"terabytes"}}}');
+
+/***/ },
+
+/***/ "ec79d273e58f"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"new-tab":"(откроется в новой вкладке)","byte":{"one":"байт","few":"байта","many":"байт","other":"байта"},"kilobyte":{"one":"килобайт","few":"килобайта","many":"килобайт","other":"килобайта"},"megabyte":{"one":"мегабайт","few":"мегабайта","many":"мегабайт","other":"мегабайта"},"gigabyte":{"one":"гигабайт","few":"гигабайта","many":"гигабайт","other":"гигабайта"},"terabyte":{"one":"терабайт","few":"терабайта","many":"терабайт","other":"терабайта"}}}');
+
+/***/ },
+
+/***/ "3694b5e2bf39"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB","gb":"GB"}}');
+
+/***/ },
+
+/***/ "220979cc98c6"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
 
 /***/ },
 
@@ -2177,7 +2227,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.5.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.5.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

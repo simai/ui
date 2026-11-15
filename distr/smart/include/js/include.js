@@ -50,7 +50,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
  // The error row's glyphs (js/templates/default.js REASONS), asked for early.
 
 const REASON_ICONS = [{
@@ -119,8 +127,8 @@ function lineCount(value) {
 const IncludeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
   actions: {
@@ -584,7 +592,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "a35a5057e1f9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.1.0","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.1.1","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

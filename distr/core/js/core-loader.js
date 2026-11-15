@@ -2565,7 +2565,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ee5035470810");
 /* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("3c79afd07eeb");
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("06e8cd089f28");
-/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("a30ed252d965");
+/* harmony import */ var _utility_class_aliases_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("443d1792351d");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("a30ed252d965");
+
 
 
 
@@ -2840,7 +2842,7 @@ function SFLoaderPlugin(params) {
   this.installPackageApi(); // A set named on the core script (data-sf-sets) is declared like one in
   // SF_BOOT_CONFIG.packages; the configuration wins over the attribute.
 
-  const named = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.setsFromScripts)(globalThis.document);
+  const named = (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.setsFromScripts)(globalThis.document);
   named.refused.forEach(word => this.warnPackage(`sets:${word}`, `"${word}" in data-sf-sets is not a set name (or name@version); it is ignored`));
   this.declarePackages({ ...named.sets,
     ...(window.SF_BOOT_CONFIG?.packages || {}),
@@ -2932,13 +2934,13 @@ SFLoaderPlugin.prototype.declarePackages = function (declared) {
     // (sets.js); a version makes the base, a name alone waits for the index.
 
 
-    const read = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.readSetDeclaration)(config);
+    const read = (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.readSetDeclaration)(config);
 
     if (!read) {
       this.warnPackage(`base:${name}`, `package "${name}" is declared without a base, so none of its ` + 'components can load; set SF_BOOT_CONFIG.packages.' + `${name}.base to the directory holding its component folders`);
     }
 
-    const base = read?.base || (read?.version ? (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.npmBase)(name, read.version, this.setNpmRoot()) : ''); // The page's order of declaration decides which package keeps a rule two
+    const base = read?.base || (read?.version ? (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.npmBase)(name, read.version, this.setNpmRoot()) : ''); // The page's order of declaration decides which package keeps a rule two
     // of them define (registerPackage): data-sf-sets first, then
     // SF_BOOT_CONFIG.packages, then the constructor's packages, each in the
     // order written. A name declared twice keeps its first place.
@@ -2959,7 +2961,7 @@ SFLoaderPlugin.prototype.declarePackages = function (declared) {
 };
 
 SFLoaderPlugin.prototype.setNpmRoot = function () {
-  return normalisePackageUrl(window.SF_BOOT_CONFIG?.setNpm) || _sets_js__WEBPACK_IMPORTED_MODULE_14__.SET_NPM_ROOT;
+  return normalisePackageUrl(window.SF_BOOT_CONFIG?.setNpm) || _sets_js__WEBPACK_IMPORTED_MODULE_15__.SET_NPM_ROOT;
 }; // The bases of the sets a page named without one, from the compatibility
 // index: fetched once, only when a set needs it. A set the index cannot place
 // is said aloud with the reason and stays without a base.
@@ -2968,7 +2970,7 @@ SFLoaderPlugin.prototype.setNpmRoot = function () {
 SFLoaderPlugin.prototype.resolveIndexedPackages = function () {
   const waiting = Object.values(this.packages).filter(pkg => pkg.byIndex && !pkg.base);
   if (!waiting.length) return null;
-  const url = normalisePackageUrl(window.SF_BOOT_CONFIG?.setIndex) || _sets_js__WEBPACK_IMPORTED_MODULE_14__.SET_INDEX_URL;
+  const url = normalisePackageUrl(window.SF_BOOT_CONFIG?.setIndex) || _sets_js__WEBPACK_IMPORTED_MODULE_15__.SET_INDEX_URL;
 
   const unplaced = (pkg, why) => this.warnPackage(`index:${pkg.name}`, `set "${pkg.name}" could not be placed from the compatibility index ` + `(${why}); give it a base or a version: SF_BOOT_CONFIG.packages.` + `${pkg.name} = '<base>' or '<version>'`);
 
@@ -2978,11 +2980,11 @@ SFLoaderPlugin.prototype.resolveIndexedPackages = function () {
     if (!response.ok) throw new Error(`${url} answered ${response.status}`);
     return response.json();
   }).then(index => {
-    const problems = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.checkSetIndex)(index);
+    const problems = (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.checkSetIndex)(index);
     if (problems.length) throw new Error(`${url} is not a set index: ${problems[0]}`);
     this.setIndex = index;
     waiting.forEach(pkg => {
-      const chosen = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.selectSetRelease)(index, pkg.name);
+      const chosen = (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.selectSetRelease)(index, pkg.name);
 
       if (!chosen.row) {
         unplaced(pkg, chosen.reason);
@@ -2991,7 +2993,7 @@ SFLoaderPlugin.prototype.resolveIndexedPackages = function () {
 
       pkg.version = chosen.row.version;
       pkg.release = chosen.row.release;
-      pkg.base = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.npmBase)(pkg.name, chosen.row.version, this.setNpmRoot());
+      pkg.base = (0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.npmBase)(pkg.name, chosen.row.version, this.setNpmRoot());
       pkg.rule = `${pkg.base}/rule.js`;
     });
   }).catch(error => waiting.forEach(pkg => unplaced(pkg, String(error?.message || error))));
@@ -3051,7 +3053,7 @@ SFLoaderPlugin.prototype.readSetPassport = function (pkg) {
 
     (Array.isArray(passport.requires_sets) ? passport.requires_sets : []).forEach(need => {
       if (this.packages[need?.id]) return;
-      this.warnPackage(`requires:${pkg.name}:${need?.id}`, `set "${pkg.name}" needs set "${need?.id}" (${need?.range}), which this ` + `page has not declared; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.declarationLine)(need?.id)}`);
+      this.warnPackage(`requires:${pkg.name}:${need?.id}`, `set "${pkg.name}" needs set "${need?.id}" (${need?.range}), which this ` + `page has not declared; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.declarationLine)(need?.id)}`);
     });
   }).catch(() => null);
 }; // What the Loader knows of a package: frozen, safe to hand out. A bundle uses
@@ -3088,7 +3090,7 @@ SFLoaderPlugin.prototype.packageExports = function (name, {
     const pkg = this.packages[packageName];
 
     if (!pkg) {
-      throw new Error(`SF.package: set "${given}" is not declared on this page; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.declarationLine)(given)}`);
+      throw new Error(`SF.package: set "${given}" is not declared on this page; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_15__.declarationLine)(given)}`);
     }
 
     if (pkg.exports) return pkg.exports;
@@ -4421,7 +4423,11 @@ SFLoaderPlugin.prototype.clearAttributeRuleIndex = function () {
 SFLoaderPlugin.prototype.getTokenRuleKeys = function (token) {
   if (!this.tokenRuleMatches) this.tokenRuleMatches = new Map();
   const known = this.tokenRuleMatches.get(token);
-  if (known) return known;
+  if (known) return known; // A retired class name or family (C185 (2), C186 (8), C187 (1); the one
+  // table src/core/js/retired-classes.table.js) is noted once in
+  // SF.deprecations; it still loads and draws as before until its date.
+
+  (0,_utility_class_aliases_js__WEBPACK_IMPORTED_MODULE_14__.noteUtilityClassAlias)(token);
   const keys = [];
   const {
     tokenRulesByFirst,
@@ -4440,8 +4446,10 @@ SFLoaderPlugin.prototype.getTokenRuleKeys = function (token) {
     const re = regex instanceof RegExp ? regex : new RegExp(regex, regex?.flags || '');
     if (re.global || re.sticky) re.lastIndex = 0;
     if (re.test(token)) keys.push(key);
-  }
+  } // A class of a retired utility sheet (C187 (1)) is noted the same way.
 
+
+  (0,_utility_class_aliases_js__WEBPACK_IMPORTED_MODULE_14__.noteRetiredUtilitySheets)(token, keys);
   this.tokenRuleMatches.set(token, keys);
   return keys;
 };
@@ -8455,6 +8463,236 @@ if (Array.isArray(window.SF_PENDING_COMPONENTS)) {
 
 /***/ },
 
+/***/ "cef5a448c23d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// The one table of retired class names (owner decision C187 (1),
+// 2026-11-14), read by the Loader (utility-class-aliases.js), by the C187
+// contract test and by the docs. Data only: it stays a plain module so the
+// browser bundle and node read the same object.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  "schema": "simai.framework.retired-classes",
+  "schema_version": 1,
+  "summary": "The one table of retired class names (owner decision C187 (1), 2026-11-14). A retired class keeps drawing what it drew until remove_after: its sheet stays in the distribution and in utility.full.css, and the Loader notes the first use of each name on a page in SF.deprecations (src/core/js/utility-class-aliases.js reads this table). Each record names its change-journal entry (contracts/changes/journal.json) and retires names (an exact class), patterns (a family of classes; to may refer to the pattern's groups as $1) or sheets (every class of a utility folder, at every breakpoint and state). A variant prefix (md:, hover:, focus-visible:) is kept on both sides. to is the name to write instead, or null where the job leaves the utilities (the record's note says where it went). extended lists the names that stay but are documented on one «extended» page instead of a page each. Nothing here is deleted before remove_after, and nothing is deleted without checking the built sheets, the ui-doc examples, the products and the Loader's Tailwind-name conversion.",
+  "records": [{
+    "journal": "class-table-sm-to-density",
+    "decision": "C185 (2)",
+    "component": "table",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "A table's row follows the density of its area: data-sf-density=\"compact\" on the table or an ancestor. table-sm and table-small keep drawing a row of the size-1/2 step until the date (utility.table 1.6.0).",
+    "names": {
+      "table-sm": "data-sf-density=\"compact\"",
+      "table-small": "data-sf-density=\"compact\""
+    }
+  }, {
+    "journal": "class-text-flow-utility-aliases",
+    "decision": "C186 (8)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "One text-* family for how a line breaks.",
+    "names": {
+      "wrap-none": "text-nowrap",
+      "text-break-word": "text-break",
+      "text-break-all": "text-break",
+      "t-ellipsis": "truncate",
+      "t-clip": "truncate"
+    }
+  }, {
+    "journal": "utility-c187-retired-sheets",
+    "decision": "C187 (2)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "The raw spacing ladders and the extended translate and background-size ladders: space comes from the space steps and the C105/C173 roles (m-*, p-*, gap-*, scroll-m-*, scroll-p-*, translate-* steps).",
+    "sheets": {
+      "margin-ext": null,
+      "padding-ext": null,
+      "scroll-margin-ext": null,
+      "scroll-padding-ext": null,
+      "background-size-ext": null,
+      "transform-translate-ext": null
+    }
+  }, {
+    "journal": "class-c187-utility-renames",
+    "decision": "C187 (3)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Ring widths are 0, 1, 2 (C173 (6)); the ring's colour is a role at full strength, not a tenth step of the alpha scale (C41).",
+    "names": {
+      "ring-3": "ring-2",
+      "ring-4": "ring-2"
+    }
+  }, {
+    "journal": "utility-c187-retired-sheets",
+    "decision": "C187 (3)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Ring widths are 0, 1, 2 (C173 (6)); the ring's colour is a role at full strength, not a tenth step of the alpha scale (C41).",
+    "sheets": {
+      "ring-opacity": null
+    }
+  }, {
+    "journal": "utility-c187-divide-spelling",
+    "decision": "C187 (4)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "One spelling of the row dividers, divide-* (the Tailwind spelling); the divider's colour is a role (divide-outline-variant), not a tenth step of the alpha scale.",
+    "patterns": [{
+      "from": "divider-*",
+      "pattern": "^divider-((?:x|y)-(?:0|1|2|3|4|reverse)|solid|dashed|dotted|double|hidden|none|current|error|info|outline|outline-variant|primary|secondary|success|tertiary|transparent|warning)$",
+      "to": "divide-$1"
+    }]
+  }, {
+    "journal": "utility-c187-retired-sheets",
+    "decision": "C187 (4)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "One spelling of the row dividers, divide-* (the Tailwind spelling); the divider's colour is a role (divide-outline-variant), not a tenth step of the alpha scale.",
+    "sheets": {
+      "divider-opacity": "divide-outline-variant"
+    }
+  }, {
+    "journal": "utility-c187-retired-sheets",
+    "decision": "C187 (5)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Of the effects the utilities keep blur-*, backdrop-blur-* and opacity-*; filters, backdrop filters, masks and blend modes leave (no use in the Framework, the docs examples or the products, 2026-11-14).",
+    "sheets": {
+      "mix-blend-mode": null,
+      "filter-brightness": null,
+      "filter-contrast": null,
+      "filter-grayscale": null,
+      "filter-hue-rotate": null,
+      "filter-invert": null,
+      "filter-opacity": null,
+      "filter-saturate": null,
+      "filter-sepia": null,
+      "backdrop-filer-hue-rotate": null,
+      "backdrop-filter-brightness": null,
+      "backdrop-filter-contrast": null,
+      "backdrop-filter-grayscale": null,
+      "backdrop-filter-invert": null,
+      "backdrop-filter-opacity": null,
+      "backdrop-filter-saturate": null,
+      "backdrop-filter-sepia": null,
+      "mask-clip": null,
+      "mask-composite": null,
+      "mask-mode": null,
+      "mask-origin": null,
+      "mask-position": null,
+      "mask-repeat": null,
+      "mask-size": null,
+      "mask-type": null
+    }
+  }, {
+    "journal": "class-c187-utility-renames",
+    "decision": "C187 (6)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Motion by role: ease-enter, ease-exit, ease-move, ease-linear on --sf-ease-*. A delay lives inside the component that needs it (C130 (8)); will-change and the slide-in animations leave.",
+    "names": {
+      "ease-in": "ease-exit",
+      "ease-out": "ease-enter",
+      "ease-in-out": "ease-move"
+    }
+  }, {
+    "journal": "class-c187-retired-classes",
+    "decision": "C187 (6)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Motion by role: ease-enter, ease-exit, ease-move, ease-linear on --sf-ease-*. A delay lives inside the component that needs it (C130 (8)); will-change and the slide-in animations leave.",
+    "names": {
+      "animation-from-bottom": null,
+      "animation-from-left": null,
+      "animation-from-right": null
+    }
+  }, {
+    "journal": "utility-c187-retired-sheets",
+    "decision": "C187 (6)",
+    "component": "utility",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Motion by role: ease-enter, ease-exit, ease-move, ease-linear on --sf-ease-*. A delay lives inside the component that needs it (C130 (8)); will-change and the slide-in animations leave.",
+    "sheets": {
+      "transition-delay": null,
+      "will-change": null
+    }
+  }, {
+    "journal": "class-c187-retired-parts",
+    "decision": "C187 (8)",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Small parts: the single legacy tab joins sf-tabs; emoji, the heading outline (its name clashes with the colour role --sf-outline) and hide-show leave.",
+    "names": {
+      "sf-tab": {
+        "to": "sf-tabs",
+        "component": "tab"
+      },
+      "sf-emoji": {
+        "to": null,
+        "component": "emoji"
+      },
+      "sf-outline": {
+        "to": null,
+        "component": "outline"
+      },
+      "sf-hide-show": {
+        "to": null,
+        "component": "hide-show"
+      }
+    }
+  }, {
+    "journal": "class-c96-tabs-looks",
+    "decision": "C96 (1)",
+    "component": "sf-tabs",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "Two looks of the tabs: the line (default, no modifier) and the plate (sf-tabs--pills). sf-tabs--full draws the line with the tabs sharing the row equally until remove_after.",
+    "names": {
+      "sf-tabs--full": "sf-tabs"
+    }
+  }],
+  "extended": {
+    "decision": "C187 (2), (3)",
+    "note": "Kept, documented together on one «extended» page, not a page per class.",
+    "sheets": ["width-ext", "height-ext", "max-width-ext", "max-height-ext", "flex-basis-ext", "element-position-ext"],
+    "patterns": [{
+      "family": "border-width 3-10",
+      "pattern": "^border-(?:(?:top|bottom|x|y|inline-start|inline-end)-)?(?:[3-9]|10)$"
+    }, {
+      "family": "outline-width 3-4",
+      "pattern": "^outline-[34]$"
+    }, {
+      "family": "outline-offset 3-4",
+      "pattern": "^outline-offset-[34]$"
+    }, {
+      "family": "ring-offset-width 3-4",
+      "pattern": "^ring-offset-[34]$"
+    }, {
+      "family": "divide widths 3-4",
+      "pattern": "^divide-[xy]-[34]$"
+    }, {
+      "family": "ring-offset-color strong and overlay",
+      "pattern": "^ring-offset-[a-z-]+-(?:container-strong|transparent-overlay)$"
+    }]
+  }
+});
+
+/***/ },
+
 /***/ "af3c1d41479b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -8725,6 +8963,15 @@ function mapTailwindBaseClass(className) {
 
   if (gridColsMatch && GRID_COLS_VALUE.test(gridColsMatch[1])) {
     return `grid-col-${gridColsMatch[1]}`;
+  } // Tailwind's columns-N is the Framework's layout-col-N (utility/column;
+  // C187 (7), UT-7): multi-column text for print and documents.
+
+
+  const columnsMatch = base.match(/^columns-(\d{1,2}|auto)$/);
+
+  if (columnsMatch) {
+    const value = columnsMatch[1];
+    if (value === 'auto' || Number(value) >= 1 && Number(value) <= 12) return `layout-col-${value}`;
   }
 
   if (base === 'w-100') return 'w-full';
@@ -8884,7 +9131,12 @@ function mapTailwindBaseClass(className) {
   return null;
 }
 function convertTailwindClassToken(token) {
-  if (!token) return token;
+  if (!token) return token; // Tailwind's print:hidden hides an element on paper: the Framework's
+  // print-hidden (utility/display-print; owner decision C187 (7)). Only
+  // hidden: print-block and the other display-print classes also hide the
+  // element on screen, which Tailwind's print:block does not.
+
+  if (token === 'print:hidden') return 'print-hidden';
   const parts = token.split(':');
   const base = parts.pop();
   const variants = parts;
@@ -8912,6 +9164,148 @@ function convertTailwindClasses(value) {
     return next;
   });
   return changed ? nextTokens.join(' ') : value;
+}
+
+/***/ },
+
+/***/ "443d1792351d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RETIRED_CLASSES: () => (/* binding */ RETIRED_CLASSES),
+/* harmony export */   UTILITY_CLASS_ALIASES: () => (/* binding */ UTILITY_CLASS_ALIASES),
+/* harmony export */   UTILITY_CLASS_ALIAS_DATES: () => (/* binding */ UTILITY_CLASS_ALIAS_DATES),
+/* harmony export */   noteRetiredUtilitySheets: () => (/* binding */ noteRetiredUtilitySheets),
+/* harmony export */   noteUtilityClassAlias: () => (/* binding */ noteUtilityClassAlias),
+/* harmony export */   retiredClassName: () => (/* binding */ retiredClassName)
+/* harmony export */ });
+/* harmony import */ var _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cef5a448c23d");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
+// Retired class names (owner decisions C185 (2), C186 (8) and C187 (1), 2026-11-14).
+// One table, core/js/retired-classes.table.js, lists every class
+// the Framework retires: a name, a family (pattern) or a whole utility sheet.
+// A retired class keeps drawing what it drew until remove_after, and the
+// Loader notes each one once in SF.deprecations the first time a page uses it
+// (a console line under data-sf-deprecations="warn", and after the date
+// whatever the page opted into). Journals: class-table-sm-to-density,
+// class-text-flow-utility-aliases,
+// class-c187-retired-utilities, class-c187-retired-parts, class-c96-tabs-looks.
+
+
+const VARIANT = /^((?:[a-z-]+:)*)(.*)$/;
+
+function entry(record, from, value) {
+  const to = value && typeof value === 'object' ? value.to : value;
+  const component = value && typeof value === 'object' && value.component || record.component || 'utility';
+  return {
+    component,
+    from,
+    to: to ?? null,
+    since: record.since,
+    remove_after: record.remove_after
+  };
+}
+
+const NAMES = new Map();
+const PATTERNS = [];
+const SHEETS = new Map();
+
+for (const record of _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__["default"].records) {
+  for (const [from, value] of Object.entries(record.names || {})) NAMES.set(from, entry(record, from, value));
+
+  for (const item of record.patterns || []) PATTERNS.push({ ...entry(record, item.from, item.to),
+    re: new RegExp(item.pattern)
+  });
+
+  for (const [sheet, to] of Object.entries(record.sheets || {})) SHEETS.set(sheet, entry(record, sheet, to));
+}
+
+const TEXT_FLOW = _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__["default"].records.find(record => record.journal === 'class-text-flow-utility-aliases'); // The C186 (8) text-flow names and their dates, as C186 published them.
+
+const UTILITY_CLASS_ALIASES = Object.freeze({ ...TEXT_FLOW.names
+});
+const UTILITY_CLASS_ALIAS_DATES = Object.freeze({
+  since: TEXT_FLOW.since,
+  remove_after: TEXT_FLOW.remove_after
+});
+const RETIRED_CLASSES = _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__["default"];
+
+const expiredAt = (date, now) => now > Date.parse(`${date}T23:59:59.999Z`);
+
+function note(found, from, to, now) {
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+    component: found.component,
+    kind: 'class',
+    from,
+    to,
+    since: found.since,
+    remove_after: found.remove_after,
+    ...(expiredAt(found.remove_after, now) ? {
+      expired: true
+    } : {})
+  });
+}
+/**
+ * The retired name or family `token` belongs to, as {from, to} with the
+ * variant prefix kept on both sides, or null. `to` is '' when the job leaves
+ * the utilities.
+ */
+
+
+function retiredClassName(token) {
+  if (typeof token !== 'string' || !token) return null;
+  const [, variants, base] = token.match(VARIANT);
+  let found = NAMES.get(base);
+  let to = found?.to;
+
+  if (!found) {
+    for (const item of PATTERNS) {
+      const match = base.match(item.re);
+      if (!match) continue;
+      found = item;
+      to = item.to === null ? null : base.replace(item.re, item.to);
+      break;
+    }
+  }
+
+  if (!found) return null;
+  return {
+    found,
+    from: token,
+    to: to === null ? '' : `${variants}${to}`
+  };
+}
+/**
+ * Notes `token` when it is a retired class name or belongs to a retired
+ * family; returns the name to write instead ('' when there is none) or null.
+ * The Loader calls it once per distinct class token of the page.
+ */
+
+function noteUtilityClassAlias(token, now = Date.now()) {
+  const retired = retiredClassName(token);
+  if (!retired) return null;
+  note(retired.found, retired.from, retired.to || null, now);
+  return retired.to;
+}
+/**
+ * Notes `token` when every utility sheet it loads (`keys`, the Loader's rule
+ * keys such as margin-ext/md) is a retired sheet; returns true when noted.
+ */
+
+function noteRetiredUtilitySheets(token, keys, now = Date.now()) {
+  if (!keys || !keys.length) return false;
+  let found = null;
+
+  for (const key of keys) {
+    const sheet = SHEETS.get(String(key).split('/')[0]);
+    if (!sheet) return false;
+    found = sheet;
+  }
+
+  const [, variants] = token.match(VARIANT);
+  note(found, token, found.to ? `${variants}${found.to}` : null, now);
+  return true;
 }
 
 /***/ },
@@ -9031,7 +9425,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","visibility/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

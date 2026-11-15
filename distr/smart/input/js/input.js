@@ -1233,6 +1233,90 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "76b2d9a8d7c6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COUNT_FROM: () => (/* binding */ COUNT_FROM),
+/* harmony export */   charCount: () => (/* binding */ charCount),
+/* harmony export */   countAnnouncement: () => (/* binding */ countAnnouncement),
+/* harmony export */   countLimit: () => (/* binding */ countLimit)
+/* harmony export */ });
+// The character count of a text field with a limit (owner decision C141 (1),
+// the rule sf-chat-composer keeps in ui-pro): one rule for every field that
+// counts, so the message box, the multi-line field and the formatted text
+// say the same thing at the same moment.
+//
+// - The count shows from 80 % of the limit (more than 0.8 x limit
+//   characters), or always when the field asks for it (`counter`).
+// - Past the limit the count and the field's frame are the error colour and
+//   the field is invalid (too-long), so its form is not sent; the text is
+//   never cut: the person decides what to take out.
+// - A polite line speaks only when a threshold is crossed (near, over, back
+//   under), never on every key.
+//
+// The field draws the count at the end of its message line (the hint's or
+// the error's), in the message's text and colour with digits of one width.
+
+/** The share of the limit from which the count shows. */
+const COUNT_FROM = 0.8;
+/** A limit as a positive whole number, or null when there is none. */
+
+function countLimit(value) {
+  const number = Math.trunc(Number(value));
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+/**
+ * Where a text of `length` characters stands against `limit`:
+ * {limit, length, near, over, shown, level}. `level` is '', 'near' or
+ * 'over'; `shown` says whether the count is drawn (near, over, or `always`).
+ * Without a limit nothing is counted.
+ */
+
+function charCount(length, limit, {
+  always = false
+} = {}) {
+  const max = countLimit(limit);
+  const count = Math.max(0, Number(length) || 0);
+  if (max === null) return {
+    limit: null,
+    length: count,
+    near: false,
+    over: false,
+    shown: false,
+    level: ''
+  };
+  const near = count > max * COUNT_FROM;
+  const over = count > max;
+  return {
+    limit: max,
+    length: count,
+    near,
+    over,
+    shown: Boolean(always) || near,
+    level: over ? 'over' : near ? 'near' : ''
+  };
+}
+/**
+ * What the polite line says now: the count's words when its level changed
+ * since `lastLevel`, else `lastSaid` as it was. Returns {level, said}; the
+ * component keeps both for the next call.
+ */
+
+function countAnnouncement(state, lastLevel, lastSaid, words) {
+  if (state.level === (lastLevel || '')) return {
+    level: state.level,
+    said: lastSaid || ''
+  };
+  return {
+    level: state.level,
+    said: state.level ? words(state) : ''
+  };
+}
+
+/***/ },
+
 /***/ "64feefebb417"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1624,6 +1708,75 @@ function preloadSwitchIcons(host, options = {}) {
 
 /***/ },
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1631,10 +1784,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -1848,72 +2009,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -1984,11 +2382,12 @@ const INHERITED_TEXT = {
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
 // the manifest check that reads a component's props sees them.
-// The marker and the reset are one step down the ladder from the field they
-// sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
-// button (32px) with the same inset on every side.
-// sf-input's outer steps: a 3 field holds a 2 button; 1/3 is the ladder's
-// foot, so its marker and reset stay at 1/3.
+// The marker is one step down the ladder from the field it sits in, so it
+// reads as a note about the value. (The reset was a button of that step too,
+// a 32px button in a 40px field; since C123 it is the field's own action at
+// the field's glyph size, see renderInheritedSlot.)
+// sf-input's outer steps: a 3 field's marker is a 2; 1/3 is the ladder's
+// foot, so its marker stays at 1/3.
 
 const STEP_DOWN = Object.freeze({
   '1/3': '1/3',
@@ -2173,6 +2572,15 @@ const InheritedValueField = Base => class extends Base {
 /**
  * The marker and the reset, for a control's trailing slot. Nothing at all
  * without an inherited value, so a field that does not use it is unchanged.
+ *
+ * The reset is an action of the field (owner decision C123, variant A): the
+ * field layer's .sf-field-action (component.inputs), the glyph sf-input's
+ * clear and reveal draw -- no plate in any state, the quiet ink at rest and the
+ * text's ink under the pointer and on a press, the keyboard ring round the
+ * glyph, an invisible hit area. Its glyph is the field's leading-icon size
+ * (the field's text line), not a step down; the marker keeps the step down.
+ * Each field says its step through --sf-field-action--glyph, --height and
+ * --inset (inherited-value.css). It was a link icon button of the step below.
  */
 
 function renderInheritedSlot(component, {
@@ -2191,7 +2599,7 @@ function renderInheritedSlot(component, {
             ?hidden=${!inherited}>${component.inheritedText}</span>
       <button
         type="button"
-        class="sf-field-reset sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${step}"
+        class="sf-field-action sf-field-reset"
         data-inherited-reset
         aria-label=${component.resetLabel}
         title=${component.resetLabel}
@@ -2224,14 +2632,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5c571b560382");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("fc92d2bbc3ce");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b0558b1b8eb0");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e9f1da81a45b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d6f37816062a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_char_count__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("76b2d9a8d7c6");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("5c571b560382");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fc92d2bbc3ce");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b0558b1b8eb0");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e9f1da81a45b");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("d6f37816062a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
+([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 
@@ -2245,7 +2654,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
- // sf-input from its component.json (standard simai.smart-component 1.3.8 §3,
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+}; // sf-input from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §17, §20). The settings are made by core/js/element-manifest.js; the
 // legacy names `type` (appearance), `error` (invalid, §17.2), `left-icon`
 // (icon-start) and `right-text` (text-end) are dated aliases (aliases.json),
@@ -2253,17 +2671,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 // the form control through ElementInternals: it submits the text, reports the
 // native input's validity, and the native input carries no name (§17.1).
 
-const InputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const InputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en,
+    ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
 
-class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownRequired)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(InputElement)) {
+class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(InputElement)) {
   static get props() {
     return { ...super.props,
       rootClass: {
@@ -2297,7 +2715,115 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
     this._revealed = false; // The clear shows while the field holds a value: typing, a paste or the
     // page's own input event say so (C123 (6)).
 
-    this.addEventListener('input', () => this.syncClearAction());
+    this.addEventListener('input', () => {
+      this.syncClearAction(); // The count follows the text (C153 (10), C141 (1)): every edit of a
+      // field with a limit redraws the count and, at a threshold, the frame.
+
+      if (this.countLimit !== null) this.requestComponentUpdate?.('count');
+    }); // Escape empties a field that can be cleared -- clearable, or a search
+    // field -- when it holds a value (C153 (6)): the clear glyph is no Tab
+    // stop, so the key is the keyboard's way to it. An empty field lets the
+    // key go on (a window closes, a list folds).
+
+    this.addEventListener('keydown', event => this.clearFromKey(event));
+    this._countLevel = '';
+    this._countSaid = ''; // The Caps Lock hint of a password field (C191 (3)): every key, on its way
+    // down and up, and a click in the field say whether Caps Lock is on
+    // (getModifierState); leaving the field takes the hint away.
+
+    this._capsLock = false;
+
+    const capsFrom = event => this.syncCapsLock(event);
+
+    this.addEventListener('keydown', capsFrom);
+    this.addEventListener('keyup', capsFrom);
+    this.addEventListener('click', capsFrom);
+    this.addEventListener('focusout', event => {
+      if (event.target === this.getInputElement()) this.setCapsLock(false);
+    }); // A revealed password hides again when its form is sent (C191 (1)),
+    // whether the page lets the browser send it or sends it itself.
+
+    this._hideOnSubmit = event => this.hideRevealOnSubmit(event);
+  }
+
+  clearFromKey(event) {
+    if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
+    if (event.target !== this.getInputElement()) return;
+    if (this.disabled || this.readonly) return;
+    if (!(this.clearable || this.inputType === 'search')) return;
+    if (!(this.getInputElement()?.value || '')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.clearOwnValue();
+    this.syncClearAction();
+  } // The limit the field counts against (C153 (10)): maxlength, counted and
+  // never cut, as sf-input-textarea's (C141 (1)). A masked field keeps the
+  // native limit: the mask decides its length.
+
+
+  get countLimit() {
+    if (this.mask) return null;
+    const value = Math.trunc(Number(this.getAttribute('maxlength')));
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  sfCount() {
+    return (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_6__.charCount)((this.getInputElement()?.value ?? this.getAttribute('value') ?? '').length, this.countLimit, {
+      always: Boolean(this.counter)
+    });
+  } // What the template draws of the count, and the polite line, which changes
+  // only when a threshold is crossed.
+
+
+  sfCountView() {
+    const count = this.sfCount();
+
+    const words = state => this.sfWord('count-text', {
+      vars: {
+        count: state.length,
+        max: state.limit
+      }
+    });
+
+    const said = (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_6__.countAnnouncement)(count, this._countLevel, this._countSaid, state => state.over ? this.sfTooLongMessage(state) : words(state));
+    this._countLevel = said.level;
+    this._countSaid = said.said;
+    return {
+      over: count.over,
+      text: count.shown ? words(count) : '',
+      said: said.said
+    };
+  }
+
+  sfTooLongMessage(count) {
+    return this.sfWord('too-long', {
+      vars: {
+        max: count.limit
+      }
+    });
+  }
+
+  get maxlength() {
+    return this.countLimit;
+  } // The native input's validity, and too-long past the counted limit: the
+  // native maxlength would cut the text, so the field counts itself.
+
+
+  sfSyncValidity() {
+    const anchor = this.sfValidityAnchor();
+    const count = this.sfCount();
+    const message = count.over ? this.sfTooLongMessage(count) : '';
+    if (!this.sfInternals && anchor?.setCustomValidity) anchor.setCustomValidity(message);
+    (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.syncFieldValidity)(this, anchor, count.over ? {
+      tooLong: message
+    } : {});
+  }
+
+  onConnected() {
+    super.onConnected?.(); // Captured on the document: the form owner may be named by the form
+    // attribute, and the page's own submit handler may stop the event.
+
+    document.addEventListener('submit', this._hideOnSubmit, true);
   } // The clear (C123 (6)): empties the field the way a reset does -- input,
   // then change, from the native input -- and gives the focus back to it, as
   // the button that had it is gone.
@@ -2321,6 +2847,35 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
     if (this.disabled) return;
     this._revealed = !this._revealed;
     this.requestComponentUpdate('revealed');
+  } // C191 (1): the form this field belongs to is being sent -- the password
+  // goes back to dots before the browser takes the page (and a password
+  // manager reads the field), so the type changes at once, not at the next
+  // drawing.
+
+
+  hideRevealOnSubmit(event) {
+    if (!this._revealed) return;
+    const form = this.sfInternals?.form || this.closest('form');
+    if (!form || event.target !== form) return;
+    this._revealed = false;
+    const input = this.getInputElement();
+    if (input && input.type !== 'password') input.type = 'password';
+    this.requestComponentUpdate('revealed');
+  } // C191 (3): Caps Lock while a password is typed. Only the native input's
+  // own events count, so the hint is there only while the field has the focus.
+
+
+  syncCapsLock(event) {
+    const input = this.getInputElement();
+    if (!input || event.target !== input || typeof event.getModifierState !== 'function') return;
+    this.setCapsLock(event.getModifierState('CapsLock'));
+  }
+
+  setCapsLock(on) {
+    const next = Boolean(on) && this.inputType === 'password' && !this.disabled;
+    if (next === this._capsLock) return;
+    this._capsLock = next;
+    this.requestComponentUpdate('capsLock');
   }
 
   syncClearAction() {
@@ -2381,6 +2936,10 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
 
   get textEnd() {
     return this.getAttribute('text-end') ?? '';
+  }
+
+  get textStart() {
+    return this.getAttribute('text-start') ?? '';
   }
 
   get maskLazy() {
@@ -2448,6 +3007,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
     const props = this.getPropsContext();
     const hasControlledValue = this.hasAttribute('value');
     const input = this.getInputElement();
+    const count = this.sfCountView();
     return this.createTemplateContext({ ...props,
       // The size the field draws: a retired size is the one it keeps, as
       // the props' closed list alone would read it as the default.
@@ -2461,7 +3021,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
       maskLazy: this.maskLazy,
       // The page's error, or the required one a failed form check shows
       // (ShownRequired, C55 acceptance F1: as sf-dropdown 1.9.0).
-      invalid: this.sfShownInvalid(props.invalid || props.error),
+      invalid: this.sfShownInvalid(props.invalid || props.error) || count.over,
       error: false,
       errorMessage: this.sfShownMessage(props.invalid || props.error, props.errorMessage),
       // The host is the form control where the browser has ElementInternals,
@@ -2474,11 +3034,24 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
       inheritedText: this.inheritedText,
       resetLabel: this.resetLabel,
       revealed: this._revealed && props.inputType === 'password',
+      // The «?» after the label (C153 (8), helpers/field-help.js).
+      help: props.help || '',
+      textStart: this.textStart || '',
+      // The count (C153 (10)): its words when shown, over the limit (the
+      // error frame), the polite line.
+      countable: this.countLimit !== null,
+      count: count.text,
+      countOver: count.over,
+      countSaid: count.said,
+      capsLock: this._capsLock && props.inputType === 'password' && !props.disabled,
       component: this
     });
   }
 
   onDisconnected() {
+    document.removeEventListener('submit', this._hideOnSubmit, true);
+    this._capsLock = false;
+
     if (this._boundRoot) {
       (0,_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__.unbindInput)(this._boundRoot);
       this._boundRoot = null;
@@ -2501,7 +3074,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
       // cleared the message while the red border and aria-invalid="true" came
       // back (Larena acceptance, 2026-10-22: the datetime's time field after
       // «Укажите время» and then 10:30).
-      const invalid = this.sfShownInvalid(this.invalid);
+      const invalid = this.sfShownInvalid(this.invalid) || this.sfCount().over;
 
       this._boundRoot.classList.toggle('error', invalid);
 
@@ -2511,7 +3084,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
     // crossed eye is there on the first press (as sf-button-copy's check).
 
 
-    if (this.querySelector(':scope .sf-input-reveal')) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.preloadControlIcons)(this, ['visibility', 'visibility_off']);
+    if (this.querySelector(':scope .sf-input-reveal')) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_8__.preloadControlIcons)(this, ['visibility', 'visibility_off']);
     this.syncInheritedState();
     this.syncClearAction();
     this.sfSyncFormState();
@@ -2522,7 +3095,7 @@ class SfInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownR
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderInputTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderInputTemplate)(this.templateContext());
   }
 
   get state() {
@@ -2601,13 +3174,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderInputTemplate: () => (/* binding */ renderInputTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("151a293c8c90");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38b38b744888");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("778671c79fa6");
+/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("151a293c8c90");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38b38b744888");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -2671,7 +3246,14 @@ function renderInputTemplate(context) {
     ariaLabel,
     shortcut,
     clearable,
-    revealed
+    revealed,
+    help,
+    textStart,
+    count = '',
+    countOver = false,
+    countSaid = '',
+    countable = false,
+    capsLock
   } = context; // The shortcut's keys (C04, C38): the kbd component's, read in this
   // platform's words; the field draws them at its end and never styles them.
   // The native input says the combination in aria-keyshortcuts.
@@ -2679,8 +3261,8 @@ function renderInputTemplate(context) {
   const {
     keys: shortcutKeys,
     join: shortcutJoin
-  } = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.shortcutView)(shortcut);
-  const keyShortcuts = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_3__.parseShortcut)(shortcut));
+  } = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.shortcutView)(shortcut);
+  const keyShortcuts = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.parseShortcut)(shortcut));
   const maskLazyValue = maskLazy === '' ? '' : String(maskLazy); // A number field (1.5.0) takes the native range and step; other types do
   // not carry them.
 
@@ -2691,7 +3273,7 @@ function renderInputTemplate(context) {
   // empty field shows, in the placeholder's ink -- never as its value.
 
   const shownPlaceholder = context.inheritedValue || placeholder;
-  const inheritedSlot = (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__.renderInheritedSlot)(context.component, {
+  const inheritedSlot = (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__.renderInheritedSlot)(context.component, {
     size,
     disabled: disabled || readonly
   });
@@ -2706,13 +3288,20 @@ function renderInputTemplate(context) {
   const showClear = editable && (clearable || inputType === 'search');
   const nativeType = isPassword && revealed ? 'text' : inputType;
   const clearWord = context.component?.sfWord?.('clear') || 'Clear';
-  const revealWord = context.component?.sfWord?.('reveal') || 'Show password';
+  const revealWord = context.component?.sfWord?.('reveal') || 'Show password'; // C191 (3): while the focused password field types with Caps Lock on, a line
+  // in the hint's place and type says so; a polite live region after the
+  // label says it to assistive technology (the line itself is not read twice).
+
+  const capsWord = isPassword && !disabled ? context.component?.sfWord?.('caps-lock') || 'Caps Lock is on' : '';
+  const capsLine = capsLock && capsWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-hint-text-wrap sf-input-caps" data-field-message="caps" aria-hidden="true">${capsWord}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const capsSaid = capsWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-caps-said" role="status" aria-live="polite" aria-atomic="true">${capsLock ? capsWord : ''}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const actionsContent = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     ${showClear ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
           type="button"
           class="sf-field-action sf-input-clear"
           data-action="clear"
           aria-label=${clearWord}
+          tabindex="-1"
           ?hidden=${!String(value ?? '')}
           @click=${event => context.component?.clearFromButton?.(event)}
         ><sf-icon icon="close" aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2725,14 +3314,14 @@ function renderInputTemplate(context) {
           @click=${event => context.component?.toggleReveal?.(event)}
         ><sf-icon icon=${revealed ? 'visibility_off' : 'visibility'} aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   `;
-  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
+  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_2__.createFieldContract)(context.component, {
     prefix: 'sf-input',
     required,
     invalid: invalid || error,
     hint,
     errorMessage
   });
-  const rootClasses = ['sf-input', field.invalid ? 'error' : '', `sf-input--size-${size}`, `sf-input--${appearance ?? type}`, radius && radius !== 'default' ? `sf-input--radius-${radius}` : '', rootClass, 'flex', 'flex-col'];
+  const rootClasses = ['sf-input', field.invalid ? 'error' : '', `sf-input--size-${size}`, `sf-input--${appearance ?? type}`, countOver ? 'sf-input--over' : '', radius && radius !== 'default' ? `sf-input--radius-${radius}` : '', rootClass, 'flex', 'flex-col'];
 
   if (type === 'hidden') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input
@@ -2748,18 +3337,29 @@ function renderInputTemplate(context) {
               data-mask-placeholder-char=${maskPlaceholderChar || ''}
               data-mask-options=${maskOptions || ''}
       />`;
-  }
+  } // The «?» after the label (C153 (8), C133's look, helpers/field-help.js):
+  // the help setting's text behind sf-help-mark, a step below the value as the
+  // label is; the label row keeps its height.
 
+
+  const helpMark = (0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help,
+    label,
+    size,
+    className: 'sf-input-help',
+    component: context.component
+  });
   const labelContent = context.component?.hasSlotContent?.('label') ? slottedLabel(context.component.getSlotContent('label')) : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <span class="sf-input-text">${label}</span>
-            ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-required">*</span>` : ''}
+            ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-required" aria-hidden="true">*</span>` : ''}
+            ${helpMark}
           ` // No label, no label row. A lone star above a control names nothing --
   // the control's own `required` is what tells a reader and assistive
   // technology that it must be filled in -- and the row it stood in came
   // out as an empty line over every required control in a panel whose
   // labels are drawn beside them.
   : '';
-  const leftContent = context.component?.hasSlotContent?.('start') ? context.component.getSlotContent('start') : context.component?.hasSlotContent?.('left') ? context.component.getSlotContent('left') : leftIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-left flex"><sf-icon icon="${leftIcon}"></sf-icon></span>` : '';
+  const leftContent = context.component?.hasSlotContent?.('start') ? context.component.getSlotContent('start') : context.component?.hasSlotContent?.('left') ? context.component.getSlotContent('left') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${leftIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-left flex"><sf-icon icon="${leftIcon}"></sf-icon></span>` : ''}${textStart ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-start" aria-hidden="true">${textStart}</span>` : ''}`;
   const rightContent = context.component?.hasSlotContent?.('end') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actionsContent}${context.component.getSlotContent('end')}` : context.component?.hasSlotContent?.('right') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actionsContent}${context.component.getSlotContent('right')}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           ${rightText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-right"><span class="sf-input-text">${rightText}</span></span>` : ''}
           ${actionsContent}
@@ -2773,7 +3373,18 @@ function renderInputTemplate(context) {
   // the native input. Both at once would make the name say one thing and the
   // page another.
 
-  const accessibleName = !labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const accessibleName = !labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The count stands at the end of the message line (C153 (10), C141 (1)), so
+  // the line is drawn for it alone too; the input is described by both. The
+  // start text is said with the value's description, not read as typed text.
+
+  const countId = `${field.messageId}-count`;
+  const startId = `${field.messageId}-start`;
+  const describedBy = [textStart && !context.component?.hasSlotContent?.('start') && !context.component?.hasSlotContent?.('left') ? startId : '', messageContent ? field.messageId : '', count ? countId : ''].filter(Boolean).join(' ');
+  const messageNode = messageContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+        id=${field.messageId}
+        class="sf-input-hint-text-wrap"
+        data-field-message=${field.invalid && errorContent ? 'error' : 'hint'}
+      >${messageContent}</span>` : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label
       class=${rootClasses.join(' ')}
@@ -2799,7 +3410,7 @@ function renderInputTemplate(context) {
                 autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
-                maxlength=${maxlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
+                maxlength=${maxlength === '' || countable ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
                 pattern=${pattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 min=${numberMin}
                 max=${numberMax}
@@ -2814,7 +3425,7 @@ function renderInputTemplate(context) {
                 aria-label=${accessibleName}
                 aria-keyshortcuts=${keyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-describedby=${describedBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 data-mask=${String(mask)}
                 data-mask-pattern=${maskPattern || ''}
@@ -2829,7 +3440,7 @@ function renderInputTemplate(context) {
                 autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
-                maxlength=${maxlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
+                maxlength=${maxlength === '' || countable ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
                 pattern=${pattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 min=${numberMin}
                 max=${numberMax}
@@ -2844,7 +3455,7 @@ function renderInputTemplate(context) {
                 aria-label=${accessibleName}
                 aria-keyshortcuts=${keyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-describedby=${describedBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 data-mask=${String(mask)}
                 data-mask-pattern=${maskPattern || ''}
@@ -2857,12 +3468,9 @@ function renderInputTemplate(context) {
         ${rightContent}
       </span>
 
-      ${messageContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
-            id=${field.messageId}
-            class="sf-input-hint-text-wrap"
-            data-field-message=${field.invalid && errorContent ? 'error' : 'hint'}
-          >${messageContent}</span>` : ''}
-    </label>
+      ${count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-message flex">${messageNode}<span id=${countId} class="sf-input-count">${count}</span></span>` : messageNode}${capsLine}
+      ${textStart ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${startId} class="sf-input-said" hidden>${textStart}</span>` : ''}
+    </label>${countable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-input-count-said" aria-live="polite">${countSaid}</span>` : ''}${capsSaid}
   `;
 }
 __webpack_async_result__();
@@ -2947,21 +3555,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.10.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.13.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "e9f1da81a45b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Text fields","runtime":{"value-missing":"Fill in this field","clear":"Clear","reveal":"Show password"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Text fields","runtime":{"value-missing":"Fill in this field","clear":"Clear","reveal":"Show password","type-mismatch":"Check the value","type-mismatch-email":"Enter the whole address, for example ivan@clinic.ru","type-mismatch-url":"Enter the whole address, for example https://clinic.ru","pattern-mismatch":"Check the format","too-short":"At least {min} characters","too-long":"At most {max} characters","range-underflow":"At least {min}","range-overflow":"At most {max}","step-mismatch":"Use steps of {step}","bad-input":"Enter a number","count-text":"{count} / {max}","help":"More about: {label}","caps-lock":"Caps Lock is on"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ },
 
 /***/ "d6f37816062a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Текстовые поля","runtime":{"value-missing":"Заполните поле","clear":"Очистить","reveal":"Показать пароль"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Текстовые поля","runtime":{"value-missing":"Заполните поле","clear":"Очистить","reveal":"Показать пароль","type-mismatch":"Проверьте значение","type-mismatch-email":"Введите адрес целиком, например ivan@clinic.ru","type-mismatch-url":"Введите адрес целиком, например https://clinic.ru","pattern-mismatch":"Проверьте формат","too-short":"Не меньше {min} знаков","too-long":"Не больше {max} знаков","range-underflow":"Не меньше {min}","range-overflow":"Не больше {max}","step-mismatch":"Шаг значения — {step}","bad-input":"Введите число","count-text":"{count} / {max}","help":"Подробнее: {label}","caps-lock":"Включён Caps Lock"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

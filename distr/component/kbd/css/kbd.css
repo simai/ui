@@ -278,6 +278,20 @@
   :where(kbd[appearance=key]:has(> kbd), .sf-kbd--group[appearance=key]) > :where(.sf-kbd-join) {
     display: none;
   }
+  :where(kbd[data-sf-shortcut]:empty) {
+    display: none;
+  }
+  :where(.sf-kbd-spoken) {
+    position: absolute;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
+  }
   @media (forced-colors: active) {
     :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
       border-color: CanvasText;

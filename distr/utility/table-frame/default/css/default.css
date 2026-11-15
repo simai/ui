@@ -15,6 +15,7 @@
     width: 100%;
     inline-size: 100%;
     overflow: auto;
+    scroll-padding: var(--sf-focus-room);
     border: var(--sf-px) solid var(--sf-table-frame-border-color);
     border-radius: var(--sf-table-frame-radius);
     background-color: var(--sf-table-frame-background);

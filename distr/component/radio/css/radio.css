@@ -457,6 +457,89 @@
     opacity: 0;
     cursor: inherit;
   }
+  /* A box at the row's end (the box after the text column) has no room past
+     it: a hit area that grew evenly stood 2px past the row on a 20 box (4 on
+     a 16), and a radio at the end of a full-width line made the page scroll
+     sideways at 390 (docs batch B, FW-B-4). There the hit area keeps its 24px
+     but grows towards the text: its end stays on the box's outer edge. The
+     inline axis only; logical, so RTL needs nothing. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: auto;
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: auto;
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(ltr)){
+    left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: auto;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: auto;
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(rtl)){
+    right: auto;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(ltr)){
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    right: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(rtl)){
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    left: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(ltr)){
+    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]{
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    }
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio]:where(:dir(rtl)){
+    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+  }
+  .sf-radio-button > .sf-radio-button-container + .sf-radio-button-box:last-child > input[type=radio] {
+    inset-inline-start: auto;
+    inset-inline-end: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
+    inset-inline-end: max(-1 * var(--sf-radio-button-box--border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
+  }
   /* The help mark («?», sf-help-mark) is the help's own button: it stands above
      the native control's hit area, so a press on it is never a press on the
      box. */

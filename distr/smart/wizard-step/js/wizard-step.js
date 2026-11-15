@@ -40,14 +40,22 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // The attributes the wizard reads; a change of one is the wizard's to draw.
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+}; // The attributes the wizard reads; a change of one is the wizard's to draw.
 
 const STEP_ATTRIBUTES = ['name', 'label', 'heading', 'description', 'type', 'optional', 'href', 'action-text', 'message', 'state'];
 const WizardStepElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+    en,
+    ru
   },
   source: 'ru'
 });
@@ -124,7 +132,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "2afd628bb263"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard-step","tag":"sf-wizard-step","version":"1.0.4","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"type":{"type":"enum","values":["info","form","action","review","result"],"default":"info"},"optional":{"type":"boolean","default":false},"href":{"type":"string","default":""},"action-text":{"type":"string","default":""},"message":{"type":"string","default":""}},"values":{"state":{"type":"enum","values":["","done","skipped","running","error"],"default":""}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard-step","tag":"sf-wizard-step","version":"1.0.5","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"type":{"type":"enum","values":["info","form","action","review","result"],"default":"info"},"optional":{"type":"boolean","default":false},"href":{"type":"string","default":""},"action-text":{"type":"string","default":""},"message":{"type":"string","default":""}},"values":{"state":{"type":"enum","values":["","done","skipped","running","error"],"default":""}}}');
 
 /***/ },
 

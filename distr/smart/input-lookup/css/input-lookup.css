@@ -47,13 +47,8 @@
        that inset (C07). */
     --sf-lookup--panel-padding: var(--sf-space-1\/4);
     --sf-lookup--chip-row-gap: var(--sf-gap--tags);
-    /* The remove cross, a small step by the chip's tag (owner decision C132,
-       the cross row: tags 1/3 and 1/2 → 8, 1 and 2 → 12); its target stays at
-       least --sf-c2 whatever the chip (LS-3). It was the tag's text step, 10. */
-    --sf-lookup--chip-cross: var(--sf-a8);
   }
   .sf-lookup.sf-lookup--size-2 {
-    --sf-lookup--chip-cross: var(--sf-b2);
     --sf-lookup--font-size: var(--sf-text-size-2);
     --sf-lookup--line-height: var(--sf-text-height-2);
     --sf-lookup--label-size: var(--sf-text-size-1);
@@ -116,10 +111,6 @@
     --sf-field-action--glyph: var(--sf-text-height-3);
     --sf-field-action--height: var(--sf-ui-3--control-height);
   }
-  /* At 3 the chip is an sf-tag 2: the cross of tag 2, 12 (C132). */
-  .sf-lookup.sf-lookup--size-3 {
-    --sf-lookup--chip-cross: var(--sf-b2);
-  }
   /* The label row and the message line: sf-input's. */
   .sf-lookup .sf-lookup-label {
     gap: var(--sf-space-1\/4);
@@ -133,11 +124,15 @@
     font-size: var(--sf-lookup--label-size);
     line-height: var(--sf-lookup--label-height);
   }
+  /* C153 (1), (2): the label and its mark in the text ink; the hint keeps the
+     hint ink. */
   .sf-lookup .sf-lookup-text,
+  .sf-lookup .sf-lookup-required {
+    color: var(--sf-on-surface);
+  }
   .sf-lookup .sf-lookup-hint-text-wrap {
     color: var(--sf-on-surface-variant);
   }
-  .sf-lookup .sf-lookup-required,
   .sf-lookup.error .sf-lookup-hint-text-wrap {
     color: var(--sf-error);
   }
@@ -149,7 +144,8 @@
     inline-size: 100%;
     min-width: 0;
     min-inline-size: 0;
-    gap: var(--sf-lookup--chip-row-gap) var(--sf-space-1\/4);
+    --sf-lookup--column-gap: var(--sf-space-1\/4);
+    gap: var(--sf-lookup--chip-row-gap) var(--sf-lookup--column-gap);
     padding-top: var(--sf-lookup--padding-block);
     padding-bottom: var(--sf-lookup--padding-block);
     padding-block: var(--sf-lookup--padding-block);
@@ -183,7 +179,8 @@
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
   .sf-lookup:not(.error):not(.sf-lookup--disabled):not(.sf-lookup--readonly) .sf-lookup-frame:hover {
-    --sf-lookup--border-color: var(--sf-primary-hover);
+    /* C153 (4): hover in the text ink. */
+    --sf-lookup--border-color: var(--sf-on-surface);
   }
   /* The filled field's bottom line (C52, owner 2026-11-10; as sf-input): at rest
      the field draws its bottom edge in --sf-outline, the fill at 8 % (C41)
@@ -209,14 +206,11 @@
     --sf-lookup--background-color: var(--sf-transparent);
     --sf-lookup--border-color: var(--sf-outline);
   }
-  /* The keyboard ring is the frame's; a click into it draws none, as on sf-input. */
-  .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input.focus-visible) .sf-lookup-frame {
+  /* C153 (4), R242: focus by mouse or keys draws a 2 px edge of the focus colour
+     inside the frame, over its border; no ring outside, nothing moves. */
+  .sf-lookup:has(.sf-lookup-input:focus) .sf-lookup-frame {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input:focus-visible) .sf-lookup-frame {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
+    outline-offset: calc(-1 * var(--sf-focus--width));
   }
   /* !important: a page's unlayered :focus-visible rule beats any layered one, and
      drew a second frame on the bare input (owner, 2026-11-01). */
@@ -437,37 +431,67 @@
   /* The clear is the field layer's action (C123; it was sf-button-close plain,
      C14): a glyph without a plate, its hit area the field's inner height. It
      stands over the frame's block padding by what it passes the text line, so a
-     value never grows the field; the value keeps half an inset before it. */
+     value never grows the field; the value keeps half an inset before its glyph
+     (C123 (6)): the field layer's --sf-field-action--value-space of its own,
+     the rest is what the hit area stands out past the glyph. The frame's column
+     gap (it spaces the chips) is given back between the value and the clear;
+     with it the value stood a quarter step further, 12 for 8 at size 1. */
   .sf-lookup .sf-lookup-frame > .sf-field-action {
     margin-top: calc(-1 * var(--sf-lookup--padding-block));
     margin-bottom: calc(-1 * var(--sf-lookup--padding-block));
     margin-block: calc(-1 * var(--sf-lookup--padding-block));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
-    padding-right: calc(var(--sf-field-action--inset) / 4);
+    padding-right: var(--sf-field-action--value-space);
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
-    padding-right: calc(var(--sf-field-action--inset) / 4);
+    padding-right: var(--sf-field-action--value-space);
     }
   }
   .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action):where(:dir(ltr)){
-    padding-right: calc(var(--sf-field-action--inset) / 4);
+    padding-right: var(--sf-field-action--value-space);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
-    padding-left: calc(var(--sf-field-action--inset) / 4);
+    padding-left: var(--sf-field-action--value-space);
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action){
-    padding-left: calc(var(--sf-field-action--inset) / 4);
+    padding-left: var(--sf-field-action--value-space);
     }
   }
   .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action):where(:dir(rtl)){
-    padding-left: calc(var(--sf-field-action--inset) / 4);
+    padding-left: var(--sf-field-action--value-space);
   }
   .sf-lookup .sf-lookup-frame > .sf-lookup-input:has(+ .sf-field-action) {
-    -webkit-padding-end: calc(var(--sf-field-action--inset) / 4);
-            padding-inline-end: calc(var(--sf-field-action--inset) / 4);
+    -webkit-padding-end: var(--sf-field-action--value-space);
+            padding-inline-end: var(--sf-field-action--value-space);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action{
+    margin-left: calc(-1 * var(--sf-lookup--column-gap));
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action{
+    margin-left: calc(-1 * var(--sf-lookup--column-gap));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action:where(:dir(ltr)){
+    margin-left: calc(-1 * var(--sf-lookup--column-gap));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action{
+    margin-right: calc(-1 * var(--sf-lookup--column-gap));
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action{
+    margin-right: calc(-1 * var(--sf-lookup--column-gap));
+    }
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action:where(:dir(rtl)){
+    margin-right: calc(-1 * var(--sf-lookup--column-gap));
+  }
+  .sf-lookup .sf-lookup-frame > .sf-lookup-input + .sf-field-action {
+    -webkit-margin-start: calc(-1 * var(--sf-lookup--column-gap));
+            margin-inline-start: calc(-1 * var(--sf-lookup--column-gap));
   }
   /* The list: sf-dropdown's menu surface, in the top layer under the frame. */
   .sf-lookup .sf-lookup-panel {
@@ -513,6 +537,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);
@@ -924,11 +950,10 @@
      wide): the chip high and no wider than --sf-c2, so the cross keeps its
      place at the chip's end and the target is at least --sf-c2 square (the
      tag's ::after reaches past a box under it: chips of 20). It was the line
-     square, 20 x 20 on a phone (LS-3). The cross is the small step the
-     chip's size takes (C132); sf-tag sets its own in this layer, by size. */
-  .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline {
-    --sf-tag--close-size: var(--sf-lookup--chip-cross);
-  }
+     square, 20 x 20 on a phone (LS-3). The cross is the chip tag's own,
+     which follows its height (owner decision C145 (1), C132): 8 on chips up
+     to 28, 12 from 32. The field set it by its size before, so a 1 field on
+     a desktop drew 8 in a 32 chip where a compact 2 drew 12. */
   .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline > sf-button-close > .sf-icon-button.sf-icon-button--close {
     height: var(--sf-lookup--chip-height);
     block-size: var(--sf-lookup--chip-height);
@@ -942,10 +967,12 @@
     inline-size: min(var(--sf-lookup--chip-height), var(--sf-c2));
   }
   /* The avatar in a chip is the chip less --sf-space-1/4 above and below
-     (C58): 24 in a 32 chip. sf-tag draws an inline tag's avatar its line
-     high, which was the chip (LS-2). */
+     (C58): 24 in a 32 chip, and never under 16 (C145 (1), C132: an avatar is
+     at least 16; it was 12 in the 20 chips of a compact or phone 1/2 field).
+     sf-tag draws an inline tag's avatar its line high, which was the chip
+     (LS-2). */
   .sf-lookup .sf-lookup-chip > .sf-tag.sf-tag--inline.sf-tag--inline > .sf-avatar {
-    --sf-lookup--chip-avatar: calc(var(--sf-lookup--chip-height) - 2 * var(--sf-space-1\/4));
+    --sf-lookup--chip-avatar: max(var(--sf-b6), calc(var(--sf-lookup--chip-height) - 2 * var(--sf-space-1\/4)));
     --sf-avatar--height: var(--sf-lookup--chip-avatar);
     --sf-avatar--width: var(--sf-lookup--chip-avatar);
     --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-lookup--chip-avatar) / 2));
@@ -957,13 +984,9 @@
     }
   }
   @media (forced-colors: active) {
-    .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input.focus-visible) .sf-lookup-frame {
+    .sf-lookup:has(.sf-lookup-input:focus) .sf-lookup-frame {
       outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-    }
-    .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input:focus-visible) .sf-lookup-frame {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
+      outline-offset: calc(-1 * var(--sf-focus--width));
     }
     .sf-lookup .sf-lookup-panel {
       border: var(--sf-px) solid CanvasText;
@@ -1181,8 +1204,14 @@
     -webkit-padding-start: calc(var(--sf-px) * 0);
             padding-inline-start: calc(var(--sf-px) * 0);
   }
-  /* With chips the first tag is the picture: it stands at the plain inset,
-     as an icon does. */
+  /* With chips the end keeps the plain inset (the clear stands there). The
+     first tag stands as far from the start edge as from the top and bottom
+     (owner decision C145, amendment R238, 2026-11-14): (field - tag) / 2 =
+     --sf-space-1/4 from the outer edge, the border counted inside it, at
+     every size, compact and on a phone; inline-start, so the same in RTL. It
+     stood at the plain inset, 13 / 15 / 19 from the edge with 4 above and
+     below. The search text after the tags keeps its own text inset, and an
+     empty field's placeholder the C77 value inset (the rule above). */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup:has(.sf-lookup-chip) .sf-lookup-frame{
     padding-left: calc(var(--sf-lookup--inset) - var(--sf-px));
     padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
@@ -1248,6 +1277,40 @@
             padding-inline-end: calc(var(--sf-lookup--inset) - var(--sf-px));
     -webkit-padding-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
             padding-inline-end: var(--sf-lookup-padding-inline, calc(var(--sf-lookup--inset) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child){
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child){
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+    }
+  }
+  .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child):where(:dir(ltr)){
+    padding-left: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-left: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child){
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child){
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+    }
+  }
+  .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child):where(:dir(rtl)){
+    padding-right: calc(var(--sf-space-1\/4) - var(--sf-px));
+    padding-right: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+  }
+  .sf-lookup .sf-lookup-frame:has(> .sf-lookup-chip:first-child) {
+    -webkit-padding-start: calc(var(--sf-space-1\/4) - var(--sf-px));
+            padding-inline-start: calc(var(--sf-space-1\/4) - var(--sf-px));
+    -webkit-padding-start: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
+            padding-inline-start: var(--sf-lookup-padding-inline, calc(var(--sf-space-1\/4) - var(--sf-px)));
   }
   /* The list's rows keep the field's text edge (section 3): a rounder field
      moves its value in by half of what its corner adds, and so do the rows. */
@@ -1383,6 +1446,11 @@
 }
 /* C123: the field layer's action rules (inputs/scss/field-action.scss). */
 @layer sf.components {
+  .sf-lookup-frame {
+    --sf-field-action--standout: calc((max(var(--sf-field-action--glyph, var(--sf-text-height-1)) + var(--sf-field-action--inset, var(--sf-space-1)) / 2, var(--sf-c2)) - var(--sf-field-action--glyph, var(--sf-text-height-1))) / 2);
+    --sf-field-action--value-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - var(--sf-field-action--standout));
+    --sf-field-action--pair-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - 2 * var(--sf-field-action--standout));
+  }
   .sf-field-action {
     --sf-field-action--ink: var(--sf-on-surface-variant);
     --sf-field-action--glyph-size: var(--sf-field-action--glyph, var(--sf-text-height-1));
@@ -1425,38 +1493,161 @@
     border-radius: var(--sf-radius--ui);
     pointer-events: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child,html:not([dir="rtl"])
-  .sf-lookup-frame > :last-child .sf-field-action{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child{
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
   @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child,html:not([dir="rtl"])
-  .sf-lookup-frame > :last-child .sf-field-action{
+  html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:last-child{
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
     }
   }
-  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(ltr)),
+  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(ltr)){
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child{
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(rtl)){
+    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  .sf-lookup-frame > .sf-field-action:last-child {
+    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > :last-child .sf-field-action{
+    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+    }
+  }
   .sf-lookup-frame > :last-child .sf-field-action:where(:dir(ltr)){
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child,[dir="rtl"]
-  .sf-lookup-frame > :last-child .sf-field-action{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > :last-child .sf-field-action{
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
   @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-lookup-frame > .sf-field-action:last-child,[dir="rtl"]
-  .sf-lookup-frame > :last-child .sf-field-action{
+  [dir="rtl"] .sf-lookup-frame > :last-child .sf-field-action{
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
     }
   }
-  .sf-lookup-frame > .sf-field-action:last-child:where(:dir(rtl)),
   .sf-lookup-frame > :last-child .sf-field-action:where(:dir(rtl)){
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  .sf-lookup-frame > .sf-field-action:last-child,
   .sf-lookup-frame > :last-child .sf-field-action {
     -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
             margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--pair-space);
+            margin-inline-start: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--pair-space);
+            margin-inline-start: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  .sf-lookup-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--pair-space);
+            margin-inline-start: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
+    margin-left: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--pair-space);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
+    margin-right: var(--sf-field-action--pair-space);
+    }
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--pair-space);
+  }
+  .sf-lookup-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--pair-space);
+            margin-inline-start: var(--sf-field-action--pair-space);
   }
 }
 @layer sf.states {
@@ -1495,5 +1686,19 @@
     .sf-field-action:focus-visible .sf-icon {
       outline-color: Highlight;
     }
+  }
+}
+/* C153 (1), (2): a disabled field's label and mark take the disabled ink. */
+.sf-lookup.sf-lookup--disabled .sf-lookup-text,
+.sf-lookup.sf-lookup--disabled .sf-lookup-required {
+  color: var(--sf-on-surface-disabled);
+}
+
+/* C153 (1): at size 1 the label stays 14 on a phone (below 60rem), the step of
+   the value there, as sf-input's. */
+@media not all and (min-width: 60rem) {
+  .sf-lookup.sf-lookup--size-1 {
+    --sf-lookup--label-size: var(--sf-text-size-1);
+    --sf-lookup--label-height: var(--sf-text-height-1);
   }
 }

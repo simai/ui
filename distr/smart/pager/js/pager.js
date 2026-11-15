@@ -58,7 +58,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
  // A key pressed in a field is the field's: the keys setting never takes it.
 
 const EDITABLE = 'input, textarea, select, [contenteditable=""], [contenteditable="true"], [role="textbox"], [role="combobox"], [role="spinbutton"], [role="slider"]';
@@ -90,8 +98,8 @@ function clampIndex(value, length) {
 const PagerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
   actions: {
@@ -747,7 +755,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "4e5307ab3b30"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.3.3","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"total":{"type":"number","integer":true,"min":0,"default":0},"has-next":{"type":"boolean","default":false},"list-href":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background-color":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.3.4","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"total":{"type":"number","integer":true,"min":0,"default":0},"has-next":{"type":"boolean","default":false},"list-href":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background-color":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

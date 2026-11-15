@@ -28,6 +28,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b0314d85fd3a");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _field_size__WEBPACK_IMPORTED_MODULE_7__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_10__]);
 ([_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _field_size__WEBPACK_IMPORTED_MODULE_7__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
@@ -43,31 +44,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
+
  // Every word this part says. A product adds a language with
 // SF.language.register('sf-input-country', code, words); the locale here is
 // also what the number itself is formatted by, which is why it stays.
 
 const COUNTRY_CODE_TEXT = {
-  en: {
-    phoneLabel: 'Phone number',
-    phoneRequired: 'Enter a phone number.',
-    countryLabel: 'Country code',
-    countryUnknown: 'Country code not recognised. Choose a country',
-    searchPlaceholder: 'Country or code',
-    frequent: 'Frequently chosen',
-    allCountries: 'All countries',
-    nothingFound: 'Nothing found'
-  },
-  ru: {
-    phoneLabel: 'Телефон',
-    phoneRequired: 'Введите номер телефона.',
-    countryLabel: 'Код страны',
-    countryUnknown: 'Код страны не узнан. Выбрать страну',
-    searchPlaceholder: 'Страна или код',
-    frequent: 'Часто выбирают',
-    allCountries: 'Все страны',
-    nothingFound: 'Ничего не найдено'
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].ru
 }; // Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default());
@@ -457,7 +443,9 @@ function resolveConfig(root, input) {
   const rawMaskStyle = String(root.dataset.maskStyle ?? input?.dataset.maskStyle ?? 'native').toLowerCase();
   const maskStyle = rawMaskStyle === 'brackets' ? 'brackets' : 'native';
   return {
-    locale: locale === 'ru' ? 'ru' : 'en',
+    // The page's language as it is: ru and en name countries from the table,
+    // any other language through Intl (C177 (9): a third language was English).
+    locale: locale.split('-')[0] || 'en',
     useMask: toBoolean(root.dataset.useMask ?? input?.dataset.useMask, false),
     useCountryMasks: toBoolean(root.dataset.useCountryMasks ?? input?.dataset.useCountryMasks, true),
     showCode: toBoolean(root.dataset.showCode ?? input?.dataset.showCode, true),
@@ -475,12 +463,30 @@ function resolveConfig(root, input) {
     // an empty one for the recent choices alone; without it no group at all.
     preferred: root.dataset.preferred === undefined ? undefined : String(root.dataset.preferred).split(/[\s,;]+/u).map(normalizeIso2).filter(Boolean)
   };
+} // A country's name in a language the table does not carry, from Intl; null
+// where Intl has no name for it (it answers the code back).
+
+
+const REGION_NAMES = new Map();
+
+function regionName(iso2, locale) {
+  if (!iso2 || !locale) return null;
+
+  try {
+    if (!REGION_NAMES.has(locale)) REGION_NAMES.set(locale, new Intl.DisplayNames([locale], {
+      type: 'region'
+    }));
+    const name = REGION_NAMES.get(locale).of(String(iso2).toUpperCase());
+    return name && name.toUpperCase() !== String(iso2).toUpperCase() ? name : null;
+  } catch {
+    return null;
+  }
 }
 
 function getCountryLabel(country, locale) {
   if (!country) return '';
   if (country.label) return String(country.label);
-  const name = (locale === 'en' ? country.nameEn || country.nameRu : country.nameRu || country.nameEn) || country.iso2;
+  const name = (locale === 'ru' ? country.nameRu || country.nameEn : locale === 'en' ? country.nameEn || country.nameRu : regionName(country.iso2, locale) || country.nameEn || country.nameRu) || country.iso2;
   return name ? `${name} (${country.dialCode})` : String(country.dialCode || '');
 }
 
@@ -2994,6 +3000,75 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -3001,10 +3076,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -3218,72 +3301,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -3323,7 +3643,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-input-country from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+}; // sf-input-country from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §11, §16.20, §17.1): the settings are attributes and properties
 // made by core/js/element-manifest.js, the words are lang/<locale>.json and the
 // host is the form control through ElementInternals. What stays here is
@@ -3332,8 +3660,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const CountryCodeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
@@ -3341,7 +3669,7 @@ const CountryCodeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
 const COUNTRY_CODE_SELECTOR = '.sf-country-code';
 const COUNTRY_ITEMS = Array.isArray(_component_country_code_data_countries_json__WEBPACK_IMPORTED_MODULE_0__?.items) ? _component_country_code_data_countries_json__WEBPACK_IMPORTED_MODULE_0__.items : [];
 
-class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(CountryCodeElement) {
+class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(CountryCodeElement)) {
   static get props() {
     return { ...super.props,
       ariaLabel: {
@@ -3428,8 +3756,9 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
 
   get locale() {
     // The country names and the field's own words follow the page unless a
-    // locale is given: Russian on a Russian page, English otherwise.
-    return String(this.getAttribute('locale') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageLanguage)(this)).toLowerCase() === 'ru' ? 'ru' : 'en';
+    // locale is given: ru and en from the country table, any other language
+    // through Intl (C177 (9): a third language was English).
+    return String(this.getAttribute('locale') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageLanguage)(this)).toLowerCase().split('-')[0] || 'en';
   }
 
   get useMask() {
@@ -3528,6 +3857,9 @@ class SfCountryCode extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
     const preserveOpen = root && !this._renderAttributes.has('open') && !this._renderAttributes.has('active');
     const preserveDisabled = root && !this._renderAttributes.has('disabled');
     return this.createTemplateContext({ ...props,
+      // C153 (3): the page's error, or the one the field shows itself (ShownValidity).
+      invalid: this.sfShownInvalid(props.invalid),
+      errorMessage: this.sfShownMessage(props.invalid, props.errorMessage),
       open: preserveOpen ? root.classList.contains('open') : this.open,
       disabled: preserveDisabled ? !!root.querySelector('input')?.disabled || root.classList.contains('disabled') : this.disabled,
       countries: this.countries.length ? this.countries : (0,_component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_2__.normalizeCountriesList)(COUNTRY_ITEMS, this.locale, this.maxItems),
@@ -3619,10 +3951,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderCountryCodeTemplate: () => (/* binding */ renderCountryCodeTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
  // A flag of the list is the browser's own lazy image: the address is written
 // with the row, and the browser fetches it when the row comes near the view (a
@@ -3690,7 +4024,7 @@ function renderCountryCodeTemplate(context) {
   } = context; // The line under the field is sf-input's (fields ladder, 2026-11-14): the
   // help, or the error in its place while the field is invalid and says why.
 
-  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
+  const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_2__.createFieldContract)(context.component, {
     prefix: 'sf-input-country',
     invalid: context.invalid,
     hint,
@@ -3728,7 +4062,14 @@ function renderCountryCodeTemplate(context) {
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <span class="sf-country-code-label flex">
             <span class="sf-country-code-text">${label}</span>
-            ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-country-code-required">*</span>` : ''}
+            ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-country-code-required" aria-hidden="true">*</span>` : ''}
+            ${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help: context.help,
+    label,
+    size,
+    className: 'sf-country-code-help',
+    component: context.component
+  })}
           </span>` : ''}
 
       <span class="sf-country-code-field transition flex items-center">
@@ -3848,6 +4189,25 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "b0314d85fd3a"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("30e4802f0b2b");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c12c62b3b14e");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
 /***/ "c614c5e30b0d"
 (module) {
 
@@ -3862,6 +4222,20 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-country-code":["display/flex (.f
 
 /***/ },
 
+/***/ "30e4802f0b2b"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"phoneLabel":"Phone number","phoneRequired":"Enter a phone number.","countryLabel":"Country code","countryUnknown":"Country code not recognised. Choose a country","searchPlaceholder":"Country or code","frequent":"Frequently chosen","allCountries":"All countries","nothingFound":"Nothing found"}}');
+
+/***/ },
+
+/***/ "c12c62b3b14e"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"phoneLabel":"Телефон","phoneRequired":"Введите номер телефона.","countryLabel":"Код страны","countryUnknown":"Код страны не узнан. Выбрать страну","searchPlaceholder":"Страна или код","frequent":"Часто выбирают","allCountries":"Все страны","nothingFound":"Ничего не найдено"}}');
+
+/***/ },
+
 /***/ "b847b178e9c4"
 (module) {
 
@@ -3872,21 +4246,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1870676d0d14"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.7.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.8.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 
 /***/ "7aba30a6eb07"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Country Code","runtime":{"all-countries":"All countries","country-label":"Country code","country-unknown":"Country code not recognised. Choose a country","frequent":"Frequently chosen","nothing-found":"Nothing found","phone-label":"Phone number","phone-required":"Enter a phone number.","placeholder":"","search-placeholder":"Country or code","value-missing":"Enter a phone number."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Country Code","runtime":{"all-countries":"All countries","country-label":"Country code","country-unknown":"Country code not recognised. Choose a country","frequent":"Frequently chosen","nothing-found":"Nothing found","phone-label":"Phone number","phone-required":"Enter a phone number.","placeholder":"","search-placeholder":"Country or code","value-missing":"Enter a phone number.","pattern-mismatch":"Enter the whole number","too-short":"Enter the whole number","help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "383ecf57640b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Код страны","runtime":{"all-countries":"Все страны","country-label":"Код страны","country-unknown":"Код страны не узнан. Выбрать страну","frequent":"Часто выбирают","nothing-found":"Ничего не найдено","phone-label":"Телефон","phone-required":"Введите номер телефона.","placeholder":"","search-placeholder":"Страна или код","value-missing":"Введите номер телефона."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Код страны","runtime":{"all-countries":"Все страны","country-label":"Код страны","country-unknown":"Код страны не узнан. Выбрать страну","frequent":"Часто выбирают","nothing-found":"Ничего не найдено","phone-label":"Телефон","phone-required":"Введите номер телефона.","placeholder":"","search-placeholder":"Страна или код","value-missing":"Введите номер телефона.","pattern-mismatch":"Введите номер целиком","too-short":"Введите номер целиком","help":"Подробнее: {label}"}}');
 
 /***/ }
 

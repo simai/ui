@@ -20,6 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pluralForm: () => (/* binding */ pluralForm)
 /* harmony export */ });
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4c90c9c3f57e");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
@@ -42,20 +43,17 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
 // Whether a count is drawn as a number or as a dot is the stylesheet's
 // decision: on an anchor of 1/3 or 1/2 a count is a dot, whatever it says, and
 // the number lives in the name and the tooltip alone.
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
+
  // The words, by language. A count is one phrase per plural form, separated by
 // «|» in the order of CLDR's categories -- one|few|many|other in Russian,
 // one|other in English -- with {count} where the number goes. A product adds a
 // language with SF.language.register('sf-badge', code, {count, dot}).
 
 const ANCHORED_BADGE_TEXT = {
-  en: {
-    count: '{count} unread',
-    dot: 'new'
-  },
-  ru: {
-    count: '{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного',
-    dot: 'есть новое'
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru
 };
 const ANCHORED_BADGE_COMPONENT = 'sf-badge';
 const DEFAULT_BADGE_CAP = 99;
@@ -465,8 +463,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
-const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'href', 'target', 'rel', 'download', 'pressed', 'label-pressed', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+};
+const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'href', 'target', 'rel', 'download', 'pressed', 'label-pressed', 'tooltip', // The host's title is the name tooltip's text (C160 (1)), not forwarded.
+'title', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -504,15 +511,44 @@ function linkRelation(target, rel) {
 const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
-}); // The looks C15 retired (docs review R033): surface is drawn as tonal with
+}); // The name tooltip (owner decision C160 (1)): the icon button shows its name
+// as the Framework's tooltip by itself. The surface is the tooltip
+// composition (a .sf-tooltip the button names by data-tooltip), linked by the
+// tooltip controller (component.tooltip); it is made on the first hover,
+// keyboard focus or long press, so nothing is drawn or fetched before -- the
+// first-paint markup is unchanged -- and the event that woke it is handed to
+// the controller once it has linked the button.
+
+const NAME_TIP = 'sf-icon-button-tooltip';
+let nameTips = 0;
+
+function tooltipController() {
+  return globalThis.SF?.ComponentRegistry?.Tooltip || globalThis.SF?.Loader?.ComponentRegistry?.Tooltip || null;
+} // The controller is there: run now; else ask the Loader for it (a lazy
+// relation) and run once it registered.
+
+
+function whenTooltipReady(run) {
+  if (tooltipController()) {
+    run();
+    return;
+  }
+
+  const loader = globalThis.SF?.Loader;
+  loader?.ensurePlugin?.('tooltip');
+  if (typeof loader?.ready === 'function') loader.ready('Tooltip', () => run());else globalThis.addEventListener?.('Tooltip:ready', () => run(), {
+    once: true
+  });
+} // The looks C15 retired (docs review R033): surface is drawn as tonal with
 // the on-surface scheme, secondary as on-surface-variant. surface changes two
 // settings, which a value alias cannot do, so the component reads the word
 // itself and notes the use (change journal value-icon-button-looks-c15).
+
 
 const RETIRED_APPEARANCE = 'surface';
 
@@ -522,7 +558,7 @@ class SfIconButton extends IconButtonElement {
   // drawing never reached the button (sf-language's «Язык: Русский» stayed
   // after a choice, 2026-11-06). updateDom patches it.
   static get observedAttributes() {
-    return [...new Set([...super.observedAttributes, 'aria-label'])];
+    return [...new Set([...super.observedAttributes, 'aria-label', 'title'])];
   }
 
   constructor() {
@@ -712,7 +748,7 @@ class SfIconButton extends IconButtonElement {
   resolveUpdateMode(changedAttributes = []) {
     // loading is drawn by the template, not patched: it puts the spinner in
     // place of the icon (simai/ui-source#10).
-    const directPatchAttributes = ['disabled', 'aria-label', 'icon']; // A cycle's name and icon come from its item: drawn, not patched; a link
+    const directPatchAttributes = ['disabled', 'aria-label', 'icon', 'title', 'tooltip']; // A cycle's name and icon come from its item: drawn, not patched; a link
     // is drawn too (disabled takes its href away).
 
     if (this.cycleState() || this.hasAttribute('href')) return 'lit';
@@ -763,16 +799,130 @@ class SfIconButton extends IconButtonElement {
     }
 
     applyButtonAttributes(this, button);
+    this.syncNameTooltip();
     return true;
+  } // The name tooltip's text: the host's title when the page wrote one, a
+  // cycle's current and next value, the pressed name of a toggle that is on,
+  // else the name.
+
+
+  nameTooltipText() {
+    const title = (this.getAttribute('title') || '').trim();
+    if (title) return title;
+    const cycle = this.cycleState();
+    if (cycle) return cycle.tooltip;
+    return String(this.pressed === true && this.labelPressed || this.getAttribute('aria-label') || '').trim();
+  } // The button and whether the name tooltip is its: off, no text, or a
+  // tooltip the page linked itself (data-tooltip naming another surface).
+
+
+  nameTooltipTarget() {
+    const button = this.querySelector('.sf-icon-button');
+    if (!button || this.getAttribute('tooltip') === 'off' || !this.nameTooltipText()) return null;
+    const linked = button.getAttribute('data-tooltip');
+    if (linked && linked !== this._nameTip?.id) return null;
+    return button;
+  } // After every drawing: the title stands back, and a tooltip made already
+  // keeps its text and its link to the button lit drew this time.
+
+
+  syncNameTooltip() {
+    const button = this.querySelector('.sf-icon-button');
+    if (!button) return;
+    const target = this.nameTooltipTarget();
+    const tip = this._nameTip;
+
+    if (!target) {
+      button.removeAttribute('aria-description');
+
+      if (tip) {
+        if (button.getAttribute('data-tooltip') === tip.id) button.removeAttribute('data-tooltip');
+        tip.remove();
+        this._nameTip = null;
+      } // Off: the host's title and a cycle's value stay the browser's title,
+      // as before 1.11.0.
+
+
+      const cycle = this.cycleState();
+      const title = this.getAttribute('title');
+      if (cycle) button.setAttribute('title', cycle.tooltip);else if (title !== null) button.setAttribute('title', title);else if (button.getAttribute('title') === '') button.removeAttribute('title');
+      return;
+    } // An empty title on the button: the host's title (the button's ancestor)
+    // draws no browser tooltip over the Framework one.
+
+
+    if (this.hasAttribute('title')) button.setAttribute('title', '');else button.removeAttribute('title'); // A text other than the name describes the button (as the title did)
+    // before the tooltip is made; once made, the controller links it by
+    // aria-describedby instead.
+
+    const cycle = this.cycleState();
+    const name = String(cycle ? cycle.name : this.pressed === true && this.labelPressed || this.getAttribute('aria-label') || '').trim().toLowerCase();
+    const said = this.nameTooltipText();
+    if (!tip && said.toLowerCase() !== name) button.setAttribute('aria-description', said);else button.removeAttribute('aria-description');
+    if (!tip) return;
+    const text = tip.querySelector('.sf-tooltip-text');
+    if (text && text.textContent !== this.nameTooltipText()) text.textContent = this.nameTooltipText();
+    if (tip.previousElementSibling !== button || !tip.isConnected) button.after(tip);
+    if (button.getAttribute('data-tooltip') !== tip.id) button.setAttribute('data-tooltip', tip.id);
+  } // The first hover, keyboard focus or long press makes the tooltip and hands
+  // that event to the controller, which shows it by its own rules (C59).
+
+
+  wakeNameTooltip(event) {
+    if (this._nameTip) return;
+    const button = this.nameTooltipTarget();
+    if (!button) return; // A pointer entering is told to the host itself; a focus and a press come
+    // from inside, and must come from the button.
+
+    if (event.type !== 'pointerenter' && !(event.target instanceof Node && button.contains(event.target))) return;
+    const tip = document.createElement('span');
+    tip.className = `sf-tooltip sf-tooltip--dark ${NAME_TIP}`;
+    tip.id = this.id ? `${this.id}--tooltip` : `${NAME_TIP}-${++nameTips}`;
+    tip.hidden = true;
+    const content = document.createElement('span');
+    content.className = 'sf-tooltip-content';
+    const text = document.createElement('span');
+    text.className = 'sf-tooltip-text';
+    text.textContent = this.nameTooltipText();
+    content.append(text);
+    tip.append(content);
+    this._nameTip = tip;
+    button.after(tip);
+    button.removeAttribute('aria-description');
+    button.setAttribute('data-tooltip', tip.id);
+    const kind = event.type;
+    const pointerType = event.pointerType;
+    let released = false;
+    if (kind === 'pointerdown') button.addEventListener('pointerup', () => {
+      released = true;
+    }, {
+      once: true
+    });
+    whenTooltipReady(() => setTimeout(() => {
+      const now = this.querySelector('.sf-icon-button');
+      if (!now || now.getAttribute('data-tooltip') !== tip.id) return; // The controller links the button on its own (its observer); the event
+      // is handed over only while it still holds.
+
+      if (kind === 'pointerenter' && now.matches(':hover')) {
+        now.dispatchEvent(new PointerEvent('pointerenter', {
+          pointerType
+        }));
+      } else if (kind === 'focusin' && document.activeElement === now) {
+        now.dispatchEvent(new FocusEvent('focusin'));
+      } else if (kind === 'pointerdown' && !released) {
+        now.dispatchEvent(new PointerEvent('pointerdown', {
+          pointerType
+        }));
+      }
+    }, 0));
   }
 
   afterRender() {
     const button = this.querySelector('.sf-icon-button');
-    applyButtonAttributes(this, button); // The cycle's tooltip names the current and the next value; it stands
-    // over a title the page forwarded.
+    applyButtonAttributes(this, button); // The name tooltip (C160 (1)): a cycle's value and the host's title are
+    // its text, not a browser title; off, they stay the title.
 
-    const cycle = this.cycleState();
-    if (button && cycle) button.setAttribute('title', cycle.tooltip);
+    this.syncNameTooltip();
 
     if (!this._attributeObserver) {
       this._attributeObserver = this.observeForwardedHostAttributes(() => this.querySelector('.sf-icon-button'), {
@@ -886,6 +1036,30 @@ class SfIconButton extends IconButtonElement {
   }
 
   onConnected() {
+    if (!this._nameTipWake) {
+      // Pointer enter does not bubble, but the host is the button's ancestor
+      // and hears it; a finger counts only once it is a long press (the
+      // controller times it), so a touch is handed over from pointerdown.
+      this._nameTipWake = event => {
+        if (event.type === 'pointerenter' && event.pointerType === 'touch') return;
+        if (event.type === 'pointerdown' && event.pointerType !== 'touch') return;
+
+        if (event.type === 'focusin') {
+          try {
+            if (!event.target?.matches?.(':focus-visible')) return;
+          } catch {
+            /* the selector unknown: a focus counts */
+          }
+        }
+
+        this.wakeNameTooltip(event);
+      };
+
+      this.addEventListener('pointerenter', this._nameTipWake);
+      this.addEventListener('focusin', this._nameTipWake);
+      this.addEventListener('pointerdown', this._nameTipWake);
+    }
+
     if (!this._cyclePress) {
       // A person's press moves the cycle: the click of the native button.
       this._cyclePress = event => {
@@ -908,6 +1082,13 @@ class SfIconButton extends IconButtonElement {
   }
 
   onDisconnected() {
+    if (this._nameTipWake) {
+      this.removeEventListener('pointerenter', this._nameTipWake);
+      this.removeEventListener('focusin', this._nameTipWake);
+      this.removeEventListener('pointerdown', this._nameTipWake);
+      this._nameTipWake = null;
+    }
+
     if (this._cyclePress) {
       this.removeEventListener('click', this._cyclePress);
       this._cyclePress = null;
@@ -1786,6 +1967,39 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "4c90c9c3f57e"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7f9642eacf1b");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8714e4691010");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "7f9642eacf1b"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+
+/***/ },
+
+/***/ "8714e4691010"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+
+/***/ },
+
 /***/ "c402762d3a76"
 (module) {
 
@@ -1796,7 +2010,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.10.1","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.11.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

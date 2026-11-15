@@ -42,18 +42,43 @@
     cursor: grab;
     touch-action: none;
   }
+  /* A row without a handle is taken whole: by a finger after a long press,
+     so the page still scrolls over it, and the press brings up no text
+     selection or callout of its own (owner C171 (2)). */
+  @media (pointer: coarse) {
+    [data-sf-sortable-item][data-sf-sortable-whole] {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+    }
+  }
+  /* The copy under the pointer is whole (owner C171 (3)): no transparency
+     of its own and none copied from the dimmed item. It stands over the
+     page -- the overlay place (C20): the popup surface under the copy and
+     the overlay shadow, no value of its own. */
   .sf-sortable-ghost {
     position: fixed;
     z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
+    box-sizing: border-box;
     margin: 0;
     pointer-events: none;
-    opacity: 0.9;
-    opacity: var(--sf-sortable-ghost-opacity, 0.9);
-    /* The dragged copy stands over the page: the overlay place (C20), no
-       value of its own. */
+    opacity: 1;
+    opacity: var(--sf-sortable-ghost-opacity, 1);
+    background-color: Canvas;
+    background-color: var(--sf-surface-popup, Canvas);
     box-shadow: var(--sf-shadow-overlay);
   }
+  .sf-sortable-ghost > .sf-sortable-ghost-item {
+    opacity: 1;
+  }
+  /* The drop line (owner C171 (4)): one line, two pixels thick
+     (SORTABLE_DROP_LINE in the drag module draws its box), for a list, a
+     grid, the column mode's line preview and the editor overlay's seams --
+     the overlay loads this sheet through its rule and draws with this
+     class. */
   .sf-sortable-indicator {
     position: fixed;
     z-index: 90;
@@ -202,6 +227,19 @@
     background-image: linear-gradient(transparent, transparent);
     background-image: linear-gradient(var(--sf-icon-button--background-color, transparent), var(--sf-icon-button--background-color, transparent));
     --sf-icon-button--box-shadow: var(--sf-shadow-raised);
+  }
+  /* Under a finger the "+" answers on the touch target (44, --sf-d1)
+     around its own box; the loading mark keeps ::after. */
+  @media (pointer: coarse) {
+    .sf-sortable-insert .sf-sortable-insert-button.sf-icon-button::before {
+      content: "";
+      position: absolute;
+      top: min(0px, (100% - var(--sf-d1)) / 2);
+      right: min(0px, (100% - var(--sf-d1)) / 2);
+      bottom: min(0px, (100% - var(--sf-d1)) / 2);
+      left: min(0px, (100% - var(--sf-d1)) / 2);
+      inset: min(0px, (100% - var(--sf-d1)) / 2);
+    }
   }
   html[data-sf-sortable-active] .sf-sortable-insert {
     display: none;

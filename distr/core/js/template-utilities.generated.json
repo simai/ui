@@ -90,12 +90,16 @@
     "position/default",
     "width/default"
   ],
+  "cl-display-settings": [
+    "font-family/default",
+    "text-decoration/default"
+  ],
   "cl-drawer": [
     "display/default",
-    "justify-content/default",
     "margin/default",
-    "place-items/default",
+    "position/default",
     "resize/default",
+    "text-max-width/default",
     "visibility/default"
   ],
   "cl-dropdown": [
@@ -131,6 +135,10 @@
     "justify-items/default",
     "width/default"
   ],
+  "cl-form": [
+    "display/default",
+    "position/default"
+  ],
   "cl-gallery": [
     "display/default"
   ],
@@ -138,10 +146,10 @@
     "align-items/default",
     "display/default",
     "flex-direction/default",
-    "flex-grow/default",
     "flex-wrap/default",
     "margin/default",
     "min-width/default",
+    "position/default",
     "text-overflow/default"
   ],
   "cl-header-site": [
@@ -237,6 +245,7 @@
     "display/default",
     "flex/default",
     "justify-content/default",
+    "position/default",
     "sr-only/default"
   ],
   "cl-list-attention": [
@@ -417,6 +426,9 @@
     "min-width/default",
     "place-items/default"
   ],
+  "cl-tag-group": [
+    "display/default"
+  ],
   "cl-tile-metric": [
     "position/default",
     "sr-only/default"
@@ -424,7 +436,7 @@
   "cl-time": [
     "display/default",
     "position/default",
-    "visibility/default"
+    "sr-only/default"
   ],
   "cl-toast": [
     "align-items/default",

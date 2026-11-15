@@ -635,6 +635,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
   }
@@ -689,6 +691,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
   }
@@ -1358,6 +1362,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     /* A long name wraps (C95 point 5) within the column's width. */
@@ -1949,6 +1955,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
@@ -2567,6 +2575,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
@@ -3185,6 +3195,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }
@@ -3803,6 +3815,8 @@
       --sf-surface-transparent-active: var(--sf-surface-state-active);
       --sf-surface-transparent-hover: var(--sf-surface-state-hover);
       --sf-surface-transparent-select: var(--sf-surface-state-select);
+      --sf-code--color: var(--sf-on-surface);
+      --sf-code--background: var(--sf-surface-container);
       --sf-place--container-outline: initial;
       box-shadow: var(--sf-shadow-overlay);
     }

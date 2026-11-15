@@ -183,6 +183,31 @@
       ]
     },
     {
+      "name": "SF.displaySettings",
+      "status": "public",
+      "layer": "core",
+      "audience": "public",
+      "author": "Keeps the display settings a person chose on this site (text size, colour scheme, spacing, images, motion) in this browser and shows them on every page.",
+      "doc": "guide/functions/person/display-settings",
+      "kind": "object",
+      "loaded_by": "core",
+      "summary": "The person's display settings (owner decision C196): kept in localStorage sf-display-settings only, written on <html> as data-sf-scheme, data-sf-text-scale, data-sf-text-spacing, data-sf-images, data-sf-motion, data-sf-font and data-sf-links; the sf-display-settings panel writes them. Nothing is sent to a server.",
+      "members": [
+        "storageKey",
+        "schemes",
+        "textScales",
+        "defaults",
+        "read",
+        "current",
+        "write",
+        "reset",
+        "subscribe",
+        "reducedMotion",
+        "forcedColors",
+        "installSkipLink"
+      ]
+    },
+    {
       "name": "SF.RegionNavigation",
       "status": "public",
       "layer": "core",
@@ -415,6 +440,19 @@
         "configure",
         "close",
         "history"
+      ]
+    },
+    {
+      "name": "SF.menu",
+      "status": "public",
+      "layer": "core",
+      "audience": "public",
+      "author": "Opens the page's one menu of actions at a control or at a point and answers the row chosen.",
+      "kind": "object",
+      "loaded_by": "core",
+      "summary": "The page's one menu of actions (owner decision C184 (4)): open({anchor | x, y, entries, label, size, returnTo}) opens the standard menu (sf-menu-context, fetched by the Loader the first time, one on the page, in the open modal dialog the opener is in) at a control or with its corner at a point in the window, and settles with {id, entry} of the row chosen or null when it closes without one; it never rejects. A press on the same control while its menu is open closes it; a second opening closes the first, which answers null. The focus goes back to returnTo (the row acted on), else to where it was. A row's «⋯», a toolbar's «Ещё», the right button and the menu key all open this one menu, with the same entries.",
+      "members": [
+        "open"
       ]
     },
     {
@@ -1304,7 +1342,9 @@
         "textOffset",
         "INLINE_EVENTS",
         "INLINE_EVENTS_LEGACY",
-        "INLINE_TOOLBAR_MODES"
+        "INLINE_TOOLBAR_MODES",
+        "INLINE_ENTER_MODES",
+        "linkProblem"
       ]
     },
     {

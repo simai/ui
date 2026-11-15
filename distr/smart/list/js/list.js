@@ -2,6 +2,153 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
 /***/ "e577837dd70a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -10,7 +157,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
 /* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   knownTimeZone: () => (/* binding */ knownTimeZone),
 /* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   timeZoneOffset: () => (/* binding */ timeZoneOffset),
 /* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
@@ -39,8 +188,10 @@ function hasDateStyle(style) {
  *
  * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
  * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
+ * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
+ * Europe/Moscow) writes the moment on that zone's clock instead of the
+ * reader's (owner decision C183 (3): a product that knows the person's zone).
+ * Anything that is not a date is `gap`, '' by default.
  */
 
 
@@ -48,6 +199,7 @@ function formatDate(value, {
   date = 'medium',
   time = null,
   intl = null,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -62,23 +214,107 @@ function formatDate(value, {
     if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
   }
 
+  if (knownTimeZone(timeZone)) options = { ...options,
+    timeZone
+  };
   return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
 }
 /**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
+ * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
+ * empty or unknown name is the reader's own zone everywhere here.
+ */
+
+function knownTimeZone(timeZone) {
+  const name = String(timeZone ?? '').trim();
+  if (!name) return false;
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfTimeZones instanceof Map)) root.__sfTimeZones = new Map();
+  if (root.__sfTimeZones.has(name)) return root.__sfTimeZones.get(name);
+  let known = true;
+
+  try {
+    new Intl.DateTimeFormat('en', {
+      timeZone: name
+    });
+  } catch {
+    known = false;
+  }
+
+  if (root.__sfTimeZones.size < 64) root.__sfTimeZones.set(name, known);
+  return known;
+} // The calendar date and the clock of a moment in a zone, as numbers: the
+// reader's own when the zone is none.
+
+function wallClock(moment, timeZone) {
+  if (!knownTimeZone(timeZone)) {
+    return {
+      year: moment.getFullYear(),
+      month: moment.getMonth(),
+      day: moment.getDate(),
+      hour: moment.getHours(),
+      minute: moment.getMinutes(),
+      second: moment.getSeconds()
+    };
+  }
+
+  const parts = {};
+
+  for (const part of (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', 'en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  }).formatToParts(moment)) {
+    if (part.type !== 'literal') parts[part.type] = Number(part.value);
+  }
+
+  return {
+    year: parts.year,
+    month: parts.month - 1,
+    day: parts.day,
+    hour: parts.hour % 24,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+/**
+ * The zone's offset from UTC at a moment, in minutes (Moscow +180, New York
+ * -300 in winter); the reader's own when the zone is none.
+ */
+
+
+function timeZoneOffset(value, {
+  timeZone = ''
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return Number.NaN;
+  if (!knownTimeZone(timeZone)) return -moment.getTimezoneOffset();
+  const clock = wallClock(moment, timeZone);
+  const asUtc = Date.UTC(clock.year, clock.month, clock.day, clock.hour, clock.minute, clock.second);
+  return Math.round((asUtc - Math.floor(moment.getTime() / 1000) * 1000) / 60000);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone (or
+ * `timeZone`'s): 0 today, -1 yesterday, 1 tomorrow; NaN when the value is no
+ * date. Counted on calendar dates, not 24-hour spans, so 23:59 yesterday is
+ * -1 at 00:01 and a day of a clock change is still one day.
  */
 
 function calendarDayOffset(value, {
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
   if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const at = wallClock(moment, timeZone);
+  const from = wallClock(today, timeZone);
+  const day = Date.UTC(at.year, at.month, at.day);
+  const base = Date.UTC(from.year, from.month, from.day);
   return Math.round((day - base) / DAY_MS);
 }
 /**
@@ -88,10 +324,26 @@ function calendarDayOffset(value, {
  * draws them again; «сегодня» said yesterday is wrong by morning.
  */
 
-function msUntilNextDay(now = new Date()) {
+function msUntilNextDay(now = new Date(), {
+  timeZone = ''
+} = {}) {
   const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
+
+  if (!knownTimeZone(timeZone)) {
+    const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return next.getTime() - today.getTime();
+  } // In a named zone: the time left on its clock until 24:00, corrected by a
+  // change of its offset before then (a clock change at night).
+
+
+  const clock = wallClock(today, timeZone);
+  const left = DAY_MS - ((clock.hour * 60 + clock.minute) * 60 + clock.second) * 1000 - today.getMilliseconds();
+  const shift = timeZoneOffset(today, {
+    timeZone
+  }) - timeZoneOffset(new Date(today.getTime() + left), {
+    timeZone
+  });
+  return Math.max(1, left + shift * 60000);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -109,25 +361,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4294700087dc");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // File sizes in the page's language («1,4 МБ»), with no top-level side
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
- // The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
+ // The four words of a size live in core's language files
+// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
+// other language takes the words a product registers for `sf-file-size`
+// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// English words with its own digits. A component with words of its own passes
+// them as `units`. The registry is read from the shared global the page
+// language keeps (core/js/page-language.js), so this module still runs
+// nothing on load.
+
+
+const UNIT_KEYS = /* @__PURE__ */Object.freeze(['b', 'kb', 'mb', 'gb']);
+
+function unitsOf(words) {
+  return Object.freeze(UNIT_KEYS.map(key => words[key]));
+}
 
 const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
+  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
 });
-/** The unit words for a locale: its language's, else English. */
+
+function registeredUnits(code) {
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
+  return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
+}
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
+
 
 function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
+    if (units) return units;
+  }
+
+  return registeredUnits('en') ?? FILE_SIZE_UNITS.en;
 }
 /**
  * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
@@ -394,6 +671,8 @@ function capitalise(text, locale) {
  * `weekday: false` goes from yesterday straight to the date; `capital: true`
  * starts the word with a capital, as a heading or a divider does.
  *
+ * `timeZone` counts the days and writes them on that zone's clock.
+ *
  * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
  * says when.
  */
@@ -406,6 +685,7 @@ function formatRelativeDay(value, {
   tomorrow,
   weekday = true,
   capital = false,
+  timeZone = '',
   gap = '',
   ...where
 } = {}) {
@@ -413,8 +693,12 @@ function formatRelativeDay(value, {
   if (!moment) return gap;
   const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
   const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
-    now
+    now,
+    timeZone
   });
+  const zone = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.knownTimeZone)(timeZone) ? {
+    timeZone
+  } : {};
   const own = {
     0: today,
     [-1]: yesterday,
@@ -430,7 +714,8 @@ function formatRelativeDay(value, {
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
-      weekday: 'long'
+      weekday: 'long',
+      ...zone
     }).format(moment);
   } else {
     const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
@@ -439,7 +724,8 @@ function formatRelativeDay(value, {
     text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
       day: 'numeric',
       month: 'long',
-      ...year
+      ...year,
+      ...zone
     }).format(moment);
   }
 
@@ -564,6 +850,260 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "8d229b7c92e9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   menuOpen: () => (/* binding */ menuOpen),
+/* harmony export */   publishMenu: () => (/* binding */ publishMenu)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// SF.menu.open: the page's one menu of actions (owner decision C184 (4),
+// 2026-11-14; the public name is the owner's; study control/research/
+// 2026-11-14-toolbar-menu-open.md, K-03).
+//
+// A row's «⋯», a toolbar's «Ещё», the right button and the menu key on a row
+// all open the standard menu -- sf-menu-context -- and every component used to
+// place its own and wait for it (nine in SIMAI Pro, more in the Framework).
+// Now one call opens the one menu of the page:
+//
+//   const choice = await SF.menu.open({anchor, entries, label});
+//   const choice = await SF.menu.open({x, y, entries, label, returnTo: row});
+//   // choice: {id, entry} of the row chosen, or null (closed without one)
+//
+// - anchor: the control the menu hangs from (a press on the same control
+//   while its menu is open closes it, as a toggle); or x, y: a point in the
+//   window -- where a right-click was, or a row's corner for Shift+F10 -- the
+//   menu's corner exactly there;
+// - entries: the rows, as sf-menu-context takes them;
+// - label: the menu's name, read by a screen reader;
+// - size: the menu's size step, as sf-menu-context's size attribute; left
+//   out, the step of what opens it (the anchor's, its component's or the
+//   Smart component holding it: a row menu of a table of size 1 is size 1);
+// - returnTo: where the focus goes when the menu closes (the row it acted
+//   on); left out, the menu gives the focus back to where it was, or to the
+//   anchor.
+//
+// The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
+// the page -- on the body, or in the open modal dialog the anchor is in, since
+// a modal dialog makes the rest of the page inert. A second opening while one
+// is open closes the first, which answers null. The answer never rejects:
+// without a menu (no Loader, no sf-menu-context) it is null.
+//
+// Every bundle may carry a copy of this module (bundles each carry their own
+// module copy), so the one menu and its pending answer live behind the shared
+// global: the first copy to run publishes SF.menu.open and every other copy
+// calls the published one.
+
+const SHARED = 'data-sf-menu-shared';
+
+function installMenuOpen() {
+  let pending = null;
+  let point = null; // The opening the menu belongs to now, kept past its answer: a choice
+  // answers before the menu closes, and the focus goes back on closing.
+
+  let shown = null;
+
+  const settle = value => {
+    const waiting = pending;
+    pending = null;
+    waiting?.resolve(value);
+    return waiting;
+  };
+
+  function sharedMenu(anchor) {
+    const doc = globalThis.document;
+    let menu = doc.querySelector(`[${SHARED}]`);
+
+    if (!menu) {
+      menu = doc.createElement('sf-menu-context');
+      menu.setAttribute('popup', '');
+      menu.setAttribute(SHARED, '');
+      menu.addEventListener('sf-menu-context-select', event => {
+        if (event.target !== menu) return;
+        settle({
+          id: event.detail?.id ?? null,
+          entry: event.detail?.entry ?? null
+        });
+      });
+      menu.addEventListener('sf-menu-context-closed', event => {
+        if (event.target !== menu) return;
+        settle(null);
+        const opening = shown;
+        shown = null;
+        const back = opening?.returnTo;
+        if (!back?.isConnected) return; // After the menu's own return: the row the person acted on, when the
+        // focus fell to the page, stayed in the closed menu or went back to
+        // the «⋯» that opened it (a pointer's control, not a Tab stop).
+
+        const anchor = opening.anchor;
+        setTimeout(() => {
+          const active = doc.activeElement;
+
+          if (!active || active === doc.body || active === doc.documentElement || menu.contains(active) || anchor && (active === anchor || anchor.contains?.(active))) {
+            back.focus?.({
+              preventScroll: true
+            });
+          }
+        }, 0);
+      });
+    } // In the open modal dialog the opener is in, or on the body.
+
+
+    const home = anchor?.closest?.('dialog[open]') || doc.body;
+    if (menu.parentNode !== home && !menu.isOpen) home.append(menu);
+    return menu;
+  } // A point in the window as an anchor of no size: sf-menu-context hangs its
+  // corner exactly there and reads the page under it (density, focus back).
+
+
+  function pointAnchor(x, y, near) {
+    const doc = globalThis.document;
+
+    if (!point?.isConnected) {
+      point = doc.createElement('span');
+      point.setAttribute('aria-hidden', 'true');
+      point.setAttribute('data-sf-menu-point', '');
+    }
+
+    const home = near?.closest?.('dialog[open]') || doc.body;
+    if (point.parentNode !== home) home.append(point);
+    point.style.cssText = `position:fixed;left:${x}px;top:${y}px;inline-size:0;block-size:0;pointer-events:none;overflow:hidden`;
+    return point;
+  }
+
+  return async function open(options = {}) {
+    const {
+      anchor = null,
+      x,
+      y,
+      entries = [],
+      label = '',
+      size = '',
+      returnTo = null
+    } = options || {};
+    const atPoint = !(anchor instanceof Element);
+    if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
+    const doc = globalThis.document;
+    if (!doc) return null;
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!globalThis.customElements?.get('sf-menu-context')) return null;
+    const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
+
+    if (!atPoint && menu.isOpen && pending?.anchor === anchor) {
+      menu.close({
+        reason: 'api'
+      });
+      return null;
+    }
+
+    if (menu.isOpen) {
+      settle(null);
+      shown = null;
+      menu.close({
+        restoreFocus: false,
+        reason: 'api',
+        ask: false
+      });
+    }
+
+    if (label) menu.setAttribute('aria-label', label);else menu.removeAttribute('aria-label');
+    if (size) menu.setAttribute('size', String(size));else {
+      menu.removeAttribute('size');
+      menu.removeAttribute(_density_js__WEBPACK_IMPORTED_MODULE_0__.RELATIVE);
+    } // In the density of the control or the row it opens from (C22, C79), not
+    // of the body it stands on.
+
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, atPoint ? returnTo : anchor);
+    menu.search = null;
+    menu.entries = Array.isArray(entries) ? entries : [];
+    return new Promise(resolve => {
+      pending = {
+        resolve,
+        anchor,
+        returnTo: returnTo instanceof Element ? returnTo : null
+      };
+      shown = pending;
+      const mine = pending;
+      const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
+        target: returnTo ?? undefined
+      }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      }) : menu.openFor(anchor, {
+        side: 'block-end',
+        align: 'start',
+        focus: 'first'
+      });
+      Promise.resolve(opening).then(answer => {
+        // Refused (a listener kept it closed) or no surface: nothing chosen.
+        if (pending === mine && answer && answer !== true && answer.outcome !== 'applied') settle(null);
+      }, () => {
+        if (pending === mine) settle(null);
+      });
+    });
+  };
+} // The published one, or this copy published.
+
+
+function publishMenu() {
+  const SF = globalThis.SF = globalThis.SF || {};
+  SF.menu = SF.menu || {};
+  if (typeof SF.menu.open !== 'function') SF.menu.open = installMenuOpen();
+  return SF.menu;
+}
+function menuOpen(options) {
+  return publishMenu().open(options);
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuOpen);
+
+/***/ },
+
+/***/ "2ee7a47e9b10"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MOTION_ATTRIBUTE: () => (/* binding */ MOTION_ATTRIBUTE),
+/* harmony export */   MOTION_CHANGE: () => (/* binding */ MOTION_CHANGE),
+/* harmony export */   reducedMotion: () => (/* binding */ reducedMotion),
+/* harmony export */   watchMotion: () => (/* binding */ watchMotion)
+/* harmony export */ });
+// Whether to keep things still: the device asks for less motion
+// (prefers-reduced-motion: reduce), or the person stopped motion on this site
+// (<html data-sf-motion="reduce">, written by the sf-display-settings panel
+// through SF.displaySettings; owner decision C196, 2026-11-15). Core's own
+// scripts read this one function; the core sheet stops CSS animations and
+// transitions under the same mark (core/scss/_sf_css__display.scss).
+//
+// No state and no side effect, so every bundle may carry it.
+const MOTION_ATTRIBUTE = 'data-sf-motion';
+const MOTION_CHANGE = 'sf-display-change';
+function reducedMotion(root = globalThis.document?.documentElement, win = globalThis) {
+  try {
+    if (win.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return true;
+  } catch {// No media queries here: only the page's own mark.
+  }
+
+  return root?.getAttribute?.(MOTION_ATTRIBUTE) === 'reduce';
+} // Calls `listener` when either source changes; returns the stop.
+
+function watchMotion(listener, win = globalThis) {
+  const media = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+  const doc = win.document;
+  media?.addEventListener?.('change', listener);
+  doc?.addEventListener?.(MOTION_CHANGE, listener);
+  return () => {
+    media?.removeEventListener?.('change', listener);
+    doc?.removeEventListener?.(MOTION_CHANGE, listener);
+  };
+}
+
+/***/ },
+
 /***/ "6978f1cc153b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -577,6 +1117,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   scrollerOf: () => (/* binding */ scrollerOf),
 /* harmony export */   watchEdge: () => (/* binding */ watchEdge)
 /* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
 // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): what a feed, a log, a conversation or a long list does to keep a
 // person's place while its content changes under them. It was written in
@@ -601,17 +1142,17 @@ __webpack_require__.r(__webpack_exports__);
 // Nothing here keeps state at module scope: each column gets its own
 // controller, so the copies of this module that every bundle carries cannot
 // disagree (bundles each carry their own module copy).
-// Within this distance of the end counts as being there. 96px is about two
+// The device's reduced motion or the site's «остановить движение» (C196).
+ // Within this distance of the end counts as being there. 96px is about two
 // lines of text and an entry's action row: closer than that, a person reading
 // the end of a column is reading the end.
+
 const NEAR_END = 96; // The start is "reached" a little before it is reached, so an earlier page is
 // usually there by the time the person scrolls into it.
 
 const NEAR_START = 240; // The end of a list asks for its next page this far before it is in view.
 
 const EDGE_MARGIN = '200px';
-
-const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 const frame = callback => typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(callback) : setTimeout(callback, 16);
 /**
@@ -684,7 +1225,7 @@ function readingPosition(scroller, {
       frame(() => {
         if (element) element.scrollTo({
           top: element.scrollHeight,
-          behavior: instant || reducedMotion() ? 'instant' : 'smooth'
+          behavior: instant || (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? 'instant' : 'smooth'
         });
         then?.();
         if (settle) frame(() => {
@@ -1173,13 +1714,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1c69b52a2c3c");
-/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("50e7fd61ac57");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c1c5abcf20ed");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0c29db1e15d7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8d229b7c92e9");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1c69b52a2c3c");
+/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2677706b5ec9");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c1c5abcf20ed");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0c29db1e15d7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 // A list a person acts on: a person's conversations, letters, templates,
@@ -1225,6 +1767,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Is the end within watchEdge's margin of the box that scrolls the list (or
 // of the window)? Read once, on the scroll that arms the watch.
 
@@ -1244,7 +1787,15 @@ function endInReach(sentinel, root) {
 
 
 
- // A text longer than this is not a name; the rename field stops there, as the
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+}; // A text longer than this is not a name; the rename field stops there, as the
 // server that stores it most likely does.
 
 const TEXT_LIMIT = 200;
@@ -1265,7 +1816,11 @@ const normalItem = item => ({ ...item,
 
 const word = value => typeof value === "string" ? value.trim() : "";
 
-const SHAPES = new Set(["circle", "square"]); // The badge's tone is a word of the Framework's status set
+const SHAPES = new Set(["circle", "square"]); // The skeleton's leading place by the setting leading (1.17.0).
+
+const LEADING = new Set(["auto", "none", "icon", "avatar"]); // The skeleton rows' line count by the setting lines (1.18.0).
+
+const LINES = new Set(["auto", "1", "2"]); // The badge's tone is a word of the Framework's status set
 // (contracts/public-api-axes.json status_vocabulary); neutral is no status.
 
 const TONES = new Set(["neutral", "info", "success", "warning", "error"]); // The largest count drawn as a number; a larger one reads «99+», as
@@ -1279,12 +1834,17 @@ const NARROW_REM = 20; // A wider list goes narrow too when a row's title would 
 // long badge on a 366 px phone column left the title 55 px, «Порта…»).
 
 const TITLE_MIN_REM = 10;
-const NARROW = "data-sf-list-narrow";
+const NARROW = "data-sf-list-narrow"; // 1.14.0: a frame in a shrink-to-fit place, taken out of the container query.
+
+const FIT = "data-sf-list-fit"; // The frame's content box width: what the container query reads.
+
+const contentWidth = (frame, style) => frame.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
 /**
  * The item's picture, or null: {image-url?, text?, shape?, icon?}. A sign
  * (icon without an image) is a glyph in the avatar's place -- a channel, an
  * agent, a bot; an image or initials are sf-avatar's.
  */
+
 
 function avatarOf(item) {
   const avatar = item?.avatar;
@@ -1305,6 +1865,26 @@ function avatarOf(item) {
 function countOf(item) {
   const count = Number(item?.count);
   return Number.isFinite(count) && count >= 1 ? Math.floor(count) : 0;
+}
+/**
+ * Is the row unread? A count says so (owner decision C167 (3)); a letter
+ * without one says it with unread: true (1.15.0, C189 (8)). A number above 0
+ * is read as true -- sf-chat-threads spells its unread count unread -- and
+ * draws no number: the number is count's.
+ */
+
+
+function unreadOf(item) {
+  if (countOf(item)) return true;
+  const unread = item?.unread;
+  return unread === true || typeof unread === "number" && unread > 0;
+}
+/** The item's date as an ISO moment for sf-time, or "" when it has none. */
+
+
+function momentOf(item) {
+  const moment = item?.date == null || item.date === "" ? null : (0,_core_js_format_js__WEBPACK_IMPORTED_MODULE_2__.toDate)(item.date);
+  return moment && Number.isFinite(moment.getTime()) ? moment.toISOString() : "";
 }
 /** The item's badge, {text, tone}, or null: a badge with no text draws nothing. */
 
@@ -1336,11 +1916,11 @@ const pageArguments = (first, second) => {
   };
 };
 
-const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: "ru"
 });
@@ -1358,7 +1938,9 @@ class SfList extends ListElement {
 
   constructor() {
     super();
-    this._items = [];
+    this._items = []; // The shape of the rows last shown, for the skeleton (skeletonShape()).
+
+    this._shownShape = null;
     this._actions = [];
     this._groups = [];
     this._loadingMore = false;
@@ -1558,28 +2140,40 @@ class SfList extends ListElement {
 
     const item = this._items.find(one => one.id === id);
 
-    const menu = this.menu;
-    if (!item || !menu) return refused("unknown");
+    if (!item) return refused("unknown");
     const entries = this.menuEntries(item);
     if (!entries.length) return refused("no-actions");
     const row = this.rowFor(id);
     const anchor = anchorGiven instanceof Element ? anchorGiven : row?.closest(".sf-list__row")?.querySelector(".sf-list__actions") ?? row ?? this;
-    this._menuFor = id;
-    menu.setAttribute("aria-label", this.sfWord("actions-label", {
-      vars: {
-        text: item.text || this.sfWord("untitled-text")
-      }
-    }));
-    menu.entries = entries; // The Loader brings sf-menu-context when it is first needed (a lazy
-    // relation); a press before that waits for it.
+    this._menuFor = id; // The page's one menu (core SF.menu.open, owner decision C184 (4)),
+    // fetched by the Loader the first time: the «⋯» and Shift+F10 open the
+    // same list, and the focus goes back to the row.
 
-    customElements.whenDefined("sf-menu-context").then(() => menu.toggleFor(anchor));
+    const opening = (0,_core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__.menuOpen)({
+      anchor,
+      entries,
+      label: this.sfWord("actions-label", {
+        vars: {
+          text: item.text || this.sfWord("untitled-text")
+        }
+      }),
+      returnTo: row ?? null
+    });
+    this._menuOpening = opening;
+    opening.then(choice => {
+      if (this._menuOpening === opening) this._menuOpening = null;
+      if (choice) this.onMenu({
+        id: choice.id,
+        entry: choice.entry
+      }, id);
+    });
     return applied();
   } // ── words and what is drawn ──────────────────────────────────────────────
+  // The page's one menu while it holds this list's actions (C184 (4)).
 
 
   get menu() {
-    return this.querySelector(":scope > .sf-list__frame > .sf-list__menu");
+    return this.ownerDocument.querySelector("[data-sf-menu-shared]");
   } // The menu of one row: «Rename» when the list renames, then the host's
   // actions the item allows.
 
@@ -1700,10 +2294,11 @@ class SfList extends ListElement {
   // two-line row when any row of the list has a second line, else the row's
   // line: a one-line row keeps its control height. A row without an icon
   // among rows with one keeps the icon's place too (owner C105), at the
-  // row's line.
+  // row's line. (1.17.0: named leadingPlace(), the setting leading is the
+  // skeleton's.)
 
 
-  leading() {
+  leadingPlace() {
     if (this._items.some(item => avatarOf(item))) {
       return {
         wide: this._items.some(item => Boolean(item.supporting))
@@ -1716,6 +2311,95 @@ class SfList extends ListElement {
       wide: false
     };
     return null;
+  } // The format of a row's time (1.15.0), as sf-list-timeline's time-format
+  // reads: under a day heading the clock time, since the heading names the
+  // day; elsewhere -- ungrouped, by key, the pinned group -- the moment in
+  // full. null: time-format none, no time.
+
+
+  timeFormatFor(group) {
+    const asked = this.timeFormat;
+    if (asked !== "auto" && asked !== "relative" && asked !== "exact") return null;
+    if (asked === "relative") return "relative";
+    const underDay = this.groupBy === "day" && typeof group?.key === "string" && group.key.startsWith("day:");
+    if (asked === "exact") return underDay ? "time" : "datetime";
+    return underDay ? "time" : "auto";
+  } // The shape of the skeleton rows (1.16.0, C130, C148 (1)): the shape of
+  // the rows the list has shown -- one line or the caption row, and the
+  // leading place they draw: an avatar's (wide when a row has a second
+  // line, its shape), an icon's, or none. It is kept when the rows are
+  // taken away for a reload (items = [] and loading), so the rows that come
+  // back find their place; until the list has shown rows it is the caption
+  // row with no leading place -- the list does not guess one.
+  //
+  // 1.17.0: the setting leading says the place instead of the rows shown
+  // (C130, C148 (1)): icon, avatar or none hold from the first frame, so a
+  // list whose rows will carry icons or avatars has its title bar start
+  // where the title will before it has shown any; auto is the shape of the
+  // rows shown. The line count, and an avatar's shape and width, still
+  // come from the rows shown; before any, the caption row's: an avatar of
+  // the control height, a circle.
+  //
+  // 1.18.0: the setting lines says the line count instead of the rows shown
+  // (C130): 1 or 2 hold from the first frame, so a one-line list's first
+  // skeleton row is as tall as its rows (40, not the caption row's 48 at
+  // 1440) and an avatar's box is the one-line box; auto is the line count
+  // of the rows shown, the caption row before any. A declared count also
+  // gives the avatar its width: the control height with a second line,
+  // else the row's line.
+
+
+  skeletonShape() {
+    const items = this._items;
+
+    if (items.length) {
+      const avatar = items.map(item => avatarOf(item)).find(Boolean);
+      const icon = items.some(item => typeof item?.icon === "string" && item.icon.trim() !== "");
+      this._shownShape = {
+        twoLine: items.some(item => Boolean(item.supporting)),
+        lead: avatar ? {
+          kind: "avatar",
+          wide: items.some(item => Boolean(item.supporting)),
+          shape: avatar.shape
+        } : icon ? {
+          kind: "icon"
+        } : null
+      };
+    }
+
+    const shown = this._shownShape ?? {
+      twoLine: true,
+      lead: null
+    };
+    const lines = LINES.has(this.lines) ? this.lines : "auto";
+    const twoLine = lines === "auto" ? shown.twoLine : lines === "2";
+    const declared = LEADING.has(this.leading) ? this.leading : "auto";
+    const learned = shown.lead?.kind === "avatar" ? shown.lead : null;
+    const wide = learned && lines === "auto" ? learned.wide : twoLine;
+    if (declared === "none") return {
+      twoLine,
+      lead: null
+    };
+    if (declared === "icon") return {
+      twoLine,
+      lead: {
+        kind: "icon"
+      }
+    };
+    if (declared === "auto") return {
+      twoLine,
+      lead: learned ? { ...learned,
+        wide
+      } : shown.lead
+    };
+    return {
+      twoLine,
+      lead: {
+        kind: "avatar",
+        wide,
+        shape: learned ? learned.shape : "circle"
+      }
+    };
   }
 
   templateContext() {
@@ -1731,9 +2415,15 @@ class SfList extends ListElement {
       noWrap: this.noWrap === true,
       divided: this.divided === true,
       sections: this.arranged(),
-      leading: this.leading(),
+      leading: this.leadingPlace(),
       avatarOf,
       countOf,
+      unreadOf,
+      momentOf,
+      // The row's time (1.15.0): sf-time's format for the rows of a
+      // group, or null when the list draws no time (timeFormatFor).
+      timeFormat: group => this.timeFormatFor(group),
+      unreadText: this.sfWord("unread-text"),
       badgeOf,
       countCap: COUNT_CAP,
       countLabel: count => this.sfWord("count-label", {
@@ -1744,10 +2434,9 @@ class SfList extends ListElement {
       editing: this._editing,
       loading,
       // The skeleton's rows take the shape of the rows the list has
-      // shown, else the caption row (template skeleton()).
-      skeleton: {
-        twoLine: this._items.length === 0 || this._items.some(item => Boolean(item.supporting))
-      },
+      // shown, else the caption row with no leading place (template
+      // skeleton()).
+      skeleton: this.skeletonShape(),
       loadingText: this.sfWord("loading-text"),
       empty,
       emptyHeading: this.emptyText,
@@ -1771,7 +2460,7 @@ class SfList extends ListElement {
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__.renderListTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__.renderListTemplate)(this.templateContext());
   } // The rows are drawn; the list's sheets may still be on their way. The
   // width is watched from now (C47): when the sheet comes, the observer
   // measures the frame before it is painted with it, so no frame of a
@@ -1829,7 +2518,7 @@ class SfList extends ListElement {
     // nothing. No swipe.
 
     if (!this._longPress) {
-      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_5__.watchLongPress)(this, {
+      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_6__.watchLongPress)(this, {
         accepts: event => {
           const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
           if (!row || !this.contains(row) || event.target.closest(".sf-list__actions, .sf-list__rename")) return false;
@@ -1856,6 +2545,8 @@ class SfList extends ListElement {
     this.unwatchEnd();
     this._widthObserver?.disconnect();
     this._widthObserver = null;
+    cancelAnimationFrame(this._fitFrame);
+    this._fitFrame = 0;
     this._widthFrame = null;
     this._widthMetas = null;
     clearTimeout(this._dayTimer);
@@ -1874,20 +2565,25 @@ class SfList extends ListElement {
       if (this.groupBy === "day") this.requestComponentUpdate("day");
     }, (0,_core_js_format_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)() + 1000);
   } // A narrow list (owner decision C47, 2026-11-10): below 20rem of its own
-  // width the list marks its frame, and a row's badge and count go under
-  // its second line, at the text's start, so the title keeps the row's
-  // width and the badge stays whole. A wider list is narrow too when, laid
-  // out on one line, a row's title would keep less than half of the row's
-  // text column or less than 10rem (a long badge in a phone column). The
-  // list measures itself: no page breakpoint and no setting. A
-  // ResizeObserver, not a container query: an inline-size container takes
-  // no width from its rows, and a list in a shrink-to-fit place (a popover,
-  // an auto-width flex item) would fold to nothing. It watches the frame's
+  // width a row's badge and count go under its second line, at the text's
+  // start, so the title keeps the row's width and the badge stays whole. A
+  // wider list is narrow too when, laid out on one line, a row's title would
+  // keep less than half of the row's text column or less than 10rem (a long
+  // badge in a phone column). No page breakpoint and no setting.
+  // 1.14.0: the 20rem is a container query on the frame (the sheet's
+  // container sf-list), so a printed first paint is narrow before any
+  // script (DEV, ui-chat chat-threads at 390: CLS 0.09 when the code
+  // adopted). The code marks the frame (data-sf-list-narrow) only for what
+  // the sheet cannot know: a squeezed title; and, for a frame in a
+  // shrink-to-fit place (a popover, an auto-width flex item), whose
+  // inline-size container would take no width from its rows and fold to
+  // nothing, it takes the frame out of the query (data-sf-list-fit) and
+  // marks it below 20rem by measuring, as before. It watches the frame's
   // width and every row's badge and count, and is started as soon as the
   // rows are drawn, before the list's sheet is in: the observer reports
   // before the frame is painted, so the frame painted with the sheet is
-  // already laid out narrow or wide. The mark is an attribute the template
-  // does not bind, so a redraw keeps it.
+  // already laid out narrow or wide. The marks are attributes the template
+  // does not bind, so a redraw keeps them.
   // 1.5.1: the frame's width is read from .sf-list__width, a box of no
   // height across the frame, not from the frame. The narrow layout changes
   // the frame's height; a frame observed itself then changed size inside the
@@ -1941,22 +2637,31 @@ class SfList extends ListElement {
   // would keep less than half of its text column (or 10rem) beside its
   // badge and count. The one-line layout is measured with the mark taken
   // off and put back in the same task, so nothing of it is painted and the
-  // answer does not depend on the layout it chooses.
+  // answer does not depend on the layout it chooses. Below 20rem the
+  // sheet's container query lays the rows out narrow; the mark is written
+  // only where the query does not answer (no sheet yet, or a fitted frame).
 
 
   measureNarrow() {
     const frame = this._widthFrame;
     if (!frame?.isConnected) return;
+    this.checkFit(frame);
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const style = getComputedStyle(frame);
-    const width = frame.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+    const width = contentWidth(frame, style);
 
     if (!(width > 0)) {
       frame.removeAttribute(NARROW);
       return;
     }
 
+    const queried = style.containerType === "inline-size";
     let narrow = width < NARROW_REM * rem;
+
+    if (narrow && queried) {
+      frame.removeAttribute(NARROW);
+      return;
+    }
 
     if (!narrow) {
       const was = frame.hasAttribute(NARROW);
@@ -1968,6 +2673,31 @@ class SfList extends ListElement {
     }
 
     frame.toggleAttribute(NARROW, narrow);
+  } // A frame whose inline-size container folds it: in a shrink-to-fit place
+  // the contained frame is narrower than its rows would make it (no content
+  // width at all), and it is taken out of the query. Measured with the mark
+  // flipped and put back in the same task, so the observer's callback ends
+  // on the layout it began with (a size changed inside it would be a
+  // ResizeObserver loop); the change itself is made in the next frame.
+
+
+  checkFit(frame) {
+    const had = frame.hasAttribute(FIT);
+    const style = getComputedStyle(frame);
+    if (!had && (style.containerType !== "inline-size" || contentWidth(frame, style) >= 1)) return;
+    const now = frame.getBoundingClientRect().width;
+    frame.toggleAttribute(FIT, !had);
+    const other = frame.getBoundingClientRect().width;
+    frame.toggleAttribute(FIT, had);
+    const fit = (had ? now : other) > (had ? other : now) + 0.5;
+    if (fit === had) return;
+    cancelAnimationFrame(this._fitFrame);
+    this._fitFrame = requestAnimationFrame(() => {
+      this._fitFrame = 0;
+      if (!frame.isConnected || frame !== this._widthFrame) return;
+      frame.toggleAttribute(FIT, fit);
+      this.measureNarrow();
+    });
   } // On one line: the title's room is what the badge and count leave of the
   // text column, the row's gap before them kept (their own start padding is
   // in their box).
@@ -1982,7 +2712,9 @@ class SfList extends ListElement {
     const rtl = wrapStyle.direction === "rtl";
     const box = wrap.getBoundingClientRect();
     const textBox = text.getBoundingClientRect();
-    const metaBox = meta.getBoundingClientRect();
+    const metaBox = meta.getBoundingClientRect(); // An end part with only the screen-reader word takes no place (1.15.0).
+
+    if (!(metaBox.width > 0)) return false;
     const gap = parseFloat(wrapStyle.columnGap) || 0;
     const inset = (parseFloat(textStyle.paddingLeft) || 0) + (parseFloat(textStyle.paddingRight) || 0);
     const end = rtl ? box.left + (parseFloat(wrapStyle.borderLeftWidth) || 0) + (parseFloat(wrapStyle.paddingLeft) || 0) : box.right - (parseFloat(wrapStyle.borderRightWidth) || 0) - (parseFloat(wrapStyle.paddingRight) || 0);
@@ -2142,8 +2874,8 @@ class SfList extends ListElement {
     }
   }
 
-  onMenu(detail = {}) {
-    const id = this._menuFor;
+  onMenu(detail = {}, forId = null) {
+    const id = forId ?? this._menuFor;
     const choice = String(detail.id ?? detail.entry?.id ?? "");
     if (!id || !choice) return;
     if (choice === "rename") setTimeout(() => this.rename(id), 0); // A row's action is apply {action, scope: entry, ids} (vocabulary §5, §18.3).
@@ -2156,7 +2888,7 @@ class SfList extends ListElement {
 
   closeMenu() {
     const menu = this.menu;
-    if (menu?.isOpen) menu.close({
+    if (this._menuOpening && menu?.isOpen) menu.close({
       restoreFocus: false,
       reason: "api"
     });
@@ -2216,7 +2948,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
  // The list, drawn in the component's light DOM on the Framework's plain list
 // surface (the class unit .sf-list): the rows in their groups, the end of the
 // list («Show more» and the sentinel the next page is asked by), the empty
-// state, and one context menu shared by every row.
+// state. The row actions open in the page's one menu (core SF.menu.open,
+// owner decision C184 (4)), not in a menu of the list's own.
 //
 // A row is the Framework's row, sf-list-item, interactive: the rows of the
 // whole list -- every group -- are one Tab stop, the arrows move between them
@@ -2297,11 +3030,22 @@ const leadContent = (context, item) => {
 
   const icon = typeof item.icon === "string" && item.icon.trim() ? item.icon.trim() : "";
   return icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon class="sf-list__glyph" icon=${icon} aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-};
+}; // The row's time (1.15.0, time-format; C189 (8)) leads the end part: in a
+// two-line row it stands on the title's line, above the badge and the count
+// (sf-list-item's end column, C148 (2)), and reads first. It is sf-time (C40)
+// without a tooltip: the row is the list's one Tab stop (C148 (3)), and a
+// time with a tooltip outside a button would be a stop of its own. A row
+// unread without a count says so to a screen reader at its end (the count's
+// own words say it where there is one); the word is the only thing it adds,
+// so the end part of a row with nothing else stays out of the layout (CSS).
 
-const metaContent = (context, item) => {
+
+const metaContent = (context, item, group) => {
   const count = context.countOf(item);
-  const badge = context.badgeOf(item); // A two-line row's badge and count stand on its caption's line, in the
+  const badge = context.badgeOf(item);
+  const format = context.timeFormat(group);
+  const moment = format ? context.momentOf(item) : "";
+  const unreadWord = !count && context.unreadOf(item); // A two-line row's badge and count stand on its caption's line, in the
   // row's end column (owner decision C148 (2)): the line of the text they
   // stand in. A one-line row's take the row's line.
 
@@ -2312,13 +3056,13 @@ const metaContent = (context, item) => {
   // primary, the filled blue count; the filled look is the attention
   // count's alone (red), which a list row does not draw.
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__badge" line=${line} appearance="tonal" tight
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${moment ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-list__time" datetime=${moment} format=${format} tooltip="none"></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__badge" line=${line} appearance="tonal" tight
                          status=${BADGE_STATUS[badge.tone]} text=${badge.text}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__count" line=${line} appearance="tonal" tight
                          text=${count > context.countCap ? `${context.countCap}+` : String(count)}
-                         aria-label=${context.countLabel(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+                         aria-label=${context.countLabel(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${unreadWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list__unread sr-only">${context.unreadText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
 };
 
-const row = (context, item) => {
+const row = (context, item, group) => {
   const {
     component
   } = context;
@@ -2376,7 +3120,7 @@ const row = (context, item) => {
                     ?disabled=${disabled}
                     ?divided=${context.divided}
             ><span slot="leading" class="sf-list__lead">${leadContent(context, item)}</span><span
-                    slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-list-item
+                    slot="trailing" class="sf-list__meta">${metaContent(context, item, group)}</span></sf-list-item>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-list-item
                     interactive
                     kind=${icon ? "icon" : "text"}
                     icon=${icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2388,9 +3132,9 @@ const row = (context, item) => {
                     ?selected=${current}
                     ?disabled=${disabled}
                     ?divided=${context.divided}
-            ><span slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>`;
+            ><span slot="trailing" class="sf-list__meta">${metaContent(context, item, group)}</span></sf-list-item>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.countOf(item) ? "sf-list__row--unread" : ""}" data-id=${item.id}>
+        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.unreadOf(item) ? "sf-list__row--unread" : ""}" data-id=${item.id}>
             ${listItem}
             ${menu ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
                         type="button"
@@ -2405,9 +3149,9 @@ const row = (context, item) => {
     `;
 };
 
-const rows = (context, items, labelled) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+const rows = (context, group, labelled) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <ul class="sf-list__rows" aria-labelledby=${labelled ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${labelled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.label}>
-        ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(items, item => item.id, item => row(context, item))}
+        ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(group.items, item => item.id, item => row(context, item, group))}
     </ul>
 `; // The rows on their way (owner decision C130; list and feed study LF-2): the
 // list's own rows, sf-list-item of the list's size, so a skeleton row is as
@@ -2420,29 +3164,59 @@ const rows = (context, items, labelled) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.h
 // the lists it serves (conversations, letters, files, versions); a list that
 // has shown rows keeps their shape. aria-hidden: the status beside it says
 // the wait.
+//
+// 1.16.0 (C130, C148 (1)): the skeleton row keeps the leading place of the
+// rows it stands for, so its title bar starts where the title will. The
+// place is the one the rows draw (leadingPlace() and the row's own icon): an icon
+// is the row's line square with the control radius (C130 (1)); an avatar is
+// sf-avatar's own box of the step the rows give it -- the control height in a
+// list with a second line, else the row's line -- and its shape; a list with
+// neither keeps no place. The shape is read from the rows the list has shown
+// (context.skeleton.lead), never guessed: with none shown yet there is no
+// place (a printed first paint, data-sf-first-paint="skeleton", carries the
+// rows' own picture) -- unless the list's setting leading says it (1.17.0:
+// icon, avatar or none, from the first frame).
 
 
 const SKELETON_ROWS = 3;
 
+const skeletonLead = context => {
+  const lead = context.skeleton.lead;
+  if (!lead) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (lead.kind === "avatar") {
+    const wide = lead.wide && context.skeleton.twoLine;
+    const box = wide ? `sf-avatar--size-${context.size}` : `sf-avatar--size-1 sf-avatar--line-${context.size}`;
+    const shape = lead.shape === "square" ? " sf-avatar--square" : "";
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="leading" class="sf-list__lead"><span
+                class=${`sf-avatar sf-avatar--picture ${box}${shape} sf-first-paint-fill sf-list__lead-skeleton`}></span></span>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="leading" class="sf-list__lead"><span
+            class="sf-first-paint-fill sf-list__lead-skeleton sf-list__lead-skeleton--icon"></span></span>`;
+};
+
 const skeleton = context => {
   const {
-    twoLine
+    twoLine,
+    lead
   } = context.skeleton;
 
   const bar = part => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-first-paint-bar sf-list__bar sf-list__bar--${part}`}>\u00a0</span>`;
 
+  const wide = lead?.kind === "avatar" && lead.wide && twoLine;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <ul class="sf-list__rows sf-list__skeleton" aria-hidden="true">
+        <ul class="sf-list__rows sf-list__skeleton${wide ? " sf-list__skeleton--lead-wide" : ""}" aria-hidden="true">
             ${Array.from({
     length: SKELETON_ROWS
   }, () => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <li class="sf-list__row sf-list__row--skeleton">
                     <sf-list-item
-                            kind="text"
+                            kind=${lead ? "icon" : "text"}
                             size=${context.size}
                             text="\u00a0"
                             supporting=${twoLine ? "\u00a0" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    ><span slot="text">${bar("title")}</span>${twoLine ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="supporting">${bar("supporting")}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</sf-list-item>
+                    >${skeletonLead(context)}<span slot="text">${bar("title")}</span>${twoLine ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="supporting">${bar("supporting")}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</sf-list-item>
                 </li>`)}
         </ul>`;
 };
@@ -2468,8 +3242,8 @@ function renderListTemplate(context) {
                             <div class=${`sf-group-heading sf-list__heading${context.size === "1" ? "" : ` sf-group-heading--size-${context.size}`}${context.stickyHeadings ? " sf-group-heading--sticky" : ""}`}
                                  role="heading" aria-level=${context.headingLevel}
                                  id=${`${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`}>${group.heading}${group.date ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-time class="sf-group-heading-date" format="date" tooltip="none" datetime=${group.date}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
-                            ${rows(context, group.items, `${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`)}
-                        </section>` : rows(context, group.items, null))}
+                            ${rows(context, group, `${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`)}
+                        </section>` : rows(context, group, null))}
             </div>
             ${context.emptyContent // The page's own empty state stays in the document while the
   // list has rows, hidden: a page that looks it up by id to give
@@ -2491,14 +3265,6 @@ function renderListTemplate(context) {
                 <span class="sr-only" role="status">${context.loadingMore ? context.loadingMoreText : ""}</span>
                 <span class="sf-list__end" aria-hidden="true"></span>
             </div>
-            <sf-menu-context
-                    class="sf-list__menu"
-                    popup
-                    @sf-menu-context-select=${event => {
-    event.stopPropagation();
-    component.onMenu(event.detail);
-  }}
-            ></sf-menu-context>
         </div>
     `;
 }
@@ -2555,6 +3321,25 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "4294700087dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
+// The unit words of a file size (localization study LC-3), for the bundle and
+// for Node alike: the runtime words of the language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
 
 /***/ },
 
@@ -2643,24 +3428,38 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "3694b5e2bf39"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB","gb":"GB"}}');
+
+/***/ },
+
+/***/ "220979cc98c6"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
+
+/***/ },
+
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.12.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.18.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "c1c5abcf20ed"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","untitled-text":"Untitled"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","unread-text":"unread","untitled-text":"Untitled"}}');
 
 /***/ },
 
 /***/ "0c29db1e15d7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Список","runtime":{"actions-label":"Действия: {text}","count-label":{"one":"{n} непрочитанное","few":"{n} непрочитанных","many":"{n} непрочитанных","other":"{n} непрочитанного"},"empty-text":"Здесь пока пусто","label":"Список","loading-more-text":"Загружаю…","loading-text":"Загружаю список","more-text":"Показать ещё","pinned-text":"Закреплённые","rename-label":"Новое название","rename-text":"Переименовать","undated-text":"Без даты","ungrouped-text":"Другое","untitled-text":"Без названия"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Список","runtime":{"actions-label":"Действия: {text}","count-label":{"one":"{n} непрочитанное","few":"{n} непрочитанных","many":"{n} непрочитанных","other":"{n} непрочитанного"},"empty-text":"Здесь пока пусто","label":"Список","loading-more-text":"Загружаю…","loading-text":"Загружаю список","more-text":"Показать ещё","pinned-text":"Закреплённые","rename-label":"Новое название","rename-text":"Переименовать","undated-text":"Без даты","ungrouped-text":"Другое","unread-text":"не прочитано","untitled-text":"Без названия"}}');
 
 /***/ }
 

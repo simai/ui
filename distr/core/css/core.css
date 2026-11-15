@@ -70,6 +70,7 @@
     --sf-focus--offset: var(--sf-px);
     --sf-focus--style: solid;
     --sf-focus-outline-width: var(--sf-focus--width);
+    --sf-focus-room: var(--sf-space-1\/4);
     --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus--width) var(--sf-focus);
   }
   .focus-visible {
@@ -168,15 +169,19 @@
   .theme-dark {
     color-scheme: dark;
   }
-  /* An effect area or window card takes the theme its effect is drawn in
-     (SF.Effects, area-takes-the-drawn-theme). The class changes the tokens,
-     but the text keeps the colour it inherited from the page, so a light page
-     left dark text over a dark scene; the area takes its theme's ink. In
-     sf.base, so a colour utility on the area still wins. */
-  .sf-effect-area.theme-dark {
-    color: var(--sf-on-surface);
-  }
-  .sf-effect-area.theme-light {
+  /* A theme class takes its theme's ink (FW-B-2, docs batch B 2026-11-15).
+     The class re-declares the roles, but colour is inherited as a computed
+     value: text inside a nested .theme-light or .theme-dark kept the ink of
+     the theme outside it, light text on a white card in the dark theme
+     (1.29:1) and dark text on a dark card in the light one (1.14:1). The
+     class writes --sf-on-surface of its own theme on itself, as an effect
+     area already did (SF.Effects, area-takes-the-drawn-theme), so what stands
+     inside reads its theme. The ground stays the author's: a section in the
+     other theme lays its surface (bg-surface-page, bg-surface-card), and a
+     portal that carries the theme of its host (layer-stack) is no surface. In
+     sf.base, so a colour utility on the element still wins. */
+  .theme-light,
+  .theme-dark {
     color: var(--sf-on-surface);
   }
   .theme-light,
@@ -941,7 +946,7 @@
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1218,6 +1223,8 @@
     --sf-popup-form-width: var(--sf-g0);
     --sf-popup-form-wide-width: var(--sf-g2);
     --sf-popup-question-width: var(--sf-g4);
+    --sf-popup--window-form-width: var(--sf-g8);
+    --sf-popup--window-wide-width: var(--sf-h2);
   }
 }
 @layer sf.base {
@@ -1288,7 +1295,6 @@
     --sf-border--alfa: 1;
     --sf-divider--alfa: 1;
     --sf-outline--alfa: 1;
-    --sf-ring--alfa: 1;
     --sf-bg--alfa: 1;
     --sf-stripe--alfa: 1;
     --sf-ring-color: ;
@@ -2659,7 +2665,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2756,7 +2762,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2835,7 +2841,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2898,7 +2904,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2924,8 +2930,9 @@ body {
     --sf-heading-1--height: var(--sf-title--height-6);
     --sf-heading-2--size: var(--sf-text--size-5);
     --sf-heading-2--height: var(--sf-title--height-5);
+    /* Owner decision C186 (13), 2026-11-14: on a phone h3 takes the next title line, 18/24; 18/20 touched in two lines. Sizes of C21 unchanged; the desktop keeps 24/28. */
     --sf-heading-3--size: var(--sf-text--size-3);
-    --sf-heading-3--height: var(--sf-title--height-3);
+    --sf-heading-3--height: var(--sf-title--height-4);
     --sf-heading-4--size: var(--sf-text--size-2);
     --sf-heading-4--height: var(--sf-title--height-2);
     --sf-heading-5--size: var(--sf-text--size-1);
@@ -2952,6 +2959,11 @@ body {
     --sf-heading--space-top: var(--sf-content--space-section);
     --sf-heading--space-bottom: var(--sf-content--space-text);
     --sf-heading--margin: var(--sf-heading--space-top);
+  }
+  @media (min-width: 60rem) {
+    :root {
+      --sf-heading-3--height: var(--sf-title--height-3);
+    }
   }
 }
 @layer sf.base {
@@ -3010,7 +3022,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3037,7 +3049,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3064,7 +3076,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3091,7 +3103,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3118,7 +3130,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 70458f051464210070cf3e914f84c0cef0dfacbd8e3f6dc6e0c9ad546e1f44d3
+ * contract-sha256: d95e89178fa873eae6eeba4f2f2a52eff67393fc91b42ce95b1b64691ae5b299
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -3596,12 +3608,37 @@ body {
   ul,
   q,
   blockquote {
-    word-break: break-word;
+    word-wrap: anywhere;
     margin-bottom: var(--sf-text--space-bottom);
   }
   table {
     word-break: normal;
-    word-wrap: break-word;
+    word-wrap: anywhere;
+  }
+  :where(h1, h2, h3, h4, .sf-h-1, .sf-h-2, .sf-h-3, .sf-h-4) {
+    text-wrap: balance;
+  }
+  :where(p, li, dd, blockquote, figcaption) {
+    text-wrap: pretty;
+  }
+  @media not all and (min-width: 60rem) {
+    :where(p, li, dd, blockquote, figcaption) {
+      -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto;
+    }
+  }
+  @container (max-width: 40rem) {
+    :where(p, li, dd, blockquote, figcaption) {
+      -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto;
+    }
+  }
+  :where(h1, h2, h3, h4, h5, h6, .sf-h-1, .sf-h-2, .sf-h-3, .sf-h-4, .sf-h-5, .sf-h-6, code, samp, pre, var, address, a[href^="mailto:"], a[href^="tel:"], [translate=no]) {
+    -webkit-hyphens: manual;
+    -ms-hyphens: manual;
+        hyphens: manual;
   }
   .label-small {
     font-size: var(--sf-label-small--size);
@@ -3828,7 +3865,7 @@ body {
 /*
  * Generated by scripts/generate-density.mjs from the ladder files in
  * src/core/figma_variables (desktop blocks). Do not edit by hand.
- * source-sha256: ef3c8e215634882473e86d8046463bf863dd123eb50358838ab703c08793bdb5
+ * source-sha256: 77c1805b1e31a464138e2cc52859d2e8d256bfc83a45b41048aa8baeec12f0ec
  *
  * Density (owner decision C22): data-sf-density="compact" on the root or on
  * a container moves every component one ladder step down -- height, padding,
@@ -3944,6 +3981,8 @@ body {
       --sf-popup-form-width: var(--sf-f8);
       --sf-popup-form-wide-width: var(--sf-g1);
       --sf-popup-question-width: var(--sf-g3);
+      --sf-popup--window-form-width: var(--sf-g6);
+      --sf-popup--window-wide-width: var(--sf-h1);
       --sf-text-size-1\/3: var(--sf-text--size-1\/3);
       --sf-text-size-1\/2: var(--sf-text--size-1\/2);
       --sf-text-size-1: var(--sf-text--size-1);
@@ -4078,6 +4117,8 @@ body {
       --sf-popup-form-width: var(--sf-g0);
       --sf-popup-form-wide-width: var(--sf-g2);
       --sf-popup-question-width: var(--sf-g4);
+      --sf-popup--window-form-width: var(--sf-g8);
+      --sf-popup--window-wide-width: var(--sf-h2);
       --sf-text-size-1\/3: var(--sf-text--size-1\/3);
       --sf-text-size-1\/2: var(--sf-text--size-1\/2);
       --sf-text-size-1: var(--sf-text--size-1);
@@ -4124,6 +4165,7 @@ body {
     --sf-link--underline-weight: var(--sf-px);
     --sf-link--underline-dotted: var(--sf-a3);
     --sf-link--underline-dashed: var(--sf-a6);
+    --sf-link--underline-ink: 48%;
   }
   button:not(:disabled):not([class*=cursor-]) {
     cursor: pointer;
@@ -4136,25 +4178,30 @@ body {
   }
   a:hover:not(.sf-button) {
     color: var(--sf-link-hover);
+    color: var(--sf-place--ink, var(--sf-link-hover));
     -webkit-text-decoration-color: var(--sf-link-hover);
             text-decoration-color: var(--sf-link-hover);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
   }
   a:active:not(.sf-button) {
     color: var(--sf-link-active);
+    color: var(--sf-place--ink, var(--sf-link-active));
     -webkit-text-decoration-color: var(--sf-link-active);
             text-decoration-color: var(--sf-link-active);
-  }
-  a:visited:not(.sf-button) {
-    color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
   }
   a:not([class]),
   a[class*=link-],
   [class*=link-] ~ a {
     color: var(--sf-link);
-    -webkit-text-decoration-color: var(--sf-link);
-            text-decoration-color: var(--sf-link);
+    color: var(--sf-place--ink, var(--sf-link));
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+    text-decoration-thickness: var(--sf-link--underline-weight);
+    -webkit-text-decoration-color: color-mix(in srgb, currentColor var(--sf-link--underline-ink), transparent);
+            text-decoration-color: color-mix(in srgb, currentColor var(--sf-link--underline-ink), transparent);
     text-underline-offset: 0.1875rem;
     text-underline-offset: var(--sf-a3);
   }
@@ -4163,21 +4210,177 @@ body {
   [class*=link-] ~ a:hover {
     -webkit-text-decoration-color: var(--sf-link-hover);
             text-decoration-color: var(--sf-link-hover);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
     color: var(--sf-link-hover);
+    color: var(--sf-place--ink, var(--sf-link-hover));
   }
   a:not([class]):active,
   a[class*=link-]:active,
   [class*=link-] ~ a:active {
     -webkit-text-decoration-color: var(--sf-link-active);
             text-decoration-color: var(--sf-link-active);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
     color: var(--sf-link-active);
+    color: var(--sf-place--ink, var(--sf-link-active));
   }
-  a:not([class]):visited,
-  a[class*=link-]:visited,
-  [class*=link-] ~ a:visited {
+  :where(nav, menu, [role=navigation], [role=menu], [role=menubar], [role=tablist], table, [role=table], [role=grid], [role=treegrid]) a:not([class]) {
+    -webkit-text-decoration-line: none;
+            text-decoration-line: none;
+  }
+  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):hover {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a.focus-visible:not([class]) {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):hover {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]).focus-visible {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):focus-visible {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :where([data-sf-visited=on]) a:not([class]):visited,
+  :where([data-sf-visited=on]) a[class*=link-]:visited,
+  :where([data-sf-visited=on]) [class*=link-] ~ a:visited {
+    color: var(--sf-link-visited);
+    color: var(--sf-place--ink, var(--sf-link-visited));
+    -webkit-text-decoration-color: color-mix(in srgb, var(--sf-link-visited) var(--sf-link--underline-ink), transparent);
+            text-decoration-color: color-mix(in srgb, var(--sf-link-visited) var(--sf-link--underline-ink), transparent);
+    -webkit-text-decoration-color: color-mix(in srgb, var(--sf-place--ink, var(--sf-link-visited)) var(--sf-link--underline-ink), transparent);
+            text-decoration-color: color-mix(in srgb, var(--sf-place--ink, var(--sf-link-visited)) var(--sf-link--underline-ink), transparent);
+  }
+  :where([data-sf-visited=on]) a:not([class]):visited:hover {
     -webkit-text-decoration-color: var(--sf-link-visited);
             text-decoration-color: var(--sf-link-visited);
-    color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) a:not([class]):visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) a[class*=link-]:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) a[class*=link-]:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=link-] ~ a:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=link-] ~ a:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  a:not([class]).focus-visible,
+  a[class*=link-].focus-visible,
+  [class*=link-] ~ a.focus-visible {
+    outline-offset: 0.125rem;
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  a:not([class]).focus-visible,
+  a[class*=link-].focus-visible,
+  [class*=link-] ~ a.focus-visible {
+    outline-offset: 0.125rem;
+    outline-offset: 0.125rem;
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  a:not([class]):focus-visible,
+  a[class*=link-]:focus-visible,
+  [class*=link-] ~ a:focus-visible {
+    outline-offset: 0.125rem;
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  a [data-sf-new-tab=tail] {
+    white-space: nowrap;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) a [data-sf-new-tab=mark]{
+    margin-left: var(--sf-space-1\/4);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) a [data-sf-new-tab=mark]{
+    margin-left: var(--sf-space-1\/4);
+    }
+  }
+  a [data-sf-new-tab=mark]:where(:dir(ltr)){
+    margin-left: var(--sf-space-1\/4);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] a [data-sf-new-tab=mark]{
+    margin-right: var(--sf-space-1\/4);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] a [data-sf-new-tab=mark]{
+    margin-right: var(--sf-space-1\/4);
+    }
+  }
+  a [data-sf-new-tab=mark]:where(:dir(rtl)){
+    margin-right: var(--sf-space-1\/4);
+  }
+  a [data-sf-new-tab=mark] {
+    --sf-icon--font-size: 1em;
+    --sf-icon--width: 1em;
+    --sf-icon--height: 1lh;
+    -webkit-margin-start: var(--sf-space-1\/4);
+            margin-inline-start: var(--sf-space-1\/4);
+    color: inherit;
+    text-decoration: none;
+    -moz-user-select: none;
+     -ms-user-select: none;
+         user-select: none;
+    -webkit-user-select: none;
+  }
+  a:dir(rtl) [data-sf-new-tab=mark] {
+    -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+  }
+  a [data-sf-new-tab=words] {
+    position: absolute;
+    width: 1px;
+    inline-size: 1px;
+    width: 1px;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    height: 1px;
+    block-size: 1px;
+    height: 1px;
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
   }
   .disabled a,
   .disabled a[href],
@@ -4802,6 +5005,11 @@ body {
     cursor: pointer;
   }
 }
+@layer sf.base {
+  .sf-workspace > * {
+    padding: var(--sf-focus-room);
+  }
+}
 @layer sf.components {
   .sf-workspace {
     container: sf-workspace/inline-size;
@@ -4827,6 +5035,7 @@ body {
     overflow: auto;
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
+    scroll-padding: var(--sf-focus-room);
   }
   /* sf-focus-ring: none — a region takes focus only programmatically, when
      the script moves it there (an empty drawer, main shown without a back
@@ -5577,6 +5786,19 @@ body {
     width: var(--sf-language--trigger);
     inline-size: var(--sf-language--trigger);
   }
+  /* Its button, drawn by its code before the button sheet has come (the
+     sheet is fetched when the code asks for it), keeps the trigger's box too:
+     unstyled (the browser's button font, no glyphs yet) it was 7-10 px wider
+     for about 300 ms, and the tools beside it moved there and back (C130).
+     The button sheet draws the same box. A list with a longer code (its code
+     slot sized to the code, the template's inline-size auto) is left to the
+     sheet: its width is the code's. */
+  :where(sf-language .sf-language-parts > sf-button > button:not(:has(.sf-language-code[style*="inline-size: auto"]))) {
+    width: var(--sf-language--trigger);
+    inline-size: var(--sf-language--trigger);
+    height: var(--sf-language--box);
+    block-size: var(--sf-language--box);
+  }
   :where(sf-language .sf-language-parts > sf-segmented:not(:defined)) {
     display: inline-block;
     vertical-align: middle;
@@ -5597,15 +5819,120 @@ body {
   :where(sf-language[languages]:not([languages*=" "]):not([languages*=","]):not([languages*=";"]):not([data-look])):not(:has(> [data-sf-static], > script)) {
     display: none;
   }
-  /* The code's slot in the trigger: one text line of the size wide (a code
-     of two capitals is a little narrower), the code in its middle. Every code
-     of the list already stands in the same grid cell, so the trigger keeps
-     its width whatever is chosen; the slot makes that width the one held
-     above. A wider code (PT-BR) widens the slot. */
+  /* The code's slot in the trigger: exactly one text line of the size wide,
+     the code in its middle. Every code of the list already stands in the same
+     grid cell, so the trigger keeps its width whatever is chosen; the slot
+     makes that width the one held above, so the box held before the code and
+     the box drawn are equal. Two capitals are about one line wide: a little
+     narrower in Inter at most steps, a little wider at the 12/16 and 18/24
+     steps (RU 16.7 in 16) and in the fallback face a cold load draws first
+     (RU 24.8 in 24), and MN is the widest (20 in 16). Such a code stands out
+     of its slot by the same amount on each side, into the text space beside
+     it, and moves nothing (C130: the header shifted 0.7-2.6 px when the slot
+     grew to the code). A list with a longer code (PT-BR, 简体: more than two
+     letters, or letters wider than a capital) is drawn by the element with
+     its slot sized to the widest code instead (its template's inline style,
+     inline-size auto; never narrower than the line). */
   :where(sf-language .sf-language-code) {
+    width: var(--sf-language--line);
+    inline-size: var(--sf-language--line);
     min-width: var(--sf-language--line);
     min-inline-size: var(--sf-language--line);
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
+    white-space: nowrap;
+  }
+  /* sf-header-site before its sheet (headers study HD-13: without printed
+     markup the bar was 19 px of inline slot content, then 130 px of its drawn
+     but unstyled row, then 73 px, within 160 ms; 390: 17, 116, 61). Its height
+     is known from its attributes alone, by the same rule its sheet draws with:
+     the size's control height, a space-1 inset above and below and the 1 px
+     edge, or the page's --sf-site-header-block-size. Until the element is
+     defined the host holds that box, its slot content held out of view; once
+     it has drawn, the drawn bar holds it, its row out of view, until the bar's
+     own sheet arrives and lets both go (block-size auto, the row visible).
+     Static markup printed inside (data-sf-static) is its own box and is left
+     alone. A row taller than the bar (size 1/2 with size-1 controls in it)
+     is the one thing the attributes cannot tell. */
+  :where(sf-header-site) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  :where(sf-site-header) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  [size="1/2"]:where(sf-header-site) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1\/2--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  [size="1/2"]:where(sf-site-header) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1\/2--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  :where(sf-header-site):not(:defined):not(:has(> [data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-site-header--box);
+    block-size: var(--sf-site-header--box);
+    overflow: clip;
+    border-bottom: 1px solid var(--sf-outline-variant);
+    -webkit-border-after: 1px solid var(--sf-outline-variant);
+            border-block-end: 1px solid var(--sf-outline-variant);
+    border-bottom: 1px solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  :where(sf-site-header):not(:defined):not(:has(> [data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-site-header--box);
+    block-size: var(--sf-site-header--box);
+    overflow: clip;
+    border-bottom: 1px solid var(--sf-outline-variant);
+    -webkit-border-after: 1px solid var(--sf-outline-variant);
+            border-block-end: 1px solid var(--sf-outline-variant);
+    border-bottom: 1px solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  :where(sf-header-site) > :where(.sf-site-header:not([data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-site-header--box);
+    block-size: var(--sf-site-header--box);
+    overflow: clip;
+    border-bottom: 1px solid var(--sf-outline-variant);
+    -webkit-border-after: 1px solid var(--sf-outline-variant);
+            border-block-end: 1px solid var(--sf-outline-variant);
+    border-bottom: 1px solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  :where(sf-site-header) > :where(.sf-site-header:not([data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-site-header--box);
+    block-size: var(--sf-site-header--box);
+    overflow: clip;
+    border-bottom: 1px solid var(--sf-outline-variant);
+    -webkit-border-after: 1px solid var(--sf-outline-variant);
+            border-block-end: 1px solid var(--sf-outline-variant);
+    border-bottom: 1px solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  :where(sf-header-site):not(:defined):not(:has(> [data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-site-header):not(:defined):not(:has(> [data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-header-site) > :where(.sf-site-header:not([data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-site-header) > :where(.sf-site-header:not([data-sf-static])) > * {
+    visibility: hidden;
   }
   /* sf-input before it draws (first-paint study R222, pilot of «box from
      attributes»: a bare <sf-input> had no box until its code arrived, and the
@@ -5747,7 +6074,7 @@ body {
     --sf-tag--box-cross: var(--sf-micro--cross-1\/2);
     --sf-tag--box-lead: var(--sf-text-height-1\/2);
     --sf-tag--box-line: var(--sf-text-height-1\/2);
-    --sf-tag--box-lead-on: 1;
+    --sf-tag--box-lead-on: 0;
     --sf-tag--box-cross-on: 0;
   }
   :where(sf-tag[size="1/3"]:not(:defined)) {
@@ -5786,48 +6113,100 @@ body {
     --sf-tag--box-lead: var(--sf-text-height-3);
     --sf-tag--box-line: var(--sf-text-height-3);
   }
-  /* A picture is the tag less 4 above and below; a plain label has none. */
+  /* A picture is the tag less 4 above and below; a plain label has none. A
+     filter tag (kind checkbox, the default) shows its check mark, a picture,
+     only when it is chosen (C145 (2)); a colour is a dot of the point step
+     (C145 (7)). */
   :where(sf-tag[kind=icon]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[kind=avatar]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[kind=color]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[type=icon]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[type=avatar]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[type=color]:not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
-  :where(sf-tag[kind=default]:not(:defined)) {
-    --sf-tag--box-lead-on: 0;
+  :where(sf-tag[active]:not([kind]):not([type]):not([active=false]):not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
   }
-  :where(sf-tag[kind=quantity]:not(:defined)) {
-    --sf-tag--box-lead-on: 0;
+  :where(sf-tag[kind=checkbox][active]:not(.does-not-exist):not([active=false]):not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
   }
-  :where(sf-tag[type=default]:not(:defined)) {
-    --sf-tag--box-lead-on: 0;
+  :where(sf-tag[type=checkbox][active]:not(.does-not-exist):not([active=false]):not(:defined)) {
+    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
+    --sf-tag--box-lead-on: 1;
   }
-  :where(sf-tag[type=quantity]:not(:defined)) {
-    --sf-tag--box-lead-on: 0;
+  :where(sf-tag[kind=color]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1\/2);
+  }
+  :where(sf-tag[type=color]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1\/2);
+  }
+  :where(sf-tag[kind=color][size="1/3"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1\/3);
+  }
+  :where(sf-tag[type=color][size="1/3"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1\/3);
+  }
+  :where(sf-tag[kind=color][size="1"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1);
+  }
+  :where(sf-tag[type=color][size="1"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-1);
+  }
+  :where(sf-tag[kind=color][size="2"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-2);
+  }
+  :where(sf-tag[type=color][size="2"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-2);
+  }
+  :where(sf-tag[kind=color][size="3"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-3);
+  }
+  :where(sf-tag[type=color][size="3"]:not(:defined)) {
+    --sf-tag--box-lead: var(--sf-micro--point-3);
   }
   :where(sf-tag[closable]:not([closable=false]):not(:defined)) {
     --sf-tag--box-cross-on: 1;
   }
   :where(sf-tag[closable=false]:not(:defined)) {
     --sf-tag--box-cross-on: 0;
+  }
+  /* A link has no check mark and no cross (C145 (6)). */
+  :where(sf-tag[href]:not([href=""]):not(:defined)) {
+    --sf-tag--box-cross-on: 0;
+  }
+  :where(sf-tag[href]:not([href=""]):not([kind]):not([type]):not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[href][kind=checkbox]:not([href=""]):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-lead-on: 0;
+  }
+  :where(sf-tag[href][type=checkbox]:not([href=""]):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-lead-on: 0;
   }
   /* A compact region on a desktop moves each edge one step down, as the tag
      sheet does (C76): 8 / 8 / 12 / 16 at 1/3, 1/2, 1, 2. */
@@ -5840,6 +6219,25 @@ body {
     }
     :where([data-sf-density=compact] sf-tag[size="2"]:not(:defined):not([data-sf-density=normal] *)) {
       --sf-tag--box-edge: var(--sf-b6);
+    }
+    /* A 1/2 tag outside a compact region is 32 high: its cross is 12 (C145 (1)). */
+    :where(sf-tag:not([size]):not(:defined):not([data-sf-density=compact] *)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
+    }
+    :where(sf-tag[size=""]:not(:defined):not([data-sf-density=compact] *)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
+    }
+    :where(sf-tag[size="1/2"]:not(:defined):not([data-sf-density=compact] *)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
+    }
+    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag:not([size]):not(:defined)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
+    }
+    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag[size=""]:not(:defined)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
+    }
+    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag[size="1/2"]:not(:defined)) {
+      --sf-tag--box-cross: var(--sf-micro--cross-1);
     }
   }
   /* On a text line (line="..."): the tag is that line high, one size down, with
@@ -6325,6 +6723,37 @@ body {
     min-height: max(var(--sf-avatar--box), (var(--sf-avatar--box-heading) + var(--sf-avatar--box-description)) * var(--sf-avatar--box-line));
     min-block-size: max(var(--sf-avatar--box), (var(--sf-avatar--box-heading) + var(--sf-avatar--box-description)) * var(--sf-avatar--box-line));
   }
+  /* sf-tag-group before it is defined (C145 (3)): the row's box, the tags 4
+     apart on one line (C105 H5, the C173 role --sf-gap--tags); the tags that do not fit wait clipped for
+     the group's «+N». layout wrap wraps. */
+  :where(sf-tag-group:not(:defined)) {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--sf-gap--tags);
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: clip;
+  }
+  :where(sf-tag-group[layout=wrap]:not(:defined)) {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+  /* sf-time before it draws (DEV change-time study CT-7: an empty line for
+     216-262 ms, then 38-43 px of text pushed the rest of it). Text the server
+     printed inside the host is the first paint and holds the line itself
+     (sf-time 1.2.0 replaces it in the same task). A host with nothing inside
+     holds the width of a time: «00:00» in the place's type and tabular
+     numerals, hidden, until the element is defined. A date or relative words
+     are longer; only the server's text knows them. */
+  :where(sf-time[datetime]:not([datetime=""]):not(:defined)):empty::before {
+    content: "00:00";
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    visibility: hidden;
+  }
   /* Its menu waits for its own code in the parts the element drew: an empty
      undefined sf-menu-context would stand in the row as one more item, a gap
      wider than the trigger, until it upgrades into its popup. */
@@ -6660,6 +7089,81 @@ body {
       flow-tolerance: 0;
       item-tolerance: 0;
     }
+  }
+  /* A window's or a side panel's content waits for its code out of the page
+     flow (studies DR-13, MD-3): it belongs to a window over the page or a
+     panel at an edge of the screen, never to the page. Held only out of sight
+     (the pending-tags rule, visibility), the content of every closed sf-drawer
+     kept its box in the page for the first frames -- the page stood 2-3 times
+     its height for about 120 ms, then shrank -- and a closed sf-modal's
+     slotted content stood in the page as a line for about 100 ms. A window
+     drawn in the page (sf-modal display="inline") is part of it and keeps its
+     box. Static markup printed inside (data-sf-static) is the element's own
+     picture and stays. */
+  :where(sf-drawer:not(:defined), sf-modal:not(:defined):not([display=inline])):not(:has(> [data-sf-static])) {
+    display: none;
+  }
+  /* sf-wizard before it draws (wizard study WZ-7: without a printed picture
+     the raw steps stood in the page, then the frame came 300 px taller and
+     everything below it jumped). A wizard in a window or a side panel (place
+     modal, drawer) is a window's content: out of the flow, as above. A wizard
+     in the page holds its frame from what the markup tells, on the steps the
+     frame draws with (sf-wizard 1.3.0): the frame's edge and inset (C105 H6),
+     the head -- the top line and the row of steps, a control each, related
+     apart -- the step's title (h5, C179 (2)) and its «why» when the first
+     step has a description, then the first step's body, its form a column
+     the frame's gap apart, and the footer (a hairline and a control). The
+     other steps wait out of the flow. Printed markup (data-sf-static) is its
+     own box. */
+  :where(sf-wizard[place=modal]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: none;
+  }
+  :where(sf-wizard[place=drawer]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: none;
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) {
+    --sf-wizard--box-frame: calc(var(--sf-space-2) - var(--sf-px));
+    --sf-wizard--box-gap: var(--sf-space-3);
+    --sf-wizard--box-control: var(--sf-ui-1--control-height);
+    --sf-wizard--box-related: var(--sf-space-1);
+    --sf-wizard--box-why: calc(var(--sf-px) * 0);
+    display: block;
+    box-sizing: border-box;
+    padding: var(--sf-wizard--box-frame);
+    padding-top: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
+    -webkit-padding-before: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
+            padding-block-start: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
+    padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+    -webkit-padding-after: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+            padding-block-end: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+    padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+    padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+    -webkit-padding-after: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+            padding-block-end: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
+    border: 1px solid var(--sf-outline-variant);
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    border-radius: var(--sf-radius--surface);
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer]):has(> sf-wizard-step:first-of-type[description]:not([description=""]))) {
+    --sf-wizard--box-why: calc(var(--sf-wizard--box-related) + var(--sf-text-height-1));
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step:not(:first-of-type) {
+    display: none;
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > p {
+    margin: 0;
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > ul {
+    margin: 0;
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > ol {
+    margin: 0;
+  }
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-wizard--box-gap);
+    margin: 0;
   }
 }
 @layer sf.base {
@@ -7055,6 +7559,184 @@ body {
     line-clamp: 2;
   }
 }
+@layer sf.base {
+  /* sf-header-page before it draws (register smart-2 RG-S2-5, 2026-11-15:
+     without printed markup the page header was 0, then 19 px of slot content,
+     80, then 52 while sf-breadcrumbs had no code in the path row, then 80; a
+     phone 20 -> 48 -> 52 -> 60 -> 108). Its height is known from its attributes
+     and the slots the page gave it, by the rules its sheet draws with: the path
+     row (the trail's 1/3 control height) and the path gap, the line (the
+     fourth heading's line, never under the star's 1/2 control) or the actions'
+     control height, the tabs row, the expressive padding. The actions stand beside the
+     heading at every width: since C161 (4) and C103 a phone keeps them on the
+     heading's line, and below the g6 step of the line's own width the head
+     folds them to the main action and «Ещё» (sf-header-page 1.8.0), so the
+     one-line head is what the laid-out head draws (2026-11-15: the guess of a
+     line of their own below the sm step was a screen query, and wrong for
+     every head with actions on a phone). Where the heading's words and the
+     kept actions do not fit one line the head is a line taller once it draws:
+     the words' widths are not in the attributes. Until the element is
+     defined the host holds that box, its slot content out of view; once it
+     has drawn, the drawn head holds it, its rows out of view, until the head's
+     own sheet arrives and lets both go (block-size auto, the rows visible).
+     Printed markup (data-sf-static) is its own box and is left alone. */
+  :where(sf-header-page) {
+    --sf-page-header--box-path: calc(var(--sf-px) * 0);
+    --sf-page-header--box-line: max(var(--sf-heading-4--height), var(--sf-ui-1\/2--control-height));
+    --sf-page-header--box-actions: calc(var(--sf-px) * 0);
+    --sf-page-header--box-tabs: calc(var(--sf-px) * 0);
+    --sf-page-header--box-pad: calc(var(--sf-px) * 0);
+    --sf-page-header--box: calc(var(--sf-page-header--box-path) + max(var(--sf-page-header--box-line), var(--sf-page-header--box-actions)) + var(--sf-page-header--box-tabs) + var(--sf-page-header--box-pad));
+  }
+  :where(sf-page-header) {
+    --sf-page-header--box-path: calc(var(--sf-px) * 0);
+    --sf-page-header--box-line: max(var(--sf-heading-4--height), var(--sf-ui-1\/2--control-height));
+    --sf-page-header--box-actions: calc(var(--sf-px) * 0);
+    --sf-page-header--box-tabs: calc(var(--sf-px) * 0);
+    --sf-page-header--box-pad: calc(var(--sf-px) * 0);
+    --sf-page-header--box: calc(var(--sf-page-header--box-path) + max(var(--sf-page-header--box-line), var(--sf-page-header--box-actions)) + var(--sf-page-header--box-tabs) + var(--sf-page-header--box-pad));
+  }
+  :where(sf-header-page):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
+    --sf-page-header--box-path: calc(var(--sf-ui-1\/3--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
+  }
+  :where(sf-page-header):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
+    --sf-page-header--box-path: calc(var(--sf-ui-1\/3--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
+  }
+  /* The actions are buttons of the default size 1 unless every one says 1/2;
+     one of size 2 makes the line that tall. The slot content is the host's
+     child until the element draws, then a child of the drawn head's rows:
+     the box reads both. */
+  :where(sf-header-page):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]) {
+    --sf-page-header--box-actions: var(--sf-ui-1--control-height);
+  }
+  :where(sf-page-header):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]) {
+    --sf-page-header--box-actions: var(--sf-ui-1--control-height);
+  }
+  :where(sf-header-page):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]):not(:has(> [slot=actions]:not([size="1/2"]), > header .sf-page-header-actions > [slot=actions]:not([size="1/2"]))) {
+    --sf-page-header--box-actions: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-page-header):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]):not(:has(> [slot=actions]:not([size="1/2"]), > header .sf-page-header-actions > [slot=actions]:not([size="1/2"]))) {
+    --sf-page-header--box-actions: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-header-page):has(> [slot=actions][size="2"], > header .sf-page-header-actions > [slot=actions][size="2"]) {
+    --sf-page-header--box-actions: var(--sf-ui-2--control-height);
+  }
+  :where(sf-page-header):has(> [slot=actions][size="2"], > header .sf-page-header-actions > [slot=actions][size="2"]) {
+    --sf-page-header--box-actions: var(--sf-ui-2--control-height);
+  }
+  :where(sf-header-page):where([expressive]:not([expressive=false])) {
+    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
+  }
+  :where(sf-page-header):where([expressive]:not([expressive=false])) {
+    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
+  }
+  :where([data-sf-style=expressive]) :where(sf-header-page):not([expressive=false]) {
+    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
+  }
+  :where([data-sf-style=expressive]) :where(sf-page-header):not([expressive=false]) {
+    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
+  }
+  /* The tabs slot (C161 (5)) ends the head: the header's gap below the line,
+     then the tabs' strip, the control height of the tabs' size (1 unless they
+     say 1/2 or 2; the strip without panels, as the head draws it). The strip
+     is the head's lower edge, so the decorative level keeps its top padding
+     only. The header's sheet holds the strip while the tabs have no code
+     (sf-header-page 1.8.1: before, the bare tag's box had no tabs row and the
+     head grew 40 -> 52 -> 92 at 1440). */
+  :where(sf-header-page):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-1--control-height);
+    --sf-page-header--box-tabs: calc(var(--sf-page-header-gap, var(--sf-space-1\/2)) + var(--sf-page-header--box-tabs-strip));
+  }
+  :where(sf-page-header):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-1--control-height);
+    --sf-page-header--box-tabs: calc(var(--sf-page-header-gap, var(--sf-space-1\/2)) + var(--sf-page-header--box-tabs-strip));
+  }
+  :where(sf-header-page):has(> [slot=tabs][size="1/2"], > header > .sf-page-header-tabs > [slot=tabs][size="1/2"]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-page-header):has(> [slot=tabs][size="1/2"], > header > .sf-page-header-tabs > [slot=tabs][size="1/2"]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-header-page):has(> [slot=tabs][size="2"], > header > .sf-page-header-tabs > [slot=tabs][size="2"]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-2--control-height);
+  }
+  :where(sf-page-header):has(> [slot=tabs][size="2"], > header > .sf-page-header-tabs > [slot=tabs][size="2"]) {
+    --sf-page-header--box-tabs-strip: var(--sf-ui-2--control-height);
+  }
+  :where(sf-header-page):where([expressive]:not([expressive=false])):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-pad: var(--sf-space-1);
+  }
+  :where(sf-page-header):where([expressive]:not([expressive=false])):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-pad: var(--sf-space-1);
+  }
+  :where([data-sf-style=expressive]) :where(sf-header-page):not([expressive=false]):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-pad: var(--sf-space-1);
+  }
+  :where([data-sf-style=expressive]) :where(sf-page-header):not([expressive=false]):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+    --sf-page-header--box-pad: var(--sf-space-1);
+  }
+  :where(sf-header-page):not(:defined):not(:has(> [data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-page-header--box);
+    block-size: var(--sf-page-header--box);
+    overflow: clip;
+  }
+  :where(sf-page-header):not(:defined):not(:has(> [data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-page-header--box);
+    block-size: var(--sf-page-header--box);
+    overflow: clip;
+  }
+  :where(sf-header-page) > :where(.sf-page-header:not([data-sf-static])) {
+    box-sizing: border-box;
+    height: var(--sf-page-header--box);
+    block-size: var(--sf-page-header--box);
+    overflow: clip;
+  }
+  :where(sf-page-header) > :where(.sf-page-header:not([data-sf-static])) {
+    box-sizing: border-box;
+    height: var(--sf-page-header--box);
+    block-size: var(--sf-page-header--box);
+    overflow: clip;
+  }
+  :where(sf-header-page):not(:defined):not(:has(> [data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-page-header):not(:defined):not(:has(> [data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-header-page) > :where(.sf-page-header:not([data-sf-static])) > * {
+    visibility: hidden;
+  }
+  :where(sf-page-header) > :where(.sf-page-header:not([data-sf-static])) > * {
+    visibility: hidden;
+  }
+  /* sf-breadcrumbs before it draws (RG-S2-5: the trail in a page header's path
+     row was 0 px until its code came, and its drawn list unstyled until its
+     sheet came). The trail is one row (it never wraps; C93): the 1/3 control
+     height, its crumbs' target. The undefined host, then the drawn trail until
+     the trail's sheet arrives, hold that row with their words out of view.
+     Printed markup (data-sf-static) is left alone. */
+  :where(sf-breadcrumbs):not(:defined):not(:has(> [data-sf-static])) {
+    display: block;
+    box-sizing: border-box;
+    height: var(--sf-ui-1\/3--control-height);
+    block-size: var(--sf-ui-1\/3--control-height);
+    overflow: clip;
+  }
+  :where(sf-breadcrumbs) > :where(.sf-breadcrumbs:not([data-sf-static])) {
+    box-sizing: border-box;
+    height: var(--sf-ui-1\/3--control-height);
+    block-size: var(--sf-ui-1\/3--control-height);
+    overflow: clip;
+  }
+  :where(sf-breadcrumbs):not(:defined):not(:has(> [data-sf-static])) > *,
+  :where(sf-breadcrumbs) > :where(.sf-breadcrumbs:not([data-sf-static])) > * {
+    visibility: hidden;
+  }
+}
 @media (hover: none) and (pointer: coarse) {
   @media not all and (min-width: 60rem) {
     @layer sf.states {
@@ -7073,5 +7755,714 @@ body {
         font-size: 16px;
       }
     }
+  }
+}
+@layer sf.base {
+  :root[data-sf-scheme=black-on-white] {
+    --sf-scheme-ground: var(--sf-white);
+    --sf-scheme-text: var(--sf-black);
+    --sf-scheme-link: var(--sf-blue-30);
+  }
+  :root[data-sf-scheme=black-on-white],
+  :root[data-sf-scheme=black-on-white] .theme-light,
+  :root[data-sf-scheme=black-on-white] .theme-dark {
+    color-scheme: light;
+  }
+  :root[data-sf-scheme=white-on-black] {
+    --sf-scheme-ground: var(--sf-black);
+    --sf-scheme-text: var(--sf-white);
+    --sf-scheme-link: var(--sf-sky-85);
+  }
+  :root[data-sf-scheme=white-on-black],
+  :root[data-sf-scheme=white-on-black] .theme-light,
+  :root[data-sf-scheme=white-on-black] .theme-dark {
+    color-scheme: dark;
+  }
+  :root[data-sf-scheme=yellow-on-black] {
+    --sf-scheme-ground: var(--sf-black);
+    --sf-scheme-text: var(--sf-yellow-85);
+    --sf-scheme-link: var(--sf-white);
+  }
+  :root[data-sf-scheme=yellow-on-black],
+  :root[data-sf-scheme=yellow-on-black] .theme-light,
+  :root[data-sf-scheme=yellow-on-black] .theme-dark {
+    color-scheme: dark;
+  }
+  :root[data-sf-scheme=blue-on-sky] {
+    --sf-scheme-ground: var(--sf-sky-90);
+    --sf-scheme-text: var(--sf-blue-10);
+    --sf-scheme-link: var(--sf-blue-30);
+  }
+  :root[data-sf-scheme=blue-on-sky],
+  :root[data-sf-scheme=blue-on-sky] .theme-light,
+  :root[data-sf-scheme=blue-on-sky] .theme-dark {
+    color-scheme: light;
+  }
+  :root[data-sf-scheme=brown-on-cream] {
+    --sf-scheme-ground: var(--sf-yellow-95);
+    --sf-scheme-text: var(--sf-brown-10);
+    --sf-scheme-link: var(--sf-blue-30);
+  }
+  :root[data-sf-scheme=brown-on-cream],
+  :root[data-sf-scheme=brown-on-cream] .theme-light,
+  :root[data-sf-scheme=brown-on-cream] .theme-dark {
+    color-scheme: light;
+  }
+  :root[data-sf-scheme=black-on-white], :root[data-sf-scheme=blue-on-sky], :root[data-sf-scheme=brown-on-cream] {
+    --sf-neutral-98: var(--sf-scheme-ground);
+    --sf-neutral-95: var(--sf-scheme-ground);
+    --sf-neutral-90: var(--sf-scheme-ground);
+    --sf-neutral-85: var(--sf-scheme-ground);
+    --sf-neutral-80: var(--sf-scheme-ground);
+    --sf-neutral-70: var(--sf-scheme-ground);
+    --sf-neutral-60: var(--sf-scheme-ground);
+    --sf-neutral-50: var(--sf-scheme-text);
+    --sf-neutral-40: var(--sf-scheme-text);
+    --sf-neutral-35: var(--sf-scheme-text);
+    --sf-neutral-30: var(--sf-scheme-text);
+    --sf-neutral-25: var(--sf-scheme-text);
+    --sf-neutral-20: var(--sf-scheme-text);
+    --sf-neutral-15: var(--sf-scheme-text);
+    --sf-neutral-10: var(--sf-scheme-text);
+    --sf-neutral-5: var(--sf-scheme-text);
+    --sf-primary-98: var(--sf-scheme-ground);
+    --sf-primary-95: var(--sf-scheme-ground);
+    --sf-primary-90: var(--sf-scheme-ground);
+    --sf-primary-85: var(--sf-scheme-ground);
+    --sf-primary-80: var(--sf-scheme-ground);
+    --sf-primary-70: var(--sf-scheme-ground);
+    --sf-primary-60: var(--sf-scheme-ground);
+    --sf-primary-50: var(--sf-scheme-text);
+    --sf-primary-40: var(--sf-scheme-text);
+    --sf-primary-35: var(--sf-scheme-text);
+    --sf-primary-30: var(--sf-scheme-text);
+    --sf-primary-25: var(--sf-scheme-text);
+    --sf-primary-20: var(--sf-scheme-text);
+    --sf-primary-15: var(--sf-scheme-text);
+    --sf-primary-10: var(--sf-scheme-text);
+    --sf-primary-5: var(--sf-scheme-text);
+    --sf-secondary-98: var(--sf-scheme-ground);
+    --sf-secondary-95: var(--sf-scheme-ground);
+    --sf-secondary-90: var(--sf-scheme-ground);
+    --sf-secondary-85: var(--sf-scheme-ground);
+    --sf-secondary-80: var(--sf-scheme-ground);
+    --sf-secondary-70: var(--sf-scheme-ground);
+    --sf-secondary-60: var(--sf-scheme-ground);
+    --sf-secondary-50: var(--sf-scheme-text);
+    --sf-secondary-40: var(--sf-scheme-text);
+    --sf-secondary-35: var(--sf-scheme-text);
+    --sf-secondary-30: var(--sf-scheme-text);
+    --sf-secondary-25: var(--sf-scheme-text);
+    --sf-secondary-20: var(--sf-scheme-text);
+    --sf-secondary-15: var(--sf-scheme-text);
+    --sf-secondary-10: var(--sf-scheme-text);
+    --sf-secondary-5: var(--sf-scheme-text);
+    --sf-tertiary-98: var(--sf-scheme-ground);
+    --sf-tertiary-95: var(--sf-scheme-ground);
+    --sf-tertiary-90: var(--sf-scheme-ground);
+    --sf-tertiary-85: var(--sf-scheme-ground);
+    --sf-tertiary-80: var(--sf-scheme-ground);
+    --sf-tertiary-70: var(--sf-scheme-ground);
+    --sf-tertiary-60: var(--sf-scheme-ground);
+    --sf-tertiary-50: var(--sf-scheme-text);
+    --sf-tertiary-40: var(--sf-scheme-text);
+    --sf-tertiary-35: var(--sf-scheme-text);
+    --sf-tertiary-30: var(--sf-scheme-text);
+    --sf-tertiary-25: var(--sf-scheme-text);
+    --sf-tertiary-20: var(--sf-scheme-text);
+    --sf-tertiary-15: var(--sf-scheme-text);
+    --sf-tertiary-10: var(--sf-scheme-text);
+    --sf-tertiary-5: var(--sf-scheme-text);
+    --sf-error-98: var(--sf-scheme-ground);
+    --sf-error-95: var(--sf-scheme-ground);
+    --sf-error-90: var(--sf-scheme-ground);
+    --sf-error-85: var(--sf-scheme-ground);
+    --sf-error-80: var(--sf-scheme-ground);
+    --sf-error-70: var(--sf-scheme-ground);
+    --sf-error-60: var(--sf-scheme-ground);
+    --sf-error-50: var(--sf-scheme-text);
+    --sf-error-40: var(--sf-scheme-text);
+    --sf-error-35: var(--sf-scheme-text);
+    --sf-error-30: var(--sf-scheme-text);
+    --sf-error-25: var(--sf-scheme-text);
+    --sf-error-20: var(--sf-scheme-text);
+    --sf-error-15: var(--sf-scheme-text);
+    --sf-error-10: var(--sf-scheme-text);
+    --sf-error-5: var(--sf-scheme-text);
+    --sf-warning-98: var(--sf-scheme-ground);
+    --sf-warning-95: var(--sf-scheme-ground);
+    --sf-warning-90: var(--sf-scheme-ground);
+    --sf-warning-85: var(--sf-scheme-ground);
+    --sf-warning-80: var(--sf-scheme-ground);
+    --sf-warning-70: var(--sf-scheme-ground);
+    --sf-warning-60: var(--sf-scheme-ground);
+    --sf-warning-50: var(--sf-scheme-text);
+    --sf-warning-40: var(--sf-scheme-text);
+    --sf-warning-35: var(--sf-scheme-text);
+    --sf-warning-30: var(--sf-scheme-text);
+    --sf-warning-25: var(--sf-scheme-text);
+    --sf-warning-20: var(--sf-scheme-text);
+    --sf-warning-15: var(--sf-scheme-text);
+    --sf-warning-10: var(--sf-scheme-text);
+    --sf-warning-5: var(--sf-scheme-text);
+    --sf-success-98: var(--sf-scheme-ground);
+    --sf-success-95: var(--sf-scheme-ground);
+    --sf-success-90: var(--sf-scheme-ground);
+    --sf-success-85: var(--sf-scheme-ground);
+    --sf-success-80: var(--sf-scheme-ground);
+    --sf-success-70: var(--sf-scheme-ground);
+    --sf-success-60: var(--sf-scheme-ground);
+    --sf-success-50: var(--sf-scheme-text);
+    --sf-success-40: var(--sf-scheme-text);
+    --sf-success-35: var(--sf-scheme-text);
+    --sf-success-30: var(--sf-scheme-text);
+    --sf-success-25: var(--sf-scheme-text);
+    --sf-success-20: var(--sf-scheme-text);
+    --sf-success-15: var(--sf-scheme-text);
+    --sf-success-10: var(--sf-scheme-text);
+    --sf-success-5: var(--sf-scheme-text);
+    --sf-info-98: var(--sf-scheme-ground);
+    --sf-info-95: var(--sf-scheme-ground);
+    --sf-info-90: var(--sf-scheme-ground);
+    --sf-info-85: var(--sf-scheme-ground);
+    --sf-info-80: var(--sf-scheme-ground);
+    --sf-info-70: var(--sf-scheme-ground);
+    --sf-info-60: var(--sf-scheme-ground);
+    --sf-info-50: var(--sf-scheme-text);
+    --sf-info-40: var(--sf-scheme-text);
+    --sf-info-35: var(--sf-scheme-text);
+    --sf-info-30: var(--sf-scheme-text);
+    --sf-info-25: var(--sf-scheme-text);
+    --sf-info-20: var(--sf-scheme-text);
+    --sf-info-15: var(--sf-scheme-text);
+    --sf-info-10: var(--sf-scheme-text);
+    --sf-info-5: var(--sf-scheme-text);
+  }
+  :root[data-sf-scheme=white-on-black], :root[data-sf-scheme=yellow-on-black] {
+    --sf-neutral-98: var(--sf-scheme-text);
+    --sf-neutral-95: var(--sf-scheme-text);
+    --sf-neutral-90: var(--sf-scheme-text);
+    --sf-neutral-85: var(--sf-scheme-text);
+    --sf-neutral-80: var(--sf-scheme-text);
+    --sf-neutral-70: var(--sf-scheme-text);
+    --sf-neutral-60: var(--sf-scheme-text);
+    --sf-neutral-50: var(--sf-scheme-text);
+    --sf-neutral-40: var(--sf-scheme-ground);
+    --sf-neutral-35: var(--sf-scheme-ground);
+    --sf-neutral-30: var(--sf-scheme-ground);
+    --sf-neutral-25: var(--sf-scheme-ground);
+    --sf-neutral-20: var(--sf-scheme-ground);
+    --sf-neutral-15: var(--sf-scheme-ground);
+    --sf-neutral-10: var(--sf-scheme-ground);
+    --sf-neutral-5: var(--sf-scheme-ground);
+    --sf-primary-98: var(--sf-scheme-text);
+    --sf-primary-95: var(--sf-scheme-text);
+    --sf-primary-90: var(--sf-scheme-text);
+    --sf-primary-85: var(--sf-scheme-text);
+    --sf-primary-80: var(--sf-scheme-text);
+    --sf-primary-70: var(--sf-scheme-text);
+    --sf-primary-60: var(--sf-scheme-text);
+    --sf-primary-50: var(--sf-scheme-text);
+    --sf-primary-40: var(--sf-scheme-ground);
+    --sf-primary-35: var(--sf-scheme-ground);
+    --sf-primary-30: var(--sf-scheme-ground);
+    --sf-primary-25: var(--sf-scheme-ground);
+    --sf-primary-20: var(--sf-scheme-ground);
+    --sf-primary-15: var(--sf-scheme-ground);
+    --sf-primary-10: var(--sf-scheme-ground);
+    --sf-primary-5: var(--sf-scheme-ground);
+    --sf-secondary-98: var(--sf-scheme-text);
+    --sf-secondary-95: var(--sf-scheme-text);
+    --sf-secondary-90: var(--sf-scheme-text);
+    --sf-secondary-85: var(--sf-scheme-text);
+    --sf-secondary-80: var(--sf-scheme-text);
+    --sf-secondary-70: var(--sf-scheme-text);
+    --sf-secondary-60: var(--sf-scheme-text);
+    --sf-secondary-50: var(--sf-scheme-text);
+    --sf-secondary-40: var(--sf-scheme-ground);
+    --sf-secondary-35: var(--sf-scheme-ground);
+    --sf-secondary-30: var(--sf-scheme-ground);
+    --sf-secondary-25: var(--sf-scheme-ground);
+    --sf-secondary-20: var(--sf-scheme-ground);
+    --sf-secondary-15: var(--sf-scheme-ground);
+    --sf-secondary-10: var(--sf-scheme-ground);
+    --sf-secondary-5: var(--sf-scheme-ground);
+    --sf-tertiary-98: var(--sf-scheme-text);
+    --sf-tertiary-95: var(--sf-scheme-text);
+    --sf-tertiary-90: var(--sf-scheme-text);
+    --sf-tertiary-85: var(--sf-scheme-text);
+    --sf-tertiary-80: var(--sf-scheme-text);
+    --sf-tertiary-70: var(--sf-scheme-text);
+    --sf-tertiary-60: var(--sf-scheme-text);
+    --sf-tertiary-50: var(--sf-scheme-text);
+    --sf-tertiary-40: var(--sf-scheme-ground);
+    --sf-tertiary-35: var(--sf-scheme-ground);
+    --sf-tertiary-30: var(--sf-scheme-ground);
+    --sf-tertiary-25: var(--sf-scheme-ground);
+    --sf-tertiary-20: var(--sf-scheme-ground);
+    --sf-tertiary-15: var(--sf-scheme-ground);
+    --sf-tertiary-10: var(--sf-scheme-ground);
+    --sf-tertiary-5: var(--sf-scheme-ground);
+    --sf-error-98: var(--sf-scheme-text);
+    --sf-error-95: var(--sf-scheme-text);
+    --sf-error-90: var(--sf-scheme-text);
+    --sf-error-85: var(--sf-scheme-text);
+    --sf-error-80: var(--sf-scheme-text);
+    --sf-error-70: var(--sf-scheme-text);
+    --sf-error-60: var(--sf-scheme-text);
+    --sf-error-50: var(--sf-scheme-text);
+    --sf-error-40: var(--sf-scheme-ground);
+    --sf-error-35: var(--sf-scheme-ground);
+    --sf-error-30: var(--sf-scheme-ground);
+    --sf-error-25: var(--sf-scheme-ground);
+    --sf-error-20: var(--sf-scheme-ground);
+    --sf-error-15: var(--sf-scheme-ground);
+    --sf-error-10: var(--sf-scheme-ground);
+    --sf-error-5: var(--sf-scheme-ground);
+    --sf-warning-98: var(--sf-scheme-text);
+    --sf-warning-95: var(--sf-scheme-text);
+    --sf-warning-90: var(--sf-scheme-text);
+    --sf-warning-85: var(--sf-scheme-text);
+    --sf-warning-80: var(--sf-scheme-text);
+    --sf-warning-70: var(--sf-scheme-text);
+    --sf-warning-60: var(--sf-scheme-text);
+    --sf-warning-50: var(--sf-scheme-text);
+    --sf-warning-40: var(--sf-scheme-ground);
+    --sf-warning-35: var(--sf-scheme-ground);
+    --sf-warning-30: var(--sf-scheme-ground);
+    --sf-warning-25: var(--sf-scheme-ground);
+    --sf-warning-20: var(--sf-scheme-ground);
+    --sf-warning-15: var(--sf-scheme-ground);
+    --sf-warning-10: var(--sf-scheme-ground);
+    --sf-warning-5: var(--sf-scheme-ground);
+    --sf-success-98: var(--sf-scheme-text);
+    --sf-success-95: var(--sf-scheme-text);
+    --sf-success-90: var(--sf-scheme-text);
+    --sf-success-85: var(--sf-scheme-text);
+    --sf-success-80: var(--sf-scheme-text);
+    --sf-success-70: var(--sf-scheme-text);
+    --sf-success-60: var(--sf-scheme-text);
+    --sf-success-50: var(--sf-scheme-text);
+    --sf-success-40: var(--sf-scheme-ground);
+    --sf-success-35: var(--sf-scheme-ground);
+    --sf-success-30: var(--sf-scheme-ground);
+    --sf-success-25: var(--sf-scheme-ground);
+    --sf-success-20: var(--sf-scheme-ground);
+    --sf-success-15: var(--sf-scheme-ground);
+    --sf-success-10: var(--sf-scheme-ground);
+    --sf-success-5: var(--sf-scheme-ground);
+    --sf-info-98: var(--sf-scheme-text);
+    --sf-info-95: var(--sf-scheme-text);
+    --sf-info-90: var(--sf-scheme-text);
+    --sf-info-85: var(--sf-scheme-text);
+    --sf-info-80: var(--sf-scheme-text);
+    --sf-info-70: var(--sf-scheme-text);
+    --sf-info-60: var(--sf-scheme-text);
+    --sf-info-50: var(--sf-scheme-text);
+    --sf-info-40: var(--sf-scheme-ground);
+    --sf-info-35: var(--sf-scheme-ground);
+    --sf-info-30: var(--sf-scheme-ground);
+    --sf-info-25: var(--sf-scheme-ground);
+    --sf-info-20: var(--sf-scheme-ground);
+    --sf-info-15: var(--sf-scheme-ground);
+    --sf-info-10: var(--sf-scheme-ground);
+    --sf-info-5: var(--sf-scheme-ground);
+  }
+  :root[data-sf-scheme=black-on-white], :root[data-sf-scheme=white-on-black], :root[data-sf-scheme=yellow-on-black], :root[data-sf-scheme=blue-on-sky], :root[data-sf-scheme=brown-on-cream] {
+    --sf-neutral-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-neutral-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-neutral-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-neutral-90--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-neutral-90--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-neutral-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-neutral-90--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-neutral-90--alfa-48: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 48%);
+    --sf-neutral-60--alfa-48: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 48%);
+    --sf-neutral-60--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-neutral-80--alfa-48: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 48%);
+    --sf-neutral-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-neutral-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-neutral-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-neutral-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-neutral-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-neutral-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-neutral-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-neutral-50--alfa-48: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 48%);
+    --sf-neutral-50--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-primary-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-primary-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-primary-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-primary-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-primary-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-primary-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-primary-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-primary-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-primary-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-primary-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-primary-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-primary-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-primary-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-primary-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-primary-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-primary-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-primary-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-primary-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-primary-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-primary-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-secondary-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-secondary-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-secondary-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-secondary-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-secondary-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-secondary-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-secondary-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-secondary-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-secondary-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-secondary-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-secondary-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-secondary-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-secondary-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-secondary-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-secondary-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-secondary-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-secondary-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-secondary-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-secondary-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-secondary-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-tertiary-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-tertiary-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-tertiary-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-tertiary-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-tertiary-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-tertiary-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-tertiary-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-tertiary-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-tertiary-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-tertiary-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-tertiary-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-tertiary-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-tertiary-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-tertiary-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-tertiary-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-tertiary-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-tertiary-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-tertiary-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-tertiary-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-tertiary-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-error-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-error-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-error-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-error-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-error-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-error-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-error-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-error-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-error-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-error-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-error-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-error-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-error-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-error-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-error-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-error-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-error-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-error-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-error-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-error-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-warning-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-warning-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-warning-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-warning-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-warning-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-warning-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-warning-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-warning-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-warning-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-warning-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-warning-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-warning-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-warning-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-warning-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-warning-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-warning-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-warning-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-warning-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-warning-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-warning-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-success-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-success-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-success-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-success-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-success-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-success-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-success-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-success-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-success-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-success-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-success-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-success-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-success-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-success-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-success-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-success-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-success-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-success-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-success-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-success-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+    --sf-info-90--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-info-90--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-info-90--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-info-90--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-info-50--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-info-50--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-info-50--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-info-50--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-info-50--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-info-50--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-info-50--alfa-28: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-info-50--alfa-32: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-info-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 4%);
+    --sf-info-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 8%);
+    --sf-info-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-info-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-info-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-info-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-info-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-info-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 80%);
+  }
+  :root[data-sf-scheme=black-on-white], :root[data-sf-scheme=black-on-white] .theme-light, :root[data-sf-scheme=black-on-white] .theme-dark, :root[data-sf-scheme=white-on-black], :root[data-sf-scheme=white-on-black] .theme-light, :root[data-sf-scheme=white-on-black] .theme-dark, :root[data-sf-scheme=yellow-on-black], :root[data-sf-scheme=yellow-on-black] .theme-light, :root[data-sf-scheme=yellow-on-black] .theme-dark, :root[data-sf-scheme=blue-on-sky], :root[data-sf-scheme=blue-on-sky] .theme-light, :root[data-sf-scheme=blue-on-sky] .theme-dark, :root[data-sf-scheme=brown-on-cream], :root[data-sf-scheme=brown-on-cream] .theme-light, :root[data-sf-scheme=brown-on-cream] .theme-dark {
+    --sf-surface-page: var(--sf-scheme-ground);
+    --sf-surface-0: var(--sf-surface-page);
+    --sf-paper: var(--sf-scheme-ground);
+    --sf-on-paper: var(--sf-scheme-text);
+    --sf-paper-primary: var(--sf-scheme-text);
+    --sf-alpha-base: var(--sf-scheme-text);
+    --sf-on-neutral: var(--sf-scheme-ground);
+    --sf-on-primary: var(--sf-scheme-ground);
+    --sf-on-secondary: var(--sf-scheme-ground);
+    --sf-on-tertiary: var(--sf-scheme-ground);
+    --sf-on-error: var(--sf-scheme-ground);
+    --sf-on-warning: var(--sf-scheme-ground);
+    --sf-on-success: var(--sf-scheme-ground);
+    --sf-on-info: var(--sf-scheme-ground);
+    --sf-outline: var(--sf-scheme-text);
+    --sf-outline-variant: var(--sf-scheme-text);
+    --sf-link: var(--sf-scheme-link);
+    --sf-link-hover: var(--sf-scheme-link);
+    --sf-link-active: var(--sf-scheme-link);
+    --sf-link-visited: var(--sf-scheme-link);
+    --sf-focus: var(--sf-scheme-link);
+    --sf-focus--color: var(--sf-scheme-link);
+    --sf-mark: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-tone-rose-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-rose-container: var(--sf-scheme-text);
+    --sf-tone-amber-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-amber-container: var(--sf-scheme-text);
+    --sf-tone-lime-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-lime-container: var(--sf-scheme-text);
+    --sf-tone-green-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-green-container: var(--sf-scheme-text);
+    --sf-tone-teal-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-teal-container: var(--sf-scheme-text);
+    --sf-tone-sky-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-sky-container: var(--sf-scheme-text);
+    --sf-tone-indigo-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-indigo-container: var(--sf-scheme-text);
+    --sf-tone-violet-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-on-tone-violet-container: var(--sf-scheme-text);
+  }
+  :root[data-sf-scheme=black-on-white], :root[data-sf-scheme=black-on-white] body, :root[data-sf-scheme=white-on-black], :root[data-sf-scheme=white-on-black] body, :root[data-sf-scheme=yellow-on-black], :root[data-sf-scheme=yellow-on-black] body, :root[data-sf-scheme=blue-on-sky], :root[data-sf-scheme=blue-on-sky] body, :root[data-sf-scheme=brown-on-cream], :root[data-sf-scheme=brown-on-cream] body {
+    background-color: var(--sf-surface-page);
+    color: var(--sf-on-surface);
+  }
+  :root[data-sf-text-scale="125"] {
+    font-size: 125%;
+  }
+  :root[data-sf-text-scale="150"] {
+    font-size: 150%;
+  }
+  :root[data-sf-text-scale="175"] {
+    font-size: 175%;
+  }
+  :root[data-sf-text-scale="200"] {
+    font-size: 200%;
+  }
+  :root[data-sf-text-scale="125"] pre {
+    max-width: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  :root[data-sf-text-scale="150"] pre {
+    max-width: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  :root[data-sf-text-scale="175"] pre {
+    max-width: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  :root[data-sf-text-scale="200"] pre {
+    max-width: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+  :root[data-sf-text-spacing=wide] body {
+    letter-spacing: 0.12em;
+    word-spacing: 0.16em;
+  }
+  :root[data-sf-text-spacing=wide] p, :root[data-sf-text-spacing=wide] li, :root[data-sf-text-spacing=wide] dd, :root[data-sf-text-spacing=wide] dt, :root[data-sf-text-spacing=wide] blockquote, :root[data-sf-text-spacing=wide] figcaption, :root[data-sf-text-spacing=wide] td, :root[data-sf-text-spacing=wide] th, :root[data-sf-text-spacing=wide] label {
+    line-height: 1.5;
+  }
+  :root[data-sf-text-spacing=wide] p {
+    margin-bottom: 2em;
+    -webkit-margin-after: 2em;
+            margin-block-end: 2em;
+  }
+  :root[data-sf-font=sans] {
+    --sf-text--family: var(--sf-sans);
+    --sf-heading--family: var(--sf-sans);
+    --sf-display--family: var(--sf-sans);
+  }
+  :root[data-sf-font=serif] {
+    --sf-text--family: var(--sf-serif);
+    --sf-heading--family: var(--sf-serif);
+    --sf-display--family: var(--sf-serif);
+  }
+  :root[data-sf-links=underline] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link),
+  :root[data-sf-scheme=black-on-white] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link), :root[data-sf-scheme=white-on-black] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link), :root[data-sf-scheme=yellow-on-black] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link), :root[data-sf-scheme=blue-on-sky] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link), :root[data-sf-scheme=brown-on-cream] a[href]:not([class*=sf-button]):not([role=button]):not([role=tab]):not([role=menuitem]):not(.sf-skip-link) {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  :root[data-sf-images=grey] img, :root[data-sf-images=grey] picture, :root[data-sf-images=grey] video, :root[data-sf-images=grey] iframe, :root[data-sf-images=grey] canvas, :root[data-sf-images=grey] svg[role=img], :root[data-sf-images=grey] [data-bg] {
+    -webkit-filter: grayscale(1);
+            filter: grayscale(1);
+  }
+  :root[data-sf-images=hide] img, :root[data-sf-images=hide] picture, :root[data-sf-images=hide] video, :root[data-sf-images=hide] iframe, :root[data-sf-images=hide] canvas, :root[data-sf-images=hide] svg[role=img], :root[data-sf-images=hide] [data-bg] {
+    display: none;
+  }
+  .sf-image-caption {
+    display: none;
+  }
+  :root[data-sf-images=hide] .sf-image-caption {
+    display: block;
+    box-sizing: border-box;
+    max-width: 100%;
+    max-inline-size: 100%;
+    padding: var(--sf-space-1\/4) var(--sf-space-1\/3);
+    border: 1px dashed var(--sf-outline);
+    border: var(--sf-px) dashed var(--sf-outline);
+    border-radius: var(--sf-radius--ui);
+    color: var(--sf-on-surface);
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+  }
+  :root[data-sf-motion=reduce],
+  :root[data-sf-motion=reduce] *,
+  :root[data-sf-motion=reduce] ::before,
+  :root[data-sf-motion=reduce] ::after {
+    -webkit-animation-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+    -webkit-animation-iteration-count: 1 !important;
+            animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  @media (prefers-contrast: more) {
+    :root:not([data-sf-scheme]),
+    :root:not([data-sf-scheme]) .theme-light,
+    :root:not([data-sf-scheme]) .theme-dark {
+      --sf-on-surface-variant: var(--sf-on-surface);
+      --sf-on-surface-container-variant: var(--sf-on-surface);
+      --sf-on-surface-card-variant: var(--sf-on-surface);
+      --sf-on-surface-raised-variant: var(--sf-on-surface);
+      --sf-on-surface-popup-variant: var(--sf-on-surface);
+      --sf-on-surface-popup-nested-variant: var(--sf-on-surface);
+      --sf-on-surface-icon: var(--sf-on-surface);
+      --sf-outline: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
+      --sf-on-elevation-1--variant: var(--sf-on-surface-card-variant);
+      --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+      --sf-on-elevation-4--variant: var(--sf-on-surface-popup-nested-variant);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    :root {
+      --sf-blur-small: var(--sf-blur-none);
+      --sf-blur-medium: var(--sf-blur-none);
+      --sf-blur-large: var(--sf-blur-none);
+      --sf-surface-overlay--blur: var(--sf-blur-none);
+    }
+    :root,
+    :root .theme-light,
+    :root .theme-dark {
+      --sf-surface-media: var(--sf-black--alfa-80);
+      --sf-surface-media-hover: var(--sf-black);
+      --sf-surface-media-active: var(--sf-black);
+    }
+  }
+  .sf-skip-link:not(:focus) {
+    position: absolute;
+    width: 1px;
+    inline-size: 1px;
+    width: 1px;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    height: 1px;
+    block-size: 1px;
+    height: 1px;
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-skip-link:focus{
+    left: var(--sf-space-1\/2);
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-skip-link:focus{
+    left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-skip-link:focus:where(:dir(ltr)){
+    left: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-skip-link:focus{
+    right: var(--sf-space-1\/2);
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-skip-link:focus{
+    right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-skip-link:focus:where(:dir(rtl)){
+    right: var(--sf-space-1\/2);
+  }
+  .sf-skip-link:focus {
+    position: fixed;
+    top: var(--sf-space-1\/2);
+    inset-block-start: var(--sf-space-1\/2);
+    inset-inline-start: var(--sf-space-1\/2);
+    z-index: calc(9000 + 1000);
+    z-index: calc(var(--sf-z-index-layer, 9000) + 1000);
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: var(--sf-ui-1--control-height);
+    min-block-size: var(--sf-ui-1--control-height);
+    padding-left: var(--sf-space-1\/2);
+    padding-right: var(--sf-space-1\/2);
+    padding-inline: var(--sf-space-1\/2);
+    border-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    color: var(--sf-on-primary);
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1);
+    line-height: var(--sf-text-height-1);
+    font-weight: var(--sf-weight--medium);
+    text-decoration: none;
   }
 }

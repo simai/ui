@@ -46,7 +46,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+};
 
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default());
@@ -62,8 +70,8 @@ let sequence = 0;
 const HelpMarkElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
@@ -255,7 +263,7 @@ function renderHelpMarkTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${['sf-help-mark', context.rootClass].filter(Boolean).join(' ')}>
       <sf-button-icon class="sf-help-mark-button" size=${context.size} appearance="ghost" scheme="on-surface"
-                      icon="help" aria-label=${context.name}
+                      icon="help" aria-label=${context.name} tooltip="off"
                       aria-expanded=${String(Boolean(context.open))} aria-controls=${panelId}
                       @click=${() => context.component.toggle()}></sf-button-icon>
       <div class="sf-help-mark-panel" id=${panelId} ?hidden=${!context.open}>
@@ -332,7 +340,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-help-
 /***/ "cd1ae22812c1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.4.3","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.4.4","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

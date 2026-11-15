@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.reference-link",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "title": "Reference Link",
   "summary": "Navigation surface that pairs a real destination with a compact reference.",
   "kind": "smart",
@@ -283,7 +283,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/reference-link/index.js",
-        "sha256": "42c97fadfd0c86c2e3876a95fcbe6e2b948a5e219f97c551585e5975a927fdfd"
+        "sha256": "de2d3e67250392bc114b3a73e071807e4e01efe99d92dfa121005cd4a98d1bbc"
       }
     ],
     "generated_runtime": [

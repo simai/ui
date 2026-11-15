@@ -273,34 +273,45 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6d8735a1253b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9279cc82ea5a");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b58689b2b3f6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("45e954eb1d84");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("616513d619d2");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d8735a1253b");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9279cc82ea5a");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("b58689b2b3f6");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("45e954eb1d84");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("616513d619d2");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
 
 
 
 
 
 
- // sf-tooltip from its component.json (standard simai.smart-component 1.3.8 §3,
+
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+}; // sf-tooltip from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4): appearance, size, arrow, text and supporting-text are attributes and
 // properties made by core/js/element-manifest.js; the axis's old name `type` is
 // a dated alias of appearance (aliases.json).
 
-const TooltipElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+const TooltipElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en,
+    ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
 });
 
 class SfTooltip extends TooltipElement {
@@ -320,9 +331,27 @@ class SfTooltip extends TooltipElement {
         aliases: ['type']
       }
     };
-  }
+  } // One size for every tooltip (owner decision C160 (3)): size is a former
+  // name that draws nothing until 2027-01-01; a size other than the plain
+  // one is noted (SF.deprecations), and the sheet draws every size alike.
+
 
   templateContext() {
+    const size = this.getAttribute('size');
+
+    if (size !== null && size !== '1/3') {
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+        component: 'sf-tooltip',
+        tag: 'sf-tooltip',
+        kind: 'setting',
+        attribute: 'size',
+        from: 'size',
+        to: null,
+        since: '2026-11-14',
+        remove_after: '2027-01-01'
+      });
+    }
+
     return this.createTemplateContext({
       component: this,
       ...this.getPropsContext()
@@ -330,7 +359,7 @@ class SfTooltip extends TooltipElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderTooltipTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderTooltipTemplate)(this.templateContext());
   }
 
 }
@@ -411,6 +440,13 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -442,7 +478,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toolt
 /***/ "9279cc82ea5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.3.1","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.4.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

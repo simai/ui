@@ -636,7 +636,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
- // sf-progress-bar from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+}; // sf-progress-bar from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §4.4): its settings are attributes and properties made by
 // core/js/element-manifest.js; a job's part arrives as the stream fact chunk
 // {done, total} (vocabulary 1.1.5 §5.2), which a rule hands to the action
@@ -648,8 +656,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 const ProgressBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
@@ -1033,7 +1041,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "e023bc52f90d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","top","inline-end"],"default":"none"},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","top","inline-end"],"default":"none"},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

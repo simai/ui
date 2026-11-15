@@ -387,10 +387,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FormField: () => (/* binding */ FormField),
 /* harmony export */   ShownRequired: () => (/* binding */ ShownRequired),
+/* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
+/* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
+/* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
+/* harmony export */   formTried: () => (/* binding */ formTried),
+/* harmony export */   hasFieldWord: () => (/* binding */ hasFieldWord),
 /* harmony export */   innerControlName: () => (/* binding */ innerControlName),
+/* harmony export */   ownInvalid: () => (/* binding */ ownInvalid),
 /* harmony export */   syncFieldValidity: () => (/* binding */ syncFieldValidity),
-/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity)
+/* harmony export */   syncOwnValidity: () => (/* binding */ syncOwnValidity),
+/* harmony export */   validityWords: () => (/* binding */ validityWords)
 /* harmony export */ });
 // The form-control half of a field built from its component.json (standard
 // simai.smart-component 1.3.8 §17.1, §17.2), shared by the field family.
@@ -604,72 +612,309 @@ const FormField = Base => class extends Base {
     this.sfSyncFormState();
   }
 
-};
+}; // The word key a failed validity flag is said with (owner decision C153 (3)):
+// each component carries these words in its lang/<locale>.json runtime
+// words, in the page's language (LC-9), never the browser's.
+
+const VALIDITY_WORDS = Object.freeze({
+  valueMissing: 'value-missing',
+  typeMismatch: 'type-mismatch',
+  patternMismatch: 'pattern-mismatch',
+  tooShort: 'too-short',
+  tooLong: 'too-long',
+  rangeUnderflow: 'range-underflow',
+  rangeOverflow: 'range-overflow',
+  stepMismatch: 'step-mismatch',
+  badInput: 'bad-input'
+}); // One check pass across every field of a page (C153 (3)): a submit attempt,
+// reportValidity() or checkValidity() fires `invalid` on every wrong field
+// in tree order, synchronously. The first wrong field of a pass the person
+// started (a press or Enter in this task) takes the focus; the rest show
+// their errors and keep still. The fields are separate bundles, each with its
+// own copy of this module, so the pass lives on a shared global.
+
+const CHECK_KEY = Symbol.for('simai.framework.field-check');
+
+function fieldCheck() {
+  const shared = globalThis[CHECK_KEY] || (globalThis[CHECK_KEY] = {
+    activated: false,
+    focused: false,
+    tried: new WeakSet()
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const mark = event => {
+      if (event.type === 'keydown' && event.key !== 'Enter') return;
+      shared.activated = true;
+      setTimeout(() => {
+        shared.activated = false;
+      }, 0);
+    };
+
+    document.addEventListener('click', mark, true);
+    document.addEventListener('keydown', mark, true);
+  }
+
+  return shared;
+}
 /**
- * The required error a text field shows after a failed form check (owner
- * decision C55, sf-dropdown 1.9.0's look; C55 acceptance F1): once the
- * browser's check finds the field required and empty -- a submit attempt,
- * checkValidity(), reportValidity(), all of which fire `invalid` on the host
- * -- the field draws its error border and the component's value-missing word
- * under it, until the person's input fills it or the form is reset. The
- * browser's own bubble and its focus on the first invalid field are left as
- * they are. The page's invalid / error-message win over it.
- *
- * Usage, over FormField: `class SfThing extends ShownRequired(FormField(Element))`;
- * the template reads `sfShownInvalid(invalid)` and
- * `sfShownMessage(invalid, errorMessage)` instead of the bare settings.
+ * Says that `element` failed a check now. Returns true when it is the first
+ * wrong field of a pass the person started, the one that takes the focus.
+ * Every member of the field family calls it from its `invalid` listener.
  */
 
-const ShownRequired = Base => class extends Base {
+
+function claimFirstInvalid(element) {
+  const check = fieldCheck();
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) check.tried.add(form);
+  if (!check.activated || check.focused) return false;
+  check.focused = true;
+  setTimeout(() => {
+    check.focused = false;
+  }, 0);
+  return true;
+}
+/**
+ * For a member that draws its own errors on `invalid` (C153 (3)): the
+ * browser's bubble is cancelled on the host and on every native control
+ * inside it, `show` runs for the host's own event, and the first wrong field
+ * of a submit the person made takes the focus. Returns the listener, to
+ * remove with removeEventListener('invalid', listener, true).
+ */
+
+function ownInvalid(component, show) {
+  fieldCheck();
+
+  const listener = event => {
+    event.preventDefault();
+    if (event.target !== component) return;
+    const first = claimFirstInvalid(component);
+    show?.(event);
+
+    if (first) {
+      const target = component.focusDelegate?.() || component.sfValidityAnchor?.() || component;
+
+      try {
+        target.focus?.();
+      } catch {
+        /* a field taken out of the page while the check ran */
+      }
+    }
+  };
+
+  component.addEventListener('invalid', listener, true);
+  return listener;
+}
+/** A submit attempt has failed on this field's form since its last reset. */
+
+function formTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  return Boolean(form && fieldCheck().tried.has(form));
+}
+/** Forgets the failed attempt of a form (form.reset()). */
+
+function forgetFormTried(element) {
+  const form = element?.form || element?.closest?.('form') || null;
+  if (form) fieldCheck().tried.delete(form);
+}
+/** Whether the component's dictionaries hold a word, in any language. */
+
+function hasFieldWord(component, key) {
+  const words = component?.constructor?.sfWords || {};
+  return Object.values(words).some(dictionary => dictionary && dictionary[key] !== undefined && dictionary[key] !== null);
+}
+/**
+ * The words a field says for its validity now (C153 (3)): the page's custom
+ * error as written; else the first failed flag in the component's own words,
+ * with the limit it broke ({min}, {max}, {step}); a type mismatch of an
+ * e-mail or a web address has its own word (type-mismatch-email,
+ * type-mismatch-url). A flag the component has no word for says what the
+ * component itself set (its own count, range or file words), never the
+ * browser's. '' while valid.
+ */
+
+function validityWords(component, control = component?.sfValidityAnchor?.()) {
+  const validity = component?.validity;
+  if (!validity || validity.valid) return '';
+  if (validity.customError) return component.validationMessage || '';
+
+  const read = name => control?.getAttribute?.(name) ?? component.getAttribute?.(name) ?? '';
+
+  for (const flag of VALIDITY_FLAGS) {
+    if (!validity[flag]) continue;
+    let key = VALIDITY_WORDS[flag];
+
+    if (flag === 'typeMismatch') {
+      const type = String(control?.type || '').toLowerCase();
+      if ((type === 'email' || type === 'url') && hasFieldWord(component, `${key}-${type}`)) key = `${key}-${type}`;
+    }
+
+    if (hasFieldWord(component, key)) {
+      return component.sfWord(key, {
+        vars: {
+          min: read(flag === 'tooShort' ? 'minlength' : 'min'),
+          max: flag === 'tooLong' ? component.maxlength ?? read('maxlength') : read('max'),
+          step: read('step')
+        }
+      });
+    }
+
+    return component.validationMessage || '';
+  }
+
+  return component.validationMessage || '';
+}
+/**
+ * The errors a field shows itself (owner decision C153 (3), for the whole
+ * field family as C55): never the browser's bubble, always the component's
+ * words in the page's language.
+ *
+ * - A failed check of the form -- a submit attempt, reportValidity(),
+ *   checkValidity() -- shows the error on every wrong field at once, and the
+ *   first wrong field of a submit the person made takes the focus
+ *   (claimFirstInvalid). The browser's bubble, on the host and on the native
+ *   control inside it, is cancelled.
+ * - After that, or once the person has changed the value, leaving the field
+ *   checks it: a wrong value shows its error, a right one clears it.
+ * - While the person types, a shown error goes the moment the value is right;
+ *   a still-wrong value keeps it, in the words of what is wrong now. Nothing
+ *   is shown while typing into a field that showed no error.
+ * - form.reset() takes every shown error away.
+ *
+ * The page's invalid / error-message win over it. Usage, over FormField:
+ * `class SfThing extends ShownValidity(FormField(Element))`; the template
+ * reads `sfShownInvalid(invalid)` and `sfShownMessage(invalid, errorMessage)`
+ * instead of the bare settings. ShownRequired, its name before C153, stays
+ * the same mixin.
+ */
+
+const ShownValidity = Base => class extends Base {
   constructor() {
     super();
-    this.__sfMissingShown = false;
-    this.addEventListener('invalid', () => {
-      if (!this.validity?.valueMissing || this.__sfMissingShown) return;
-      this.__sfMissingShown = true;
-      this.requestComponentUpdate?.('invalid');
+    this.__sfErrorShown = false;
+    this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
+    // submits is seen before the check it starts.
+
+    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    // would draw a second bubble; neither bubbles, so only capture sees both.
+
+    this.addEventListener('invalid', event => {
+      event.preventDefault();
+      if (event.target !== this) return;
+      const first = claimFirstInvalid(this);
+
+      if (!this.__sfErrorShown) {
+        this.__sfErrorShown = true;
+        this.requestComponentUpdate?.('invalid');
+      } else {
+        this.requestComponentUpdate?.('validity');
+      }
+
+      if (first) this.sfFocusFirstInvalid();
+    }, true);
+    this.addEventListener('input', () => {
+      this.__sfTouched = true;
     });
-  } // The shown required error goes once the value is no longer missing,
-  // whatever filled it: the person's input or change, a value set from
-  // script, a value attribute (C55 acceptance F1 R2, D1; sf-dropdown 1.9.0's
-  // shownMissing reads the value the same way). Every one of them ends in
-  // this sync, so the check is here and not on the events.
+    this.addEventListener('change', () => {
+      this.__sfTouched = true;
+    });
+    this.addEventListener('focusout', event => {
+      if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
+
+      if (this.matches?.(':focus-within')) return;
+      if (!this.__sfTouched && !formTried(this)) return;
+      this.sfSyncValidity?.();
+      const wrong = this.validity ? !this.validity.valid : false;
+
+      if (wrong !== this.__sfErrorShown) {
+        this.__sfErrorShown = wrong;
+        this.requestComponentUpdate?.('validity');
+      } else if (wrong) {
+        this.requestComponentUpdate?.('validity');
+      }
+    });
+  }
+  /** The first wrong field of a submit takes the focus, as the browser's check did. */
+
+
+  sfFocusFirstInvalid() {
+    const target = this.focusDelegate?.() || this.sfValidityAnchor?.() || this;
+
+    try {
+      target.focus?.();
+    } catch {
+      /* a field taken out of the page while the check ran */
+    }
+  } // A shown error goes the moment the value is right, whatever made it right:
+  // the person's input or change, a value set from script, a value attribute
+  // (C55 acceptance F1 R2, D1). A still-wrong value redraws its words.
 
 
   sfSyncFormState() {
     super.sfSyncFormState?.();
-    if (!this.__sfMissingShown || this.validity?.valueMissing) return;
-    this.__sfMissingShown = false;
+    if (!this.__sfErrorShown) return;
+
+    if (this.validity && !this.validity.valid) {
+      const words = validityWords(this);
+
+      if (words !== this.__sfShownWords) {
+        this.__sfShownWords = words;
+        this.requestComponentUpdate?.('validity');
+      }
+
+      return;
+    }
+
+    this.__sfErrorShown = false;
+    this.__sfShownWords = '';
     this.requestComponentUpdate?.('value');
   }
-  /** The required error is shown now. */
+  /** An error is shown now (the page's own invalid aside). */
+
+
+  get sfErrorShown() {
+    return this.__sfErrorShown;
+  }
+  /** The name before C153, kept for the components that read it. */
 
 
   get sfMissingShown() {
-    return this.__sfMissingShown;
+    return this.__sfErrorShown;
   }
-  /** The invalid state the field draws: the page's, or the required one shown. */
+  /** The invalid state the field draws: the page's, or the one it shows itself. */
 
 
   sfShownInvalid(invalid) {
-    return Boolean(invalid) || this.__sfMissingShown;
+    return Boolean(invalid) || this.__sfErrorShown;
   }
-  /** The message under the field: the page's while it says invalid, else the required word. */
+  /** The message under the field: the page's while it says invalid, else the shown error's words. */
 
 
   sfShownMessage(invalid, errorMessage) {
     if (invalid) return errorMessage || '';
-    return this.__sfMissingShown ? this.sfWord?.('value-missing') || '' : '';
+    if (!this.__sfErrorShown) return '';
+    const words = validityWords(this);
+    this.__sfShownWords = words;
+    return words;
   }
 
   formResetCallback() {
-    const shown = this.__sfMissingShown;
-    this.__sfMissingShown = false;
+    const shown = this.__sfErrorShown;
+    this.__sfErrorShown = false;
+    this.__sfTouched = false;
+    this.__sfShownWords = '';
+    forgetFormTried(this);
     super.formResetCallback?.();
     if (shown) this.requestComponentUpdate?.('reset');
   }
 
 };
+/** The mixin's name before owner decision C153 (C55 acceptance F1). */
+
+const ShownRequired = ShownValidity;
 
 /***/ },
 
@@ -740,11 +985,12 @@ const INHERITED_TEXT = {
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
 // the manifest check that reads a component's props sees them.
-// The marker and the reset are one step down the ladder from the field they
-// sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
-// button (32px) with the same inset on every side.
-// sf-input's outer steps: a 3 field holds a 2 button; 1/3 is the ladder's
-// foot, so its marker and reset stay at 1/3.
+// The marker is one step down the ladder from the field it sits in, so it
+// reads as a note about the value. (The reset was a button of that step too,
+// a 32px button in a 40px field; since C123 it is the field's own action at
+// the field's glyph size, see renderInheritedSlot.)
+// sf-input's outer steps: a 3 field's marker is a 2; 1/3 is the ladder's
+// foot, so its marker stays at 1/3.
 
 const STEP_DOWN = Object.freeze({
   '1/3': '1/3',
@@ -929,6 +1175,15 @@ const InheritedValueField = Base => class extends Base {
 /**
  * The marker and the reset, for a control's trailing slot. Nothing at all
  * without an inherited value, so a field that does not use it is unchanged.
+ *
+ * The reset is an action of the field (owner decision C123, variant A): the
+ * field layer's .sf-field-action (component.inputs), the glyph sf-input's
+ * clear and reveal draw -- no plate in any state, the quiet ink at rest and the
+ * text's ink under the pointer and on a press, the keyboard ring round the
+ * glyph, an invisible hit area. Its glyph is the field's leading-icon size
+ * (the field's text line), not a step down; the marker keeps the step down.
+ * Each field says its step through --sf-field-action--glyph, --height and
+ * --inset (inherited-value.css). It was a link icon button of the step below.
  */
 
 function renderInheritedSlot(component, {
@@ -947,7 +1202,7 @@ function renderInheritedSlot(component, {
             ?hidden=${!inherited}>${component.inheritedText}</span>
       <button
         type="button"
-        class="sf-field-reset sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${step}"
+        class="sf-field-action sf-field-reset"
         data-inherited-reset
         aria-label=${component.resetLabel}
         title=${component.resetLabel}
@@ -1008,7 +1263,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // A colour, for anywhere a colour is set: a theme, a site's own look, a label, a
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+}; // A colour, for anywhere a colour is set: a theme, a site's own look, a label, a
 // chart series. It was built because the property set had no colour at all while a
 // running Larena site declares fourteen of them, but nothing here is about a
 // property view -- it is a control like a switch or a date.
@@ -1034,8 +1297,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const ColorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en,
+    ru
   },
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
@@ -1071,7 +1334,7 @@ const normalise = value => {
   return (0,_js_color_math_js__WEBPACK_IMPORTED_MODULE_7__.normaliseHex)(text.startsWith("#") ? text : `#${text}`);
 };
 
-class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(ColorElement) {
+class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(ColorElement)) {
   static get props() {
     return { ...super.props,
       templateName: {
@@ -1242,6 +1505,13 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
 
   get themeResetLabel() {
     return this.getAttribute("clear-label") || this.sfWord("theme-reset");
+  } // The brand field's clear returns the product's own colour, SIMAI's,
+  // not an inherited one: «Вернуть цвет SIMAI» (DEV, recipe brand-theme,
+  // 2026-11-15). clear-label still names it.
+
+
+  get brandResetLabel() {
+    return this.getAttribute("clear-label") || this.sfWord("brand-reset");
   }
 
   _palette() {
@@ -1371,7 +1641,17 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
     const target = this._themeTarget();
 
     if (seed && palette.isThemeColor(seed) && target?.style) {
-      this._restoreTheme = setVariables(target, this._themeVariables(palette.themeFromColor(seed)));
+      // The theme through core's applyTheme: an area below the page
+      // takes the scheme around it and follows it (C84, RG-S3-31); the
+      // brand fill beside it.
+      const theme = palette.themeFromColor(seed);
+      const undoTheme = palette.applyTheme(theme, target);
+      const undoBrand = setVariables(target, palette.brandVariables?.(theme) ?? {});
+
+      this._restoreTheme = () => {
+        undoBrand();
+        undoTheme();
+      };
     }
 
     this._appliedColor = color;
@@ -2095,6 +2375,9 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
   templateContext() {
     const open = Boolean(this._open);
     return this.createTemplateContext({ ...this.getPropsContext(),
+      // C153 (3): the page's error, or the one the field shows itself (ShownValidity).
+      invalid: this.sfShownInvalid(this.invalid),
+      errorMessage: this.sfShownMessage(this.invalid, this.errorMessage),
       component: this,
       value: this.value,
       painted: this.effectiveValue,
@@ -2104,7 +2387,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormFi
       inheritedText: this.inheritedText,
       hasInheritedValue: this.hasInheritedValue,
       chooseLabel: this.chooseLabel,
-      clearLabel: this.clearLabel,
+      clearLabel: this.isBrand ? this.brandResetLabel : this.clearLabel,
       swatchList: this.swatchList,
       clearable: this.clearable,
       disabled: this.disabled,
@@ -2649,16 +2932,17 @@ function renderColorTemplate(context) {
     disabled,
     className: 'sf-color-inherited-slot'
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    ${context.clearable && isSet && !context.hasInheritedValue ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                                <sf-button-icon
-                                        appearance="ghost"
-                                        scheme="on-surface"
-                                        size=${{
-    '1/3': '1/3',
-    '2': '1',
-    '3': '2'
-  }[size] || '1/2'}
-                                        icon="restart_alt"
+                    ${context.clearable && isSet && !context.hasInheritedValue // The reset is an action inside the field (owner
+  // decision C123): the field layer's .sf-field-action
+  // (component.inputs), the glyph sf-input's clear and
+  // reveal draw -- no plate in any state, the quiet ink
+  // at rest and the text's ink under the pointer, the
+  // ring round the glyph, an invisible hit area the
+  // field's inner height. Its name is the variant's
+  // reset words (clearLabel).
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                                <button type="button"
+                                        class="sf-field-action sf-color-reset"
                                         data-action="clear"
                                         aria-label=${context.clearLabel}
                                         title=${context.clearLabel}
@@ -2667,7 +2951,7 @@ function renderColorTemplate(context) {
     event.stopPropagation();
     component.clear();
   }}
-                                ></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                                ><sf-icon icon="restart_alt" aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     <sf-icon icon=${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
                              root-class="sf-color-chevron"
                              aria-hidden="true"></sf-icon>
@@ -3096,21 +3380,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.9.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.14.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
 /***/ "068ec0d4d41c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour","how":"How to choose the colour","palette":"Palette","own":"Custom","product":"Product colours","recent":"Recent custom colours","recent-one":"Custom colour {value}","recent-alpha":"Custom colour {value}, opacity {alpha} %","shade":"Saturation and brightness","shade-value":"saturation {saturation} %, brightness {brightness} %","hue":"Hue","hue-value":"hue {hue}°","alpha":"Transparency","alpha-value":"opacity {alpha} %","eyedropper":"Pick a colour from the screen","eyedropper-missing":"The eyedropper is only in Chrome and Edge on a computer","code":"Colour code","code-in":"Colour code, {format}","format":"Code format","format-current":"Code format: {format}","opacity":"Opacity, per cent","not-a-colour":"This does not read as a colour in {format}","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-info":"The colour is close to the information colour: an accent may read as a hint or a notice.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","decimal":".","scheme-dark":"dark","scheme-light":"light","brand":"Brand colour"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour","brand-reset":"Restore SIMAI colour","how":"How to choose the colour","palette":"Palette","own":"Custom","product":"Product colours","recent":"Recent custom colours","recent-one":"Custom colour {value}","recent-alpha":"Custom colour {value}, opacity {alpha} %","shade":"Saturation and brightness","shade-value":"saturation {saturation} %, brightness {brightness} %","hue":"Hue","hue-value":"hue {hue}°","alpha":"Transparency","alpha-value":"opacity {alpha} %","eyedropper":"Pick a colour from the screen","eyedropper-missing":"The eyedropper is only in Chrome and Edge on a computer","code":"Colour code","code-in":"Colour code, {format}","format":"Code format","format-current":"Code format: {format}","opacity":"Opacity, per cent","not-a-colour":"This does not read as a colour in {format}","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-info":"The colour is close to the information colour: an accent may read as a hint or a notice.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","decimal":".","scheme-dark":"dark","scheme-light":"light","brand":"Brand colour"}}');
 
 /***/ },
 
 /***/ "fc14def3c2cf"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы","how":"Как выбрать цвет","palette":"Палитра","own":"Своё","product":"Цвета продукта","recent":"Недавние свои цвета","recent-one":"Свой цвет {value}","recent-alpha":"Свой цвет {value}, непрозрачность {alpha} %","shade":"Насыщенность и яркость","shade-value":"насыщенность {saturation} %, яркость {brightness} %","hue":"Оттенок","hue-value":"оттенок {hue}°","alpha":"Прозрачность","alpha-value":"непрозрачность {alpha} %","eyedropper":"Взять цвет с экрана","eyedropper-missing":"Пипетка есть только в Chrome и Edge на компьютере","code":"Код цвета","code-in":"Код цвета, {format}","format":"Вид кода","format-current":"Вид кода: {format}","opacity":"Непрозрачность, процентов","not-a-colour":"Не похоже на цвет в виде {format}","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-info":"Цвет похож на цвет сведений: акцент можно принять за подсказку или уведомление.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","decimal":",","scheme-dark":"тёмной","scheme-light":"светлой","brand":"Фирменный цвет"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы","brand-reset":"Вернуть цвет SIMAI","how":"Как выбрать цвет","palette":"Палитра","own":"Своё","product":"Цвета продукта","recent":"Недавние свои цвета","recent-one":"Свой цвет {value}","recent-alpha":"Свой цвет {value}, непрозрачность {alpha} %","shade":"Насыщенность и яркость","shade-value":"насыщенность {saturation} %, яркость {brightness} %","hue":"Оттенок","hue-value":"оттенок {hue}°","alpha":"Прозрачность","alpha-value":"непрозрачность {alpha} %","eyedropper":"Взять цвет с экрана","eyedropper-missing":"Пипетка есть только в Chrome и Edge на компьютере","code":"Код цвета","code-in":"Код цвета, {format}","format":"Вид кода","format-current":"Вид кода: {format}","opacity":"Непрозрачность, процентов","not-a-colour":"Не похоже на цвет в виде {format}","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-info":"Цвет похож на цвет сведений: акцент можно принять за подсказку или уведомление.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","decimal":",","scheme-dark":"тёмной","scheme-light":"светлой","brand":"Фирменный цвет"}}');
 
 /***/ }
 

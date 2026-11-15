@@ -26,7 +26,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-steps from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+}; // sf-steps from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // another language through SF.language.register("sf-steps", code, words)), and
@@ -42,8 +50,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const StepsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
@@ -784,14 +792,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-steps
 /***/ "fce42b338f4d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.4.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.4.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
 
 /***/ },
 
 /***/ "892d49d25ed0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Steps","runtime":{"aria-label":"Steps","completed-label":"Completed","current-label":"Current","ahead-label":"Not started","error-label":"Error","skipped-label":"Skipped","running-label":"In progress","count-label":"Step {n} of {count}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Steps","runtime":{"aria-label":"Steps","completed-label":"Completed","current-label":"Current","ahead-label":"Upcoming","error-label":"Error","skipped-label":"Skipped","running-label":"In progress","count-label":"Step {n} of {count}"}}');
 
 /***/ },
 

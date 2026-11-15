@@ -917,6 +917,10 @@
       {
         "lazy": true,
         "name": "spinner"
+      },
+      {
+        "lazy": true,
+        "name": "tooltip"
       }
     ],
     "tags": [
@@ -999,6 +1003,9 @@
       },
       {
         "name": "cl-change"
+      },
+      {
+        "name": "cl-time"
       }
     ],
     "tags": [
@@ -1033,6 +1040,21 @@
     "type": "smart"
   },
   {
+    "name": "cl-display-settings",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      }
+    ],
+    "tags": [
+      "sf-display-settings"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-drawer",
     "css": true,
     "js": true,
@@ -1043,6 +1065,12 @@
       },
       {
         "name": "close"
+      },
+      {
+        "name": "cl-button-close"
+      },
+      {
+        "name": "cl-button-icon"
       }
     ],
     "tags": [
@@ -1076,6 +1104,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -1088,7 +1119,24 @@
     "css": true,
     "js": true,
     "mode": "smart",
-    "relation": [],
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-input"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
+      }
+    ],
     "tags": [
       "sf-editor-inline",
       "sf-inline-editor"
@@ -1109,6 +1157,10 @@
       },
       {
         "name": "cl-tooltip"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
       }
     ],
     "tags": [
@@ -1245,6 +1297,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-form",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-help-mark"
+      }
+    ],
+    "tags": [
+      "sf-form"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-gallery",
     "css": true,
     "js": true,
@@ -1283,6 +1353,10 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
       }
     ],
     "tags": [
@@ -1302,6 +1376,9 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-button-close"
       }
     ],
     "tags": [
@@ -1384,6 +1461,9 @@
       },
       {
         "name": "kbd"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -1445,6 +1525,9 @@
         "name": "icons"
       },
       {
+        "name": "inputs"
+      },
+      {
         "name": "cl-icon"
       },
       {
@@ -1468,6 +1551,9 @@
     "relation": [
       {
         "name": "country-code"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -1575,6 +1661,9 @@
       },
       {
         "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -1597,6 +1686,12 @@
       },
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "cl-help-mark"
+      },
+      {
+        "name": "inputs"
       }
     ],
     "tags": [
@@ -1625,6 +1720,16 @@
       },
       {
         "name": "cl-button"
+      },
+      {
+        "name": "cl-help-mark"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
+      },
+      {
+        "name": "buttons"
       }
     ],
     "tags": [
@@ -1646,7 +1751,10 @@
         "name": "icons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-help-mark"
+      },
+      {
+        "name": "inputs"
       }
     ],
     "tags": [
@@ -1939,6 +2047,10 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-progress-bar"
       }
     ],
     "tags": [
@@ -1957,6 +2069,9 @@
       },
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "cl-button-close"
       },
       {
         "lazy": true,
@@ -2055,6 +2170,20 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
+      },
+      {
+        "lazy": true,
+        "name": "cl-drawer"
+      },
+      {
+        "name": "cl-segmented"
       }
     ],
     "tags": [
@@ -2206,6 +2335,30 @@
       },
       {
         "name": "kbd"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "cl-spinner"
+      },
+      {
+        "name": "cl-empty-state"
+      },
+      {
+        "name": "cl-tag-group"
+      },
+      {
+        "name": "cl-tag"
+      },
+      {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-time"
       }
     ],
     "tags": [
@@ -2400,7 +2553,7 @@
         "name": "icons"
       },
       {
-        "name": "icon-buttons"
+        "name": "inputs"
       },
       {
         "name": "cl-help-mark"
@@ -2486,6 +2639,24 @@
     ],
     "tags": [
       "sf-tag"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tag-group",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-tag"
+      },
+      {
+        "name": "cl-popover"
+      }
+    ],
+    "tags": [
+      "sf-tag-group"
     ],
     "type": "smart"
   },
@@ -2680,10 +2851,10 @@
         "name": "cl-spinner"
       },
       {
-        "name": "cl-confirm"
+        "name": "cl-modal"
       },
       {
-        "name": "cl-modal"
+        "name": "cl-drawer"
       },
       {
         "name": "cl-icon"
@@ -2837,7 +3008,7 @@
   {
     "name": "contentDivider",
     "css": true,
-    "js": false,
+    "js": true,
     "regex": "/(?:^|[\"'\\s])sf-divider(?:[\\s\"']|--|-)/",
     "type": "component"
   },
@@ -3963,7 +4134,7 @@
   {
     "name": "kbd",
     "css": true,
-    "js": false,
+    "js": true,
     "regex": "/(?:<kbd\\b|\\bsf-kbd\\b)/i",
     "type": "component"
   },
@@ -5424,7 +5595,7 @@
   },
   {
     "name": "transition-timing-function/default",
-    "regex": "/^(?:ease-(?:in(?:-out)?|linear|out))(?![\\s\\S])/"
+    "regex": "/^(?:ease-(?:e(?:nter|xit)|in(?:-out)?|linear|move|out))(?![\\s\\S])/"
   },
   {
     "name": "tree",
@@ -5553,7 +5724,7 @@
   },
   {
     "name": "word-break/default",
-    "regex": "/^(?:text-break-(?:all|normal|word))(?![\\s\\S])/"
+    "regex": "/^(?:text-(?:break(?:-(?:all|normal|word))?|hyphens))(?![\\s\\S])/"
   },
   {
     "name": "z-index/default",

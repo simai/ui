@@ -7,7 +7,7 @@
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
   .table-hover.table-stripe > tbody > tr:nth-of-type(odd):hover > * {
-    --sf-table-accent-bg: var(--sf-surface-state-select);
+    --sf-table-accent-bg: var(--sf-surface-state-active);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }

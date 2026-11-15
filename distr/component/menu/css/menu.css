@@ -894,7 +894,11 @@
   }
 }
 /* The first-level item of a header row that is the current page or holds it
-   (C30, R060). */
+   (C30, R060). A section with subsections is a split row: its link, which
+   carries aria-current, sits inside the row (div.sf-menu-element > a). That
+   case is a child combinator inside the one :has -- a :has nested in :has is
+   invalid CSS, and the browser dropped every rule it was in, so a current
+   section with subsections lost its line and kept the C23 plate. */
 /* line (the default): a 2 px primary line under the whole control lying ON
    the header's bottom border, as the sf-tabs indicator -- it takes that
    segment of the border's place -- and a medium label. sf-header-site
@@ -1017,6 +1021,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
@@ -1251,6 +1257,8 @@
     --sf-surface-transparent-active: var(--sf-surface-state-active);
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
@@ -2717,7 +2725,11 @@
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
     --sf-menu-element--color: var(--sf-on-surface);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element {
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+    --sf-menu-element--color: var(--sf-on-surface);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element {
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
     --sf-menu-element--color: var(--sf-on-surface);
   }
@@ -2747,7 +2759,10 @@
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open) {
     --sf-menu-element--background-color: var(--sf-transparent);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(.open) {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open) {
+    --sf-menu-element--background-color: var(--sf-transparent);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open) {
     --sf-menu-element--background-color: var(--sf-transparent);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open) {
@@ -2775,7 +2790,12 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-menu-element--background-color: var(--sf-surface-state-select);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-menu-element--background-color);
@@ -2815,7 +2835,12 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-menu-element--background-color: var(--sf-surface-state-active);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-menu-element--background-color);
@@ -2851,7 +2876,10 @@
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element .sf-menu-element-icon {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element .sf-menu-element-icon {
@@ -3089,95 +3117,205 @@
     background-color: var(--sf-primary);
     pointer-events: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-left-radius: var(--sf-a2);
   }
   @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-left-radius: var(--sf-a2);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(ltr)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(ltr)){
     border-top-left-radius: var(--sf-a2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-right-radius: var(--sf-a2);
   }
   @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-right-radius: var(--sf-a2);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(rtl)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(rtl)){
     border-top-right-radius: var(--sf-a2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-right-radius: var(--sf-a2);
   }
   @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-right-radius: var(--sf-a2);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(ltr)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(ltr)){
     border-top-right-radius: var(--sf-a2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-left-radius: var(--sf-a2);
   }
   @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-top-left-radius: var(--sf-a2);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(rtl)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(rtl)){
     border-top-left-radius: var(--sf-a2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-left-radius: var(--sf-0);
   }
   @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-left-radius: var(--sf-0);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(ltr)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-right-radius: var(--sf-0);
   }
   @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-right-radius: var(--sf-0);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(rtl)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-right-radius: var(--sf-0);
   }
   @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-right-radius: var(--sf-0);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(ltr)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-left-radius: var(--sf-0);
   }
   @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after{
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
     border-bottom-left-radius: var(--sf-0);
     }
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after:where(:dir(rtl)){
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-0);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+    content: "";
+    position: absolute;
+    /* The fallback is a zero length: a bare 0 makes the calc a number,
+       which an inset refuses. */
+    bottom: calc(-1 * calc(var(--sf-px) * 0));
+    inset-block-end: calc(-1 * calc(var(--sf-px) * 0));
+    bottom: calc(-1 * calc(var(--sf-px) * 0));
+    bottom: calc(-1 * var(--sf-site-header--edge, calc(var(--sf-px) * 0)));
+    inset-block-end: calc(-1 * var(--sf-site-header--edge, calc(var(--sf-px) * 0)));
+    left: var(--sf-space-1\/4);
+    right: var(--sf-space-1\/4);
+    inset-inline: var(--sf-space-1\/4);
+    height: var(--sf-a2);
+    block-size: var(--sf-a2);
+    border-start-start-radius: var(--sf-a2);
+    border-start-end-radius: var(--sf-a2);
+    border-end-start-radius: var(--sf-0);
+    border-end-end-radius: var(--sf-0);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-left-radius: var(--sf-a2);
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-left-radius: var(--sf-a2);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(ltr)){
+    border-top-left-radius: var(--sf-a2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-right-radius: var(--sf-a2);
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-right-radius: var(--sf-a2);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(rtl)){
+    border-top-right-radius: var(--sf-a2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-right-radius: var(--sf-a2);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-right-radius: var(--sf-a2);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-a2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-left-radius: var(--sf-a2);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-top-left-radius: var(--sf-a2);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-a2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(rtl)){
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(ltr)){
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after:where(:dir(rtl)){
+    border-bottom-left-radius: var(--sf-0);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
     content: "";
     position: absolute;
     /* The fallback is a zero length: a bare 0 makes the calc a number,
@@ -3758,7 +3896,11 @@
       forced-color-adjust: none;
       background-color: Highlight;
     }
-    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true]))::after {
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
       forced-color-adjust: none;
       background-color: Highlight;
     }
@@ -3799,7 +3941,15 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
+    --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
@@ -3853,7 +4003,10 @@
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-primary-container);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-primary-container);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
@@ -3877,7 +4030,10 @@
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-icon-button .sf-icon {
     --sf-icon--color: var(--sf-on-primary-container);
   }
-  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element:has(> [aria-current=page], > [aria-current=true])) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-icon-button .sf-icon {
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-icon-button .sf-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-icon-button .sf-icon {
     --sf-icon--color: var(--sf-on-primary-container);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-icon-button .sf-icon {

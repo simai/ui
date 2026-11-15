@@ -79,9 +79,9 @@
       "id": "smart-overlay-measured-geometry",
       "category": "runtime-review",
       "filePattern": "^smart/drawer/index\\.js$",
-      "contextPattern": "(?:Math\\.max|sides\\[side\\])",
+      "contextPattern": "(?:Math\\.max|sides\\[side\\]|\\$\\{room\\}px|\\$\\{end\\}px|\\$\\{Math\\.round\\(drawn\\)\\}px)",
       "status": "accepted-runtime-geometry",
-      "reason": "The drawer's scroll-lock gutters and its bottom sheet's drag offset are derived from the current viewport, rendered boxes and the pointer."
+      "reason": "The drawer's scroll-lock gutters, its bottom sheet's drag offset, the head's room for the edge controls of a panel without room beside it and where the panel's head ends, and the drawn width an off-ladder warning reports are derived from the current viewport, rendered boxes and the pointer."
     },
     {
       "id": "smart-drag-measured-geometry",
@@ -175,6 +175,14 @@
       "reason": "Sass maps naming size steps by their rem value for container queries, which cannot read a variable (g6, h0, h2, h4, h6, h8, i0, i2)."
     },
     {
+      "id": "wcag-text-spacing",
+      "category": "style-review",
+      "filePattern": "^core/scss/_sf_css__display\\.scss$",
+      "contextPattern": "^\\s*(?:letter-spacing: 0\\.12em|word-spacing: 0\\.16em|margin-block-end: 2em);",
+      "status": "accepted-platform-boundary",
+      "reason": "«Шире» (C196) is WCAG 1.4.12 Text Spacing itself: letters 0.12, words 0.16 and paragraphs 2 times the text size. The criterion is stated in em of the text, so the values follow it, not the space ladder."
+    },
+    {
       "id": "touch-field-zoom-floor",
       "category": "style-review",
       "filePattern": "^core/scss/_sf_css__touch_fields\\.scss$",
@@ -242,20 +250,28 @@
         "style-review",
         "definition-review"
       ],
-      "filePattern": "^(?:core/scss/_sf_css__typograpy\\.scss|component/file-upload/scss/_css__upload_progress\\.scss|core/contracts/public-variables\\.v1\\.json)$",
+      "filePattern": "^(?:core/scss/_sf_css__typograpy\\.scss|core/scss/_sf_css__link\\.scss|component/file-upload/scss/_css__upload_progress\\.scss|core/contracts/public-variables\\.v1\\.json)$",
       "contextPattern": ".*",
       "textPattern": "^\\d*\\.?\\d+em$",
       "status": "accepted-owner-decision",
-      "reason": "Sized from the text around them by decision: inline code's room (C10, R024: .2em by .4em), an underline's offset. No ladder step is a fixed share of every text size."
+      "reason": "Sized from the text around them by decision: inline code's room (C10, R024: .2em by .4em), an underline's offset, the new-tab sign of a link at the size of its text (C186 (3)). No ladder step is a fixed share of every text size."
     },
     {
       "id": "text-bar-capital-height",
       "category": "style-review",
-      "filePattern": "^(?:core/scss/_sf_css__placeholder\\.scss|component/skeleton/scss/_skeleton\\.scss)$",
+      "filePattern": "^(?:core/scss/_sf_css__placeholder\\.scss|component/skeleton/scss/_skeleton\\.scss|component/modal/scss/_css__modal_custom\\.scss)$",
       "contextPattern": "(?:@supports \\(block-size: round\\(nearest, 1em, 1em\\)\\)|--sf-first-paint-bar--(?:height|top):)",
       "textPattern": "^\\d*\\.?\\d+em$",
       "status": "accepted-owner-decision",
-      "reason": "Owner decision C136 (1): a text skeleton bar is as tall as the capitals of the text it stands for, Inter's capital height 0.727 em rounded to an even pixel with the size ladder's 2 px step, centred in the line (the glyph box's middle, 0.6055 em from its top). These are font metrics relative to the text, not sizes; the @supports test only asks whether round() parses."
+      "reason": "Owner decision C136 (1): a text skeleton bar is as tall as the capitals of the text it stands for, Inter's capital height 0.727 em rounded to an even pixel with the size ladder's 2 px step, centred in the line (the glyph box's middle, 0.6055 em from its top). These are font metrics relative to the text, not sizes; the @supports test only asks whether round() parses. sf-modal's loading skeleton (C159 (9)) draws the same bar."
+    },
+    {
+      "id": "form-field-width-steps",
+      "category": "style-review",
+      "filePattern": "^smart/form/scss/_smart__form\\.scss$",
+      "contextPattern": "^\\s*max-inline-size: (?:8|16)rem;$",
+      "status": "accepted-owner-decision",
+      "reason": "C182 (4), owner 2026-11-14: a short form field's width steps are s 8rem and m 16rem of the control; the decision gives the values, no other component reads them."
     },
     {
       "id": "documentation-prose",
@@ -317,10 +333,10 @@
     {
       "id": "measured-runtime-geometry",
       "category": "runtime-review",
-      "filePattern": "^(?:component/(?:country-code/js/_country_code|menu/js/_menu|range-slider/js/_range_slider|scrollbar/js/_scrollbar|textarea/js/_textarea|tooltip/js/_tooltip)\\.js|core/js/(?:code-copy|effects|float-anchor|layer-stack|position|workspace)\\.js|core/js/composition/(?:inline-editor|overlay|sortable-inserter|sortable)\\.mjs|smart/(?:menu|menu-context|profile-picker|resizer|segmented)/index\\.js|smart/tree/js/templates/default\\.js|smart/gallery/js/(?:masonry|viewer)\\.js)$",
+      "filePattern": "^(?:component/(?:country-code/js/_country_code|menu/js/_menu|range-slider/js/_range_slider|scrollbar/js/_scrollbar|textarea/js/_textarea|tooltip/js/_tooltip)\\.js|core/js/(?:code-copy|effects|float-anchor|layer-stack|menu-open|position|sheet-swipe|workspace)\\.js|core/js/composition/(?:inline-editor|overlay|sortable-inserter|sortable)\\.mjs|smart/(?:menu|menu-context|profile-picker|resizer|segmented)/index\\.js|smart/tree/js/templates/default\\.js|smart/gallery/js/(?:masonry|viewer)\\.js)$",
       "contextPattern": ".*",
       "status": "accepted-runtime-geometry",
-      "reason": "Coordinates and sizes measured from the rendered page or the pointer (a floating panel's place, a drag ghost, a virtual list's spacer, a tooltip tail); the browser reports them in CSS pixels."
+      "reason": "Coordinates and sizes measured from the rendered page or the pointer (a floating panel's place, a drag ghost, a sheet or side panel following a finger (C157), a virtual list's spacer, a tooltip tail); the browser reports them in CSS pixels."
     },
     {
       "id": "drawer-dock-default",
@@ -329,9 +345,9 @@
         "script-data-template-review"
       ],
       "filePattern": "^smart/drawer/index\\.js$",
-      "contextPattern": "(?:DOCK_MIN_REM|^//)",
+      "contextPattern": "(?:DOCK_MIN_REM|LADDER_WIDTHS|^//)",
       "status": "accepted-size-step",
-      "reason": "The dock threshold's default, 48rem (h2), a step of the size scale, and the comments that name it."
+      "reason": "The dock threshold's default, 48rem (h2), a step of the size scale, the width ladder's steps named in the off-ladder warning (20 · 24 · 30rem, the sheet's g0 · g2 · g5, C157 (2)), and the comments that name them."
     },
     {
       "id": "deferred-legacy-sf-system-panel",

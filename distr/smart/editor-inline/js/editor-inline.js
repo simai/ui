@@ -2,6 +2,771 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog.
+
+async function standardMenu(owner, field, select) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  const menu = document.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
+  (owner.closest('dialog[open]') || document.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
+/***/ "557c99eb8f3a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   focusTarget: () => (/* binding */ focusTarget),
+/* harmony export */   roving: () => (/* binding */ roving)
+/* harmony export */ });
+// One Tab stop for a row of controls, and the arrows between them (owner
+// decision C184 (1)-(3), 2026-11-14; study control/research/2026-11-14-
+// toolbar-menu-open.md, K-02). A toolbar is not a component of its own
+// (C155 (8): no sf-toolbar): it is ordinary sf-button-icon groups, 4 apart
+// inside a group and a separator between groups (C144), and this helper gives
+// them the keyboard of the WAI-ARIA toolbar pattern:
+//
+// - the row is one Tab stop; Tab comes back to the control the person left
+//   (memory, C184 (3)), or to the first one (memory: false);
+// - the arrows of the row's orientation move between the controls, in the
+//   row's direction (right-to-left reverses ← and →), Home and End go to the
+//   ends, and the walk wraps;
+// - a control that cannot be used now (aria-disabled) stays in the walk,
+//   dimmed by its component, with its reason as a tooltip (C184 (2), as
+//   C164 (4) does for a menu row); disabled: 'skip' leaves it out. A control
+//   with the native disabled attribute cannot take the focus and is skipped;
+// - a control inside «Ещё» (the C155 row engine marks the part that left the
+//   row with .out or [hidden]) is not in the walk;
+// - ↓ (↑) on a menu button of a horizontal row opens its menu, as the
+//   pattern's menu button does.
+//
+// It is also the list's keyboard (C184 (5)): a list is one Tab stop and ↑ ↓
+// move between its rows (orientation 'vertical').
+//
+// roving(container, options) -> {refresh, set, current, items, destroy}.
+// The look stays with the components; this module holds no state of its own
+// outside the controller it returns, so every bundle may carry its own copy.
+const NATIVE_FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex], [contenteditable=""], [contenteditable="true"]';
+const OUT = '.out, [hidden], [data-sf-out], [inert]'; // The element that takes the focus for an item: the item itself when it can
+// (a <button>, a row with a tabindex), else the control inside it -- an
+// sf-button-icon host draws a <button> and is display: contents.
+
+function focusTarget(item) {
+  if (!item) return null;
+  if (item.matches?.(NATIVE_FOCUSABLE)) return item;
+  return item.querySelector?.('button, a[href], [role="button"], [tabindex]') ?? item;
+}
+
+const isUnavailable = target => target.getAttribute?.('aria-disabled') === 'true';
+
+const isDisabled = target => Boolean(target.disabled) || target.matches?.(':disabled');
+
+function roving(container, {
+  items: itemsOf = 'button',
+  orientation = 'horizontal',
+  wrap = true,
+  disabled = 'focusable',
+  memory = true,
+  out = OUT,
+  onMove = null,
+  observe = true
+} = {}) {
+  let current = null; // Every item of the row, in order, as the targets that take the focus.
+
+  const all = () => {
+    const found = typeof itemsOf === 'function' ? itemsOf() : [...container.querySelectorAll(itemsOf)];
+    const targets = [];
+
+    for (const item of found) {
+      const target = focusTarget(item);
+      if (!target || !container.contains(target) || targets.includes(target)) continue; // Out of the row: a part inside it that left (into «Ещё») or is
+      // hidden. The row itself being hidden for now does not count.
+
+      const away = target.closest(out);
+      if (away && away !== container && container.contains(away)) continue;
+      targets.push(target);
+    }
+
+    return targets;
+  }; // The items the walk stops on.
+
+
+  const items = () => all().filter(target => !isDisabled(target) && (disabled === 'focusable' || !isUnavailable(target)));
+
+  function set(element) {
+    const target = focusTarget(element);
+    const every = all();
+    if (!target || !every.includes(target)) return;
+    current = target;
+
+    for (const other of every) {
+      const next = other === target ? '0' : '-1';
+      if (other.getAttribute('tabindex') !== next) other.setAttribute('tabindex', next);
+    }
+  } // After a drawing or a change of the row: the one Tab stop is the item
+  // remembered, or the first one when it is gone (or the row forgets).
+
+
+  function refresh() {
+    const list = items();
+
+    if (!list.length) {
+      // Nothing to stop on: no item keeps a stop either (a disabled field's
+      // toolbar is not a Tab stop).
+      for (const other of all()) if (other.getAttribute('tabindex') !== '-1') other.setAttribute('tabindex', '-1');
+
+      current = null;
+      return;
+    }
+
+    set(current && list.includes(current) ? current : list[0]);
+  }
+
+  const vertical = orientation === 'vertical';
+  const both = orientation === 'both';
+
+  function onKeydown(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    const list = items();
+    const target = list.find(one => one === event.target || one.contains(event.target));
+    if (!target) return; // A field inside an item (a link's address) keeps its own keys.
+
+    if (event.target !== target && event.target.matches?.('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) return;
+    const rtl = getComputedStyle(container).direction === 'rtl';
+    const forward = vertical ? ['ArrowDown'] : both ? ['ArrowDown', rtl ? 'ArrowLeft' : 'ArrowRight'] : [rtl ? 'ArrowLeft' : 'ArrowRight'];
+    const back = vertical ? ['ArrowUp'] : both ? ['ArrowUp', rtl ? 'ArrowRight' : 'ArrowLeft'] : [rtl ? 'ArrowRight' : 'ArrowLeft'];
+    const at = list.indexOf(target);
+    let next = null;
+
+    if (!vertical && !both && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && target.getAttribute('aria-haspopup') === 'menu' && !isUnavailable(target)) {
+      event.preventDefault();
+      target.click();
+      return;
+    }
+
+    if (forward.includes(event.key)) next = at + 1 < list.length ? list[at + 1] : wrap ? list[0] : null;else if (back.includes(event.key)) next = at > 0 ? list[at - 1] : wrap ? list[list.length - 1] : null;else if (event.key === 'Home') next = list[0];else if (event.key === 'End') next = list[list.length - 1];else return;
+    event.preventDefault();
+    if (!next || next === target) return;
+    set(next);
+    next.focus();
+    onMove?.(next, event.key);
+  }
+
+  function onFocusIn(event) {
+    const target = all().find(one => one === event.target);
+    if (!target || target === current) return;
+    set(target);
+    onMove?.(target, 'focus');
+  }
+
+  function onFocusOut(event) {
+    if (memory || container.contains(event.relatedTarget)) return;
+    const list = items();
+    if (list.length) set(list[0]);
+  }
+
+  container.addEventListener('keydown', onKeydown);
+  container.addEventListener('focusin', onFocusIn);
+  container.addEventListener('focusout', onFocusOut); // Items drawn later -- a host that draws its <button> on its own schedule
+  // (sf-button-icon), a row added -- join the walk with tabindex -1 at once:
+  // the row stays one Tab stop whatever draws when.
+
+  let queued = false;
+  const watcher = observe && typeof MutationObserver === 'function' ? new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      refresh();
+    });
+  }) : null;
+  watcher?.observe(container, {
+    childList: true,
+    subtree: true
+  });
+  refresh();
+  return {
+    refresh,
+    set,
+    items,
+
+    get current() {
+      return current;
+    },
+
+    destroy() {
+      watcher?.disconnect();
+      container.removeEventListener('keydown', onKeydown);
+      container.removeEventListener('focusin', onFocusIn);
+      container.removeEventListener('focusout', onFocusOut);
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (roving);
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -419,26 +1184,47 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
 
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+};
+ // The words the module does not carry itself (the link window's hint and
+// reasons, «Ещё», the new-block label; owner decision C172) are the
+// language files'.
 
+(0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.useInlineEditorWords)({
+  en,
+  ru
+});
 globalThis.SF = globalThis.SF || {};
 globalThis.SF.InlineEditor = Object.freeze({
+  INLINE_ENTER_MODES: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_ENTER_MODES,
   INLINE_EVENTS: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EVENTS,
   INLINE_EVENTS_FORMER_TAG: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EVENTS_FORMER_TAG,
   INLINE_EVENTS_LEGACY: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_EVENTS_LEGACY,
   INLINE_TOOLBAR_MODES: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_TOOLBAR_MODES,
+  linkProblem: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.linkProblem,
   readInlineDom: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.readInlineDom,
   renderInlineDom: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.renderInlineDom,
   startInlineEdit: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.startInlineEdit,
   textOffset: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.textOffset
 }); // edit(element, options) takes its fields in order; the runtime gives it the
 // object form of §4.4 as well: edit({element, options}).
+// An editor page draws parameter forms: the composition editor words, no
+// longer part of every page's core (localization study LC-1), are fetched
+// once now, so SF.Composition.editorFieldMessages() answers in full.
 
+globalThis.SF.Composition?.loadEditorWords?.();
 (0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.defineInlineEditor)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
     lang: {
-      en: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__,
-      ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
+      en,
+      ru
     },
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
@@ -500,22 +1286,30 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INLINE_ENTER_MODES: () => (/* binding */ INLINE_ENTER_MODES),
 /* harmony export */   INLINE_EVENTS: () => (/* binding */ INLINE_EVENTS),
 /* harmony export */   INLINE_EVENTS_FORMER_TAG: () => (/* binding */ INLINE_EVENTS_FORMER_TAG),
 /* harmony export */   INLINE_EVENTS_LEGACY: () => (/* binding */ INLINE_EVENTS_LEGACY),
 /* harmony export */   INLINE_TOOLBAR_MODES: () => (/* binding */ INLINE_TOOLBAR_MODES),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineInlineEditor: () => (/* binding */ defineInlineEditor),
+/* harmony export */   linkProblem: () => (/* binding */ linkProblem),
 /* harmony export */   readInlineDom: () => (/* binding */ readInlineDom),
 /* harmony export */   renderInlineDom: () => (/* binding */ renderInlineDom),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   textOffset: () => (/* binding */ textOffset)
+/* harmony export */   textOffset: () => (/* binding */ textOffset),
+/* harmony export */   useInlineEditorWords: () => (/* binding */ useInlineEditorWords),
+/* harmony export */   wordAround: () => (/* binding */ wordAround)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e66d878fb4f8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_1__]);
-([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _overflow_row_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _roving_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("557c99eb8f3a");
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e66d878fb4f8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__]);
+([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
 
 
 
@@ -551,8 +1345,10 @@ const INLINE_EVENTS_LEGACY = Object.freeze({
   cancel: 'sf-inline-edit-cancel',
 });
 
-function emitInline(element, key, id, content) {
-  const detail = content === undefined ? { id } : { id, content };
+// next: the text after the caret when Enter starts a new block (enter:
+// 'new-block', C172 (2)); the former names' details never carry it.
+function emitInline(element, key, id, content, next) {
+  const detail = content === undefined ? { id } : next === undefined ? { id, content } : { id, content, next };
   const legacy = content === undefined ? { node_id: id } : { node_id: id, content };
   const frozen = Object.freeze(detail);
   element.dispatchEvent(new globalThis.CustomEvent(INLINE_EVENTS[key], { bubbles: true, composed: true, detail: frozen }));
@@ -574,7 +1370,7 @@ const BLOCK = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5
 // editable inside and carries its entry as JSON here, so reading the DOM back,
 // and pasting what the editor copied, return the entry exactly.
 const NODE_ATTRIBUTE = 'data-sf-inline-node';
-const ATOM_TAGS = new Map(Object.entries(_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_COMPONENTS).map(([name, entry]) => [entry.tag.toUpperCase(), name]));
+const ATOM_TAGS = new Map(Object.entries(_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_COMPONENTS).map(([name, entry]) => [entry.tag.toUpperCase(), name]));
 const isAtomElement = (node) => node?.nodeType === 1 && node.hasAttribute(NODE_ATTRIBUTE);
 // A mark the editor has no element for is drawn as a span carrying its name,
 // never as an element of that name, so it survives the DOM read-back.
@@ -624,7 +1420,7 @@ function atomEntry(element) {
   }
   const name = ATOM_TAGS.get(element.tagName.toUpperCase());
   if (!name) return null;
-  const declared = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_COMPONENTS[name].props;
+  const declared = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_COMPONENTS[name].props;
   const props = {};
   if (name === 'kbd') props.text = element.textContent.replace(/\s+/gu, ' ').trim();
   else for (const [key, kind] of Object.entries(declared)) {
@@ -632,18 +1428,35 @@ function atomEntry(element) {
     props[key] = kind === 'boolean' ? true : element.getAttribute(key);
   }
   const entry = { type: 'component', name, ...(Object.keys(props).length ? { props } : {}) };
-  return (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.isInlineComponent)(entry) ? entry : null;
+  return (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.isInlineComponent)(entry) ? entry : null;
 }
 
 const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
+// The words of sf-editor-inline's language files (lang/<locale>.json,
+// runtime), given by its bundle (useInlineEditorWords): the words this module
+// does not carry in MESSAGES -- the link window's hint and reasons, «Ещё»,
+// the new-block label (owner decision C172) -- live only there.
+let shippedWords = null;
+function useInlineEditorWords(lang) {
+  shippedWords = lang && typeof lang === 'object' ? lang : null;
+}
+const dictionary = () => {
+  if (!shippedWords) return MESSAGES;
+  const merged = {};
+  for (const locale of new Set([...Object.keys(MESSAGES), ...Object.keys(shippedWords)])) merged[locale] = { ...(MESSAGES[locale] || {}), ...(shippedWords[locale]?.runtime || {}) };
+  return merged;
+};
 // Words in the page's language through pageText, as every component takes
 // them: the editor read <html lang> alone and offered only English or Russian,
 // so SF.language.use() and a product's own dictionary never reached it
 // (documentation trial, 2026-10-12).
-const words = (node) => Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageText)(MESSAGES, key, node, 'sf-editor-inline')]));
+const words = (node) => {
+  const all = dictionary();
+  return Object.fromEntries(Object.keys(all.en || MESSAGES.en).map((key) => [key, (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageText)(all, key, node, 'sf-editor-inline')]));
+};
 
 /** Reads inline content from any DOM subtree; foreign markup and styles are dropped. */
-function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS, links = true, collapse = false } = {}) {
+function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_MARKS, links = true, collapse = false } = {}) {
   const segments = [];
   const carry = (extra, linkExtra, href) => ({ ...(extra ? { extra } : {}), ...(href && linkExtra ? { linkExtra } : {}) });
   const visit = (node, active, href, extra = null, linkExtra = null) => {
@@ -658,7 +1471,7 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
       const entry = atomEntry(node);
       if (entry) {
         // An atom is never inside a link, even when pasted inside an <a>.
-        segments.push({ text: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_OBJECT, marks: [], href: entry.type === 'component' ? null : href, node: entry, ...(entry.type === 'component' ? {} : carry(null, linkExtra, href)) });
+        segments.push({ text: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_OBJECT, marks: [], href: entry.type === 'component' ? null : href, node: entry, ...(entry.type === 'component' ? {} : carry(null, linkExtra, href)) });
         return;
       }
     }
@@ -683,7 +1496,7 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
     let nextLinkExtra = linkExtra;
     if (tag === 'A' && !href && links) {
       const candidate = node.getAttribute('href');
-      if ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.safeHref)(candidate)) {
+      if ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.safeHref)(candidate)) {
         nextHref = candidate;
         nextLinkExtra = readExtra(node);
       }
@@ -697,7 +1510,7 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
       // element (an emptied editor, or the empty line after a final break)
       // is not content; a break the editor drew says so itself.
       if (!node.hasAttribute(BREAK_ATTRIBUTE) && isLastLeaf(node, root)) return;
-      segments.push({ ...(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.breakSegment)([...active], href, readExtra(node) || extra), ...carry(null, linkExtra, href) });
+      segments.push({ ...(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.breakSegment)([...active], href, readExtra(node) || extra), ...carry(null, linkExtra, href) });
       return;
     }
     for (const child of node.childNodes) visit(child, next, nextHref, nextExtra, nextLinkExtra);
@@ -708,13 +1521,13 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
   // The field's marks limit the known ones; a mark the model does not know is
   // kept as it came, so an edit never drops it (validation still reports it).
   const allowed = new Set(marks);
-  const keep = (mark) => allowed.has(mark) || !_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS.includes(mark);
-  let content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(segments.map((segment) => ({ ...segment, marks: segment.marks.filter(keep), href: links ? segment.href : null })));
+  const keep = (mark) => allowed.has(mark) || !_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_MARKS.includes(mark);
+  let content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.fromSegments)(segments.map((segment) => ({ ...segment, marks: segment.marks.filter(keep), href: links ? segment.href : null })));
   if (collapse) {
-    const flat = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(content);
+    const flat = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)(content);
     if (flat.length && !flat[0].node) flat[0] = { ...flat[0], text: flat[0].text.replace(/^ +/u, '') };
     if (flat.length && !flat.at(-1).node) flat[flat.length - 1] = { ...flat.at(-1), text: flat.at(-1).text.replace(/ +$/u, '') };
-    content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(flat);
+    content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.fromSegments)(flat);
   }
   return content;
 }
@@ -727,12 +1540,12 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
 function renderInlineDom(doc, content) {
   const fragment = doc.createDocumentFragment();
   const object = (entry) => {
-    const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineComponentView)(entry);
+    const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineComponentView)(entry);
     const element = doc.createElement(view ? view.tag : 'span');
     if (view) {
       for (const [name, value] of view.attributes) element.setAttribute(name, value);
       if (view.text) element.textContent = view.text;
-    } else element.textContent = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_OBJECT;
+    } else element.textContent = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_OBJECT;
     element.setAttribute('contenteditable', 'false');
     element.setAttribute(NODE_ATTRIBUTE, JSON.stringify(entry));
     return element;
@@ -750,7 +1563,7 @@ function renderInlineDom(doc, content) {
       wrapper.append(node);
       node = wrapper;
     }
-    const extra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineExtensions)(entry);
+    const extra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineExtensions)(entry);
     if (extra) {
       const wrapper = doc.createElement('span');
       wrapper.setAttribute(EXTRA_ATTRIBUTE, JSON.stringify(extra));
@@ -759,12 +1572,12 @@ function renderInlineDom(doc, content) {
     }
     return node;
   };
-  const normalized = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(content);
+  const normalized = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)(content);
   for (const entry of normalized) {
     if (entry.type === 'link') {
       const anchor = doc.createElement('a');
       anchor.setAttribute('href', entry.href);
-      const linkExtra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineExtensions)(entry);
+      const linkExtra = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineExtensions)(entry);
       if (linkExtra) anchor.setAttribute(EXTRA_ATTRIBUTE, JSON.stringify(linkExtra));
       for (const child of entry.children) anchor.append(run(child));
       fragment.append(anchor);
@@ -845,27 +1658,81 @@ function setSelection(root, anchor, focus = anchor) {
   selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
 }
 
-// When the formatting toolbar shows: for the whole edit, over the element
-// (session, the default), or only while text is selected, over the selection
-// (selection: a flow editor where every paragraph is an edit, and a bar over
-// the element would cover the line being typed; simai/ui-source#67).
-const INLINE_TOOLBAR_MODES = Object.freeze(['session', 'selection']);
+// When the formatting toolbar shows (owner decision C172 (1), 2026-11-14):
+// only while text is selected, over the selection (selection, the default
+// since sf-editor-inline 1.9.0), or for the whole edit, over the element
+// (session, the default before it, kept for a host that asks for it;
+// simai/ui-source#67). On a phone the toolbar is a strip of icons above the
+// screen keyboard for the whole edit, whatever the mode (C172 (3)).
+const INLINE_TOOLBAR_MODES = Object.freeze(['selection', 'session']);
+
+// What Enter does (owner decision C172 (2)): save, the default, commits the
+// edit; new-block -- a block editor's setting «Enter — новый блок» -- commits
+// the text before the caret and gives the text after it as next, for the
+// host to make the next block of. Shift+Enter is a line break in both, focus
+// leaving saves in both.
+const INLINE_ENTER_MODES = Object.freeze(['save', 'new-block']);
+
+const MARK_ICONS = Object.freeze({ strong: 'format_bold', em: 'format_italic', code: 'code', strike: 'strikethrough_s' });
+// The toolbar's rungs: icon buttons 1/2 over the page (C141 (4), C144); on a
+// phone the strip's buttons are 2, the touch rung.
+const BAR_SIZE = Object.freeze({ float: '1/2', dock: '2' });
+// The link window is one small form on one rung (C141 (6)): its field and
+// both buttons are 1/2.
+const LINK_SIZE = '1/2';
+// A row unit that left for «Ещё» (core/js/overflow-row.js, C155).
+const OUT = 'sf-inline-editor-out';
+// Below the md breakpoint core.css does not declare --sf-breakpoint-md: a
+// phone, as sf-input-rich reads it.
+const onPhone = (doc) => !doc.defaultView?.getComputedStyle(doc.documentElement).getPropertyValue('--sf-breakpoint-md').trim();
+const ICON_BUTTON = ['sf-icon-button', 'sf-icon-button--icon', 'sf-icon-button--ghost', 'sf-icon-button--on-surface'];
+
+// Why a link address is refused, as the link window says it under the field
+// (owner decision C172 (4)): the word of the reason, which names what to
+// change, or null when the address is accepted (safeHref).
+function linkProblem(value) {
+  const text = String(value ?? '');
+  if (!text) return 'link-empty';
+  if ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.safeHref)(text)) return null;
+  if (text.length > _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_LIMITS.maxHrefLength) return 'link-long';
+  if (/\s/u.test(text)) return 'link-spaces';
+  if (text.startsWith('//') || text.includes('\\')) return 'link-slashes';
+  if (/^[a-z][a-z0-9+.-]*:/iu.test(text)) return 'link-scheme';
+  return 'link-start';
+}
+
+// The word around an offset (letters, digits, joiners inside a word), as
+// [start, end], or null in a space or beside an atom: Ctrl/⌘+K with no
+// selection links the word under the caret (C172 (4), IE-3).
+function wordAround(content, offset) {
+  const text = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)(content).map((segment) => (segment.node || segment.break ? '\u0000' : segment.text)).join('');
+  const inWord = (at) => at >= 0 && at < text.length && /[\p{L}\p{N}\p{M}_'’-]/u.test(text[at]);
+  let start = offset;
+  let end = offset;
+  while (inWord(start - 1)) start -= 1;
+  while (inWord(end)) end += 1;
+  while (start < end && /[-'’_]/u.test(text[start])) start += 1;
+  while (end > start && /[-'’_]/u.test(text[end - 1])) end -= 1;
+  return start < end ? [start, end] : null;
+}
 
 /**
  * Starts in-place editing of a rendered heading or paragraph element.
- * options: {content, nodeId, label, marks, links, messages, toolbar}
+ * options: {content, nodeId, label, marks, links, messages, toolbar, enter}
  * Returns {commit(), cancel(), value(), element}.
  */
 function startInlineEdit(element, options = {}) {
   if (!(element instanceof globalThis.Element)) throw new TypeError('Inline editing needs an element');
   if (element.hasAttribute('data-sf-inline-editing')) throw new TypeError('inline_edit_active');
-  const toolbarMode = options.toolbar ?? 'session';
+  const toolbarMode = options.toolbar ?? 'selection';
   if (!INLINE_TOOLBAR_MODES.includes(toolbarMode)) throw new TypeError(`inline_toolbar_unknown: ${toolbarMode}`);
+  const enterMode = options.enter ?? 'save';
+  if (!INLINE_ENTER_MODES.includes(enterMode)) throw new TypeError(`inline_enter_unknown: ${enterMode}`);
   const doc = element.ownerDocument;
   const text = { ...words(element), ...(options.messages || {}) };
   // options.marks: the marks the field allows and offers; without it every
   // known mark is kept and the toolbar offers TOOLBAR_MARKS.
-  const marks = (options.marks || _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS).filter((mark) => _inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.INLINE_MARKS.includes(mark));
+  const marks = (options.marks || _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_MARKS).filter((mark) => _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_MARKS.includes(mark));
   const offered = options.marks ? marks : TOOLBAR_MARKS.filter((mark) => marks.includes(mark));
   const links = options.links !== false;
   const original = { html: element.innerHTML, attributes: ['contenteditable', 'role', 'aria-multiline', 'aria-label', 'spellcheck', 'tabindex'].map((name) => [name, element.getAttribute(name)]) };
@@ -880,7 +1747,7 @@ function startInlineEdit(element, options = {}) {
   const read = () => readInlineDom(element, { marks, links });
   const selectionOffsets = () => {
     const selection = doc.getSelection();
-    if (!selection?.rangeCount || !element.contains(selection.anchorNode)) return [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineLength)(read()), (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineLength)(read())];
+    if (!selection?.rangeCount || !element.contains(selection.anchorNode)) return [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineLength)(read()), (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineLength)(read())];
     const range = selection.getRangeAt(0);
     return [textOffset(element, range.startContainer, range.startOffset), textOffset(element, range.endContainer, range.endOffset)];
   };
@@ -913,66 +1780,166 @@ function startInlineEdit(element, options = {}) {
   };
 
   // Toolbar ----------------------------------------------------------------
+  // One row of icon buttons in groups (owner decisions C141 (4), C144, C172):
+  // the marks, a separator, the link; 4 apart inside a group, a 1 px line with
+  // 4 on each side between groups. What does not fit the row leaves for
+  // ⋯ «Ещё» at its end, a whole group with its separator, the link first
+  // (core/js/overflow-row.js, C155); the marks stay.
   const toolbar = doc.createElement('div');
   toolbar.className = 'sf-inline-editor-toolbar';
   toolbar.setAttribute('role', 'toolbar');
   toolbar.setAttribute('aria-label', text.toolbar);
   toolbar.dataset.sfToolbar = toolbarMode;
-  if (toolbarMode === 'selection') toolbar.hidden = true;
+  toolbar.hidden = toolbarMode === 'selection';
   const buttons = new Map();
-  for (const mark of offered) {
+  const tools = [];
+  const toolButton = (id, icon, label) => {
     const button = doc.createElement('button');
     button.type = 'button';
-    button.className = `sf-inline-editor-button sf-inline-editor-button--${mark}`;
+    button.classList.add('sf-inline-editor-button', `sf-inline-editor-button--${id}`, ...ICON_BUTTON);
+    button.dataset.sfTool = id;
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    const glyph = doc.createElement('i');
+    glyph.className = 'sf-icon';
+    glyph.setAttribute('aria-hidden', 'true');
+    glyph.textContent = icon;
+    button.append(glyph);
+    tools.push(button);
+    return button;
+  };
+  const group = (priority) => {
+    const box = doc.createElement('div');
+    box.className = 'sf-inline-editor-group';
+    box.setAttribute('role', 'group');
+    box.dataset.sfPriority = String(priority);
+    return box;
+  };
+  const separator = (...extra) => {
+    const line = doc.createElement('span');
+    line.className = ['sf-inline-editor-separator', ...extra].join(' ');
+    line.setAttribute('aria-hidden', 'true');
+    return line;
+  };
+  const groups = [];
+  const separators = [];
+  const marksGroup = group(1);
+  for (const mark of offered) {
+    const button = toolButton(mark, MARK_ICONS[mark] || 'format_clear', text[mark]);
     button.dataset.mark = mark;
-    button.textContent = text[mark];
     button.setAttribute('aria-pressed', 'false');
     if (SHORTCUTS[mark]) button.setAttribute('aria-keyshortcuts', `Control+${SHORTCUTS[mark].toUpperCase()} Meta+${SHORTCUTS[mark].toUpperCase()}`);
     buttons.set(mark, button);
-    toolbar.append(button);
+    marksGroup.append(button);
   }
-  const linkForm = doc.createElement('div');
-  linkForm.className = 'sf-inline-editor-link';
-  linkForm.hidden = true;
-  const linkInput = doc.createElement('input');
-  linkInput.type = 'url';
+  if (marksGroup.childElementCount) groups.push(marksGroup);
+  if (links) {
+    const linkGroup = group(2);
+    const button = toolButton('link', 'link', text.link);
+    button.dataset.link = 'toggle';
+    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-keyshortcuts', 'Control+K Meta+K');
+    buttons.set('link', button);
+    linkGroup.append(button);
+    groups.push(linkGroup);
+  }
+  groups.forEach((box, at) => {
+    if (at) {
+      const line = separator();
+      separators.push(line);
+      toolbar.append(line);
+    }
+    toolbar.append(box);
+  });
+  const moreSeparator = separator('sf-inline-editor-more-separator', OUT);
+  const moreButton = toolButton('more', 'more_horiz', text.more);
+  moreButton.classList.add(OUT);
+  moreButton.setAttribute('aria-haspopup', 'menu');
+  moreButton.setAttribute('aria-expanded', 'false');
+  toolbar.append(moreSeparator, moreButton);
+  doc.body.append(toolbar);
+  // The toolbar's keys (owner decision C184 (1)-(3), TL-4): one Tab stop that
+  // comes back to the tool left, the arrows in the row's direction, Home and
+  // End; a tool under «Ещё» (C155) and the link panel's buttons are not in the walk.
+  const toolbarKeys = (0,_roving_js__WEBPACK_IMPORTED_MODULE_2__.roving)(toolbar, { items: () => [...tools, moreButton], out: `.${OUT}, [hidden], [inert]` });
+  let toolsOut = [];
+  let docked = false;
+  let savedSelection = [0, 0];
+  let lastSelection = null;
+
+  // The link window (C141 (6), C172 (4)): its own panel under the selected
+  // text -- the address field with its hint under it, then «Применить» and,
+  // on a link, «Убрать ссылку» in a row from the start -- and a sheet at the
+  // bottom of the screen on a phone (C32), above the keyboard. A refused
+  // address says why in the hint's place.
+  const linkPanel = doc.createElement('div');
+  linkPanel.className = 'sf-inline-editor-link';
+  linkPanel.setAttribute('role', 'dialog');
+  linkPanel.setAttribute('aria-label', text.link);
+  linkPanel.hidden = true;
+  const linkInput = doc.createElement('sf-input');
   linkInput.className = 'sf-inline-editor-url';
-  linkInput.setAttribute('aria-label', text.url);
-  const linkApply = doc.createElement('button');
-  linkApply.type = 'button';
-  linkApply.className = 'sf-inline-editor-button';
-  linkApply.textContent = text.apply;
-  const linkRemove = doc.createElement('button');
-  linkRemove.type = 'button';
-  linkRemove.className = 'sf-inline-editor-button';
-  linkRemove.textContent = text.unlink;
+  linkInput.setAttribute('size', LINK_SIZE);
+  linkInput.setAttribute('label', text.url);
+  linkInput.setAttribute('hint', text['link-hint']);
+  linkInput.setAttribute('autocomplete', 'url');
+  linkInput.setAttribute('inputmode', 'url');
+  const linkActions = doc.createElement('div');
+  linkActions.className = 'sf-inline-editor-link-actions';
+  const linkApply = doc.createElement('sf-button');
+  linkApply.className = 'sf-inline-editor-apply';
+  linkApply.setAttribute('size', LINK_SIZE);
+  linkApply.setAttribute('text', text.apply);
+  const linkRemove = doc.createElement('sf-button');
+  linkRemove.className = 'sf-inline-editor-unlink';
+  linkRemove.setAttribute('size', LINK_SIZE);
+  linkRemove.setAttribute('appearance', 'outline');
+  linkRemove.setAttribute('text', text.unlink);
+  linkActions.append(linkApply, linkRemove);
+  // The reason, said once to a screen reader as it appears; the field shows it.
   const linkError = doc.createElement('span');
   linkError.className = 'sf-inline-editor-error';
   linkError.setAttribute('role', 'alert');
-  linkForm.append(linkInput, linkApply, linkRemove, linkError);
-  if (links) {
-    const button = doc.createElement('button');
-    button.type = 'button';
-    button.className = 'sf-inline-editor-button sf-inline-editor-button--link';
-    button.dataset.link = 'toggle';
-    button.textContent = text.link;
-    button.setAttribute('aria-pressed', 'false');
-    button.setAttribute('aria-keyshortcuts', 'Control+K Meta+K');
-    buttons.set('link', button);
-    toolbar.append(button, linkForm);
-  }
-  doc.body.append(toolbar);
-  let savedSelection = [0, 0];
+  linkPanel.append(linkInput, linkActions, linkError);
+  if (links) doc.body.append(linkPanel);
+
+  const inside = (node) => Boolean(node) && (element.contains(node) || toolbar.contains(node) || linkPanel.contains(node) || Boolean(toolbar._sfRowMoreMenu?.contains?.(node)) || node === toolbar._sfRowMoreMenu);
+  const fieldControl = () => linkInput.querySelector('input');
+  const linkValue = () => String(fieldControl()?.value ?? linkInput.value ?? '');
+  const setLinkValue = (value) => {
+    linkInput.value = value;
+    const control = fieldControl();
+    if (control) control.value = value;
+  };
+  const clearError = () => {
+    linkInput.removeAttribute('invalid');
+    linkInput.removeAttribute('error-message');
+    linkError.textContent = '';
+  };
+  const showError = (problem) => {
+    const message = format(text[problem] ?? text.invalid, { max: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.INLINE_LIMITS.maxHrefLength });
+    linkInput.setAttribute('invalid', '');
+    linkInput.setAttribute('error-message', message);
+    linkError.textContent = message;
+  };
 
   // The box of the text between two offsets: the first line's top, the last
-  // line's bottom, the span between the leftmost and rightmost edge.
+  // line's bottom, the span between the leftmost and rightmost edge; for a
+  // caret, its line.
   function rangeBox(start, end) {
-    if (start === end) return null;
     const range = doc.createRange();
     range.setStart(...locate(element, Math.min(start, end)));
     range.setEnd(...locate(element, Math.max(start, end)));
     const lines = [...range.getClientRects()].filter((rect) => rect.width > 0 || rect.height > 0);
-    if (!lines.length) return null;
+    if (!lines.length) {
+      if (start !== end) return null;
+      const box = range.getBoundingClientRect();
+      if (box.height > 0) return { top: box.top, bottom: box.bottom, left: box.left, right: box.right };
+      const own = element.getBoundingClientRect();
+      return { top: own.top, bottom: own.bottom, left: own.left, right: own.right };
+    }
     return {
       top: Math.min(...lines.map((rect) => rect.top)),
       bottom: Math.max(...lines.map((rect) => rect.bottom)),
@@ -980,94 +1947,244 @@ function startInlineEdit(element, options = {}) {
       right: Math.max(...lines.map((rect) => rect.right)),
     };
   }
+  // The room between the text and what floats by it: the toolbar's own gap
+  // (--sf-space-1/4 through its sheet).
+  const gap = () => parseFloat(globalThis.getComputedStyle(toolbar).columnGap) || 4;
+  // The bottom of what the person sees: above the screen keyboard where the
+  // browser says where it is (visualViewport).
+  const keyboardEdge = () => {
+    const view = globalThis.visualViewport;
+    return view ? view.offsetTop + view.height : globalThis.innerHeight;
+  };
 
   // The selection mode's place: above the selected text, centred on it,
   // below it when there is no room above, kept inside the viewport. While the
-  // link form is open the selection is in its field, so the saved one counts.
+  // link window is open the selection is in its field, so the saved one counts.
   function positionOverSelection() {
-    if (toolbar.hidden) return;
-    const box = rangeBox(...(linkForm.hidden ? selectionOffsets() : savedSelection));
+    const [start, end] = linkPanel.hidden ? selectionOffsets() : savedSelection;
+    if (start === end && linkPanel.hidden) return;
+    const box = rangeBox(start, end);
     if (!box) return;
     const bar = toolbar.getBoundingClientRect();
-    const above = box.top - bar.height - 4;
-    const top = above >= 0 ? above : Math.min(globalThis.innerHeight - bar.height, box.bottom + 4);
+    const above = box.top - bar.height - gap();
+    const top = above >= 0 ? above : Math.min(globalThis.innerHeight - bar.height, box.bottom + gap());
     const left = (box.left + box.right) / 2 - bar.width / 2;
-    Object.assign(toolbar.style, { top: `${top}px`, left: `${Math.max(0, Math.min(left, globalThis.innerWidth - bar.width))}px` });
+    Object.assign(toolbar.style, { top: `${top}px`, left: `${Math.max(0, Math.min(left, doc.documentElement.clientWidth - bar.width))}px` });
   }
 
   function positionToolbar() {
-    if (toolbarMode === 'selection') {
-      positionOverSelection();
+    if (finished) return;
+    if (!toolbar.hidden) {
+      if (docked) {
+        const bar = toolbar.getBoundingClientRect();
+        Object.assign(toolbar.style, { top: `${keyboardEdge() - bar.height}px`, left: '' });
+      } else if (toolbarMode === 'selection') positionOverSelection();
+      else {
+        const box = element.getBoundingClientRect();
+        const bar = toolbar.getBoundingClientRect();
+        const rtl = globalThis.getComputedStyle(element).direction === 'rtl';
+        const above = box.top - bar.height - gap();
+        const top = above >= 0 ? above : Math.min(globalThis.innerHeight - bar.height, box.bottom + gap());
+        const start = rtl ? box.right - bar.width : box.left;
+        Object.assign(toolbar.style, { top: `${top}px`, left: `${Math.max(0, Math.min(start, doc.documentElement.clientWidth - bar.width))}px` });
+      }
+    }
+    placeLinkPanel();
+  }
+
+  // The link window under the selected text (above the toolbar when there is
+  // no room below), from its start edge, inside the viewport; on a phone a
+  // sheet standing on the keyboard.
+  function placeLinkPanel() {
+    if (linkPanel.hidden) return;
+    if (docked) {
+      linkPanel.setAttribute('data-sf-sheet', '');
+      linkPanel.style.left = '';
+      linkPanel.style.top = `${keyboardEdge() - linkPanel.getBoundingClientRect().height}px`;
       return;
     }
-    const box = element.getBoundingClientRect();
-    const bar = toolbar.getBoundingClientRect();
+    linkPanel.removeAttribute('data-sf-sheet');
+    const box = rangeBox(...savedSelection);
+    if (!box) return;
+    const panel = linkPanel.getBoundingClientRect();
+    const bar = toolbar.hidden ? null : toolbar.getBoundingClientRect();
+    const space = gap();
+    const barBelow = bar && bar.top >= box.bottom - 1;
+    let top = (barBelow ? bar.bottom : box.bottom) + space;
+    if (top + panel.height > globalThis.innerHeight) {
+      const above = (bar && !barBelow ? bar.top : box.top) - space - panel.height;
+      top = above >= 0 ? above : Math.max(0, globalThis.innerHeight - panel.height);
+    }
     const rtl = globalThis.getComputedStyle(element).direction === 'rtl';
-    const above = box.top - bar.height - 4;
-    const top = above >= 0 ? above : Math.min(globalThis.innerHeight - bar.height, box.bottom + 4);
-    const start = rtl ? box.right - bar.width : box.left;
-    Object.assign(toolbar.style, { top: `${top}px`, left: `${Math.max(0, Math.min(start, globalThis.innerWidth - bar.width))}px` });
+    const start = rtl ? box.right - panel.width : box.left;
+    Object.assign(linkPanel.style, { top: `${top}px`, left: `${Math.max(0, Math.min(start, doc.documentElement.clientWidth - panel.width))}px` });
+  }
+
+  // The row: the groups that fit, the rest in ⋯ (C155 (3), (4)). A floating
+  // toolbar's room is the viewport's width less its own padding; the strip's
+  // is its own width.
+  function layoutBar() {
+    if (finished || toolbar.hidden) return;
+    let room = null;
+    if (!docked) {
+      const style = globalThis.getComputedStyle(toolbar);
+      const chrome = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+      room = doc.documentElement.clientWidth - chrome;
+    }
+    const units = groups.map((box, at) => ({ element: box, rank: at + 1, pin: at === 0, group: at }));
+    const { out } = (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_1__.layoutActionRow)({ row: toolbar, units, more: moreButton, moreSeparator, separators: separators.map((line, at) => ({ element: line, after: at })), outClass: OUT, room });
+    toolsOut = out.flatMap((at) => [...groups[at].querySelectorAll('button')]);
+    toolbar.setAttribute('data-sf-row-laid', '');
+  }
+
+  // A phone takes the strip above the keyboard with buttons on the touch
+  // rung; wider, the floating toolbar on the 1/2 rung.
+  function followScreen() {
+    const next = onPhone(doc);
+    if (next === docked && toolbar.hasAttribute('data-sf-size')) return;
+    docked = next;
+    toolbar.classList.toggle('sf-inline-editor-toolbar--dock', docked);
+    const size = docked ? BAR_SIZE.dock : BAR_SIZE.float;
+    toolbar.dataset.sfSize = size;
+    for (const button of tools) {
+      for (const name of [...button.classList]) if (name.startsWith('sf-icon-button--size-')) button.classList.remove(name);
+      button.classList.add(`sf-icon-button--size-${size}`);
+    }
   }
 
   function updateToolbar() {
-    const [start, end] = selectionOffsets();
-    const state = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.marksIn)(read(), start, end === start ? Math.max(0, start - 1) : end);
+    if (finished) return;
+    const [start, end] = linkPanel.hidden ? selectionOffsets() : savedSelection;
+    if (linkPanel.hidden && element.contains(doc.getSelection()?.anchorNode)) lastSelection = [start, end];
+    const state = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.marksIn)(read(), start, end === start ? Math.max(0, start - 1) : end);
     for (const mark of offered) buttons.get(mark).setAttribute('aria-pressed', state.marks.includes(mark) ? 'true' : 'false');
     buttons.get('link')?.setAttribute('aria-pressed', state.href ? 'true' : 'false');
+    const wasHidden = toolbar.hidden;
     // Selection mode: the bar is there while text is selected or a link is
-    // being written, and nowhere while the caret only stands in the text.
-    if (toolbarMode === 'selection') toolbar.hidden = start === end && linkForm.hidden;
+    // being written, and nowhere while the caret only stands in the text --
+    // except on a phone, where the strip stays for the whole edit.
+    toolbar.hidden = !docked && toolbarMode === 'selection' && start === end && linkPanel.hidden;
+    if (wasHidden && !toolbar.hidden) layoutBar();
     positionToolbar();
   }
 
   function toggle(mark) {
     const [start, end] = selectionOffsets();
     if (start === end) return;
-    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toggleMark)(read(), start, end, mark), start, end);
+    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toggleMark)(read(), start, end, mark), start, end);
   }
 
   function insertBreak() {
     const [start, end] = selectionOffsets();
     const content = read();
-    const at = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.sliceInline)(content, Math.max(0, start - 1), start)).find((segment) => !segment.node);
-    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(content, start, end, [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.breakSegment)(at?.marks || [], at?.href || null)]), start + 1, start + 1);
+    const at = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.sliceInline)(content, Math.max(0, start - 1), start)).find((segment) => !segment.node);
+    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(content, start, end, [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.breakSegment)(at?.marks || [], at?.href || null)]), start + 1, start + 1);
+  }
+
+  // The field takes the focus once sf-input has drawn it.
+  function focusField() {
+    const ready = globalThis.customElements?.get('sf-input') ? null : globalThis.SF?.Loader?.ensure?.(['sf-input', 'sf-button']);
+    Promise.resolve(ready).then(() => linkInput.updateComplete).then(() => {
+      if (finished || linkPanel.hidden) return;
+      const control = fieldControl();
+      if (control) {
+        control.focus({ preventScroll: true });
+        control.select?.();
+      } else linkInput.focus?.({ preventScroll: true });
+      placeLinkPanel();
+    });
   }
 
   function openLink() {
-    savedSelection = selectionOffsets();
-    if (savedSelection[0] === savedSelection[1]) return;
-    linkForm.hidden = false;
-    linkError.textContent = '';
-    linkInput.value = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.marksIn)(read(), ...savedSelection).href || '';
-    linkInput.focus();
-    positionToolbar();
+    if (!links || finished) return;
+    let [start, end] = selectionOffsets();
+    // No selection: the word under the caret; none there, the address
+    // becomes the link's text where the caret stands.
+    if (start === end) {
+      const word = wordAround(read(), start);
+      if (word) {
+        [start, end] = word;
+        setSelection(element, start, end);
+      }
+    }
+    savedSelection = [start, end];
+    const href = start === end ? '' : ((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.marksIn)(read(), start, end).href || '');
+    linkRemove.hidden = !href;
+    clearError();
+    setLinkValue(href);
+    linkPanel.hidden = false;
+    buttons.get('link')?.setAttribute('aria-expanded', 'true');
+    updateToolbar();
+    focusField();
   }
 
   function closeLink(focusEditor = true) {
-    linkForm.hidden = true;
-    if (focusEditor) {
-      element.focus();
+    if (linkPanel.hidden) return;
+    linkPanel.hidden = true;
+    linkPanel.removeAttribute('data-sf-sheet');
+    buttons.get('link')?.setAttribute('aria-expanded', 'false');
+    clearError();
+    if (focusEditor && !finished) {
+      element.focus({ preventScroll: true });
       setSelection(element, ...savedSelection);
     }
-    if (toolbarMode === 'selection' && !finished) updateToolbar();
+    if (!finished) updateToolbar();
   }
 
   function applyLink(href) {
-    if (href !== null && !(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.safeHref)(href)) {
-      linkError.textContent = text.invalid;
-      linkInput.setAttribute('aria-invalid', 'true');
-      return;
+    if (href !== null) {
+      const problem = linkProblem(href);
+      if (problem) {
+        showError(problem);
+        return;
+      }
     }
-    linkInput.removeAttribute('aria-invalid');
     closeLink();
-    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.setLink)(read(), ...savedSelection, href), ...savedSelection);
+    const [start, end] = savedSelection;
+    if (href !== null && start === end) {
+      // Nothing selected and no word: the address is the link's text.
+      const shown = href.replace(/^(mailto|tel):/u, '');
+      apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(read(), start, end, [{ text: shown, marks: [], href }]), start + shown.length, start + shown.length);
+    } else apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.setLink)(read(), start, end, href), start, end);
+  }
+
+  // A tool of the toolbar or of its «Ещё»: from the menu the text gets the
+  // focus and its selection back first.
+  function runTool(id, fromMenu = false) {
+    if (finished) return;
+    if (fromMenu) {
+      element.focus({ preventScroll: true });
+      if (lastSelection) setSelection(element, ...lastSelection);
+    }
+    if (id === 'link') (linkPanel.hidden ? openLink() : closeLink());
+    else if (offered.includes(id)) toggle(id);
+  }
+
+  async function openMore() {
+    const entries = [];
+    let last = null;
+    for (const button of toolsOut) {
+      const box = button.closest('.sf-inline-editor-group');
+      if (last && box !== last) entries.push({ type: 'separator' });
+      last = box;
+      const entry = (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_1__.actionEntry)(button, button.dataset.sfTool);
+      const key = button.dataset.mark ? SHORTCUTS[button.dataset.mark] : button.dataset.link ? 'k' : null;
+      if (key) entry.shortcut = `mod+${key}`;
+      entries.push(entry);
+    }
+    await (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_1__.openRowMenu)(toolbar, { anchor: moreButton, entries, label: text.more, size: docked ? '1' : '1/2', select: (id) => runTool(id, true) });
   }
 
   // Lifecycle --------------------------------------------------------------
+  let observer = null;
   function teardown() {
     finished = true;
     connection.abort();
+    observer?.disconnect();
+    toolbarKeys.destroy();
+    toolbar._sfRowMoreMenu?.remove?.();
     toolbar.remove();
+    linkPanel.remove();
     element.innerHTML = original.html;
     for (const [name, value] of original.attributes) {
       if (value === null) element.removeAttribute(name);
@@ -1078,10 +2195,23 @@ function startInlineEdit(element, options = {}) {
 
   function commit() {
     if (finished) return null;
-    const content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(read());
+    const content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)(read());
     teardown();
     emitInline(element, 'commit', options.nodeId ?? null, content);
     return content;
+  }
+
+  // Enter in a block editor (enter: 'new-block'): the text before the caret
+  // is saved, the text after it (the selection dropped) goes as next.
+  function commitNewBlock() {
+    if (finished) return null;
+    const [start, end] = selectionOffsets();
+    const content = read();
+    const before = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.sliceInline)(content, 0, start));
+    const next = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.sliceInline)(content, end, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineLength)(content)));
+    teardown();
+    emitInline(element, 'commit', options.nodeId ?? null, before, next);
+    return before;
   }
 
   function cancel() {
@@ -1091,15 +2221,15 @@ function startInlineEdit(element, options = {}) {
   }
 
   // Start ------------------------------------------------------------------
-  const initial = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(options.content ?? readInlineDom(element, { marks, links }));
+  const initial = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)(options.content ?? readInlineDom(element, { marks, links }));
   element.setAttribute('data-sf-inline-editing', '');
   element.setAttribute('contenteditable', 'true');
   element.setAttribute('role', 'textbox');
   element.setAttribute('aria-multiline', 'false');
-  element.setAttribute('aria-label', format(text.editing, { label: options.label || '' }).replace(/^: /u, ''));
+  element.setAttribute('aria-label', format(enterMode === 'new-block' ? text['editing-block'] : text.editing, { label: options.label || '' }).replace(/^: /u, ''));
   element.replaceChildren(renderInlineDom(doc, initial));
   element.focus();
-  setSelection(element, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineLength)(initial));
+  setSelection(element, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineLength)(initial));
   history.push({ content: initial, selection: selectionOffsets(), typing: false });
   historyIndex = 0;
 
@@ -1145,10 +2275,10 @@ function startInlineEdit(element, options = {}) {
       }
       parsed = readInlineDom(body, { marks, links, collapse: true });
     }
-    const inserted = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(parsed);
+    const inserted = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)(parsed);
     const [start, end] = selectionOffsets();
-    const length = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.inlineLength)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.fromSegments)(inserted));
-    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(read(), start, end, inserted), start + length, start + length);
+    const length = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.inlineLength)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.fromSegments)(inserted));
+    apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(read(), start, end, inserted), start + length, start + length);
   }, signal);
   element.addEventListener('drop', (event) => event.preventDefault(), signal);
   // Copy and cut write the editor's own HTML, in which an atom keeps its
@@ -1157,15 +2287,15 @@ function startInlineEdit(element, options = {}) {
     const [start, end] = selectionOffsets();
     if (start === end || !event.clipboardData) return;
     event.preventDefault();
-    const slice = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.sliceInline)(read(), start, end);
+    const slice = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.sliceInline)(read(), start, end);
     const holder = doc.createElement('div');
     const wrapper = doc.createElement('span');
     wrapper.setAttribute(COPY_ATTRIBUTE, copyToken());
     wrapper.append(renderInlineDom(doc, slice));
     holder.append(wrapper);
     event.clipboardData.setData('text/html', holder.innerHTML);
-    event.clipboardData.setData('text/plain', (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)(slice).map(({ text, node, break: isBreak }) => (node ? (typeof node.props?.text === 'string' ? node.props.text : '') : isBreak ? '\n' : text)).join(''));
-    if (remove) apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(read(), start, end, []), start, start);
+    event.clipboardData.setData('text/plain', (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)(slice).map(({ text, node, break: isBreak }) => (node ? (typeof node.props?.text === 'string' ? node.props.text : '') : isBreak ? '\n' : text)).join(''));
+    if (remove) apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(read(), start, end, []), start, start);
   };
   element.addEventListener('copy', (event) => copySelection(event, false), signal);
   element.addEventListener('cut', (event) => copySelection(event, true), signal);
@@ -1178,13 +2308,13 @@ function startInlineEdit(element, options = {}) {
     const [start, end] = selectionOffsets();
     if (event.key === 'Backspace' || event.key === 'Delete') {
       if (start !== end) {
-        if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.sliceInline)(content, start, end)).some(({ node }) => node)) return false;
-        apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(content, start, end, []), start, start);
+        if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.sliceInline)(content, start, end)).some(({ node }) => node)) return false;
+        apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(content, start, end, []), start, start);
         return true;
       }
       const at = event.key === 'Backspace' ? start - 1 : start;
-      if (at < 0 || !(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.objectAt)(content, at)) return false;
-      apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.replaceRange)(content, at, at + 1, []), at, at);
+      if (at < 0 || !(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.objectAt)(content, at)) return false;
+      apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.replaceRange)(content, at, at + 1, []), at, at);
       return true;
     }
     const rtl = globalThis.getComputedStyle(element).direction === 'rtl';
@@ -1193,7 +2323,7 @@ function startInlineEdit(element, options = {}) {
     const focus = textOffset(element, selection.focusNode, selection.focusOffset);
     if (!event.shiftKey && anchor !== focus) return false;
     const next = forward ? focus + 1 : focus - 1;
-    if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.objectAt)(content, forward ? focus : focus - 1)) return false;
+    if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.objectAt)(content, forward ? focus : focus - 1)) return false;
     setSelection(element, event.shiftKey ? anchor : next, next);
     updateToolbar();
     return true;
@@ -1209,8 +2339,10 @@ function startInlineEdit(element, options = {}) {
       event.preventDefault();
       insertBreak();
     } else if (event.key === 'Enter' && !event.shiftKey) {
+      // Enter saves (C172 (2)); in a block editor it starts the next block.
       event.preventDefault();
-      commit();
+      if (enterMode === 'new-block') commitNewBlock();
+      else commit();
     } else if (event.key === 'Escape') {
       event.preventDefault();
       cancel();
@@ -1238,31 +2370,70 @@ function startInlineEdit(element, options = {}) {
   toolbar.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button) return;
-    if (button.dataset.mark) toggle(button.dataset.mark);
-    else if (button.dataset.link) (linkForm.hidden ? openLink() : closeLink());
-    else if (button === linkApply) applyLink(linkInput.value.trim());
-    else if (button === linkRemove) applyLink(null);
+    if (button === moreButton) openMore();
+    else runTool(button.dataset.sfTool);
   }, signal);
-  linkInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') { event.preventDefault(); applyLink(linkInput.value.trim()); }
+  // The arrows, Home and End are core's roving helper (C184, above); Escape
+  // goes back to the text.
+  toolbar.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    element.focus({ preventScroll: true });
+    if (lastSelection) setSelection(element, ...lastSelection);
+  }, signal);
+  linkPanel.addEventListener('keydown', (event) => {
+    if (event.isComposing) return;
+    if (event.key === 'Enter' && !event.target.closest?.('sf-button')) { event.preventDefault(); applyLink(linkValue().trim()); }
     if (event.key === 'Escape') { event.preventDefault(); closeLink(); }
   }, signal);
+  // The reason goes as soon as the address changes (C153 (3)).
+  linkPanel.addEventListener('input', () => { if (linkInput.hasAttribute('invalid')) clearError(); }, signal);
+  linkPanel.addEventListener('click', (event) => {
+    if (event.target.closest('.sf-inline-editor-apply')) applyLink(linkValue().trim());
+    else if (event.target.closest('.sf-inline-editor-unlink')) applyLink(null);
+  }, signal);
+  // On a phone the sheet stands over a scrim: a press outside it closes it
+  // and keeps the edit.
+  doc.addEventListener('pointerdown', (event) => {
+    if (!docked || linkPanel.hidden || linkPanel.contains(event.target)) return;
+    event.preventDefault();
+    closeLink();
+  }, { ...signal, capture: true });
   const onFocusOut = (event) => {
-    const next = event.relatedTarget;
-    if (next && (element.contains(next) || toolbar.contains(next))) return;
-    // Let a click inside the toolbar land before deciding to commit.
+    if (inside(event.relatedTarget)) return;
+    // Let a click inside the toolbar or the link window land before deciding to commit.
     globalThis.setTimeout(() => {
-      if (!finished && !element.contains(doc.activeElement) && !toolbar.contains(doc.activeElement)) commit();
+      if (!finished && !inside(doc.activeElement)) commit();
     }, 0);
   };
   element.addEventListener('focusout', onFocusOut, signal);
   toolbar.addEventListener('focusout', onFocusOut, signal);
+  linkPanel.addEventListener('focusout', onFocusOut, signal);
   doc.addEventListener('selectionchange', () => { if (element.contains(doc.getSelection()?.anchorNode)) updateToolbar(); }, signal);
+  const onResize = () => {
+    const was = docked;
+    followScreen();
+    if (was !== docked) toolbar.removeAttribute('data-sf-row-laid');
+    layoutBar();
+    positionToolbar();
+  };
   globalThis.addEventListener('scroll', positionToolbar, { ...signal, passive: true, capture: true });
-  globalThis.addEventListener('resize', positionToolbar, { ...signal, passive: true });
+  globalThis.addEventListener('resize', onResize, { ...signal, passive: true });
+  globalThis.visualViewport?.addEventListener('resize', positionToolbar, { ...signal, passive: true });
+  globalThis.visualViewport?.addEventListener('scroll', positionToolbar, { ...signal, passive: true });
+  // The groups widen when the icon face arrives: the row is laid out again.
+  if (typeof globalThis.ResizeObserver === 'function') {
+    observer = new globalThis.ResizeObserver(() => { layoutBar(); positionToolbar(); });
+    for (const box of groups) observer.observe(box);
+    // The link window grows when a reason takes two lines: it is placed again.
+    if (links) observer.observe(linkPanel);
+  }
+  followScreen();
   updateToolbar();
+  layoutBar();
+  positionToolbar();
 
-  return Object.freeze({ element, commit, cancel, value: () => (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_2__.normalizeInline)(read()) });
+  return Object.freeze({ element, commit, cancel, value: () => (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.normalizeInline)(read()) });
 }
 
 /**
@@ -1289,11 +2460,11 @@ function defineInlineEditor(registry = globalThis.customElements, { base = null 
   }
   registry.define('sf-editor-inline', SfInlineEditor);
   // The former tag sf-inline-editor is a dated alias (a subclass, noted once).
-  (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_1__.defineTagAliases)(SfInlineEditor, 'sf-editor-inline', { define: (name, Class) => registry.define(name, Class) });
+  (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.defineTagAliases)(SfInlineEditor, 'sf-editor-inline', { define: (name, Class) => registry.define(name, Class) });
   return SfInlineEditor;
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_EVENTS, INLINE_EVENTS_FORMER_TAG, INLINE_EVENTS_LEGACY, INLINE_TOOLBAR_MODES, defineInlineEditor, readInlineDom, renderInlineDom, startInlineEdit, textOffset });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_ENTER_MODES, INLINE_EVENTS, INLINE_EVENTS_FORMER_TAG, INLINE_EVENTS_LEGACY, INLINE_TOOLBAR_MODES, defineInlineEditor, linkProblem, readInlineDom, renderInlineDom, startInlineEdit, textOffset, useInlineEditorWords, wordAround });
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1762,21 +2933,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.9.1","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.11.1","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 
 /***/ "5bd53c217eca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Inline editor","runtime":{"apply":"Apply","code":"Code","editing":"{label}: editing. Enter saves, Escape cancels.","em":"Italic","invalid":"Invalid link address","link":"Link","strong":"Bold","toolbar":"Formatting","unlink":"Remove link","url":"Link address"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Inline editor","runtime":{"apply":"Apply","code":"Code","editing":"{label}: editing. Enter saves, Escape cancels.","editing-block":"{label}: editing. Enter starts a new block, Escape cancels.","em":"Italic","invalid":"Invalid link address","link":"Link","link-empty":"Enter the link address","link-hint":"https://…, mailto:, tel: or a path on this site such as /about","link-long":"The address is longer than {max} characters","link-scheme":"This address is not allowed: start with https://, mailto: or tel:","link-slashes":"An address on this site starts with a single slash /","link-spaces":"Remove the spaces: an address has none","link-start":"The address has no start: https://, or / for a page of this site","more":"More","strong":"Bold","toolbar":"Formatting","unlink":"Remove link","url":"Link address"}}');
 
 /***/ },
 
 /***/ "47068da1f922"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Редактор текста на холсте","runtime":{"apply":"Применить","code":"Код","editing":"{label}: редактирование. Enter — сохранить, Escape — отменить.","em":"Курсив","invalid":"Недопустимый адрес ссылки","link":"Ссылка","strong":"Полужирный","toolbar":"Форматирование","unlink":"Убрать ссылку","url":"Адрес ссылки"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Редактор текста на холсте","runtime":{"apply":"Применить","code":"Код","editing":"{label}: редактирование. Enter — сохранить, Escape — отменить.","editing-block":"{label}: редактирование. Enter — новый блок, Escape — отменить.","em":"Курсив","invalid":"Недопустимый адрес ссылки","link":"Ссылка","link-empty":"Введите адрес ссылки","link-hint":"https://…, mailto:, tel: или путь на этом сайте, например /about","link-long":"Адрес длиннее {max} знаков","link-scheme":"Такой адрес нельзя: начните с https://, mailto: или tel:","link-slashes":"Адрес на этом сайте начинается с одной косой черты /","link-spaces":"Уберите пробелы: в адресе их не бывает","link-start":"Не хватает начала адреса: https:// или / для страницы этого сайта","more":"Ещё","strong":"Полужирный","toolbar":"Форматирование","unlink":"Убрать ссылку","url":"Адрес ссылки"}}');
 
 /***/ }
 

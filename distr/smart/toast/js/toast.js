@@ -94,6 +94,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _dismiss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ab7da13ee130");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1df9407f40fc");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
@@ -101,14 +102,13 @@ _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependenci
 
 
 
+ // The words live in the component's language files (localization study LC-4):
+// one place for every language, as the Smart components keep them.
+
 
 const TOAST_TEXT = {
-  en: {
-    close: 'Close message'
-  },
-  ru: {
-    close: 'Закрыть сообщение'
-  }
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].ru
 };
 const TOAST_SELECTOR = '.sf-toast';
 const TOAST_BOUND_FLAG = 'sfToastBound'; // The shared status vocabulary (neutral, info, success, warning, error). The
@@ -317,7 +317,7 @@ function createToastElement(options = {}) {
     actions = null,
     link = null,
     closable = true,
-    closeLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(TOAST_TEXT, 'close', document.documentElement),
+    closeLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(TOAST_TEXT, 'close', document.documentElement, 'sf-toast'),
     duration = 0,
     role = '',
     actionsLayout = 'auto'
@@ -1077,7 +1077,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // sf-toast from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle; the title, settings and events
+// stay in the language files for the Studio and the docs (localization study LC-2).
+
+const en = {
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+};
+const ru = {
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+}; // sf-toast from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // a language through SF.language.register("sf-toast", code, words)), and the
@@ -1086,8 +1094,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const ToastElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en,
+    ru
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
@@ -1485,6 +1493,39 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "1df9407f40fc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2582dbbec1f5");
+/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6a0439971d01");
+// The component's words for the bundle and for Node alike (localization study
+// LC-4/LC-5): the runtime words of its language files, by language.
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+
+
+/***/ },
+
+/***/ "2582dbbec1f5"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"close":"Close message"}}');
+
+/***/ },
+
+/***/ "6a0439971d01"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"close":"Закрыть сообщение"}}');
+
+/***/ },
+
 /***/ "712ff066c789"
 (module) {
 
@@ -1495,7 +1536,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.4.1","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"action-href":{"type":"string","default":""},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.4.2","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"action-href":{"type":"string","default":""},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
