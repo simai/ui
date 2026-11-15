@@ -8,6 +8,12 @@
 
 ### Добавлено
 
+- Pair next 7 (group build 5, ui-source integration/pair-next-7): C178 fix bottom, check top (row-rung and contrast-matrix probes in every pair cut, dark container graphic 60 -> 70, glass 48 -> 64), C173 role tokens (gaps, insets, lines, hit areas; compact regions) and five layers, C181 fluid grid `grid-col-fit` and container steps (screen queries only in the page frame and listed components).
+- Tables and lists: C146 table rows, head, numbers with tabular digits, actions column; C148 list item (end column, row keyboard, `divided` with lines on every row but the last, `lines="2"`, long press); C167 list feed; C130 skeletons for lists, tiles and include states; C168 metric tile.
+- Content: C152 avatar (picture role, square corners, group overflow button), C154 accordion (marker at the end, lines, summary, `hidden="until-found"`), C151 icons (ladder sizes, unknown names, RTL mirror, middle alignment in text and bottom inside icon buttons), C147 reference link, C150 gallery grid, viewer and masonry, C149 file preview, card, divider and icon circle defects.
+- Buttons and places: content on strong places and glass (C42, C70), C103 one row one step; resizer C158 and its defects; component-set loader family field (C174 NM-5).
+- `core.runtime` 1.56.0, `core.styles` 1.13.0.
+
 - Pair next 6 (group builds 2, 3 and 4, ui-source 09cf1b0f): C139 `sf-input-lookup` (create row last, recent items on focus, stale rows while searching, one Tab stop, phone sheet), C140 badges (grey tonal default, 24 · 28 · 32 heights, `main` only for the attention count with a dated alias), C141 textarea and rich text (counter from 80 %, growth 3 to 10 lines, sticky toolbar), C142 `sf-language`, C143 content slider and gallery, C144 toolbar gaps and C105 spacing roles in button rows, tags, menus, accordion and pagination.
 - New utility family `gradient` (C65/C92); glass accent (C70), icon colour roles (C107), place fills, highlight place roles, tonal pressed buttons, C43 badge rings.
 - Fields: C77 field inset, C79 adaptive sizes, C123 field actions, C83 colour field, C87 country code, C94 image field, C62 datepicker, C78/C80 range slider, C82 code input, required look; choice controls and motion.
