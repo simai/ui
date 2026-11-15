@@ -311,7 +311,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.15.0"
+    "version": "1.16.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -486,7 +486,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.10.0"
+    "version": "1.10.1"
   },
   "sf-checkbox": {
     "inputs": {
@@ -554,7 +554,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.3.1"
+    "version": "1.4.1"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -685,7 +685,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.11.0"
+    "version": "1.13.0"
   },
   "sf-icon": {
     "inputs": {
@@ -724,6 +724,15 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         },
         "label": {
           "default": "",
+          "type": "string"
+        },
+        "mirror": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
           "type": "string"
         },
         "optical-size": {
@@ -768,7 +777,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "sf-input": {
     "inputs": {
@@ -965,7 +974,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.9.1"
+    "version": "1.10.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -1137,7 +1146,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.9.0"
+    "version": "1.10.1"
   },
   "sf-switch": {
     "inputs": {

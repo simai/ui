@@ -52,7 +52,9 @@
     text-align: start;
   }
   .table > :not(caption) > * > * {
-    padding: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2) calc(var(--sf-space-1) / 2);
+    height: var(--sf-ui-1--control-height);
+    block-size: var(--sf-ui-1--control-height);
+    padding: calc(calc(var(--sf-ui-2--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)) / 2) calc(var(--sf-space-1) / 2);
     border-bottom-width: var(--sf-px);
     border-block-end-width: var(--sf-px);
     background-image: linear-gradient(var(--sf-table-accent-bg), var(--sf-table-accent-bg));
@@ -109,11 +111,10 @@
     -webkit-padding-end: var(--sf-space-1);
             padding-inline-end: var(--sf-space-1);
   }
-  .table > tbody {
-    vertical-align: inherit;
-  }
-  .table > thead {
-    vertical-align: bottom;
+  .table > thead,
+  .table > tbody,
+  .table > tfoot {
+    vertical-align: middle;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table > thead > tr > th,html:not([dir="rtl"])
   .table > tbody > tr > th[scope=row] {
@@ -145,8 +146,59 @@
   }
   .table > thead > tr > th,
   .table > tbody > tr > th[scope=row] {
-    font-weight: var(--sf-font-weight-bold);
     text-align: start;
+  }
+  .table > thead > tr > th {
+    color: var(--sf-on-surface-variant);
+    font-weight: var(--sf-weight--medium);
+  }
+  .table > tbody > tr > th[scope=row] {
+    font-weight: var(--sf-font-weight-bold);
+  }
+  .table > tbody > tr:where(:hover) > * {
+    --sf-table-accent-bg: var(--sf-table-hover-bg);
+    color: var(--sf-table-hover-color);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
+  .table > :not(caption) > * > :where(:has(> sf-checkbox:not(.does-not-exist):only-child)) {
+    width: 0;
+    inline-size: 0;
+    white-space: nowrap;
+  }
+  .table > :not(caption) > * > :where(:has(> sf-button-icon:not(.does-not-exist):only-child)) {
+    width: 0;
+    inline-size: 0;
+    white-space: nowrap;
+  }
+  .table > :not(caption) > * > :where(:has(> sf-icon-button:not(.does-not-exist):only-child)) {
+    width: 0;
+    inline-size: 0;
+    white-space: nowrap;
+  }
+  .table > :not(caption) > * > :where(:has(> input[type=checkbox]:only-child)) {
+    width: 0;
+    inline-size: 0;
+    white-space: nowrap;
+  }
+  .table > tbody > tr > * > a:where([href]:not(.sf-button)) {
+    color: var(--sf-link);
+    -webkit-text-decoration-color: currentColor;
+            text-decoration-color: currentColor;
+    text-underline-offset: var(--sf-a3);
+  }
+  .table > tbody > tr > * > a:where([href]:not(.sf-button)):hover, .table > tbody > tr > * > a:where([href]:not(.sf-button)).focus-visible {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  .table > tbody > tr > * > a:where([href]:not(.sf-button)):hover, .table > tbody > tr > * > a:where([href]:not(.sf-button)):focus-visible {
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+  }
+  .table > :not(caption) > * > * > .line-clamp-2 {
+    margin-bottom: clamp(-1 * var(--sf-px), calc(var(--sf-ui-2--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
+    -webkit-margin-after: clamp(-1 * var(--sf-px), calc(var(--sf-ui-2--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
+            margin-block-end: clamp(-1 * var(--sf-px), calc(var(--sf-ui-2--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table > caption {
     text-align: left;
@@ -209,10 +261,19 @@
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
     text-align: end;
+    white-space: nowrap;
   }
   .table-sm > :not(caption) > * > *,
   .table-small > :not(caption) > * > * {
-    padding: calc((var(--sf-ui-1\/2--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2) calc(var(--sf-space-1\/2) / 2);
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+    padding: calc(calc(var(--sf-ui-1--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)) / 2) calc(var(--sf-space-1\/2) / 2);
+  }
+  .table-sm > :not(caption) > * > * > .line-clamp-2,
+  .table-small > :not(caption) > * > * > .line-clamp-2 {
+    margin-bottom: clamp(-1 * var(--sf-px), calc(var(--sf-ui-1--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
+    -webkit-margin-after: clamp(-1 * var(--sf-px), calc(var(--sf-ui-1--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
+            margin-block-end: clamp(-1 * var(--sf-px), calc(var(--sf-ui-1--control-height) - 2 * var(--sf-text-height-1) - var(--sf-px)), 0px);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-sm > :not(caption) > * > :where(:first-child),html:not([dir="rtl"])
   .table-small > :not(caption) > * > :where(:first-child) {

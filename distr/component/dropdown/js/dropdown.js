@@ -1471,7 +1471,7 @@ function openDropdownPortal(root, list, onUnavailable) {
       const boundary = root.closest('dialog[open], [role="dialog"][aria-modal="true"]');
       (boundary || document.body).append(state.context);
       state.context.append(list);
-      list.style.zIndex = 'var(--sf-z-index-9)';
+      list.style.zIndex = 'var(--sf-layer--popover)';
     }
     state.inheritance = new MutationObserver(state.schedule);
 

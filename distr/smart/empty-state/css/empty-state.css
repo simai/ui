@@ -50,8 +50,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--sf-space-1\/3);
-    gap: var(--sf-empty-state-actions-gap, var(--sf-space-1\/3));
+    gap: var(--sf-gap--actions);
+    gap: var(--sf-empty-state-actions-gap, var(--sf-gap--actions));
     margin-top: var(--sf-a4);
     -webkit-margin-before: var(--sf-a4);
             margin-block-start: var(--sf-a4);

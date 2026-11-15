@@ -449,6 +449,27 @@
     --sf-on-primary-container: var(--sf-white);
     --sf-place--plate: var(--sf-white);
     --sf-place--on-plate: var(--sf-gradient--from);
+    --sf-on-primary-container-graphic: var(--sf-white);
+    --sf-on-secondary-container: var(--sf-white);
+    --sf-on-secondary-container-graphic: var(--sf-white);
+    --sf-on-tertiary-container: var(--sf-white);
+    --sf-on-tertiary-container-graphic: var(--sf-white);
+    --sf-on-info-container: var(--sf-white);
+    --sf-on-info-container-graphic: var(--sf-white);
+    --sf-on-success-container: var(--sf-white);
+    --sf-on-success-container-graphic: var(--sf-white);
+    --sf-on-warning-container: var(--sf-white);
+    --sf-on-warning-container-graphic: var(--sf-white);
+    --sf-on-error-container: var(--sf-white);
+    --sf-on-error-container-graphic: var(--sf-white);
+    --sf-on-neutral-container: var(--sf-white);
+    --sf-on-neutral-container-graphic: var(--sf-white);
+    --sf-link: var(--sf-white);
+    --sf-link-hover: var(--sf-primary-hover);
+    --sf-link-active: var(--sf-primary-active);
+    --sf-link-visited: var(--sf-white--alfa-80);
+    --sf-focus: var(--sf-white);
+    --sf-focus--color: var(--sf-focus);
   }
   .gradient-cover {
     --sf-gradient--from: light-dark(var(--sf-gradient--c-90, var(--sf-primary-90)), var(--sf-gradient--c-30, var(--sf-primary-30)));

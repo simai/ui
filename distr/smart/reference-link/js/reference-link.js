@@ -170,18 +170,36 @@ class SfReferenceLink extends ReferenceLinkElement {
 
   set line(value) {
     super.line = value;
-  } // An absent attribute is the default arrow; an empty one is no icon at all.
+  } // An absent attribute is the default icon; an empty one is no icon at all.
   // Read as `|| default` the two were the same answer, so a reference drawn
   // beside its own label could not drop the arrow it does not need.
+  // An absent icon is the arrow in a card, a size or on a line; a reference
+  // in text (appearance inline) has no arrow unless one is named -- a link
+  // in a sentence is told by its colour and line, the icon there says the
+  // record's type (C147 (1), (2)).
 
 
   get icon() {
     const icon = this.getAttribute('icon');
-    return icon === null ? 'arrow_forward' : icon;
+    if (icon === null) return this.getAttribute('appearance') === 'inline' ? '' : 'arrow_forward';
+    return icon;
   }
 
   set icon(value) {
     super.icon = value;
+  } // What the copy button copies (C147 (8)): the address in full, as the
+  // browser's own «copy link address» gives it, not the href as written.
+
+
+  get copyValue() {
+    const href = this.getAttribute('href') || '';
+    if (!href) return '';
+
+    try {
+      return new URL(href, this.ownerDocument?.baseURI || globalThis.location?.href).href;
+    } catch {
+      return href;
+    }
   }
 
   templateContext() {
@@ -192,6 +210,16 @@ class SfReferenceLink extends ReferenceLinkElement {
       line: this.line,
       icon: this.icon,
       appearance: this.appearance,
+      state: this.state,
+      copy: this.copy,
+      copyValue: this.copyValue,
+      words: {
+        // Said after the name (C147 (4)), as sf-file-download says it (C25).
+        newTab: this.sfWord('new-tab-text'),
+        copy: this.sfWord('copy-label'),
+        missing: this.sfWord('missing-text'),
+        forbidden: this.sfWord('forbidden-text')
+      },
       ariaLabel: this.getAttribute('aria-label') || '',
       rootClass: this.getRootClass()
     });
@@ -199,6 +227,94 @@ class SfReferenceLink extends ReferenceLinkElement {
 
   template() {
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderReferenceLinkTemplate)(this.templateContext());
+  }
+
+  afterRender(callback) {
+    if (typeof callback === 'function') return super.afterRender(callback);
+    this.markCutName();
+    this.observeRoom();
+    return undefined;
+  }
+
+  disconnectedCallback() {
+    this._roomObserver?.disconnect();
+    this._roomObserver = null;
+    this._roomRoot = null;
+    super.disconnectedCallback();
+  } // A long name (C147 (9)): a card shows two lines, a sized reference or one
+  // on a line (a table cell, a field) one; past that an ellipsis. A name cut
+  // that way has its whole text in the Framework tooltip on hover and
+  // keyboard focus (as the breadcrumbs, C93 (6)), through the tooltip
+  // component's controller (data-tooltip). Text that wraps in a sentence is
+  // never cut, so an inline reference has none.
+
+
+  markCutName() {
+    const root = this.querySelector(':scope > .sf-reference-link');
+    const link = root && !root.classList.contains('sf-reference-link--inline') ? root.querySelector('a.sf-reference-link__link') : null;
+    const label = link?.querySelector('.sf-reference-link__label');
+    const cut = Boolean(link && label) && (link.scrollWidth > link.clientWidth + 1 || link.scrollHeight > link.clientHeight + 1);
+    let surface = this._cutTooltip;
+
+    if (!cut) {
+      if (surface) {
+        if (this._cutLink?.getAttribute('data-tooltip') === surface.id) this._cutLink.removeAttribute('data-tooltip');
+        surface.remove();
+        this._cutTooltip = null;
+        this._cutLink = null;
+      }
+
+      return;
+    }
+
+    const doc = this.ownerDocument;
+    const words = label.textContent.replace(/\s+/gu, ' ').trim();
+
+    if (!surface) {
+      // The Framework's plain tooltip in class markup, as the clipboard
+      // component writes it for an icon button's name.
+      surface = doc.createElement('span');
+      surface.className = 'sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-reference-link__name-tooltip flex';
+      surface.hidden = true;
+      const content = doc.createElement('span'); // A name is long by definition: the plate is a block (the utility
+      // hint of the tooltip sheet), so a second line keeps its fill.
+
+      content.className = 'sf-tooltip-content flex flex-col items-start';
+      const text = doc.createElement('span');
+      text.className = 'sf-tooltip-text';
+      content.append(text);
+      surface.append(content);
+      const base = `${this.id ? `page/${this.id}` : 'sf-reference-link'}/name`;
+      let id = base.replace(/[^\w:./-]/gu, '-');
+
+      for (let index = 2; doc.getElementById(id); index++) id = `${base}-${index}`;
+
+      surface.id = id;
+      this._cutTooltip = surface;
+    }
+
+    surface.querySelector('.sf-tooltip-text').textContent = words;
+    if (!surface.isConnected) this.append(surface);
+    if (this._cutLink && this._cutLink !== link) this._cutLink.removeAttribute('data-tooltip');
+    this._cutLink = link;
+    if (link.getAttribute('data-tooltip') !== surface.id) link.setAttribute('data-tooltip', surface.id);
+  } // The host is display: contents, so the box watched is the root it draws.
+
+
+  observeRoom() {
+    const root = this.querySelector(':scope > .sf-reference-link');
+    if (typeof ResizeObserver === 'undefined' || !root || root === this._roomRoot) return;
+    this._roomObserver?.disconnect();
+    this._roomRoot = root;
+    this._roomObserver = new ResizeObserver(() => {
+      if (this._roomFrame) return;
+      this._roomFrame = requestAnimationFrame(() => {
+        this._roomFrame = 0;
+        this.markCutName();
+      });
+    });
+
+    this._roomObserver.observe(root);
   }
 
   handleRootClick = event => {
@@ -276,7 +392,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The icon a target that is gone shows in place of its own (C147 (6)): the
+// broken link, whatever the reason.
 
+const GONE_ICON = 'link_off';
 function renderReferenceLinkTemplate(context) {
   const {
     component,
@@ -290,24 +409,68 @@ function renderReferenceLinkTemplate(context) {
     ariaLabel,
     rootClass,
     size,
-    line
+    line,
+    state,
+    copy,
+    copyValue,
+    words = {}
   } = context;
-  const rootClasses = ['sf-reference-link', size ? `sf-reference-link--size-${size}` : '', line ? `sf-reference-link--line-${line}` : '', appearance === 'plain' ? 'sf-reference-link--plain' : '', 'flex', 'items-cross-center', disabled ? 'disabled' : '', rootClass].filter(Boolean).join(' ');
+  const inline = appearance === 'inline'; // A target that is gone (C147 (6)): no link, the words dimmed, the broken
+  // link icon and the reason after the name. href is not followed then.
+
+  const gone = state === 'missing' || state === 'forbidden';
+  const newTab = !gone && !disabled && Boolean(href) && target === '_blank'; // The copy button is the card's (C147 (8)): a card with an address to copy.
+
+  const copyButton = copy && !inline && !size && !line && appearance !== 'plain' && !gone && !disabled && Boolean(href);
+  const rootClasses = ['sf-reference-link', inline ? 'sf-reference-link--inline' : '', !inline && size ? `sf-reference-link--size-${size}` : '', !inline && line ? `sf-reference-link--line-${line}` : '', !inline && appearance === 'plain' ? 'sf-reference-link--plain' : '', gone ? `sf-reference-link--gone sf-reference-link--${state}` : '', copyButton ? 'sf-reference-link--copy' : '', inline ? '' : 'flex', inline ? '' : 'items-cross-center', disabled ? 'disabled' : '', rootClass].filter(Boolean).join(' ');
   const labelContent = component?.hasSlotContent?.('label') ? component.getSlotContent('label') : label;
   const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : text;
-  const linkContent = href && !disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const shownIcon = gone ? GONE_ICON : icon;
+  const iconPart = shownIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__icon sf-icon" aria-hidden="true">${shownIcon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // A new tab says so (C147 (4)): the sign after the words and, for a screen
+  // reader, the words in the link's name -- in the page's language, the
+  // words sf-file-download says for a file opened to view (C25).
+
+  const tabPart = newTab ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__tab sf-icon" aria-hidden="true">open_in_new</i><span class="sf-reference-link__tab-words">${words.newTab}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const name = ariaLabel && newTab ? `${ariaLabel} ${words.newTab}` : ariaLabel;
+  const reasonPart = gone ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__reason">${state === 'forbidden' ? words.forbidden : words.missing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (inline) {
+    // In text (C147 (1), (2)): one inline run that wraps with the sentence --
+    // the type icon, the name, the record's number in a quiet ink, the new
+    // tab sign. No white space between the parts: the icon never parts from
+    // the name's first word at a line end.
+    const numberPart = textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <span class="sf-reference-link__number">${textContent}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${iconPart}<span class="sf-reference-link__label">${labelContent}</span>${numberPart}${reasonPart}${tabPart}`;
+    const run = href && !disabled && !gone ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-reference-link__link"
+          href=${href}
+          target=${target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          rel=${target && target !== '_self' ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          aria-label=${name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >${body}</a>` : disabled ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__link" role="link" aria-disabled="true" aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${body}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__link">${body}</span>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${run}</span>`;
+  }
+
+  const linkContent = href && !disabled && !gone ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <a class="sf-reference-link__link"
             href=${href}
             target=${target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             rel=${target && target !== '_self' ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-          >
-            ${labelContent}
-          </a>
+            aria-label=${name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+          ><span class="sf-reference-link__label">${labelContent}</span>${tabPart}</a>
         ` : disabled ? // A disabled reference is a link the reader cannot follow: the label
   // says so as a link that is unavailable (RL-16), not as plain text.
   // No href and no tabindex, so it takes no focus and goes nowhere.
-  (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span role="link" aria-disabled="true" aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${labelContent}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span>${labelContent}</span>`;
+  (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span role="link" aria-disabled="true" aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${labelContent}</span>` : // No address, or a target that is gone: the name as text; the
+  // reason follows it in the same run, not as a card's row item.
+  (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__label">${labelContent}${reasonPart}</span>`; // Copy the address (C147 (8)): the clipboard component's attribute route
+  // (data-sf-copy, decision C48) on an icon button of the Framework's class
+  // markup; its feedback, name tooltip and words are that route's.
+
+  const copyPart = copyButton ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button"
+        class="sf-reference-link__copy sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1/2 flex items-cross-center content-main-center"
+        data-sf-copy=${copyValue}
+        aria-label=${words.copy}
+      ><i class="sf-icon" aria-hidden="true">content_copy</i></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses}
@@ -315,10 +478,11 @@ function renderReferenceLinkTemplate(context) {
       @click=${component?.handleRootClick}
     >
       <div class="sf-reference-link__main sf-reference-link-left">
-        ${icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__icon sf-icon" aria-hidden="true">${icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${iconPart}
         ${linkContent}
       </div>
       <div class="sf-reference-link__meta sf-reference-link-text">${textContent}</div>
+      ${copyPart}
     </div>
   `;
 }
@@ -365,21 +529,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-refer
 /***/ "02ab397b5f7e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.1.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","plain"],"default":"card"},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.2.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","inline","plain"],"default":"card"},"copy":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"state":{"type":"enum","values":["","missing","forbidden"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "ab85d2329834"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Reference Link"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Reference Link","runtime":{"new-tab-text":"(opens in a new tab)","copy-label":"Copy link","missing-text":"deleted","forbidden-text":"no access"}}');
 
 /***/ },
 
 /***/ "80454adf6618"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Справочная ссылка"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Справочная ссылка","runtime":{"new-tab-text":"(откроется в новой вкладке)","copy-label":"Копировать ссылку","missing-text":"удалена","forbidden-text":"нет доступа"}}');
 
 /***/ }
 

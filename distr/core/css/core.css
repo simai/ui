@@ -49,11 +49,11 @@
 }
 @layer sf.base {
   :root {
-    --sf-focus-outline-width: calc(var(--sf-px) * 2);
+    --sf-focus--width: calc(var(--sf-px) * 2);
   }
   @media (min-width: 60rem) {
     :root {
-      --sf-focus-outline-width: calc(var(--sf-px) * 2);
+      --sf-focus--width: calc(var(--sf-px) * 2);
     }
   }
 }
@@ -69,8 +69,8 @@
     --sf-focus--color: var(--sf-focus);
     --sf-focus--offset: var(--sf-px);
     --sf-focus--style: solid;
-    --sf-focus--width: var(--sf-focus-outline-width);
-    --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-focus-outline-width: var(--sf-focus--width);
+    --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus--width) var(--sf-focus);
   }
   .focus-visible {
     outline-color: var(--sf-focus--color);
@@ -197,7 +197,13 @@
     --sf-success-container-strong: light-dark(var(--sf-success-50--alfa-24), var(--sf-success-90--alfa-24));
     --sf-on-success: light-dark(var(--sf-white), var(--sf-success-20));
     --sf-on-success-container: light-dark(var(--sf-success-10), var(--sf-success-90));
-    --sf-on-success-container-graphic: light-dark(var(--sf-success-50), var(--sf-success-60));
+    /* The graphic on a status container (a dot, an icon, a bar) is tone 70
+       in the dark theme since C178 (owner 2026-11-14, contrast matrix): tone
+       60 left 2.47 to 2.97:1 when the container lies over a popup or a nested
+       popup, and the neutral one 2.93:1 on every surface, under WCAG 1.4.11's
+       3:1. Tone 70 holds 3 and more on every surface; light (50) unchanged.
+       The outline keeps 60. */
+    --sf-on-success-container-graphic: light-dark(var(--sf-success-50), var(--sf-success-70));
     --sf-success-outline: light-dark(var(--sf-success-50), var(--sf-success-60));
     --sf-warning: light-dark(var(--sf-warning-40), var(--sf-warning-80));
     --sf-error: light-dark(var(--sf-error-40), var(--sf-error-80));
@@ -212,7 +218,7 @@
     --sf-error-container-strong: light-dark(var(--sf-error-50--alfa-24), var(--sf-error-90--alfa-24));
     --sf-on-error: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-on-error-container: light-dark(var(--sf-error-10), var(--sf-error-90));
-    --sf-on-error-container-graphic: light-dark(var(--sf-error-50), var(--sf-error-60));
+    --sf-on-error-container-graphic: light-dark(var(--sf-error-50), var(--sf-error-70));
     --sf-error-outline: light-dark(var(--sf-error-50), var(--sf-error-60));
     --sf-warning-hover: light-dark(var(--sf-warning-35), var(--sf-warning-85));
     --sf-warning-active: light-dark(var(--sf-warning-30), var(--sf-warning-90));
@@ -225,7 +231,7 @@
     --sf-warning-container-strong: light-dark(var(--sf-warning-50--alfa-24), var(--sf-warning-90--alfa-24));
     --sf-on-warning: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-on-warning-container: light-dark(var(--sf-warning-10), var(--sf-warning-90));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-warning-50), var(--sf-warning-60));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-warning-50), var(--sf-warning-70));
     --sf-warning-outline: light-dark(var(--sf-warning-50), var(--sf-warning-60));
     --sf-tertiary-hover: light-dark(var(--sf-tertiary-35), var(--sf-tertiary-85));
     --sf-tertiary-active: light-dark(var(--sf-tertiary-30), var(--sf-tertiary-90));
@@ -238,7 +244,7 @@
     --sf-tertiary-container-strong: light-dark(var(--sf-tertiary-50--alfa-24), var(--sf-tertiary-90--alfa-24));
     --sf-on-tertiary: light-dark(var(--sf-white), var(--sf-tertiary-20));
     --sf-on-tertiary-container: light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70));
     --sf-tertiary-outline: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
     --sf-secondary-hover: light-dark(var(--sf-secondary-35), var(--sf-secondary-85));
     --sf-secondary-active: light-dark(var(--sf-secondary-30), var(--sf-secondary-90));
@@ -251,7 +257,7 @@
     --sf-secondary-container-strong: light-dark(var(--sf-secondary-50--alfa-24), var(--sf-secondary-90--alfa-24));
     --sf-on-secondary: light-dark(var(--sf-white), var(--sf-secondary-20));
     --sf-on-secondary-container: light-dark(var(--sf-secondary-10), var(--sf-secondary-90));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-70));
     --sf-primary-hover: light-dark(var(--sf-primary-35), var(--sf-primary-85));
     --sf-primary-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
     --sf-primary-container: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24));
@@ -267,7 +273,7 @@
     --sf-primary-container-strong: light-dark(var(--sf-primary-50--alfa-24), var(--sf-primary-90--alfa-24));
     --sf-on-primary: light-dark(var(--sf-white), var(--sf-primary-20));
     --sf-on-primary-container: light-dark(var(--sf-primary-10), var(--sf-primary-90));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-60));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-70));
     --sf-primary-outline: light-dark(var(--sf-primary-50), var(--sf-primary-60));
     --sf-neutral-hover: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-neutral-active: light-dark(var(--sf-neutral-30), var(--sf-neutral-90));
@@ -276,7 +282,7 @@
     --sf-neutral-container-active: light-dark(var(--sf-neutral-80), var(--sf-neutral-40));
     --sf-on-neutral: light-dark(var(--sf-white), var(--sf-neutral-20));
     --sf-on-neutral-container: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-neutral-50), var(--sf-neutral-70));
     --sf-info: light-dark(var(--sf-info-40), var(--sf-info-80));
     --sf-info-hover: light-dark(var(--sf-info-35), var(--sf-info-85));
     --sf-info-active: light-dark(var(--sf-info-30), var(--sf-info-90));
@@ -285,7 +291,7 @@
     --sf-info-container-active: light-dark(var(--sf-info-50--alfa-20), var(--sf-info-50--alfa-32));
     --sf-on-info: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-on-info-container: light-dark(var(--sf-info-10), var(--sf-info-90));
-    --sf-on-info-container-graphic: light-dark(var(--sf-info-50), var(--sf-info-60));
+    --sf-on-info-container-graphic: light-dark(var(--sf-info-50), var(--sf-info-70));
     --sf-info-outline: light-dark(var(--sf-info-50), var(--sf-info-60));
     /* Information had no translucent layers, so a hover or a selection on an
        info surface borrowed primary's (C16, surfaces research 6.3). The same
@@ -334,9 +340,12 @@
        black at 48 with a blur, ink white, the same in both themes because the
        picture does not change with the theme. Hover and press take the next
        steps of the ink family, which the alpha scale allows as a fill for glass
-       and the scrim only. */
-    --sf-surface-media: var(--sf-black--alfa-48);
-    --sf-surface-media-hover: var(--sf-black--alfa-64);
+       and the scrim only. Black at 64 at rest since C178 (owner 2026-11-14):
+       at 48 white text over a white picture held 3.69:1, under WCAG 1.4.3's
+       4.5; 64 gives 6.5. Under the pointer and pressed it is 80, the top of
+       the ink family: the scale has no step above it. */
+    --sf-surface-media: var(--sf-black--alfa-64);
+    --sf-surface-media-hover: var(--sf-black--alfa-80);
     --sf-surface-media-active: var(--sf-black--alfa-80);
     --sf-on-surface-media: var(--sf-white);
     --sf-surface-page: light-dark(var(--sf-white), var(--sf-neutral-5));
@@ -477,7 +486,10 @@
        darker still and takes the primary role. The same ink takes dim text
        under a state layer (surfaces research 6.1). Dark neutral-85 since C16
        (owner, 2026-11-08): on a resting fill over the popup's step
-       neutral-80 gave 4.30, neutral-85 gives 4.96. */
+       neutral-80 gave 4.30, neutral-85 gives 4.96. Inside a popup the place
+       declares its own, one step up (C43, mix/_mix__places.scss): 90 on the
+       popup, 95 on the nested one, so the strong fill there holds 4.64 and
+       5.27 (C178 contrast matrix reads the place's value). */
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     /* The former tones of initials (C17, 2026-11-08): sf-avatar names a hue of
        the static palette now and draws its initials on the hue's container,
@@ -705,7 +717,13 @@
     --sf-surface-card: light-dark(var(--sf-surface-page), var(--sf-surface-2));
     --sf-surface-raised: light-dark(var(--sf-surface-page), var(--sf-surface-3));
     --sf-surface-popup: light-dark(var(--sf-surface-page), var(--sf-surface-4));
-    --sf-surface-popup-nested: light-dark(var(--sf-surface-page), var(--sf-surface-5));
+    /* The nested popup takes the popup's step in the dark theme since C178
+       (owner 2026-11-14), as both take the page in the light one: on step 5
+       (neutral-30) the strong fill under the ink gave 4.08:1 and a pressed fill
+       under the dim ink 3.94, under WCAG 1.4.3's 4.5. The nested popup still
+       stands off its parent by the overlay shadow and its own edge
+       (neutral-70, mix/_mix__places.scss). */
+    --sf-surface-popup-nested: light-dark(var(--sf-surface-page), var(--sf-surface-4));
     /* The C16 names of the shadows (2026-11-08) join the four places: a card's
        shadow is the raised one, a popup's and a nested popup's the overlay.
        Former names until the alias list's remove_after (token-aliases.v1.json,
@@ -872,6 +890,21 @@
     --sf-place--outer-link-active: var(--sf-link-active);
     --sf-place--outer-link-visited: var(--sf-link-visited);
     --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
     --sf-place--outer-focus--color: var(--sf-focus--color);
   }
   .sf-surface-media > * {
@@ -889,6 +922,21 @@
     --sf-link-visited: var(--sf-white--alfa-80);
     --sf-focus: var(--sf-white);
     --sf-focus--color: var(--sf-focus);
+    --sf-on-primary-container-graphic: var(--sf-white);
+    --sf-on-secondary-container: var(--sf-white);
+    --sf-on-secondary-container-graphic: var(--sf-white);
+    --sf-on-tertiary-container: var(--sf-white);
+    --sf-on-tertiary-container-graphic: var(--sf-white);
+    --sf-on-info-container: var(--sf-white);
+    --sf-on-info-container-graphic: var(--sf-white);
+    --sf-on-success-container: var(--sf-white);
+    --sf-on-success-container-graphic: var(--sf-white);
+    --sf-on-warning-container: var(--sf-white);
+    --sf-on-warning-container-graphic: var(--sf-white);
+    --sf-on-error-container: var(--sf-white);
+    --sf-on-error-container-graphic: var(--sf-white);
+    --sf-on-neutral-container: var(--sf-white);
+    --sf-on-neutral-container-graphic: var(--sf-white);
   }
 }
 /*
@@ -949,11 +997,15 @@
 }
 @layer sf.base {
   :root {
+    /* Former names (owner decision C178, 2026-11-14): the blur family is
+       --sf-blur-*, a radius a rule writes as blur(var(--sf-blur-medium)).
+       These filter values keep their value until 2027-01-01
+       (src/core/contracts/token-aliases.v1.json, families). */
     --sf-ui-blur-small: blur(var(--sf-blur-small));
     --sf-ui-blur-medium: blur(var(--sf-blur-medium));
     --sf-ui-blur-large: blur(var(--sf-blur-large));
     --sf-ui-blur-surface-overlay: blur(var(--sf-surface-overlay--blur));
-    --sf-ui-focus: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-ui-focus: 0 0 0 var(--sf-focus--width) var(--sf-focus);
     /* The skeleton is a control's fill since C16 (owner, 2026-11-08): 16, and
        the wave's highlight 24 (--sf-surface-container-active). It was a
        gradient of two ink steps (48), which the alpha scale keeps for what is
@@ -1288,7 +1340,7 @@
     --sf-black--alfa-16: rgba(0,0,0,0.16078);
     --sf-black--alfa-28: rgba(0,0,0,0.27843);
     /* Glass over a photo or a video (C16 --sf-surface-media; C14 the media
-       close button): black at 48 at rest, 64 under the pointer, 80 pressed.
+       close button): black at 64 at rest (C178), 80 under the pointer and pressed.
        The ink family as a fill, which the alpha scale allows for glass and
        the scrim only. */
     --sf-black--alfa-48: rgba(0,0,0,0.47843);
@@ -2299,7 +2351,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-red-50--alfa-16), var(--sf-red-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-red-50--alfa-20), var(--sf-red-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-red-10), var(--sf-red-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-red-50), var(--sf-red-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-red-50), var(--sf-red-70));
     --sf-hue-outline: light-dark(var(--sf-red-50), var(--sf-red-60));
   }
   .sf-hue-orange {
@@ -2309,7 +2361,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-orange-50--alfa-16), var(--sf-orange-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-orange-50--alfa-20), var(--sf-orange-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-orange-10), var(--sf-orange-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-orange-50), var(--sf-orange-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-orange-50), var(--sf-orange-70));
     --sf-hue-outline: light-dark(var(--sf-orange-50), var(--sf-orange-60));
   }
   .sf-hue-amber {
@@ -2319,7 +2371,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-amber-50--alfa-16), var(--sf-amber-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-amber-50--alfa-20), var(--sf-amber-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-amber-10), var(--sf-amber-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-amber-50), var(--sf-amber-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-amber-50), var(--sf-amber-70));
     --sf-hue-outline: light-dark(var(--sf-amber-50), var(--sf-amber-60));
   }
   .sf-hue-yellow {
@@ -2329,7 +2381,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-yellow-50--alfa-16), var(--sf-yellow-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-yellow-50--alfa-20), var(--sf-yellow-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-yellow-10), var(--sf-yellow-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-yellow-50), var(--sf-yellow-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-yellow-50), var(--sf-yellow-70));
     --sf-hue-outline: light-dark(var(--sf-yellow-50), var(--sf-yellow-60));
   }
   .sf-hue-lime {
@@ -2339,7 +2391,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-lime-50--alfa-16), var(--sf-lime-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-lime-50--alfa-20), var(--sf-lime-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-lime-10), var(--sf-lime-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-lime-50), var(--sf-lime-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-lime-50), var(--sf-lime-70));
     --sf-hue-outline: light-dark(var(--sf-lime-50), var(--sf-lime-60));
   }
   .sf-hue-green {
@@ -2349,7 +2401,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-green-50--alfa-16), var(--sf-green-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-green-50--alfa-20), var(--sf-green-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-green-10), var(--sf-green-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-green-50), var(--sf-green-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-green-50), var(--sf-green-70));
     --sf-hue-outline: light-dark(var(--sf-green-50), var(--sf-green-60));
   }
   .sf-hue-teal {
@@ -2359,7 +2411,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-teal-50--alfa-16), var(--sf-teal-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-teal-50--alfa-20), var(--sf-teal-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-teal-10), var(--sf-teal-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-teal-50), var(--sf-teal-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-teal-50), var(--sf-teal-70));
     --sf-hue-outline: light-dark(var(--sf-teal-50), var(--sf-teal-60));
   }
   .sf-hue-cyan {
@@ -2369,7 +2421,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-cyan-50--alfa-16), var(--sf-cyan-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-cyan-50--alfa-20), var(--sf-cyan-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-cyan-10), var(--sf-cyan-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-cyan-50), var(--sf-cyan-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-cyan-50), var(--sf-cyan-70));
     --sf-hue-outline: light-dark(var(--sf-cyan-50), var(--sf-cyan-60));
   }
   .sf-hue-sky {
@@ -2379,7 +2431,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-sky-50--alfa-16), var(--sf-sky-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-sky-50--alfa-20), var(--sf-sky-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-sky-10), var(--sf-sky-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-sky-50), var(--sf-sky-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-sky-50), var(--sf-sky-70));
     --sf-hue-outline: light-dark(var(--sf-sky-50), var(--sf-sky-60));
   }
   .sf-hue-blue {
@@ -2389,7 +2441,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-blue-50--alfa-16), var(--sf-blue-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-blue-50--alfa-20), var(--sf-blue-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-blue-10), var(--sf-blue-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-blue-50), var(--sf-blue-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-blue-50), var(--sf-blue-70));
     --sf-hue-outline: light-dark(var(--sf-blue-50), var(--sf-blue-60));
   }
   .sf-hue-indigo {
@@ -2399,7 +2451,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-indigo-50--alfa-16), var(--sf-indigo-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-indigo-50--alfa-20), var(--sf-indigo-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-indigo-10), var(--sf-indigo-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-indigo-50), var(--sf-indigo-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-indigo-50), var(--sf-indigo-70));
     --sf-hue-outline: light-dark(var(--sf-indigo-50), var(--sf-indigo-60));
   }
   .sf-hue-violet {
@@ -2409,7 +2461,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-violet-50--alfa-16), var(--sf-violet-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-violet-50--alfa-20), var(--sf-violet-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-violet-10), var(--sf-violet-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-violet-50), var(--sf-violet-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-violet-50), var(--sf-violet-70));
     --sf-hue-outline: light-dark(var(--sf-violet-50), var(--sf-violet-60));
   }
   .sf-hue-purple {
@@ -2419,7 +2471,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-purple-50--alfa-16), var(--sf-purple-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-purple-50--alfa-20), var(--sf-purple-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-purple-10), var(--sf-purple-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-purple-50), var(--sf-purple-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-purple-50), var(--sf-purple-70));
     --sf-hue-outline: light-dark(var(--sf-purple-50), var(--sf-purple-60));
   }
   .sf-hue-pink {
@@ -2429,7 +2481,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-pink-50--alfa-16), var(--sf-pink-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-pink-50--alfa-20), var(--sf-pink-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-pink-10), var(--sf-pink-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-pink-50), var(--sf-pink-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-pink-50), var(--sf-pink-70));
     --sf-hue-outline: light-dark(var(--sf-pink-50), var(--sf-pink-60));
   }
   .sf-hue-brown {
@@ -2439,7 +2491,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-brown-50--alfa-16), var(--sf-brown-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-brown-50--alfa-20), var(--sf-brown-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-brown-10), var(--sf-brown-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-brown-50), var(--sf-brown-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-brown-50), var(--sf-brown-70));
     --sf-hue-outline: light-dark(var(--sf-brown-50), var(--sf-brown-60));
   }
   .sf-hue-gray {
@@ -2449,7 +2501,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-gray-50--alfa-16), var(--sf-gray-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-gray-50--alfa-20), var(--sf-gray-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-gray-10), var(--sf-gray-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-gray-50), var(--sf-gray-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-gray-50), var(--sf-gray-70));
     --sf-hue-outline: light-dark(var(--sf-gray-50), var(--sf-gray-60));
   }
   .sf-hue-primary {
@@ -2459,7 +2511,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-primary-10), var(--sf-primary-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-70));
     --sf-hue-outline: light-dark(var(--sf-primary-50), var(--sf-primary-60));
   }
   .sf-hue-secondary {
@@ -2469,7 +2521,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-secondary-50--alfa-16), var(--sf-secondary-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-secondary-50--alfa-20), var(--sf-secondary-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-secondary-10), var(--sf-secondary-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-70));
     --sf-hue-outline: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
   }
   .sf-hue-tertiary {
@@ -2479,7 +2531,7 @@
     --sf-hue-container-hover: light-dark(var(--sf-tertiary-50--alfa-16), var(--sf-tertiary-50--alfa-28));
     --sf-hue-container-active: light-dark(var(--sf-tertiary-50--alfa-20), var(--sf-tertiary-50--alfa-32));
     --sf-on-hue-container: light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90));
-    --sf-on-hue-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70));
     --sf-hue-outline: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
   }
 }
@@ -3129,7 +3181,7 @@ body {
     --sf-display--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
     --sf-text--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
     --sf-text--margin: var(--sf-space-1);
-    --sf-text--weight: var(--sf-font-weight-regular);
+    --sf-text--weight: var(--sf-weight--regular);
     --sf-heading--weight: var(--sf-weight--bold);
     --sf-display--weight: var(--sf-weight--light);
   }
@@ -3267,7 +3319,7 @@ body {
     font-size: var(--sf-text-large--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-large--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
     margin-top: 0;
     margin-bottom: var(--sf-text--space-bottom);
     margin-block: 0 var(--sf-text--space-bottom);
@@ -3276,7 +3328,7 @@ body {
     font-size: var(--sf-text-medium--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-medium--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
     margin-top: 0;
     margin-bottom: var(--sf-text--space-bottom);
     margin-block: 0 var(--sf-text--space-bottom);
@@ -3285,7 +3337,7 @@ body {
     font-size: var(--sf-text-small--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-small--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
     margin-top: 0;
     margin-bottom: var(--sf-text--space-bottom);
     margin-block: 0 var(--sf-text--space-bottom);
@@ -3294,25 +3346,25 @@ body {
     font-size: var(--sf-label-large--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-label-large--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-label-medium {
     font-size: var(--sf-label-medium--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-label-medium--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-label-small {
     font-size: var(--sf-label-small--size);
     font-family: var(--sf-text--family);
     line-height: var(--sf-label-small--height);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-1\/4 {
     font-size: var(--sf-text-size-1\/4);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-1\/4);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-1\/4 + * {
     margin-top: var(--sf-text--margin);
@@ -3321,7 +3373,7 @@ body {
     font-size: var(--sf-text-size-1\/3);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-1\/3);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-1\/3 + * {
     margin-top: var(--sf-text--margin);
@@ -3330,7 +3382,7 @@ body {
     font-size: var(--sf-text-size-1\/2);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-1\/2);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-1\/2 + * {
     margin-top: var(--sf-text--margin);
@@ -3339,7 +3391,7 @@ body {
     font-size: var(--sf-text-size-1);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-1);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-1 + * {
     margin-top: var(--sf-space-1);
@@ -3348,7 +3400,7 @@ body {
     font-size: var(--sf-text-size-2);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-2);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-2 + * {
     margin-top: var(--sf-text--margin);
@@ -3357,7 +3409,7 @@ body {
     font-size: var(--sf-text-size-3);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-3);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-3 + * {
     margin-top: var(--sf-text--margin);
@@ -3366,7 +3418,7 @@ body {
     font-size: var(--sf-text-size-4);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-4);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-4 + * {
     margin-top: var(--sf-text--margin);
@@ -3375,7 +3427,7 @@ body {
     font-size: var(--sf-text-size-5);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-5);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-5 + * {
     margin-top: var(--sf-text--margin);
@@ -3384,7 +3436,7 @@ body {
     font-size: var(--sf-text-size-6);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-6);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-6 + * {
     margin-top: var(--sf-text--margin);
@@ -3393,7 +3445,7 @@ body {
     font-size: var(--sf-text-size-7);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-7);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-7 + * {
     margin-top: var(--sf-text--margin);
@@ -3402,7 +3454,7 @@ body {
     font-size: var(--sf-text-size-8);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-8);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-8 + * {
     margin-top: var(--sf-text--margin);
@@ -3411,7 +3463,7 @@ body {
     font-size: var(--sf-text-size-9);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-9);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-9 + * {
     margin-top: var(--sf-text--margin);
@@ -3420,7 +3472,7 @@ body {
     font-size: var(--sf-text-size-10);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-10);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-10 + * {
     margin-top: var(--sf-text--margin);
@@ -3429,7 +3481,7 @@ body {
     font-size: var(--sf-text-size-11);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-11);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-11 + * {
     margin-top: var(--sf-text--margin);
@@ -3438,7 +3490,7 @@ body {
     font-size: var(--sf-text-size-12);
     font-family: var(--sf-text--family);
     line-height: var(--sf-text-height-12);
-    font-weight: var(--sf-font-weight-regular);
+    font-weight: var(--sf-weight--regular);
   }
   .sf-text-12 + * {
     margin-top: var(--sf-text--margin);
@@ -3472,10 +3524,10 @@ body {
     background: transparent;
   }
   :root {
-    --sf-font-weight-regular: 400;
-    --sf-font-weight-medium: 500;
-    --sf-font-weight-bold: 700;
-    --sf-font-weight-light: 300;
+    --sf-font-weight-regular: var(--sf-weight--regular);
+    --sf-font-weight-medium: var(--sf-weight--medium);
+    --sf-font-weight-bold: var(--sf-weight--bold);
+    --sf-font-weight-light: var(--sf-weight--light);
     --sf-space-auto: auto;
     --sf-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
@@ -3491,9 +3543,9 @@ body {
     --sf-display--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
     --sf-text--size: var(--sf-text--size-1);
     --sf-text--height: var(--sf-text--height-1);
-    --sf-text--weight: 400;
-    --sf-heading--weight: 700;
-    --sf-display--weight: 300;
+    --sf-text--weight: var(--sf-weight--regular);
+    --sf-heading--weight: var(--sf-weight--bold);
+    --sf-display--weight: var(--sf-weight--light);
     --sf-text--style: inherit;
     --sf-text--tracking: inherit;
     --sf-mark--color: var(--sf-mark);
@@ -3509,15 +3561,15 @@ body {
     --sf-text--line-height-loose: 2;
     --sf-text--line-height-none: 1;
     --sf-text--line-height-normal: 1.5;
-    --sf-text--font-weight-1: 100;
-    --sf-text--font-weight-2: 200;
-    --sf-text--font-weight-3: 300;
-    --sf-text--font-weight-4: 400;
-    --sf-text--font-weight-5: 500;
-    --sf-text--font-weight-6: 600;
-    --sf-text--font-weight-7: 700;
-    --sf-text--font-weight-8: 800;
-    --sf-text--font-weight-9: 900;
+    --sf-text--font-weight-1: var(--sf-weight--thin);
+    --sf-text--font-weight-2: var(--sf-weight--extra-light);
+    --sf-text--font-weight-3: var(--sf-weight--light);
+    --sf-text--font-weight-4: var(--sf-weight--regular);
+    --sf-text--font-weight-5: var(--sf-weight--medium);
+    --sf-text--font-weight-6: var(--sf-weight--semi-bold);
+    --sf-text--font-weight-7: var(--sf-weight--bold);
+    --sf-text--font-weight-8: var(--sf-weight--extra-bold);
+    --sf-text--font-weight-9: var(--sf-weight--black);
     --sf-text--tracking-tighter: -0.05em;
     --sf-text--tracking-tight: -0.025em;
     --sf-text--tracking-wide: 0.025em;
@@ -3694,8 +3746,7 @@ body {
   }
   .sf-code-copy-status {
     position: fixed;
-    z-index: 90;
-    z-index: var(--sf-z-index-9);
+    z-index: var(--sf-layer--message);
     margin-top: calc(-1 * var(--sf-space-1\/4));
     -webkit-margin-before: calc(-1 * var(--sf-space-1\/4));
             margin-block-start: calc(-1 * var(--sf-space-1\/4));
@@ -3728,9 +3779,56 @@ body {
   }
 }
 /*
+ * Generated by scripts/generate-role-tokens.mjs from src/core/contracts/role-tokens.v1.json.
+ * contract-sha256: fb7045e3d851b7e95af1c169a0b207f1338887cd75f613f964bce29e51e6cad8
+ * Do not edit by hand.
+ *
+ * Role tokens (owner decision C173): --sf-<area>--<role>, each an alias of an
+ * existing step. Declared on :root, where the width ladder redefines the
+ * steps too; the density regions declare the step-dependent ones again
+ * (core/scss/_sf_css__density.scss), or a compact region would read the
+ * root's step (RT-15). The five layer roles read the z-index scale in their
+ * order (C173 point 7, C181 (3)). A host whose corner or inset differs declares
+ * --sf-radius--inner on itself with the same formula:
+ * max(var(--sf-a4), calc(<host corner> - <inset>)).
+ */
+@layer sf.base {
+  :root {
+    --sf-gap--actions: var(--sf-space-1\/3);
+    --sf-gap--toolbar: var(--sf-space-1\/4);
+    --sf-gap--tags: var(--sf-space-1\/4);
+    --sf-gap--groups: var(--sf-space-1);
+    --sf-gap--icon-text: var(--sf-space-1\/2);
+    --sf-gap--icon-inline: var(--sf-space-1\/4);
+    --sf-inset--panel: var(--sf-space-2);
+    --sf-inset--plate: var(--sf-space-1\/4);
+    --sf-radius--inner: max(var(--sf-a4), calc(var(--sf-radius--surface) - var(--sf-inset--plate)));
+    --sf-line--border: var(--sf-px);
+    --sf-line--indicator: calc(2 * var(--sf-px));
+    --sf-hit--min: var(--sf-c2);
+    --sf-hit--touch: var(--sf-d1);
+    --sf-layer--base: var(--sf-z-index-0);
+    --sf-layer--sticky: var(--sf-z-index-5);
+    --sf-layer--popover: var(--sf-z-index-9);
+    --sf-layer--window: var(--sf-z-index-layer);
+    --sf-layer--message: var(--sf-z-index-layer);
+  }
+}
+@layer sf.base {
+  .sf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sf-gap--actions);
+  }
+  .sf-actions--end {
+    justify-content: flex-end;
+  }
+}
+/*
  * Generated by scripts/generate-density.mjs from the ladder files in
  * src/core/figma_variables (desktop blocks). Do not edit by hand.
- * source-sha256: a8194c87264cf09c3fef5373b37b5e7fde765fac16197c7f7d993c547f6482c2
+ * source-sha256: ef3c8e215634882473e86d8046463bf863dd123eb50358838ab703c08793bdb5
  *
  * Density (owner decision C22): data-sf-density="compact" on the root or on
  * a container moves every component one ladder step down -- height, padding,
@@ -3867,6 +3965,14 @@ body {
       --sf-text-medium--height: var(--sf-text--height-1);
       --sf-text-large--size: var(--sf-text--size-2);
       --sf-text-large--height: var(--sf-text--height-2);
+      --sf-gap--actions: var(--sf-space-1\/3);
+      --sf-gap--toolbar: var(--sf-space-1\/4);
+      --sf-gap--tags: var(--sf-space-1\/4);
+      --sf-gap--groups: var(--sf-space-1);
+      --sf-gap--icon-text: var(--sf-space-1\/2);
+      --sf-gap--icon-inline: var(--sf-space-1\/4);
+      --sf-inset--panel: var(--sf-space-2);
+      --sf-inset--plate: var(--sf-space-1\/4);
       --sf-heading-1--size: var(--sf-c8);
       --sf-heading-2--size: var(--sf-c6);
       --sf-heading-3--size: var(--sf-c2);
@@ -3993,6 +4099,14 @@ body {
       --sf-text-medium--height: var(--sf-text--height-1);
       --sf-text-large--size: var(--sf-text--size-2);
       --sf-text-large--height: var(--sf-text--height-2);
+      --sf-gap--actions: var(--sf-space-1\/3);
+      --sf-gap--toolbar: var(--sf-space-1\/4);
+      --sf-gap--tags: var(--sf-space-1\/4);
+      --sf-gap--groups: var(--sf-space-1);
+      --sf-gap--icon-text: var(--sf-space-1\/2);
+      --sf-gap--icon-inline: var(--sf-space-1\/4);
+      --sf-inset--panel: var(--sf-space-2);
+      --sf-inset--plate: var(--sf-space-1\/4);
       --sf-text--size: var(--sf-text--size-1);
       --sf-text--height: var(--sf-text--height-1);
     }
@@ -4179,7 +4293,7 @@ body {
     width: 100%;
     height: 100vh;
     opacity: 1;
-    z-index: 1000;
+    z-index: var(--sf-layer--window);
     background-color: var(--sf-surface-page);
     text-align: center;
   }
@@ -5080,7 +5194,7 @@ body {
     .sf-workspace.sf-workspace--wide-h4 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5114,7 +5228,7 @@ body {
     .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5124,7 +5238,7 @@ body {
     .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5170,7 +5284,7 @@ body {
     .sf-workspace.sf-workspace--wide-h8 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5204,7 +5318,7 @@ body {
     .sf-workspace.sf-workspace--wide-i0 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5238,7 +5352,7 @@ body {
     .sf-workspace.sf-workspace--wide-i2 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
-      z-index: var(--sf-z-index-layer, 9000);
+      z-index: var(--sf-layer--window, 9000);
       background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
@@ -5541,6 +5655,79 @@ body {
     height: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
     block-size: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
   }
+  /* sf-tile-metric before it draws (tile study TM-3, owner decision C130 (2):
+     a row of tiles was 0 px for 80-230 ms, then 300 at once). Its box is known
+     from its attributes, on the ladder the tile's sheet draws with: the card's
+     inset (the size's space, the hairline inside it), the label line, the value
+     two steps up, and the lines its settings promise -- the change's badge line
+     when previous, delta or period-text is set or there is no limit (the
+     loading skeleton's own rule), the meter's bar and its words' line with
+     max, the status line with status or hint. A label or a hint that wraps is
+     what the attributes cannot tell. Static markup printed inside
+     (data-sf-static) is its own box. */
+  :where(sf-tile-metric:not(:defined)) {
+    --sf-tile-metric--box-space: var(--sf-ui-1--space-x);
+    --sf-tile-metric--box-gap: var(--sf-ui-1--text-space-x);
+    --sf-tile-metric--box-line: var(--sf-text-height-1\/2);
+    --sf-tile-metric--box-value: var(--sf-text-height-3);
+    --sf-tile-metric--box-badge: calc(var(--sf-c0) + 2 * var(--sf-a4));
+    --sf-tile-metric--box-bar: var(--sf-a8);
+    --sf-tile-metric--box-change: 1;
+    --sf-tile-metric--box-meter: 0;
+    --sf-tile-metric--box-status: 0;
+  }
+  :where(sf-tile-metric[size="1/2"]:not(:defined)) {
+    --sf-tile-metric--box-space: var(--sf-ui-1\/2--space-x);
+    --sf-tile-metric--box-gap: var(--sf-ui-1\/2--text-space-x);
+    --sf-tile-metric--box-line: var(--sf-text-height-1\/3);
+    --sf-tile-metric--box-value: var(--sf-text-height-2);
+    --sf-tile-metric--box-badge: calc(var(--sf-b6) + 2 * var(--sf-a4));
+    --sf-tile-metric--box-bar: var(--sf-a4);
+  }
+  :where(sf-tile-metric[size="2"]:not(:defined)) {
+    --sf-tile-metric--box-space: var(--sf-ui-2--space-x);
+    --sf-tile-metric--box-gap: var(--sf-ui-2--text-space-x);
+    --sf-tile-metric--box-line: var(--sf-text-height-1);
+    --sf-tile-metric--box-value: var(--sf-text-height-4);
+    --sf-tile-metric--box-badge: calc(var(--sf-c2) + 2 * var(--sf-a4));
+  }
+  /* From the desktop breakpoint a badge's line is the text height and the
+     size's low tightness (component.badges, C140 (5)). */
+  @media (min-width: 60rem) {
+    :where(sf-tile-metric:not(:defined)) {
+      --sf-tile-metric--box-badge: calc(var(--sf-text-height-1\/2) + 2 * var(--sf-ui-1\/2--space-y-tightness-low));
+    }
+    :where(sf-tile-metric[size="1/2"]:not(:defined)) {
+      --sf-tile-metric--box-badge: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-low));
+    }
+    :where(sf-tile-metric[size="2"]:not(:defined)) {
+      --sf-tile-metric--box-badge: calc(var(--sf-text-height-1) + 2 * var(--sf-ui-1--space-y-tightness-low));
+    }
+  }
+  :where(sf-tile-metric[max]:not([max=""]):not(:defined)) {
+    --sf-tile-metric--box-change: 0;
+    --sf-tile-metric--box-meter: 1;
+  }
+  :where(sf-tile-metric[previous]:not([previous=""]):not(:defined)) {
+    --sf-tile-metric--box-change: 1;
+  }
+  :where(sf-tile-metric[delta]:not([delta=""]):not(:defined)) {
+    --sf-tile-metric--box-change: 1;
+  }
+  :where(sf-tile-metric[period-text]:not([period-text=""]):not(:defined)) {
+    --sf-tile-metric--box-change: 1;
+  }
+  :where(sf-tile-metric[status]:not([status=""]):not([status=neutral]):not(:defined)) {
+    --sf-tile-metric--box-status: 1;
+  }
+  :where(sf-tile-metric[hint]:not([hint=""]):not(.does-not-exist):not(:defined)) {
+    --sf-tile-metric--box-status: 1;
+  }
+  :where(sf-tile-metric:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    min-height: calc(2 * var(--sf-tile-metric--box-space) + var(--sf-tile-metric--box-line) + var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-value) + var(--sf-tile-metric--box-change) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-badge)) + var(--sf-tile-metric--box-meter) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-bar) + var(--sf-tile-metric--box-gap) / 2 + var(--sf-tile-metric--box-line)) + var(--sf-tile-metric--box-status) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-line)));
+    min-block-size: calc(2 * var(--sf-tile-metric--box-space) + var(--sf-tile-metric--box-line) + var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-value) + var(--sf-tile-metric--box-change) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-badge)) + var(--sf-tile-metric--box-meter) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-bar) + var(--sf-tile-metric--box-gap) / 2 + var(--sf-tile-metric--box-line)) + var(--sf-tile-metric--box-status) * (var(--sf-tile-metric--box-gap) + var(--sf-tile-metric--box-line)));
+  }
   /* sf-tag before it draws (tags study TG-15: a bare tag was 0 px for 120-140
      ms, then the whole tag, and the line it stood in jumped). Its box is known
      from its attributes, on the ladder the tag sheet draws with: one control of
@@ -5767,15 +5954,20 @@ body {
      and the markup tell is held from core.css, the one sheet a page links
      before any code, on the ladder the class sheet draws with:
 
-     - the element is a column of sections, --sf-space-2 apart (flush ones
-       meet), so it is never shorter than one closed header of its size:
+     - the element is a column of sections that meet -- lines are the default
+       look (owner decision C154 (2)); filled and outlined ones stand
+       --sf-space-2 apart -- so it is never shorter than one closed header of
+       its size:
        --sf-ui-<S>--control-height, the roomy default --sf-ui-3--control-height;
        a page that knows the loaded box still declares it
        (--sf-skeleton-block-size);
      - each <details> written inside is a section already: its summary the
        header (a control height, the size's line and text, the header's inset),
        its other nodes the content, the header's inset from every edge. So the
-       box the element draws over them is the box they held.
+       box the element draws over them is the box they held;
+     - with expand-all and five <details> or more (not single), the row of
+       «Развернуть все» over them: the button's height and a group's step
+       (C154 (7)).
 
      Sections given as data (items) cannot be counted by a sheet; for them a
      host prints the first paint (standard §5.4). Static markup printed inside
@@ -5785,15 +5977,18 @@ body {
     --sf-accordion--box-inset: var(--sf-space-3);
     --sf-accordion--box-text: var(--sf-text--size);
     --sf-accordion--box-line: var(--sf-text--height);
-    --sf-accordion--box-gap: var(--sf-space-2);
+    --sf-accordion--box-gap: calc(var(--sf-px) * 0);
+    --sf-accordion--box-all: var(--sf-ui-1--control-height);
   }
   :where(sf-accordion[size="1/3"]:not(:defined)) {
+    --sf-accordion--box-all: var(--sf-ui-1\/3--control-height);
     --sf-accordion--box-header: var(--sf-ui-1\/3--control-height);
     --sf-accordion--box-inset: var(--sf-ui-1\/3--space-x);
     --sf-accordion--box-text: var(--sf-text-size-1\/3);
     --sf-accordion--box-line: var(--sf-text-height-1\/3);
   }
   :where(sf-accordion[size="1/2"]:not(:defined)) {
+    --sf-accordion--box-all: var(--sf-ui-1\/2--control-height);
     --sf-accordion--box-header: var(--sf-ui-1\/2--control-height);
     --sf-accordion--box-inset: max(var(--sf-space-1\/2), var(--sf-b2));
     --sf-accordion--box-text: var(--sf-text-size-1\/2);
@@ -5806,19 +6001,24 @@ body {
     --sf-accordion--box-line: var(--sf-text-height-1);
   }
   :where(sf-accordion[size="2"]:not(:defined)) {
+    --sf-accordion--box-all: var(--sf-ui-2--control-height);
     --sf-accordion--box-header: var(--sf-ui-2--control-height);
     --sf-accordion--box-inset: var(--sf-space-2);
     --sf-accordion--box-text: var(--sf-text-size-2);
     --sf-accordion--box-line: var(--sf-text-height-2);
   }
   :where(sf-accordion[size="3"]:not(:defined)) {
+    --sf-accordion--box-all: var(--sf-ui-3--control-height);
     --sf-accordion--box-header: var(--sf-ui-3--control-height);
     --sf-accordion--box-inset: var(--sf-ui-3--space-x);
     --sf-accordion--box-text: var(--sf-text-size-3);
     --sf-accordion--box-line: var(--sf-text-height-3);
   }
-  :where(sf-accordion[appearance=flush]:not(:defined)) {
-    --sf-accordion--box-gap: calc(var(--sf-px) * 0);
+  :where(sf-accordion[appearance=default]:not(:defined)) {
+    --sf-accordion--box-gap: var(--sf-space-2);
+  }
+  :where(sf-accordion[appearance=outline]:not(:defined)) {
+    --sf-accordion--box-gap: var(--sf-space-2);
   }
   :where(sf-accordion:not(:defined)):not(:has(> [data-sf-static])) {
     display: flex;
@@ -5831,6 +6031,11 @@ body {
     min-block-size: max(var(--sf-skeleton-block-size, calc(var(--sf-px) * 0)), var(--sf-accordion--box-header));
     font-size: var(--sf-accordion--box-text);
     line-height: var(--sf-accordion--box-line);
+  }
+  :where(sf-accordion[expand-all]:not([single]):not(:defined):not(:has(> [data-sf-static])):has(> details:nth-of-type(5))) {
+    padding-top: calc(var(--sf-accordion--box-all) + var(--sf-space-1\/2));
+    -webkit-padding-before: calc(var(--sf-accordion--box-all) + var(--sf-space-1\/2));
+            padding-block-start: calc(var(--sf-accordion--box-all) + var(--sf-space-1\/2));
   }
   :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details) {
     margin: 0;
@@ -5852,7 +6057,7 @@ body {
     margin-inline: calc(var(--sf-accordion--box-inset) * -1);
     padding: max(1px * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
     padding: max(var(--sf-px) * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
-    font-weight: var(--sf-font-weight-medium);
+    font-weight: var(--sf-weight--medium);
     list-style: none;
   }
   :where(sf-accordion:not(:defined):not(:has(> [data-sf-static])) > details[open] > summary) {
@@ -5933,8 +6138,37 @@ body {
     height: var(--sf-reference-link--box);
     block-size: var(--sf-reference-link--box);
   }
+  /* In text (appearance inline, C147 (1)) the reference is a run of words in
+     the sentence, not a box: no height of its own, and its name is written
+     from the label attribute in the link's ink and line until the element
+     draws, so the sentence does not close up and open again. */
+  :where(sf-reference-link[appearance=inline]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline;
+    height: auto;
+    block-size: auto;
+  }
+  :where(sf-reference-link[appearance=inline][label]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label);
+    color: var(--sf-link);
+    -webkit-text-decoration-line: underline;
+            text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-thickness: var(--sf-px);
+    text-underline-offset: 0.1875rem;
+    text-underline-offset: var(--sf-a3);
+  }
+  :where(sf-reference-link[appearance=inline][label][state=missing]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    color: var(--sf-on-surface-variant);
+    -webkit-text-decoration-line: none;
+            text-decoration-line: none;
+  }
+  :where(sf-reference-link[appearance=inline][label][state=forbidden]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    color: var(--sf-on-surface-variant);
+    -webkit-text-decoration-line: none;
+            text-decoration-line: none;
+  }
   @media (max-width: 31.999rem) {
-    :where(sf-reference-link:not(:defined):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
+    :where(sf-reference-link:not(:defined):not([appearance=inline]):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
       height: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
       block-size: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
     }
@@ -5956,6 +6190,32 @@ body {
   :where(sf-file-preview[surface]:not([surface=false]):not(:defined)):not(:has(> [data-sf-static])) {
     height: var(--sf-ui-3--control-height);
     block-size: var(--sf-ui-3--control-height);
+  }
+  /* The chip and the tile (decision C149 (1)): a chip is 48 high and at most
+     --sf-f8 (288) wide in the line of attachments; a tile is its 4:3 picture, the
+     one-line name and the meta line beside its size 1/2 buttons. */
+  :where(sf-file-preview[appearance=chip]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline-block;
+    vertical-align: middle;
+    width: min(100%, 18rem);
+    inline-size: min(100%, 18rem);
+    width: min(100%, 18rem);
+    width: min(100%, var(--sf-f8));
+    inline-size: min(100%, var(--sf-f8));
+    height: var(--sf-ui-2--control-height);
+    block-size: var(--sf-ui-2--control-height);
+  }
+  :where(sf-file-preview[appearance=tile]:not(:defined)):not(:has(> [data-sf-static])) {
+    height: auto;
+    block-size: auto;
+    padding-bottom: calc(2 * var(--sf-space-1\/4) + var(--sf-ui-1\/2--control-height) + var(--sf-text-height-1\/2));
+    -webkit-padding-after: calc(2 * var(--sf-space-1\/4) + var(--sf-ui-1\/2--control-height) + var(--sf-text-height-1\/2));
+            padding-block-end: calc(2 * var(--sf-space-1\/4) + var(--sf-ui-1\/2--control-height) + var(--sf-text-height-1\/2));
+  }
+  :where(sf-file-preview[appearance=tile]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: "";
+    display: block;
+    aspect-ratio: 4/3;
   }
   :where(sf-file-preview[compact]:not([compact=false]):not(:defined)):not(:has(> [data-sf-static])) {
     display: inline-block;
@@ -6141,97 +6401,265 @@ body {
     -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-d2));
             padding-block-end: calc(var(--sf-space-1) + var(--sf-d2));
   }
-  /* sf-gallery before it draws (GL-7, decision C143 (8)). Its pictures are the
-     page's children, so before the code they stood one under another: six
-     pictures 4400 px high, then 0 while the slider measured, then 1081. The
-     element knows its frame from its markup alone, so it holds it here: the
-     first picture, whole (contain), in the gallery's ratio -- its own width and
-     height attributes when ratio is auto (the default), else the ratio the
-     page wrote, else 16/9 -- with its caption small and muted under it, and
-     room for the thumbnails under that (thumbs is on by default). The gallery
-     draws the same box (--sf-gallery--ratio), so the first frame is the final
-     one. A lightbox-only gallery shows nothing on the page. */
+  /* sf-gallery before it draws (owner decision C150 (6)). Its pictures are the
+     page's children, so before the code they stood one under another at their
+     own sizes (six pictures 4400 px high, GL-7). The element knows its grid from
+     its markup alone, so it is drawn here as the gallery draws it
+     (component.figure: .sf-figure-grid, .sf-figure--tile): as many columns as
+     fit at the tile's minimum -- tile-size s 6rem, m 10rem (the default), l
+     15rem -- never fewer than 3 / 2 / 1, gap --sf-space-1/3; each picture in the
+     tile's shape (ratio 1/1 by default, 4/3, 16/9; auto its own), covering it,
+     on the quiet fill with the surface radius. The children stay in place until
+     the drawing takes them (holdsSlotNodesUntilDrawn), so the first frame is the
+     final one. layout="thumbnails": the first picture whole in a 4/3 frame and
+     room for the row of thumbnails and the place under it. An inline="false"
+     gallery shows nothing on the page. */
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) {
-    display: block;
+    --sf-gallery--tile: var(--sf-f0);
+    --sf-gallery--columns: 2;
+    --sf-gallery--gap: var(--sf-space-1\/3);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--sf-gallery--tile), (100% - (var(--sf-gallery--columns) - 1) * var(--sf-gallery--gap)) / var(--sf-gallery--columns)), 1fr));
+    grid-gap: var(--sf-gallery--gap);
+    gap: var(--sf-gallery--gap);
+    min-width: 0;
+    min-inline-size: 0;
   }
-  :where(sf-gallery:not(:defined):not([thumbs=false])):not(:has(> [data-sf-static])) {
-    padding-bottom: calc(var(--sf-space-1) + 3rem);
-    -webkit-padding-after: calc(var(--sf-space-1) + 3rem);
-            padding-block-end: calc(var(--sf-space-1) + 3rem);
-    padding-bottom: calc(var(--sf-space-1) + 3rem);
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-d2));
-    -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-d2));
-            padding-block-end: calc(var(--sf-space-1) + var(--sf-d2));
+  :where(sf-gallery:not(:defined)[tile-size=s]):not(:has(> [data-sf-static])) {
+    --sf-gallery--tile: var(--sf-e2);
+    --sf-gallery--columns: 3;
   }
-  :where(sf-gallery:not(:defined)[inline=false]:not([lightbox=false])):not(:has(> [data-sf-static])) {
+  :where(sf-gallery:not(:defined)[tile-size=l]):not(:has(> [data-sf-static])) {
+    --sf-gallery--tile: var(--sf-f5);
+    --sf-gallery--columns: 1;
+  }
+  :where(sf-gallery:not(:defined)[inline=false]):not(:has(> [data-sf-static])) {
     display: none;
   }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :not(:first-child) {
-    display: none;
-  }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child {
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > * {
     display: block;
-    width: 100%;
-    inline-size: 100%;
+    min-width: 0;
+    min-inline-size: 0;
     margin: 0;
   }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img:first-child {
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :not(img):not(picture):not(figure):not(a) {
+    display: none;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img :where(img) {
     display: block;
     width: 100%;
     inline-size: 100%;
     height: auto;
     block-size: auto;
-    -o-object-fit: contain;
-       object-fit: contain;
+    -o-object-fit: cover;
+       object-fit: cover;
+    border-radius: var(--sf-radius--surface);
+    background-color: var(--sf-surface-container);
   }
-  :where(sf-gallery:not(:defined):not([ratio])):not(:has(> [data-sf-static])) > :first-child :where(img:not([width][height])) {
-    aspect-ratio: 16/9;
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img) {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: auto;
+    block-size: auto;
+    -o-object-fit: cover;
+       object-fit: cover;
+    border-radius: var(--sf-radius--surface);
+    background-color: var(--sf-surface-container);
   }
-  :where(sf-gallery[ratio=auto]:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(img:not([width][height])) {
-    aspect-ratio: 16/9;
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img) {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: auto;
+    block-size: auto;
+    -o-object-fit: cover;
+       object-fit: cover;
+    border-radius: var(--sf-radius--surface);
+    background-color: var(--sf-surface-container);
   }
-  :where(sf-gallery:not(:defined):not([ratio])):not(:has(> [data-sf-static])) > img:first-child:not([width][height]) {
-    aspect-ratio: 16/9;
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > a :where(img) {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: auto;
+    block-size: auto;
+    -o-object-fit: cover;
+       object-fit: cover;
+    border-radius: var(--sf-radius--surface);
+    background-color: var(--sf-surface-container);
   }
-  :where(sf-gallery[ratio=auto]:not(:defined)):not(:has(> [data-sf-static])) > img:first-child:not([width][height]) {
-    aspect-ratio: 16/9;
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: auto;
+    block-size: auto;
+    -o-object-fit: cover;
+       object-fit: cover;
+    border-radius: var(--sf-radius--surface);
+    background-color: var(--sf-surface-container);
   }
-  :where(sf-gallery:not(:defined)[ratio="16/9"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="16/9"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 16/9;
-  }
-  :where(sf-gallery:not(:defined)[ratio="4/3"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="4/3"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 4/3;
-  }
-  :where(sf-gallery:not(:defined)[ratio="3/2"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="3/2"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 3/2;
-  }
-  :where(sf-gallery:not(:defined)[ratio="1/1"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="1/1"]):not(:has(> [data-sf-static])) > img:first-child {
+  /* One ratio for every tile; ratio="auto" and the masonry look keep each
+     picture's own, which its width and height give before it arrives. */
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > img :where(img) {
     aspect-ratio: 1/1;
   }
-  :where(sf-gallery:not(:defined)[ratio="21/9"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="21/9"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 21/9;
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > picture :where(img) {
+    aspect-ratio: 1/1;
   }
-  :where(sf-gallery:not(:defined)[ratio="3/4"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="3/4"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 3/4;
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > figure :where(img) {
+    aspect-ratio: 1/1;
   }
-  :where(sf-gallery:not(:defined)[ratio="2/3"]):not(:has(> [data-sf-static])) > :first-child :where(img),
-  :where(sf-gallery:not(:defined)[ratio="2/3"]):not(:has(> [data-sf-static])) > img:first-child {
-    aspect-ratio: 2/3;
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > a :where(img) {
+    aspect-ratio: 1/1;
   }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :first-child :where(figcaption) {
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > img {
+    aspect-ratio: 1/1;
+  }
+  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > img :where(img) {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > picture :where(img) {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > figure :where(img) {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > a :where(img) {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery:not(:defined)[ratio="4/3"]:not([layout=masonry])):not(:has(> [data-sf-static])) > img {
+    aspect-ratio: 4/3;
+  }
+  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > img :where(img) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > picture :where(img) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > figure :where(img) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > a :where(img) {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery:not(:defined)[ratio="16/9"]:not([layout=masonry])):not(:has(> [data-sf-static])) > img {
+    aspect-ratio: 16/9;
+  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > * :where(figcaption) {
+    display: none;
+  }
+  :where(sf-gallery:not(:defined)[caption=under]):not(:has(> [data-sf-static])) > * :where(figcaption) {
+    display: block;
     color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     margin-top: var(--sf-space-1\/4);
     -webkit-margin-before: var(--sf-space-1\/4);
             margin-block-start: var(--sf-space-1\/4);
+  }
+  :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])) {
+    display: block;
+  }
+  :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])) > :not(:first-child) {
+    display: none;
+  }
+  :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])) > img:first-child {
+    -o-object-fit: contain;
+       object-fit: contain;
+  }
+  :where(sf-gallery:not(:defined)[layout=thumbnails]:not([ratio])):not(:has(> [data-sf-static])) > :first-child :where(img),
+  :where(sf-gallery:not(:defined)[layout=thumbnails]:not([ratio])):not(:has(> [data-sf-static])) > img:first-child {
+    aspect-ratio: 4/3;
+  }
+  /* The thumbnails' row (72 and the ring's room) and the place line under it. */
+  :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])):has(> :nth-child(2)) {
+    padding-bottom: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
+    -webkit-padding-after: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
+            padding-block-end: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
+    padding-bottom: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
+    padding-bottom: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
+    -webkit-padding-after: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
+            padding-block-end: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
+  }
+  /* layout="masonry" (C150 (11)): the grid's columns and gap, never fewer than
+     two, each picture in its own shape from its width and height (a square
+     while a picture without them arrives). A browser with display: grid-lanes
+     lays the page's pictures out as the gallery will -- each into the shortest
+     column -- so the first frame is the final one. Elsewhere the gallery's
+     script places them: until it does, the columns stand as a quiet fill (CSS
+     columns, one tile per picture, the pictures and captions unseen, so none
+     is seen where it will not stay), and the block changes its height once when they are
+     placed. */
+  :where(sf-gallery:not(:defined)[layout=masonry][tile-size=l]):not(:has(> [data-sf-static])) {
+    --sf-gallery--columns: 2;
+  }
+  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > img :where(img:not([width][height])) {
+    aspect-ratio: auto 1/1;
+  }
+  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img:not([width][height])) {
+    aspect-ratio: auto 1/1;
+  }
+  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img:not([width][height])) {
+    aspect-ratio: auto 1/1;
+  }
+  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > a :where(img:not([width][height])) {
+    aspect-ratio: auto 1/1;
+  }
+  :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > img:not([width][height]) {
+    aspect-ratio: auto 1/1;
+  }
+  @supports not (display: grid-lanes) {
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) {
+      display: block;
+      -webkit-column-width: var(--sf-gallery--tile);
+         -moz-column-width: var(--sf-gallery--tile);
+              column-width: var(--sf-gallery--tile);
+      -webkit-column-gap: var(--sf-gallery--gap);
+         -moz-column-gap: var(--sf-gallery--gap);
+              column-gap: var(--sf-gallery--gap);
+    }
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > * {
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+         -moz-column-break-inside: avoid;
+              break-inside: avoid;
+      margin-bottom: var(--sf-gallery--gap);
+      -webkit-margin-after: var(--sf-gallery--gap);
+              margin-block-end: var(--sf-gallery--gap);
+    }
+    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > img :where(img) {
+      -o-object-position: 0 -200vmax !important;
+         object-position: 0 -200vmax !important;
+    }
+    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img) {
+      -o-object-position: 0 -200vmax !important;
+         object-position: 0 -200vmax !important;
+    }
+    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img) {
+      -o-object-position: 0 -200vmax !important;
+         object-position: 0 -200vmax !important;
+    }
+    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > a :where(img) {
+      -o-object-position: 0 -200vmax !important;
+         object-position: 0 -200vmax !important;
+    }
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > img {
+      -o-object-position: 0 -200vmax !important;
+         object-position: 0 -200vmax !important;
+    }
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > * :where(figcaption) {
+      visibility: hidden;
+    }
+  }
+  @supports (display: grid-lanes) {
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) {
+      display: grid-lanes;
+      flow-tolerance: 0;
+      item-tolerance: 0;
+    }
   }
 }
 @layer sf.base {
@@ -6594,6 +7022,37 @@ body {
      placed by the row's code; until then they would stand under the words. */
   :where(:not(sf-dropdown) > sf-list-item:not(:defined):not(:has(> [data-sf-static])) > [slot]) {
     display: none;
+  }
+  /* lines="2" (owner decision C148 (5)): the title takes up to two lines, so
+     the box is the row's block space around its words, never under its one-line
+     height: the same padding the row's sheet gives it (one line: the control's
+     space around the line; with a caption: the next step's control around the
+     two lines, at least the C49 caption row). */
+  :where(:not(sf-dropdown) > sf-list-item[lines="2"]:not(:defined)):not(:has(> [data-sf-static])) {
+    height: auto;
+    block-size: auto;
+    min-height: var(--sf-list-item--box-control);
+    min-block-size: var(--sf-list-item--box-control);
+    padding-top: calc((var(--sf-list-item--box-control) - var(--sf-list-item--box-line)) / 2);
+    padding-bottom: calc((var(--sf-list-item--box-control) - var(--sf-list-item--box-line)) / 2);
+    padding-block: calc((var(--sf-list-item--box-control) - var(--sf-list-item--box-line)) / 2);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[lines="2"][supporting]:not([supporting=""]):not(:defined)):not(:has(> [data-sf-static])) {
+    height: auto;
+    block-size: auto;
+    min-height: var(--sf-list-item--box-two-line);
+    min-block-size: var(--sf-list-item--box-two-line);
+    padding-top: max(0px, (var(--sf-list-item--box-next) - var(--sf-list-item--box-line) - var(--sf-list-item--box-caption-line)) / 2);
+    padding-bottom: max(0px, (var(--sf-list-item--box-next) - var(--sf-list-item--box-line) - var(--sf-list-item--box-caption-line)) / 2);
+    padding-block: max(0px, (var(--sf-list-item--box-next) - var(--sf-list-item--box-line) - var(--sf-list-item--box-caption-line)) / 2);
+  }
+  :where(:not(sf-dropdown) > sf-list-item[lines="2"]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    display: -webkit-box;
+    word-wrap: anywhere;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 }
 @media (hover: none) and (pointer: coarse) {

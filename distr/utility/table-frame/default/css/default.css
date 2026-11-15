@@ -2,13 +2,14 @@
 @layer sf.utilities {
   .table-frame {
     /* The public variables of .table-frame; the head fill,
-       --sf-table-frame-head-background, defaults on the head cells. */
+       --sf-table-frame-head-background, defaults on the head cells to
+       the frame's own background: no fill of its own. */
     --sf-table-frame-border-color: var(--sf-outline-variant);
     --sf-table-frame-radius: var(--sf-radius--surface);
     --sf-table-frame-background: var(--sf-surface-place);
-    --sf-table-frame-head-color: var(--sf-on-surface);
-    --sf-table-frame-head-padding-block: calc((var(--sf-ui-3--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
-    --sf-table-frame-cell-padding-block: calc((var(--sf-ui-2--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
+    --sf-table-frame-head-color: var(--sf-on-surface-variant);
+    --sf-table-frame-head-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
+    --sf-table-frame-cell-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
     --sf-table-frame-cell-padding-inline: var(--sf-space-1);
     --sf-table-frame-cell-min-inline-size: var(--sf-e0);
     width: 100%;
@@ -171,6 +172,64 @@
   .table-frame > .table > :not(caption) > * > .text-end {
     text-align: end;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > .table-numeric {
+    text-align: right;
+  }
+  @supports not (text-align: end) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > .table-numeric {
+    text-align: right;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > .table-numeric:where(:dir(ltr)) {
+    text-align: right;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > .table-numeric {
+    text-align: left;
+  }
+  @supports not (text-align: end) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > .table-numeric {
+    text-align: left;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > .table-numeric:where(:dir(rtl)) {
+    text-align: left;
+  }
+  .table-frame > .table > :not(caption) > * > .table-numeric {
+    text-align: end;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > tr > :first-child {
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > tr > :first-child {
+    left: 0;
+    }
+  }
+  .table-frame > .table > :not(caption) > tr > :first-child:where(:dir(ltr)) {
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > tr > :first-child {
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > tr > :first-child {
+    right: 0;
+    }
+  }
+  .table-frame > .table > :not(caption) > tr > :first-child:where(:dir(rtl)) {
+    right: 0;
+  }
+  .table-frame > .table > :not(caption) > tr > :first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+  }
+  .table-frame > .table > tbody > tr > :first-child {
+    background-color: var(--sf-table-frame-background);
+  }
+  .table-frame > .table > tfoot > tr > :first-child {
+    background-color: var(--sf-table-frame-background);
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > *:last-child {
     border-right-width: var(--sf-0);
   }
@@ -201,14 +260,13 @@
     border-block-end-color: transparent;
   }
   .table-frame > .table > thead > tr > * {
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     padding-top: var(--sf-table-frame-head-padding-block);
     padding-bottom: var(--sf-table-frame-head-padding-block);
     padding-block: var(--sf-table-frame-head-padding-block);
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-table-frame-head-background, var(--sf-surface-container));
+    background-color: var(--sf-table-frame-background);
+    background-color: var(--sf-table-frame-head-background, var(--sf-table-frame-background));
     color: var(--sf-table-frame-head-color);
-    font-weight: var(--sf-font-weight-bold);
+    font-weight: var(--sf-weight--medium);
     vertical-align: bottom;
   }
 }

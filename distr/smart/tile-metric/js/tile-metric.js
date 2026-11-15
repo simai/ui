@@ -114,12 +114,27 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
  *
- * Anything else reads as number.
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
  */
 
 function numberOptions(format = 'number', step = 0) {
-  const word = String(format || 'number').trim();
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
   if (word === 'integer') return {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0
   };
   if (word === 'percent') return {
@@ -192,7 +207,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SfTileMetric: () => (/* binding */ SfTileMetric),
 /* harmony export */   changeOf: () => (/* binding */ changeOf),
 /* harmony export */   drawnStatus: () => (/* binding */ drawnStatus),
-/* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus)
+/* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus),
+/* harmony export */   tileFormat: () => (/* binding */ tileFormat)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
@@ -258,6 +274,20 @@ const ARROWS = {
   down: 'arrow_downward',
   flat: 'remove'
 };
+/**
+ * The format word the tile writes with (owner C168 (2), 2026-11-14): money on
+ * a tile is whole by default -- «currency-RUB» is «1 111 111 ₽» -- and keeps
+ * its kopecks only when the page asks with a precision word
+ * («currency-RUB decimal-2»); «currency-RUB compact» writes «1,1 млн ₽» for a
+ * narrow 1/2 tile. Every other word is core's as given.
+ */
+
+function tileFormat(format = 'number') {
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+  const money = words.some(one => /^currency-[A-Z]{3}$/u.test(one));
+  const precise = words.some(one => /^(?:integer|compact|decimal-\d{1,2})$/u.test(one));
+  return money && !precise ? [...words, 'integer'].join(' ') : words.join(' ') || 'number';
+}
 /** The threshold a share of the limit reached, in per cent: '', warning or error. */
 
 function thresholdStatus(percent, warningAt, errorAt) {
@@ -327,7 +357,7 @@ class SfTileMetric extends TileMetricElement {
   }
 
   say(value) {
-    return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__.formatNumber)(value, this.format, {
+    return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__.formatNumber)(value, tileFormat(this.format), {
       node: this,
       gap: this.words('no-value')
     });
@@ -382,6 +412,30 @@ class SfTileMetric extends TileMetricElement {
     this.sfEmit('open', {
       id: this.id || ''
     });
+  } // The lines a loading tile keeps (owner decision C130 (2): a skeleton takes
+  // exactly the data's place; tile study TM-1): those its settings promise.
+  // The change line when the page gave what it is worked out from (previous,
+  // delta) or what it is against (period-text), or when the tile has no limit
+  // -- a plain number comes with its change; a limit tile with max set
+  // shows its meter and the meter's words instead. The status line when the
+  // page states one (status, hint). The words are fillers of the right
+  // length: the bars stand for them.
+
+
+  skeleton(status) {
+    const max = this.given('max');
+    const promised = this.given('previous') !== null || this.given('delta') !== null || Boolean(this.periodText);
+    const limited = max !== null && max > 0;
+    const statusWord = status === 'neutral' ? '' : this.words(`status-${status}`);
+    return {
+      value: this.valueText || '000 000',
+      change: promised || !limited ? '+00,0 %' : '',
+      limit: limited ? this.limitText || this.words('limit', {
+        value: '00',
+        max: this.say(max)
+      }) : '',
+      status: this.hint || statusWord
+    };
   }
 
   templateContext() {
@@ -414,6 +468,7 @@ class SfTileMetric extends TileMetricElement {
       hint: this.hint,
       hasChart,
       chart: hasChart ? this.getSlotContent('chart') : null,
+      skeleton: loading ? this.skeleton(status) : null,
       loadingWord: this.words('loading'),
       rootClass: this.getRootClass()
     });
@@ -452,13 +507,23 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   group named by its label. Inside a button only phrasing content belongs,
 //   so every part is a span the sheet lays out.
 // - The change says its direction in words (visually hidden) beside the arrow
-//   of a tonal sf-badge, the status its word beside the icon, so colour is
+//   of a tonal sf-badge (C140); no change is the visible words «без
+//   изменений», no badge and no sign (C168 (1)). The status says its word
+//   beside the icon, so colour is
 //   never the only sign. With a hint the word is said before it (visually
 //   hidden); without one the word is the line's text («Внимание»), so a
 //   threshold that fired is never an icon alone.
 // - The limit is a meter; the sf-progress-bar under it is its picture
 //   (aria-hidden), with the page's thresholds.
-// - loading keeps the label and draws a skeleton bar on each line that waits.
+// - loading keeps the label and draws each line that waits in its own place,
+//   as tall as the line that comes (owner decision C130 (2); tile study
+//   TM-1): the value a first-paint bar in the value's own type, the change
+//   the change badge's own box, the limit the meter's own bar and its words'
+//   line, the status its hint's line. Which lines wait is what the settings
+//   promise (index.js skeleton()). The bars are core's .sf-first-paint-bar
+//   (C136: the capitals' height in the middle of the line, the 12 % fill and
+//   the pulse, C130 (3), (4)); a box (the badge, the bar) keeps its real part
+//   hidden under one fill of the control radius, so it is exactly as big.
 // The rung below the tile's: the label, the change, the limit's words and the hint.
 
 const BELOW = {
@@ -467,14 +532,43 @@ const BELOW = {
   2: '1'
 };
 
-const skeleton = part => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-tile-metric-skeleton sf-tile-metric-skeleton--${part}`} aria-hidden="true"></span>`;
+const bar = words => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-first-paint-bar">${words}</span>`;
+
+const shape = part => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-skeleton sf-tile-metric-skeleton--shape" aria-hidden="true">${part}</span>`;
+
+function renderWaiting(context) {
+  const {
+    skeleton,
+    size
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    ${skeleton.change ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-delta" aria-hidden="true">
+      ${shape((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge appearance="tonal" size=${BELOW[size]} icon-start="arrow_upward" text=${skeleton.change}></sf-badge>`)}
+      ${context.periodText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-period">${bar(context.periodText)}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${skeleton.limit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-meter" aria-hidden="true">
+      ${shape((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar class="sf-tile-metric-bar" size=${size} value="0"></sf-progress-bar>`)}
+      <span class="sf-tile-metric-limit">${bar(skeleton.limit)}</span>
+    </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${skeleton.status ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-status" aria-hidden="true"><span class="sf-tile-metric-hint">${bar(skeleton.status)}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  `;
+}
 
 function renderDelta(context) {
   const {
     change: delta,
     size
   } = context;
-  if (!delta) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!delta) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // No change is said in words on the change's line, with no badge and no
+  // sign: a grey «− 0» read as a fall (owner C168 (1), 2026-11-14).
+
+  if (delta.direction === 'flat') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-delta">
+      <span class="sf-tile-metric-flat">${delta.word}</span>
+      ${context.periodText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-period">${context.periodText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </span>`;
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-delta">
     <sf-badge class="sf-tile-metric-change" data-tone=${delta.tone} appearance="tonal" size=${BELOW[size]}
       status=${delta.badge || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon-start=${delta.arrow} text=${delta.text}></sf-badge>
@@ -518,11 +612,9 @@ function renderBody(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class="sf-tile-metric-label" id=${`${uid}-label`}>${context.labelShown}</span>
     <span class="sf-tile-metric-figure">
-      ${loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${skeleton('value')}<span class="sr-only">${context.loadingWord}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-value">${context.valueShown}</span>${context.unit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-unit">${context.unit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`}
+      ${loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-value sf-tile-metric-skeleton" aria-hidden="true">${bar(context.skeleton.value)}</span>${context.unit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-unit">${context.unit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sr-only">${context.loadingWord}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-value">${context.valueShown}</span>${context.unit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-unit">${context.unit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`}
     </span>
-    ${loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tile-metric-delta">${skeleton('line')}</span>` : renderDelta(context)}
-    ${renderMeter(context)}
-    ${loading ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : renderStatus(context)}
+    ${loading ? renderWaiting(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderDelta(context)}${renderMeter(context)}${renderStatus(context)}`}
   `;
 }
 
@@ -593,7 +685,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "1d705aa58430"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.3.0","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.5.0","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

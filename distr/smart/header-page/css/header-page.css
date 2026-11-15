@@ -33,8 +33,8 @@
     flex-wrap: wrap;
     min-width: 0;
     min-inline-size: 0;
-    gap: var(--sf-space-1\/3);
-    gap: var(--sf-page-header-actions-gap, var(--sf-space-1\/3));
+    gap: var(--sf-gap--actions);
+    gap: var(--sf-page-header-actions-gap, var(--sf-gap--actions));
   }
   /* The decorative level (owner decisions C91 level 2 and C65 round 2, R164,
      variant C): a tinted head. Primary tone 50 at 16 (dark 24, the fill steps)

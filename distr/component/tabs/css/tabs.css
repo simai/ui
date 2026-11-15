@@ -274,7 +274,7 @@
     top: var(--sf-0);
     top: var(--sf-tabs-sticky-top, var(--sf-0));
     inset-block-start: var(--sf-tabs-sticky-top, var(--sf-0));
-    z-index: var(--sf-z-index-5);
+    z-index: var(--sf-layer--sticky);
     background-color: var(--sf-surface-page);
   }
   .sf-tabs.sf-tabs--sticky.sf-tabs--vertical > .sf-tabs-top-container {

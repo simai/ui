@@ -853,7 +853,7 @@
     --sf-pagination-actions--background-color: var(--sf-surface-raised);
     --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
     --sf-pagination-actions--border-color: var(--sf-outline-variant);
-    --sf-pagination-actions--gap: var(--sf-space-1);
+    --sf-pagination-actions--gap: var(--sf-gap--groups);
     --sf-pagination-actions--padding-block: var(--sf-space-1);
     --sf-pagination-actions--padding-inline: var(--sf-space-2);
     --sf-pagination-actions--radius: var(--sf-radius--surface);
@@ -878,7 +878,8 @@
        of the card -- so it is rounded like one. */
     border-radius: var(--sf-pagination-actions--radius);
     box-shadow: var(--sf-shadow-raised);
-    z-index: var(--sf-z-index-3);
+    /* It holds the bottom of the card over the rows: the sticky layer (C181 (3)). */
+    z-index: var(--sf-layer--sticky);
   }
   /* A direction is a button, not a cell: its item box would otherwise take a gap
      of its own even while it is hidden, and the row of numbers moved by a few

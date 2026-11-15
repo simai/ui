@@ -466,7 +466,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--sf-space-1\/3);
+    gap: var(--sf-gap--actions);
     padding-top: var(--sf-wizard--gap);
     -webkit-padding-before: var(--sf-wizard--gap);
             padding-block-start: var(--sf-wizard--gap);
@@ -501,7 +501,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--sf-space-1\/3);
+    gap: var(--sf-gap--actions);
     -webkit-margin-start: auto;
             margin-inline-start: auto;
   }
@@ -602,7 +602,7 @@
   /* Narrow (under 40rem): always the compact head -- the step's label and the
      bar, never the row and never a column. The footer's primary takes the
      line's end, Back its start. */
-  @container sf-wizard (max-width: 39.99rem) {
+  @container sf-wizard (width < 40rem) {
     /* sf-steps' host draws as its children (display: contents): its root
        is what goes. */
     .sf-wizard .sf-wizard-steps > .sf-steps {

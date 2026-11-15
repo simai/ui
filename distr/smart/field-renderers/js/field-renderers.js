@@ -2430,6 +2430,8 @@ const SET_TEXT = {
     retry: 'Try again',
     loadMore: 'Load more',
     removeFile: 'Remove',
+    fileRemoved: 'File removed',
+    undo: 'Undo',
     passwordSet: 'Set',
     passwordUnset: 'Not set',
     passwordKeep: 'Set; type a new one to replace it',
@@ -2462,7 +2464,9 @@ const SET_TEXT = {
     recordsError: 'Не удалось загрузить записи',
     retry: 'Повторить',
     loadMore: 'Загрузить ещё',
-    removeFile: 'Удалить',
+    removeFile: 'Убрать',
+    fileRemoved: 'Файл убран',
+    undo: 'Вернуть',
     passwordSet: 'Задан',
     passwordUnset: 'Не задан',
     passwordKeep: 'Задан; введите новый, чтобы заменить',
@@ -2992,14 +2996,29 @@ function renderFileEdit(field, value, host) {
   const multiple = field.multiple === true || Array.isArray(value);
   const canUpload = Boolean(host.startFieldUpload && host.getFieldUploads);
   const uploads = canUpload ? host.getFieldUploads(field) : null;
-  const items = Array.isArray(uploads) ? uploads : [];
+  const items = Array.isArray(uploads) ? uploads : []; // «×» takes a file out of the field at once, and the notice gives it back
+  // with «Вернуть» (decisions C25, C149 (8)): the field's value before the
+  // removal is set again.
 
   const drop = index => {
+    const before = value;
     const next = files.filter((_, position) => position !== index);
     host.setFieldValue(field, multiple ? next : next[0] ?? null);
-  }; // download-action and remove-action both read true when the attribute is
-  // absent, so a file with no href has to say false rather than drop it.
+    const removed = files[index];
+    globalThis.SF?.notify?.({
+      status: 'neutral',
+      title: setText(host, 'fileRemoved'),
+      text: String(removed?.label ?? removed?.name ?? ''),
+      source: 'sf-file-preview',
+      action: {
+        label: setText(host, 'undo'),
+        onSelect: () => host.setFieldValue(field, before)
+      }
+    });
+  };
 
+  const readonly = field.readonly === true; // download-action and remove-action both read true when the attribute is
+  // absent, so a file with no href has to say false rather than drop it.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-field-file flex flex-col">
@@ -3011,7 +3030,7 @@ function renderFileEdit(field, value, host) {
                         mime-type=${String(file.mime ?? file.mimeType ?? '')}
                         href=${file.href ? String(file.href) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                         download-action=${file.href ? 'true' : 'false'}
-                        remove-action="true"
+                        remove-action=${readonly ? 'false' : 'true'}
                         remove-label=${`${setText(host, 'removeFile')} ${file.label ?? file.name ?? ''}`.trim()}
                         @sf-file-preview-detach=${() => drop(index)}
                 ></sf-file-preview>

@@ -280,12 +280,27 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
  *
- * Anything else reads as number.
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
  */
 
 function numberOptions(format = 'number', step = 0) {
-  const word = String(format || 'number').trim();
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
   if (word === 'integer') return {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0
   };
   if (word === 'percent') return {
@@ -772,15 +787,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   avatarContent: () => (/* binding */ avatarContent),
 /* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
 /* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
-/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons),
+/* harmony export */   avatarStepText: () => (/* binding */ avatarStepText)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
-/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9d9903b87148");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
  // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
@@ -800,7 +818,16 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
 /** The glyph of a placeholder: a person, unless the host names another. */
 
-const AVATAR_PLACEHOLDER_ICON = "person";
+const AVATAR_PLACEHOLDER_ICON = "person"; // The letters a step holds (owner decision C152 (3), 2026-11-14): two from
+// 1/3 up, one at 1/4 (16 px holds one letter of a readable size, two were
+// 10 px each). Only letters are cut: «+5» or a number stays whole.
+
+function avatarStepText(text, size) {
+  const value = String(text ?? "");
+  if (String(size ?? "") !== "1/4") return value;
+  const letters = value.match(/^(\p{L}\p{M}*)\p{L}/u);
+  return letters ? letters[1] : value;
+}
 /**
  * The drawing context of one avatar picture, from what a host knows: the photo,
  * the initials or the name they are taken from, the hue, the placeholder's
@@ -811,15 +838,18 @@ function avatarPictureContext(options = {}) {
   const imageUrl = String(options.imageUrl ?? "").trim();
   const name = String(options.name ?? "").trim();
   const explicitText = String(options.text ?? "").trim();
-  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
-  // names a glyph (a bot, a system), which stands in for them.
+  const namedIcon = String(options.icon ?? "").trim();
+  const size = AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : ""; // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them. With a photo
+  // they stand under it until it comes and when it fails (C152 (2)).
 
-  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
-  const isImage = Boolean(imageUrl);
-  const isText = !isImage && Boolean(text);
+  const text = avatarStepText(namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_2__.getInitials)(name), size);
+  const isImage = Boolean(imageUrl); // isText: the initials are drawn (alone, or under the photo).
+
+  const isText = Boolean(text);
   const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
   return {
-    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    size,
     line: String(options.line ?? ""),
     shape: options.shape === "square" ? "square" : "circle",
     imageUrl,
@@ -829,7 +859,7 @@ function avatarPictureContext(options = {}) {
     icon,
     status: options.status || "none",
     expressive: Boolean(options.expressive),
-    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveAvatarHue)(options.hue, name || text, "") : "",
     rootClass: options.rootClass || "",
     rootStyle: options.rootStyle || "",
     disabled: Boolean(options.disabled),
@@ -852,10 +882,6 @@ function avatarClasses(context, options = {}) {
   const layout = options.layout ?? null;
   const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
 
-  if (context.isImage && layout) {
-    classes.push(layout.center);
-  }
-
   if (context.isText) {
     classes.push("sf-avatar--text");
     if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
@@ -866,7 +892,7 @@ function avatarClasses(context, options = {}) {
     }
   }
 
-  if (!context.isImage && !context.isText) {
+  if (!context.isText) {
     classes.push("sf-avatar--placeholder");
     if (layout) classes.push(layout.center);
   } // The decorative level (C91 level 2): the sheet turns the initials'
@@ -902,30 +928,39 @@ function avatarClasses(context, options = {}) {
   }
 
   return classes.join(" ");
+} // The photo says when it has come or failed (C152 (2)): the sheet fades it
+// in over the initials when loaded and drops it on an error, so the avatar is
+// never an empty circle or the browser's broken-image glyph. The state is
+// the runtime mark data-sf-loaded ("true" or "error"), which the template
+// does not bind, so a redraw keeps it, and which a first-paint snapshot
+// leaves out (it depends on the network); a new address is a new element
+// (keyed), which starts transparent again.
+
+function onImageLoad(event) {
+  event.currentTarget.dataset.sfLoaded = "true";
+}
+
+function onImageError(event) {
+  event.currentTarget.dataset.sfLoaded = "error";
 }
 /**
- * What the circle holds: the photo, the initials, or the placeholder glyph as
- * an sf-icon element, so its name reaches the icon font request (a bare
- * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
- * review 2026-11-09).
+ * What the circle holds: the initials, or the placeholder glyph as an sf-icon
+ * element, so its name reaches the icon font request (a bare <i class="sf-icon">
+ * drawn after the page's scan stayed blank: buttons review 2026-11-09); with a
+ * photo, the photo over them (owner decision C152 (2)).
  */
 
+
 function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  const under = context.isText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  if (!context.isImage) return under;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${under}${(0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(context.imageUrl, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @load=${onImageLoad} @error=${onImageError} />`)}`;
 }
 /** The icon names a picture draws (for a host's icon preload). */
 
 function avatarPictureIcons(options = {}) {
   const context = avatarPictureContext(options);
-  return context.isImage || context.isText ? [] : [context.icon];
+  return context.isText ? [] : [context.icon];
 }
 /**
  * One avatar picture beside a host's own content: a span hidden from
@@ -957,7 +992,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
-const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
+// (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
+// titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
+// skipped wherever they stand. Compared without case and without the dots
+// around them (normalizeInitialsWords strips those).
+
+const INITIALS_SERVICE_WORDS = new Set([// legal forms
+"ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
+"dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -990,6 +1034,10 @@ function firstGrapheme(word) {
 //   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
 //   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
 //   «Анна»                 → «А»
+//   «ООО «Ромашка»»        → «Р»    legal forms, titles, particles skipped (C152)
+//   «Мария фон Штейн»      → «МШ»
+//   «Dr. John Smith»       → «JS»
+//   «anna@simai.ru»        → «A»    an address: the first letter before «@»
 //   «»                     → ''     or `fallback`: '?' where text must stand
 //
 // `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
@@ -1003,7 +1051,21 @@ function getInitials(value = "", options = {}) {
     fallback = "",
     locale
   } = options;
-  const words = normalizeInitialsWords(value);
+  let source = String(value ?? "").trim(); // An address reads by the name before «@»: one letter (C152 (3)),
+  // anna@simai.ru → A, not the letters of its parts.
+
+  if (/^[^\s@]+@[^\s@]+$/u.test(source)) {
+    const local = normalizeInitialsWords(source.slice(0, source.indexOf("@")).replace(/[._+-]+/gu, " "));
+    if (!local.length) return String(fallback);
+    const letter = firstGrapheme(local[0]);
+    return (locale ? letter.toLocaleUpperCase(locale) : letter.toUpperCase()) || String(fallback);
+  }
+
+  const allWords = normalizeInitialsWords(source); // Legal forms, titles and particles go first; a name made of them alone
+  // keeps them, so it still has initials.
+
+  const ownWords = allWords.filter(word => !INITIALS_SERVICE_WORDS.has(String(word).toLowerCase()));
+  const words = ownWords.length ? ownWords : allWords;
   let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
   // are its words. Split before the skip list, «из-за» would be two words.
 
@@ -1022,6 +1084,86 @@ function getInitials(value = "", options = {}) {
 
 /***/ },
 
+/***/ "50e7fd61ac57"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   watchLongPress: () => (/* binding */ watchLongPress)
+/* harmony export */ });
+// A long press under a finger (owner decision C148 (6), list item study
+// prototypes/list-item-study.html #q-swipe): held 0.5 s on a row, it opens the
+// same menu as the row's «⋯» and Shift+F10. No swipe: it is hidden and fights
+// the platform's back gesture. The press time is the tooltip's long press
+// (component tooltip, C59): times, not lengths -- the Framework has no delay
+// tokens. A touch the browser takes for a scroll ends in pointercancel and
+// opens nothing. The click the release sends afterwards is the press's, not a
+// press of the row: swallowed() answers it once.
+//
+// Stateless module: sf-list-item and sf-list each carry a copy in their own
+// bundle; every watch keeps its state in its own closure.
+const LONG_PRESS_MS = 500;
+function watchLongPress(target, {
+  accepts,
+  press
+}) {
+  let timer = 0;
+  let pointer = null;
+  let fired = false;
+
+  const clear = () => {
+    clearTimeout(timer);
+    timer = 0;
+    pointer = null;
+  };
+
+  const onDown = event => {
+    fired = false;
+    if (event.pointerType !== 'touch' || !event.isPrimary || !accepts(event)) return;
+    clear();
+    pointer = event.pointerId;
+    timer = setTimeout(() => {
+      timer = 0;
+      press(event); // After the press: a click press() sends itself is not the release.
+
+      fired = true;
+    }, LONG_PRESS_MS);
+  };
+
+  const onEnd = event => {
+    if (pointer === event.pointerId) clear();
+  }; // The browser's own long-press menu (text selection, «copy») would cover
+  // the row's menu.
+
+
+  const onContextMenu = event => {
+    if (pointer !== null || fired) event.preventDefault();
+  };
+
+  target.addEventListener('pointerdown', onDown);
+  target.addEventListener('pointerup', onEnd);
+  target.addEventListener('pointercancel', onEnd);
+  target.addEventListener('contextmenu', onContextMenu);
+  return {
+    swallowed() {
+      if (!fired) return false;
+      fired = false;
+      return true;
+    },
+
+    stop() {
+      clear();
+      target.removeEventListener('pointerdown', onDown);
+      target.removeEventListener('pointerup', onEnd);
+      target.removeEventListener('pointercancel', onEnd);
+      target.removeEventListener('contextmenu', onContextMenu);
+    }
+
+  };
+}
+
+/***/ },
+
 /***/ "6cfd28b331a1"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -1032,9 +1174,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1c69b52a2c3c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c1c5abcf20ed");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0c29db1e15d7");
+/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2677706b5ec9");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c1c5abcf20ed");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0c29db1e15d7");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1081,6 +1224,21 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // rename, load-more).
 
 
+
+ // Is the end within watchEdge's margin of the box that scrolls the list (or
+// of the window)? Read once, on the scroll that arms the watch.
+
+const EDGE_REACH = parseFloat(_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__.EDGE_MARGIN) || 0;
+
+function endInReach(sentinel, root) {
+  const end = sentinel.getBoundingClientRect();
+  const view = sentinel.ownerDocument.defaultView;
+  const box = root ? root.getBoundingClientRect() : {
+    top: 0,
+    bottom: view?.innerHeight ?? 0
+  };
+  return end.top <= box.bottom + EDGE_REACH && end.bottom >= box.top - EDGE_REACH;
+}
 
 
 
@@ -1178,11 +1336,11 @@ const pageArguments = (first, second) => {
   };
 };
 
-const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: "ru"
 });
@@ -1571,6 +1729,7 @@ class SfList extends ListElement {
       stickyHeadings: this.stickyHeadings === true,
       size: this.size,
       noWrap: this.noWrap === true,
+      divided: this.divided === true,
       sections: this.arranged(),
       leading: this.leading(),
       avatarOf,
@@ -1584,6 +1743,11 @@ class SfList extends ListElement {
       selected: this.selected,
       editing: this._editing,
       loading,
+      // The skeleton's rows take the shape of the rows the list has
+      // shown, else the caption row (template skeleton()).
+      skeleton: {
+        twoLine: this._items.length === 0 || this._items.some(item => Boolean(item.supporting))
+      },
       loadingText: this.sfWord("loading-text"),
       empty,
       emptyHeading: this.emptyText,
@@ -1660,7 +1824,32 @@ class SfList extends ListElement {
 
   onConnected() {
     super.onConnected?.();
-    this.watchDay();
+    this.watchDay(); // A long press on a row under a finger opens its menu, as its «⋯»
+    // does (owner decision C148 (6)); the click its release sends opens
+    // nothing. No swipe.
+
+    if (!this._longPress) {
+      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_5__.watchLongPress)(this, {
+        accepts: event => {
+          const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
+          if (!row || !this.contains(row) || event.target.closest(".sf-list__actions, .sf-list__rename")) return false;
+
+          const item = this._items.find(one => one.id === this.idOf(row));
+
+          return Boolean(item) && this.hasMenu(item);
+        },
+        press: event => {
+          const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
+          const id = this.idOf(row);
+          if (id != null) this.openMenu(id);
+        }
+      });
+      this.addEventListener("click", event => {
+        if (!this._longPress.swallowed()) return;
+        event.preventDefault();
+        event.stopPropagation();
+      }, true);
+    }
   }
 
   onDisconnected() {
@@ -1771,8 +1960,10 @@ class SfList extends ListElement {
 
     if (!narrow) {
       const was = frame.hasAttribute(NARROW);
-      if (was) frame.removeAttribute(NARROW);
-      narrow = [...frame.querySelectorAll(".sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty)")].some(meta => this.titleSqueezed(meta, rem));
+      if (was) frame.removeAttribute(NARROW); // A two-line row keeps its badge and count in its end column
+      // (owner decision C148 (2)): only one-line rows are measured.
+
+      narrow = [...frame.querySelectorAll(".sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty)")].some(meta => this.titleSqueezed(meta, rem));
       if (was && !narrow) return;
     }
 
@@ -1799,8 +1990,15 @@ class SfList extends ListElement {
     const title = (rtl ? textBox.right - metaBox.right : metaBox.left - textBox.left) - gap - inset;
     if (!(column > 0)) return false;
     return title < Math.max(column / 2, TITLE_MIN_REM * rem);
-  } // The end of the list asks for the next page when it comes within reach,
-  // never from a scroll handler (core/js/reading-position.js watchEdge).
+  } // The end of the list asks for the next page when a person brings it
+  // within reach (core/js/reading-position.js watchEdge), not when it is
+  // there already: a list whose end shows on load waits for «Show more» or
+  // for the first scroll (list and feed study LF-8: the next page was asked
+  // for on load, with «Show more» on screen as well -- two answers to one
+  // question). The first scroll of the box that scrolls the list, after a
+  // page is drawn, arms the watch; if the end is in reach then, that scroll
+  // brought it there. The scroll is listened to once, to arm, never to
+  // measure the edge on every move.
 
 
   watchEnd() {
@@ -1814,10 +2012,36 @@ class SfList extends ListElement {
     if (this._edge === sentinel && this._stopEdge) return;
     this.unwatchEnd();
     this._edge = sentinel; // Inside the box that scrolls the list, so the margin reaches ahead there.
+    // watchEdge reports the end coming into reach; its first report, before
+    // any scroll, says only that it is there already (reached). The first
+    // scroll then asks if the end is still in reach -- no new report comes
+    // for an end that never left; an end that comes into reach later is
+    // the watch's own report, asked once.
 
-    this._stopEdge = (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__.watchEdge)(sentinel, () => this.requestMore(), {
-      root: (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__.scrollerOf)(sentinel)
+    const root = (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__.scrollerOf)(sentinel);
+    const scroller = root ?? this.ownerDocument;
+    let moved = false;
+    let reached = false;
+
+    const onScroll = () => {
+      moved = true;
+      scroller.removeEventListener("scroll", onScroll);
+      if (reached && endInReach(sentinel, root)) this.requestMore();
+    };
+
+    scroller.addEventListener("scroll", onScroll, {
+      passive: true
     });
+    const stopEdge = (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__.watchEdge)(sentinel, () => {
+      if (moved) this.requestMore();else reached = true;
+    }, {
+      root
+    });
+
+    this._stopEdge = () => {
+      stopEdge();
+      scroller.removeEventListener("scroll", onScroll);
+    };
   }
 
   unwatchEnd() {
@@ -1867,8 +2091,40 @@ class SfList extends ListElement {
   }
 
   onKey(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return; // The «⋯» of a row is reached from the row (owner decision C148 (3),
+    // as the APG layout grid): ArrowRight (ArrowLeft right to left) from
+    // the row to it, the other arrow, Escape, ArrowUp or ArrowDown back.
+    // It is no Tab stop of its own.
+
+    const rtl = getComputedStyle(this.querySelector(":scope > .sf-list__frame") ?? this).direction === "rtl";
+    const forward = rtl ? "ArrowLeft" : "ArrowRight";
+    const actions = event.target.closest?.(".sf-list__actions");
+
+    if (actions) {
+      if (event.shiftKey || ![rtl ? "ArrowRight" : "ArrowLeft", "Escape", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+      const back = actions.closest(".sf-list__row")?.querySelector(".sf-list-item[data-sf-list-roving]");
+      if (!back) return;
+      event.preventDefault(); // The Escape is the row's: a panel around the list stays open.
+
+      event.stopPropagation();
+      back.focus();
+      return;
+    }
+
     const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
-    if (!row || event.target !== row || event.defaultPrevented) return;
+    if (!row || event.target !== row) return;
+
+    if (event.key === forward && !event.shiftKey) {
+      const button = row.closest(".sf-list__row")?.querySelector(":scope > .sf-list__actions");
+
+      if (button) {
+        event.preventDefault();
+        button.focus();
+      }
+
+      return;
+    }
+
     const id = this.idOf(row);
 
     const item = this._items.find(one => one.id === id);
@@ -2045,8 +2301,11 @@ const leadContent = (context, item) => {
 
 const metaContent = (context, item) => {
   const count = context.countOf(item);
-  const badge = context.badgeOf(item);
-  const line = context.size; // A row is a dense place: its badge and count keep the tight side room
+  const badge = context.badgeOf(item); // A two-line row's badge and count stand on its caption's line, in the
+  // row's end column (owner decision C148 (2)): the line of the text they
+  // stand in. A one-line row's take the row's line.
+
+  const line = item.supporting ? "text" : context.size; // A row is a dense place: its badge and count keep the tight side room
   // (sf-badge tight), so the wider default of sf-badge 1.3.0 does not push
   // the row's text aside. The count is a quantity: sf-badge tonal, grey
   // (owner decision C140 (3); list item study LI-8). It was sf-badge scheme
@@ -2115,6 +2374,7 @@ const row = (context, item) => {
                     title=${tip || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ?selected=${current}
                     ?disabled=${disabled}
+                    ?divided=${context.divided}
             ><span slot="leading" class="sf-list__lead">${leadContent(context, item)}</span><span
                     slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-list-item
                     interactive
@@ -2127,9 +2387,10 @@ const row = (context, item) => {
                     title=${tip || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ?selected=${current}
                     ?disabled=${disabled}
+                    ?divided=${context.divided}
             ><span slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <li class="sf-list__row ${current ? "sf-list__row--current" : ""}" data-id=${item.id}>
+        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.countOf(item) ? "sf-list__row--unread" : ""}" data-id=${item.id}>
             ${listItem}
             ${menu ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
                         type="button"
@@ -2148,7 +2409,43 @@ const rows = (context, items, labelled) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.h
     <ul class="sf-list__rows" aria-labelledby=${labelled ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${labelled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.label}>
         ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(items, item => item.id, item => row(context, item))}
     </ul>
-`;
+`; // The rows on their way (owner decision C130; list and feed study LF-2): the
+// list's own rows, sf-list-item of the list's size, so a skeleton row is as
+// tall as the row that replaces it -- one line, or the caption row (C49: 48,
+// compact 44, 60 under a finger) -- and nothing moves when the rows arrive.
+// The words are core's first-paint bars (C136: as tall as the capitals, in the
+// middle of the line, the control radius at the ends, the skeleton fill and
+// its pulse, C130 (3), (4)); the title a shorter bar than its caption line.
+// Until a page has shown rows the list draws the caption row, the shape of
+// the lists it serves (conversations, letters, files, versions); a list that
+// has shown rows keeps their shape. aria-hidden: the status beside it says
+// the wait.
+
+
+const SKELETON_ROWS = 3;
+
+const skeleton = context => {
+  const {
+    twoLine
+  } = context.skeleton;
+
+  const bar = part => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-first-paint-bar sf-list__bar sf-list__bar--${part}`}>\u00a0</span>`;
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <ul class="sf-list__rows sf-list__skeleton" aria-hidden="true">
+            ${Array.from({
+    length: SKELETON_ROWS
+  }, () => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <li class="sf-list__row sf-list__row--skeleton">
+                    <sf-list-item
+                            kind="text"
+                            size=${context.size}
+                            text="\u00a0"
+                            supporting=${twoLine ? "\u00a0" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ><span slot="text">${bar("title")}</span>${twoLine ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="supporting">${bar("supporting")}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</sf-list-item>
+                </li>`)}
+        </ul>`;
+};
 
 function renderListTemplate(context) {
   const {
@@ -2160,8 +2457,7 @@ function renderListTemplate(context) {
              aria-label=${context.grouped ? context.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-busy=${context.loading ? "true" : "false"}>
             <span class="sf-list__width" aria-hidden="true"></span>
-            ${context.loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
-                       <p class="sr-only" role="status">${context.loadingText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${skeleton(context)}<p class="sr-only" role="status">${context.loadingText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <div class="sf-list__body"
                  data-sf-list
                  ?hidden=${context.empty || context.loading}
@@ -2224,6 +2520,13 @@ __webpack_require__.r(__webpack_exports__);
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "9d9903b87148"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/keyed.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/keyed.js", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -2343,7 +2646,7 @@ function resolveAvatarTone(setting, name) {
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.9.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.12.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

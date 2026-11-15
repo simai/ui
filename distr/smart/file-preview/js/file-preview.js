@@ -385,12 +385,27 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
  *
- * Anything else reads as number.
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
  */
 
 function numberOptions(format = 'number', step = 0) {
-  const word = String(format || 'number').trim();
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
   if (word === 'integer') return {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0
   };
   if (word === 'percent') return {
@@ -703,7 +718,17 @@ const FilePreviewElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
 const IMAGE_EXTENSION = /\.(?:avif|bmp|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i;
-const STATES = ['ready', 'uploading', 'error']; // The media type a name's extension says, for the formats the core's file
+const VIDEO_EXTENSION = /\.(?:mp4|m4v|webm|ogv|mov)(?:[?#].*)?$/i;
+const PDF_EXTENSION = /\.pdf(?:[?#].*)?$/i;
+const STATES = ['ready', 'uploading', 'error'];
+const VIEWS = ['row', 'chip', 'tile']; // The kinds the page's viewer shows in place (C149 (5), (6)): the rest download.
+
+const VIEWABLE = new Set(['image', 'video', 'pdf']); // The tail a cut name always keeps (C149 (2)): the extension and the end of
+// the name before it.
+
+const KEPT_TAIL = 10; // The joints a name breaks after (C34), as nameParts in the template.
+
+const JOINT = /(?<=[_\-–—/+])/u; // The media type a name's extension says, for the formats the core's file
 // icons tell apart (core/js/composition/file-size.mjs FILE_ICONS, the icons
 // sf-file-upload's rows draw): PDF, a sheet and slides each get their own
 // glyph (C81: «значок с типом у остальных»). Other names take the kind of the
@@ -860,18 +885,114 @@ class SfFilePreview extends FilePreviewElement {
     } catch {
       return this.shownSize;
     }
-  } // What a screen reader hears after the name (C51): «, PDF, 2,3 мегабайта».
+  } // What a screen reader hears after the name (C51, C149 (7)): «, PDF,
+  // 2,3 мегабайта, 12 ноября».
 
 
   get said() {
-    const parts = [this.extension, this.shownState === 'ready' ? this.spokenSize : ''].filter(Boolean);
+    const ready = this.shownState === 'ready';
+    const parts = [this.extension, ready ? this.spokenSize : '', ready ? this.dateText('long') : ''].filter(Boolean);
     return parts.length ? `, ${parts.join(', ')}` : '';
   }
 
   get isImage() {
-    if (this.kind === 'image') return true;
-    if (this.kind === 'icon') return false;
-    return this.mimeType.toLowerCase().startsWith('image/') || IMAGE_EXTENSION.test(this.imageUrl || this.href || this.fileName);
+    return this.fileKind === 'image';
+  } // The file's kind for the viewer and the picture (C149 (4), (5)): image,
+  // video, pdf or file, from kind, the media type, then the name's or the
+  // address's extension. A picture the host gave (image-url) does not make a
+  // PDF an image: it is the PDF's first page.
+
+
+  get fileKind() {
+    if (this.kind === 'image') return 'image';
+    const mime = String(this.mimeType || '').toLowerCase();
+    if (mime.startsWith('image/')) return 'image';
+    if (mime.startsWith('video/')) return 'video';
+    if (mime === 'application/pdf') return 'pdf';
+    if (mime) return 'file';
+    const named = String(this.fileName || '');
+    const address = String(this.href || '').split(/[?#]/u)[0];
+
+    for (const text of [named, address]) {
+      if (IMAGE_EXTENSION.test(text)) return 'image';
+      if (VIDEO_EXTENSION.test(text)) return 'video';
+      if (PDF_EXTENSION.test(text)) return 'pdf';
+    }
+
+    return 'file';
+  } // The picture in the holder (C149 (4)): the one the host gave, for any file;
+  // an image's own address when it gave none. kind="icon" draws the glyph.
+
+
+  get picture() {
+    if (this.kind === 'icon') return '';
+    if (this.imageUrl) return this.imageUrl;
+    return this.fileKind === 'image' ? this.href || '' : '';
+  } // Opens in the page's viewer (C149 (5)): a picture, a PDF or a video that
+  // is there.
+
+
+  get viewable() {
+    return VIEWABLE.has(this.fileKind) && Boolean(this.viewSource) && this.shownState === 'ready' && !this.disabled;
+  }
+
+  get viewSource() {
+    return this.href || (this.fileKind === 'image' ? this.imageUrl : '') || '';
+  }
+
+  get shownView() {
+    const view = String(this.getAttribute('appearance') || '').trim().toLowerCase();
+    return VIEWS.includes(view) ? view : 'row';
+  } // The date under the name (C149 (7)): «12 нояб.», with the year when it is
+  // not this year; nothing when the page gives none or it is not a date.
+
+
+  get fileMoment() {
+    const raw = this.fileDate;
+    if (raw === null || raw === undefined || String(raw).trim() === '') return null;
+    return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__.toDate)(raw);
+  }
+
+  dateText(month) {
+    const moment = this.fileMoment;
+    if (!moment) return '';
+    const options = {
+      day: 'numeric',
+      month
+    };
+    if (moment.getFullYear() !== new Date().getFullYear()) options.year = 'numeric';
+
+    try {
+      return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__.intlFormatter)('DateTimeFormat', (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__.formatLocale)({
+        node: this
+      }), options).format(moment);
+    } catch {
+      return '';
+    }
+  }
+
+  get shownDate() {
+    return this.dateText('short');
+  } // A video's length (C149 (4)): seconds (84) drawn as 1:24, text as written.
+
+
+  get shownDuration() {
+    const raw = String(this.duration ?? '').trim();
+    if (!raw) return '';
+    if (!/^\d+(?:\.\d+)?$/u.test(raw)) return raw;
+    const total = Math.round(Number(raw));
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor(total % 3600 / 60);
+    const seconds = String(total % 60).padStart(2, '0');
+    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}` : `${minutes}:${seconds}`;
+  } // Under the name (C149 (7)): the type, the size and the date when the page
+  // gives it, «PDF · 2,4 МБ · 12 нояб.»; a chip keeps type and size.
+
+
+  get meta() {
+    const parts = [this.extension, this.shownSize];
+    if (this.shownView !== 'chip') parts.push(this.shownDate);
+    return parts.filter(Boolean).join(' · ');
   }
 
   templateContext() {
@@ -879,10 +1000,22 @@ class SfFilePreview extends FilePreviewElement {
     const name = this.fileName;
     const state = this.shownState;
     const errorText = String(this.getAttribute('error-text') || '').trim();
+    const view = this.shownView;
+    const stored = Boolean(this.stored);
     return this.createTemplateContext({ ...props,
       component: this,
       fileName: name,
+      fileId: String(this.fileId ?? ''),
       fileSize: this.shownSize,
+      fileKind: this.fileKind,
+      view,
+      lines: view === 'row' ? 2 : 1,
+      meta: this.meta,
+      duration: this.shownDuration,
+      picture: this.picture,
+      viewable: this.viewable,
+      stored,
+      asking: Boolean(this._asking) && stored,
       said: this.said,
       state,
       progress: this.shownProgress,
@@ -904,13 +1037,14 @@ class SfFilePreview extends FilePreviewElement {
       removeAction: this.removeAction,
       disabled: this.disabled,
       ariaLabel: this.accessibleName,
-      // «Скачать <имя>», «Удалить <имя>» (C51): a page's own label is kept.
+      // «Скачать <имя>», «Убрать <имя>» or, for a stored file, «Удалить <имя>»
+      // (C51, C149 (8)): a page's own label is kept.
       downloadLabel: this.getAttribute('download-label') || this.sfWord('download-label', {
         vars: {
           name
         }
       }),
-      removeLabel: this.getAttribute('remove-label') || this.sfWord('remove-label', {
+      removeLabel: this.getAttribute('remove-label') || this.sfWord(stored ? 'delete-label' : 'remove-label', {
         vars: {
           name
         }
@@ -931,12 +1065,19 @@ class SfFilePreview extends FilePreviewElement {
           vars: {
             name
           }
-        })
+        }),
+        deleteQuestion: this.sfWord('delete-question', {
+          vars: {
+            name
+          }
+        }),
+        deleteText: this.sfWord('delete-text')
       },
       onOpen: event => this.handleOpen(event),
       onDownload: event => this.handleDownload(event),
       onRemove: event => this.handleRemove(event),
-      onRetry: event => this.handleRetry(event)
+      onRetry: event => this.handleRetry(event),
+      onAnswer: event => this.handleAnswer(event)
     });
   }
 
@@ -1017,24 +1158,213 @@ class SfFilePreview extends FilePreviewElement {
 
     anchor.click();
   } // The name is the file's link (C51): the browser follows it as any link
-  // (a middle click, «copy address» work); the same cancelable download
-  // request goes first, and a page that refuses it keeps the press.
+  // (a middle click, «copy address» work). A picture, a PDF or a video opens
+  // in the page's viewer (C149 (5)); any other file downloads, after the same
+  // cancelable download request, and a page that refuses it keeps the press.
 
 
   handleOpen(event) {
-    if (this.disabled || !this.request('download', 'download')) event?.preventDefault?.();
+    if (this.disabled) {
+      event?.preventDefault?.();
+      return;
+    }
+
+    const plain = event && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+
+    if (this.viewable && (plain || !event)) {
+      event?.preventDefault?.();
+      this.openViewer();
+      return;
+    }
+
+    if (!this.request('download', 'download')) event?.preventDefault?.();
+  } // The files a viewer pages through (C149 (6)): the viewable files of this
+  // one's list -- the nearest parent holding more than one sf-file-preview,
+  // three levels up at most -- in their order; else this file alone.
+
+
+  viewerFiles() {
+    let scope = this.parentElement;
+
+    for (let level = 0; scope && level < 3; level += 1, scope = scope.parentElement) {
+      const files = [...scope.querySelectorAll('sf-file-preview')];
+
+      if (files.length > 1) {
+        const shown = files.filter(file => file.viewable && !file.hidden && !file.compact);
+        if (shown.includes(this)) return shown;
+        break;
+      }
+    }
+
+    return [this];
+  }
+
+  viewerItem() {
+    return {
+      src: this.viewSource,
+      type: this.fileKind,
+      mime: this.mimeType || undefined,
+      name: this.fileName,
+      alt: this.fileKind === 'image' ? this.fileName : '',
+      meta: [this.extension, this.shownSize].filter(Boolean).join(' · '),
+      download: this.download ? this.fileName : false,
+      open: true
+    };
+  } // Opens this file in the page's full-screen viewer, sf-gallery's
+  // SF.Gallery.view (C149 (6), C150 (7)): name, «N из M», download, open in a
+  // tab, close, arrows, keys and a swipe; Escape gives the focus back to the
+  // name of the file now shown. Answers false when the file cannot be viewed.
+
+
+  async openViewer() {
+    if (!this.viewable) return false;
+    const files = this.viewerFiles();
+    const start = files.indexOf(this) + 1;
+
+    const nameOf = file => file?.querySelector?.('.sf-file-preview-name') || file;
+
+    try {
+      if (!globalThis.SF?.Gallery?.view) await globalThis.SF?.Loader?.ensure?.(['sf-gallery']);
+    } catch {// Without the viewer the browser opens the file.
+    }
+
+    const gallery = globalThis.SF?.Gallery;
+
+    if (!gallery?.view || !this.isConnected) {
+      globalThis.location?.assign?.(this.viewSource);
+      return false;
+    }
+
+    gallery.view(files.map(file => file.viewerItem()), {
+      start,
+      counter: 'words',
+      opener: current => nameOf(files[current - 1] || this),
+      labels: {
+        previous: this.sfWord('viewer-previous'),
+        next: this.sfWord('viewer-next')
+      }
+    });
+    return true;
   } // retry {id}: the host sends the file again and sets the state.
 
 
   handleRetry(event) {
     event?.preventDefault?.();
     if (!this.disabled) this.request('retry', 'retry');
-  } // detach {id}: the host removes the file; the preview only asks.
+  } // detach {id}: the host removes the file; the preview only asks. «×» takes
+  // a file out of a draft or a field at once -- the page offers «Вернуть» in
+  // its notice (C25); the trash of a stored file asks first (C149 (8)).
 
 
   handleRemove(event) {
     event?.preventDefault?.();
-    if (!this.disabled) this.request('detach', 'remove');
+    if (this.disabled) return;
+
+    if (!this.stored) {
+      this.request('detach', 'remove');
+      return;
+    }
+
+    this._asking = true;
+    this.requestComponentUpdate('ask');
+    this.whenRendered?.(() => {
+      const answer = this.querySelector('.sf-file-preview-question');
+      customElements.whenDefined('sf-confirm').then(() => requestAnimationFrame(() => {
+        (answer?.querySelector('button') || answer)?.focus?.({
+          preventScroll: true
+        });
+      }));
+    }, {
+      next: true
+    });
+  } // The answer to «Удалить «<имя>»?»: yes asks the page to erase the file
+  // (detach with action delete); either way the question goes and the focus
+  // comes back to the trash button.
+
+
+  handleAnswer(event) {
+    event?.stopPropagation?.();
+    const accepted = Boolean(event?.detail?.accepted);
+    event?.preventDefault?.();
+    this._asking = false;
+    if (accepted) this.request('detach', 'delete');
+    this.requestComponentUpdate('answer');
+    this.whenRendered?.(() => {
+      this.querySelector('[data-action="delete"]')?.focus?.({
+        preventScroll: true
+      });
+    }, {
+      next: true
+    });
+  } // ── the name cut in the middle (C149 (2)) ──
+
+
+  afterRender() {
+    this.fitName();
+
+    if (typeof ResizeObserver === 'function' && !this._fitObserver) {
+      this._fitObserver = new ResizeObserver(() => this.fitName()); // A face that arrives later changes the name's width, not its box.
+
+      globalThis.document?.fonts?.ready?.then?.(() => this.fitName(true));
+    }
+
+    const name = this.querySelector('.sf-file-preview-name');
+
+    if (this._fitObserver && name !== this._fitObserved) {
+      if (this._fitObserved) this._fitObserver.unobserve(this._fitObserved);
+      if (name) this._fitObserver.observe(name);
+      this._fitObserved = name;
+    }
+  }
+
+  onDisconnected() {
+    super.onDisconnected?.();
+    this._fitObserver?.disconnect();
+    this._fitObserver = null;
+    this._fitObserved = null;
+  } // Draws the whole name; when it needs more lines than its view gives (two in
+  // a row, one in a chip or a tile), draws the longest head that fits, an
+  // ellipsis and the tail with the extension, broken by words as the whole.
+
+
+  fitName(force = false) {
+    const name = this.querySelector('.sf-file-preview-name');
+    const fit = name?.querySelector('.sf-file-preview-fit');
+    if (!name || !fit || !name.isConnected) return;
+    const full = String(this.fileName ?? '');
+    const width = name.clientWidth;
+    if (!force && this._fitKey === `${full}|${width}` && name.hasAttribute('data-fitted') === Boolean(this._fitCut)) return;
+    name.removeAttribute('data-fitted');
+    fit.replaceChildren();
+    this._fitKey = `${full}|${width}`;
+    this._fitCut = false;
+    if (!width || this.overflows(name) === false) return;
+    const tail = full.slice(-KEPT_TAIL);
+    const head = full.slice(0, -KEPT_TAIL);
+    if (!head) return;
+    name.setAttribute('data-fitted', '');
+
+    const draw = length => {
+      const shown = `${head.slice(0, length).replace(/[\s_.\-–—/+]+$/u, '')}…${tail}`;
+      fit.replaceChildren(...shown.split(JOINT).flatMap((part, index) => index ? [document.createElement('wbr'), document.createTextNode(part)] : [document.createTextNode(part)]));
+    };
+
+    let low = 0;
+    let high = head.length;
+
+    while (low < high) {
+      const middle = Math.ceil((low + high) / 2);
+      draw(middle);
+      if (this.overflows(name)) high = middle - 1;else low = middle;
+    }
+
+    draw(low);
+    this._fitCut = true;
+  } // The name takes more room than its lines (the clamp hides the rest).
+
+
+  overflows(name) {
+    return name.scrollHeight > name.clientHeight + 1 || name.scrollWidth > name.clientWidth + 1;
   } // The detail is data only (§8): the id, and for the old names' listeners
   // the action and the file (detail-adds rows of aliases.json).
 
@@ -1063,6 +1393,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   nameParts: () => (/* binding */ nameParts),
 /* harmony export */   renderFilePreviewTemplate: () => (/* binding */ renderFilePreviewTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
@@ -1070,21 +1401,24 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
- // The download and remove buttons stand on the step of the name beside them,
-// size 1 (C103: one line, one step -- text 1, button size 1, 40 with a 24
-// icon; docs precheck FP-06: they were 1/2, 32 beside the 16 px name).
+ // The actions stand on the step of the name beside them (C103: one line, one
+// step): size 1 (40, icon 24) in a row; size 1/2 (32) in a chip and a tile,
+// whose name is a step smaller (C149 (1)). Removing a file from a draft or a
+// form field is «×» «Убрать <имя>»; erasing a stored file is the trash
+// «Удалить <имя>», asked first (C149 (8)).
 
 function renderAction({
   icon,
   label,
   disabled,
   action,
+  size,
   onClick
 }) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
       type="button"
-      class="sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1"
+      class="sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${size}"
       data-action=${action}
       ?disabled=${disabled}
       aria-label=${label}
@@ -1104,42 +1438,64 @@ function nameParts(name) {
   return parts.map((part, index) => index ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<wbr>${part}` : part);
 } // Only the leading visual, named by the file: the image, or the extension in a
 // tile (the type's icon when the name has none). A link when the file has an
-// address, so a list row opens it the way the record does.
-
+// address, so a list row opens it the way the record does. For a table cell.
 
 function renderCompact(context) {
-  const visual = context.isImage ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-file-preview-thumbnail" src=${context.imageUrl || context.href} alt=${context.fileName}>` : context.extension ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-extension" aria-hidden="true">${context.extension}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`;
+  const visual = context.picture ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-file-preview-thumbnail" src=${context.picture} alt=${context.fileName}>` : context.extension ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-extension" aria-hidden="true">${context.extension}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`;
   const classes = ['sf-file-preview', 'sf-file-preview--compact', context.rootClass].filter(Boolean).join(' ');
-  const name = context.isImage ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.fileName;
+  const name = context.picture ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.fileName;
   return context.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${context.href} target=${context.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${context.fileName}
-              aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} title=${context.fileName} role=${context.isImage ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'img'}
+              aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} title=${context.fileName} role=${context.picture ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'img'}
               aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></span>`;
-} // The name: a link to the file when it is there (C51: the name is a link), a
-// line of text while it uploads or after it failed. Two lines at most, then an
-// ellipsis; the whole name in the tooltip and for a screen reader (C88). The
-// type and the size follow it for a screen reader only (C51: «имя, тип,
-// размер», the unit as a word); the eye reads the size line under it.
+} // The leading visual (C149 (3), (4)): the picture the host gave (image-url,
+// for any file; an image's own address), else the glyph of the file's kind in
+// the grey tile. Over a picture of a file that is not an image the type
+// stands in a small corner badge; a video adds the play sign and its length.
+
+
+function renderHolder(context) {
+  if (!context.picture) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-holder"><i class="sf-icon" aria-hidden="true">${context.icon}</i></span>`;
+  }
+
+  const badge = context.fileKind === 'video' ? context.duration : context.fileKind === 'image' ? '' : context.extension;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-holder sf-file-preview-holder--picture">
+    <img class="sf-file-preview-thumbnail" src=${context.picture} alt="" decoding="async">
+    ${context.fileKind === 'video' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-play" aria-hidden="true"><i class="sf-icon">play_circle</i></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-badge" aria-hidden="true">${badge}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </span>`;
+} // The name: a link to the file when it is there (C51; C149 (5): a picture, a
+// PDF or a video opens the viewer, anything else downloads), a line of text
+// while it uploads or after it failed. Its whole text breaks by words; when it
+// does not fit its lines (two in a row, one in a chip or a tile) the element
+// cuts it in the middle and keeps the tail with the extension (C149 (2)): the
+// cut text is drawn in the fit span, the whole name stays in the tooltip and,
+// with the type, the size and the date, for a screen reader (C88, C51).
 
 
 function renderName(context) {
-  const said = context.said ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-said">${context.said}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const inner = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-full" aria-hidden="true">${nameParts(context.fileName)}</span><span
+    class="sf-file-preview-fit" aria-hidden="true"></span><span class="sf-file-preview-said">${context.fileName}${context.said}</span>`;
 
   if (context.linked) {
+    const viewing = context.viewable;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
       class="sf-file-preview-name"
       href=${context.href}
-      download=${context.download ? context.fileName : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      target=${!context.download && context.target ? context.target : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      rel=${!context.download && context.target === '_blank' ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      download=${!viewing && context.download ? context.fileName : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      target=${!viewing && !context.download && context.target ? context.target : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      rel=${!viewing && !context.download && context.target === '_blank' ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       title=${context.fileName}
+      data-lines=${context.lines}
       @click=${context.onOpen}
-    >${nameParts(context.fileName)}${said}</a>`;
+    >${inner}</a>`;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-name" title=${context.fileName}>${nameParts(context.fileName)}${said}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-name" title=${context.fileName} data-lines=${context.lines}>${inner}</span>`;
 } // The line under the name, by the state (C81: one family with the upload
-// core's rows): the size; while uploading the upload row's bar with its per
-// cent at the end; after a failure the reason in the error colour.
+// core's rows): type, size and date (C149 (7)); while uploading the upload
+// row's bar with its per cent at the end; after a failure the reason in the
+// error colour.
 
 
 function renderLine(context) {
@@ -1158,19 +1514,38 @@ function renderLine(context) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-error">${context.words.failed}</span>`;
   }
 
-  return context.fileSize ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-size" aria-hidden=${context.said ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${context.fileSize}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return context.meta ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-meta sf-file-preview-size" aria-hidden="true" title=${context.view === 'tile' ? context.meta : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${context.meta}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // Erasing a stored file is asked in place (C149 (8), C25: a question where
+// the removal cannot be taken back): sf-confirm under the row, the danger
+// answer «Удалить», «Отмена» quiet.
+
+
+function renderQuestion(context) {
+  if (!context.asking) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-confirm
+    class="sf-file-preview-question"
+    question=${context.words.deleteQuestion}
+    accept-text=${context.words.deleteText}
+    status="danger"
+    size="1/2"
+    confirm-id=${context.fileId}
+    @sf-confirm-answer=${context.onAnswer}
+  ></sf-confirm>`;
 }
 
 function renderFilePreviewTemplate(context) {
   if (context.compact) return renderCompact(context);
   const state = context.state;
-  const rootClasses = ['sf-file-preview', context.surface ? 'sf-file-preview--surface' : '', state !== 'ready' ? `sf-file-preview--${state}` : '', context.disabled ? 'disabled' : '', context.rootClass].filter(Boolean); // A file not there yet (uploading) or not there at all (failed) has nothing
-  // to download; it can still be taken away.
+  const view = context.view;
+  const rootClasses = ['sf-file-preview', `sf-file-preview--${view}`, context.surface && view === 'row' ? 'sf-file-preview--surface' : '', state !== 'ready' ? `sf-file-preview--${state}` : '', context.disabled ? 'disabled' : '', context.rootClass].filter(Boolean); // A file not there yet (uploading) or not there at all (failed) has nothing
+  // to download; it can still be taken away. A chip is an attachment: it
+  // offers only «×» (C149 (1)).
 
-  const download = context.downloadAction && state === 'ready';
+  const download = context.downloadAction && state === 'ready' && view !== 'chip';
   const hasActions = context.actions && (download || context.removeAction);
   const retry = state === 'error' && !context.disabled;
   const grouped = hasActions || retry;
+  const size = view === 'row' ? '1' : '1/2';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses.join(' ')}
@@ -1181,9 +1556,7 @@ function renderFilePreviewTemplate(context) {
       aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-busy=${state === 'uploading' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
-      <span class="sf-file-preview-holder">
-        ${context.isImage ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-file-preview-thumbnail" src=${context.imageUrl || context.href} alt="">` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`}
-      </span>
+      ${renderHolder(context)}
       <span class="sf-file-preview-main">
         ${renderName(context)}
         ${renderLine(context)}
@@ -1192,7 +1565,7 @@ function renderFilePreviewTemplate(context) {
           <span class="sf-file-preview-actions">
             ${retry ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
                 class="sf-file-preview-retry"
-                size="1"
+                size=${size}
                 height="low"
                 appearance="ghost"
                 scheme="primary"
@@ -1208,17 +1581,20 @@ function renderFilePreviewTemplate(context) {
     label: context.downloadLabel,
     disabled: context.disabled,
     action: 'download',
+    size,
     onClick: context.onDownload
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${hasActions && context.removeAction ? renderAction({
-    icon: 'delete',
+    icon: context.stored ? 'delete' : 'close',
     label: context.removeLabel,
-    disabled: context.disabled,
-    action: 'remove',
+    disabled: context.disabled || context.asking,
+    action: context.stored ? 'delete' : 'remove',
+    size,
     onClick: context.onRemove
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           </span>
         ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${renderQuestion(context)}
     </div>
   `;
 }
@@ -1352,21 +1728,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.3.0","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.4.1","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "ba7a8d52b29c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"File Preview","runtime":{"aria-label":"File","download-label":"Download {name}","remove-label":"Remove {name}","uploading-label":"Uploading {name}","error-text":"Not uploaded","error-line":"Not uploaded: {message}","retry-text":"Retry","retry-label":"Retry {name}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"File Preview","runtime":{"aria-label":"File","download-label":"Download {name}","remove-label":"Remove {name}","uploading-label":"Uploading {name}","error-text":"Not uploaded","error-line":"Not uploaded: {message}","retry-text":"Retry","retry-label":"Retry {name}","delete-label":"Delete {name}","delete-question":"Delete “{name}”?","delete-text":"Delete","viewer-previous":"Previous file","viewer-next":"Next file"}}');
 
 /***/ },
 
 /***/ "66b9acf74a27"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Предпросмотр файла","runtime":{"aria-label":"Файл","download-label":"Скачать {name}","remove-label":"Удалить {name}","uploading-label":"Загрузка {name}","error-text":"Не загрузился","error-line":"Не загрузился: {message}","retry-text":"Повторить","retry-label":"Повторить {name}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Предпросмотр файла","runtime":{"aria-label":"Файл","download-label":"Скачать {name}","remove-label":"Убрать {name}","uploading-label":"Загрузка {name}","error-text":"Не загрузился","error-line":"Не загрузился: {message}","retry-text":"Повторить","retry-label":"Повторить {name}","delete-label":"Удалить {name}","delete-question":"Удалить «{name}»?","delete-text":"Удалить","viewer-previous":"Предыдущий файл","viewer-next":"Следующий файл"}}');
 
 /***/ }
 

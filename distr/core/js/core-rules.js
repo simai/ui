@@ -306,7 +306,7 @@ SF.RuleLoader['featured-icon'] = {
   regex: /class\s*=\s*["'][^"']*\bsf-featured-icon\b/i,
   type: 'component',
   css: true,
-  js: false
+  js: true
 };
 
 /***/ },
@@ -3596,6 +3596,9 @@ SF.RuleLoader['cl-accordion'] = {
   }, {
     name: 'cl-badge',
     lazy: true
+  }, {
+    name: 'cl-button',
+    lazy: true
   }]
 };
 
@@ -3663,6 +3666,14 @@ SF.RuleLoader['cl-avatar-group'] = {
   }, // The placeholder's glyph is an sf-icon element (avatar study AV-8).
   {
     name: 'cl-icon'
+  }, // «+N» opens the list of everyone in an sf-popover (C152 (6)), fetched when a group has one.
+  {
+    name: 'cl-popover',
+    lazy: true
+  }, // A member's name in a tooltip (C152 (7)), fetched when a group draws names.
+  {
+    name: 'tooltip',
+    lazy: true
   }]
 };
 
@@ -3684,6 +3695,10 @@ SF.RuleLoader['cl-avatar'] = {
   }, // The placeholder's glyph is an sf-icon element, so its name reaches the icon font request (avatar study AV-8).
   {
     name: 'cl-icon'
+  }, // The name over a link or button avatar (C152 (7)): the tooltip composition, fetched when such an avatar draws.
+  {
+    name: 'tooltip',
+    lazy: true
   }]
 }; // The badge sheet places a count or a dot on the avatar
 // (simai/ui-source#12).
@@ -4306,6 +4321,14 @@ SF.RuleLoader['cl-file-preview'] = {
   {
     name: 'cl-button',
     lazy: true
+  }, // The page's full-screen viewer, SF.Gallery.view, asked for when a picture, a PDF or a video is opened (decision C149 (6)).
+  {
+    name: 'cl-gallery',
+    lazy: true
+  }, // «Удалить «<имя>»?» before a stored file is erased (decision C149 (8)).
+  {
+    name: 'cl-confirm',
+    lazy: true
   }]
 };
 
@@ -4345,9 +4368,13 @@ SF.RuleLoader['cl-gallery'] = {
   js: true,
   css: true,
   relation: [{
-    name: 'cl-slider'
+    name: 'cl-button-icon'
   }, {
-    name: 'cl-modal'
+    name: 'cl-button-close'
+  }, {
+    name: 'figure'
+  }, {
+    name: 'checkbox'
   }]
 };
 
@@ -4863,7 +4890,8 @@ SF.RuleLoader['cl-list-description'] = {
 
 // Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The feed's frame draws two Smart controls -- «Show earlier» is an
-// sf-button, «To the latest» an sf-button-icon -- and a tag the feed renders is a
+// sf-button, «To the latest» an sf-button-icon -- and its empty state is an
+// sf-empty-state; a tag the feed renders is a
 // tag it fetches. The announcer is visually hidden with the Framework's sr-only
 // utility, which a class scan can miss on a node that starts empty, so it comes
 // with the component. What an entry looks like is the host's renderer; a host
@@ -4878,6 +4906,8 @@ SF.RuleLoader['cl-list-feed'] = {
     name: 'cl-button'
   }, {
     name: 'cl-button-icon'
+  }, {
+    name: 'cl-empty-state'
   }, {
     name: 'sr-only/default'
   }]
@@ -8314,7 +8344,7 @@ SF.RuleLoader['grid-row/xxl'] = new RegExp("^(?:xxl:(?:grid-row-(?:auto|span-(?:
 /***/ "1160b0f9a4c2"
 () {
 
-SF.RuleLoader['grid-template-columns/default'] = new RegExp("^(?:grid-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))(?![\\s\\S])");
+SF.RuleLoader['grid-template-columns/default'] = new RegExp("^(?:grid-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|fit(?:-(?:f(?:0|2|6)|g(?:0|2|6)))?|none|subgrid))(?![\\s\\S])");
 
 /***/ },
 

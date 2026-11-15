@@ -2,6 +2,94 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "524cdaa09638"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   moveSection: () => (/* binding */ moveSection),
+/* harmony export */   sectionClock: () => (/* binding */ sectionClock),
+/* harmony export */   sectionHeight: () => (/* binding */ sectionHeight),
+/* harmony export */   stopSectionMotion: () => (/* binding */ stopSectionMotion)
+/* harmony export */ });
+// The height motion of an accordion section (owner decision C154 (4)): the
+// section grows or shrinks to its new height on the clock of the toggle and
+// the check box (C66, C121) -- 200 ms, --sf-ease-move -- and its marker
+// turns on the same clock. The clock is the class sheet's: the section's
+// transition on block-size, which nothing else animates, so a page that
+// changes --sf-accordion--duration or asks for reduced motion (the sheet
+// sets it to none) changes the motion here too. Shared by the class runtime
+// and sf-accordion; stateless, so each bundle may carry its own copy.
+const running = new WeakMap();
+
+function seconds(value) {
+  const first = String(value || '').split(',')[0].trim();
+  if (!first) return 0;
+  const number = parseFloat(first);
+  if (!Number.isFinite(number)) return 0;
+  return first.endsWith('ms') ? number : number * 1000;
+} // The section's clock: [duration in ms, easing], or null when it does not
+// move -- reduced motion, a zero duration, or no layout (a hidden page).
+
+
+function sectionClock(section) {
+  if (!section || typeof getComputedStyle !== 'function' || typeof section.animate !== 'function') return null;
+  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return null;
+  const style = getComputedStyle(section);
+  const properties = String(style.transitionProperty || '').split(',').map(one => one.trim());
+  const at = properties.findIndex(one => one === 'block-size' || one === 'height' || one === 'all');
+  if (at < 0) return null;
+  const durations = String(style.transitionDuration || '').split(',');
+  const easings = String(style.transitionTimingFunction || '').split(/,(?![^(]*\))/u);
+  const duration = seconds(durations[at] ?? durations[0]);
+  if (!(duration > 0)) return null;
+  return [duration, (easings[at] ?? easings[0] ?? 'ease').trim()];
+} // The height the section stands at now, mid-motion included.
+
+function sectionHeight(section) {
+  return section?.getBoundingClientRect?.().height ?? 0;
+} // Stops a motion still running on the section (a second press before the
+// first ended): the next one starts from where this one stood.
+
+function stopSectionMotion(section) {
+  const animation = running.get(section);
+  if (!animation) return;
+  running.delete(section);
+  animation.onfinish = null;
+  animation.cancel();
+} // Moves the section from the height it stood at to the one it stands at now.
+// `done` runs when the motion ends (not when a newer one replaces it); it is
+// how a closing section keeps its content in view until it has shrunk.
+// Answers whether anything moves; without motion `done` runs at once.
+
+function moveSection(section, from, done) {
+  const clock = sectionClock(section);
+  const to = sectionHeight(section);
+
+  if (!clock || !(from >= 0) || Math.abs(to - from) < 1) {
+    done?.();
+    return false;
+  }
+
+  const [duration, easing] = clock;
+  const animation = section.animate({
+    blockSize: [`${from}px`, `${to}px`]
+  }, {
+    duration,
+    easing
+  });
+  running.set(section, animation);
+
+  animation.onfinish = () => {
+    if (running.get(section) === animation) running.delete(section);
+    done?.();
+  };
+
+  return true;
+}
+
+/***/ },
+
 /***/ "0eb897441700"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -14,12 +102,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0f6c0abdc39e");
-/* harmony import */ var _sections_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bb3926f81811");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c8becad87ee8");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f733ebfdf5a9");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7b406578f80a");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("43114319d847");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ae80b847db92");
+/* harmony import */ var _component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("524cdaa09638");
+/* harmony import */ var _sections_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bb3926f81811");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c8becad87ee8");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f733ebfdf5a9");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7b406578f80a");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("43114319d847");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ae80b847db92");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -46,23 +135,39 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8):
 // the settings are attributes and properties made by
 // core/js/element-manifest.js, open, close and toggle answer outcomes, and the
 // old event name sf-accordion:toggle is a dated alias of sf-accordion-toggle.
 
-const AccordionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const AccordionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
 const HEADING_LEVELS = ['2', '3', '4', '5', '6']; // open('main') and open({id: 'main'}) both name a section (§4.4).
 
-const sectionArgument = value => value && typeof value === 'object' ? value.id : value;
+const sectionArgument = value => value && typeof value === 'object' ? value.id : value; // A closing section's panel stays drawn while it shrinks (the class sheet's
+// mark, component/accordion/js/_accordion.js).
+
+
+const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // The section the address names (C154 (5)): the fragment, without its #.
+
+function addressId() {
+  const hash = globalThis.location?.hash || '';
+  if (hash.length < 2) return '';
+
+  try {
+    return decodeURIComponent(hash.slice(1));
+  } catch {
+    return hash.slice(1);
+  }
+}
 
 class SfSmartAccordion extends AccordionElement {
   static get props() {
@@ -80,15 +185,16 @@ class SfSmartAccordion extends AccordionElement {
       },
       size: {
         default: '',
-        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_4__.ACCORDION_SIZES
+        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_5__.ACCORDION_SIZES
       },
+      // Lines by default (owner decision C154 (2)).
       appearance: {
-        default: 'default',
-        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_4__.ACCORDION_APPEARANCES
+        default: _sections_mjs__WEBPACK_IMPORTED_MODULE_5__.ACCORDION_DEFAULT_APPEARANCE,
+        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_5__.ACCORDION_APPEARANCES
       },
       marker: {
         default: 'chevron',
-        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_4__.ACCORDION_MARKERS
+        values: _sections_mjs__WEBPACK_IMPORTED_MODULE_5__.ACCORDION_MARKERS
       },
       // One section is a plain section (simai/ui-source#19, #29); `toggle`
       // keeps it a disclosure -- a list that fills in later.
@@ -101,6 +207,17 @@ class SfSmartAccordion extends AccordionElement {
         attribute: 'heading-level',
         default: '3',
         values: HEADING_LEVELS
+      },
+      // A section's id is its address (C154 (5)).
+      link: {
+        type: Boolean,
+        default: false
+      },
+      // «Развернуть все / Свернуть все» over five sections or more (C154 (7)).
+      expandAll: {
+        attribute: 'expand-all',
+        type: Boolean,
+        default: false
       },
       rootClass: {
         default: ''
@@ -116,18 +233,36 @@ class SfSmartAccordion extends AccordionElement {
     // open flag each section carries.
 
     this._openState = new Map();
-    this._childSections = []; // A value set as a property before the element was defined -- a lit
+    this._childSections = []; // Heights the changed sections stood at before a drawing, by id: the
+    // drawing moves them from there (C154 (4)).
+
+    this._moving = null; // The address is read after the first drawing, then on each hashchange.
+
+    this._addressPending = true;
+    this._scrollTo = ''; // A value set as a property before the element was defined -- a lit
     // `.items` binding on a tag the loader had not upgraded yet -- is an own
     // property that would hide the accessor; it is taken through it.
 
     if (Object.prototype.hasOwnProperty.call(this, 'items')) {
       const early = this.items;
       delete this.items;
-      this._items = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_4__.normaliseSections)(early);
+      this._items = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseSections)(early);
     }
 
     this.addEventListener('click', this.onClick);
-    this.addEventListener('keydown', this.onKeydown);
+    this.addEventListener('keydown', this.onKeydown); // Find-in-page found text in a closed panel (C154 (6)).
+
+    this.addEventListener('beforematch', this.onBeforeMatch, true);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    globalThis.addEventListener?.('hashchange', this.onHashChange);
+  }
+
+  disconnectedCallback() {
+    globalThis.removeEventListener?.('hashchange', this.onHashChange);
+    super.disconnectedCallback?.();
   }
 
   attributeChangedCallback(name, previous, next) {
@@ -144,13 +279,14 @@ class SfSmartAccordion extends AccordionElement {
     if (!first) return;
     Array.from(this.children).filter(child => child.localName === 'details').forEach((details, index) => {
       const summary = details.querySelector(':scope > summary');
-      const section = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_4__.normaliseSection)({
+      const section = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseSection)({
         id: details.dataset.id || details.id,
         title: summary?.textContent.replace(/\s+/gu, ' ').trim() || '',
         open: details.open,
         disabled: details.hasAttribute('data-disabled'),
         icon: details.dataset.icon,
-        badge: details.dataset.badge
+        badge: details.dataset.badge,
+        summary: details.dataset.summary
       }, index); // A local name: the slot map is the element's own (§7.1.1, #41).
 
       section.slot = `sf-accordion-child-${index}`;
@@ -166,11 +302,11 @@ class SfSmartAccordion extends AccordionElement {
 
   get items() {
     if (this._items !== undefined) return this._items;
-    return (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_4__.normaliseSections)(this.getAttribute('items'));
+    return (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseSections)(this.getAttribute('items'));
   }
 
   set items(next) {
-    this._items = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_4__.normaliseSections)(next);
+    this._items = (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseSections)(next);
     this.requestComponentUpdate('items');
   }
 
@@ -183,6 +319,13 @@ class SfSmartAccordion extends AccordionElement {
 
   get expanded() {
     return this.openIds;
+  } // An accordion inside a section draws lines, whatever its appearance
+  // (C154 (8)); the class sheet holds the same for class markup.
+
+
+  get drawnAppearance() {
+    if (this.parentElement?.closest?.('.sf-accordion-content')) return 'flush';
+    return this.appearance || _sections_mjs__WEBPACK_IMPORTED_MODULE_5__.ACCORDION_DEFAULT_APPEARANCE;
   } // The one section that stands alone is a plain section: no toggle.
 
 
@@ -194,7 +337,7 @@ class SfSmartAccordion extends AccordionElement {
   get openIds() {
     const sections = this.sections;
     if (this.isStatic) return sections.map(section => section.id);
-    return [...(0,_sections_mjs__WEBPACK_IMPORTED_MODULE_4__.openSections)(sections, this._openState, this.single)];
+    return [...(0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.openSections)(sections, this._openState, this.single)];
   }
 
   isOpen(id) {
@@ -222,9 +365,13 @@ class SfSmartAccordion extends AccordionElement {
   // group reports the one it closes. A disabled section, a section that is
   // already so, and the single section do nothing. Answers an outcome:
   // applied, or refused with unknown, static, disabled or already.
+  // The sections move to their new height (C154 (4)) unless motion is false:
+  // the browser's find shows the text at once, an address opens in place.
 
 
-  setOpen(id, open, source = 'method') {
+  setOpen(id, open, source = 'method', {
+    motion = true
+  } = {}) {
     const section = this.section(id);
     if (!section) return {
       outcome: 'refused',
@@ -250,11 +397,47 @@ class SfSmartAccordion extends AccordionElement {
 
     this._openState.set(section.id, Boolean(open));
 
-    const after = new Set(this.openIds);
-    this.requestComponentUpdate('open');
-    const changed = this.sections.filter(one => before.has(one.id) !== after.has(one.id)); // The section asked for first, then the one single mode closed.
+    this.commitOpen(before, source, motion, section.id);
+    return {
+      outcome: 'applied'
+    };
+  } // «Развернуть все» opens every section that can open, «Свернуть все» closes
+  // them, when all are open (C154 (7)). A disabled section stays as it is.
 
-    changed.sort((a, b) => a.id === section.id ? -1 : b.id === section.id ? 1 : 0); // sf-accordion-toggle, then its old name sf-accordion:toggle with the same
+
+  toggleAll(source = 'user') {
+    if (this.isStatic || this.single) return {
+      outcome: 'refused',
+      reason: this.isStatic ? 'static' : 'single'
+    };
+    const enabled = this.sections.filter(one => !one.disabled);
+    const open = !enabled.every(one => this.isOpen(one.id));
+    const before = new Set(this.openIds);
+    enabled.forEach(one => this._openState.set(one.id, open));
+    this.commitOpen(before, source, true, '');
+    return {
+      outcome: 'applied'
+    };
+  } // After a change of the open sections: the drawing, the motion of each
+  // section that changed and its event, the one asked for first.
+
+
+  commitOpen(before, source, motion, first) {
+    const after = new Set(this.openIds);
+    const changed = this.sections.filter(one => before.has(one.id) !== after.has(one.id));
+
+    if (motion) {
+      this._moving = this._moving || new Map();
+
+      for (const one of changed) {
+        const article = this.sectionElement(one.id);
+        if (article && !this._moving.has(one.id)) this._moving.set(one.id, (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.sectionHeight)(article));
+      }
+    }
+
+    this.requestComponentUpdate('open'); // The section asked for first, then the one single mode closed.
+
+    changed.sort((a, b) => a.id === first ? -1 : b.id === first ? 1 : 0); // sf-accordion-toggle, then its old name sf-accordion:toggle with the same
     // detail (aliases.json, until 2026-12-01).
 
     for (const one of changed) {
@@ -265,12 +448,77 @@ class SfSmartAccordion extends AccordionElement {
         section: one
       });
     }
+  } // The drawn section of this element (not of an accordion nested in it).
 
-    return {
-      outcome: 'applied'
-    };
-  } // The header buttons of this element, not of an accordion nested inside it.
 
+  sectionElement(id) {
+    return Array.from(this.querySelectorAll('article.sf-accordion[data-sf-accordion-id]')).find(article => article.dataset.sfAccordionId === String(id) && article.closest('sf-accordion') === this) || null;
+  } // The drawing is in: each section that changed moves from the height it
+  // stood at to its new one; a closing one keeps its panel drawn until then.
+
+
+  renderTemplateResult(templateResult) {
+    const result = super.renderTemplateResult(templateResult);
+    const moving = this._moving;
+    this._moving = null;
+    moving?.forEach((from, id) => {
+      const article = this.sectionElement(id);
+      if (!article) return;
+      (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.stopSectionMotion)(article);
+      article.removeAttribute(CLOSING_ATTRIBUTE);
+      const moved = (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.moveSection)(article, from, () => article.removeAttribute(CLOSING_ATTRIBUTE));
+      if (moved && !this.isOpen(id)) article.setAttribute(CLOSING_ATTRIBUTE, '');
+    });
+    return result;
+  }
+
+  afterRender(changed) {
+    const result = super.afterRender(changed);
+    if (typeof changed !== 'function') this.followAddress();
+    return result;
+  } // With link (C154 (5)): the section the address names opens, in place, and
+  // the page scrolls to it; read after the first drawing and on hashchange.
+
+
+  followAddress() {
+    if (this._addressPending) {
+      this._addressPending = false;
+      const id = addressId();
+
+      if (this.link && id && this.section(id)) {
+        if (!this.isOpen(id)) this.setOpen(id, true, 'method', {
+          motion: false
+        });
+        this._scrollTo = id;
+      }
+    }
+
+    if (!this._scrollTo || this._moving) return;
+    const article = this.sectionElement(this._scrollTo);
+    if (!article || !this.isOpen(this._scrollTo) && !this.isStatic) return;
+    this._scrollTo = '';
+    article.scrollIntoView?.({
+      block: 'start'
+    });
+    article.querySelector('.sf-accordion-trigger')?.focus?.({
+      preventScroll: true
+    });
+  }
+
+  onHashChange = () => {
+    this._addressPending = true;
+    this.followAddress();
+  }; // The browser found the text in a closed panel and shows it (C154 (6)):
+  // the section opens as a press would, without motion.
+
+  onBeforeMatch = event => {
+    const article = event.target?.closest?.('article.sf-accordion[data-sf-accordion-id]');
+    if (!article || article.closest('sf-accordion') !== this) return;
+    const id = article.dataset.sfAccordionId;
+    if (!this.isOpen(id)) this.setOpen(id, true, 'user', {
+      motion: false
+    });
+  }; // The header buttons of this element, not of an accordion nested inside it.
 
   triggers() {
     return Array.from(this.querySelectorAll('.sf-accordion-trigger[data-sf-accordion-section]')).filter(trigger => trigger.closest('sf-accordion') === this && trigger.localName === 'button');
@@ -286,10 +534,27 @@ class SfSmartAccordion extends AccordionElement {
   }
 
   onClick = event => {
+    const all = event.target?.closest?.('.sf-accordion-all-button');
+
+    if (all && all.closest('sf-accordion') === this) {
+      this.toggleAll('user');
+      return;
+    }
+
     const trigger = this.ownTrigger(event.target);
     if (!trigger || trigger.disabled) return;
     const id = trigger.dataset.sfAccordionSection;
-    this.setOpen(id, !this.isOpen(id), 'user');
+    const result = this.setOpen(id, !this.isOpen(id), 'user'); // With link, opening writes the section's address, without a new entry
+    // in the history (C154 (5)).
+
+    if (this.link && result.outcome === 'applied' && this.isOpen(id)) {
+      try {
+        const url = new URL(globalThis.location.href);
+        url.hash = id;
+        globalThis.history?.replaceState?.(globalThis.history.state, '', url);
+      } catch {// An address the page cannot write (a sandboxed frame) is left as it is.
+      }
+    }
   }; // Enter and Space are the button's own. The arrows walk the headers, Home
   // and End go to the first and the last (WAI-ARIA accordion pattern); a
   // disabled header is passed over, as it takes no focus.
@@ -323,7 +588,16 @@ class SfSmartAccordion extends AccordionElement {
       single: this.single,
       isStatic: this.isStatic,
       size: this.size,
-      appearance: this.appearance,
+      appearance: this.drawnAppearance,
+      link: Boolean(this.link),
+      expandAllShown: (0,_sections_mjs__WEBPACK_IMPORTED_MODULE_5__.showsExpandAll)(sections, {
+        expandAll: this.expandAll,
+        single: this.single,
+        isStatic: this.isStatic
+      }),
+      allOpen: sections.filter(one => !one.disabled).every(one => open.has(one.id)),
+      expandAllText: this.sfWord('expandAll'),
+      collapseAllText: this.sfWord('collapseAll'),
       marker: this.marker,
       // The enum of the class sheet's levels; the property is the number.
       headingLevel: this.getProp('headingLevel'),
@@ -382,8 +656,9 @@ function renderContent(context, section) {
   if (section.slot && component?.hasSlotContent?.(section.slot)) return component.getSlotContent(section.slot);
   return section.content || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // What stands in the header: an icon before the title, the title, a badge
-// after it, then the class accordion's marker. The badge is tonal, grey (owner
-// decision C140): it took sf-badge's former default, the dark grey fill.
+// after it, a short summary at the end (C154 (3)), then the class
+// accordion's marker. The badge is tonal, grey (owner decision C140): it took
+// sf-badge's former default, the dark grey fill.
 
 
 function renderHeaderContent(context, section, open) {
@@ -392,6 +667,7 @@ function renderHeaderContent(context, section, open) {
     <span class="sf-accordion-title">${section.title}</span>
     ${section.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-accordion-badge" appearance="tonal" size=${_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.BADGE_SIZE[context.size] || '1/3'}
           line=${_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.BADGE_LINE[context.size] || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${section.badge}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${section.summary ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-accordion-summary">${section.summary}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.isStatic ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${(0,_sections_mjs__WEBPACK_IMPORTED_MODULE_2__.markerGlyph)(context.marker, open)}</i>`}
   `;
 }
@@ -407,14 +683,31 @@ function renderSection(context, section, index) {
   const header = context.isStatic ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-accordion-trigger" id=${triggerId} data-sf-accordion-static>${renderHeaderContent(context, section, true)}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button class="sf-accordion-trigger" type="button" id=${triggerId}
                    data-sf-accordion-section=${section.id}
                    aria-expanded=${open ? 'true' : 'false'} aria-controls=${panelId}
-                   ?disabled=${section.disabled}>${renderHeaderContent(context, section, open)}</button>`;
+                   ?disabled=${section.disabled}>${renderHeaderContent(context, section, open)}</button>`; // With link the section's id is its address (C154 (5)): #id opens it.
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <article class=${sectionClasses(context, section, open)} data-sf-accordion-init="1" data-sf-accordion-id=${section.id}>
+    <article class=${sectionClasses(context, section, open)} id=${context.link ? section.id : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+             data-sf-accordion-init="1" data-sf-accordion-id=${section.id}>
       <div class="sf-accordion-heading" role="heading" aria-level=${context.headingLevel}>${header}</div>
       <div class="sf-accordion-content" id=${panelId}
            role=${region ? 'region' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-labelledby=${region ? triggerId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           ?hidden=${!open}>${renderContent(context, section)}</div>
+           hidden=${open ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'until-found'}>${renderContent(context, section)}</div>
     </article>
+  `;
+} // «Развернуть все» over the sections (C154 (7)): a ghost button at the end of
+// the row, «Свернуть все» once every section that can open is open.
+
+
+function renderExpandAll(context) {
+  if (!context.expandAllShown) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const all = context.allOpen;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class="sf-accordion-all">
+      <sf-button class="sf-accordion-all-button" appearance="ghost" scheme="on-surface"
+                 size=${context.size || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                 icon-start=${all ? 'unfold_less' : 'unfold_more'}
+                 text=${all ? context.collapseAllText : context.expandAllText}></sf-button>
+    </div>
   `;
 } // The sections stand in a column as wide as the element: a flex column, not a
 // grid, whose auto track would widen to a long word and push the page
@@ -424,6 +717,7 @@ function renderSection(context, section, index) {
 function renderAccordionTemplate(context) {
   const flush = context.appearance === 'flush';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    ${renderExpandAll(context)}
     <div class=${joinClasses('sf-accordion-group', 'sf-smart-accordion', 'flex', 'flex-col', flush ? '' : 'gap-2', context.rootClass)}
          style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
          data-mode=${context.single ? 'single' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -487,15 +781,18 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ACCORDION_APPEARANCES: () => (/* binding */ ACCORDION_APPEARANCES),
+/* harmony export */   ACCORDION_DEFAULT_APPEARANCE: () => (/* binding */ ACCORDION_DEFAULT_APPEARANCE),
 /* harmony export */   ACCORDION_MARKERS: () => (/* binding */ ACCORDION_MARKERS),
 /* harmony export */   ACCORDION_SIZES: () => (/* binding */ ACCORDION_SIZES),
 /* harmony export */   BADGE_LINE: () => (/* binding */ BADGE_LINE),
 /* harmony export */   BADGE_SIZE: () => (/* binding */ BADGE_SIZE),
+/* harmony export */   EXPAND_ALL_FROM: () => (/* binding */ EXPAND_ALL_FROM),
 /* harmony export */   REGION_LIMIT: () => (/* binding */ REGION_LIMIT),
 /* harmony export */   markerGlyph: () => (/* binding */ markerGlyph),
 /* harmony export */   normaliseSection: () => (/* binding */ normaliseSection),
 /* harmony export */   normaliseSections: () => (/* binding */ normaliseSections),
-/* harmony export */   openSections: () => (/* binding */ openSections)
+/* harmony export */   openSections: () => (/* binding */ openSections),
+/* harmony export */   showsExpandAll: () => (/* binding */ showsExpandAll)
 /* harmony export */ });
 // The parts of sf-accordion that are about data, not the page: the shape a
 // section takes, from the items a host gives or from a <details> written in
@@ -506,14 +803,20 @@ __webpack_require__.r(__webpack_exports__);
 // default header, the look of a content page.
 const ACCORDION_SIZES = Object.freeze(['', '1/3', '1/2', '1', '2', '3']);
 // The class accordion's appearances: a filled surface, a hairline border, or
-// no fill and no radius with a line between sections.
+// no fill and no radius with a line between sections. Lines (flush) are the
+// default look (owner decision C154 (2)); the filled plates are the value
+// `default`, kept by that name.
 const ACCORDION_APPEARANCES = Object.freeze(['default', 'outline', 'flush']);
+const ACCORDION_DEFAULT_APPEARANCE = 'flush';
 // What marks a section open or closed: the class accordion's chevron, or its
 // plus and minus.
 const ACCORDION_MARKERS = Object.freeze(['chevron', 'plus-minus']);
 // More open panels than this, and a landmark for each would crowd the page
 // (WAI-ARIA accordion pattern): the panels stop being regions.
 const REGION_LIMIT = 6;
+// «Развернуть все / Свернуть все» stands over a list of this many sections or
+// more (owner decision C154 (7)); a shorter list is read at a glance.
+const EXPAND_ALL_FROM = 5;
 
 const text = (value) => (value === null || value === undefined ? '' : String(value));
 
@@ -539,6 +842,8 @@ function normaliseSection(item, index = 0) {
     disabled: Boolean(item.disabled),
     icon: text(item.icon).trim(),
     badge: text(item.badge).trim(),
+    // A short summary at the end of the header (C154 (3)): «Выбрано 2».
+    summary: text(item.summary).trim(),
   };
 }
 
@@ -566,6 +871,12 @@ function normaliseSections(items) {
     sections.push(section);
   });
   return sections;
+}
+
+// Whether the expand-all button stands over these sections (C154 (7)): the
+// setting is on, there are enough of them, and more than one may be open.
+function showsExpandAll(sections, {expandAll = false, single = false, isStatic = false} = {}) {
+  return Boolean(expandAll) && !single && !isStatic && sections.length >= EXPAND_ALL_FROM;
 }
 
 // Which sections are open: what the person or the host set, else what the
@@ -617,21 +928,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-accor
 /***/ "f733ebfdf5a9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.1.12","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"default"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"flush"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"link":{"type":"boolean","default":false},"expand-all":{"type":"boolean","default":false}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 
 /***/ "43114319d847"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Accordion"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Accordion","runtime":{"expandAll":"Expand all","collapseAll":"Collapse all"}}');
 
 /***/ },
 
 /***/ "ae80b847db92"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Аккордеон"}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Аккордеон","runtime":{"expandAll":"Развернуть все","collapseAll":"Свернуть все"}}');
 
 /***/ }
 

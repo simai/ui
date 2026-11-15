@@ -48,7 +48,7 @@
     --sf-alert-bar--padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--column-inset));
     --sf-alert-bar--gap: var(--sf-alert-bar-gap, var(--sf-space-1));
     --sf-alert-bar--icon-gap: var(--sf-space-1\/2);
-    --sf-alert-bar--between: var(--sf-space-1\/3);
+    --sf-alert-bar--between: var(--sf-gap--actions);
     /* Text to the actions when they stand under it (C115, the vertical
        standard): 12, phone 8. */
     --sf-alert-bar--under-gap: var(--sf-space-1\/2);
@@ -172,6 +172,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -217,6 +238,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -262,6 +304,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -307,6 +370,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -359,6 +443,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
+    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -374,6 +479,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
+    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -389,6 +515,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
+    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
@@ -404,6 +551,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
+    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
+    --sf-focus--color: var(--sf-focus);
   }
   /* The close cross (owner decision C112, R198): the notice's service glyph
      is the place's on-surface ink at 64 of the alpha scale's ink family
@@ -461,6 +629,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -506,6 +695,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -542,6 +752,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-link-hover: light-dark(var(--sf-warning-95), var(--sf-warning-25));
+    --sf-link-active: light-dark(var(--sf-warning-90), var(--sf-warning-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-warning-20));
@@ -557,6 +788,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-link-hover: light-dark(var(--sf-warning-95), var(--sf-warning-25));
+    --sf-link-active: light-dark(var(--sf-warning-90), var(--sf-warning-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-warning-20));
+    --sf-focus--color: var(--sf-focus);
   }
   /* The close cross (owner decision C112, R198): the notice's service glyph
      is the place's on-surface ink at 64 of the alpha scale's ink family
@@ -611,6 +863,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -656,6 +929,27 @@
     --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
     --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
     --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
+    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
+    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
+    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
+    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
+    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
+    --sf-place--outer-on-info-container: var(--sf-on-info-container);
+    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
+    --sf-place--outer-on-success-container: var(--sf-on-success-container);
+    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
+    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
+    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
+    --sf-place--outer-on-error-container: var(--sf-on-error-container);
+    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
+    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
+    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
+    --sf-place--outer-link: var(--sf-link);
+    --sf-place--outer-link-hover: var(--sf-link-hover);
+    --sf-place--outer-link-active: var(--sf-link-active);
+    --sf-place--outer-link-visited: var(--sf-link-visited);
+    --sf-place--outer-focus: var(--sf-focus);
+    --sf-place--outer-focus--color: var(--sf-focus--color);
     --sf-surface-place: var(--sf-alert-bar--fill);
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
@@ -692,6 +986,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-link-hover: light-dark(var(--sf-info-95), var(--sf-info-25));
+    --sf-link-active: light-dark(var(--sf-info-90), var(--sf-info-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
@@ -707,6 +1022,27 @@
     --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
     --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-link-hover: light-dark(var(--sf-info-95), var(--sf-info-25));
+    --sf-link-active: light-dark(var(--sf-info-90), var(--sf-info-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-focus--color: var(--sf-focus);
   }
   /* The close cross (owner decision C112, R198): the notice's service glyph
      is the place's on-surface ink at 64 of the alpha scale's ink family
@@ -838,7 +1174,7 @@
      is display: contents (set on the element) and the glyph's display is the
      icon sheet's, outside the layers, so the glyph is taken out of the flow
      and out of sight instead (it is aria-hidden). */
-  @container sf-alert-bar (width > 38rem) {
+  @container sf-alert-bar (width > 40rem) {
     .sf-alert-bar-row .sf-alert-bar-all > button > sf-icon > .sf-icon {
       position: absolute;
       visibility: hidden;
@@ -1187,6 +1523,27 @@
     --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
     --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
     --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
     --sf-place--plate: initial;
     --sf-place--on-plate: initial;
     --sf-place--fill-placeholder: initial;
@@ -1207,6 +1564,21 @@
     --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
     --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
     --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
     --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
   }
   :where(.bg-surface-4) .sf-alert-bar-list {
@@ -1431,8 +1803,8 @@
               transform: translateY(calc(var(--sf-a4) * -1));
     }
   }
-  /* Narrow (the bar's own width up to g9, 608 px; a container query cannot
-     read a variable, so the step is written in rem): the icon, the text and the
+  /* Narrow (the bar's own width up to 40rem, 640 px, the container step h0
+     of C181; it was g9, 608 px, no step of the ladder): the icon, the text and the
      close share the first line; the actions go under the text from its start
      (AA-17, C114 (5)), «Ещё N» at the line's end; the open list's rows do
      the same. The
@@ -1443,7 +1815,7 @@
      block inset, the control's inset above the text, and the room above the
      capitals inside the line, (line - 1cap) / 2 (1cap is the font's own cap
      height, so it follows the rung and the density by itself). */
-  @container sf-alert-bar (max-width: 38rem) {
+  @container sf-alert-bar (max-width: 40rem) {
     .sf-alert-bar-row {
       display: grid;
       grid-template-columns: var(--sf-alert-bar--line) minmax(0, 1fr) auto;

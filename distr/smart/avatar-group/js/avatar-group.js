@@ -250,7 +250,9 @@ const AvatarsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
-});
+}); // The tooltips' ids, one per element on the page (stable across renders).
+
+let sequence = 0;
 
 class SfAvatars extends AvatarsElement {
   static get props() {
@@ -410,8 +412,20 @@ class SfAvatars extends AvatarsElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    if (!this._uid) this._uid = `sf-avatar-group-${++sequence}`;
     return this.createTemplateContext({ ...props,
       component: this,
+      uid: this._uid,
+      // The group's name and the «+N» button's (C152 (6)), in the page's
+      // language: «Участники: 9», «Ещё 5 участников».
+      words: {
+        group: count => this.sfWord('group-label', {
+          count
+        }),
+        more: count => this.sfWord('more-label', {
+          count
+        })
+      },
       imageUrl: this.imageUrl,
       avatarUrl: this.avatarUrl,
       avatarSize: this.avatarSize,
@@ -466,9 +480,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4f7ae7ea9e1c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c69a3dc158df");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
  // The combinations are drawn from the avatar's own parts -- sf-avatar,
 // sf-avatar-group, sf-avatar-label-group, the online indicator and the verified
@@ -502,28 +518,30 @@ function step(value, fallback = '1') {
 } // How far the avatars of a group overlap, by the size they are drawn at: the
 // --sf-space step of the overlap, in the size names (1.2.4, docs precheck
 // AV-06; xs, sm and md before, journal class-avatar-group-overlap-size-names).
+// Owner decision C152 (6), 2026-11-14: 4 up to size 1 and 8 at 2 and 3, so the
+// next circle with its 2 px cut-out leaves the letters whole (12 at size 1
+// covered the second letter: «АБ» read «АЕ»).
 
 
 function groupStep(size) {
-  if (size === '1/4' || size === '1/3') return '1/4';
-  if (size === '1/2') return '1/3';
-  return '1/2';
-}
+  if (size === '2' || size === '3') return '1/3';
+  return '1/4';
+} // Up to four people are shown; the fifth place is «+N» (C152 (6)).
+
+
+const SHOWN = 4;
 
 function avatar(options) {
-  const imageUrl = options.imageUrl || '';
-  const context = {
+  // sf-avatar's drawing (js/picture.js): the photo over the initials, else
+  // the initials, else the glyph.
+  const context = (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPictureContext)({
     size: options.size,
-    line: '',
-    shape: 'circle',
-    imageUrl,
-    isImage: Boolean(imageUrl),
+    imageUrl: options.imageUrl || '',
     text: options.text || '',
-    isText: !imageUrl && Boolean(options.text),
     status: options.status || 'none',
     rootClass: options.rootClass || '',
     component: options.component
-  };
+  });
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarClasses)(context)} style=${options.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       ${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarContent)(context)} ${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.statusBadge)(context)}
@@ -590,25 +608,93 @@ function renderLabelTemplate(context) {
     title: context.labelText,
     text: context.labelSecondText
   });
-}
+} // One person of the group: the picture (photo over the initials, C152 (2)),
+// role img named by the person, the hue of the name (C17, C152 (6)) and the
+// name in a tooltip, since a group prints no names (C152 (7)).
+
+
+function member(item, size, index, context) {
+  const name = String(item.name ?? item.heading ?? '').trim();
+  const picture = (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPictureContext)({
+    size,
+    imageUrl: item.imageUrl || item.image_url,
+    name,
+    text: item.text || item.initials,
+    hue: item.hue || (name ? 'auto' : ''),
+    status: item.status,
+    component: context.component
+  });
+  const tipId = name && context.uid ? `${context.uid}-tip-${index}` : '';
+  const face = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarClasses)(picture)} role="img" aria-label=${name || picture.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    data-tooltip=${tipId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarContent)(picture)} ${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.statusBadge)(picture)}</span>`;
+  return (0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.withNameTooltip)(face, name, tipId);
+} // The row of the full list behind «+N»: the picture and the printed name.
+
+
+function listRow(item) {
+  const name = String(item.name ?? item.heading ?? '').trim();
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-avatar-group-list-item">${(0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPicture)({
+    size: '1/2',
+    imageUrl: item.imageUrl || item.image_url,
+    name,
+    text: item.text || item.initials,
+    hue: item.hue || (name ? 'auto' : '')
+  })}<span class="sf-avatar-group-list-name">${name || item.text || item.initials || ''}</span></li>`;
+} // The group (owner decision C152 (6), 2026-11-14): up to four people, the
+// fifth place «+N» with the exact number of the others. When the host gives
+// the whole list (more than four in avatars) «+N» is a button of the same
+// size and shape that opens the list of everyone in an sf-popover; with only
+// a number (avatars-more) it stays text. The group is named «Участники: N»,
+// N everyone it stands for. Before: every avatar shown, «+N» a grey avatar
+// with no action or name, the group nameless.
+
 
 function renderGroupTemplate(context) {
   const size = step(context.roundSize, '1/2');
+  const list = Array.isArray(context.avatars) ? context.avatars : [];
   const more = String(context.avatarsMore ?? '').trim();
+  const extra = /^\d+$/u.test(more) ? Number(more) : 0;
+  const shown = list.slice(0, SHOWN);
+  const hidden = list.length - shown.length + extra;
+  const total = list.length + extra;
+  const words = context.words || {};
+  const groupLabel = words.group ? words.group(total) : '';
+  const moreLabel = words.more ? words.more(hidden) : '';
+  const withList = list.length > SHOWN;
+
+  if (withList) {
+    globalThis.SF?.Loader?.ensurePlugin?.('cl-popover');
+  }
+
+  if (shown.some(item => String(item.name ?? item.heading ?? '').trim())) {
+    globalThis.SF?.Loader?.ensurePlugin?.('tooltip');
+  }
+
+  let tail = lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (withList) {
+    const plus = (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_2__.avatarPictureContext)({
+      size,
+      text: `+${hidden}`
+    });
+    tail = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-popover class="sf-avatar-group-more" placement="bottom-start" label=${moreLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+      <button slot="trigger" type="button" class=${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarClasses)(plus)} aria-label=${moreLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${(0,_avatar_js_templates_shared__WEBPACK_IMPORTED_MODULE_1__.avatarContent)(plus)}</button>
+      <div slot="content"><ul class="sf-avatar-group-list">${list.map(item => listRow(item))}</ul></div>
+    </sf-popover>`;
+  } else if (hidden > 0 || more && !extra) {
+    // No list from the host: «+N» (or the host's short text) is text.
+    tail = avatar({
+      size,
+      text: extra ? `+${hidden}` : more,
+      component: context.component
+    });
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${['sf-avatar-group', `sf-avatar-group--size-${groupStep(size)}`, 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <div class=${['sf-avatar-group', `sf-avatar-group--size-${groupStep(size)}`, 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="group" aria-label=${groupLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       <div class="sf-avatar-group-avatars flex">
-        ${context.avatars.map(item => avatar({
-    size,
-    imageUrl: item.imageUrl || item.image_url,
-    text: item.text || item.initials,
-    component: context.component
-  }))}
-        ${more ? avatar({
-    size,
-    text: /^\d+$/u.test(more) ? `+${more}` : more,
-    component: context.component
-  }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${shown.map((item, index) => member(item, size, index, context))}
+        ${tail}
       </div>
     </div>
   `;
@@ -660,15 +746,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   avatarContent: () => (/* binding */ avatarContent),
 /* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
 /* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
-/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons),
+/* harmony export */   avatarStepText: () => (/* binding */ avatarStepText)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
-/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9d9903b87148");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
  // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
@@ -688,7 +777,16 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
 /** The glyph of a placeholder: a person, unless the host names another. */
 
-const AVATAR_PLACEHOLDER_ICON = "person";
+const AVATAR_PLACEHOLDER_ICON = "person"; // The letters a step holds (owner decision C152 (3), 2026-11-14): two from
+// 1/3 up, one at 1/4 (16 px holds one letter of a readable size, two were
+// 10 px each). Only letters are cut: «+5» or a number stays whole.
+
+function avatarStepText(text, size) {
+  const value = String(text ?? "");
+  if (String(size ?? "") !== "1/4") return value;
+  const letters = value.match(/^(\p{L}\p{M}*)\p{L}/u);
+  return letters ? letters[1] : value;
+}
 /**
  * The drawing context of one avatar picture, from what a host knows: the photo,
  * the initials or the name they are taken from, the hue, the placeholder's
@@ -699,15 +797,18 @@ function avatarPictureContext(options = {}) {
   const imageUrl = String(options.imageUrl ?? "").trim();
   const name = String(options.name ?? "").trim();
   const explicitText = String(options.text ?? "").trim();
-  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
-  // names a glyph (a bot, a system), which stands in for them.
+  const namedIcon = String(options.icon ?? "").trim();
+  const size = AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : ""; // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them. With a photo
+  // they stand under it until it comes and when it fails (C152 (2)).
 
-  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
-  const isImage = Boolean(imageUrl);
-  const isText = !isImage && Boolean(text);
+  const text = avatarStepText(namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_2__.getInitials)(name), size);
+  const isImage = Boolean(imageUrl); // isText: the initials are drawn (alone, or under the photo).
+
+  const isText = Boolean(text);
   const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
   return {
-    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    size,
     line: String(options.line ?? ""),
     shape: options.shape === "square" ? "square" : "circle",
     imageUrl,
@@ -717,7 +818,7 @@ function avatarPictureContext(options = {}) {
     icon,
     status: options.status || "none",
     expressive: Boolean(options.expressive),
-    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveAvatarHue)(options.hue, name || text, "") : "",
     rootClass: options.rootClass || "",
     rootStyle: options.rootStyle || "",
     disabled: Boolean(options.disabled),
@@ -740,10 +841,6 @@ function avatarClasses(context, options = {}) {
   const layout = options.layout ?? null;
   const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
 
-  if (context.isImage && layout) {
-    classes.push(layout.center);
-  }
-
   if (context.isText) {
     classes.push("sf-avatar--text");
     if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
@@ -754,7 +851,7 @@ function avatarClasses(context, options = {}) {
     }
   }
 
-  if (!context.isImage && !context.isText) {
+  if (!context.isText) {
     classes.push("sf-avatar--placeholder");
     if (layout) classes.push(layout.center);
   } // The decorative level (C91 level 2): the sheet turns the initials'
@@ -790,30 +887,39 @@ function avatarClasses(context, options = {}) {
   }
 
   return classes.join(" ");
+} // The photo says when it has come or failed (C152 (2)): the sheet fades it
+// in over the initials when loaded and drops it on an error, so the avatar is
+// never an empty circle or the browser's broken-image glyph. The state is
+// the runtime mark data-sf-loaded ("true" or "error"), which the template
+// does not bind, so a redraw keeps it, and which a first-paint snapshot
+// leaves out (it depends on the network); a new address is a new element
+// (keyed), which starts transparent again.
+
+function onImageLoad(event) {
+  event.currentTarget.dataset.sfLoaded = "true";
+}
+
+function onImageError(event) {
+  event.currentTarget.dataset.sfLoaded = "error";
 }
 /**
- * What the circle holds: the photo, the initials, or the placeholder glyph as
- * an sf-icon element, so its name reaches the icon font request (a bare
- * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
- * review 2026-11-09).
+ * What the circle holds: the initials, or the placeholder glyph as an sf-icon
+ * element, so its name reaches the icon font request (a bare <i class="sf-icon">
+ * drawn after the page's scan stayed blank: buttons review 2026-11-09); with a
+ * photo, the photo over them (owner decision C152 (2)).
  */
 
+
 function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  const under = context.isText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  if (!context.isImage) return under;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${under}${(0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(context.imageUrl, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @load=${onImageLoad} @error=${onImageError} />`)}`;
 }
 /** The icon names a picture draws (for a host's icon preload). */
 
 function avatarPictureIcons(options = {}) {
   const context = avatarPictureContext(options);
-  return context.isImage || context.isText ? [] : [context.icon];
+  return context.isText ? [] : [context.icon];
 }
 /**
  * One avatar picture beside a host's own content: a span hidden from
@@ -847,7 +953,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   avatarClasses: () => (/* binding */ avatarClasses),
 /* harmony export */   avatarContent: () => (/* reexport safe */ _picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent),
 /* harmony export */   onlineIndicator: () => (/* binding */ onlineIndicator),
-/* harmony export */   statusBadge: () => (/* binding */ statusBadge)
+/* harmony export */   statusBadge: () => (/* binding */ statusBadge),
+/* harmony export */   withNameTooltip: () => (/* binding */ withNameTooltip)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("34addf781b5b");
@@ -931,9 +1038,13 @@ function getVerifiedBadge(context) {
 function onlineIndicator(context) {
   if (context.component?.hasSlotContent?.("online-indicator")) {
     return context.component.getSlotContent("online-indicator");
-  }
+  } // Only «online» is drawn, and «away» as a hollow ring when the host
+  // asks for it (owner decision C152 (5), 2026-11-14): grey offline dots in
+  // a long list read as «something here». Offline draws nothing; its word
+  // still joins the name (index.js presenceWord).
 
-  if (!["online", "offline"].includes(context.status)) {
+
+  if (!["online", "away"].includes(context.status)) {
     return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   }
 
@@ -970,19 +1081,71 @@ function statusBadge(context) {
     default:
       return onlineIndicator(context);
   }
-}
+} // The name in a tooltip where no name is visible (owner decision C152 (7)):
+// the Framework's tooltip composition (component.tooltip) -- an anchor holding
+// the avatar (data-tooltip naming the surface) and a dark tooltip of size 1/3
+// with its tail pointing down. The controller shows it on hover and keyboard
+// focus and hides it on Escape and a press. The surface is hidden in the
+// markup and only the controller shows it, so a redraw never fights it.
+
+function withNameTooltip(trigger, tipText, tipId) {
+  if (!tipText || !tipId) return trigger;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-anchor sf-tooltip-anchor">${trigger}<span
+        class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-tooltip--arrow-bottom-center sf-avatar-tooltip"
+        id=${tipId} hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${tipText}</span><span
+        class="sf-tooltip-tail" aria-hidden="true"></span></span></span></span>`;
+} // What the avatar is (owner decision C152 (1), 2026-11-14): a picture by
+// default -- role img named by the person, no Tab stop, no hover ring --,
+// a link with href, a button only where it has an action of its own (the
+// trigger of a menu: slot="trigger" or aria-haspopup on the host). Beside
+// a printed name (options.nameShown) the picture is hidden from assistive
+// technology: the name is read once, from the text.
+
 function avatarButton(context, options = {}) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  const style = options.includeRootStyle === false ? "" : context.rootStyle || "";
+  const label = context.buttonLabel ?? context.ariaLabel;
+  const inner = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${(0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent)(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}`;
+  const mode = context.mode || "button";
+
+  if (mode === "link") {
+    const link = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
+                class="${avatarClasses(context, { ...options,
+      disabled: context.disabled
+    })}"
+                style=${style || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                href=${context.disabled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.href}
+                aria-disabled=${context.disabled ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${label}
+                data-tooltip=${context.tipId && context.tipText ? context.tipId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >${inner}</a>`;
+    return withNameTooltip(link, context.tipText, context.tipId);
+  }
+
+  if (mode === "picture") {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+                class="${avatarClasses(context, { ...options,
+      disabled: context.disabled
+    })}"
+                style=${style || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                role=${options.nameShown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "img"}
+                aria-label=${options.nameShown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : label}
+                aria-hidden=${options.nameShown ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >${inner}</span>`;
+  }
+
+  const button = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 class="${avatarClasses(context, options)}"
-                style=${options.includeRootStyle === false ? "" : context.rootStyle || ""}
-                aria-label=${context.buttonLabel ?? context.ariaLabel}
+                style=${style}
+                aria-label=${label}
                 ?disabled=${context.disabled}
                 type="button"
+                data-tooltip=${context.tipId && context.tipText ? context.tipId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
-            ${(0,_picture__WEBPACK_IMPORTED_MODULE_2__.avatarContent)(context)} ${statusBadge(context)} ${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_1__.renderAnchoredBadge)(context.badge)}
+            ${inner}
         </button>
     `;
+  return withNameTooltip(button, context.tipText, context.tipId);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1067,7 +1230,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
-const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
+// (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
+// titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
+// skipped wherever they stand. Compared without case and without the dots
+// around them (normalizeInitialsWords strips those).
+
+const INITIALS_SERVICE_WORDS = new Set([// legal forms
+"ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
+"dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1100,6 +1272,10 @@ function firstGrapheme(word) {
 //   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
 //   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
 //   «Анна»                 → «А»
+//   «ООО «Ромашка»»        → «Р»    legal forms, titles, particles skipped (C152)
+//   «Мария фон Штейн»      → «МШ»
+//   «Dr. John Smith»       → «JS»
+//   «anna@simai.ru»        → «A»    an address: the first letter before «@»
 //   «»                     → ''     or `fallback`: '?' where text must stand
 //
 // `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
@@ -1113,7 +1289,21 @@ function getInitials(value = "", options = {}) {
     fallback = "",
     locale
   } = options;
-  const words = normalizeInitialsWords(value);
+  let source = String(value ?? "").trim(); // An address reads by the name before «@»: one letter (C152 (3)),
+  // anna@simai.ru → A, not the letters of its parts.
+
+  if (/^[^\s@]+@[^\s@]+$/u.test(source)) {
+    const local = normalizeInitialsWords(source.slice(0, source.indexOf("@")).replace(/[._+-]+/gu, " "));
+    if (!local.length) return String(fallback);
+    const letter = firstGrapheme(local[0]);
+    return (locale ? letter.toLocaleUpperCase(locale) : letter.toUpperCase()) || String(fallback);
+  }
+
+  const allWords = normalizeInitialsWords(source); // Legal forms, titles and particles go first; a name made of them alone
+  // keeps them, so it still has initials.
+
+  const ownWords = allWords.filter(word => !INITIALS_SERVICE_WORDS.has(String(word).toLowerCase()));
+  const words = ownWords.length ? ownWords : allWords;
   let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
   // are its words. Split before the skip list, «из-за» would be two words.
 
@@ -1136,6 +1326,13 @@ function getInitials(value = "", options = {}) {
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "9d9903b87148"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/keyed.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/keyed.js", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1255,21 +1452,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.3.0","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.4.0","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 
 /***/ "d709c9845088"
 (module) {
 
-module.exports = {"title":"Avatars"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Avatars","runtime":{"group-label":"Members: {n}","more-label":{"one":"{n} more member","other":"{n} more members"}}}');
 
 /***/ },
 
 /***/ "3824886fec29"
 (module) {
 
-module.exports = {"title":"Аватары"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Аватары","runtime":{"group-label":"Участники: {n}","more-label":{"one":"Ещё {n} участник","few":"Ещё {n} участника","many":"Ещё {n} участников","other":"Ещё {n} участника"}}}');
 
 /***/ }
 

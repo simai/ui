@@ -210,6 +210,324 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "a1e33ce15a5e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DIRECTIONAL_ICONS: () => (/* binding */ DIRECTIONAL_ICONS),
+/* harmony export */   checkIconGlyph: () => (/* binding */ checkIconGlyph),
+/* harmony export */   markCustomGlyph: () => (/* binding */ markCustomGlyph),
+/* harmony export */   mirrorsInRtl: () => (/* binding */ mirrorsInRtl),
+/* harmony export */   nearestIconName: () => (/* binding */ nearestIconName),
+/* harmony export */   registerIcon: () => (/* binding */ registerIcon),
+/* harmony export */   registeredIcon: () => (/* binding */ registeredIcon)
+/* harmony export */ });
+// What every icon slot shares about a glyph beyond its font (owner decision
+// C151, icons study control/research/2026-11-14-icons.md): the glyphs a
+// product registers by name (point 6), the glyphs that turn over in a
+// right-to-left part (point 3) and an unknown name, which keeps its box empty
+// and is named once in the console with the nearest real name (point 2).
+//
+// One state per page, on the shared global: Core, the Loader and the Smart
+// icon each carry a copy of this module (bundles each carry their own module
+// copy), and a glyph registered through one copy has to draw in the slots the
+// others render.
+const NAME = /^[a-z0-9_][a-z0-9_-]*$/u;
+
+function shared() {
+  const root = globalThis.SF = globalThis.SF || {};
+  const icons = root.icons = root.icons || {};
+
+  if (!icons.__glyphs) {
+    Object.defineProperty(icons, '__glyphs', {
+      value: {
+        registered: new Map(),
+        warned: new Set(),
+        names: null,
+        pending: new Set(),
+        frame: 0
+      },
+      configurable: true
+    });
+  }
+
+  return icons.__glyphs;
+} // ---------------------------------------------------------------- point 6
+// SF.icons.register(name, svg): the product's own or a brand glyph, drawn in
+// the current colour at the slot's size wherever an icon name is accepted --
+// sf-icon, a button's icon-start, a menu row, a tab, the class markup
+// <i class="sf-icon">name</i>. The SVG is a mask over the glyph's box, so one
+// colour; the box and its size are the ladder's. The name never reaches the
+// icon font request.
+
+
+function styleSheet() {
+  const doc = globalThis.document;
+  if (!doc?.head) return null;
+  let style = doc.head.querySelector('style[data-sf-icons-registered]');
+
+  if (!style) {
+    style = doc.createElement('style');
+    style.setAttribute('data-sf-icons-registered', '');
+    doc.head.appendChild(style);
+  }
+
+  return style;
+}
+
+function svgUrl(svg) {
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function writeRegisteredSheet() {
+  const style = styleSheet();
+  if (!style) return;
+  const rules = [];
+
+  for (const [name, svg] of shared().registered) {
+    rules.push(`.sf-icon[data-sf-icon-custom="${name}"]{--sf-icon--custom:${svgUrl(svg)}}`);
+  }
+
+  style.textContent = rules.join('\n');
+}
+
+function registeredIcon(name) {
+  const key = String(name || '').trim();
+  return key ? shared().registered.get(key) || null : null;
+} // A glyph of the class markup takes its registered drawing from the attribute;
+// one that stops being registered (its text changed) gives it back.
+
+function markCustomGlyph(el, name) {
+  if (!el?.setAttribute) return false;
+  const key = String(name || '').trim();
+
+  if (key && registeredIcon(key)) {
+    if (el.getAttribute('data-sf-icon-custom') !== key) el.setAttribute('data-sf-icon-custom', key); // Drawn as letters before it was registered: it is no longer missing.
+
+    el.removeAttribute('data-sf-icon-missing');
+    return true;
+  }
+
+  if (el.hasAttribute?.('data-sf-icon-custom')) el.removeAttribute('data-sf-icon-custom');
+  return false;
+}
+function registerIcon(name, svg) {
+  const key = String(name || '').trim();
+  const drawing = String(svg || '').trim();
+
+  if (!NAME.test(key)) {
+    globalThis.console?.warn?.(`[SIMAI Framework] SF.icons.register: "${key}" is not an icon name (lowercase letters, digits, _ and -).`);
+    return false;
+  }
+
+  if (!/^<svg[\s>]/iu.test(drawing)) {
+    globalThis.console?.warn?.(`[SIMAI Framework] SF.icons.register("${key}"): the drawing must be an <svg> element.`);
+    return false;
+  }
+
+  shared().registered.set(key, drawing);
+  writeRegisteredSheet();
+  const doc = globalThis.document; // Class-markup glyphs already on the page take it now; sf-icon elements and
+  // the Loader hear the event.
+
+  doc?.querySelectorAll?.('.sf-icon').forEach(el => {
+    if (el.closest?.('sf-icon')) return;
+    const text = String(el.getAttribute('data-icon') || el.textContent || '').trim();
+    if (text === key && markCustomGlyph(el, key)) el.classList.add('sf-icon-loaded');
+  });
+
+  try {
+    globalThis.dispatchEvent?.(new CustomEvent('sf-icons:registered', {
+      detail: {
+        name: key
+      }
+    }));
+  } catch {// A realm without CustomEvent (a unit test) has nothing listening.
+  }
+
+  return true;
+} // ---------------------------------------------------------------- point 3
+// The glyphs that point along the line (Material's bidirectionality guidance):
+// arrows, chevrons, send, reply and forward, undo and redo, lists and
+// indents, open in a new window, log in and out. Clocks, checks, media
+// controls and logos never turn over.
+
+const DIRECTIONAL_ICONS = Object.freeze(new Set(['arrow_back', 'arrow_forward', 'arrow_back_ios', 'arrow_back_ios_new', 'arrow_forward_ios', 'arrow_left', 'arrow_right', 'arrow_left_alt', 'arrow_right_alt', 'arrow_outward', 'chevron_left', 'chevron_right', 'keyboard_arrow_left', 'keyboard_arrow_right', 'keyboard_double_arrow_left', 'keyboard_double_arrow_right', 'double_arrow', 'navigate_before', 'navigate_next', 'first_page', 'last_page', 'trending_flat', 'subdirectory_arrow_left', 'subdirectory_arrow_right', 'call_made', 'call_received', 'keyboard_tab', 'keyboard_backspace', 'backspace', 'send', 'reply', 'reply_all', 'forward', 'undo', 'redo', 'format_list_bulleted', 'list', 'view_list', 'toc', 'notes', 'short_text', 'subject', 'wrap_text', 'format_indent_increase', 'format_indent_decrease', 'menu_open', 'read_more', 'open_in_new', 'launch', 'exit_to_app', 'logout', 'login', 'input', 'output', 'label', 'label_important'])); // mirror: auto (the glyph turns over in a right-to-left part when it points
+// along the line), on (it turns over there whatever it is), off (never).
+
+function mirrorsInRtl(name, mode = 'auto') {
+  const value = String(mode || 'auto').trim().toLowerCase();
+  if (value === 'off') return false;
+  if (value === 'on') return true;
+  return DIRECTIONAL_ICONS.has(String(name || '').trim());
+} // ---------------------------------------------------------------- point 2
+// An unknown or misspelt name is drawn by the icon font as its letters: wider
+// than the glyph's box. The box clips them (the icons sheet), the glyph is
+// marked missing (its letters unseen, the box kept) and the name is said once
+// per page, with the nearest real name from the font's own list
+// (core/contracts/icon-names.v1.json, fetched only when a name is missing).
+
+function textWidth(el) {
+  const doc = el.ownerDocument;
+  const range = doc?.createRange?.();
+  if (!range) return 0;
+  range.selectNodeContents(el);
+  return range.getBoundingClientRect?.().width || 0;
+}
+
+function namesUrl() {
+  const base = String(globalThis.sfPath || '').replace(/\/+$/u, '');
+  return base ? `${base}/core/contracts/icon-names.v1.json` : '';
+}
+
+function loadNames() {
+  const state = shared();
+
+  if (!state.names) {
+    const url = namesUrl();
+    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : []).catch(() => []) : Promise.resolve([]);
+  }
+
+  return state.names;
+}
+
+function distance(a, b) {
+  const row = Array.from({
+    length: b.length + 1
+  }, (_, index) => index);
+
+  for (let i = 1; i <= a.length; i += 1) {
+    let previous = row[0];
+    row[0] = i;
+
+    for (let j = 1; j <= b.length; j += 1) {
+      const kept = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1));
+      previous = kept;
+    }
+  }
+
+  return row[b.length];
+}
+
+function nearestIconName(name, names = []) {
+  const wanted = String(name || '').trim().toLowerCase().replace(/[\s-]+/gu, '_');
+  let best = '';
+  let bestDistance = Infinity;
+
+  for (const candidate of names) {
+    if (Math.abs(candidate.length - wanted.length) >= bestDistance) continue;
+    const d = distance(wanted, candidate);
+
+    if (d < bestDistance) {
+      best = candidate;
+      bestDistance = d;
+    }
+  }
+
+  return bestDistance <= Math.max(2, Math.ceil(wanted.length / 3)) ? best : '';
+}
+
+function warnMissing(name) {
+  const state = shared();
+  if (state.warned.has(name)) return;
+  state.warned.add(name);
+  loadNames().then(names => {
+    const near = nearestIconName(name, names);
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-icon: no icon "${name}"${near ? `; nearest: "${near}"` : ''}. The box stays empty.`);
+  });
+} // A glyph is judged only once the face that draws it is in: marked loaded,
+// its family can still be on its way (font-display: block draws the name
+// unseen at the fallback's width, as wide as letters). Until then the check
+// waits for the face, twice at most; a face that never comes is judged as it
+// draws.
+
+
+const fontWaits = new WeakMap();
+
+function faceOnItsWay(glyph, name) {
+  const fonts = glyph.ownerDocument?.fonts;
+  const view = glyph.ownerDocument?.defaultView;
+  if (!fonts?.check || !view?.getComputedStyle) return null;
+  const waits = fontWaits.get(glyph) || 0;
+  if (waits >= 2) return null;
+  const style = view.getComputedStyle(glyph);
+  const font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+
+  try {
+    if (fonts.check(font, name || 'a')) return null;
+  } catch {
+    return null;
+  }
+
+  fontWaits.set(glyph, waits + 1);
+  return Promise.resolve(fonts.load(font, name || 'a')).catch(() => null);
+} // Called when a glyph is marked loaded; the reads are taken together in one
+// frame for every glyph that loaded since the last one.
+
+
+function checkIconGlyph(el) {
+  if (!el?.isConnected || el.hasAttribute('data-sf-icon-custom')) return;
+  const state = shared();
+  state.pending.add(el);
+  if (state.frame) return;
+
+  const run = () => {
+    state.frame = 0;
+    const glyphs = [...state.pending];
+    state.pending.clear();
+    const readings = glyphs.map(glyph => {
+      if (!glyph.isConnected || glyph.hasAttribute('data-sf-icon-custom')) return null;
+      const box = glyph.getBoundingClientRect(); // Not rendered (a closed panel): read again when it loads anew.
+
+      if (!box.width || !box.height) return null;
+      return {
+        glyph,
+        box: box.width,
+        text: textWidth(glyph)
+      };
+    });
+
+    for (const reading of readings) {
+      if (!reading) continue;
+      const {
+        glyph,
+        box,
+        text
+      } = reading;
+      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one box wide; letters are several.
+
+      const missing = text > box * 1.5;
+
+      if (missing) {
+        const face = faceOnItsWay(glyph, name);
+
+        if (face) {
+          face.then(() => checkIconGlyph(glyph));
+          continue;
+        }
+
+        if (!glyph.hasAttribute('data-sf-icon-missing')) glyph.setAttribute('data-sf-icon-missing', '');
+        if (name) warnMissing(name);
+      } else if (glyph.hasAttribute('data-sf-icon-missing')) {
+        glyph.removeAttribute('data-sf-icon-missing');
+      }
+    }
+  };
+
+  const raf = globalThis.requestAnimationFrame;
+  state.frame = typeof raf === 'function' ? raf(run) : (setTimeout(run, 16), 1);
+}
+
+if (typeof globalThis !== 'undefined') {
+  const root = globalThis.SF = globalThis.SF || {};
+  root.icons = root.icons || {};
+  if (typeof root.icons.register !== 'function') root.icons.register = registerIcon;
+}
+
+/***/ },
+
 /***/ "34addf781b5b"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -289,14 +607,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("07905d246432");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("34addf781b5b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("756bf22cb853");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("75949279fd27");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5d30914d54d5");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d5970e8c0f65");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a1e33ce15a5e");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("756bf22cb853");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("75949279fd27");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5d30914d54d5");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d5970e8c0f65");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__);
+
+
 
 
 
@@ -306,7 +629,24 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const weightClasses = new Map([[100, "thin"], [200, "extra-light"], [300, "light"], [400, "regular"], [500, "medium"], [600, "semi-bold"], [700, "bold"]]);
-const iconSizes = ["1/4", "1/3", "1/2", "1", "2", "3", "4", "5", "6", "7"];
+const iconSizes = ["1/4", "1/3", "1/2", "1", "2", "3", "4", "5", "6", "7"]; // The size names (owner decision C151 point 1): a size is the UI ladder step
+// of the host -- 1/3, 1/2, 1, 2, 3 draw 16, 20, 24, 28, 36, one step down on a
+// phone and in a compact region, like the button, field or row of that size;
+// 4 to 7 are the large glyphs of empty states. A region (or the icon itself)
+// takes these names with data-sf-icon-scale="ladder". Elsewhere the old icon
+// scale still answers until 2027-01-01 (journal value-icon-size-ladder): its
+// 1/4 to 3 drew 12, 12, 14, 16, 20, 24, and each use is noted in
+// SF.deprecations with the ladder name that draws the same.
+
+const OLD_SCALE_LADDER = Object.freeze({
+  "1/4": "",
+  "1/3": "",
+  "1/2": "",
+  "1": "1/3",
+  "2": "1/2",
+  "3": "1"
+});
+const LADDER_REGION = '[data-sf-icon-scale="ladder"]';
 
 function clampAxis(value, fallback, minimum, maximum) {
   const numericValue = Number(value);
@@ -355,14 +695,14 @@ function sightForRendered() {
   return renderedSight;
 }
 
-const IconElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const IconElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
 
 class SfIcon extends IconElement {
@@ -388,6 +728,13 @@ class SfIcon extends IconElement {
     this.onRendered = () => {
       this.requestIconLoad();
       this.syncLoadedState();
+    }; // A glyph registered after this icon drew (SF.icons.register, C151 point 6).
+
+
+    this.onIconRegistered = event => {
+      if (event?.detail?.name !== String(this.getProp("icon") || "").trim()) return;
+      this.syncLoadedState();
+      this.refresh("icon-registered");
     };
   }
 
@@ -418,6 +765,7 @@ class SfIcon extends IconElement {
     super.connectedCallback();
     window.addEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
     window.addEventListener("sf-loader-ready", this.onLoaderReady);
+    window.addEventListener("sf-icons:registered", this.onIconRegistered);
     this.requestIconLoad();
     this.syncLoadedState();
   }
@@ -425,6 +773,7 @@ class SfIcon extends IconElement {
   disconnectedCallback() {
     window.removeEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
     window.removeEventListener("sf-loader-ready", this.onLoaderReady);
+    window.removeEventListener("sf-icons:registered", this.onIconRegistered);
     this.watchRendered(false);
     super.disconnectedCallback();
   }
@@ -440,6 +789,7 @@ class SfIcon extends IconElement {
   }
 
   requestIconLoad() {
+    if (this.isRegisteredGlyph) return;
     const loader = window.SF?.Loader;
     const iconCount = loader?.trackIconElement?.(this) || 0;
 
@@ -451,7 +801,7 @@ class SfIcon extends IconElement {
   syncLoadedState() {
     const loader = window.SF?.Loader;
     const tracked = loader?.getTrackedIconAttrs?.(this) || null;
-    const loaded = Boolean(tracked?.icon && loader?.isTrackedIconLoaded?.(tracked));
+    const loaded = this.isRegisteredGlyph || Boolean(tracked?.icon && loader?.isTrackedIconLoaded?.(tracked));
 
     if (loaded) {
       window.removeEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
@@ -464,9 +814,18 @@ class SfIcon extends IconElement {
     this.setState({
       loaded
     });
-  }
+  } // A registered glyph (SF.icons.register) draws from its SVG, never the font.
+
+
+  get isRegisteredGlyph() {
+    return Boolean((0,_core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__.registeredIcon)(this.getProp("icon")));
+  } // Unset, the weight is the label's beside it: the glyph inherits the
+  // font-weight around it (C151 point 4), so no weight class is written. An
+  // author's weight still wins.
+
 
   get weightClass() {
+    if (!this.hasAttribute("weight")) return "";
     let weight = this.getProp("weight");
     weight = this.toNumber(weight, 400);
     return weightClasses.get(weight) || weightClasses.get(400);
@@ -481,15 +840,41 @@ class SfIcon extends IconElement {
 
   get iconSize() {
     const size = String(this.getProp("size") || "").trim();
-    return iconSizes.includes(size) ? size : "";
-  }
+    if (!iconSizes.includes(size)) return ""; // An old-scale number outside a ladder region: noted once per value.
+
+    if (Object.hasOwn(OLD_SCALE_LADDER, size) && !this.closest?.(LADDER_REGION)) {
+      const ladder = OLD_SCALE_LADDER[size];
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
+        component: "sf-icon",
+        kind: "value",
+        attribute: "size",
+        from: size,
+        to: ladder ? `data-sf-icon-scale="ladder" size="${ladder}"` : 'data-sf-icon-scale="ladder" size="1/3" (16, the smallest ladder step)',
+        tag: "sf-icon",
+        since: "2026-11-14",
+        remove_after: "2027-01-01"
+      });
+    }
+
+    return size;
+  } // Unset (""), the sheet's: grade -25 on a dark theme, the optical size from
+  // the glyph's size (C151 point 4).
+
 
   get iconGrade() {
+    if (!this.hasAttribute("grade")) return "";
     return clampAxis(this.getProp("grade"), 0, -50, 200);
   }
 
   get iconOpticalSize() {
+    if (!this.hasAttribute("optical-size")) return "";
     return clampAxis(this.getProp("opticalSize"), 24, 20, 48);
+  } // Turns over in a right-to-left part (C151 point 3): a glyph that points
+  // along the line, or any with mirror="on"; never with mirror="off".
+
+
+  get iconMirrors() {
+    return (0,_core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__.mirrorsInRtl)(this.getProp("icon"), this.getProp("mirror"));
   }
 
   get templateData() {
@@ -502,8 +887,19 @@ class SfIcon extends IconElement {
       grade: this.iconGrade,
       opticalSize: this.iconOpticalSize,
       label: String(this.getProp("label") || "").trim(),
-      badge: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.elementBadge)(this)
+      badge: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.elementBadge)(this),
+      custom: this.isRegisteredGlyph,
+      mirror: this.iconMirrors
     };
+  } // A loaded glyph that draws as letters is an unknown name (C151 point 2):
+  // its box stays empty and the name is said once in the console.
+
+
+  afterRender(changed) {
+    const result = super.afterRender(changed);
+    const glyph = this.querySelector(":scope > i.sf-icon, :scope > .sf-badge-anchor > i.sf-icon");
+    if (glyph && this.isRegisteredGlyph) glyph.removeAttribute("data-sf-icon-missing");else if (glyph && this.getProp("loaded")) (0,_core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__.checkIconGlyph)(glyph);
+    return result;
   } // Classes someone else put on the glyph stay through a re-render: the
   // template writes the whole class attribute, and Docara's icon runtime lost
   // the face class it had set (sf-icon-complete), so a name outside the fast
@@ -569,18 +965,25 @@ function getIconData(context) {
     grade,
     opticalSize,
     label,
-    foreignClass
+    foreignClass,
+    custom,
+    mirror
   } = context;
   const ownClass = ["sf-icon", size ? `sf-icon--size-${size}` : "", loaded ? "sf-icon-loaded" : "", weightClass ? `sf-icon--weight-${weightClass}` : "", filled ? "sf-icon--filled" : "", rootClass].filter(Boolean).join(" "); // What the element did not write itself (sf-icon's foreignGlyphClasses).
 
-  const className = [ownClass, foreignClass].filter(Boolean).join(" ");
-  const style = [rootStyle, `--sf-icon--grade:${grade}`, `--sf-icon--optical-size:${opticalSize}`].filter(Boolean).join(";");
+  const className = [ownClass, foreignClass].filter(Boolean).join(" "); // Grade and optical size are written only when the author set them: unset,
+  // the icons sheet gives them -- the optical size from the glyph's size, the
+  // grade from the theme (owner decision C151 point 4).
+
+  const style = [rootStyle, grade !== "" && grade != null ? `--sf-icon--grade:${grade}` : "", opticalSize !== "" && opticalSize != null ? `--sf-icon--optical-size:${opticalSize}` : ""].filter(Boolean).join(";");
   return {
     icon,
     className,
     ownClass,
-    style,
-    label
+    style: style || lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    label,
+    custom: custom ? icon : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    mirror: mirror ? "" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing
   };
 }
 
@@ -590,7 +993,9 @@ function renderIconTemplate(context) {
     className,
     ownClass,
     style,
-    label
+    label,
+    custom,
+    mirror
   } = getIconData(context);
   const badge = context.badge;
 
@@ -607,7 +1012,7 @@ function renderIconTemplate(context) {
       class="sf-badge-anchor sf-badge-anchor--size-${(0,_component_badges_js_anchored_state__WEBPACK_IMPORTED_MODULE_1__.iconBadgeStep)(context.size)} sf-badge-anchor--square"
       role=${label ? "img" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-label=${label ? (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.nameWithBadge)(label, badge.phrase) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ><i class="${className}" style=${style} aria-hidden="true">${icon}</i
+      ><i class="${className}" style=${style} data-sf-icon-custom=${custom} data-sf-icon-mirror=${mirror} aria-hidden="true">${icon}</i
       >${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.renderAnchoredBadge)(badge)}${label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.renderAnchoredBadgeText)(badge, false)}</span
     >`);
   }
@@ -615,6 +1020,8 @@ function renderIconTemplate(context) {
   return mark((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i
     class="${className}"
     style=${style}
+    data-sf-icon-custom=${custom}
+    data-sf-icon-mirror=${mirror}
     role=${label ? "img" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     aria-label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     aria-hidden=${label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "true"}
@@ -624,6 +1031,13 @@ function renderIconTemplate(context) {
 renderIconTemplate.getIconData = getIconData;
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -665,7 +1079,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.2.0","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.3.0","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

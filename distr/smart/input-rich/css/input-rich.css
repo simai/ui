@@ -198,7 +198,7 @@
      edge), and a group ends at its separator line with --sf-space-1/4 on each
      side of the line. */
   .sf-rich-text .sf-rich-text-toolbar {
-    gap: var(--sf-space-1\/4);
+    gap: var(--sf-gap--toolbar);
     padding: var(--sf-space-1\/4);
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
@@ -269,7 +269,7 @@
   .sf-rich-text .sf-rich-text-link-actions {
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: var(--sf-space-1\/3);
+    gap: var(--sf-gap--actions);
   }
   /* On a phone (below the md breakpoint, 44rem) the link editor is a form, so
      it is a sheet at the bottom of the screen as a form of sf-menu-context is
@@ -324,7 +324,7 @@
   }
   .sf-rich-text sf-popover.sf-rich-text-link > [slot=content][data-sf-sheet] {
     position: fixed;
-    z-index: var(--sf-z-index-9);
+    z-index: var(--sf-layer--popover);
     top: auto;
     right: 0;
     bottom: 0;

@@ -505,12 +505,35 @@ class SfListFeed extends FeedElement {
       hasMore: this.hasMore,
       loadingEarlier: this._loadingEarlier,
       empty: this._items.size === 0,
-      emptyContent: this.hasSlotContent("empty") ? this.getSlotContent("empty") : null
+      ...this.emptyState()
     };
   }
 
   template() {
     return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__.renderListFeedTemplate)(this.templateContext());
+  } // The empty feed (owner decision C120 (3), study LF-5): the empty state
+  // of the Framework, sf-empty-state no-data. The page's empty slot wins:
+  // markup with an element inside is its own state, drawn whole; words alone
+  // (a <p> of text) are the heading of the feed's state, so a slot written
+  // as plain words is not drawn as bare text at the start of the box.
+
+
+  emptyState() {
+    if (!this.hasSlotContent("empty")) return {
+      emptyContent: null,
+      emptyHeading: this.sfWord("empty-text")
+    };
+    const content = this.getSlotContent("empty");
+    const nodes = (Array.isArray(content) ? content : [content]).filter(node => node && typeof node === "object" && "nodeType" in node);
+    const wordsOnly = nodes.length > 0 && nodes.every(node => node.nodeType === 3 || node.nodeType === 1 && node.childElementCount === 0);
+    const words = wordsOnly ? nodes.map(node => node.textContent).join(" ").replace(/\s+/gu, " ").trim() : "";
+    return words ? {
+      emptyContent: null,
+      emptyHeading: words
+    } : {
+      emptyContent: content,
+      emptyHeading: ""
+    };
   }
 
   afterRender(changed) {
@@ -1036,9 +1059,13 @@ class SfListFeed extends FeedElement {
     const selection = this.ownerDocument.getSelection?.();
     const inside = active && active !== item.node && item.node.contains(active) || selection && selection.rangeCount > 0 && !selection.isCollapsed && item.node.contains(selection.anchorNode);
     if (shown && inside && item.node.childNodes.length === 1 && !(node instanceof DocumentFragment)) overlay(shown, node);else item.node.replaceChildren(node);
-  } // Without a renderer an entry is its author and its text: enough for a
-  // feed of people, and the shape a renderer replaces. Text only; a host
-  // that has markup draws it itself, with its own sanitiser.
+  } // Without a renderer an entry is a comment (owner decision C167 (4),
+  // 2026-11-14; C40): its author over the first entry of a run -- one's own
+  // too, as «Вы» -- and the text under it, with no fill, at the column's
+  // start: comments on a task, a record's history, a journal. Capsules are
+  // a conversation's look, the host's renderer (SIMAI Pro sf-chat-message).
+  // Text only; a host that has markup draws it itself, with its own
+  // sanitiser.
 
 
   renderDefault(entry, {
@@ -1051,7 +1078,7 @@ class SfListFeed extends FeedElement {
     const name = own ? this.sfWord("you-text") : authorName(entry);
     if (name) article.setAttribute("aria-label", name);
 
-    if (first && name && !own) {
+    if (first && name) {
       const author = doc.createElement("p");
       author.className = "sf-list-feed__author";
       author.textContent = name;
@@ -1286,6 +1313,9 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // places it once and leaves it alone, so prepending history and redrawing an
 // entry never move the scroll anchor.
 //
+// An empty feed shows the empty slot, or sf-empty-state no-data (C120):
+// index.js emptyState() decides which.
+//
 // The two buttons sit in wrappers that are hidden instead of the buttons: a
 // Smart button's host is display: contents, and `hidden` on it does nothing.
 
@@ -1313,8 +1343,8 @@ function renderListFeedTemplate(context) {
                         @click=${() => component.requestEarlier()}
                 ></sf-button>
             </div>
-            <div class="sf-list-feed__empty" ?hidden=${!context.empty || !context.emptyContent}>
-                ${context.emptyContent ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            <div class="sf-list-feed__empty" ?hidden=${!context.empty}>
+                ${context.emptyContent ?? (context.empty ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-empty-state kind="no-data" size="1/2" heading=${context.emptyHeading}></sf-empty-state>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing)}
             </div>
             ${context.column}
             <div class="sf-list-feed__jump" hidden>
@@ -1374,21 +1404,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "7595f2639ad9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.1.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.3.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "22eb8f8fb40c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Feed","runtime":{"earlier-text":"Show earlier","latest-label":"To the latest","loading-earlier-text":"Loading earlier entries","log-label":"Entries","region-label":"Feed","you-text":"You"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Feed","runtime":{"earlier-text":"Show earlier","empty-text":"No entries yet","latest-label":"To the latest","loading-earlier-text":"Loading earlier entries","log-label":"Entries","region-label":"Feed","you-text":"You"}}');
 
 /***/ },
 
 /***/ "1002fcd319ac"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Лента","runtime":{"earlier-text":"Показать предыдущие","latest-label":"К последней записи","loading-earlier-text":"Загружаю предыдущие записи","log-label":"Записи","region-label":"Лента","you-text":"Вы"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Лента","runtime":{"earlier-text":"Показать предыдущие","empty-text":"Записей пока нет","latest-label":"К последней записи","loading-earlier-text":"Загружаю предыдущие записи","log-label":"Записи","region-label":"Лента","you-text":"Вы"}}');
 
 /***/ }
 

@@ -5293,12 +5293,27 @@ __webpack_require__.r(__webpack_exports__);
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
  *
- * Anything else reads as number.
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
  */
 
 function numberOptions(format = 'number', step = 0) {
-  const word = String(format || 'number').trim();
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
   if (word === 'integer') return {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0
   };
   if (word === 'percent') return {
@@ -5559,7 +5574,9 @@ function publishFormat(root = typeof globalThis !== 'undefined' ? globalThis : u
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ICON_CHOICES: () => (/* binding */ ICON_CHOICES),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   ICON_CHOICE_WORDS: () => (/* binding */ ICON_CHOICE_WORDS),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   iconWords: () => (/* binding */ iconWords)
 /* harmony export */ });
 // The glyphs a person may mark a part of an interface with -- a section of a
 // record, a row of a menu, a tile of a dashboard. A hundred and twenty names
@@ -5571,10 +5588,512 @@ __webpack_require__.r(__webpack_exports__);
 // Raised from ui-pro sf-view-properties (js/icon-choices.js), which sf-admin-menu
 // imported across what become two component sets (duplication audit
 // 2026-11-03, A-1; owner decision 2026-11-03, component sets, point 13). A
-// component imports ICON_CHOICES; a page reads SF.icons.choices. The choice
+// component imports ICON_CHOICES; a page reads SF.icons.choices, and
+// SF.icons.choices.words[name] gives a glyph's Russian and English words
+// (C151 point 8). The choice
 // itself is drawn by sf-dropdown with options of kind icon (layout grid,
 // search), as sf-view-properties and sf-admin-menu do.
-const ICON_CHOICES = Object.freeze(["folder", "folder_open", "topic", "home", "dashboard", "apartment", "store", "storefront", "business_center", "work", "badge", "person", "group", "groups", "account_circle", "manage_accounts", "supervisor_account", "contacts", "school", "menu_book", "assignment", "task", "description", "article", "note_alt", "edit_note", "draft", "receipt", "receipt_long", "request_quote", "inventory_2", "category", "label", "sell", "local_offer", "shopping_cart", "shopping_bag", "payments", "savings", "credit_card", "account_balance", "calculate", "percent", "trending_up", "analytics", "insights", "monitoring", "bar_chart", "pie_chart", "table_chart", "schedule", "event", "today", "calendar_month", "date_range", "history", "alarm", "timer", "update", "hourglass_top", "mail", "outgoing_mail", "chat", "forum", "sms", "call", "phone_in_talk", "contact_support", "campaign", "notifications", "language", "public", "place", "map", "location_on", "travel_explore", "flight", "local_shipping", "route", "directions", "settings", "tune", "build", "construction", "handyman", "code", "terminal", "data_object", "api", "bug_report", "database", "storage", "cloud", "backup", "sync", "folder_zip", "upload_file", "download", "attach_file", "link", "lock", "lock_open", "shield", "verified_user", "key", "admin_panel_settings", "policy", "gavel", "fingerprint", "visibility", "palette", "format_paint", "image", "photo_library", "collections", "movie", "play_circle", "mic", "headphones", "brush"]); // Core publishes the list; a component bundle that carries its own copy reuses
+// The words a person searches the choice by (owner decision C151 point 8): a
+// Russian and an English word or two for each glyph, the name's own words
+// among the English ones. sf-dropdown matches its icon options against them
+// in either language, so «папка» finds folder and «folder» still does.
+const ICON_CHOICE_WORDS = Object.freeze({
+  folder: {
+    ru: ["папка", "каталог"],
+    en: ["folder", "directory"]
+  },
+  folder_open: {
+    ru: ["открытая", "папка"],
+    en: ["open", "folder"]
+  },
+  topic: {
+    ru: ["тема", "раздел"],
+    en: ["topic", "section"]
+  },
+  home: {
+    ru: ["главная", "дом"],
+    en: ["home", "main"]
+  },
+  dashboard: {
+    ru: ["панель", "сводка"],
+    en: ["dashboard", "overview"]
+  },
+  apartment: {
+    ru: ["здание", "организация"],
+    en: ["building", "organisation"]
+  },
+  store: {
+    ru: ["магазин"],
+    en: ["store", "shop"]
+  },
+  storefront: {
+    ru: ["витрина", "магазин"],
+    en: ["storefront", "shop"]
+  },
+  business_center: {
+    ru: ["портфель", "бизнес"],
+    en: ["business", "briefcase"]
+  },
+  work: {
+    ru: ["работа", "портфель"],
+    en: ["work", "briefcase"]
+  },
+  badge: {
+    ru: ["пропуск", "удостоверение"],
+    en: ["badge", "pass", "id"]
+  },
+  person: {
+    ru: ["человек", "пользователь"],
+    en: ["person", "user"]
+  },
+  group: {
+    ru: ["группа", "люди"],
+    en: ["group", "people"]
+  },
+  groups: {
+    ru: ["группы", "сообщество"],
+    en: ["groups", "community"]
+  },
+  account_circle: {
+    ru: ["профиль", "аккаунт"],
+    en: ["account", "profile"]
+  },
+  manage_accounts: {
+    ru: ["управление", "пользователями"],
+    en: ["manage", "accounts", "users"]
+  },
+  supervisor_account: {
+    ru: ["руководитель", "команда"],
+    en: ["supervisor", "team"]
+  },
+  contacts: {
+    ru: ["контакты"],
+    en: ["contacts"]
+  },
+  school: {
+    ru: ["обучение", "школа"],
+    en: ["school", "learning"]
+  },
+  menu_book: {
+    ru: ["книга", "справочник"],
+    en: ["book", "manual"]
+  },
+  assignment: {
+    ru: ["задание"],
+    en: ["assignment"]
+  },
+  task: {
+    ru: ["задача"],
+    en: ["task"]
+  },
+  description: {
+    ru: ["документ", "описание"],
+    en: ["document", "description"]
+  },
+  article: {
+    ru: ["статья"],
+    en: ["article"]
+  },
+  note_alt: {
+    ru: ["заметка"],
+    en: ["note"]
+  },
+  edit_note: {
+    ru: ["правка", "заметки"],
+    en: ["edit", "note"]
+  },
+  draft: {
+    ru: ["черновик"],
+    en: ["draft"]
+  },
+  receipt: {
+    ru: ["чек", "квитанция"],
+    en: ["receipt"]
+  },
+  receipt_long: {
+    ru: ["счёт", "чек"],
+    en: ["bill", "receipt"]
+  },
+  request_quote: {
+    ru: ["смета", "предложение"],
+    en: ["quote", "estimate"]
+  },
+  inventory_2: {
+    ru: ["архив", "склад"],
+    en: ["archive", "inventory"]
+  },
+  category: {
+    ru: ["категории"],
+    en: ["category"]
+  },
+  label: {
+    ru: ["метка", "ярлык"],
+    en: ["label", "tag"]
+  },
+  sell: {
+    ru: ["цена", "продажа"],
+    en: ["price", "sell"]
+  },
+  local_offer: {
+    ru: ["скидка", "предложение"],
+    en: ["offer", "discount"]
+  },
+  shopping_cart: {
+    ru: ["корзина"],
+    en: ["shopping", "cart"]
+  },
+  shopping_bag: {
+    ru: ["покупки", "сумка"],
+    en: ["shopping", "bag"]
+  },
+  payments: {
+    ru: ["оплата", "деньги"],
+    en: ["payments", "money"]
+  },
+  savings: {
+    ru: ["сбережения", "копилка"],
+    en: ["savings"]
+  },
+  credit_card: {
+    ru: ["карта", "оплата"],
+    en: ["credit", "card"]
+  },
+  account_balance: {
+    ru: ["банк"],
+    en: ["bank", "account"]
+  },
+  calculate: {
+    ru: ["калькулятор", "расчёт"],
+    en: ["calculator"]
+  },
+  percent: {
+    ru: ["процент"],
+    en: ["percent"]
+  },
+  trending_up: {
+    ru: ["рост", "тренд"],
+    en: ["trend", "growth"]
+  },
+  analytics: {
+    ru: ["аналитика"],
+    en: ["analytics"]
+  },
+  insights: {
+    ru: ["выводы", "инсайты"],
+    en: ["insights"]
+  },
+  monitoring: {
+    ru: ["мониторинг"],
+    en: ["monitoring"]
+  },
+  bar_chart: {
+    ru: ["диаграмма", "график"],
+    en: ["bar", "chart"]
+  },
+  pie_chart: {
+    ru: ["круговая", "диаграмма"],
+    en: ["pie", "chart"]
+  },
+  table_chart: {
+    ru: ["таблица"],
+    en: ["table"]
+  },
+  schedule: {
+    ru: ["время", "часы", "расписание"],
+    en: ["time", "clock", "schedule"]
+  },
+  event: {
+    ru: ["событие"],
+    en: ["event"]
+  },
+  today: {
+    ru: ["сегодня"],
+    en: ["today"]
+  },
+  calendar_month: {
+    ru: ["календарь"],
+    en: ["calendar"]
+  },
+  date_range: {
+    ru: ["период", "даты"],
+    en: ["date", "range"]
+  },
+  history: {
+    ru: ["история"],
+    en: ["history"]
+  },
+  alarm: {
+    ru: ["будильник", "напоминание"],
+    en: ["alarm"]
+  },
+  timer: {
+    ru: ["таймер"],
+    en: ["timer"]
+  },
+  update: {
+    ru: ["обновление"],
+    en: ["update"]
+  },
+  hourglass_top: {
+    ru: ["ожидание", "песочные", "часы"],
+    en: ["hourglass", "waiting"]
+  },
+  mail: {
+    ru: ["почта", "письмо"],
+    en: ["mail", "email", "letter"]
+  },
+  outgoing_mail: {
+    ru: ["исходящие", "отправка"],
+    en: ["outgoing", "mail"]
+  },
+  chat: {
+    ru: ["чат", "сообщение"],
+    en: ["chat", "message"]
+  },
+  forum: {
+    ru: ["обсуждение", "форум"],
+    en: ["forum", "discussion"]
+  },
+  sms: {
+    ru: ["смс", "сообщение"],
+    en: ["sms", "text"]
+  },
+  call: {
+    ru: ["звонок", "телефон"],
+    en: ["call", "phone"]
+  },
+  phone_in_talk: {
+    ru: ["разговор"],
+    en: ["phone", "call", "talk"]
+  },
+  contact_support: {
+    ru: ["поддержка"],
+    en: ["support", "help"]
+  },
+  campaign: {
+    ru: ["рассылка", "объявление"],
+    en: ["campaign", "announcement"]
+  },
+  notifications: {
+    ru: ["уведомления"],
+    en: ["notifications"]
+  },
+  language: {
+    ru: ["язык", "мир"],
+    en: ["language", "world"]
+  },
+  public: {
+    ru: ["сайт", "мир", "интернет"],
+    en: ["public", "web", "world"]
+  },
+  place: {
+    ru: ["место"],
+    en: ["place"]
+  },
+  map: {
+    ru: ["карта"],
+    en: ["map"]
+  },
+  location_on: {
+    ru: ["адрес", "место"],
+    en: ["location", "address"]
+  },
+  travel_explore: {
+    ru: ["поиск", "по", "миру"],
+    en: ["travel", "explore"]
+  },
+  flight: {
+    ru: ["перелёт", "самолёт"],
+    en: ["flight", "plane"]
+  },
+  local_shipping: {
+    ru: ["доставка"],
+    en: ["shipping", "delivery"]
+  },
+  route: {
+    ru: ["маршрут"],
+    en: ["route"]
+  },
+  directions: {
+    ru: ["направление"],
+    en: ["directions"]
+  },
+  settings: {
+    ru: ["настройки"],
+    en: ["settings"]
+  },
+  tune: {
+    ru: ["фильтр", "параметры"],
+    en: ["tune", "filter"]
+  },
+  build: {
+    ru: ["инструменты", "сборка"],
+    en: ["build", "tools"]
+  },
+  construction: {
+    ru: ["стройка"],
+    en: ["construction"]
+  },
+  handyman: {
+    ru: ["ремонт", "мастер"],
+    en: ["handyman", "repair"]
+  },
+  code: {
+    ru: ["код"],
+    en: ["code"]
+  },
+  terminal: {
+    ru: ["терминал", "консоль"],
+    en: ["terminal", "console"]
+  },
+  data_object: {
+    ru: ["объект", "данные"],
+    en: ["data", "object"]
+  },
+  api: {
+    ru: ["интерфейс", "api"],
+    en: ["api"]
+  },
+  bug_report: {
+    ru: ["ошибка", "баг"],
+    en: ["bug"]
+  },
+  database: {
+    ru: ["база", "данных"],
+    en: ["database"]
+  },
+  storage: {
+    ru: ["хранилище"],
+    en: ["storage"]
+  },
+  cloud: {
+    ru: ["облако"],
+    en: ["cloud"]
+  },
+  backup: {
+    ru: ["резервная", "копия"],
+    en: ["backup"]
+  },
+  sync: {
+    ru: ["синхронизация"],
+    en: ["sync"]
+  },
+  folder_zip: {
+    ru: ["архив", "zip"],
+    en: ["zip", "archive"]
+  },
+  upload_file: {
+    ru: ["загрузка", "файла"],
+    en: ["upload", "file"]
+  },
+  download: {
+    ru: ["скачать"],
+    en: ["download"]
+  },
+  attach_file: {
+    ru: ["вложение", "скрепка"],
+    en: ["attach", "file"]
+  },
+  link: {
+    ru: ["ссылка"],
+    en: ["link"]
+  },
+  lock: {
+    ru: ["замок", "доступ"],
+    en: ["lock"]
+  },
+  lock_open: {
+    ru: ["открытый", "доступ"],
+    en: ["unlock", "open"]
+  },
+  shield: {
+    ru: ["защита"],
+    en: ["shield", "protection"]
+  },
+  verified_user: {
+    ru: ["проверено", "безопасность"],
+    en: ["verified", "user"]
+  },
+  key: {
+    ru: ["ключ"],
+    en: ["key"]
+  },
+  admin_panel_settings: {
+    ru: ["администрирование"],
+    en: ["admin"]
+  },
+  policy: {
+    ru: ["правила", "политика"],
+    en: ["policy"]
+  },
+  gavel: {
+    ru: ["закон", "право"],
+    en: ["law", "gavel"]
+  },
+  fingerprint: {
+    ru: ["отпечаток"],
+    en: ["fingerprint"]
+  },
+  visibility: {
+    ru: ["видимость", "просмотр"],
+    en: ["visibility", "view"]
+  },
+  palette: {
+    ru: ["палитра", "цвет"],
+    en: ["palette", "colour", "color"]
+  },
+  format_paint: {
+    ru: ["оформление", "кисть"],
+    en: ["format", "paint"]
+  },
+  image: {
+    ru: ["картинка", "изображение"],
+    en: ["image", "picture"]
+  },
+  photo_library: {
+    ru: ["фото", "галерея"],
+    en: ["photos", "gallery"]
+  },
+  collections: {
+    ru: ["коллекции"],
+    en: ["collections"]
+  },
+  movie: {
+    ru: ["видео", "фильм"],
+    en: ["movie", "video"]
+  },
+  play_circle: {
+    ru: ["воспроизведение"],
+    en: ["play"]
+  },
+  mic: {
+    ru: ["микрофон"],
+    en: ["microphone"]
+  },
+  headphones: {
+    ru: ["наушники", "звук"],
+    en: ["headphones", "audio"]
+  },
+  brush: {
+    ru: ["кисть", "рисование"],
+    en: ["brush"]
+  }
+}); // The words of any glyph name: the choice's words, or the name read as words
+// (folder_open -> folder open) for a glyph outside the choice.
+
+function iconWords(name) {
+  const key = String(name || '').trim();
+  const words = Object.hasOwn(ICON_CHOICE_WORDS, key) ? ICON_CHOICE_WORDS[key] : null;
+  const own = key.split('_').filter(Boolean);
+  return {
+    ru: words ? [...words.ru] : [],
+    en: [...new Set([...(words ? words.en : []), ...own])]
+  };
+}
+const ICON_CHOICES = Object.freeze(Object.defineProperty(["folder", "folder_open", "topic", "home", "dashboard", "apartment", "store", "storefront", "business_center", "work", "badge", "person", "group", "groups", "account_circle", "manage_accounts", "supervisor_account", "contacts", "school", "menu_book", "assignment", "task", "description", "article", "note_alt", "edit_note", "draft", "receipt", "receipt_long", "request_quote", "inventory_2", "category", "label", "sell", "local_offer", "shopping_cart", "shopping_bag", "payments", "savings", "credit_card", "account_balance", "calculate", "percent", "trending_up", "analytics", "insights", "monitoring", "bar_chart", "pie_chart", "table_chart", "schedule", "event", "today", "calendar_month", "date_range", "history", "alarm", "timer", "update", "hourglass_top", "mail", "outgoing_mail", "chat", "forum", "sms", "call", "phone_in_talk", "contact_support", "campaign", "notifications", "language", "public", "place", "map", "location_on", "travel_explore", "flight", "local_shipping", "route", "directions", "settings", "tune", "build", "construction", "handyman", "code", "terminal", "data_object", "api", "bug_report", "database", "storage", "cloud", "backup", "sync", "folder_zip", "upload_file", "download", "attach_file", "link", "lock", "lock_open", "shield", "verified_user", "key", "admin_panel_settings", "policy", "gavel", "fingerprint", "visibility", "palette", "format_paint", "image", "photo_library", "collections", "movie", "play_circle", "mic", "headphones", "brush"], 'words', {
+  value: ICON_CHOICE_WORDS,
+  enumerable: false
+})); // Core publishes the list; a component bundle that carries its own copy reuses
 // the published one instead of replacing it.
 
 if (typeof globalThis !== 'undefined') {
@@ -5584,6 +6103,325 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ICON_CHOICES);
+
+/***/ },
+
+/***/ "a1e33ce15a5e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DIRECTIONAL_ICONS: () => (/* binding */ DIRECTIONAL_ICONS),
+/* harmony export */   checkIconGlyph: () => (/* binding */ checkIconGlyph),
+/* harmony export */   markCustomGlyph: () => (/* binding */ markCustomGlyph),
+/* harmony export */   mirrorsInRtl: () => (/* binding */ mirrorsInRtl),
+/* harmony export */   nearestIconName: () => (/* binding */ nearestIconName),
+/* harmony export */   registerIcon: () => (/* binding */ registerIcon),
+/* harmony export */   registeredIcon: () => (/* binding */ registeredIcon)
+/* harmony export */ });
+// What every icon slot shares about a glyph beyond its font (owner decision
+// C151, icons study control/research/2026-11-14-icons.md): the glyphs a
+// product registers by name (point 6), the glyphs that turn over in a
+// right-to-left part (point 3) and an unknown name, which keeps its box empty
+// and is named once in the console with the nearest real name (point 2).
+//
+// One state per page, on the shared global: Core, the Loader and the Smart
+// icon each carry a copy of this module (bundles each carry their own module
+// copy), and a glyph registered through one copy has to draw in the slots the
+// others render.
+const NAME = /^[a-z0-9_][a-z0-9_-]*$/u;
+
+function shared() {
+  const root = globalThis.SF = globalThis.SF || {};
+  const icons = root.icons = root.icons || {};
+
+  if (!icons.__glyphs) {
+    Object.defineProperty(icons, '__glyphs', {
+      value: {
+        registered: new Map(),
+        warned: new Set(),
+        names: null,
+        pending: new Set(),
+        frame: 0
+      },
+      configurable: true
+    });
+  }
+
+  return icons.__glyphs;
+} // ---------------------------------------------------------------- point 6
+// SF.icons.register(name, svg): the product's own or a brand glyph, drawn in
+// the current colour at the slot's size wherever an icon name is accepted --
+// sf-icon, a button's icon-start, a menu row, a tab, the class markup
+// <i class="sf-icon">name</i>. The SVG is a mask over the glyph's box, so one
+// colour; the box and its size are the ladder's. The name never reaches the
+// icon font request.
+
+
+function styleSheet() {
+  const doc = globalThis.document;
+  if (!doc?.head) return null;
+  let style = doc.head.querySelector('style[data-sf-icons-registered]');
+
+  if (!style) {
+    style = doc.createElement('style');
+    style.setAttribute('data-sf-icons-registered', '');
+    doc.head.appendChild(style);
+  }
+
+  return style;
+}
+
+function svgUrl(svg) {
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function writeRegisteredSheet() {
+  const style = styleSheet();
+  if (!style) return;
+  const rules = [];
+
+  for (const [name, svg] of shared().registered) {
+    rules.push(`.sf-icon[data-sf-icon-custom="${name}"]{--sf-icon--custom:${svgUrl(svg)}}`);
+  }
+
+  style.textContent = rules.join('\n');
+}
+
+function registeredIcon(name) {
+  const key = String(name || '').trim();
+  return key ? shared().registered.get(key) || null : null;
+} // A glyph of the class markup takes its registered drawing from the attribute;
+// one that stops being registered (its text changed) gives it back.
+
+function markCustomGlyph(el, name) {
+  if (!el?.setAttribute) return false;
+  const key = String(name || '').trim();
+
+  if (key && registeredIcon(key)) {
+    if (el.getAttribute('data-sf-icon-custom') !== key) el.setAttribute('data-sf-icon-custom', key); // Drawn as letters before it was registered: it is no longer missing.
+
+    el.removeAttribute('data-sf-icon-missing');
+    return true;
+  }
+
+  if (el.hasAttribute?.('data-sf-icon-custom')) el.removeAttribute('data-sf-icon-custom');
+  return false;
+}
+function registerIcon(name, svg) {
+  const key = String(name || '').trim();
+  const drawing = String(svg || '').trim();
+
+  if (!NAME.test(key)) {
+    globalThis.console?.warn?.(`[SIMAI Framework] SF.icons.register: "${key}" is not an icon name (lowercase letters, digits, _ and -).`);
+    return false;
+  }
+
+  if (!/^<svg[\s>]/iu.test(drawing)) {
+    globalThis.console?.warn?.(`[SIMAI Framework] SF.icons.register("${key}"): the drawing must be an <svg> element.`);
+    return false;
+  }
+
+  shared().registered.set(key, drawing);
+  writeRegisteredSheet();
+  const doc = globalThis.document; // Class-markup glyphs already on the page take it now; sf-icon elements and
+  // the Loader hear the event.
+
+  doc?.querySelectorAll?.('.sf-icon').forEach(el => {
+    if (el.closest?.('sf-icon')) return;
+    const text = String(el.getAttribute('data-icon') || el.textContent || '').trim();
+    if (text === key && markCustomGlyph(el, key)) el.classList.add('sf-icon-loaded');
+  });
+
+  try {
+    globalThis.dispatchEvent?.(new CustomEvent('sf-icons:registered', {
+      detail: {
+        name: key
+      }
+    }));
+  } catch {// A realm without CustomEvent (a unit test) has nothing listening.
+  }
+
+  return true;
+} // ---------------------------------------------------------------- point 3
+// The glyphs that point along the line (Material's bidirectionality guidance):
+// arrows, chevrons, send, reply and forward, undo and redo, lists and
+// indents, open in a new window, log in and out. Clocks, checks, media
+// controls and logos never turn over.
+
+const DIRECTIONAL_ICONS = Object.freeze(new Set(['arrow_back', 'arrow_forward', 'arrow_back_ios', 'arrow_back_ios_new', 'arrow_forward_ios', 'arrow_left', 'arrow_right', 'arrow_left_alt', 'arrow_right_alt', 'arrow_outward', 'chevron_left', 'chevron_right', 'keyboard_arrow_left', 'keyboard_arrow_right', 'keyboard_double_arrow_left', 'keyboard_double_arrow_right', 'double_arrow', 'navigate_before', 'navigate_next', 'first_page', 'last_page', 'trending_flat', 'subdirectory_arrow_left', 'subdirectory_arrow_right', 'call_made', 'call_received', 'keyboard_tab', 'keyboard_backspace', 'backspace', 'send', 'reply', 'reply_all', 'forward', 'undo', 'redo', 'format_list_bulleted', 'list', 'view_list', 'toc', 'notes', 'short_text', 'subject', 'wrap_text', 'format_indent_increase', 'format_indent_decrease', 'menu_open', 'read_more', 'open_in_new', 'launch', 'exit_to_app', 'logout', 'login', 'input', 'output', 'label', 'label_important'])); // mirror: auto (the glyph turns over in a right-to-left part when it points
+// along the line), on (it turns over there whatever it is), off (never).
+
+function mirrorsInRtl(name, mode = 'auto') {
+  const value = String(mode || 'auto').trim().toLowerCase();
+  if (value === 'off') return false;
+  if (value === 'on') return true;
+  return DIRECTIONAL_ICONS.has(String(name || '').trim());
+} // ---------------------------------------------------------------- point 2
+// An unknown or misspelt name is drawn by the icon font as its letters: wider
+// than the glyph's box. The box clips them (the icons sheet), the glyph is
+// marked missing (its letters unseen, the box kept) and the name is said once
+// per page, with the nearest real name from the font's own list
+// (core/contracts/icon-names.v1.json, fetched only when a name is missing).
+
+function textWidth(el) {
+  const doc = el.ownerDocument;
+  const range = doc?.createRange?.();
+  if (!range) return 0;
+  range.selectNodeContents(el);
+  return range.getBoundingClientRect?.().width || 0;
+}
+
+function namesUrl() {
+  const base = String(globalThis.sfPath || '').replace(/\/+$/u, '');
+  return base ? `${base}/core/contracts/icon-names.v1.json` : '';
+}
+
+function loadNames() {
+  const state = shared();
+
+  if (!state.names) {
+    const url = namesUrl();
+    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : []).catch(() => []) : Promise.resolve([]);
+  }
+
+  return state.names;
+}
+
+function distance(a, b) {
+  const row = Array.from({
+    length: b.length + 1
+  }, (_, index) => index);
+
+  for (let i = 1; i <= a.length; i += 1) {
+    let previous = row[0];
+    row[0] = i;
+
+    for (let j = 1; j <= b.length; j += 1) {
+      const kept = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1));
+      previous = kept;
+    }
+  }
+
+  return row[b.length];
+}
+
+function nearestIconName(name, names = []) {
+  const wanted = String(name || '').trim().toLowerCase().replace(/[\s-]+/gu, '_');
+  let best = '';
+  let bestDistance = Infinity;
+
+  for (const candidate of names) {
+    if (Math.abs(candidate.length - wanted.length) >= bestDistance) continue;
+    const d = distance(wanted, candidate);
+
+    if (d < bestDistance) {
+      best = candidate;
+      bestDistance = d;
+    }
+  }
+
+  return bestDistance <= Math.max(2, Math.ceil(wanted.length / 3)) ? best : '';
+}
+
+function warnMissing(name) {
+  const state = shared();
+  if (state.warned.has(name)) return;
+  state.warned.add(name);
+  loadNames().then(names => {
+    const near = nearestIconName(name, names);
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-icon: no icon "${name}"${near ? `; nearest: "${near}"` : ''}. The box stays empty.`);
+  });
+} // A glyph is judged only once the face that draws it is in: marked loaded,
+// its family can still be on its way (font-display: block draws the name
+// unseen at the fallback's width, as wide as letters). Until then the check
+// waits for the face, twice at most; a face that never comes is judged as it
+// draws.
+
+
+const fontWaits = new WeakMap();
+
+function faceOnItsWay(glyph, name) {
+  const fonts = glyph.ownerDocument?.fonts;
+  const view = glyph.ownerDocument?.defaultView;
+  if (!fonts?.check || !view?.getComputedStyle) return null;
+  const waits = fontWaits.get(glyph) || 0;
+  if (waits >= 2) return null;
+  const style = view.getComputedStyle(glyph);
+  const font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+
+  try {
+    if (fonts.check(font, name || 'a')) return null;
+  } catch {
+    return null;
+  }
+
+  fontWaits.set(glyph, waits + 1);
+  return Promise.resolve(fonts.load(font, name || 'a')).catch(() => null);
+} // Called when a glyph is marked loaded; the reads are taken together in one
+// frame for every glyph that loaded since the last one.
+
+
+function checkIconGlyph(el) {
+  if (!el?.isConnected || el.hasAttribute('data-sf-icon-custom')) return;
+  const state = shared();
+  state.pending.add(el);
+  if (state.frame) return;
+
+  const run = () => {
+    state.frame = 0;
+    const glyphs = [...state.pending];
+    state.pending.clear();
+    const readings = glyphs.map(glyph => {
+      if (!glyph.isConnected || glyph.hasAttribute('data-sf-icon-custom')) return null;
+      const box = glyph.getBoundingClientRect(); // Not rendered (a closed panel): read again when it loads anew.
+
+      if (!box.width || !box.height) return null;
+      return {
+        glyph,
+        box: box.width,
+        text: textWidth(glyph)
+      };
+    });
+
+    for (const reading of readings) {
+      if (!reading) continue;
+      const {
+        glyph,
+        box,
+        text
+      } = reading;
+      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one box wide; letters are several.
+
+      const missing = text > box * 1.5;
+
+      if (missing) {
+        const face = faceOnItsWay(glyph, name);
+
+        if (face) {
+          face.then(() => checkIconGlyph(glyph));
+          continue;
+        }
+
+        if (!glyph.hasAttribute('data-sf-icon-missing')) glyph.setAttribute('data-sf-icon-missing', '');
+        if (name) warnMissing(name);
+      } else if (glyph.hasAttribute('data-sf-icon-missing')) {
+        glyph.removeAttribute('data-sf-icon-missing');
+      }
+    }
+  };
+
+  const raf = globalThis.requestAnimationFrame;
+  state.frame = typeof raf === 'function' ? raf(run) : (setTimeout(run, 16), 1);
+}
+
+if (typeof globalThis !== 'undefined') {
+  const root = globalThis.SF = globalThis.SF || {};
+  root.icons = root.icons || {};
+  if (typeof root.icons.register !== 'function') root.icons.register = registerIcon;
+}
 
 /***/ },
 
@@ -5697,7 +6535,7 @@ function iconSubsetCssFromManifest(manifest = {}) {
     family,
     weights: [...weights]
   };
-  const cssText = fontFaces + `\n` + `${iconSubsetSelector(iconManifestType(manifest))} {\n` + `  --sf-icon--font-family: '${family}';\n` + `  --sf-icon--font--weight: var(--sf-icon--weight, 400);\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'wght' var(--sf-icon--weight, 400), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
+  const cssText = fontFaces + `\n` + `${iconSubsetSelector(iconManifestType(manifest))} {\n` + `  --sf-icon--font-family: '${family}';\n` + `  --sf-icon--font--weight: var(--sf-icon--weight, 400);\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
   return {
     cssText,
     family,
@@ -5915,13 +6753,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("effedf2a2981");
 /* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("a1e33ce15a5e");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("6c7f357fe960");
  // The text faces the page needs, started before anything else runs, so a
 // quick network brings Inter in before the first frame (core/js/text-fonts.js).
 
@@ -5966,6 +6805,9 @@ __webpack_require__.r(__webpack_exports__);
  // The glyphs a person chooses from (duplication audit 2026-11-03, A-1):
 // SF.icons.choices.
 
+ // Registered glyphs, mirroring and the unknown-name check every icon slot
+// shares (owner decision C151): SF.icons.register.
+
 
 
 
@@ -5990,10 +6832,10 @@ if (typeof window !== 'undefined') {
 
   if (SF.deprecations && !('warn' in SF.deprecations)) SF.deprecations.warn = false; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_26__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_27__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_29__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_30__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -6057,9 +6899,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_30__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_31__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -6145,10 +6987,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_27__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_28__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_28__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_29__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -6254,12 +7096,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   // them at once and is left alone, as it was.
 
   const holdUndefinedUntilDefined = () => {
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) {
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_31__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_31__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_32__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_32__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -6267,12 +7109,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.getPreloaderBackground)(),
       modifier: 'loader-default',
-      tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_32__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_32__.DEFAULT_PRELOADER.height,
+      tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: var(--sf-layer--window, 9000);background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_33__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_33__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
@@ -6280,8 +7122,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return; // Preloaded modules draw their elements before this runs: nothing is
     // left for a preloader to stand in for (input-choice audit 2026-11-11).
 
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.createPreloaderContent)(cfg);
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) return;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -6301,7 +7143,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -6311,7 +7153,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // Read when the preloader would show, after its delay, when the
       // server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageHasPreloadedModules)(window)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageHasPreloadedModules)(window)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -6333,10 +7175,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
       // preloader over drawn content (R216, any site).
 
-      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_32__.watchForContent)(() => {
+      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_33__.watchForContent)(() => {
         preloaderRun = false;
         stopAnimation();
         hide();
@@ -6381,7 +7223,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_32__.pageShowsContent)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_33__.pageShowsContent)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -11961,7 +12803,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.55.0';
+const CORE_RUNTIME = '1.56.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -12667,6 +13509,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   workspace: () => (/* binding */ workspace)
 /* harmony export */ });
 /* harmony import */ var _layer_stack_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("51250bf01ab0");
 // The workspace layout's script (core.css .sf-workspace, docs/developer/
 // workspace-layout.md). The sheet places the regions from the container's
 // width; this keeps what a sheet cannot:
@@ -12679,7 +13522,15 @@ __webpack_require__.r(__webpack_exports__);
 //   - the narrow view: when the region holding focus is hidden, focus goes to
 //     the region shown -- back to the list, onto the row the host marks with
 //     aria-current; on to main, onto its back control;
-//   - the events sf-workspace-view {view} and sf-workspace-panel {open}.
+//   - the events sf-workspace-view {view} and sf-workspace-panel {open};
+//   - the edge of a list or panel region marked data-sf-workspace-resize
+//     (owner decision C158 (6)): an sf-resizer placed in the region, the
+//     width in the region's own variable (--sf-workspace-list,
+//     --sf-workspace-panel), kept in this browser (SF.Preferences
+//     sf-resizer/<key>, the key the attribute's value or the region's name)
+//     and written before the first paint; the list folds to its edge
+//     (collapsible). The region scrolls as before; the handle stands outside
+//     its clip (sf-resizer 1.2.0) and is not there below the split step.
 //
 // The state is the element's attributes: data-sf-workspace-view (list|main)
 // and data-sf-workspace-panel (open). A host sets them, or calls
@@ -12690,13 +13541,64 @@ __webpack_require__.r(__webpack_exports__);
 // region, which must stay where it is in the DOM to be a column when the
 // container is wide. The contract is sf-drawer's, kept with the same stack.
 
+
 const VIEW = 'data-sf-workspace-view';
 const PANEL = 'data-sf-workspace-panel';
 const LIST_HIDDEN = '[data-sf-workspace-list="hidden"]';
 const KEY = Symbol.for('sf.workspace');
 const CURRENT = '[aria-current]:not([aria-current="false"])';
 
-const region = (element, name) => element.querySelector(`:scope > .sf-workspace-${name}`); // The node itself when a person can focus it, else the first that can be
+const region = (element, name) => element.querySelector(`:scope > .sf-workspace-${name}`); // The regions that may have an edge, the variable their width is in and the
+// side the edge stands on.
+
+
+const RESIZE = 'data-sf-workspace-resize';
+const EDGES = {
+  list: {
+    property: '--sf-workspace-list',
+    edge: 'inline-end',
+    collapsible: true
+  },
+  panel: {
+    property: '--sf-workspace-panel',
+    edge: 'inline-start',
+    collapsible: false
+  }
+};
+
+const preferences = () => globalThis.SF?.Preferences || _preferences_js__WEBPACK_IMPORTED_MODULE_1__["default"]; // The edge of each region marked data-sf-workspace-resize: the region's own
+// sf-resizer when the page placed one (its min, max and words), else one made
+// here. The width the person kept is written into the region's variable now,
+// before the handle's bundle arrives, so the first frame has it.
+
+
+function placeEdges(element) {
+  for (const [name, spec] of Object.entries(EDGES)) {
+    const part = region(element, name);
+    if (!part || !part.hasAttribute(RESIZE)) continue;
+    let handle = part.querySelector(':scope > sf-resizer');
+    const key = part.getAttribute(RESIZE).trim() || `sf-workspace-${name}`;
+
+    if (!handle) {
+      handle = globalThis.document.createElement('sf-resizer');
+      handle.setAttribute('property', spec.property);
+      handle.setAttribute('edge', spec.edge);
+      handle.setAttribute('storage-key', key);
+      if (spec.collapsible) handle.setAttribute('collapsible', ''); // Kept before the handle is defined: its width, or its fold.
+
+      const kept = preferences()?.read(`sf-resizer/${key.replace(/[^\w.:-]+/gu, '-')}`);
+
+      if (kept?.folded === true && spec.collapsible) {
+        part.setAttribute('data-folded', '');
+        part.style.setProperty(spec.property, '0px');
+      } else if (Number.isFinite(kept?.width) && kept.width > 0) {
+        part.style.setProperty(spec.property, `${Math.round(kept.width)}px`);
+      }
+
+      part.append(handle);
+    }
+  }
+} // The node itself when a person can focus it, else the first that can be
 // inside it, else the node with a temporary tabindex.
 
 
@@ -12721,6 +13623,7 @@ class Workspace {
     this.resize = typeof globalThis.ResizeObserver === 'function' ? new globalThis.ResizeObserver(() => this.sync()) : null;
     this.resize?.observe(element);
     element.addEventListener('click', event => this.onClick(event));
+    placeEdges(element);
   }
 
   readView() {
@@ -22305,7 +23208,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.15.0"
+    "version": "1.16.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -22480,7 +23383,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.10.0"
+    "version": "1.10.1"
   },
   "sf-checkbox": {
     "inputs": {
@@ -22548,7 +23451,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.3.1"
+    "version": "1.4.1"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -22679,7 +23582,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.11.0"
+    "version": "1.13.0"
   },
   "sf-icon": {
     "inputs": {
@@ -22718,6 +23621,15 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         },
         "label": {
           "default": "",
+          "type": "string"
+        },
+        "mirror": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
           "type": "string"
         },
         "optical-size": {
@@ -22762,7 +23674,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "sf-input": {
     "inputs": {
@@ -22959,7 +23871,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.9.1"
+    "version": "1.10.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -23131,7 +24043,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.9.0"
+    "version": "1.10.1"
   },
   "sf-switch": {
     "inputs": {

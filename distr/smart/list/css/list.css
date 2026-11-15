@@ -169,35 +169,20 @@
   .sf-list__meta:empty {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item--text .sf-list__meta{
-    padding-left: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-item--text .sf-list__meta{
-    padding-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-list-item--text .sf-list__meta:where(:dir(ltr)){
-    padding-left: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item--text .sf-list__meta{
-    padding-right: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-item--text .sf-list__meta{
-    padding-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-list-item--text .sf-list__meta:where(:dir(rtl)){
-    padding-right: var(--sf-space-1\/2);
-  }
-  .sf-list-item--text .sf-list__meta {
-    -webkit-padding-start: var(--sf-space-1\/2);
-            padding-inline-start: var(--sf-space-1\/2);
+  /* A two-line row's meta is sf-list-item's end column (owner decision C148
+     (2)): the badge and the count on the caption's line, under the title's
+     line, so the row keeps its height and its title its width. The step
+     before it is the row's own (sf-list-item's wrap, C105 H2), in a text row
+     too. sf-badge's host is display: contents: its badge is the column's
+     item. */
+  .sf-list-item--two-line > .sf-list-item-wrap > .sf-list__meta > *,
+  .sf-list-item--two-line > .sf-list-item-wrap > .sf-list__meta > sf-badge > * {
+    grid-row: 2;
   }
   /* A narrow list (owner decision C47, 2026-11-10, option A; the list sets
-     data-sf-list-narrow on its frame below 20rem of its own width): a row
-     with a badge or a count lays out as «picture | text», and the meta goes
+     data-sf-list-narrow on its frame below 20rem of its own width): a
+     one-line row with a badge or a count (a two-line row keeps its end
+     column, C148 (2)) lays out as «picture | text», and the meta goes
      under the second line, at the text's start, so the title keeps the
      row's width and the badge stays whole. The row grows by whole bands
      (geometry standard, multi-line rows): the band step --sf-space-1/4 and
@@ -205,24 +190,24 @@
      size 1. Rows without a meta keep their layout and their height; the
      picture place is one width in every row, so all titles start on one
      line. */
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) {
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     grid-row-gap: var(--sf-space-1\/4);
     row-gap: var(--sf-space-1\/4);
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item--text .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) {
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item--text:not(.sf-list-item--two-line) > .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) {
     grid-template-columns: minmax(0, 1fr);
   }
   /* The picture: the leading place, or sf-icon's own glyph (its host is
      display: contents). */
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > :first-child:not(.sf-list-item-container):not(sf-icon),
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > sf-icon:first-child > * {
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > :first-child:not(.sf-list-item-container):not(sf-icon),
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > sf-icon:first-child > * {
     grid-column: 1;
     grid-row: 1;
     align-self: center;
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > .sf-list-item-container {
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap:has(> .sf-list__meta:not(:empty)) > .sf-list-item-container {
     grid-column: -2;
     grid-row: 1;
     justify-self: stretch;
@@ -232,51 +217,51 @@
     max-inline-size: 100%;
     margin: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     margin-left: 0;
   }
   @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     margin-left: 0;
     }
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(ltr)){
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(ltr)){
     margin-left: 0;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     margin-right: 0;
   }
   @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     margin-right: 0;
     }
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(rtl)){
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(rtl)){
     margin-right: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     padding-left: 0;
   }
   @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  html:not([dir="rtl"]) .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     padding-left: 0;
     }
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(ltr)){
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(ltr)){
     padding-left: 0;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     padding-right: 0;
   }
   @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty){
+  [dir="rtl"] .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty){
     padding-right: 0;
     }
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(rtl)){
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty):where(:dir(rtl)){
     padding-right: 0;
   }
-  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item-wrap > .sf-list__meta:not(:empty) {
+  .sf-list__frame[data-sf-list-narrow] .sf-list__row .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta:not(:empty) {
     grid-column: -2;
     grid-row: 2;
     justify-self: start;
@@ -354,6 +339,13 @@
     background-color: var(--sf-list--current);
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-list--current);
+  }
+  /* An unread row (owner decision C167 (3), 2026-11-14): a row with a count
+     -- the item's count is its unread (count-label «3 непрочитанных») -- has
+     its title semibold beside the grey count (C140 (3)), so unread is read
+     before the number. The second line stays regular. */
+  .sf-list__row--unread > sf-list-item > .sf-list-item .sf-list-item-title {
+    font-weight: var(--sf-weight--semi-bold);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list__actions{
     margin-right: var(--sf-space-1\/4);
@@ -460,17 +452,31 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .sf-list__skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sf-space-1\/4);
+  /* The rows on their way (C130, LF-2): rows of the list, so each is as tall
+     as the row that comes; a bar is core's first-paint bar (.sf-first-paint-bar:
+     the skeleton fill, the pulse, the capitals' height in the middle of the
+     line, C136) drawn as a box of its own width: a box as tall as the face's
+     glyph box (line-height normal), so the bar stands where the words' band
+     would, on the line's baseline. The title's bar is shorter than the
+     caption's (C136 (4): even lines, the last one short). */
+  .sf-list__bar {
+    display: inline-block;
+    max-width: 100%;
+    max-inline-size: 100%;
+    line-height: normal;
+    vertical-align: baseline;
   }
-  .sf-list__skeleton > span {
-    display: block;
-    height: var(--sf-list--row-height);
-    block-size: var(--sf-list--row-height);
-    border-radius: var(--sf-list--row-radius);
-    background: var(--sf-surface-container);
+  .sf-list__bar--title {
+    width: 40%;
+    inline-size: 40%;
+  }
+  .sf-list__bar--supporting {
+    width: 70%;
+    inline-size: 70%;
+  }
+  /* Skeleton rows take no pointer, so the row hover never reaches them. */
+  .sf-list__row--skeleton {
+    pointer-events: none;
   }
 }
 /* Under a finger (1.2.0) every row, the rename field, the loading rows and
@@ -489,8 +495,7 @@
       min-height: var(--sf-list--touch-height);
       min-block-size: var(--sf-list--touch-height);
     }
-    .sf-list__rename,
-    .sf-list__skeleton > span {
+    .sf-list__rename {
       height: var(--sf-list--touch-height);
       block-size: var(--sf-list--touch-height);
     }
@@ -637,5 +642,17 @@
   .sf-list__frame .sf-list__row > sf-list-item > .sf-list-item .sf-list-item-container {
     -webkit-padding-end: 0;
             padding-inline-end: 0;
+  }
+}
+/* divided (owner decision C148 (4)): sf-list-item's inset line runs on under
+   the row's «⋯» to the row's own end, where the row cuts it: the list's row,
+   not the inner sf-list-item, is where the line is placed and clipped. */
+@layer sf.components {
+  .sf-list__row:has(> sf-list-item > .sf-list-item--divided) {
+    position: relative;
+  }
+  .sf-list__row > sf-list-item > .sf-list-item.sf-list-item--divided {
+    position: static;
+    overflow: visible;
   }
 }

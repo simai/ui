@@ -118,15 +118,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   avatarContent: () => (/* binding */ avatarContent),
 /* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
 /* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
-/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons),
+/* harmony export */   avatarStepText: () => (/* binding */ avatarStepText)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
-/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9d9903b87148");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
  // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
@@ -146,7 +149,16 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
 /** The glyph of a placeholder: a person, unless the host names another. */
 
-const AVATAR_PLACEHOLDER_ICON = "person";
+const AVATAR_PLACEHOLDER_ICON = "person"; // The letters a step holds (owner decision C152 (3), 2026-11-14): two from
+// 1/3 up, one at 1/4 (16 px holds one letter of a readable size, two were
+// 10 px each). Only letters are cut: «+5» or a number stays whole.
+
+function avatarStepText(text, size) {
+  const value = String(text ?? "");
+  if (String(size ?? "") !== "1/4") return value;
+  const letters = value.match(/^(\p{L}\p{M}*)\p{L}/u);
+  return letters ? letters[1] : value;
+}
 /**
  * The drawing context of one avatar picture, from what a host knows: the photo,
  * the initials or the name they are taken from, the hue, the placeholder's
@@ -157,15 +169,18 @@ function avatarPictureContext(options = {}) {
   const imageUrl = String(options.imageUrl ?? "").trim();
   const name = String(options.name ?? "").trim();
   const explicitText = String(options.text ?? "").trim();
-  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
-  // names a glyph (a bot, a system), which stands in for them.
+  const namedIcon = String(options.icon ?? "").trim();
+  const size = AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : ""; // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them. With a photo
+  // they stand under it until it comes and when it fails (C152 (2)).
 
-  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
-  const isImage = Boolean(imageUrl);
-  const isText = !isImage && Boolean(text);
+  const text = avatarStepText(namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_2__.getInitials)(name), size);
+  const isImage = Boolean(imageUrl); // isText: the initials are drawn (alone, or under the photo).
+
+  const isText = Boolean(text);
   const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
   return {
-    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    size,
     line: String(options.line ?? ""),
     shape: options.shape === "square" ? "square" : "circle",
     imageUrl,
@@ -175,7 +190,7 @@ function avatarPictureContext(options = {}) {
     icon,
     status: options.status || "none",
     expressive: Boolean(options.expressive),
-    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveAvatarHue)(options.hue, name || text, "") : "",
     rootClass: options.rootClass || "",
     rootStyle: options.rootStyle || "",
     disabled: Boolean(options.disabled),
@@ -198,10 +213,6 @@ function avatarClasses(context, options = {}) {
   const layout = options.layout ?? null;
   const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
 
-  if (context.isImage && layout) {
-    classes.push(layout.center);
-  }
-
   if (context.isText) {
     classes.push("sf-avatar--text");
     if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
@@ -212,7 +223,7 @@ function avatarClasses(context, options = {}) {
     }
   }
 
-  if (!context.isImage && !context.isText) {
+  if (!context.isText) {
     classes.push("sf-avatar--placeholder");
     if (layout) classes.push(layout.center);
   } // The decorative level (C91 level 2): the sheet turns the initials'
@@ -248,30 +259,39 @@ function avatarClasses(context, options = {}) {
   }
 
   return classes.join(" ");
+} // The photo says when it has come or failed (C152 (2)): the sheet fades it
+// in over the initials when loaded and drops it on an error, so the avatar is
+// never an empty circle or the browser's broken-image glyph. The state is
+// the runtime mark data-sf-loaded ("true" or "error"), which the template
+// does not bind, so a redraw keeps it, and which a first-paint snapshot
+// leaves out (it depends on the network); a new address is a new element
+// (keyed), which starts transparent again.
+
+function onImageLoad(event) {
+  event.currentTarget.dataset.sfLoaded = "true";
+}
+
+function onImageError(event) {
+  event.currentTarget.dataset.sfLoaded = "error";
 }
 /**
- * What the circle holds: the photo, the initials, or the placeholder glyph as
- * an sf-icon element, so its name reaches the icon font request (a bare
- * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
- * review 2026-11-09).
+ * What the circle holds: the initials, or the placeholder glyph as an sf-icon
+ * element, so its name reaches the icon font request (a bare <i class="sf-icon">
+ * drawn after the page's scan stayed blank: buttons review 2026-11-09); with a
+ * photo, the photo over them (owner decision C152 (2)).
  */
 
+
 function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  const under = context.isText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  if (!context.isImage) return under;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${under}${(0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(context.imageUrl, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @load=${onImageLoad} @error=${onImageError} />`)}`;
 }
 /** The icon names a picture draws (for a host's icon preload). */
 
 function avatarPictureIcons(options = {}) {
   const context = avatarPictureContext(options);
-  return context.isImage || context.isText ? [] : [context.icon];
+  return context.isText ? [] : [context.icon];
 }
 /**
  * One avatar picture beside a host's own content: a span hidden from
@@ -303,7 +323,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
-const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
+// (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
+// titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
+// skipped wherever they stand. Compared without case and without the dots
+// around them (normalizeInitialsWords strips those).
+
+const INITIALS_SERVICE_WORDS = new Set([// legal forms
+"ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
+"dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -336,6 +365,10 @@ function firstGrapheme(word) {
 //   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
 //   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
 //   «Анна»                 → «А»
+//   «ООО «Ромашка»»        → «Р»    legal forms, titles, particles skipped (C152)
+//   «Мария фон Штейн»      → «МШ»
+//   «Dr. John Smith»       → «JS»
+//   «anna@simai.ru»        → «A»    an address: the first letter before «@»
 //   «»                     → ''     or `fallback`: '?' where text must stand
 //
 // `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
@@ -349,7 +382,21 @@ function getInitials(value = "", options = {}) {
     fallback = "",
     locale
   } = options;
-  const words = normalizeInitialsWords(value);
+  let source = String(value ?? "").trim(); // An address reads by the name before «@»: one letter (C152 (3)),
+  // anna@simai.ru → A, not the letters of its parts.
+
+  if (/^[^\s@]+@[^\s@]+$/u.test(source)) {
+    const local = normalizeInitialsWords(source.slice(0, source.indexOf("@")).replace(/[._+-]+/gu, " "));
+    if (!local.length) return String(fallback);
+    const letter = firstGrapheme(local[0]);
+    return (locale ? letter.toLocaleUpperCase(locale) : letter.toUpperCase()) || String(fallback);
+  }
+
+  const allWords = normalizeInitialsWords(source); // Legal forms, titles and particles go first; a name made of them alone
+  // keeps them, so it still has initials.
+
+  const ownWords = allWords.filter(word => !INITIALS_SERVICE_WORDS.has(String(word).toLowerCase()));
+  const words = ownWords.length ? ownWords : allWords;
   let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
   // are its words. Split before the skip list, «из-за» would be two words.
 
@@ -377,10 +424,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c22590307c6c");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f4c129a27dd4");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("06e7f30e3c4d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f073ddf72256");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ef521380d975");
+/* harmony import */ var _js_long_press__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f4c129a27dd4");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("06e7f30e3c4d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f073ddf72256");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ef521380d975");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -399,6 +447,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // A row a person reaches by keyboard (interactive, or an item of an sf-sortable
 // list) is one stop of its list: the list is a single Tab stop and the arrows,
 // Home and End move between its rows (simai/ui-source#29, ui-mail P-14: twenty
@@ -408,7 +457,38 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const ROVING = '[data-sf-list-roving]';
 const LIST = 'sf-sortable, [role="listbox"], [role="list"], [data-sf-list]';
 const INTERACTIVE = 'a[href], button, input, select, textarea, summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([data-sf-list-roving])';
-const pendingLists = new Set();
+const pendingLists = new Set(); // The controls a row holds (a «⋯», «Позвонить»): owner decision C148 (3).
+
+const CONTROL = 'a[href], button, input, select, textarea, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([data-sf-list-roving])';
+const TEXT_ENTRY = 'input, select, textarea, [contenteditable]:not([contenteditable="false"])'; // A row's controls in its end part, in order: the ones a person reaches from
+// the row with the arrows. An element that holds another (an sf-button-icon
+// host given a tabindex around its own <button>) is the inner one.
+
+function controlsOf(row) {
+  const found = [];
+
+  for (const part of row.querySelectorAll(':scope > .sf-list-item-wrap > :is([slot="trailing"], .sf-list-item-trailing)')) {
+    const all = [part, ...part.querySelectorAll(CONTROL)].filter(el => el.matches(CONTROL));
+
+    for (const el of all) {
+      if (el.disabled || el.getAttribute('aria-disabled') === 'true' || el.closest('[hidden], [inert]')) continue;
+      if (all.some(other => other !== el && el.contains(other))) continue;
+      found.push(el);
+    }
+  }
+
+  return found;
+} // Every control inside a row of a list takes no Tab stop of its own: the row
+// is its list's one stop (C148 (3); a list of forty rows with a «⋯» each was
+// eighty stops). The controls a component draws later (sf-button-icon's own
+// <button>) are caught as they come.
+
+
+function tameControls(row) {
+  for (const el of row.querySelectorAll(CONTROL)) {
+    if (el !== row && el.tabIndex !== -1) el.tabIndex = -1;
+  }
+}
 
 function listOf(row) {
   const host = row.closest('sf-list-item') || row;
@@ -478,14 +558,14 @@ function normalizeSizeGroup(value) {
   };
 }
 
-const ListItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const ListItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 });
 
 class SfListItem extends ListItemElement {
@@ -495,7 +575,27 @@ class SfListItem extends ListItemElement {
     this._rowBound = true;
     this.addEventListener('sf-after-render', () => {
       const row = this.querySelector(':scope > .sf-list-item');
-      if (row?.matches(ROVING)) scheduleRoving(listOf(row));
+
+      if (row?.matches(ROVING)) {
+        scheduleRoving(listOf(row)); // Only a row a person presses reaches its controls by the arrows; a
+        // row of an sf-sortable list alone keeps them as Tab stops.
+
+        if (this.interactive) this.watchControls(row);
+      }
+    }); // A cut title is the row's tooltip (C148 (5)): measured when a pointer
+    // comes to the row, so a row that grew wide enough loses it.
+
+    this.addEventListener('pointerenter', () => this.markCut()); // A long press under a finger opens the row's menu, as its «⋯» does
+    // (C148 (6)); the click the release sends then opens nothing.
+
+    this._stopLongPress = (0,_js_long_press__WEBPACK_IMPORTED_MODULE_4__.watchLongPress)(this, {
+      accepts: event => {
+        const row = this.querySelector(':scope > .sf-list-item');
+        if (!this.interactive || this.disabled || !row?.contains(event.target)) return false;
+        const control = event.target.closest(INTERACTIVE);
+        return !(control && control !== row && row.contains(control)) && Boolean(this.menuControl());
+      },
+      press: () => this.menuControl()?.click()
     });
     this.addEventListener('keydown', event => this.onRowKeyDown(event));
     this.addEventListener('click', event => this.onRowClick(event));
@@ -514,20 +614,113 @@ class SfListItem extends ListItemElement {
   disconnectedCallback() {
     const row = this.querySelector(':scope > .sf-list-item');
     const list = row?.matches(ROVING) ? listOf(row) : null;
+    this._controlsObserver?.disconnect();
+    this._controlsObserver = null;
+    this._controlsRow = null;
     super.disconnectedCallback?.();
     if (list) scheduleRoving(list);
+  } // The row's controls are kept out of the Tab order, now and as they are
+  // drawn (C148 (3)).
+
+
+  watchControls(row) {
+    tameControls(row);
+    if (this._controlsRow === row || typeof MutationObserver !== 'function') return;
+    this._controlsObserver?.disconnect();
+    this._controlsRow = row;
+    this._controlsObserver = new MutationObserver(() => tameControls(row));
+
+    this._controlsObserver.observe(row, {
+      childList: true,
+      subtree: true
+    });
+  } // The control a long press stands for: the row's menu button (a control
+  // that says it opens a menu), else the last control at the row's end -- the
+  // «⋯» by the Framework's order of a row's actions.
+
+
+  menuControl() {
+    const row = this.querySelector(':scope > .sf-list-item');
+    if (!row) return null;
+    const controls = controlsOf(row);
+    return controls.find(el => /^(true|menu)$/u.test(el.getAttribute('aria-haspopup') || '')) || controls.at(-1) || null;
+  } // C148 (5): the title (and the caption) is one line cut with an ellipsis,
+  // or two lines with lines="2"; when either is cut, the whole of it is the
+  // row's tooltip. A title the page gave the host is the page's.
+
+
+  markCut() {
+    const row = this.querySelector(':scope > .sf-list-item');
+    if (!row || row.getAttribute('role') === 'option' || this.hasAttribute('title')) return;
+    const textBlock = row.querySelector(':scope > .sf-list-item-wrap > .sf-list-item-container');
+    if (!textBlock) return;
+    const title = textBlock.querySelector(':scope > .sf-list-item-title') || textBlock;
+    const caption = textBlock.querySelector(':scope > .sf-list-item-supporting');
+
+    const cut = el => Boolean(el) && (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1);
+
+    const titleCut = cut(title);
+    const captionCut = cut(caption);
+
+    if (!titleCut && !captionCut) {
+      if (row.dataset.sfListCut) {
+        row.removeAttribute('title');
+        delete row.dataset.sfListCut;
+      }
+
+      return;
+    }
+
+    const words = el => (el?.textContent || '').replace(/\s+/gu, ' ').trim();
+
+    const tip = captionCut ? [words(title), words(caption)].filter(Boolean).join(' · ') : words(title);
+    row.title = tip;
+    row.dataset.sfListCut = 'true';
   } // The row takes focus on the host's behalf: the host is boxless.
 
 
   focusDelegate() {
     const row = this.querySelector(':scope > .sf-list-item');
     return row?.matches(ROVING) ? row : null;
+  } // C148 (3), as the APG layout grid: from the row the arrow toward its end
+  // (ArrowRight; ArrowLeft right to left) goes to its first control and on,
+  // the other arrow back to the previous control and then to the row; Escape,
+  // ArrowUp and ArrowDown on a control go back to the row. A field in the
+  // row keeps its own arrows.
+
+
+  onControlKeyDown(event, row) {
+    const controls = controlsOf(row);
+    if (!controls.length) return false;
+    const rtl = getComputedStyle(row).direction === 'rtl';
+    const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
+    const back = rtl ? 'ArrowRight' : 'ArrowLeft';
+    const at = controls.indexOf(event.target);
+
+    if (event.target === row) {
+      if (event.key !== forward) return false;
+      event.preventDefault();
+      controls[0].focus();
+      return true;
+    }
+
+    if (at < 0 || event.target.matches(TEXT_ENTRY)) return false;
+    let target = null;
+    if (event.key === forward) target = controls[Math.min(controls.length - 1, at + 1)];else if (event.key === back) target = at === 0 ? row : controls[at - 1];else if (['Escape', 'ArrowUp', 'ArrowDown'].includes(event.key)) target = row;
+    if (!target) return false;
+    event.preventDefault(); // The Escape is the row's: a panel around the list stays open.
+
+    event.stopPropagation();
+    target.focus();
+    return true;
   }
 
   onRowKeyDown(event) {
     const row = this.querySelector(':scope > .sf-list-item');
-    if (!row?.matches(ROVING) || event.target !== row || event.defaultPrevented || reordering()) return;
+    if (!row?.matches(ROVING) || event.defaultPrevented || reordering()) return;
     if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (this.interactive && !event.shiftKey && this.onControlKeyDown(event, row)) return;
+    if (event.target !== row) return;
     const rows = rowsOf(listOf(row)).filter(entry => !entry.classList.contains('disabled'));
     const at = rows.indexOf(row);
     const target = {
@@ -553,7 +746,9 @@ class SfListItem extends ListItemElement {
 
   onRowClick(event) {
     const row = this.querySelector(':scope > .sf-list-item');
-    if (!this.interactive || !row || !row.contains(event.target)) return; // A control inside the row (a trailing action) acts for itself.
+    if (!this.interactive || !row || !row.contains(event.target)) return; // The release of a long press that opened the row's menu.
+
+    if (this._stopLongPress?.swallowed()) return; // A control inside the row (a trailing action) acts for itself.
 
     const control = event.target.closest(INTERACTIVE);
     if (control && control !== row && row.contains(control)) return;
@@ -650,6 +845,8 @@ class SfListItem extends ListItemElement {
       interactive: this.interactive,
       sortableItem: this.sortableItem,
       pinned: this.pinned,
+      divided: this.divided,
+      lines: this.lines,
       ariaLabel: this.getAttribute('aria-label') || '',
       // Resolved names the template reads (contracts/template-context.json).
       kind: this.kind,
@@ -716,6 +913,86 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "50e7fd61ac57"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   watchLongPress: () => (/* binding */ watchLongPress)
+/* harmony export */ });
+// A long press under a finger (owner decision C148 (6), list item study
+// prototypes/list-item-study.html #q-swipe): held 0.5 s on a row, it opens the
+// same menu as the row's «⋯» and Shift+F10. No swipe: it is hidden and fights
+// the platform's back gesture. The press time is the tooltip's long press
+// (component tooltip, C59): times, not lengths -- the Framework has no delay
+// tokens. A touch the browser takes for a scroll ends in pointercancel and
+// opens nothing. The click the release sends afterwards is the press's, not a
+// press of the row: swallowed() answers it once.
+//
+// Stateless module: sf-list-item and sf-list each carry a copy in their own
+// bundle; every watch keeps its state in its own closure.
+const LONG_PRESS_MS = 500;
+function watchLongPress(target, {
+  accepts,
+  press
+}) {
+  let timer = 0;
+  let pointer = null;
+  let fired = false;
+
+  const clear = () => {
+    clearTimeout(timer);
+    timer = 0;
+    pointer = null;
+  };
+
+  const onDown = event => {
+    fired = false;
+    if (event.pointerType !== 'touch' || !event.isPrimary || !accepts(event)) return;
+    clear();
+    pointer = event.pointerId;
+    timer = setTimeout(() => {
+      timer = 0;
+      press(event); // After the press: a click press() sends itself is not the release.
+
+      fired = true;
+    }, LONG_PRESS_MS);
+  };
+
+  const onEnd = event => {
+    if (pointer === event.pointerId) clear();
+  }; // The browser's own long-press menu (text selection, «copy») would cover
+  // the row's menu.
+
+
+  const onContextMenu = event => {
+    if (pointer !== null || fired) event.preventDefault();
+  };
+
+  target.addEventListener('pointerdown', onDown);
+  target.addEventListener('pointerup', onEnd);
+  target.addEventListener('pointercancel', onEnd);
+  target.addEventListener('contextmenu', onContextMenu);
+  return {
+    swallowed() {
+      if (!fired) return false;
+      fired = false;
+      return true;
+    },
+
+    stop() {
+      clear();
+      target.removeEventListener('pointerdown', onDown);
+      target.removeEventListener('pointerup', onEnd);
+      target.removeEventListener('pointercancel', onEnd);
+      target.removeEventListener('contextmenu', onContextMenu);
+    }
+
+  };
+}
+
+/***/ },
+
 /***/ "c22590307c6c"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -754,7 +1031,9 @@ function renderListItemTemplate(context) {
   const sortableItem = !isOption && !context.pinned ? context.sortableItem || "" : "";
   const handleSlot = !isOption && Boolean(context.sortableItem || context.pinned);
   const roving = !isOption && Boolean(context.interactive || sortableItem);
-  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", context.rootClass].filter(Boolean);
+  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", // Owner decision C148: an inset line under the row (divided), a title
+  // of up to two lines (lines="2"). An option keeps neither.
+  !isOption && context.divided ? "sf-list-item--divided" : "", !isOption && String(context.lines) === "2" ? "sf-list-item--lines-2" : "", context.rootClass].filter(Boolean);
   const wrapClasses = ["sf-list-item-wrap", "flex", "flex-1"];
   const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type); // The step between the picture and the text is the row's own (C105 H2,
   // HS-5): the list item sheet sets it from the size and the density. A layout
@@ -872,11 +1151,20 @@ function renderListItemTemplate(context) {
   };
 
   const renderTrailing = () => {
-    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return trailingContent; // The box after a picture is a dropdown option's choice, and only where
+    // The row's end part is one box (owner decision C148 (2), (3)): a plain
+    // <span slot="trailing"> gives the slot its children (the base unwraps a
+    // wrapper that only names the slot), so loose nodes -- a time and a
+    // badge, two buttons -- are put back in a box of the row's own. An
+    // element the page gave keeps its own box.
+    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) {
+      if (isOption || typeof Element !== "undefined" && trailingContent instanceof Element) return trailingContent;
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-item-trailing">${trailingContent}</span>`;
+    } // The box after a picture is a dropdown option's choice, and only where
     // the list may hold several chosen. A row outside a dropdown has no choice
     // to mark (docs precheck smart content LI-01: an empty checkbox stood at
     // the end of every such row); an option of a single choice says it is
     // chosen with its fill alone (owner C08; DEV P2, owner R143, 2026-11-12).
+
 
     if (isOption && context.multiple && (context.type === "avatar" || context.type === "color")) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1005,6 +1293,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "9d9903b87148"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/keyed.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/keyed.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -1114,7 +1409,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-
 /***/ "f4c129a27dd4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.5.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.6.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

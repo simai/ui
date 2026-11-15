@@ -580,7 +580,7 @@ function openDropdownPortal(root, list, onUnavailable) {
       const boundary = root.closest('dialog[open], [role="dialog"][aria-modal="true"]');
       (boundary || document.body).append(state.context);
       state.context.append(list);
-      list.style.zIndex = 'var(--sf-z-index-9)';
+      list.style.zIndex = 'var(--sf-layer--popover)';
     }
     state.inheritance = new MutationObserver(state.schedule);
 
@@ -924,6 +924,544 @@ class PanelScrollbar {
 
 /***/ },
 
+/***/ "1b42c5117087"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ICON_CHOICES: () => (/* binding */ ICON_CHOICES),
+/* harmony export */   ICON_CHOICE_WORDS: () => (/* binding */ ICON_CHOICE_WORDS),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   iconWords: () => (/* binding */ iconWords)
+/* harmony export */ });
+// The glyphs a person may mark a part of an interface with -- a section of a
+// record, a row of a menu, a tile of a dashboard. A hundred and twenty names
+// from the Framework's own icon set, the ones products actually reach for,
+// read in rows of what they are usually about: what a thing is, who it
+// belongs to, when it happens, what it costs, what it is made of. One list,
+// so every set chooses from the same glyphs.
+//
+// Raised from ui-pro sf-view-properties (js/icon-choices.js), which sf-admin-menu
+// imported across what become two component sets (duplication audit
+// 2026-11-03, A-1; owner decision 2026-11-03, component sets, point 13). A
+// component imports ICON_CHOICES; a page reads SF.icons.choices, and
+// SF.icons.choices.words[name] gives a glyph's Russian and English words
+// (C151 point 8). The choice
+// itself is drawn by sf-dropdown with options of kind icon (layout grid,
+// search), as sf-view-properties and sf-admin-menu do.
+// The words a person searches the choice by (owner decision C151 point 8): a
+// Russian and an English word or two for each glyph, the name's own words
+// among the English ones. sf-dropdown matches its icon options against them
+// in either language, so «папка» finds folder and «folder» still does.
+const ICON_CHOICE_WORDS = Object.freeze({
+  folder: {
+    ru: ["папка", "каталог"],
+    en: ["folder", "directory"]
+  },
+  folder_open: {
+    ru: ["открытая", "папка"],
+    en: ["open", "folder"]
+  },
+  topic: {
+    ru: ["тема", "раздел"],
+    en: ["topic", "section"]
+  },
+  home: {
+    ru: ["главная", "дом"],
+    en: ["home", "main"]
+  },
+  dashboard: {
+    ru: ["панель", "сводка"],
+    en: ["dashboard", "overview"]
+  },
+  apartment: {
+    ru: ["здание", "организация"],
+    en: ["building", "organisation"]
+  },
+  store: {
+    ru: ["магазин"],
+    en: ["store", "shop"]
+  },
+  storefront: {
+    ru: ["витрина", "магазин"],
+    en: ["storefront", "shop"]
+  },
+  business_center: {
+    ru: ["портфель", "бизнес"],
+    en: ["business", "briefcase"]
+  },
+  work: {
+    ru: ["работа", "портфель"],
+    en: ["work", "briefcase"]
+  },
+  badge: {
+    ru: ["пропуск", "удостоверение"],
+    en: ["badge", "pass", "id"]
+  },
+  person: {
+    ru: ["человек", "пользователь"],
+    en: ["person", "user"]
+  },
+  group: {
+    ru: ["группа", "люди"],
+    en: ["group", "people"]
+  },
+  groups: {
+    ru: ["группы", "сообщество"],
+    en: ["groups", "community"]
+  },
+  account_circle: {
+    ru: ["профиль", "аккаунт"],
+    en: ["account", "profile"]
+  },
+  manage_accounts: {
+    ru: ["управление", "пользователями"],
+    en: ["manage", "accounts", "users"]
+  },
+  supervisor_account: {
+    ru: ["руководитель", "команда"],
+    en: ["supervisor", "team"]
+  },
+  contacts: {
+    ru: ["контакты"],
+    en: ["contacts"]
+  },
+  school: {
+    ru: ["обучение", "школа"],
+    en: ["school", "learning"]
+  },
+  menu_book: {
+    ru: ["книга", "справочник"],
+    en: ["book", "manual"]
+  },
+  assignment: {
+    ru: ["задание"],
+    en: ["assignment"]
+  },
+  task: {
+    ru: ["задача"],
+    en: ["task"]
+  },
+  description: {
+    ru: ["документ", "описание"],
+    en: ["document", "description"]
+  },
+  article: {
+    ru: ["статья"],
+    en: ["article"]
+  },
+  note_alt: {
+    ru: ["заметка"],
+    en: ["note"]
+  },
+  edit_note: {
+    ru: ["правка", "заметки"],
+    en: ["edit", "note"]
+  },
+  draft: {
+    ru: ["черновик"],
+    en: ["draft"]
+  },
+  receipt: {
+    ru: ["чек", "квитанция"],
+    en: ["receipt"]
+  },
+  receipt_long: {
+    ru: ["счёт", "чек"],
+    en: ["bill", "receipt"]
+  },
+  request_quote: {
+    ru: ["смета", "предложение"],
+    en: ["quote", "estimate"]
+  },
+  inventory_2: {
+    ru: ["архив", "склад"],
+    en: ["archive", "inventory"]
+  },
+  category: {
+    ru: ["категории"],
+    en: ["category"]
+  },
+  label: {
+    ru: ["метка", "ярлык"],
+    en: ["label", "tag"]
+  },
+  sell: {
+    ru: ["цена", "продажа"],
+    en: ["price", "sell"]
+  },
+  local_offer: {
+    ru: ["скидка", "предложение"],
+    en: ["offer", "discount"]
+  },
+  shopping_cart: {
+    ru: ["корзина"],
+    en: ["shopping", "cart"]
+  },
+  shopping_bag: {
+    ru: ["покупки", "сумка"],
+    en: ["shopping", "bag"]
+  },
+  payments: {
+    ru: ["оплата", "деньги"],
+    en: ["payments", "money"]
+  },
+  savings: {
+    ru: ["сбережения", "копилка"],
+    en: ["savings"]
+  },
+  credit_card: {
+    ru: ["карта", "оплата"],
+    en: ["credit", "card"]
+  },
+  account_balance: {
+    ru: ["банк"],
+    en: ["bank", "account"]
+  },
+  calculate: {
+    ru: ["калькулятор", "расчёт"],
+    en: ["calculator"]
+  },
+  percent: {
+    ru: ["процент"],
+    en: ["percent"]
+  },
+  trending_up: {
+    ru: ["рост", "тренд"],
+    en: ["trend", "growth"]
+  },
+  analytics: {
+    ru: ["аналитика"],
+    en: ["analytics"]
+  },
+  insights: {
+    ru: ["выводы", "инсайты"],
+    en: ["insights"]
+  },
+  monitoring: {
+    ru: ["мониторинг"],
+    en: ["monitoring"]
+  },
+  bar_chart: {
+    ru: ["диаграмма", "график"],
+    en: ["bar", "chart"]
+  },
+  pie_chart: {
+    ru: ["круговая", "диаграмма"],
+    en: ["pie", "chart"]
+  },
+  table_chart: {
+    ru: ["таблица"],
+    en: ["table"]
+  },
+  schedule: {
+    ru: ["время", "часы", "расписание"],
+    en: ["time", "clock", "schedule"]
+  },
+  event: {
+    ru: ["событие"],
+    en: ["event"]
+  },
+  today: {
+    ru: ["сегодня"],
+    en: ["today"]
+  },
+  calendar_month: {
+    ru: ["календарь"],
+    en: ["calendar"]
+  },
+  date_range: {
+    ru: ["период", "даты"],
+    en: ["date", "range"]
+  },
+  history: {
+    ru: ["история"],
+    en: ["history"]
+  },
+  alarm: {
+    ru: ["будильник", "напоминание"],
+    en: ["alarm"]
+  },
+  timer: {
+    ru: ["таймер"],
+    en: ["timer"]
+  },
+  update: {
+    ru: ["обновление"],
+    en: ["update"]
+  },
+  hourglass_top: {
+    ru: ["ожидание", "песочные", "часы"],
+    en: ["hourglass", "waiting"]
+  },
+  mail: {
+    ru: ["почта", "письмо"],
+    en: ["mail", "email", "letter"]
+  },
+  outgoing_mail: {
+    ru: ["исходящие", "отправка"],
+    en: ["outgoing", "mail"]
+  },
+  chat: {
+    ru: ["чат", "сообщение"],
+    en: ["chat", "message"]
+  },
+  forum: {
+    ru: ["обсуждение", "форум"],
+    en: ["forum", "discussion"]
+  },
+  sms: {
+    ru: ["смс", "сообщение"],
+    en: ["sms", "text"]
+  },
+  call: {
+    ru: ["звонок", "телефон"],
+    en: ["call", "phone"]
+  },
+  phone_in_talk: {
+    ru: ["разговор"],
+    en: ["phone", "call", "talk"]
+  },
+  contact_support: {
+    ru: ["поддержка"],
+    en: ["support", "help"]
+  },
+  campaign: {
+    ru: ["рассылка", "объявление"],
+    en: ["campaign", "announcement"]
+  },
+  notifications: {
+    ru: ["уведомления"],
+    en: ["notifications"]
+  },
+  language: {
+    ru: ["язык", "мир"],
+    en: ["language", "world"]
+  },
+  public: {
+    ru: ["сайт", "мир", "интернет"],
+    en: ["public", "web", "world"]
+  },
+  place: {
+    ru: ["место"],
+    en: ["place"]
+  },
+  map: {
+    ru: ["карта"],
+    en: ["map"]
+  },
+  location_on: {
+    ru: ["адрес", "место"],
+    en: ["location", "address"]
+  },
+  travel_explore: {
+    ru: ["поиск", "по", "миру"],
+    en: ["travel", "explore"]
+  },
+  flight: {
+    ru: ["перелёт", "самолёт"],
+    en: ["flight", "plane"]
+  },
+  local_shipping: {
+    ru: ["доставка"],
+    en: ["shipping", "delivery"]
+  },
+  route: {
+    ru: ["маршрут"],
+    en: ["route"]
+  },
+  directions: {
+    ru: ["направление"],
+    en: ["directions"]
+  },
+  settings: {
+    ru: ["настройки"],
+    en: ["settings"]
+  },
+  tune: {
+    ru: ["фильтр", "параметры"],
+    en: ["tune", "filter"]
+  },
+  build: {
+    ru: ["инструменты", "сборка"],
+    en: ["build", "tools"]
+  },
+  construction: {
+    ru: ["стройка"],
+    en: ["construction"]
+  },
+  handyman: {
+    ru: ["ремонт", "мастер"],
+    en: ["handyman", "repair"]
+  },
+  code: {
+    ru: ["код"],
+    en: ["code"]
+  },
+  terminal: {
+    ru: ["терминал", "консоль"],
+    en: ["terminal", "console"]
+  },
+  data_object: {
+    ru: ["объект", "данные"],
+    en: ["data", "object"]
+  },
+  api: {
+    ru: ["интерфейс", "api"],
+    en: ["api"]
+  },
+  bug_report: {
+    ru: ["ошибка", "баг"],
+    en: ["bug"]
+  },
+  database: {
+    ru: ["база", "данных"],
+    en: ["database"]
+  },
+  storage: {
+    ru: ["хранилище"],
+    en: ["storage"]
+  },
+  cloud: {
+    ru: ["облако"],
+    en: ["cloud"]
+  },
+  backup: {
+    ru: ["резервная", "копия"],
+    en: ["backup"]
+  },
+  sync: {
+    ru: ["синхронизация"],
+    en: ["sync"]
+  },
+  folder_zip: {
+    ru: ["архив", "zip"],
+    en: ["zip", "archive"]
+  },
+  upload_file: {
+    ru: ["загрузка", "файла"],
+    en: ["upload", "file"]
+  },
+  download: {
+    ru: ["скачать"],
+    en: ["download"]
+  },
+  attach_file: {
+    ru: ["вложение", "скрепка"],
+    en: ["attach", "file"]
+  },
+  link: {
+    ru: ["ссылка"],
+    en: ["link"]
+  },
+  lock: {
+    ru: ["замок", "доступ"],
+    en: ["lock"]
+  },
+  lock_open: {
+    ru: ["открытый", "доступ"],
+    en: ["unlock", "open"]
+  },
+  shield: {
+    ru: ["защита"],
+    en: ["shield", "protection"]
+  },
+  verified_user: {
+    ru: ["проверено", "безопасность"],
+    en: ["verified", "user"]
+  },
+  key: {
+    ru: ["ключ"],
+    en: ["key"]
+  },
+  admin_panel_settings: {
+    ru: ["администрирование"],
+    en: ["admin"]
+  },
+  policy: {
+    ru: ["правила", "политика"],
+    en: ["policy"]
+  },
+  gavel: {
+    ru: ["закон", "право"],
+    en: ["law", "gavel"]
+  },
+  fingerprint: {
+    ru: ["отпечаток"],
+    en: ["fingerprint"]
+  },
+  visibility: {
+    ru: ["видимость", "просмотр"],
+    en: ["visibility", "view"]
+  },
+  palette: {
+    ru: ["палитра", "цвет"],
+    en: ["palette", "colour", "color"]
+  },
+  format_paint: {
+    ru: ["оформление", "кисть"],
+    en: ["format", "paint"]
+  },
+  image: {
+    ru: ["картинка", "изображение"],
+    en: ["image", "picture"]
+  },
+  photo_library: {
+    ru: ["фото", "галерея"],
+    en: ["photos", "gallery"]
+  },
+  collections: {
+    ru: ["коллекции"],
+    en: ["collections"]
+  },
+  movie: {
+    ru: ["видео", "фильм"],
+    en: ["movie", "video"]
+  },
+  play_circle: {
+    ru: ["воспроизведение"],
+    en: ["play"]
+  },
+  mic: {
+    ru: ["микрофон"],
+    en: ["microphone"]
+  },
+  headphones: {
+    ru: ["наушники", "звук"],
+    en: ["headphones", "audio"]
+  },
+  brush: {
+    ru: ["кисть", "рисование"],
+    en: ["brush"]
+  }
+}); // The words of any glyph name: the choice's words, or the name read as words
+// (folder_open -> folder open) for a glyph outside the choice.
+
+function iconWords(name) {
+  const key = String(name || '').trim();
+  const words = Object.hasOwn(ICON_CHOICE_WORDS, key) ? ICON_CHOICE_WORDS[key] : null;
+  const own = key.split('_').filter(Boolean);
+  return {
+    ru: words ? [...words.ru] : [],
+    en: [...new Set([...(words ? words.en : []), ...own])]
+  };
+}
+const ICON_CHOICES = Object.freeze(Object.defineProperty(["folder", "folder_open", "topic", "home", "dashboard", "apartment", "store", "storefront", "business_center", "work", "badge", "person", "group", "groups", "account_circle", "manage_accounts", "supervisor_account", "contacts", "school", "menu_book", "assignment", "task", "description", "article", "note_alt", "edit_note", "draft", "receipt", "receipt_long", "request_quote", "inventory_2", "category", "label", "sell", "local_offer", "shopping_cart", "shopping_bag", "payments", "savings", "credit_card", "account_balance", "calculate", "percent", "trending_up", "analytics", "insights", "monitoring", "bar_chart", "pie_chart", "table_chart", "schedule", "event", "today", "calendar_month", "date_range", "history", "alarm", "timer", "update", "hourglass_top", "mail", "outgoing_mail", "chat", "forum", "sms", "call", "phone_in_talk", "contact_support", "campaign", "notifications", "language", "public", "place", "map", "location_on", "travel_explore", "flight", "local_shipping", "route", "directions", "settings", "tune", "build", "construction", "handyman", "code", "terminal", "data_object", "api", "bug_report", "database", "storage", "cloud", "backup", "sync", "folder_zip", "upload_file", "download", "attach_file", "link", "lock", "lock_open", "shield", "verified_user", "key", "admin_panel_settings", "policy", "gavel", "fingerprint", "visibility", "palette", "format_paint", "image", "photo_library", "collections", "movie", "play_circle", "mic", "headphones", "brush"], 'words', {
+  value: ICON_CHOICE_WORDS,
+  enumerable: false
+})); // Core publishes the list; a component bundle that carries its own copy reuses
+// the published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  globalThis.SF.icons = globalThis.SF.icons || {};
+  if (!globalThis.SF.icons.choices) globalThis.SF.icons.choices = ICON_CHOICES;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ICON_CHOICES);
+
+/***/ },
+
 /***/ "c69a3dc158df"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -936,15 +1474,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   avatarContent: () => (/* binding */ avatarContent),
 /* harmony export */   avatarPicture: () => (/* binding */ avatarPicture),
 /* harmony export */   avatarPictureContext: () => (/* binding */ avatarPictureContext),
-/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons)
+/* harmony export */   avatarPictureIcons: () => (/* binding */ avatarPictureIcons),
+/* harmony export */   avatarStepText: () => (/* binding */ avatarStepText)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cbce4a5232a6");
-/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a6b3ed0c1589");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9d9903b87148");
+/* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cbce4a5232a6");
+/* harmony import */ var _tone_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a6b3ed0c1589");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
  // One avatar drawing (avatar study AV-8, 2026-11-14). sf-avatar and every
@@ -964,7 +1505,16 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 const AVATAR_SIZES = Object.freeze(["1/4", "1/3", "1/2", "1", "2", "3"]);
 /** The glyph of a placeholder: a person, unless the host names another. */
 
-const AVATAR_PLACEHOLDER_ICON = "person";
+const AVATAR_PLACEHOLDER_ICON = "person"; // The letters a step holds (owner decision C152 (3), 2026-11-14): two from
+// 1/3 up, one at 1/4 (16 px holds one letter of a readable size, two were
+// 10 px each). Only letters are cut: «+5» or a number stays whole.
+
+function avatarStepText(text, size) {
+  const value = String(text ?? "");
+  if (String(size ?? "") !== "1/4") return value;
+  const letters = value.match(/^(\p{L}\p{M}*)\p{L}/u);
+  return letters ? letters[1] : value;
+}
 /**
  * The drawing context of one avatar picture, from what a host knows: the photo,
  * the initials or the name they are taken from, the hue, the placeholder's
@@ -975,15 +1525,18 @@ function avatarPictureContext(options = {}) {
   const imageUrl = String(options.imageUrl ?? "").trim();
   const name = String(options.name ?? "").trim();
   const explicitText = String(options.text ?? "").trim();
-  const namedIcon = String(options.icon ?? "").trim(); // The initials: the host's own, else those of the name -- unless the host
-  // names a glyph (a bot, a system), which stands in for them.
+  const namedIcon = String(options.icon ?? "").trim();
+  const size = AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : ""; // The initials: the host's own, else those of the name -- unless the host
+  // names a glyph (a bot, a system), which stands in for them. With a photo
+  // they stand under it until it comes and when it fails (C152 (2)).
 
-  const text = imageUrl || namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_1__.getInitials)(name);
-  const isImage = Boolean(imageUrl);
-  const isText = !isImage && Boolean(text);
+  const text = avatarStepText(namedIcon ? explicitText : explicitText || (0,_helpers_text__WEBPACK_IMPORTED_MODULE_2__.getInitials)(name), size);
+  const isImage = Boolean(imageUrl); // isText: the initials are drawn (alone, or under the photo).
+
+  const isText = Boolean(text);
   const icon = namedIcon || AVATAR_PLACEHOLDER_ICON;
   return {
-    size: AVATAR_SIZES.includes(String(options.size ?? "")) ? String(options.size) : "",
+    size,
     line: String(options.line ?? ""),
     shape: options.shape === "square" ? "square" : "circle",
     imageUrl,
@@ -993,7 +1546,7 @@ function avatarPictureContext(options = {}) {
     icon,
     status: options.status || "none",
     expressive: Boolean(options.expressive),
-    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_2__.resolveAvatarHue)(options.hue, name || text, "") : "",
+    resolvedHue: isText && options.hue ? (0,_tone_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveAvatarHue)(options.hue, name || text, "") : "",
     rootClass: options.rootClass || "",
     rootStyle: options.rootStyle || "",
     disabled: Boolean(options.disabled),
@@ -1016,10 +1569,6 @@ function avatarClasses(context, options = {}) {
   const layout = options.layout ?? null;
   const classes = ["sf-avatar", layout ? layout.box : "sf-avatar--picture", context.size ? `sf-avatar--size-${context.size}` : "", context.line ? `sf-avatar--line-${context.line}` : "", layout ? layout.inline : ""].filter(Boolean);
 
-  if (context.isImage && layout) {
-    classes.push(layout.center);
-  }
-
   if (context.isText) {
     classes.push("sf-avatar--text");
     if (layout) classes.push(layout.center); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
@@ -1030,7 +1579,7 @@ function avatarClasses(context, options = {}) {
     }
   }
 
-  if (!context.isImage && !context.isText) {
+  if (!context.isText) {
     classes.push("sf-avatar--placeholder");
     if (layout) classes.push(layout.center);
   } // The decorative level (C91 level 2): the sheet turns the initials'
@@ -1066,30 +1615,39 @@ function avatarClasses(context, options = {}) {
   }
 
   return classes.join(" ");
+} // The photo says when it has come or failed (C152 (2)): the sheet fades it
+// in over the initials when loaded and drops it on an error, so the avatar is
+// never an empty circle or the browser's broken-image glyph. The state is
+// the runtime mark data-sf-loaded ("true" or "error"), which the template
+// does not bind, so a redraw keeps it, and which a first-paint snapshot
+// leaves out (it depends on the network); a new address is a new element
+// (keyed), which starts transparent again.
+
+function onImageLoad(event) {
+  event.currentTarget.dataset.sfLoaded = "true";
+}
+
+function onImageError(event) {
+  event.currentTarget.dataset.sfLoaded = "error";
 }
 /**
- * What the circle holds: the photo, the initials, or the placeholder glyph as
- * an sf-icon element, so its name reaches the icon font request (a bare
- * <i class="sf-icon"> drawn after the page's scan stayed blank: buttons
- * review 2026-11-09).
+ * What the circle holds: the initials, or the placeholder glyph as an sf-icon
+ * element, so its name reaches the icon font request (a bare <i class="sf-icon">
+ * drawn after the page's scan stayed blank: buttons review 2026-11-09); with a
+ * photo, the photo over them (owner decision C152 (2)).
  */
 
+
 function avatarContent(context) {
-  if (context.isText) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>`;
-  }
-
-  if (context.isImage) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} />`;
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  const under = context.isText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-avatar-text">${context.text}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.icon || AVATAR_PLACEHOLDER_ICON} aria-hidden="true"></sf-icon>`;
+  if (!context.isImage) return under;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${under}${(0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(context.imageUrl, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-avatar-image" src=${context.imageUrl} alt="" loading=${context.lazy ? "lazy" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} decoding=${context.lazy ? "async" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @load=${onImageLoad} @error=${onImageError} />`)}`;
 }
 /** The icon names a picture draws (for a host's icon preload). */
 
 function avatarPictureIcons(options = {}) {
   const context = avatarPictureContext(options);
-  return context.isImage || context.isText ? [] : [context.icon];
+  return context.isText ? [] : [context.icon];
 }
 /**
  * One avatar picture beside a host's own content: a span hidden from
@@ -1130,16 +1688,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("b4d28078de6f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("f15c795f1055");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("ad680c489766");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("8b3dd54aeaa8");
+/* harmony import */ var _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b4d28078de6f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("f15c795f1055");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("ad680c489766");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("8b3dd54aeaa8");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__);
+
 
 
 
@@ -1200,14 +1760,14 @@ const actions = {
   }
 
 };
-const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
+const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_15__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_16__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__,
   actions
 });
 
@@ -1713,9 +2273,18 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
 
     if (!query) {
       return this.options;
-    }
+    } // An icon option is found by its glyph's words too, in Russian and in
+    // English (owner decision C151 point 8, SF.icons.choices.words): a
+    // product's chooser labels its options with the glyph name, and «папка»
+    // found nothing in a grid of folder_open, topic and folder.
 
-    return this.options.filter(option => getOptionLabel(option).toLowerCase().includes(query));
+
+    return this.options.filter(option => {
+      if (getOptionLabel(option).toLowerCase().includes(query)) return true;
+      if (!option.icon) return false;
+      const words = (0,_core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__.iconWords)(option.icon);
+      return [...words.ru, ...words.en].some(word => word.toLowerCase().includes(query));
+    });
   }
 
   templateContext() {
@@ -2995,7 +3564,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
-const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
+const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
+// (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
+// titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
+// skipped wherever they stand. Compared without case and without the dots
+// around them (normalizeInitialsWords strips those).
+
+const INITIALS_SERVICE_WORDS = new Set([// legal forms
+"ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
+"dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -3028,6 +3606,10 @@ function firstGrapheme(word) {
 //   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
 //   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
 //   «Анна»                 → «А»
+//   «ООО «Ромашка»»        → «Р»    legal forms, titles, particles skipped (C152)
+//   «Мария фон Штейн»      → «МШ»
+//   «Dr. John Smith»       → «JS»
+//   «anna@simai.ru»        → «A»    an address: the first letter before «@»
 //   «»                     → ''     or `fallback`: '?' where text must stand
 //
 // `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
@@ -3041,7 +3623,21 @@ function getInitials(value = "", options = {}) {
     fallback = "",
     locale
   } = options;
-  const words = normalizeInitialsWords(value);
+  let source = String(value ?? "").trim(); // An address reads by the name before «@»: one letter (C152 (3)),
+  // anna@simai.ru → A, not the letters of its parts.
+
+  if (/^[^\s@]+@[^\s@]+$/u.test(source)) {
+    const local = normalizeInitialsWords(source.slice(0, source.indexOf("@")).replace(/[._+-]+/gu, " "));
+    if (!local.length) return String(fallback);
+    const letter = firstGrapheme(local[0]);
+    return (locale ? letter.toLocaleUpperCase(locale) : letter.toUpperCase()) || String(fallback);
+  }
+
+  const allWords = normalizeInitialsWords(source); // Legal forms, titles and particles go first; a name made of them alone
+  // keeps them, so it still has initials.
+
+  const ownWords = allWords.filter(word => !INITIALS_SERVICE_WORDS.has(String(word).toLowerCase()));
+  const words = ownWords.length ? ownWords : allWords;
   let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
   // are its words. Split before the skip list, «из-за» would be two words.
 
@@ -3098,7 +3694,9 @@ function renderListItemTemplate(context) {
   const sortableItem = !isOption && !context.pinned ? context.sortableItem || "" : "";
   const handleSlot = !isOption && Boolean(context.sortableItem || context.pinned);
   const roving = !isOption && Boolean(context.interactive || sortableItem);
-  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", context.rootClass].filter(Boolean);
+  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", // Owner decision C148: an inset line under the row (divided), a title
+  // of up to two lines (lines="2"). An option keeps neither.
+  !isOption && context.divided ? "sf-list-item--divided" : "", !isOption && String(context.lines) === "2" ? "sf-list-item--lines-2" : "", context.rootClass].filter(Boolean);
   const wrapClasses = ["sf-list-item-wrap", "flex", "flex-1"];
   const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type); // The step between the picture and the text is the row's own (C105 H2,
   // HS-5): the list item sheet sets it from the size and the density. A layout
@@ -3216,11 +3814,20 @@ function renderListItemTemplate(context) {
   };
 
   const renderTrailing = () => {
-    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return trailingContent; // The box after a picture is a dropdown option's choice, and only where
+    // The row's end part is one box (owner decision C148 (2), (3)): a plain
+    // <span slot="trailing"> gives the slot its children (the base unwraps a
+    // wrapper that only names the slot), so loose nodes -- a time and a
+    // badge, two buttons -- are put back in a box of the row's own. An
+    // element the page gave keeps its own box.
+    if (trailingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing) {
+      if (isOption || typeof Element !== "undefined" && trailingContent instanceof Element) return trailingContent;
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-item-trailing">${trailingContent}</span>`;
+    } // The box after a picture is a dropdown option's choice, and only where
     // the list may hold several chosen. A row outside a dropdown has no choice
     // to mark (docs precheck smart content LI-01: an empty checkbox stood at
     // the end of every such row); an option of a single choice says it is
     // chosen with its fill alone (owner C08; DEV P2, owner R143, 2026-11-12).
+
 
     if (isOption && context.multiple && (context.type === "avatar" || context.type === "color")) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3365,6 +3972,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "9d9903b87148"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/keyed.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/keyed.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -3495,7 +4109,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.11.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.13.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 

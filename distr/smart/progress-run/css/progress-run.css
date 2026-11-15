@@ -643,7 +643,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--sf-space-1\/3); /* a button group (C105 H5); was text-space-x */
+    gap: var(--sf-gap--actions); /* a button group (C105 H5); was text-space-x */
     padding-left: var(--sf-progress-run--padding-inline);
     padding-right: var(--sf-progress-run--padding-inline);
     padding-inline: var(--sf-progress-run--padding-inline);
@@ -813,7 +813,7 @@
     display: inline-flex;
     flex: none;
     align-items: center;
-    gap: var(--sf-space-1\/3); /* a button group (C105 H5) */
+    gap: var(--sf-gap--actions); /* a button group (C105 H5) */
     -webkit-margin-start: auto;
             margin-inline-start: auto;
   }

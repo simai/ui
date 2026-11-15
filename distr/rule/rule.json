@@ -654,6 +654,10 @@
       {
         "lazy": true,
         "name": "cl-badge"
+      },
+      {
+        "lazy": true,
+        "name": "cl-button"
       }
     ],
     "tags": [
@@ -721,6 +725,10 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "tooltip"
       }
     ],
     "tags": [
@@ -742,6 +750,14 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-popover"
+      },
+      {
+        "lazy": true,
+        "name": "tooltip"
       }
     ],
     "tags": [
@@ -1190,6 +1206,14 @@
       {
         "lazy": true,
         "name": "cl-button"
+      },
+      {
+        "lazy": true,
+        "name": "cl-gallery"
+      },
+      {
+        "lazy": true,
+        "name": "cl-confirm"
       }
     ],
     "tags": [
@@ -1228,10 +1252,16 @@
     "regex": "/data-sf-gallery(?:\\s|=|>|$)/",
     "relation": [
       {
-        "name": "cl-slider"
+        "name": "cl-button-icon"
       },
       {
-        "name": "cl-modal"
+        "name": "cl-button-close"
+      },
+      {
+        "name": "figure"
+      },
+      {
+        "name": "checkbox"
       }
     ],
     "tags": [
@@ -1774,6 +1804,9 @@
       },
       {
         "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-empty-state"
       },
       {
         "name": "sr-only/default"
@@ -2999,7 +3032,7 @@
   {
     "name": "featured-icon",
     "css": true,
-    "js": false,
+    "js": true,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-featured-icon\\b/i",
     "type": "component"
   },
@@ -3671,7 +3704,7 @@
   },
   {
     "name": "grid-template-columns/default",
-    "regex": "/^(?:grid-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))(?![\\s\\S])/"
+    "regex": "/^(?:grid-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|fit(?:-(?:f(?:0|2|6)|g(?:0|2|6)))?|none|subgrid))(?![\\s\\S])/"
   },
   {
     "name": "grid-template-columns/lg",

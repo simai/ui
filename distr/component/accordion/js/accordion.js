@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("695f21e50358");
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("524cdaa09638");
+
 
 
 const accordionInstances = new WeakMap();
@@ -22,13 +24,22 @@ const PLUS_MINUS_MODIFIER = 'sf-accordion--plus-minus'; // One section needs no 
 
 const SINGLE_MODIFIER = 'sf-accordion--single'; // A group that keeps its one section a toggle says so.
 
-const SINGLE_TOGGLE_ATTRIBUTE = 'data-single-section'; // A closed panel the page wrote as hidden="until-found" (Docara's details
-// block) stays findable: the browser's find-in-page searches it and opens it,
-// firing beforematch first. The runtime keeps that value when it closes the
-// panel again and never adds the hidden class to it, whose display: none
-// would take the text out of the search (accordion study AC-8).
+const SINGLE_TOGGLE_ATTRIBUTE = 'data-single-section'; // Every closed panel is findable (owner decision C154 (6)): it is closed
+// with hidden="until-found", so the browser's find-in-page searches it and
+// opens it, firing beforematch first, and the section follows (aria-expanded,
+// the active mark, the marker). A panel the page closed with the hidden
+// attribute or the hidden class becomes findable when the runtime takes it;
+// the hidden class is never left on a closed panel, as its display: none
+// would take the text out of the search (accordion study AC-8). A browser
+// without until-found hides such a panel as it hides any hidden one.
 
-const UNTIL_FOUND = 'until-found';
+const UNTIL_FOUND = 'until-found'; // Marks a section whose panel is closed but still drawn while the section
+// shrinks to its header (C154 (4)); the class sheet keeps it in view.
+
+const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // The marker is the header's last icon; an icon before the title
+// (.sf-accordion-lead) is not the marker and keeps its glyph.
+
+const MARKER_SELECTOR = '.sf-icon:not(.sf-accordion-lead)';
 
 class SfAccordion {
   static componentName = 'Accordion';
@@ -38,11 +49,11 @@ class SfAccordion {
     this.content = el?.querySelector?.('.sf-accordion-content') || null;
     this.title = el?.querySelector?.('.sf-accordion-title') || null;
     this.trigger = el?.querySelector?.('.sf-accordion-trigger') || el;
-    this.icon = this.trigger?.querySelector?.('.sf-icon') || el?.querySelector?.(':scope > .sf-icon') || el?.querySelector?.('.sf-icon');
+    const markers = this.trigger?.querySelectorAll?.(MARKER_SELECTOR);
+    this.icon = (markers?.length ? markers[markers.length - 1] : null) || el?.querySelector?.(`:scope > ${MARKER_SELECTOR}`) || el?.querySelector?.(MARKER_SELECTOR);
     this.onClick = this.handleClick.bind(this);
     this.onKeydown = this.handleKeydown.bind(this);
     this.onBeforeMatch = this.handleBeforeMatch.bind(this);
-    this.findable = this.content?.getAttribute?.('hidden') === UNTIL_FOUND;
   }
 
   init() {
@@ -68,12 +79,10 @@ class SfAccordion {
     // that may not have arrived yet) gets the `hidden` attribute too, so its
     // content is out of the tab order and the accessibility tree before the
     // first toggle (simai/ui-source#30).
-    // A findable panel keeps hidden="until-found" and loses the hidden class.
+    // A closed panel is findable from here on: hidden="until-found".
 
     if (this.content && !this.isOpen()) {
       this.hideContent();
-    } else if (this.findable) {
-      this.content.classList.remove('hidden');
     }
 
     this.syncState();
@@ -174,24 +183,20 @@ class SfAccordion {
   } // Find-in-page found text in a closed panel: the browser is about to show
   // it, so the section opens as a click would open it -- aria-expanded, the
   // active mark, the chevron, and in single mode the other section closes.
+  // The browser shows the text at once, so the section does not move.
 
 
   handleBeforeMatch() {
     if (this.staticHeader) return;
-    this.setOpen(true);
-  } // Closes the panel: hidden="until-found" for a findable one, else the
-  // hidden attribute and class.
+    this.setOpen(true, {
+      motion: false
+    });
+  } // Closes the panel: hidden="until-found", findable, never the hidden class.
 
 
   hideContent() {
-    if (this.findable) {
-      this.content.setAttribute('hidden', UNTIL_FOUND);
-      this.content.classList.remove('hidden');
-      return;
-    }
-
-    this.content.hidden = true;
-    this.content.classList.add('hidden');
+    this.content.setAttribute('hidden', UNTIL_FOUND);
+    this.content.classList.remove('hidden');
   }
 
   handleKeydown(event) {
@@ -208,10 +213,18 @@ class SfAccordion {
   toggle() {
     if (!this.content) return;
     this.setOpen(!this.isOpen());
-  }
+  } // Opens or closes the panel. The section moves to its new height on the
+  // sheet's clock (C154 (4)); a closing panel stays drawn until the section
+  // has shrunk to its header. No motion under reduced motion.
 
-  setOpen(open) {
+
+  setOpen(open, {
+    motion = true
+  } = {}) {
     if (!this.content || this.staticHeader) return;
+    const from = (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.sectionHeight)(this.el);
+    (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.stopSectionMotion)(this.el);
+    this.el.removeAttribute(CLOSING_ATTRIBUTE);
 
     if (open) {
       this.closeSingleModeSiblings();
@@ -222,6 +235,9 @@ class SfAccordion {
     }
 
     this.syncState();
+    if (!motion) return;
+    const moving = (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.moveSection)(this.el, from, () => this.el.removeAttribute(CLOSING_ATTRIBUTE));
+    if (moving && !open) this.el.setAttribute(CLOSING_ATTRIBUTE, '');
   }
 
   closeSingleModeSiblings() {
@@ -330,6 +346,94 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "524cdaa09638"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   moveSection: () => (/* binding */ moveSection),
+/* harmony export */   sectionClock: () => (/* binding */ sectionClock),
+/* harmony export */   sectionHeight: () => (/* binding */ sectionHeight),
+/* harmony export */   stopSectionMotion: () => (/* binding */ stopSectionMotion)
+/* harmony export */ });
+// The height motion of an accordion section (owner decision C154 (4)): the
+// section grows or shrinks to its new height on the clock of the toggle and
+// the check box (C66, C121) -- 200 ms, --sf-ease-move -- and its marker
+// turns on the same clock. The clock is the class sheet's: the section's
+// transition on block-size, which nothing else animates, so a page that
+// changes --sf-accordion--duration or asks for reduced motion (the sheet
+// sets it to none) changes the motion here too. Shared by the class runtime
+// and sf-accordion; stateless, so each bundle may carry its own copy.
+const running = new WeakMap();
+
+function seconds(value) {
+  const first = String(value || '').split(',')[0].trim();
+  if (!first) return 0;
+  const number = parseFloat(first);
+  if (!Number.isFinite(number)) return 0;
+  return first.endsWith('ms') ? number : number * 1000;
+} // The section's clock: [duration in ms, easing], or null when it does not
+// move -- reduced motion, a zero duration, or no layout (a hidden page).
+
+
+function sectionClock(section) {
+  if (!section || typeof getComputedStyle !== 'function' || typeof section.animate !== 'function') return null;
+  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return null;
+  const style = getComputedStyle(section);
+  const properties = String(style.transitionProperty || '').split(',').map(one => one.trim());
+  const at = properties.findIndex(one => one === 'block-size' || one === 'height' || one === 'all');
+  if (at < 0) return null;
+  const durations = String(style.transitionDuration || '').split(',');
+  const easings = String(style.transitionTimingFunction || '').split(/,(?![^(]*\))/u);
+  const duration = seconds(durations[at] ?? durations[0]);
+  if (!(duration > 0)) return null;
+  return [duration, (easings[at] ?? easings[0] ?? 'ease').trim()];
+} // The height the section stands at now, mid-motion included.
+
+function sectionHeight(section) {
+  return section?.getBoundingClientRect?.().height ?? 0;
+} // Stops a motion still running on the section (a second press before the
+// first ended): the next one starts from where this one stood.
+
+function stopSectionMotion(section) {
+  const animation = running.get(section);
+  if (!animation) return;
+  running.delete(section);
+  animation.onfinish = null;
+  animation.cancel();
+} // Moves the section from the height it stood at to the one it stands at now.
+// `done` runs when the motion ends (not when a newer one replaces it); it is
+// how a closing section keeps its content in view until it has shrunk.
+// Answers whether anything moves; without motion `done` runs at once.
+
+function moveSection(section, from, done) {
+  const clock = sectionClock(section);
+  const to = sectionHeight(section);
+
+  if (!clock || !(from >= 0) || Math.abs(to - from) < 1) {
+    done?.();
+    return false;
+  }
+
+  const [duration, easing] = clock;
+  const animation = section.animate({
+    blockSize: [`${from}px`, `${to}px`]
+  }, {
+    duration,
+    easing
+  });
+  running.set(section, animation);
+
+  animation.onfinish = () => {
+    if (running.get(section) === animation) running.delete(section);
+    done?.();
+  };
+
+  return true;
+}
 
 /***/ },
 

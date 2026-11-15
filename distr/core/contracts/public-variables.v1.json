@@ -864,7 +864,7 @@
           "name": "--sf-modal-footer-gap",
           "role": "gap",
           "summary": "Space between the footer's actions, which stand at the end.",
-          "default": "var(--sf-space-1/3)",
+          "default": "var(--sf-gap--actions)",
           "since": "2026-10-23"
         }
       ]
@@ -2688,7 +2688,7 @@
           "name": "--sf-empty-state-actions-gap",
           "role": "gap",
           "summary": "Space between the action buttons.",
-          "default": "var(--sf-space-1/3)",
+          "default": "var(--sf-gap--actions)",
           "since": "2026-10-27"
         }
       ]
@@ -2809,28 +2809,28 @@
         {
           "name": "--sf-gallery-media-max-height",
           "role": "max-block-size",
-          "summary": "The tallest an image may be in the lightbox.",
-          "default": "calc(100dvh - var(--sf-space-6) * 2)",
+          "summary": "The tallest a picture may be in the viewer.",
+          "default": "100%",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-gallery-object-fit",
           "role": "object-fit",
-          "summary": "How an image fits its slide, inline and in the lightbox.",
+          "summary": "How the main picture fits its frame in the thumbnails look.",
           "default": "contain",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-gallery-slide-min-height",
           "role": "min-block-size",
-          "summary": "The lowest a lightbox slide may be.",
+          "summary": "The lowest the viewer's picture area may be.",
           "default": "0",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-gallery-caption-color",
           "role": "color",
-          "summary": "A caption under an image, inline and in the lightbox.",
+          "summary": "The caption under the picture in the viewer.",
           "default": "var(--sf-on-surface-variant)",
           "since": "2026-10-27"
         }
@@ -2843,8 +2843,8 @@
         {
           "name": "--sf-resizer-hit-size",
           "role": "inline-size",
-          "summary": "The strip a pointer finds, wider than the line it draws.",
-          "default": "var(--sf-a8)",
+          "summary": "The strip a pointer finds, wider than the line it draws: the hit zone 24, the touch place 44 under a coarse pointer.",
+          "default": "var(--sf-c2)",
           "since": "2026-10-27"
         },
         {
@@ -2873,7 +2873,7 @@
           "name": "--sf-resizer-z-index",
           "role": "z-index",
           "summary": "The layer the handle stands in, above the panel's own layers and below overlays.",
-          "default": "var(--sf-z-index-7)",
+          "default": "var(--sf-layer--sticky)",
           "since": "2026-10-27"
         }
       ]
@@ -2941,7 +2941,7 @@
           "name": "--sf-page-header-actions-gap",
           "role": "gap",
           "summary": "The space between the actions.",
-          "default": "var(--sf-space-1\\/3)",
+          "default": "var(--sf-gap--actions)",
           "since": "2026-10-27"
         },
         {
@@ -3200,7 +3200,7 @@
           "name": "--sf-site-header-z-index",
           "role": "z-index",
           "summary": "The sticky bar's place above the page, under every layer.",
-          "default": "var(--sf-z-index-5)",
+          "default": "var(--sf-layer--sticky)",
           "since": "2026-10-28"
         }
       ]
@@ -3394,7 +3394,7 @@
           "name": "--sf-contents-z-index",
           "role": "z-index",
           "summary": "The bar and the open list above the page, under every layer.",
-          "default": "var(--sf-z-index-5)",
+          "default": "var(--sf-layer--sticky)",
           "since": "2026-10-30"
         }
       ]
@@ -3550,8 +3550,8 @@
         {
           "name": "--sf-include-min-block-size",
           "role": "min-block-size",
-          "summary": "The least block size of the region while the part loads, so the page does not move when it arrives.",
-          "default": "0px",
+          "summary": "The least block size of the region while the part loads, so the page does not move when it arrives; by default the first paint's box, --sf-skeleton-block-size, which the page declares with data-sf-skeleton.",
+          "default": "var(--sf-skeleton-block-size, 0px)",
           "since": "2026-11-02"
         },
         {

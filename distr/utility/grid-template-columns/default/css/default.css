@@ -42,4 +42,25 @@
   .grid-col-subgrid {
     grid-template-columns: subgrid;
   }
+  .grid-col-fit {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-f2)), 1fr));
+  }
+  .grid-col-fit-f0 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-f0)), 1fr));
+  }
+  .grid-col-fit-f2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-f2)), 1fr));
+  }
+  .grid-col-fit-f6 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-f6)), 1fr));
+  }
+  .grid-col-fit-g0 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-g0)), 1fr));
+  }
+  .grid-col-fit-g2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-g2)), 1fr));
+  }
+  .grid-col-fit-g6 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sf-g6)), 1fr));
+  }
 }

@@ -12,4 +12,10 @@
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-table-accent-bg);
   }
+  .table-stripe > tbody > tr:nth-of-type(odd):hover > *,
+  .table-stripe-col > tbody > tr:hover > :nth-child(2n) {
+    --sf-table-accent-bg: var(--sf-surface-state-select);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-table-accent-bg);
+  }
 }

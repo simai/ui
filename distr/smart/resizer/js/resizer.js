@@ -298,7 +298,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // nothing but the width it writes: on its target (its parent, or the closest
 // ancestor matching `target`), as a custom property when `property` names one,
 // otherwise as inline-size. With `storage-key` the width is remembered in this
-// browser and restored the next time.
+// browser and restored the next time. With `collapsible` the panel folds to
+// its edge and comes back (owner decision C158 (2)).
 
 
 
@@ -370,12 +371,20 @@ function pixels(value, context) {
 
 const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__["default"];
 
-const preferenceKey = key => `sf-resizer/${String(key).replace(/[^\w.:-]+/gu, '-')}`;
+const preferenceKey = key => `sf-resizer/${String(key).replace(/[^\w.:-]+/gu, '-')}`; // The kept width, and whether the panel was folded (C158 (2)): {v: 1, width,
+// folded}; width is the width it comes back to.
+
+
+function readFolded(key) {
+  if (!key) return false;
+  return preferences()?.read(preferenceKey(key))?.folded === true;
+}
 
 function readStored(key) {
   if (!key) return null;
   const kept = preferences()?.read(preferenceKey(key));
-  if (Number.isFinite(kept?.width)) return kept.width; // A width this browser kept before the standard, taken over once.
+  if (Number.isFinite(kept?.width) && kept.width > 0) return kept.width;
+  if (kept) return null; // A width this browser kept before the standard, taken over once.
 
   try {
     const legacy = Number(globalThis.localStorage?.getItem(`sf-resizer:${key}`)) || null;
@@ -394,54 +403,347 @@ function readStored(key) {
   }
 }
 
-function writeStored(key, value) {
+function writeStored(key, value, folded = false) {
   if (!key) return;
-  if (value === null) preferences()?.remove(preferenceKey(key));else preferences()?.write(preferenceKey(key), {
+  if (value === null && !folded) preferences()?.remove(preferenceKey(key));else if (folded) preferences()?.write(preferenceKey(key), {
+    v: 1,
+    width: value ? Math.round(value) : 0,
+    folded: true
+  });else preferences()?.write(preferenceKey(key), {
     v: 1,
     width: Math.round(value)
   });
+} // The words of the value (aria-valuetext): «27 %», or folded (C158 (3)).
+
+
+const valueWords = dictionary => (share, folded, handle) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageWord)(dictionary, folded ? 'folded' : 'value', handle, {
+  component: 'sf-resizer',
+  source: 'ru',
+  count: share
+}); // The panel the handle folds is said folded by data-folded (the name the
+// study's prototype gives it); the «Показать» button that brings it back
+// stands on its edge (data-sf-resizer-unfold), and below the layout's split
+// step the handle is not there (data-sf-resizer-narrow, C158 (4)).
+
+
+const FOLDED = 'data-folded';
+const UNFOLD = 'data-sf-resizer-unfold';
+const NARROW = 'data-sf-resizer-narrow'; // The layout split step: h0 of the size scale (40rem) of the container, the
+// step .sf-workspace stacks its regions at.
+
+const SPLIT_STEP = 'var(--sf-h0)';
+let panelIds = 0; // The handle placed outside a target that clips: absolute (against an
+// ancestor) or fixed (against the viewport); the measured place it is given.
+
+const OUTSIDE = 'data-sf-resizer-outside';
+const PLACE = ['--sf-resizer--x', '--sf-resizer--y', '--sf-resizer--h']; // The overflow values that clip (all but the initial one); named so, the
+// template-utility reader takes no class from an overflow value.
+
+const CLIPPING = new Set(['hidden', 'clip', 'auto', 'scroll']); // The widest the target may be and leave the content beside it at least
+// `reserve` (min) wide: the target's width plus the widest such sibling's,
+// less the reserve. The content beside is an in-flow sibling on the same row
+// that gives way when the target widens -- in a flex row one that may shrink
+// or grow; a column of fixed width (the admin menu's second column, flex
+// 0 0 auto) is another panel, not content. Infinity when nothing stands beside
+// it (a stacked layout, an absolute drawer, panels only).
+
+function roomBeside(target, reserve) {
+  const parent = target.parentElement;
+  if (!parent) return Infinity;
+  const own = getComputedStyle(target).position;
+  if (own === 'absolute' || own === 'fixed') return Infinity;
+  const box = target.getBoundingClientRect();
+  if (!box.width && !box.height) return Infinity;
+  const flex = getComputedStyle(parent).display.includes('flex');
+  let widest = -1;
+
+  for (const sibling of parent.children) {
+    if (sibling === target) continue;
+    const style = getComputedStyle(sibling);
+    if (style.display === 'none' || style.display === 'contents' || style.position === 'absolute' || style.position === 'fixed') continue;
+    if (flex && !(Number.parseFloat(style.flexShrink) > 0 || Number.parseFloat(style.flexGrow) > 0)) continue;
+    const other = sibling.getBoundingClientRect();
+    if (!other.width || !other.height) continue;
+    if (other.top >= box.bottom || other.bottom <= box.top) continue;
+    widest = Math.max(widest, other.width);
+  }
+
+  return widest < 0 ? Infinity : box.width + widest - reserve;
 }
 
 class SfResizer extends ResizerElement {
   static get observedAttributes() {
-    return ['min', 'max', 'label', 'disabled', 'value'];
+    return ['min', 'max', 'label', 'disabled', 'value', 'collapsible'];
   }
 
   constructor() {
     super();
 
-    this._onWindowResize = () => this.clampToLimits();
+    this._onWindowResize = () => this.schedule(); // An element that scrolls and holds the target moves the target's edge;
+    // a handle placed outside the target's clip follows it.
+
+
+    this._onScroll = event => {
+      if (!this.hasAttribute(OUTSIDE)) return;
+      const target = this.target();
+      if (event.target !== target && (event.target === document || event.target?.contains?.(target))) this.schedule();
+    };
   }
 
   connectedCallback() {
-    super.connectedCallback();
-    if (!this.hasAttribute('tabindex')) this.tabIndex = 0;
+    super.connectedCallback(); // The handle is a Tab stop of its own making; a disabled one is none
+    // (syncLabel), and a tabindex the page wrote stays the page's.
+
+    if (!this.hasAttribute('tabindex')) {
+      this.tabIndex = 0;
+      this._ownTabIndex = true;
+    }
+
     this.syncLabel(); // The gesture is the shared one (attachResizer): the element only says
     // what the width is the width of and where it is kept.
 
     this._detach = (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(this, {
-      session: () => this.disabled ? null : this.session()
+      session: () => this.disabled || this._narrow ? null : this.session(),
+      text: valueWords(ResizerElement.sfWords)
     });
-    globalThis.addEventListener('resize', this._onWindowResize); // A language announced after the handle drew itself -- SF.language.use(),
+    globalThis.addEventListener('resize', this._onWindowResize);
+    document.addEventListener?.('scroll', this._onScroll, {
+      capture: true,
+      passive: true
+    }); // A language announced after the handle drew itself -- SF.language.use(),
     // or a word registered for it -- renames it where it stands. A Lit
     // component gets this from smart-base; this one is an ordinary element, so
     // it listens for itself, as the anchored badges do.
 
     this._languageOff = _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.language.onChange(() => {
       if (this.isConnected) this.syncLabel();
-    }); // Restored after the target has laid out, so a percentage limit is read
-    // against a real width.
+    }); // A width the host keeps for the person (value) wins over this
+    // browser's memory of it. It is written now, while the element connects,
+    // so the frame that first draws the handle draws the panel at that width:
+    // written a frame later, the remembered 288 landed ~52 ms after a first
+    // paint of 256 (study RS-8, 2026-11-14). Reading a limit forces the
+    // layout it needs, so a percentage limit is still read against a real
+    // width.
+    // A host's value of 0 is a folded panel (C158 (3): 0 is folded); so is
+    // a fold this browser kept.
 
-    requestAnimationFrame(() => {
-      if (!this.isConnected) return;
-      const target = this.target();
-      if (target && getComputedStyle(target).position === 'static') target.style.position = 'relative'; // A width the host keeps for the person (value) wins over this
-      // browser's memory of it.
+    const value = this.getAttribute('value');
+    this._wanted = Number(value) || readStored(this.storageKey) || null;
+    this._folded = this.collapsible && (value === '0' || value === null && readFolded(this.storageKey));
+    this._restore = this._wanted; // A panel that folds shows the «Показать» button on its edge: its code is
+    // asked for when a pointer or the keyboard reaches the handle, before it
+    // can fold, so the button draws whole the first time; a page that never
+    // folds a panel never loads it.
 
-      const kept = Number(this.getAttribute('value')) || readStored(this.storageKey);
-      if (kept) this.apply(kept);
-      this.syncValue();
+    const warm = () => this.warmUnfold();
+
+    this.addEventListener('pointerenter', warm, {
+      once: true,
+      signal: this.sfScope
     });
+    this.addEventListener('focusin', warm, {
+      once: true,
+      signal: this.sfScope
+    });
+
+    if (this.target()) {
+      this.control();
+      this.layout();
+      this.syncValue();
+    } // The panel and its container may still be growing (a parser that has
+    // not reached the content beside it, a sheet on its way): the layout is
+    // read again when they change size, and once more in the next frame.
+
+
+    if (globalThis.ResizeObserver) {
+      this._observer = new ResizeObserver(() => this.schedule());
+      const target = this.target();
+      if (target) this._observer.observe(target);
+      if (target?.parentElement) this._observer.observe(target.parentElement);
+    }
+
+    this.schedule();
+  } // One layout pass per frame, whatever asked for it.
+
+
+  schedule() {
+    if (this._scheduled) return;
+    this._scheduled = true;
+    requestAnimationFrame(() => {
+      this._scheduled = false;
+      if (this.isConnected) this.layout();
+    });
+  } // The width within its limits (fit), then the handle on the target's edge
+  // (place).
+
+
+  layout() {
+    this.narrowCheck();
+    if (!this._dragging) this.fit();
+    this.showFold();
+    this.place();
+  }
+
+  warmUnfold() {
+    if (this.collapsible) globalThis.SF?.Loader?.ensure?.(['sf-button-icon']);
+  } // The panel the handle controls (aria-controls, C158 (3)): by its id; a
+  // panel without one is named by element reference where the browser has
+  // it (ariaControlsElements), so the page's markup gets no made-up id, and
+  // is given an id where it does not.
+
+
+  control() {
+    const target = this.target();
+    if (!target) return;
+
+    if (target.id) {
+      this.setAttribute('aria-controls', target.id);
+      return;
+    }
+
+    if ('ariaControlsElements' in this) {
+      this.removeAttribute('aria-controls');
+      this.ariaControlsElements = [target];
+      return;
+    }
+
+    target.id = `sf-resizer-panel-${++panelIds}`;
+    this.setAttribute('aria-controls', target.id);
+  } // Below the layout's split step (40rem of the container, C158 (4)) the
+  // handle is not there: the layout shows one panel at a time, and the width
+  // the person chose waits for a wide screen. A region of .sf-workspace says
+  // its layout itself (--sf-workspace--layout); any other panel is measured
+  // against the width of its container.
+
+
+  narrowCheck() {
+    const target = this.target();
+    let narrow = false;
+
+    if (target?.parentElement) {
+      const parent = target.parentElement;
+      const layout = parent.classList.contains('sf-workspace') ? getComputedStyle(target).getPropertyValue('--sf-workspace--layout').trim() : '';
+      if (layout) narrow = layout === 'narrow';else {
+        const width = parent.getBoundingClientRect().width;
+        const step = pixels(SPLIT_STEP, parent) ?? 0;
+        narrow = width > 0 && width < step;
+      }
+    }
+
+    if (narrow === Boolean(this._narrow)) return;
+    this._narrow = narrow;
+    this.toggleAttribute(NARROW, narrow);
+  } // A folded panel: data-folded on it, its width written 0, the «Показать»
+  // button on its edge. Below the split step the panel shows as the layout
+  // places it (folding is a wide screen's), and folds again when it widens.
+
+
+  showFold() {
+    const target = this.target();
+    if (!target) return;
+    const folded = Boolean(this._folded && this.collapsible && !this._narrow);
+
+    if (folded) {
+      this.warmUnfold();
+      this.unfoldButton();
+      target.setAttribute(FOLDED, '');
+      if (this.property) target.style.setProperty(this.property, '0px');else target.style.inlineSize = '0px';
+    } else if (target.hasAttribute(FOLDED)) {
+      target.removeAttribute(FOLDED);
+      this.unwrite(target);
+      if (this._wanted) this.apply(this._wanted);
+    }
+  } // The «Показать» button on the folded panel's edge (C158 (2)), made the
+  // first time the panel folds: an sf-button-icon in a holder of its own in
+  // the panel (the holder stays where the button may redraw itself), shown
+  // only while the panel is folded. The glyph shows the side the panel opens
+  // from.
+
+
+  unfoldButton() {
+    const target = this.target();
+    if (!target) return null;
+    let holder = this._unfold;
+
+    if (!holder || holder.parentElement !== target) {
+      holder?.remove();
+      holder = document.createElement('span');
+      holder.setAttribute(UNFOLD, '');
+      holder.addEventListener('click', event => {
+        if (!event.target?.closest?.('button, sf-button-icon')) return;
+        event.stopPropagation();
+        this.fold(false, 'end');
+        this.focus({
+          preventScroll: true
+        });
+      });
+      target.append(holder);
+      this._unfold = holder;
+    }
+
+    const rtl = getComputedStyle(this).direction === 'rtl';
+    const startEdge = this.getAttribute('edge') === 'inline-start'; // A panel whose edge is on its right stands on the left of the page.
+
+    const icon = rtl === startEdge ? 'left_panel_open' : 'right_panel_open';
+    const word = this.sfWord('show');
+    const key = `${icon} ${word}`;
+
+    if (holder.__sfKey !== key) {
+      holder.__sfKey = key;
+      const button = document.createElement('sf-button-icon');
+      button.setAttribute('size', '1/2');
+      button.setAttribute('appearance', 'ghost');
+      button.setAttribute('scheme', 'on-surface');
+      button.setAttribute('icon', icon);
+      button.setAttribute('aria-label', word);
+      button.setAttribute('title', word);
+      holder.replaceChildren(button);
+    }
+
+    return holder;
+  } // Folds the panel to its edge (on) or gives back the width it had (off).
+  // phase move: during a drag, said as move and not kept; end: kept and said.
+
+
+  fold(on, phase = 'end') {
+    if (!this.collapsible || this.disabled) return;
+    const target = this.target();
+    if (!target) return;
+
+    if (on && !this._folded) {
+      // A drag that folds gives back the width it started from, not the min
+      // it passed on the way.
+      const {
+        min
+      } = this.limits();
+      const width = Math.max(min, Math.round(phase === 'move' && this._dragFrom ? this._dragFrom : this.width()) || 0);
+      this._restore = width;
+      this._folded = true;
+      this.showFold();
+      this.syncValue(0);
+      this.announce(0, phase === 'move' ? 'move' : 'end');
+    } else if (!on && this._folded) {
+      this._folded = false;
+      const back = this._restore || this._wanted;
+      target.removeAttribute(FOLDED);
+      if (back) this.apply(back);else this.unwrite(target);
+      const width = Math.round(this.width());
+      this.syncValue(width);
+      this.announce(width, phase === 'move' ? 'move' : 'end');
+
+      if (phase !== 'move') {
+        this._wanted = back || null;
+        if (back) writeStored(this.storageKey, back);else writeStored(this.storageKey, null);
+      }
+
+      return;
+    } else if (on && phase !== 'move') this.announce(0, 'end');
+
+    if (on && phase !== 'move') writeStored(this.storageKey, this._restore, true);
+  }
+
+  folded() {
+    return Boolean(this._folded && this.collapsible && !this._narrow);
   }
 
   disconnectedCallback() {
@@ -450,18 +752,40 @@ class SfResizer extends ResizerElement {
     this._detach = null;
     this._languageOff?.();
     this._languageOff = null;
+    this._observer?.disconnect();
+    this._observer = null;
     globalThis.removeEventListener('resize', this._onWindowResize);
+    document.removeEventListener?.('scroll', this._onScroll, {
+      capture: true
+    });
   }
 
   attributeChangedCallback(name, before, after) {
+    if (name === 'value' && after === '0' && after !== before && this.isConnected && this.collapsible) {
+      this.fold(true, 'move');
+      return;
+    }
+
     if (name === 'value' && after && after !== before && this.isConnected) {
+      if (this._folded) {
+        this._folded = false;
+        this.target()?.removeAttribute(FOLDED);
+      }
+
       this.restore(after);
+      return;
+    }
+
+    if (name === 'collapsible' && this.isConnected) {
+      this.schedule();
       return;
     }
 
     if (this.isConnected) {
       this.syncLabel();
-      this.syncValue();
+      this.syncValue(); // New limits fit the width again.
+
+      if (name === 'min' || name === 'max') this.schedule();
     }
   }
 
@@ -478,15 +802,22 @@ class SfResizer extends ResizerElement {
   target() {
     const selector = this.getAttribute('target');
     return (selector ? this.parentElement?.closest(selector) : this.parentElement) ?? null;
-  }
+  } // min and max as the page wrote them, in pixels; max also stops where the
+  // content beside the panel would be left narrower than min (room), so the
+  // handle never takes the content's width: on a 390 phone a 14rem menu left
+  // its text 116 px (study RS-9, 2026-11-14).
+
 
   limits() {
-    const context = this.target()?.parentElement ?? document.body;
+    const target = this.target();
+    const context = target?.parentElement ?? document.body;
     const min = pixels(this.getAttribute('min') || '12rem', context) ?? 0;
     const max = pixels(this.getAttribute('max') || '40rem', context) ?? Infinity;
+    const room = target ? roomBeside(target, min) : Infinity;
     return {
       min,
-      max: Math.max(min, max)
+      max: Math.max(min, Math.min(max, room)),
+      room
     };
   }
 
@@ -495,7 +826,11 @@ class SfResizer extends ResizerElement {
   }
 
   session() {
-    return {
+    const fold = this.collapsible ? {
+      fold: (on, phase) => this.fold(on, phase),
+      folded: () => this.folded()
+    } : {};
+    return { ...fold,
       measure: () => this.width(),
       limits: () => this.limits(),
       apply: (width, phase) => {
@@ -505,6 +840,15 @@ class SfResizer extends ResizerElement {
       },
       commit: width => this.commit(width),
       reset: () => this.reset(),
+      // A drag owns the width while it lasts: a layout pass does not fit it.
+      start: () => {
+        this._dragging = true;
+        this._dragFrom = this.folded() ? 0 : Math.round(this.width());
+      },
+      end: () => {
+        this._dragging = false;
+        this.schedule();
+      },
       // A handle on the inline end widens the panel rightwards in a
       // left-to-right page; on the start, leftwards.
       direction: () => {
@@ -537,6 +881,9 @@ class SfResizer extends ResizerElement {
   }
 
   commit(width) {
+    this._wanted = width;
+    this._fitted = false;
+    this._pageWidth = '';
     writeStored(this.storageKey, width);
     this.announce(width, 'end');
   } // Back to the width the page's stylesheet gives, and forgotten.
@@ -545,10 +892,18 @@ class SfResizer extends ResizerElement {
   reset() {
     if (this.disabled) return;
     const target = this.target();
-    if (!target) return;
-    if (this.property) target.style.removeProperty(this.property);else target.style.removeProperty('inline-size');
+    if (!target) return; // The default width is an open panel.
+
+    this._folded = false;
+    this._restore = null;
+    target.removeAttribute(FOLDED);
+    this._wanted = null;
+    this._fitted = false;
+    this._pageWidth = '';
+    this.unwrite(target);
     writeStored(this.storageKey, null);
     requestAnimationFrame(() => {
+      this.layout();
       const width = Math.round(this.width());
       this.syncValue(width);
       this.announce(width, 'reset');
@@ -560,28 +915,124 @@ class SfResizer extends ResizerElement {
   restore(width) {
     const number = Number(width);
     if (!Number.isFinite(number) || number <= 0) return null;
+    this._wanted = number;
+    this._fitted = false;
+    this._pageWidth = '';
     const written = this.apply(number);
     if (written !== null) writeStored(this.storageKey, written);
     return written;
-  } // A window narrowed under a remembered width brings it back within limits.
+  }
+
+  unwrite(target = this.target()) {
+    if (!target) return;
+    if (this.property) target.style.removeProperty(this.property);else target.style.removeProperty('inline-size');
+  }
+
+  written(target = this.target()) {
+    if (!target) return '';
+    return this.property ? target.style.getPropertyValue(this.property).trim() : target.style.inlineSize;
+  } // The width within the limits as they are now. The width the person or the
+  // host wants is written again, clamped: a narrowed window takes it in, a
+  // widened one gives it back. Without one, the stylesheet's width stands
+  // unless the content beside it would be left narrower than min; then the
+  // panel is narrowed for as long as that lasts, and nothing is remembered.
 
 
-  clampToLimits() {
+  fit() {
     const target = this.target();
     if (!target) return;
-    const written = this.property ? target.style.getPropertyValue(this.property) : target.style.inlineSize;
-    if (!written) return; // The value written is what is clamped, not the panel as measured: in a
-    // stacked layout the panel is the window's width whatever is written, and
-    // clamping that measurement wrote the maximum over the remembered width
-    // (docs trial 4, 2026-10-15).
+    if (this.folded()) return;
 
+    if (this._wanted) {
+      this.apply(this._wanted);
+      return;
+    } // A narrowing of our own is undone first: what the page wrote, or
+    // nothing, is the width the limits are measured against again.
+
+
+    if (this._fitted) {
+      if (this._pageWidth) {
+        if (this.property) target.style.setProperty(this.property, this._pageWidth);else target.style.inlineSize = this._pageWidth;
+      } else this.unwrite(target);
+
+      this._fitted = false;
+      this._pageWidth = '';
+    }
+
+    const written = this.written(target);
     const {
       min,
-      max
+      max,
+      room
     } = this.limits();
-    const value = Number.parseFloat(written);
-    if (!Number.isFinite(value)) return;
-    if (value > max || value < min) this.apply(value);
+
+    if (written) {
+      // A width the page wrote itself (a length, tokens included): the value
+      // written is what is clamped, not the panel as measured: in a stacked
+      // layout the panel is the window's width whatever is written, and
+      // clamping that measurement wrote the maximum over the remembered width
+      // (docs trial 4, 2026-10-15). Read in pixels: 16rem is 256, not 16.
+      const value = pixels(written, target.parentElement);
+      if (value === null || value <= max + 0.5 && value >= min - 0.5) return;
+      this._pageWidth = written;
+      this.apply(value);
+      this._fitted = true;
+      return;
+    }
+
+    if (room < Infinity && this.width() > Math.max(min, room) + 0.5) {
+      this.apply(room);
+      this._fitted = true;
+    }
+  } // The handle on the target's edge. A target that clips its overflow (an
+  // .sf-workspace region scrolls, so does many a panel) cut a handle placed
+  // inside it in half: 4 of its 8 px caught, and the panel gained a sideways
+  // scroll (study RS-2, 2026-11-14). Such a handle stands outside the clip:
+  // positioned against an ancestor of the target (the target is not made
+  // relative), or against the viewport when the page positioned the target
+  // itself, at the target's measured edge. The look is the same.
+
+
+  place() {
+    const target = this.target();
+    if (!target) return;
+    const style = getComputedStyle(target);
+    const clips = CLIPPING.has(style.overflowX) || CLIPPING.has(style.overflowY);
+
+    if (!clips) {
+      if (this.hasAttribute(OUTSIDE)) {
+        this.removeAttribute(OUTSIDE);
+
+        for (const name of PLACE) this.style.removeProperty(name);
+      }
+
+      if (style.position === 'static') {
+        target.style.position = 'relative';
+        this._madeRelative = true;
+      }
+
+      return;
+    }
+
+    if (this._madeRelative) {
+      target.style.removeProperty('position');
+      this._madeRelative = false;
+    }
+
+    const mode = getComputedStyle(target).position === 'static' ? 'absolute' : 'fixed';
+    if (this.getAttribute(OUTSIDE) !== mode) this.setAttribute(OUTSIDE, mode);
+    const box = target.getBoundingClientRect();
+    const own = this.getBoundingClientRect();
+    const placed = getComputedStyle(this); // Where left: 0 / top: 0 stand: the containing block, wherever it is.
+
+    const originX = own.left - (Number.parseFloat(placed.left) || 0);
+    const originY = own.top - (Number.parseFloat(placed.top) || 0);
+    const rtl = placed.direction === 'rtl';
+    const startEdge = this.getAttribute('edge') === 'inline-start';
+    const edge = rtl === startEdge ? box.right : box.left;
+    this.style.setProperty('--sf-resizer--x', `${Math.round((edge - originX - own.width / 2) * 100) / 100}px`);
+    this.style.setProperty('--sf-resizer--y', `${Math.round((box.top - originY) * 100) / 100}px`);
+    this.style.setProperty('--sf-resizer--h', `${Math.round(box.height * 100) / 100}px`);
   }
 
   syncLabel() {
@@ -593,25 +1044,51 @@ class SfResizer extends ResizerElement {
       this._ownLabel = true;
     }
 
-    this.title = this.getAttribute('label') ? `${this.getAttribute('label')}. ${hint}` : hint;
-    if (this.disabled) this.setAttribute('aria-disabled', 'true');else this.removeAttribute('aria-disabled');
+    this.title = this.getAttribute('label') ? `${this.getAttribute('label')}. ${hint}` : hint; // A disabled handle says so and leaves the Tab order: it kept tabindex=0
+    // and was a stop that did nothing (study RS-6, 2026-11-14). A tabindex
+    // the page wrote is put back when the handle is enabled again.
+
+    if (this._unfold) this.unfoldButton();
+
+    if (this.disabled) {
+      this.setAttribute('aria-disabled', 'true');
+      if (this._ownTabIndex) this.removeAttribute('tabindex');else if (this.hasAttribute('tabindex') && this._pageTabIndex === undefined) {
+        this._pageTabIndex = this.getAttribute('tabindex');
+        this.setAttribute('tabindex', '-1');
+      }
+    } else {
+      this.removeAttribute('aria-disabled');
+
+      if (this._pageTabIndex !== undefined) {
+        this.setAttribute('tabindex', this._pageTabIndex);
+        this._pageTabIndex = undefined;
+      } else if (this._ownTabIndex && !this.hasAttribute('tabindex')) this.tabIndex = 0;
+    }
   }
 
   syncValue(width = this.width()) {
     (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.setResizerValue)(this, {
       limits: () => this.limits(),
-      measure: () => width
-    }, width);
+      measure: () => width,
+      folded: () => this.folded()
+    }, width, valueWords(ResizerElement.sfWords));
   }
 
 }
 if (!customElements.get('sf-resizer')) customElements.define('sf-resizer', SfResizer);
 globalThis.SF = globalThis.SF || {}; // attach: the same gesture on any handle -- a table's column edges use it.
+// Their value says its words in the page's language, as the handle's does,
+// unless the caller gives its own text().
+
+const attach = (root, options = {}) => (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(root, {
+  text: valueWords(ResizerElement.sfWords),
+  ...options
+});
 
 globalThis.SF.Resizer = Object.freeze({
   SfResizer,
-  attach: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer,
-  attachResizer: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer
+  attach,
+  attachResizer: attach
 });
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -658,8 +1135,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // The width a person changes by an edge, as one behaviour: a drag, the arrow
 // keys (Shift: four steps; Home and End: the limits; PageUp and PageDown: four
-// steps), Enter or Space and a double click back to the default, a separator's
-// role and value, the resize cursor over the whole page while it lasts. What
+// steps), a double click back to the default, a separator's role and value
+// (the share of the way from min to max, 0-100, and its words), the resize
+// cursor over the whole page while it lasts. An edge that folds (C158 (2))
+// folds when dragged past min by half of min, and Enter folds it and gives
+// the width back; an edge that does not fold takes Enter back to the
+// default. Space does nothing (APG window splitter). What
 // the width is the width of -- a panel, a table's column -- and where it is
 // kept is the caller's (owner, 2026-10-14: the admin menu's columns and a
 // table's columns are the same gesture).
@@ -673,18 +1154,41 @@ __webpack_require__.r(__webpack_exports__);
 //     limits(): {min, max} in pixels
 //     apply(width, phase): writes it, returns the width written
 //     commit(width): the width a drag or a key ended at
-//     reset(): back to the default (Enter, Space, a double click)
-//     direction(): +1 when a pointer moving right widens, -1 otherwise
+//     reset(): back to the default (a double click; Enter on an edge that
+//              does not fold)
+//     fold(on, phase), folded(): an edge that folds (sf-resizer collapsible):
+//              fold(true|false, 'move'|'end') folds or gives the width back,
+//              folded() says which it is
+//     direction(): +1 when a pointer (or ArrowRight) moving right widens,
+//                  -1 otherwise; it holds the writing direction and the edge
 //     step: pixels an arrow moves (default 16)
 //     start(), end(): around a drag
 //   } -- or null, when this handle does not resize now.
+//   options.text(share, folded, handle): the words of the value
+//                     (aria-valuetext), «27 %»; without it, none.
+//
+// Edges another component draws (options.handles) leave Enter and Escape to
+// it: a table's column edge goes back to its header on either (C158 (5)).
 const ACTIVE = 'data-sf-resizer-active';
 
-function setValue(handle, session, width = session.measure()) {
+// The value a screen reader hears is the share of the way from min to max,
+// 0-100, as in the APG window splitter: 0 is the narrowest, or folded. It was
+// the width in pixels, «256» (study RS-6, owner decision C158 (3)).
+function share(session, width) {
+  if (session.folded?.()) return 0;
   const {min, max} = session.limits();
-  handle.setAttribute('aria-valuemin', String(Math.round(min)));
-  handle.setAttribute('aria-valuemax', String(Math.round(max)));
-  if (width) handle.setAttribute('aria-valuenow', String(Math.round(width)));
+  if (!(max > min)) return width >= max ? 100 : 0;
+  return Math.round(Math.min(100, Math.max(0, ((width - min) / (max - min)) * 100)));
+}
+
+function setValue(handle, session, width = session.measure(), text = null) {
+  const now = share(session, width);
+  handle.setAttribute('aria-valuemin', '0');
+  handle.setAttribute('aria-valuemax', '100');
+  handle.setAttribute('aria-valuenow', String(now));
+  const words = text?.(now, Boolean(session.folded?.()), handle);
+  if (words) handle.setAttribute('aria-valuetext', words);
+  else handle.removeAttribute('aria-valuetext');
 }
 
 function clamp(session, width) {
@@ -696,6 +1200,8 @@ function attachResizer(root, options = {}) {
   const handleOf = (target) => (options.handles ? target?.closest?.(options.handles) : root);
   const owns = (handle) => handle && (handle === root || root.contains(handle));
   const sessionOf = (handle) => (owns(handle) ? options.session?.(handle) ?? null : null);
+  const text = options.text ?? null;
+  const say = (handle, session, width) => setValue(handle, session, width, text);
   let drag = null;
 
   const finish = (commit) => {
@@ -708,7 +1214,11 @@ function attachResizer(root, options = {}) {
     document.documentElement.removeAttribute(ACTIVE);
     delete current.handle.dataset.sfResizing;
     current.session.end?.();
-    if (commit && current.width !== Math.round(current.from)) current.session.commit?.(current.width);
+    if (!commit) return;
+    const folded = Boolean(current.session.folded?.());
+    if (folded) {
+      if (!current.wasFolded) current.session.fold(true, 'end');
+    } else if (current.wasFolded || current.width !== Math.round(current.from)) current.session.commit?.(current.width);
   };
 
   const onPointerDown = (event) => {
@@ -719,14 +1229,31 @@ function attachResizer(root, options = {}) {
     event.preventDefault();
     event.stopPropagation();
     handle.focus?.({preventScroll: true});
-    const from = session.measure();
-    const current = {handle, session, pointer: event.pointerId, x: event.clientX, from, width: Math.round(from)};
+    const foldable = typeof session.fold === 'function';
+    const wasFolded = Boolean(session.folded?.());
+    const from = wasFolded ? 0 : session.measure();
+    const current = {handle, session, pointer: event.pointerId, x: event.clientX, from, width: Math.round(from), wasFolded};
     current.move = (next) => {
       if (next.pointerId !== current.pointer) return;
-      const width = clamp(session, current.from + (next.clientX - current.x) * (session.direction?.() ?? 1));
+      const wanted = current.from + (next.clientX - current.x) * (session.direction?.() ?? 1);
+      // Past min by half of min the edge folds; back over that line it
+      // opens again at the width the pointer asks for (C158 (2)).
+      if (foldable) {
+        const {min} = session.limits();
+        if (wanted < min / 2) {
+          if (!session.folded()) {
+            session.fold(true, 'move');
+            current.width = 0;
+            say(handle, session, 0);
+          }
+          return;
+        }
+        if (session.folded()) session.fold(false, 'move');
+      }
+      const width = clamp(session, wanted);
       if (width === current.width) return;
       current.width = session.apply(width, 'move') ?? width;
-      setValue(handle, session, current.width);
+      say(handle, session, current.width);
     };
     current.up = (next) => {
       if (next.pointerId === current.pointer) finish(true);
@@ -746,12 +1273,36 @@ function attachResizer(root, options = {}) {
     if (handle !== event.target) return;
     const session = sessionOf(handle);
     if (!session) return;
+    // Space does nothing (C158 (2)): it restored the default, which the APG
+    // window splitter gives to no key; it does not scroll the page either.
+    if (event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (event.key === 'Enter' || event.key === 'Escape') {
+      // An edge another component draws: its own (a column edge goes back to
+      // its header).
+      if (options.handles || event.key === 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      // Enter folds an edge that folds and gives the width back; one that
+      // does not goes back to the default.
+      if (typeof session.fold === 'function') {
+        session.fold(!session.folded(), 'end');
+        say(handle, session);
+      } else session.reset?.();
+      return;
+    }
     const {min, max} = session.limits();
-    const now = session.measure();
-    const rtl = getComputedStyle(handle).direction === 'rtl';
-    const sign = session.direction?.() ?? 1;
+    const folded = Boolean(session.folded?.());
+    const now = folded ? 0 : session.measure();
+    // ArrowRight moves the edge to the right and ArrowLeft to the left, as a
+    // pointer does: direction() already holds the writing direction and the
+    // edge, so it is applied once. Flipped again for RTL here, the arrows of
+    // an RTL page ran against the edge (study RS-5, 2026-11-14).
+    const right = session.direction?.() ?? 1;
     const step = (session.step ?? 16) * (event.shiftKey ? 4 : 1);
-    const right = (rtl ? -1 : 1) * sign;
     let next = null;
     if (event.key === 'ArrowRight') next = now + step * right;
     else if (event.key === 'ArrowLeft') next = now - step * right;
@@ -759,17 +1310,15 @@ function attachResizer(root, options = {}) {
     else if (event.key === 'PageDown') next = now - step * 4;
     else if (event.key === 'Home') next = min;
     else if (event.key === 'End') next = max;
-    else if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      event.stopPropagation();
-      session.reset?.();
-      return;
-    }
     if (next === null) return;
     event.preventDefault();
     event.stopPropagation();
+    // A key on a folded edge that widens opens it, at the width the key asks
+    // for (an arrow: min); one that narrows leaves it folded.
+    if (folded && next <= 0) return;
+    if (folded) session.fold(false, 'move');
     const width = session.apply(clamp(session, next), 'end') ?? clamp(session, next);
-    setValue(handle, session, width);
+    say(handle, session, width);
     session.commit?.(width);
   };
 
@@ -786,7 +1335,7 @@ function attachResizer(root, options = {}) {
   const onFocusIn = (event) => {
     const handle = handleOf(event.target);
     const session = sessionOf(handle);
-    if (session) setValue(handle, session);
+    if (session) say(handle, session);
   };
 
   root.addEventListener('pointerdown', onPointerDown);
@@ -821,21 +1370,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-resiz
 /***/ "bed569d628ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.resizer","tag":"sf-resizer","version":"1.1.5","kind":"leaf","settings":{"min":{"type":"string","default":"12rem"},"max":{"type":"string","default":"40rem"},"property":{"type":"string","default":""},"target":{"type":"string","default":""},"edge":{"type":"enum","values":["inline-end","inline-start"],"default":"inline-end"},"step":{"type":"number","default":16,"min":1},"storage-key":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"disabled":{"type":"boolean","default":false},"value":{"type":"number","nullable":true,"default":null}},"values":{},"events":{"resize":{"carries":{"width":"number","phase":{"type":"enum","values":["move","end","reset"]}},"own-verb":true}},"actions":{},"css-variables":{"--sf-resizer-hit-size":{"type":"length","state":"default"},"--sf-resizer-line-width":{"type":"length","state":"default"},"--sf-resizer-line-color":{"type":"color","state":"default"},"--sf-resizer-hover-line-color":{"type":"color","state":"hover"},"--sf-resizer-z-index":{"type":"integer","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.resizer","tag":"sf-resizer","version":"1.3.1","kind":"leaf","settings":{"min":{"type":"string","default":"12rem"},"max":{"type":"string","default":"40rem"},"property":{"type":"string","default":""},"target":{"type":"string","default":""},"edge":{"type":"enum","values":["inline-end","inline-start"],"default":"inline-end"},"step":{"type":"number","default":16,"min":1},"storage-key":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"disabled":{"type":"boolean","default":false},"collapsible":{"type":"boolean","default":false},"value":{"type":"number","nullable":true,"default":null}},"values":{},"events":{"resize":{"carries":{"width":"number","phase":{"type":"enum","values":["move","end","reset"]}},"own-verb":true}},"actions":{},"css-variables":{"--sf-resizer-hit-size":{"type":"length","state":"default"},"--sf-resizer-line-width":{"type":"length","state":"default"},"--sf-resizer-line-color":{"type":"color","state":"default"},"--sf-resizer-hover-line-color":{"type":"color","state":"hover"},"--sf-resizer-z-index":{"type":"integer","state":"default"}}}');
 
 /***/ },
 
 /***/ "4012ebee0398"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Resizer","runtime":{"hint":"Drag, or use the arrow keys; a double click restores the width.","label":"Resize"},"events":{"resize":{"label":"Change the width"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Resizer","runtime":{"hint":"Drag, or use the arrow keys; a double click restores the width.","label":"Resize","value":"{n}%","folded":"Collapsed","show":"Show"},"events":{"resize":{"label":"Change the width"}}}');
 
 /***/ },
 
 /***/ "d865d3c42424"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение ширины","runtime":{"hint":"Тяните или нажимайте стрелки; двойной щелчок возвращает ширину.","label":"Изменить ширину"},"events":{"resize":{"label":"Изменить ширину"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение ширины","runtime":{"hint":"Тяните или нажимайте стрелки; двойной щелчок возвращает ширину.","label":"Изменить ширину","value":"{n} %","folded":"Свёрнуто","show":"Показать"},"events":{"resize":{"label":"Изменить ширину"}}}');
 
 /***/ }
 

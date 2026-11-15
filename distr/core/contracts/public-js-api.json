@@ -545,13 +545,14 @@
       "status": "public",
       "layer": "core",
       "audience": "public",
-      "author": "Lists the icons a person can choose from.",
+      "author": "Lists the icons a person can choose from and registers a product's own glyphs.",
       "doc": "guide/functions/person/icons",
       "kind": "object",
       "loaded_by": "core",
-      "summary": "The icon helpers every set shares. SF.icons.choices: the frozen list of the hundred and twenty glyph names a person chooses from (a record section, a menu row), drawn as sf-dropdown options of kind icon.",
+      "summary": "The icon helpers every set shares. SF.icons.choices: the frozen list of the hundred and twenty glyph names a person chooses from (a record section, a menu row), drawn as sf-dropdown options of kind icon; SF.icons.choices.words[name] gives each glyph's Russian and English words, which sf-dropdown searches (owner decision C151 point 8). SF.icons.register(name, svg): a product's own or a brand glyph, drawn from its SVG in the current colour at the slot's size wherever an icon name is accepted -- sf-icon, a button's icon, a menu row, a tab, the class markup -- and never asked of the icon font (C151 point 6); answers false and warns for a name outside lowercase letters, digits, _ and -, or a drawing that is not an <svg>.",
       "members": [
-        "choices"
+        "choices",
+        "register"
       ]
     },
     {
@@ -1253,13 +1254,20 @@
     },
     {
       "name": "SF.Gallery",
-      "status": "internal",
+      "status": "public",
       "layer": "component",
-      "audience": "internal",
-      "author": "Is a helper of the legacy system scripts; a page does not call it.",
+      "audience": "public",
+      "author": "Opens pictures, videos and PDF files in the full-screen viewer and returns a handle to page it and close it.",
+      "doc": "smart/content/gallery#javascript",
       "kind": "object",
-      "loaded_by": "component/sf-system",
-      "summary": "A helper of the legacy system scripts (component/sf-system); the runtime's."
+      "loaded_by": "smart/gallery",
+      "summary": "The full-screen viewer of sf-gallery (owner decisions C150 (7), (8) and C149 (6)): view(items, options) opens a list of pictures, videos or PDF links at a start index and returns {close, goTo, next, prev, current, total, open}; close() closes it; current and open read the open viewer. Shared by sf-gallery and sf-file-preview; it replaced the legacy system scripts' internal gallery constructor.",
+      "members": [
+        "view",
+        "close",
+        "current",
+        "open"
+      ]
     },
     {
       "name": "SF.Highlight",

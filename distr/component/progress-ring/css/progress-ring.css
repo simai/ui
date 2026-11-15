@@ -97,6 +97,129 @@
     width: 100%;
     height: 100%;
   }
+  /* A slotted avatar's presence point stands on the ring at 45 degrees, at the
+     ring's own step (owner decisions C132 (7) and C152 (8), 2026-11-14): its
+     centre on the middle of the line, towards the bottom end corner, its disc
+     and ring the point of the ring's size (--sf-micro--point-<size>,
+     --sf-micro--ring-<size>). The place-coloured ring cuts the line, as it
+     cuts the photo. Before, it stood at the corner of the avatar inside, a
+     step smaller and off the line. Measured from the avatar's box, which is
+     the content box, centred in the ring: the end offset is half the content
+     box less the line's middle radius times sin 45 degrees less half the
+     point, less the avatar's own ring (the point is placed inside it). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+    right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+  }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+    right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+    }
+  }
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(ltr)),
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(ltr)) {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+    right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+    left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+  }
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+    left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+    }
+  }
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(rtl)),
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(rtl)) {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+    left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+  }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+    }
+  }
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(ltr)),
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(ltr)) {
+    right: calc(var(--sf-progress-ring--point-inset) - 0px);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+  }
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+    }
+  }
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(rtl)),
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(rtl)) {
+    left: calc(var(--sf-progress-ring--point-inset) - 0px);
+  }
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-progress-ring--point-inset: calc(
+      (var(--sf-progress-ring--size) / 2 - var(--sf-progress-ring--line-width) - var(--sf-progress-ring--gap))
+      - (var(--sf-progress-ring--size) / 2 - var(--sf-progress-ring--line-width) / 2) * sin(45deg)
+      - var(--sf-online-indicator--width) / 2
+    );
+    bottom: calc(var(--sf-progress-ring--point-inset) - 0px);
+    inset-block-end: calc(var(--sf-progress-ring--point-inset) - 0px);
+    bottom: calc(var(--sf-progress-ring--point-inset) - 0px);
+    bottom: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-bottom-width, 0px));
+    inset-block-end: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-bottom-width, 0px));
+    inset-inline-end: calc(var(--sf-progress-ring--point-inset) - 0px);
+    inset-inline-end: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
+  }
+  .sf-progress-ring.sf-progress-ring--size-1\/4 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-1\/4 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-1\/4);
+    --sf-online-indicator--height: var(--sf-micro--point-1\/4);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-1\/4);
+  }
+  .sf-progress-ring.sf-progress-ring--size-1\/3 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-1\/3 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-1\/3);
+    --sf-online-indicator--height: var(--sf-micro--point-1\/3);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-1\/3);
+  }
+  .sf-progress-ring.sf-progress-ring--size-1\/2 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-1\/2 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-1\/2);
+    --sf-online-indicator--height: var(--sf-micro--point-1\/2);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-1\/2);
+  }
+  .sf-progress-ring.sf-progress-ring--size-1 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-1 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-1);
+    --sf-online-indicator--height: var(--sf-micro--point-1);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-1);
+  }
+  .sf-progress-ring.sf-progress-ring--size-2 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-2 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-2);
+    --sf-online-indicator--height: var(--sf-micro--point-2);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-2);
+  }
+  .sf-progress-ring.sf-progress-ring--size-3 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
+  .sf-progress-ring.sf-progress-ring--size-3 .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
+    --sf-online-indicator--width: var(--sf-micro--point-3);
+    --sf-online-indicator--height: var(--sf-micro--point-3);
+    --sf-online-indicator--ring-width: var(--sf-micro--ring-3);
+  }
   /* No status is the theme's primary; neutral the grey of sf-dot and sf-badge
      (owner decision C131 (1)). */
   .sf-progress-ring.sf-progress-ring--neutral {

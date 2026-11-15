@@ -51,7 +51,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // How near the viewport a load="view" part starts loading.
+ // The error row's glyphs (js/templates/default.js REASONS), asked for early.
+
+const REASON_ICONS = [{
+  icon: 'error'
+}, {
+  icon: 'cloud_off'
+}]; // How near the viewport a load="view" part starts loading.
 
 const VIEW_MARGIN = '200px'; // A <script> stays only as a data block (a JSON island such as
 // data-sf-settings, which the components of the part read); any other type,
@@ -140,7 +146,14 @@ class SfInclude extends IncludeElement {
     this._settled = false;
     this._connected = false; // The opening of the closed layer the first load waits for, if any.
 
-    this._layerWait = null;
+    this._layerWait = null; // Why the last load failed: error, or offline (the network was gone).
+
+    this._reason = 'error'; // The network came back (owner decision C120 (5)): a part that failed
+    // because it was gone loads again by itself.
+
+    this._online = () => {
+      if (this._phase === 'error' && this._reason === 'offline') void this.retry();
+    };
   }
 
   get address() {
@@ -155,11 +168,16 @@ class SfInclude extends IncludeElement {
     if (this._phase === 'loading' && !this._request) this._phase = 'idle';
     this.sfHostState('data-loading', this._phase === 'loading');
     this.sfHostState('data-failed', this._phase === 'error');
+    globalThis.addEventListener?.('online', this._online); // The reasons' glyphs join the page's first icon request: a part that
+    // fails because the network is gone could not fetch cloud_off then.
+
+    globalThis.SF?.Loader?.preloadIcons?.(REASON_ICONS);
     this.arm();
   }
 
   onDisconnected() {
     super.onDisconnected?.();
+    globalThis.removeEventListener?.('online', this._online);
     this.unwatch();
   }
 
@@ -330,6 +348,9 @@ class SfInclude extends IncludeElement {
     this._settled = true;
 
     if (failure) {
+      // A request that never reached the server while the browser says it is
+      // offline is the network's, not the part's (C120 (5)).
+      this._reason = failure.reason === 'network' && globalThis.navigator?.onLine === false ? 'offline' : 'error';
       this.setPhase('error');
       await this.drawn(scope);
       if (run !== this._run) return {
@@ -408,8 +429,10 @@ class SfInclude extends IncludeElement {
       part: this._part,
       lines: lineCount(this.lines),
       ownPlaceholder: this.getSlotContent('placeholder'),
+      reason: this._reason,
       words: {
         failed: this.sfWord('failed'),
+        offline: this.sfWord('offline'),
         retry: this.sfWord('retry')
       },
       rootClass: this.getRootClass()
@@ -452,7 +475,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // - ready: the part the server answered, cleaned of scripts by the element
 //   (index.js partFrom) and drawn as markup; the Loader starts what is in it.
 // - error: an icon, the message in a polite status and Retry, an outline
-//   on-surface sf-button at rung 1 of the ladder that calls refresh().
+//   on-surface sf-button at rung 1 of the ladder that calls refresh(); the
+//   icon and its colour tell the reason (C120 (3)): error, or offline when
+//   the network is gone (then the part loads again by itself once it is back).
 //
 // The region is the element's box (the host lays out as display: contents),
 // so load="view" watches it, and tabindex -1 lets focus land on it after a
@@ -466,12 +491,28 @@ function placeholder(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-include-placeholder" aria-hidden="true">
     <sf-skeleton class="sf-include-skeleton" count=${String(context.lines)} width=${widths}></sf-skeleton>
   </div>`;
-}
+} // The reason's icon and colour are the empty states' (owner decision C120
+// (3)): «error» in the error colour; with the network gone, «cloud_off» in the
+// warning colour and the words that say the part comes back by itself
+// (C120 (5): index.js retries when the window is online again).
+
+
+const REASONS = {
+  error: {
+    icon: 'error',
+    tone: 'error'
+  },
+  offline: {
+    icon: 'cloud_off',
+    tone: 'warning'
+  }
+};
 
 function failure(context) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-include-error">
-    <i class="sf-icon sf-include-error-icon" aria-hidden="true">error</i>
-    <span class="sf-include-message" role="status">${context.words.failed}</span>
+  const reason = REASONS[context.reason] ?? REASONS.error;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${`sf-include-error sf-include-error--${reason.tone}`}>
+    <i class="sf-icon sf-include-error-icon" aria-hidden="true">${reason.icon}</i>
+    <span class="sf-include-message" role="status">${context.reason === 'offline' ? context.words.offline : context.words.failed}</span>
     <sf-button class="sf-include-retry" size="1" appearance="outline" scheme="on-surface" icon-start="refresh"
       text=${context.words.retry} @click=${() => context.component.retry()}></sf-button>
   </div>`;
@@ -543,21 +584,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "a35a5057e1f9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.0.5","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.include","tag":"sf-include","version":"1.1.0","kind":"leaf","settings":{"src":{"type":"string","default":""},"load":{"type":"enum","values":["now","view"],"default":"now"},"lines":{"type":"number","integer":true,"min":1,"max":20,"default":3}},"values":{},"events":{"loaded":{"carries":{"src":"string","status":"number"},"own-verb":true},"load-failed":{"carries":{"src":"string","status":{"type":"number","nullable":true},"reason":{"type":"enum","values":["network","http"]}},"own-verb":true}},"actions":{"refresh":{"waits":true}},"host-states":{"data-loading":"boolean","data-failed":"boolean"},"css-variables":{"--sf-include-min-block-size":{"type":"length","state":"default"},"--sf-include-gap":{"type":"length","state":"default"},"--sf-include-padding":{"type":"length","state":"default"},"--sf-include-border-color":{"type":"color","state":"default"},"--sf-include-radius":{"type":"length","state":"default"},"--sf-include-message-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "d97de4199bbc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Include","runtime":{"failed":"Could not load this part of the page.","retry":"Retry"},"events":{"loaded":{"label":"Loaded"},"load-failed":{"label":"Could not load"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Include","runtime":{"failed":"Could not load this part of the page.","offline":"No connection. It loads by itself when the network is back.","retry":"Retry"},"events":{"loaded":{"label":"Loaded"},"load-failed":{"label":"Could not load"}}}');
 
 /***/ },
 
 /***/ "c4bf739d2198"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Вставка с адреса","runtime":{"failed":"Не удалось загрузить эту часть страницы.","retry":"Повторить"},"events":{"loaded":{"label":"Загружено"},"load-failed":{"label":"Не удалось загрузить"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Вставка с адреса","runtime":{"failed":"Не удалось загрузить эту часть страницы.","offline":"Нет связи. Загрузим сами, когда сеть вернётся.","retry":"Повторить"},"events":{"loaded":{"label":"Загружено"},"load-failed":{"label":"Не удалось загрузить"}}}');
 
 /***/ }
 
