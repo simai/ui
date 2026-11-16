@@ -367,7 +367,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* A badge that names no size is the 1/3 badge (24 high), and so is its
+     icon: the text's size 1/3 (12), as .sf-badge--size-1/3 gives it. The icon
+     sizes lived in the size classes alone, so an unsized badge's icon took the
+     icon's own 24 and the badge drew 32 high, 28 on the phone (RG-BD-1). The
+     size classes below override these. */
   .sf-badge .sf-icon {
+    --sf-icon--font-size: var(--sf-badge--font-size);
+    --sf-icon--height: var(--sf-text-size-1\/3);
+    --sf-icon--width: var(--sf-text-size-1\/3);
     color: var(--sf-icon--color);
     font-size: var(--sf-icon--font-size);
     height: var(--sf-icon--height);
@@ -779,6 +787,9 @@
       outline: var(--sf-badge--ring-width) solid Canvas;
     }
   }
+  .sf-badge > .sf-dot {
+    display: none;
+  }
   .sf-avatar > .sf-badge--anchored {
     --sf-badge--anchor-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     --sf-badge--anchor-border: var(--sf-avatar--border-top-width, var(--sf-a0));
@@ -997,6 +1008,195 @@
     --sf-badge--anchored-padding: var(--sf-a0);
     --sf-badge--anchored-font-size: var(--sf-a0);
   }
+  .sf-avatar--size-1\/4 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--size-1\/3 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-icon-button--size-1\/3 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-badge-anchor--size-1\/3 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--size-1\/2 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-icon-button--size-1\/2 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-badge-anchor--size-1\/2 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--line-1\/2 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--line-1 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--line-2 > .sf-badge--anchored:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-badge.sf-badge--anchored.sf-badge--dot:has(> .sf-dot) {
+    background-color: transparent;
+  }
+  .sf-avatar--size-1\/4 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-avatar--size-1\/3 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-icon-button--size-1\/3 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-badge-anchor--size-1\/3 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-avatar--size-1\/2 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-icon-button--size-1\/2 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-badge-anchor--size-1\/2 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-avatar--line-1\/2 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-avatar--line-1 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-avatar--line-2 > .sf-badge--anchored > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  .sf-badge.sf-badge--anchored.sf-badge--dot > .sf-dot {
+    --sf-dot-item--size: var(--sf-badge--anchored-dot);
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
+  }
+  @media (forced-colors: active) {
+    .sf-avatar--size-1\/4 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-avatar--size-1\/3 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-icon-button--size-1\/3 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-badge-anchor--size-1\/3 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-avatar--size-1\/2 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-icon-button--size-1\/2 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-badge-anchor--size-1\/2 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-avatar--line-1\/2 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-avatar--line-1 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-avatar--line-2 > .sf-badge--anchored > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+    .sf-badge.sf-badge--anchored.sf-badge--dot > .sf-dot > .sf-dot-item {
+      background-color: Highlight;
+    }
+  }
   .sf-badge.sf-badge--dot:not(.sf-badge--anchored) {
     box-sizing: border-box;
     width: var(--sf-a8);
@@ -1010,6 +1210,23 @@
     padding: 0;
     overflow: hidden;
     font-size: var(--sf-a0);
+  }
+  .sf-badge.sf-badge--dot:not(.sf-badge--anchored):has(> .sf-dot) {
+    background-color: transparent;
+    background-image: none;
+  }
+  :where(.sf-badge.sf-badge--dot:not(.sf-badge--anchored)) {
+    position: relative;
+  }
+  .sf-badge.sf-badge--dot:not(.sf-badge--anchored) > .sf-dot {
+    --sf-dot-item--background-color: var(--sf-badge--background-color);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    display: flex;
   }
   .sf-badge[data-count] {
     -webkit-font-feature-settings: "tnum";
@@ -1029,5 +1246,31 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+  }
+}
+@layer sf.base {
+  .sf-badge:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-badge:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-badge-icon-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-badge:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-badge-text-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
   }
 }

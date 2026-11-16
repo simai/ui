@@ -2558,10 +2558,13 @@ body {
   * {
     --sf-scroll-bg-track: var(--sf-transparent);
     --sf-scroll-bg-thumb: var(--sf-outline);
+    --sf-scroll--thumb-hover: var(--sf-on-surface);
     --sf-scroll-bg-width: var(--sf-b4);
     --sf-scroll-thumb-size: var(--sf-a6);
     --sf-scroll-thumb-width: var(--sf-scroll-thumb-size);
     --sf-scroll-thumb-inset: var(--sf-a4);
+    --sf-scroll--gap-content: var(--sf-scroll-thumb-inset);
+    --sf-scroll--gap-edge: var(--sf-scroll-thumb-inset);
     --sf-scroll-radius: var(--sf-d6);
   }
   ::-webkit-scrollbar {
@@ -2578,6 +2581,38 @@ body {
     border-radius: var(--sf-scroll-radius);
     background-color: var(--sf-scroll-bg-thumb);
   }
+  ::-webkit-scrollbar-thumb:vertical {
+    border-left-width: var(--sf-scroll--gap-content);
+    border-right-width: var(--sf-scroll--gap-edge);
+  }
+  ::-webkit-scrollbar-thumb:horizontal {
+    border-top-width: var(--sf-scroll--gap-content);
+    border-bottom-width: var(--sf-scroll--gap-edge);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
+    border-left-width: var(--sf-scroll--gap-edge);
+  }
+  @supports not (border-inline-end-width: initial){
+  [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
+    border-left-width: var(--sf-scroll--gap-edge);
+  }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
+    border-right-width: var(--sf-scroll--gap-content);
+  }
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
+    border-right-width: var(--sf-scroll--gap-content);
+  }
+  }
+  :where(:dir(rtl))::-webkit-scrollbar-thumb:vertical {
+    border-left-width: var(--sf-scroll--gap-edge);
+    border-right-width: var(--sf-scroll--gap-content);
+  }
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
+  }
   ::-webkit-scrollbar-corner {
     background-color: var(--sf-transparent);
   }
@@ -2586,6 +2621,12 @@ body {
     border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
     background-clip: padding-box;
     border-radius: var(--sf-scroll-radius);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-color: var(--sf-scroll-bg-thumb) var(--sf-scroll-bg-track);
+      scrollbar-width: thin;
+    }
   }
 }
 @layer sf.base {

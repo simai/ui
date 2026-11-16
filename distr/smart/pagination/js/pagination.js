@@ -88,6 +88,260 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "2ee7a47e9b10"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MOTION_ATTRIBUTE: () => (/* binding */ MOTION_ATTRIBUTE),
+/* harmony export */   MOTION_CHANGE: () => (/* binding */ MOTION_CHANGE),
+/* harmony export */   reducedMotion: () => (/* binding */ reducedMotion),
+/* harmony export */   watchMotion: () => (/* binding */ watchMotion)
+/* harmony export */ });
+// Whether to keep things still: the device asks for less motion
+// (prefers-reduced-motion: reduce), or the person stopped motion on this site
+// (<html data-sf-motion="reduce">, written by the sf-display-settings panel
+// through SF.displaySettings; owner decision C196, 2026-11-15). Core's own
+// scripts read this one function; the core sheet stops CSS animations and
+// transitions under the same mark (core/scss/_sf_css__display.scss).
+//
+// No state and no side effect, so every bundle may carry it.
+const MOTION_ATTRIBUTE = 'data-sf-motion';
+const MOTION_CHANGE = 'sf-display-change';
+function reducedMotion(root = globalThis.document?.documentElement, win = globalThis) {
+  try {
+    if (win.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return true;
+  } catch {// No media queries here: only the page's own mark.
+  }
+
+  return root?.getAttribute?.(MOTION_ATTRIBUTE) === 'reduce';
+} // Calls `listener` when either source changes; returns the stop.
+
+function watchMotion(listener, win = globalThis) {
+  const media = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+  const doc = win.document;
+  media?.addEventListener?.('change', listener);
+  doc?.addEventListener?.(MOTION_CHANGE, listener);
+  return () => {
+    media?.removeEventListener?.('change', listener);
+    doc?.removeEventListener?.(MOTION_CHANGE, listener);
+  };
+}
+
+/***/ },
+
+/***/ "6978f1cc153b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EDGE_MARGIN: () => (/* binding */ EDGE_MARGIN),
+/* harmony export */   NEAR_END: () => (/* binding */ NEAR_END),
+/* harmony export */   NEAR_START: () => (/* binding */ NEAR_START),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   readingPosition: () => (/* binding */ readingPosition),
+/* harmony export */   scrollerOf: () => (/* binding */ scrollerOf),
+/* harmony export */   watchEdge: () => (/* binding */ watchEdge)
+/* harmony export */ });
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
+// The reading position of a scrolling column (duplication audit 2026-11-03,
+// A-6): what a feed, a log, a conversation or a long list does to keep a
+// person's place while its content changes under them. It was written in
+// ui-pro's sf-message-log (keep the place while history is added above,
+// follow the end only when the reader is there, «to the latest», ask once
+// when the top is reached), and the end-of-list loading again in
+// sf-chat-threads and the ui-chat pilot. One rule now, for every column:
+//
+//   const position = readingPosition(scroller, {onStart: () => askEarlier()});
+//   position.keep(() => column.prepend(fragment));  // the place does not move
+//   const follow = position.atEnd();                  // before an append
+//   column.append(node);
+//   if (follow) position.toEnd();
+//   scroller.addEventListener('scroll', () => position.check());
+//
+//   const stop = watchEdge(sentinel, () => askMore()); // the end came into reach
+//
+// It owns no content and fetches nothing: it measures one element and says
+// when an edge is reached. The element is the scroller -- the box with
+// overflow that a person scrolls.
+//
+// Nothing here keeps state at module scope: each column gets its own
+// controller, so the copies of this module that every bundle carries cannot
+// disagree (bundles each carry their own module copy).
+// The device's reduced motion or the site's «остановить движение» (C196).
+ // Within this distance of the end counts as being there. 96px is about two
+// lines of text and an entry's action row: closer than that, a person reading
+// the end of a column is reading the end.
+
+const NEAR_END = 96; // The start is "reached" a little before it is reached, so an earlier page is
+// usually there by the time the person scrolls into it.
+
+const NEAR_START = 240; // The end of a list asks for its next page this far before it is in view.
+
+const EDGE_MARGIN = '200px';
+
+const frame = callback => typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(callback) : setTimeout(callback, 16);
+/**
+ * A controller of one scroller's reading position.
+ *
+ * options:
+ *   nearEnd    px from the end that count as being at it (NEAR_END);
+ *   nearStart  px from the start that count as reaching it (NEAR_START);
+ *   onStart    () => void, called from check() when the start is reached and
+ *              the position is not settling (an earlier page is wanted).
+ */
+
+
+function readingPosition(scroller, {
+  nearEnd = NEAR_END,
+  nearStart = NEAR_START,
+  onStart = null
+} = {}) {
+  let settling = false;
+  let element = scroller ?? null;
+  const controller = {
+    /** The scroller this controller measures; set it again when the box is drawn anew. */
+    get element() {
+      return element;
+    },
+
+    set element(next) {
+      element = next ?? null;
+    },
+
+    /** Is the end of the column in view (within nearEnd)? A column not drawn yet is at its end. */
+    atEnd() {
+      if (!element) return true;
+      return element.scrollHeight - element.scrollTop - element.clientHeight < nearEnd;
+    },
+
+    /** Is the start within reach (within nearStart)? */
+    atStart() {
+      if (!element) return false;
+      return element.scrollTop < nearStart;
+    },
+
+    /**
+     * Change the content above what is read without moving it: the distance
+     * from the end is measured before `mutate` and restored after. What was
+     * under the reader's eyes is the same distance from the end before and
+     * after the history above it grew.
+     */
+    keep(mutate) {
+      if (!element) return mutate?.();
+      const fromEnd = element.scrollHeight - element.scrollTop;
+      const result = mutate?.();
+      element.scrollTop = element.scrollHeight - fromEnd;
+      return result;
+    },
+
+    /**
+     * Go to the end in the next frame: smoothly, unless `instant` or the
+     * reader asked for reduced motion. `then` runs after the jump. With
+     * `settle`, reaching the start is not reported until the frame after:
+     * a column that opens at its start for one frame does not ask for a page
+     * nobody wanted.
+     */
+    toEnd({
+      instant = false,
+      settle = false,
+      then = null
+    } = {}) {
+      if (settle) settling = true;
+      frame(() => {
+        if (element) element.scrollTo({
+          top: element.scrollHeight,
+          behavior: instant || (0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? 'instant' : 'smooth'
+        });
+        then?.();
+        if (settle) frame(() => {
+          settling = false;
+        });
+      });
+    },
+
+    /** Hold reports of the start (while a column is replaced). */
+    hold() {
+      settling = true;
+    },
+
+    release() {
+      settling = false;
+    },
+
+    get settling() {
+      return settling;
+    },
+
+    /** Call on scroll: reports onStart once the start is in reach and the position is not settling. */
+    check() {
+      if (settling || !onStart || !controller.atStart()) return false;
+      onStart();
+      return true;
+    }
+
+  };
+  return controller;
+}
+/**
+ * Report when `sentinel` comes within `margin` of the scroller it sits in --
+ * the end of a list in reach, the start of a feed. Never from a scroll handler
+ * that fires sixty times a second. `root` is the scroller; null (the default)
+ * is the viewport, which still sees the clipping of every scroller around the
+ * sentinel. Answers the way to stop watching. A watch that starts on an edge
+ * already in reach reports it at once.
+ */
+
+function watchEdge(sentinel, callback, {
+  root = null,
+  margin = EDGE_MARGIN
+} = {}) {
+  if (!sentinel || typeof callback !== 'function' || typeof globalThis.IntersectionObserver !== 'function') return () => {};
+  const observer = new globalThis.IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) callback();
+  }, {
+    root,
+    rootMargin: margin
+  });
+  observer.observe(sentinel);
+  return () => observer.disconnect();
+}
+/**
+ * The box that scrolls `node`: the nearest ancestor whose block overflow is
+ * auto or scroll, or null for the page. watchEdge takes it as `root`, so its
+ * margin reaches ahead inside that box; measured against the viewport, the
+ * margin would stop at the box's clipped edge.
+ */
+
+function scrollerOf(node) {
+  const view = node?.ownerDocument?.defaultView;
+
+  for (let at = node?.parentElement; at && view; at = at.parentElement) {
+    if (at === node.ownerDocument.documentElement || at === node.ownerDocument.body) return null;
+    if (/^(auto|scroll|overlay)$/u.test(view.getComputedStyle(at).overflowY)) return at;
+  }
+
+  return null;
+}
+const ReadingPosition = Object.freeze({
+  create: readingPosition,
+  watchEdge,
+  scrollerOf,
+  NEAR_END,
+  NEAR_START,
+  EDGE_MARGIN
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.readingPosition) globalThis.SF.readingPosition = ReadingPosition;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ReadingPosition);
+
+/***/ },
+
 /***/ "403726af3b51"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -100,16 +354,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a57d260bd333");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("344edfee8242");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("90fab10c70dd");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38d83a636029");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("96e8b718b20a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a57d260bd333");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("344edfee8242");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("90fab10c70dd");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("38d83a636029");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("96e8b718b20a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -122,10 +378,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
 }; // sf-pagination from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, every word it says is lang/<locale>.json (an
@@ -149,12 +405,28 @@ const LATER_WORDS = new Set(["title-page", "of-pages", "range", "range-many", "p
 
 const APPEARANCES = ["field", "numbers", "arrows", "cursor", "more"];
 const FOOTER_SINCE = "2026-11-12";
-const FOOTER_UNTIL = "2027-01-01"; // Places of numbers: seven, five below the sm step of the ladder
+const FOOTER_UNTIL = "2027-01-01"; // How the more appearance asks for the next portion (C167 (1)).
+
+const LOADS = ["button", "auto"]; // Is the button within watchEdge's margin of the box that scrolls it (or of
+// the window)? Read once, on the scroll that arms the watch.
+
+const EDGE_REACH = parseFloat(_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_4__.EDGE_MARGIN) || 0;
+
+function inReach(node, root) {
+  const at = node.getBoundingClientRect();
+  const view = node.ownerDocument.defaultView;
+  const box = root ? root.getBoundingClientRect() : {
+    top: 0,
+    bottom: view?.innerHeight ?? 0
+  };
+  return at.top <= box.bottom + EDGE_REACH && at.bottom >= box.top - EDGE_REACH;
+} // Places of numbers: seven, five below the sm step of the ladder
 // (core/js/breakpoints.js, the sheets' media-breakpoint-down).
 // The page window of numbers (USWDS, GOV.UK; prototype pagination-study.html):
 // at most `slots` places, the first and the last page always, a gap where
 // pages are left out. Exactly `slots` places once there are more pages than
 // that, so the row keeps its width while a person pages.
+
 
 function pageWindow(current, count, slots) {
   if (count <= slots) return Array.from({
@@ -187,14 +459,14 @@ function pageWindow(current, count, slots) {
   places.push(count);
   return places;
 }
-const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
     ru
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   formerWords: {
     since: "2026-10-27",
     remove_after: "2026-12-01",
@@ -249,7 +521,7 @@ function parseActions(value, fallback = []) {
 } // The boolean settings that are on by default (component.json).
 
 
-const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_5__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name));
+const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_6__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name));
 
 class SfPagination extends PaginationElement {
   static get props() {
@@ -370,6 +642,14 @@ class SfPagination extends PaginationElement {
         attribute: "show-more-busy",
         type: Boolean,
         default: false
+      },
+      shownLabel: {
+        attribute: "shown-label",
+        default: ""
+      },
+      load: {
+        default: "button",
+        values: LOADS
       },
       current: {
         type: Number,
@@ -631,6 +911,27 @@ class SfPagination extends PaginationElement {
 
   get showMoreBusy() {
     return this.getBooleanAttr("show-more-busy", false);
+  } // button (default) or auto: auto also asks when a person's scroll brings
+  // the more button within reach (C167 (1)).
+
+
+  get load() {
+    const value = this.getAttribute("load");
+    return LOADS.includes(value) ? value : "button";
+  } // The line under the more button, {shown} and {total} filled in: an
+  // author's shown-label, else the language word.
+
+
+  get shownText() {
+    if (!this.countKnown) return "";
+    const vars = {
+      shown: this.shown,
+      total: this.shownTotal
+    };
+    const own = this.getAttribute("shown-label");
+    return own ? own.replace(/\{(shown|total)\}/gu, (_, name) => String(vars[name])) : this.sfWord("shown", {
+      vars
+    });
   }
 
   get countingLabel() {
@@ -1015,12 +1316,7 @@ class SfPagination extends PaginationElement {
           count: Math.min(this.pageSize, Math.max(0, this.total - this.shown))
         }
       }) : this.showMoreText),
-      shownText: this.countKnown ? this.sfWord("shown", {
-        vars: {
-          shown: this.shown,
-          total: this.shownTotal
-        }
-      }) : "",
+      shownText: this.shownText,
       shownPercent: this.exactCount && this.total > 0 ? Math.round(this.shown / this.total * 100) : null,
       rangeText: this.rangeText,
       pageSizeText: this.sfWord("page-size-text", {
@@ -1080,7 +1376,7 @@ class SfPagination extends PaginationElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderPaginationTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderPaginationTemplate)(this.templateContext());
   }
 
   getTopSection() {
@@ -1247,6 +1543,7 @@ class SfPagination extends PaginationElement {
 
   onDisconnected() {
     this.restoreTitle();
+    this.unwatchMore();
     super.onDisconnected?.();
   } // The title follows the page whoever set it: a person, the host, the address.
 
@@ -1257,6 +1554,8 @@ class SfPagination extends PaginationElement {
     if (typeof changed !== "function") {
       this.applyTitle();
       this.noteFooterParts();
+      this.keepMoreFocus();
+      this.watchMore();
     }
 
     return result;
@@ -1377,13 +1676,121 @@ class SfPagination extends PaginationElement {
       total: this.total
     });
     return this;
+  } // The more button's own control: sf-button's host is display: contents (no
+  // box to observe or focus), so the native button it draws inside.
+
+
+  moreButton() {
+    return this.querySelector(".sf-pagination-more .sf-pagination-more-button")?.querySelector("button, a") ?? null;
+  } // load="auto": the more button asks for the next portion when a person
+  // brings it within reach (core/js/reading-position.js watchEdge), not when
+  // it is there already -- a short list whose button shows on load waits for
+  // the press or for the first scroll (study LF-8: the next page was asked for
+  // on load). The first scroll of the box that scrolls the button arms the
+  // watch; if the button is in reach then, that scroll brought it there. The
+  // button stays for the keyboard and for a browser without IntersectionObserver.
+
+
+  watchMore() {
+    const button = this.appearance === "more" && !this.footer && this.load === "auto" ? this.moreButton() : null;
+
+    if (!button) {
+      this.unwatchMore();
+      return;
+    }
+
+    if (this._moreEdge === button && this._stopMore) return;
+    this.unwatchMore();
+    this._moreEdge = button;
+    const root = (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_4__.scrollerOf)(button);
+    const scroller = root ?? this.ownerDocument;
+    let moved = false;
+    let reached = false;
+
+    const ask = () => {
+      if (!this.isConnected || this.showMoreBusy || !this.hasNext) return;
+      this.showMore(null);
+    };
+
+    const onScroll = () => {
+      moved = true;
+      scroller.removeEventListener("scroll", onScroll);
+      if (reached && inReach(button, root)) ask();
+    };
+
+    scroller.addEventListener("scroll", onScroll, {
+      passive: true
+    });
+    const stopEdge = (0,_core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_4__.watchEdge)(button, () => {
+      if (moved) ask();else reached = true;
+    }, {
+      root
+    });
+
+    this._stopMore = () => {
+      stopEdge();
+      scroller.removeEventListener("scroll", onScroll);
+    };
+  }
+
+  unwatchMore() {
+    this._stopMore?.();
+    this._stopMore = null;
+    this._moreEdge = null;
+  } // The focus a person left on the more button stays with it: the button is
+  // disabled while the portion loads (the browser drops the focus of a
+  // disabled control), so it takes the focus back when the portion arrives,
+  // and when the last portion removes the button the focus goes to the
+  // «Показано» line rather than to the page.
+
+
+  keepMoreFocus() {
+    if (!this._moreFocus || this.showMoreBusy) return;
+    const active = this.ownerDocument.activeElement;
+
+    if (active && active !== this.ownerDocument.body && !this.contains(active)) {
+      this._moreFocus = false;
+      return;
+    }
+
+    const button = this.moreButton();
+    const line = this.querySelector(".sf-pagination-more .sf-pagination-shown");
+
+    if (button && !button.disabled) {
+      this._moreFocus = false;
+      if (active !== button) button.focus({
+        preventScroll: true
+      });
+    } else if (!button && line) {
+      this._moreFocus = false;
+      line.focus({
+        preventScroll: true
+      });
+    } else if (button) {
+      // sf-button draws its enabled state a frame after this element: ask
+      // again then, a few frames at most.
+      this._moreFocusTries = (this._moreFocusTries ?? 0) + 1;
+
+      if (this._moreFocusTries > 10) {
+        this._moreFocus = false;
+        this._moreFocusTries = 0;
+        return;
+      }
+
+      globalThis.requestAnimationFrame?.(() => this.keepMoreFocus());
+      return;
+    }
+
+    this._moreFocusTries = 0;
   } // The action show-more (§4.4), vocabulary §5 load-more {direction: after}.
   // The button the person pressed was `item`; it is no data (§8), so only
   // the old name sf-show-more still carries it.
 
 
   showMore(item = null) {
-    this._showMoreItem = item;
+    this._showMoreItem = item; // A press of the more button keeps its focus (keepMoreFocus).
+
+    if (item && this.appearance === "more" && item.contains?.(this.ownerDocument.activeElement)) this._moreFocus = true;
 
     try {
       this.sfEmit("load-more", {
@@ -1962,6 +2369,10 @@ function renderCursor(context, component) {
 } // more: «Показать ещё 20», then «Показано 40 из 240» and a thin bar. It adds a
 // portion (sf-pagination-load-more); current is the number of portions shown.
 // When everything is shown the button goes and the line stays.
+// The line is a polite status (heard once a portion has loaded) and takes the
+// focus when the last portion removes the button (tabindex -1, never a Tab
+// stop); its words are shown-label (C167 (1)). load="auto" watches the button
+// itself (index.js watchMore), so the template is the same for both.
 
 
 function renderMore(context, component) {
@@ -1980,7 +2391,7 @@ function renderMore(context, component) {
             ></sf-button>
           ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${context.shownText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <span class="sf-pagination-shown" role="status">${context.shownText}</span>
+            <span class="sf-pagination-shown" role="status" tabindex="-1">${context.shownText}</span>
             ${context.shownPercent === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar
                   class="sf-pagination-progress"
                   size="1/3"
@@ -2237,7 +2648,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-pagin
 /***/ "344edfee8242"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.6.2","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.7.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
 
 /***/ },
 

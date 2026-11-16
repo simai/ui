@@ -120,6 +120,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getFileUploadItems: () => (/* binding */ getFileUploadItems),
 /* harmony export */   initExistingFileUploads: () => (/* binding */ initExistingFileUploads),
 /* harmony export */   normalizeItemState: () => (/* binding */ normalizeItemState),
+/* harmony export */   removeFileUploadItem: () => (/* binding */ removeFileUploadItem),
 /* harmony export */   retryFileUploadItem: () => (/* binding */ retryFileUploadItem),
 /* harmony export */   setFileUploadItems: () => (/* binding */ setFileUploadItems),
 /* harmony export */   takeFiles: () => (/* binding */ takeFiles),
@@ -284,8 +285,10 @@ function syncFileUploadInteraction(root) {
   state.disabled = disabled;
   syncInputConfig(root, getInput(root));
   if (disabled && root.classList.contains('dragover')) root.classList.remove('dragover');
-  const files = getFilesContainer(root);
-  files?.querySelectorAll('button[data-action="remove"], button[data-action="retry"]').forEach(button => {
+  const files = getFilesContainer(root); // The class rows only: a Smart area's rows are sf-file-preview, which names
+  // its own buttons («Убрать <имя>», «Повторить <имя>»).
+
+  files?.querySelectorAll('.sf-upload-progress button[data-action="remove"], .sf-upload-progress button[data-action="retry"]').forEach(button => {
     let previous = state.buttons.get(button);
 
     if (!previous) {
@@ -489,8 +492,10 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   removeButton.dataset.action = 'remove';
   const removeIcon = document.createElement('i');
   removeIcon.className = 'sf-icon';
-  removeIcon.setAttribute('aria-hidden', 'true');
-  removeIcon.textContent = 'delete';
+  removeIcon.setAttribute('aria-hidden', 'true'); // «×» «Убрать <имя>»: the file leaves the list, nothing is erased (C149
+  // (8)); the trash is a stored file's, in sf-file-preview.
+
+  removeIcon.textContent = 'close';
   removeButton.append(removeIcon);
   top.append(removeButton);
   content.append(top);
@@ -629,9 +634,12 @@ function normalizeFileItems(files = [], root = null) {
     state: 'ready',
     file
   }));
-}
+} // options.action says how the file left: remove («×», taken out of the list)
+// or delete (a stored file the person chose to erase; C149 (8)). detach
+// carries it, so the page knows which one to answer.
 
-function removeFileUploadItem(root, index) {
+
+function removeFileUploadItem(root, index, options = {}) {
   if (!root) return false;
   const currentItems = Array.from(root.__sfFileUploadItems || []);
   if (!currentItems.length) return false;
@@ -649,7 +657,8 @@ function removeFileUploadItem(root, index) {
     detail: {
       item: removed || null,
       index: normalizedIndex,
-      items: currentItems
+      items: currentItems,
+      action: options?.action === 'delete' ? 'delete' : 'remove'
     }
   }));
   return true;
@@ -1806,7 +1815,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatNumber: () => (/* binding */ formatNumber),
-/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
@@ -1904,7 +1915,32 @@ function formatNumber(value, format = 'number', {
   if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
   const options = numberOptions(format, step);
   if (grouping === false) options.useGrouping = false;
-  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2186,7 +2222,12 @@ const itemId = (item, index) => {
   if (item?.file?.name) return `${item.file.name}-${item.file.size}-${item.file.lastModified}`;
   if (item?.name || item?.fileName) return `${item.name || item.fileName}-${index}`;
   return `item-${index}`;
-};
+}; // The pictures a browser draws from a chosen file's own bytes (C81: a photo's
+// thumbnail in its row). A video's frame and a PDF's page are the host's
+// imageUrl: the component never decodes them (C149 (4)).
+
+
+const DRAWN_PICTURES = /^image\/(?:png|jpeg|gif|webp|avif|bmp|svg\+xml)$/u;
 
 const itemProgress = item => Math.max(0, Math.min(100, Number(item?.progress ?? 0) || 0)); // sf-file-upload from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §4.4, §8, §10.8, §16.20): the settings are attributes and
@@ -2296,7 +2337,10 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
     this._uploads = new Map();
     this._uploader = null;
-    this._lastAttach = null; // A file held over the area is said on the host (§5.3).
+    this._lastAttach = null; // The object addresses of chosen photos drawn in their rows: File -> URL,
+    // given back when the file leaves the list or the element the page.
+
+    this._pictures = new Map(); // A file held over the area is said on the host (§5.3).
 
     this.addEventListener('dragover', this._onDragState);
     this.addEventListener('dragleave', this._onDragState);
@@ -2361,6 +2405,9 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   set items(value) {
     this._items = Array.isArray(value) ? value : [];
+
+    this._releasePictures();
+
     this.syncRuntimeItems();
 
     this._trackStreams(this._items);
@@ -2498,6 +2545,108 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     this._uploader = typeof value === 'function' ? value : null;
 
     this._pumpUploads();
+  } // The picture of a row (C81, C149 (4)): the host's imageUrl for any file,
+  // else a chosen photo's own bytes through an object address.
+
+
+  pictureOf(item) {
+    const given = item?.imageUrl ?? item?.['image-url'];
+    if (given) return String(given);
+    const file = item?.file;
+    if (typeof Blob === 'undefined' || !(file instanceof Blob) || !DRAWN_PICTURES.test(String(file.type || ''))) return '';
+
+    let address = this._pictures.get(file);
+
+    if (!address && typeof URL?.createObjectURL === 'function') {
+      address = URL.createObjectURL(file);
+
+      this._pictures.set(file, address);
+    }
+
+    return address || '';
+  }
+
+  _releasePictures(all = false) {
+    if (!this._pictures?.size) return;
+    const listed = all ? new Set() : new Set(this.items.map(item => item?.file).filter(Boolean));
+
+    for (const [file, address] of [...this._pictures]) {
+      if (listed.has(file)) continue;
+
+      this._pictures.delete(file);
+
+      URL.revokeObjectURL?.(address);
+    }
+  } // «×» in a row (C149 (8)): the file leaves the list at once and the notice
+  // gives it back with «Вернуть» (C25); the trash of a stored file asked
+  // first in its row, and its yes (action delete) leaves nothing to give
+  // back: the page erases the file on detach. Either way detach carries the
+  // action, and the focus goes to the row that took the place, else the area.
+
+
+  handleRowDetach(event, index) {
+    event?.stopPropagation?.();
+    if (this.disabled) return;
+    const item = this.items[index];
+    if (!item) return;
+    const action = event?.detail?.action === 'delete' ? 'delete' : 'remove';
+    if (this._boundRoot) (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__.removeFileUploadItem)(this._boundRoot, index, {
+      action
+    });else this.items = this.items.filter((_, at) => at !== index);
+
+    this._focusAfterRemoval(index);
+
+    if (action === 'delete') return;
+    const name = String(item?.name || item?.fileName || item?.file?.name || '');
+    globalThis.SF?.notify?.({
+      status: 'neutral',
+      title: this.sfWord('file-removed'),
+      text: name,
+      source: 'sf-file-upload',
+      action: {
+        label: this.sfWord('undo'),
+        onSelect: () => this.restoreItem(item, index)
+      }
+    });
+  } // «Вернуть»: the file stands again where it was. A file that was on its
+  // way is ready again (its transfer was stopped): the uploader sends it, and
+  // a page that sends files itself hears change with it.
+
+
+  restoreItem(item, index) {
+    if (!item || this.items.includes(item)) return;
+    const back = itemState(item) === 'process' ? { ...item,
+      state: 'ready',
+      progress: undefined
+    } : item;
+    const next = Array.from(this.items);
+    next.splice(Math.min(Math.max(0, Number(index) || 0), next.length), 0, back);
+    this.items = next;
+    if (back.file) this.sfEmit('change', {
+      files: [back.file],
+      source: 'undo'
+    });
+  }
+
+  handleRowRetry(event, index) {
+    event?.stopPropagation?.();
+    if (this.disabled || !this._boundRoot) return;
+    (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__.retryFileUploadItem)(this._boundRoot, index);
+  }
+
+  _focusAfterRemoval(index) {
+    const place = () => {
+      const rows = this.querySelectorAll(':scope .sf-file-upload-files > .sf-file-upload-item');
+      const row = rows[Math.min(index, rows.length - 1)];
+      const button = row?.querySelector('button[data-action="remove"], button[data-action="delete"]');
+      (button || this.querySelector('.sf-file-upload'))?.focus?.({
+        preventScroll: true
+      });
+    };
+
+    if (typeof this.whenRendered === 'function') this.whenRendered(() => requestAnimationFrame(place), {
+      next: true
+    });else requestAnimationFrame(place);
   }
 
   _patchItem(id, changes) {
@@ -2703,7 +2852,8 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       component: this,
       formats: this.formats,
       supportingText: this.supportingText,
-      items: this.items
+      items: this.items,
+      keyOf: itemId
     });
   }
 
@@ -2825,6 +2975,8 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
     const refresh = () => {
       this._items = Array.from(this._boundRoot?.__sfFileUploadItems || []);
 
+      this._releasePictures();
+
       this._trackStreams(this._items);
 
       this._abortGone();
@@ -2862,6 +3014,8 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
 
   onDisconnected() {
     this.teardownRuntime();
+
+    this._releasePictures(true);
   }
 
   syncRuntimeItems() {
@@ -2918,67 +3072,66 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderFileUploadTemplate: () => (/* binding */ renderFileUploadTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c43efa1014a6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_size__WEBPACK_IMPORTED_MODULE_1__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c43efa1014a6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
 
 function normalizeSize(value) {
-  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_1__.fieldSize)(value, 'sf-file-upload');
-} // The row is the class row (describeUploadItem): ready, process, done and
-// error say the same words and offer the same buttons in both.
+  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
+} // A row is the family's file row, sf-file-preview (owner decisions C81 and
+// C149): one row height with sf-file-preview, sf-file-download and the image
+// field; the picture of a photo (the chosen file itself, or the host's
+// imageUrl) and the type's glyph and word for anything else. The upload
+// states map onto the row's: a chosen file and a sent one are there (ready;
+// a sent one with its address is a link), a file on its way is uploading with
+// the bar, a failed one is error with its reason and «Повторить». Remove is
+// «×» «Убрать <имя>» at once, given back by «Вернуть» (C25, C149 (8)); a
+// stored file the host marks stored is the trash «Удалить <имя>», asked first.
 
 
-function renderUploadItem(item, size, index, owner) {
-  const row = (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_2__.describeUploadItem)(item, owner, 'process');
+const PREVIEW_STATES = Object.freeze({
+  ready: 'ready',
+  done: 'ready',
+  process: 'uploading',
+  error: 'error'
+});
+
+function renderUploadItem(item, index, context) {
+  const owner = context.component;
+  const row = (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__.describeUploadItem)(item, owner, 'process');
   const {
     state
   } = row;
+  const bytes = Number(item?.file?.size ?? item?.size);
+  const fileSize = Number.isFinite(bytes) && (item?.file || item?.size !== undefined && item?.size !== null && item?.size !== '') ? String(bytes) : row.size;
+  const mime = String(item?.file?.type || item?.mime || '');
+  const href = state === 'done' && item?.href ? String(item.href) : '';
+  const picture = owner?.pictureOf?.(item) || '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div
-                class="sf-upload-progress sf-upload-progress--size-${size} sf-upload-progress--${state} flex items-main-start items-cross-start"
-                data-index=${String(index)}
-        >
-            <i class="sf-icon" aria-hidden="true">${row.icon}</i>
-            <div class="sf-upload-progress-content flex flex-col flex-1">
-                <div class="sf-upload-progress-top flex content-main-between">
-                    <div class="sf-upload-progress-left flex flex-col">
-                        <div class="sf-upload-progress-name">${row.name}</div>
-                        <div class="sf-upload-progress-text">${row.line}</div>
-                    </div>
-
-                    ${state === 'done' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-icon-solid sf-upload-progress-mark" aria-hidden="true">check_circle</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    <button
-                            type="button"
-                            class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${size} flex items-cross-center content-main-center self-cross-start"
-                            data-action="remove"
-                    >
-                        <i class="sf-icon" aria-hidden="true">delete</i>
-                    </button>
-                </div>
-
-                ${state === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <button
-                                    type="button"
-                                    class="sf-upload-progress-repeat self-cross-start"
-                                    data-action="retry"
-                            >
-                                ${row.retryText}
-                            </button>
-                        ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                ${state === 'process' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-progress-bar
-                                    size=${size}
-                                    value=${row.progress === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(row.progress)}
-                                    ?indeterminate=${row.progress === null}
-                                    text-position="inline-end"
-                            ></sf-progress-bar>
-                        ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            </div>
+        <div class="sf-file-upload-item" role="listitem" data-index=${String(index)}>
+            <sf-file-preview
+                    file-name=${row.name}
+                    file-size=${fileSize || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    mime-type=${mime || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    image-url=${picture || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    href=${href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    state=${PREVIEW_STATES[state] || 'ready'}
+                    value=${state === 'process' && row.progress !== null ? String(row.progress) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    error-text=${state === 'error' && row.message ? row.message : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    download-action=${href ? 'true' : 'false'}
+                    ?stored=${item?.stored === true}
+                    ?disabled=${context.disabled}
+                    @sf-file-preview-detach=${event => owner?.handleRowDetach?.(event, index)}
+                    @sf-file-preview-retry=${event => owner?.handleRowRetry?.(event, index)}
+            ></sf-file-preview>
         </div>
     `;
 }
@@ -3020,8 +3173,8 @@ function renderFileUploadTemplate(context) {
 
         <div class="sf-file-upload-message" role="status" hidden></div>
 
-        <div class="sf-file-upload-files grid grid-col-1 gap-1 w-full">
-            ${Array.isArray(context.items) ? context.items.map((item, index) => renderUploadItem(item, size, index, context.component)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        <div class="sf-file-upload-files grid grid-col-1 gap-1/2 w-full" role="list">
+            ${Array.isArray(context.items) ? (0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.items, (item, index) => context.keyOf(item, index), (item, index) => renderUploadItem(item, index, context)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
     `;
 }
@@ -3582,6 +3735,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "efa66f8927d1"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/repeat.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/repeat.js", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -3811,7 +3971,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploadi
 /***/ "6e4269348082"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Удалить","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
 
 /***/ },
 
@@ -3839,21 +3999,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "35944d444d78"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.2.3","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.3.0","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
 /***/ "8623c4e59417"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo"}}');
 
 /***/ },
 
 /***/ "d49e89d651d7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Загрузка файлов","runtime":{"done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","link-text":"Выберите файл","not-added":"Не добавлено {n}:","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-size":"«{name}» — {size}, а можно до {max}","reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","reject-type":"«{name}» не подходит: можно {formats}","remove":"Удалить","remove-failed":"Уберите или повторите файлы с ошибкой","retry":"Повторить","text":"или перетащите его сюда","uploading":"Загрузка","value-missing":"Добавьте файл","value-missing-many":"Добавьте хотя бы один файл","wait-for-uploads":"Дождитесь, пока файлы загрузятся"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Загрузка файлов","runtime":{"done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","link-text":"Выберите файл","not-added":"Не добавлено {n}:","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-size":"«{name}» — {size}, а можно до {max}","reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","reject-type":"«{name}» не подходит: можно {formats}","remove":"Убрать","remove-failed":"Уберите или повторите файлы с ошибкой","retry":"Повторить","text":"или перетащите его сюда","uploading":"Загрузка","value-missing":"Добавьте файл","value-missing-many":"Добавьте хотя бы один файл","wait-for-uploads":"Дождитесь, пока файлы загрузятся","file-removed":"Файл убран","undo":"Вернуть"}}');
 
 /***/ }
 

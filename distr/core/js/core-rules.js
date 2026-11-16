@@ -3672,6 +3672,9 @@ SF.RuleLoader['cl-avatar-group'] = {
   js: true,
   relation: [{
     name: 'avatars'
+  }, // A member's presence point is the Framework's one dot, .sf-dot (owner decision C185 (8)): the dot sheet.
+  {
+    name: 'dot'
   }, {
     name: 'icons'
   }, // The placeholder's glyph is an sf-icon element (avatar study AV-8).
@@ -3703,6 +3706,9 @@ SF.RuleLoader['cl-avatar'] = {
     name: 'avatars'
   }, {
     name: 'badges'
+  }, // The presence point is the Framework's one dot, .sf-dot (owner decision C185 (8)): the dot sheet.
+  {
+    name: 'dot'
   }, // The placeholder's glyph is an sf-icon element, so its name reaches the icon font request (avatar study AV-8).
   {
     name: 'cl-icon'
@@ -3834,6 +3840,9 @@ SF.RuleLoader['cl-button-icon'] = {
   }, // The badge sheet places a count or a dot on the button (simai/ui-source#12).
   {
     name: 'badges'
+  }, // A badge's dot is the Framework's one dot, .sf-dot (owner decision C185 (8)): the dot sheet.
+  {
+    name: 'dot'
   }, // The spinner a loading icon button shows, fetched after the page is ready.
   {
     name: 'spinner',
@@ -4409,8 +4418,10 @@ SF.RuleLoader['cl-file-upload'] = {
     name: 'file-upload'
   }, {
     name: 'featured-icon'
-  }, {
-    name: 'cl-progress-bar'
+  }, // Each file's row is sf-file-preview (owner decisions C81, C149): asked for when the first file is listed.
+  {
+    name: 'cl-file-preview',
+    lazy: true
   }, {
     name: 'icon-buttons'
   }]
@@ -4543,6 +4554,10 @@ SF.RuleLoader['cl-icon'] = {
   }, {
     name: 'badges',
     lazy: true
+  }, // A badge's dot is the Framework's one dot, .sf-dot (owner decision C185 (8)): fetched with the badge sheet when a badge draws.
+  {
+    name: 'dot',
+    lazy: true
   }]
 }; // The bundle's former name cl-icons (the folder was `icons` until standard
 // 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
@@ -4599,6 +4614,11 @@ SF.RuleLoader['cl-input-choice'] = {
   {
     name: 'cl-badge',
     lazy: true
+  }, // The «?» after the label or the heading (help, C153 (8), C165 (1)) is
+  // sf-help-mark, only when help is set.
+  {
+    name: 'cl-help-mark',
+    lazy: true
   }]
 };
 
@@ -4633,7 +4653,8 @@ SF.RuleLoader['cl-input-code'] = {
 // Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The colour control loads on demand like any other Smart element. Its relations are
 // the icons, the icon button of the reset and the eyedropper, and the segmented
-// switch of its own window (lazy: drawn only once the window opens).
+// switch, the button «Применить» and the copy action of its own window (lazy: drawn
+// only once the window opens).
 SF.RuleLoader['cl-input-color'] = {
   tags: ['sf-input-color', 'sf-color'],
   type: 'smart',
@@ -4652,6 +4673,14 @@ SF.RuleLoader['cl-input-color'] = {
   }, // cl-segmented: the window's «Палитра / Своё» switch, drawn only once the window opens, fetched after the page is ready.
   {
     name: 'cl-segmented',
+    lazy: true
+  }, // cl-button: «Применить» at the bottom of «Своё» (owner decision C209), drawn only once the window opens.
+  {
+    name: 'cl-button',
+    lazy: true
+  }, // cl-button-copy: the copy action at the end of the code field in «Своё» (C209 (4), a field action, C123), drawn only once the window opens.
+  {
+    name: 'cl-button-copy',
     lazy: true
   }]
 };
@@ -4944,6 +4973,10 @@ SF.RuleLoader['cl-language'] = {
     lazy: true
   }, {
     name: 'cl-dropdown',
+    lazy: true
+  }, // The trigger's name as the Framework's tooltip (C160 (1), TT-11): the controller and its sheet, fetched when a menu trigger draws.
+  {
+    name: 'tooltip',
     lazy: true
   }]
 };

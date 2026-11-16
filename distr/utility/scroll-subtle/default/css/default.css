@@ -1,29 +1,27 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   .scroll-subtle {
-    --sf-scroll-thumb-subtle: color-mix(
-      in srgb,
-      var(--sf-on-surface) 10%,
-      var(--sf-transparent)
-    );
-    --sf-scroll-thumb-subtle-interactive: color-mix(
-      in srgb,
-      var(--sf-on-surface) 20%,
-      var(--sf-transparent)
-    );
     --sf-scroll-bg-track: var(--sf-transparent);
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle);
+    --sf-scroll-bg-thumb: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) 48%);
+    --sf-scroll--thumb-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) 64%);
     scrollbar-gutter: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--sf-scroll-thumb-subtle) var(--sf-transparent);
   }
-  .scroll-subtle:hover, .scroll-subtle[focus-within] {
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle-interactive);
-    scrollbar-color: var(--sf-scroll-thumb-subtle-interactive) var(--sf-transparent);
-  }
-  .scroll-subtle:hover, .scroll-subtle:focus-within {
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle-interactive);
-    scrollbar-color: var(--sf-scroll-thumb-subtle-interactive) var(--sf-transparent);
+  @supports not selector(::-webkit-scrollbar) {
+    .scroll-subtle:hover {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle[focus-within] {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle:hover {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle[focus-within] {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle:focus-within {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
   }
   @media (forced-colors: active) {
     .scroll-subtle,

@@ -1801,6 +1801,81 @@
     min-inline-size: max-content;
     justify-content: center;
   }
+  .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container {
+    container: sf-tabs-row/inline-size;
+  }
+  @container sf-tabs-row (width < 44rem) {
+    .sf-tabs-top-container > .sf-tabs-top {
+      --sf-tabs--narrow: 1;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) {
+      flex: 1 1 auto;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > * > .sf-button {
+      flex: 1 1 0;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
+      min-inline-size: -webkit-max-content;
+      min-inline-size: -moz-max-content;
+      min-inline-size: max-content;
+      justify-content: center;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > * > .sf-icon-button {
+      flex: 1 1 0;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
+      min-inline-size: -webkit-max-content;
+      min-inline-size: -moz-max-content;
+      min-inline-size: max-content;
+      justify-content: center;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button {
+      flex: 1 1 0;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
+      min-inline-size: -webkit-max-content;
+      min-inline-size: -moz-max-content;
+      min-inline-size: max-content;
+      justify-content: center;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-icon-button {
+      flex: 1 1 0;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
+      min-inline-size: -webkit-max-content;
+      min-inline-size: -moz-max-content;
+      min-inline-size: max-content;
+      justify-content: center;
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :first-child > .sf-button {
+      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :first-child > .sf-button {
+      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:first-child {
+      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:first-child {
+      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :last-child > .sf-button {
+      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :last-child > .sf-button {
+      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:last-child {
+      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
+    }
+    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:last-child {
+      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
+    }
+  }
   .sf-tabs--overflow-wrap:not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top {
     flex-wrap: wrap;
     overflow-x: visible;

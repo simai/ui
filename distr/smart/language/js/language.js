@@ -1201,7 +1201,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfLanguage: () => (/* binding */ SfLanguage),
-/* harmony export */   languageRows: () => (/* reexport safe */ _js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows),
+/* harmony export */   languageRows: () => (/* reexport safe */ _js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows),
 /* harmony export */   rememberKey: () => (/* binding */ rememberKey)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
@@ -1210,19 +1210,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("688582849827");
-/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("464bf30e7c23");
-/* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9937e6b314d1");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("11b7e7a66992");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("1fc6cbb91573");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("8773c52f3b37");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("688582849827");
+/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("464bf30e7c23");
+/* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9937e6b314d1");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("11b7e7a66992");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1fc6cbb91573");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8773c52f3b37");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__);
 // sf-language: the site's language picker. One element whose look follows the
 // number of languages it is given:
 //
@@ -1260,16 +1262,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle; the title, settings and events
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
 };
-(0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_9__); // The parts it draws, found under their current names and their former ones.
+(0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_10__); // The parts it draws, found under their current names and their former ones.
 
 const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
 const TRIGGER = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button')}`;
@@ -1311,7 +1314,7 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 
 
 const rememberKey = name => text(name) ? `sf-language/${text(name)}` : '';
-const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
@@ -1327,7 +1330,7 @@ const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1_
   }
 });
 
-class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(LanguageElement) {
+class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.FormField)(LanguageElement) {
   constructor() {
     super(); // What the element last drew, so a change of the page's language that
     // this element did not make moves the shown value with it.
@@ -1352,7 +1355,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
 
 
   get languageList() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.normalizeLanguages)(this.languages, this.items, this.href, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.normalizeLanguages)(this.languages, this.items, this.href, {
       missing: this.missing,
       home: this.home
     });
@@ -1365,7 +1368,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
     if (!list.length) return null;
     const own = this.getAttribute('value');
     const doc = this.ownerDocument?.documentElement;
-    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(doc)) ?? list[0];
+    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(doc)) ?? list[0];
   } // The value is a language code of the list; the chosen one is read through
   // current, so an element written without value says the page's language.
 
@@ -1375,7 +1378,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
   }
 
   set value(next) {
-    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.canonicalCode)(next);
+    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.canonicalCode)(next);
     if (code) this.setAttribute('value', code);else this.removeAttribute('value');
     this.sfSyncFormState?.();
   } // What the segments say: name or code. labels wins; without it the dated
@@ -1416,7 +1419,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
 
 
   get look() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.lookFor)(this.languageList.length, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.lookFor)(this.languageList.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
@@ -1439,7 +1442,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
 
   choose(next, reason = 'press') {
     const list = this.languageList;
-    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, next);
+    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, next);
     if (!language) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('unknown');
     if (this.disabled || this.sfFormDisabled) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('disabled');
     const previous = this.value;
@@ -1701,7 +1704,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
 
 
   menuEntries(list, current, query = '') {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows)(list, current, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows)(list, current, {
       page: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(this),
       query,
       missing: this.sfWord('missing')
@@ -1721,12 +1724,12 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
   templateContext() {
     const list = this.languageList;
     const current = this.current;
-    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.lookFor)(list.length, {
+    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.lookFor)(list.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
     });
-    const size = _js_languages__WEBPACK_IMPORTED_MODULE_8__.SIZES.includes(this.size) ? this.size : '1';
+    const size = _js_languages__WEBPACK_IMPORTED_MODULE_9__.SIZES.includes(this.size) ? this.size : '1';
     this.sfHostState('data-look', look);
     this._shownLook = look;
     const label = this.label;
@@ -1748,6 +1751,11 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
           name: current.native
         }
       }) : label,
+      // The trigger's name tooltip (C160 (1)): its surface's id, from the
+      // element's path (§7.1.1).
+      tipId: look === 'menu' || look === 'search' ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.instancePath)(this, {
+        kind: 'sf-language'
+      }), 'tooltip') : '',
       entries: look === 'menu' || look === 'search' ? this.menuEntries(list, current, look === 'search' ? this._query : '') : [],
       search: look === 'search' ? this.searchOptions() : null,
       // The field look (C142 (8)): sf-dropdown on its own ladder (1/2, 1, 2),
@@ -1770,7 +1778,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderLanguageTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderLanguageTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -1781,6 +1789,13 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
     if (menu) {
       const search = this.look === 'search' ? this.searchOptions() : null;
       if (JSON.stringify(menu.search) !== JSON.stringify(search)) menu.search = search;
+    } // The trigger's name tooltip (C160 (1)): the controller is a lazy
+    // relation, asked for once a trigger with its tooltip is drawn.
+
+
+    if (!this._tipAsked && this.querySelector('.sf-language-tooltip')) {
+      this._tipAsked = true;
+      globalThis.SF?.Loader?.ensurePlugin?.('tooltip');
     }
 
     this.sfSyncFormState();
@@ -1811,20 +1826,20 @@ SfLanguage.menuEntry = function menuEntry({
   href = '',
   searchFrom = 8
 } = {}) {
-  const list = (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.normalizeLanguages)(languages, items, href, {
+  const list = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.normalizeLanguages)(languages, items, href, {
     missing,
     home
   });
   const doc = globalThis.document?.documentElement;
   const pageCode = page || doc?.getAttribute('lang') || 'en';
   const words = (String(pageCode).toLowerCase().startsWith('ru') ? ru : en).runtime;
-  const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
+  const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
   const entry = {
     id: 'language',
     text: label || words.label,
     icon: 'translate',
     value: current?.label,
-    submenu: (0,_js_languages__WEBPACK_IMPORTED_MODULE_8__.languageRows)(list, current, {
+    submenu: (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows)(list, current, {
       page: pageCode,
       missing: words.missing,
       prefix: 'language:'
@@ -2384,7 +2399,7 @@ function renderMenu(context) {
       scheme="on-surface"
       size=${context.size}
       aria-label=${context.triggerLabel}
-      title=${context.triggerLabel}
+      data-tooltip=${context.tipId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-haspopup="menu"
       ?disabled=${context.disabled}
       @click=${() => context.component.toggleMenu()}
@@ -2401,7 +2416,18 @@ function renderMenu(context) {
       @sf-context-menu-search=${stop}
       @sf-menu-context-closed=${event => context.component.onMenuClosed(event)}
       @sf-context-menu-closed=${stop}
-    ></sf-menu-context>`;
+    ></sf-menu-context>${renderTooltip(context)}`;
+} // The trigger's name as the Framework's tooltip (owner decision C160 (1),
+// TT-11), not a browser title: «Язык: Русский» on hover, keyboard focus or a
+// long press, the surface named by the button's data-tooltip (sf-button hands
+// a data-* to its native button) and shown by the tooltip controller
+// (component tooltip, asked for once the trigger draws). The text is the
+// button's accessible name, so the controller adds no description.
+
+
+function renderTooltip(context) {
+  if (!context.tipId || !context.triggerLabel) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tooltip sf-tooltip--dark sf-language-tooltip" id=${context.tipId} hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${context.triggerLabel}</span></span></span>`;
 } // The parts stand in a frame without a box of its own (display: contents), so
 // they lay out in the host's place. The frame is what the first paint prints
 // as static markup: the switch and the trigger inside it wait for this
@@ -2461,6 +2487,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -2485,7 +2518,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.3","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.4","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

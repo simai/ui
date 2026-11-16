@@ -1019,3 +1019,20 @@
 .sf-textarea:has(textarea:disabled) .sf-textarea-required {
   --sf-textarea-required--color: var(--sf-on-surface-disabled);
 }
+
+@layer sf.base {
+  .sf-textarea:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .sf-textarea:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-textarea-label {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+}

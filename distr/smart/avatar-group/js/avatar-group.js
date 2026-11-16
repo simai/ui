@@ -1061,11 +1061,16 @@ function onlineIndicator(context) {
     1: "sf-online-indicator--size-1",
     2: "sf-online-indicator--size-2",
     3: "sf-online-indicator--size-3"
-  };
+  }; // The point is the Framework's one dot (owner decision C185 (8)): the
+  // .sf-dot of the shared vocabulary draws the disc -- online the solid
+  // success dot, away the hollow neutral one --, and .sf-online-indicator
+  // only places it on the avatar and cuts it out with the place's ring.
+
+  const dot = context.status === "away" ? "sf-dot sf-dot--hollow sf-dot--neutral" : "sf-dot sf-dot--success";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span aria-hidden="true"
                 class="sf-online-indicator sf-online-indicator--${context.status} ${sizeMap[context.size] || ""} flex absolute bottom-0 inline-end-0"
-        ></span>
+        ><span class=${dot}><span class="sf-dot-item"></span></span></span>
     `;
 }
 function statusBadge(context) {
@@ -1198,7 +1203,12 @@ function elementBadge(element) {
   }, element); // The sheet that places it comes with the badges component; an element
   // whose rule fetches it lazily asks for it when there is a badge to show.
 
-  if (state.visible) globalThis.SF?.Loader?.ensurePlugin?.('badges');
+  if (state.visible) {
+    globalThis.SF?.Loader?.ensurePlugin?.('badges'); // The dot it draws is the Framework's one dot (C185 (8)): its sheet.
+
+    globalThis.SF?.Loader?.ensurePlugin?.('dot');
+  }
+
   return state;
 }
 /** Whether there is a badge to draw. */
@@ -1207,6 +1217,11 @@ function hasBadge(badge) {
   return Boolean(badge?.visible);
 }
 /** The badge itself: the digits and the dot hidden from assistive technology. */
+// The dot is the Framework's one dot (owner decision C185 (8)): an .sf-dot
+// stands in every anchored badge after the digits, and the badge sheet shows
+// it wherever the badge is a dot -- asked for, or a count on an anchor too
+// small for figures --, in the badge's colour and the step's point size; the
+// badge keeps the place and the ring that cuts it out.
 
 function renderAnchoredBadge(badge) {
   if (!badge?.visible) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -1214,7 +1229,7 @@ function renderAnchoredBadge(badge) {
         class="sf-badge sf-badge--anchored${badge.dot ? ' sf-badge--dot' : ''}"
         aria-hidden="true"
         title=${badge.phrase || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    >${badge.text}</span>`;
+    >${badge.text}<span class="sf-dot"><span class="sf-dot-item"></span></span></span>`;
 }
 /** The phrase for a name read from content, out of sight. */
 
@@ -1491,7 +1506,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.4.1","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.5.0","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 

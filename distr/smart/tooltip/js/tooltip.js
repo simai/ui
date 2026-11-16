@@ -266,6 +266,56 @@ function isEditableTarget(target) {
 
 /***/ },
 
+/***/ "428001505d72"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   surfaceShortcut: () => (/* binding */ surfaceShortcut),
+/* harmony export */   writeTriggerKeyShortcuts: () => (/* binding */ writeTriggerKeyShortcuts)
+/* harmony export */ });
+/* harmony import */ var _kbd_js_shortcut_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("151a293c8c90");
+ // A tooltip that shows its trigger's shortcut (sf-tooltip shortcut="mod+b")
+// says it on the trigger too: aria-keyshortcuts in the WAI-ARIA words of this
+// platform (Meta+B on an Apple platform, Control+B elsewhere), as sf-button
+// and sf-input do for their own shortcut. The keys in the tooltip are only
+// seen; a screen reader hears the trigger. A trigger that names its own
+// aria-keyshortcuts keeps it; what was written here is taken back when the
+// shortcut goes. The value written is kept on the trigger under a shared
+// symbol, so every bundle's copy of this file reads the same memory.
+
+const WRITTEN = Symbol.for('simai.sf.tooltip.keyShortcuts');
+/** The shortcut a tooltip surface shows: sf-tooltip's shortcut setting. */
+
+function surfaceShortcut(surface) {
+  if (!surface?.getAttribute) return '';
+  const tooltip = surface.localName === 'sf-tooltip' ? surface : surface.closest?.('sf-tooltip');
+  return String(tooltip?.getAttribute('shortcut') ?? '').trim();
+}
+/** Writes (or takes back) the trigger's aria-keyshortcuts for a shortcut. */
+
+function writeTriggerKeyShortcuts(trigger, shortcut) {
+  if (!trigger?.setAttribute) return;
+  const written = trigger[WRITTEN];
+  const current = trigger.getAttribute('aria-keyshortcuts'); // The page's own value wins.
+
+  if (current !== null && current !== written) return;
+  const next = shortcut ? (0,_kbd_js_shortcut_js__WEBPACK_IMPORTED_MODULE_0__.ariaKeyShortcuts)((0,_kbd_js_shortcut_js__WEBPACK_IMPORTED_MODULE_0__.parseShortcut)(shortcut)) : '';
+
+  if (next) {
+    if (current !== next) trigger.setAttribute('aria-keyshortcuts', next);
+    trigger[WRITTEN] = next;
+    return;
+  }
+
+  if (written !== undefined) {
+    if (current === written) trigger.removeAttribute('aria-keyshortcuts');
+    delete trigger[WRITTEN];
+  }
+}
+
+/***/ },
+
 /***/ "0b167a45ab71"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -275,10 +325,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d8735a1253b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9279cc82ea5a");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("b58689b2b3f6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("45e954eb1d84");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("616513d619d2");
+/* harmony import */ var _component_tooltip_js_keyshortcuts__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("428001505d72");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9279cc82ea5a");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("b58689b2b3f6");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("45e954eb1d84");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("616513d619d2");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -291,27 +342,28 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle; the title, settings and events
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
 }; // sf-tooltip from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4): appearance, size, arrow, text and supporting-text are attributes and
 // properties made by core/js/element-manifest.js; the axis's old name `type` is
 // a dated alias of appearance (aliases.json).
 
-const TooltipElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const TooltipElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
     ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 });
 
 class SfTooltip extends TooltipElement {
@@ -360,6 +412,24 @@ class SfTooltip extends TooltipElement {
 
   template() {
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderTooltipTemplate)(this.templateContext());
+  } // The shortcut the tooltip shows is said on its trigger (KB-4):
+  // aria-keyshortcuts on every [data-tooltip] naming this tooltip, written
+  // again when the shortcut changes and taken back when it goes. The
+  // tooltip controller writes it as it links a trigger, a later one too.
+
+
+  afterRender(callback) {
+    const result = super.afterRender(callback);
+
+    if (typeof callback !== 'function' && this.id && this.isConnected) {
+      const shortcut = (0,_component_tooltip_js_keyshortcuts__WEBPACK_IMPORTED_MODULE_4__.surfaceShortcut)(this);
+      const escaped = globalThis.CSS?.escape ? CSS.escape(this.id) : this.id.replace(/"/g, '\\"');
+      this.ownerDocument.querySelectorAll(`[data-tooltip="${escaped}"]`).forEach(trigger => {
+        (0,_component_tooltip_js_keyshortcuts__WEBPACK_IMPORTED_MODULE_4__.writeTriggerKeyShortcuts)(trigger, shortcut);
+      });
+    }
+
+    return result;
   }
 
 }
@@ -478,7 +548,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toolt
 /***/ "9279cc82ea5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.4.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tooltip","tag":"sf-tooltip","version":"1.5.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"dark"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/3"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"shortcut":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

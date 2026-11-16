@@ -566,7 +566,12 @@ function elementBadge(element) {
   }, element); // The sheet that places it comes with the badges component; an element
   // whose rule fetches it lazily asks for it when there is a badge to show.
 
-  if (state.visible) globalThis.SF?.Loader?.ensurePlugin?.('badges');
+  if (state.visible) {
+    globalThis.SF?.Loader?.ensurePlugin?.('badges'); // The dot it draws is the Framework's one dot (C185 (8)): its sheet.
+
+    globalThis.SF?.Loader?.ensurePlugin?.('dot');
+  }
+
   return state;
 }
 /** Whether there is a badge to draw. */
@@ -575,6 +580,11 @@ function hasBadge(badge) {
   return Boolean(badge?.visible);
 }
 /** The badge itself: the digits and the dot hidden from assistive technology. */
+// The dot is the Framework's one dot (owner decision C185 (8)): an .sf-dot
+// stands in every anchored badge after the digits, and the badge sheet shows
+// it wherever the badge is a dot -- asked for, or a count on an anchor too
+// small for figures --, in the badge's colour and the step's point size; the
+// badge keeps the place and the ring that cuts it out.
 
 function renderAnchoredBadge(badge) {
   if (!badge?.visible) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -582,7 +592,7 @@ function renderAnchoredBadge(badge) {
         class="sf-badge sf-badge--anchored${badge.dot ? ' sf-badge--dot' : ''}"
         aria-hidden="true"
         title=${badge.phrase || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    >${badge.text}</span>`;
+    >${badge.text}<span class="sf-dot"><span class="sf-dot-item"></span></span></span>`;
 }
 /** The phrase for a name read from content, out of sight. */
 
@@ -1118,7 +1128,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.3.1","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.0","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

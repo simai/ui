@@ -10,7 +10,9 @@
 */
 @layer sf.components {
   .sf-quantity .sf-quantity-wrap input {
+    flex: 1 1 auto;
     min-width: 0;
+    width: auto;
     text-align: center;
   }
 }
@@ -224,11 +226,8 @@
     --sf-quantity-wrap--border-end-start-radius: var(--sf-quantity-radius, var(--sf-radius--ui));
     --sf-quantity-wrap--border-start-end-radius: var(--sf-quantity-radius, var(--sf-radius--ui));
     --sf-quantity-wrap--border-start-start-radius: var(--sf-quantity-radius, var(--sf-radius--ui));
-    /* C53 (F2): the steppers hug the number. The gap was a layout space
-       (--sf-space-2, 20 px on a desktop) on both sides, plus the text inset:
-       in a 160 px cell 32 px were left for the digits. The number place
-       carries its own --sf-space-1/4 on each side instead. */
-    --sf-quantity-wrap--gap: var(--sf-quantity-gap, calc(var(--sf-px) * 0));
+    /* The class component's gap; the Smart field's is 0 (C53 F2, below). */
+    --sf-quantity-wrap--gap: var(--sf-quantity-gap, var(--sf-space-2));
     background-color: var(--sf-quantity-wrap--background-color);
     border: var(--sf-quantity-wrap--border);
     border-color: transparent;
@@ -512,8 +511,8 @@
     --sf-icon--color: var(--sf-on-surface-variant);
   }
   .sf-quantity.sf-quantity--size-1 input {
-    --sf-quantity-input--padding-inline-end: var(--sf-space-1\/4);
-    --sf-quantity-input--padding-inline-start: var(--sf-space-1\/4);
+    --sf-quantity-input--padding-inline-end: var(--sf-ui-1--text-space-x);
+    --sf-quantity-input--padding-inline-start: var(--sf-ui-1--text-space-x);
   }
   /* The number's type is set on the box, so the unit beside the number
      (.sf-quantity-unit) inherits the same size, line and family (C53). */
@@ -562,8 +561,8 @@
     --sf-icon--width: var(--sf-text-height-2);
   }
   .sf-quantity.sf-quantity--size-2 input {
-    --sf-quantity-input--padding-inline-end: var(--sf-space-1\/4);
-    --sf-quantity-input--padding-inline-start: var(--sf-space-1\/4);
+    --sf-quantity-input--padding-inline-end: var(--sf-ui-2--text-space-x);
+    --sf-quantity-input--padding-inline-start: var(--sf-ui-2--text-space-x);
   }
   .sf-quantity.sf-quantity--size-2 .sf-quantity-wrap {
     --sf-quantity-input--font-size: var(--sf-text-size-2);
@@ -605,8 +604,8 @@
     --sf-icon--width: var(--sf-text-height-1\/2);
   }
   .sf-quantity.sf-quantity--size-1\/2 input {
-    --sf-quantity-input--padding-inline-end: var(--sf-space-1\/4);
-    --sf-quantity-input--padding-inline-start: var(--sf-space-1\/4);
+    --sf-quantity-input--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
+    --sf-quantity-input--padding-inline-start: var(--sf-ui-1\/2--text-space-x);
   }
   .sf-quantity.sf-quantity--size-1\/2 .sf-quantity-wrap {
     --sf-quantity-input--font-size: var(--sf-text-size-1\/2);
@@ -824,6 +823,17 @@
    bound) or the digits setting, which a column of fields sets to one
    number so the column is straight (F6). */
 @layer sf.components {
+  /* C53 is the Smart field's look (sf-input-quantity renders the box in a
+     .sf-quantity-row); the class component (label.sf-quantity with the box
+     as its own child) keeps its own: the column's width, the layout gap and
+     the field's text inset (DEV review D1 of the C53 round). */
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap {
+    --sf-quantity-wrap--gap: var(--sf-quantity-gap, calc(var(--sf-px) * 0));
+  }
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input {
+    --sf-quantity-input--padding-inline-end: var(--sf-space-1\/4);
+    --sf-quantity-input--padding-inline-start: var(--sf-space-1\/4);
+  }
   .sf-quantity .sf-quantity-row {
     display: flex;
     flex-direction: row;
@@ -845,31 +855,14 @@
     max-width: 100%;
     max-inline-size: 100%;
   }
-  /* The class component (label.sf-quantity with the box as its own child,
-     no .sf-quantity-row) hugs its parts too, at the start of its column:
-     the same box as the Smart field, not the column's width with the
-     steppers pulled into its middle. */
-  .sf-quantity > .sf-quantity-wrap {
-    align-self: flex-start;
-    width: -webkit-fit-content;
-    width: -moz-fit-content;
-    width: fit-content;
-    inline-size: -webkit-fit-content;
-    inline-size: -moz-fit-content;
-    inline-size: fit-content;
-    min-width: 0;
-    min-inline-size: 0;
-    max-width: 100%;
-    max-inline-size: 100%;
-  }
-  .sf-quantity .sf-quantity-wrap > .sf-quantity-count,
-  .sf-quantity .sf-quantity-wrap > .sf-quantity-unit {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count,
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-unit {
     flex: none;
   }
   /* The number place (F4): as tall as a stepper, the steppers' corner, the
      surface hover fill under a pointer and the text cursor, so it reads as a
      place to type. */
-  .sf-quantity .sf-quantity-wrap > input {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input {
     flex: 0 1 auto;
     box-sizing: content-box;
     width: calc((6 + 0.5) * 1ch);
@@ -901,16 +894,16 @@
   .sf-quantity.sf-quantity--size-1\/2 {
     --sf-quantity--number-height: var(--sf-icon-size-3);
   }
-  .sf-quantity .sf-quantity-wrap > input:enabled:not(:-moz-read-only):not(.focus-visible):hover {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input:enabled:not(:-moz-read-only):not(.focus-visible):hover {
     --sf-quantity-input--background-color: var(--sf-surface-state-hover);
   }
-  .sf-quantity .sf-quantity-wrap > input:enabled:not(:read-only):not(.focus-visible):hover {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input:enabled:not(:read-only):not(.focus-visible):hover {
     --sf-quantity-input--background-color: var(--sf-surface-state-hover);
   }
-  .sf-quantity .sf-quantity-wrap > input:enabled:not(:-moz-read-only):not(:focus-visible):hover {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input:enabled:not(:-moz-read-only):not(:focus-visible):hover {
     --sf-quantity-input--background-color: var(--sf-surface-state-hover);
   }
-  .sf-quantity .sf-quantity-wrap > input:enabled:not(:read-only):not(:focus-visible):hover {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input:enabled:not(:read-only):not(:focus-visible):hover {
     --sf-quantity-input--background-color: var(--sf-surface-state-hover);
   }
   /* The unit after the number, in the quiet ink, the number's own type. */
@@ -963,40 +956,40 @@
      where sf-input's does (the field's space-x, then the text inset), the
      unit follows the number as sf-input's end text does, and the keys still
      step. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
     text-align: left;
   }
   @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input{
+  html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
     text-align: left;
     }
   }
-  .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input:where(:dir(ltr)){
+  .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
     text-align: right;
   }
   @supports not (text-align: start){
-  [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input{
+  [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
     text-align: right;
     }
   }
-  .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input:where(:dir(rtl)){
+  .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input:where(:dir(rtl)){
     text-align: right;
   }
-  .sf-quantity.sf-quantity--steppers-none .sf-quantity-wrap > input {
+  .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input {
     text-align: start;
   }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1 .sf-quantity-wrap {
+  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1 .sf-quantity-row > .sf-quantity-wrap {
     --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x) - var(--sf-space-1\/4)));
     --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x) - var(--sf-space-1\/4)));
   }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-2 .sf-quantity-wrap {
+  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-2 .sf-quantity-row > .sf-quantity-wrap {
     --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x) - var(--sf-space-1\/4)));
     --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x) - var(--sf-space-1\/4)));
   }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1\/2 .sf-quantity-wrap {
+  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1\/2 .sf-quantity-row > .sf-quantity-wrap {
     --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x) - var(--sf-space-1\/4)));
     --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x) - var(--sf-space-1\/4)));
   }
@@ -1007,11 +1000,11 @@
   }
   /* F8: under a finger a stepper answers on the box's whole height and to
      the box's outer edge; the picture keeps its rung. */
-  .sf-quantity .sf-quantity-wrap > .sf-quantity-count {
+  .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count {
     position: relative;
   }
   @media (pointer: coarse) {
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count::before {
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count::before {
       content: "";
       position: absolute;
       top: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
@@ -1021,54 +1014,54 @@
       right: 0;
       inset-inline: 0;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before{
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
     @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before{
+    html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
       }
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(ltr)){
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(ltr)){
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before{
+    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
     @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before{
+    [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
       }
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(rtl)){
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(rtl)){
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:first-child::before {
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before {
       inset-inline-start: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before{
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
     }
     @supports not (inset-inline-end: initial){
-    html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before{
+    html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
       }
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(ltr)){
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(ltr)){
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before{
+    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
     }
     @supports not (inset-inline-end: initial){
-    [dir="rtl"] .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before{
+    [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
       }
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(rtl)){
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(rtl)){
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
     }
-    .sf-quantity .sf-quantity-wrap > .sf-quantity-count:last-child::before {
+    .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before {
       inset-inline-end: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
     }
   }
@@ -1312,4 +1305,40 @@
 
 .sf-quantity:has(input:disabled) .sf-quantity-text {
   --sf-quantity-text--color: var(--sf-on-surface-disabled);
+}
+
+@layer sf.base {
+  .sf-quantity:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .sf-quantity:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-quantity-label {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-quantity:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-quantity-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-quantity:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-quantity-count {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-quantity:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-quantity-wrap input {
+    display: flex;
+  }
 }

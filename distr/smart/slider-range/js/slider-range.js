@@ -1251,7 +1251,7 @@ function scaleMarks(element) {
 // text that is not a number.
 
 
-function parseTyped(text, locale) {
+function parseTyped(text, locale, units = []) {
   let group = ',';
   let decimal = '.';
 
@@ -1261,9 +1261,18 @@ function parseTyped(text, locale) {
     decimal = parts.find(part => part.type === 'decimal')?.value ?? decimal;
   } catch {
     /* the platform's default marks */
+  } // The field's own unit and any currency sign go as the spaces do (RF-1,
+  // C202): «12500 ₽», «12 500₽» and «$ 12,500» are the number the box shows.
+
+
+  let value = String(text ?? '');
+
+  for (const unit of units) {
+    const own = String(unit ?? '').trim();
+    if (own) value = value.split(own).join('');
   }
 
-  let value = String(text ?? '').replace(/[\s\u00a0\u202f]/gu, '').replace(/[\u2212\u2013]/gu, '-');
+  value = value.replace(/\p{Sc}/gu, '').replace(/[\s\u00a0\u202f]/gu, '').replace(/[\u2212\u2013]/gu, '-');
   const groupMark = group.replace(/[\s\u00a0\u202f]/gu, '');
   if (groupMark && groupMark !== decimal) value = value.split(groupMark).join('');
   value = value.split(decimal).join('.');
@@ -1520,6 +1529,8 @@ class SfRangeSlider extends RangeSliderElement {
       scaleMarks: scaleMarks(this),
       field: this.hasAttribute('field') && this.getAttribute('field') !== 'false',
       fieldLabels: this.fieldLabels(),
+      fieldWords: [this.sfWord?.('from') || 'от', this.sfWord?.('to') || 'до'],
+      fieldUnit: [this.prefixText, this.suffix].map(unit => String(unit ?? '').trim()).filter(Boolean).join(' '),
       fieldDecimal: String(this.step ?? '').includes('.') || Number(this.getAttribute('precision')) > 0,
       ticks: this.hasAttribute('ticks') && this.getAttribute('ticks') !== 'false'
     });
@@ -1554,7 +1565,13 @@ class SfRangeSlider extends RangeSliderElement {
       });
     });
     inputs.forEach((input, index) => {
-      if (document.activeElement !== input && list[index] !== undefined) input.value = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, list[index]);
+      if (document.activeElement !== input && list[index] !== undefined) {
+        const text = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.formatRangeSliderNumber)(root, list[index]); // The default value too (the value attribute): a printed first frame
+        // (static markup, RF-3) shows the numbers before any code.
+
+        if (input.defaultValue !== text) input.defaultValue = text;
+        input.value = text;
+      }
     });
   }
 
@@ -1571,7 +1588,7 @@ class SfRangeSlider extends RangeSliderElement {
     const root = this.getSliderRoot();
     const input = this.querySelectorAll('.sf-range-slider-field-input')[index];
     if (!root || !input || this.disabled || this.readonly) return;
-    const typed = parseTyped(input.value, root.getAttribute('data-locale') || root.closest('[lang]')?.getAttribute('lang'));
+    const typed = parseTyped(input.value, root.getAttribute('data-locale') || root.closest('[lang]')?.getAttribute('lang'), [this.prefixText, this.suffix]);
     const before = (0,_component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__.getRangeSliderValue)(root);
     const current = Array.isArray(before) ? [...before] : [before];
     if (Number.isFinite(typed)) current[index] = typed;
@@ -2100,7 +2117,10 @@ function renderHead(context) {
   if (!showName && !showOutput) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-range-slider-head">
-            ${showName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name" id=${context.nameId}>${context.name}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${showName // The unit of the from/to field joins the name when the field
+  // stands under the track (C202): «Цена, ₽». Hidden in the wide
+  // layout, where the field writes it; the handles say it anyway.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name" id=${context.nameId}>${context.name}${context.field && context.fieldUnit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name-unit" aria-hidden="true">, ${context.fieldUnit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${showOutput // Each handle reads its own value out (aria-valuetext); this is the sighted copy.
   // A property, not a text part: the host rewrites the text as the
   // handles move, and a text part's markers would go with it, so the
@@ -2142,9 +2162,11 @@ function renderField(context) {
   // of the range, written by the host: the cell is as wide as the wider end
   // in the box's own font, and follows a late web font, a size or a density
   // by layout alone. The box fills the cell (acceptance R2: 8ch clipped).
+  // Under the track (C202) a range's boxes say «от» and «до» before the
+  // number; the words are hidden while the field stands in the track's line.
 
   const input = index => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-box"
-        ><span class="sf-range-slider-field-ruler" aria-hidden="true"></span
+        >${context.multiple ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-field-word" aria-hidden="true">${context.fieldWords[index]}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-range-slider-field-ruler" aria-hidden="true"></span
         ><span class="sf-range-slider-field-ruler" aria-hidden="true"></span
         ><input
             type="text"
@@ -2177,7 +2199,7 @@ function renderField(context) {
 }
 
 function renderRangeSliderTemplate(context) {
-  const groupClasses = joinClasses('sf-range-slider-group', `sf-range-slider-group--size-${context.size}`, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
+  const groupClasses = joinClasses('sf-range-slider-group', `sf-range-slider-group--size-${context.size}`, context.field ? 'sf-range-slider-group--field' : '', context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
   const rootClasses = joinClasses('sf-range-slider', 'flex-1', `sf-range-slider--size-${context.size}`, context.rootClass, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class=${groupClasses}>
@@ -2274,7 +2296,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.4.2","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.5.0","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

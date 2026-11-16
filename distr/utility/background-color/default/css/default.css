@@ -3120,6 +3120,10 @@
     --sf-link-hover: var(--sf-place--step-link-hover);
     --sf-link-active: var(--sf-place--step-link-active);
   }
+  .bg-surface-inverse,
+  .bg-surface-inverse-fixed {
+    color: var(--sf-on-surface);
+  }
   .bg-surface-inverse > * {
     --sf-primary: light-dark(var(--sf-primary-80), var(--sf-primary-40));
     --sf-primary-hover: light-dark(var(--sf-primary-85), var(--sf-primary-35));

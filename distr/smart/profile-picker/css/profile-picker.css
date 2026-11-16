@@ -241,6 +241,9 @@
     background-clip: padding-box;
     background-color: var(--sf-scroll-bg-thumb);
   }
+  .sf-profile-picker-panel::-webkit-scrollbar-thumb:hover, .sf-profile-picker-panel::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
+  }
   @supports not selector(::-webkit-scrollbar) {
     .sf-profile-picker-panel {
       scrollbar-width: thin;

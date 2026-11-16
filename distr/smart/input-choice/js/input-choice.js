@@ -2,6 +2,75 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -553,16 +622,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("0bbe2ffd494c");
-/* harmony import */ var _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a5350ee6efc2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("0c1826bbbeb3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("68b61d1e5ff4");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("eb10921c1c1e");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0517be6f999f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a5350ee6efc2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0c1826bbbeb3");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("68b61d1e5ff4");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("eb10921c1c1e");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0517be6f999f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -575,10 +646,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
 };
  // sf-input-choice: a form field that picks one option, or several, from
 // cards -- a site's kind, a page type, a template, a backup target, a plan,
@@ -586,6 +657,11 @@ const ru = {
 // and term, an icon or an image, in one of three layouts (list, tile,
 // picture; owner decision C28). Larena's request msg-993e1e39 item 3 (choice
 // cards).
+//
+// appearance="list" (owner decision C165 (1), (3)) draws the same field as a
+// ready group of checks or radios: a heading with its «?», the hint, the
+// options as rows of the class checkbox or radio, the error under the last
+// row; flow auto, row or column arranges the rows.
 //
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4, §8,
 // §17): the settings are made by core/js/element-manifest.js; the host is the
@@ -600,7 +676,7 @@ const ru = {
 // host's path id, so the radios of one element are one group and two elements
 // never share one.
 
-const ChoiceElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const ChoiceElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
@@ -663,8 +739,8 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
 
   get options() {
     const given = this.items;
-    if (Array.isArray(given) && given.length) return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseItems)(given);
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.normaliseItems)(this.getAttribute('items'));
+    if (Array.isArray(given) && given.length) return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(given);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(this.getAttribute('items'));
   }
 
   get effectiveDisabled() {
@@ -673,30 +749,41 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
 
   get columnsValue() {
     const columns = String(this.columns ?? 'auto');
-    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.CHOICE_COLUMNS.includes(columns) ? columns : 'auto';
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_COLUMNS.includes(columns) ? columns : 'auto';
+  }
+
+  get appearanceValue() {
+    const appearance = String(this.appearance ?? 'cards');
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_APPEARANCES.includes(appearance) ? appearance : 'cards';
   }
 
   get layoutValue() {
     const layout = String(this.layout ?? 'tile');
-    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.CHOICE_LAYOUTS.includes(layout) ? layout : 'tile';
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_LAYOUTS.includes(layout) ? layout : 'tile';
+  } // Appearance list (C165 (3)): row or column as asked; auto is a row for up
+  // to three short options and a column for the rest.
+
+
+  get flowValue() {
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.listFlow)(String(this.flow ?? 'auto'), this.options);
   }
   /** The chosen values, in the order of the options: one, or several when multiple. */
 
 
   get selected() {
     const raw = this._value !== undefined ? this._value : this.getAttribute('value');
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.orderValues)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.parseValue)(raw ?? '', Boolean(this.multiple)), this.options);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.orderValues)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(raw ?? '', Boolean(this.multiple)), this.options);
   }
   /** One value, or the values joined by commas when multiple; '' when nothing is chosen. */
 
 
   get value() {
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.formatValue)(this.selected);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)(this.selected);
   } // Set from code it is not a change: no event, as for a native field.
 
 
   set value(next) {
-    this._value = next === undefined || next === null ? undefined : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.parseValue)(next, Boolean(this.multiple)));
+    this._value = next === undefined || next === null ? undefined : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(next, Boolean(this.multiple)));
     this.requestComponentUpdate?.('value');
     this.sfSyncFormState?.();
   }
@@ -727,8 +814,8 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     const item = this.options.find(one => one.value === input.value);
     if (!item) return;
     const multiple = Boolean(this.multiple);
-    const next = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.applyChoice)(this.selected, this.options, item.value, input.checked, multiple);
-    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.formatValue)(next);
+    const next = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.applyChoice)(this.selected, this.options, item.value, input.checked, multiple);
+    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)(next);
     this.requestComponentUpdate('value');
     this.sfSyncFormState();
     const detail = {
@@ -777,7 +864,7 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     let values = state;
     if (typeof FormData === 'function' && state instanceof FormData) values = state.getAll(this.name || '').map(String);
     if (values === null || values === undefined) return;
-    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.parseValue)(values, Boolean(this.multiple)));
+    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(values, Boolean(this.multiple)));
     this.requestComponentUpdate('restore');
   } // ---------------------------------------------------------- drawing
 
@@ -795,8 +882,13 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
       chosen: new Set(this.selected),
       multiple: Boolean(this.multiple),
       columns: this.columnsValue,
+      appearance: this.appearanceValue,
       layout: this.layoutValue,
+      flow: this.flowValue,
       label: this.label || '',
+      // C165 (1), C153 (8): the «?» after the heading, named by its subject.
+      help: this.help || '',
+      helpLabel: (0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_5__.fieldHelpLabel)(this, this.label || ''),
       ariaLabel: this.getAttribute('aria-label') || '',
       hint: this.hint || '',
       // C153 (3): the page's error, or the one the field shows itself (ShownValidity).
@@ -871,6 +963,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // badge; never the icon's ligature) and
 // described by its description, price and term. While the host is the form
 // control they stay out of the page's form (§17.1 item 6).
+// The «?» after the heading or the label (help; C153 (8), C165 (1)): a step
+// below the line it stands on, 1/3, as beside the checkable rows' text of
+// size 1 (helpers/checkable-row.js CHECKABLE_HELP_SIZE); each sheet holds it
+// to that line, so the line keeps its height.
+
+function renderHelp(context) {
+  if (!context.help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark class="sf-choice-help" size="1/3" text=${context.help} label=${context.helpLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                            @click=${event => event.stopPropagation()}></sf-help-mark>`;
+}
 
 const joinClasses = (...tokens) => tokens.flat().filter(Boolean).join(' '); // The control on the name line: the markup of the class radio or checkbox,
 // with the card's own native input in its box and the same utility classes
@@ -937,15 +1039,93 @@ function renderCard(context, item, index) {
     </span>
     ${foot ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-rule" aria-hidden="true"></span>${renderPrice(item, ids.price, 'sf-choice-price')}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </label>`;
+} // ---------------------------------------------------------------- list
+//
+// appearance="list" (owner decision C165 (1), (3); research ui-control
+// control/research/2026-11-14-checks.md, prototype checks-study.html#q-group
+// and #q-inline): the ready group of checks or radios.
+//
+//   div.sf-choice[data-appearance=list][data-flow=row|column]
+//     div.sf-choice-heading           the heading (text 1, medium), «*», «?»
+//     span.sf-choice-hint             the hint under the heading
+//     div.sf-choice-options           role radiogroup (single) or group (multiple)
+//       label.sf-radio-button | label.sf-checkbox   one row per option: the
+//                                     class markup sf-radio and sf-checkbox
+//                                     draw (size 1), the native input in its
+//                                     box, the name and the description; a row
+//                                     of the step, as the C63 rows
+//     span.sf-choice-message          the error under the last row, its icon first
+//
+// The group is named by the heading and described by the hint and the error.
+// While invalid every row's control takes the error colour, as an invalid
+// sf-radio or sf-checkbox.
+
+
+function renderRow(context, item, index) {
+  const checked = context.chosen.has(item.value);
+  const disabled = context.fieldDisabled || item.disabled;
+  const n = index + 1;
+  const titleId = `${context.id}--title-${n}`;
+  const captionId = `${context.id}--caption-${n}`;
+  const input = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input class="sf-choice-input" type=${context.multiple ? 'checkbox' : 'radio'}
+           name=${context.controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} form=${context.innerForm || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+           value=${item.value} .checked=${checked} ?disabled=${disabled}
+           aria-labelledby=${titleId} aria-describedby=${item.caption ? captionId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+           aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>`;
+  const error = context.invalid ? 'error' : '';
+
+  if (context.multiple) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-checkbox', 'sf-checkbox--size-1', 'flex', 'sf-choice-row', disabled ? '' : 'cursor-pointer', error)}>
+      <span class="sf-checkbox-box flex">${input}${checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon" aria-hidden="true">check</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+      <span class="sf-checkbox-container flex flex-col"><span class="sf-checkbox-top flex"><span class="sf-checkbox-label" id=${titleId}>${item.label}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+    </label>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-radio-button', 'sf-radio-button--size-1', 'flex', 'sf-choice-row', disabled ? '' : 'cursor-pointer', error)}>
+    <span class="sf-radio-button-box flex items-cross-center content-main-center">${input}<span class="sf-radio-button-mark" aria-hidden="true"></span></span>
+    <span class="sf-radio-button-container flex flex-col"><span class="sf-radio-button-top flex"><span class="sf-radio-button-text" id=${titleId}>${item.label}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+  </label>`;
+}
+
+function renderListTemplate(context) {
+  const labelId = `${context.id}--label`;
+  const hintId = `${context.id}--hint`;
+  const messageId = `${context.id}--message`;
+  const error = context.invalid && context.errorMessage ? context.errorMessage : '';
+  const described = [context.hint ? hintId : '', error ? messageId : ''].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${joinClasses('sf-choice', 'sf-choice--list', context.multiple ? 'sf-choice--multiple' : '', context.invalid ? 'sf-choice--invalid' : '', context.fieldDisabled ? 'sf-choice--disabled' : '', context.rootClass)}
+                   style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-appearance="list" data-flow=${context.flow}>
+    ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-heading"><span class="sf-choice-heading-text" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>${renderHelp(context)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-hint" id=${hintId}>${context.hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    <div class="sf-choice-options" role=${context.multiple ? 'group' : 'radiogroup'}
+         aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         aria-label=${!context.label && context.ariaLabel ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         aria-describedby=${described || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         aria-required=${context.required && !context.multiple ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         aria-invalid=${context.invalid && !context.multiple ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+         aria-disabled=${context.fieldDisabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+      ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.items, item => item.value, (item, index) => renderRow(context, item, index))}
+    </div>
+    ${error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-message" id=${messageId} data-field-message="error"><span class="sf-icon sf-choice-message-icon" aria-hidden="true">error</span><span class="sf-choice-message-text">${error}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </div>`;
+} // The cards' label row: the label, then with help its «?» beside it in one
+// row (the mark is the label's sibling, so the group's name is the label alone).
+
+
+function renderLabel(context, labelId) {
+  const label = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-label" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+  if (!context.help) return label;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-label-row">${label}${renderHelp(context)}</div>`;
 }
 
 function renderChoiceTemplate(context) {
+  if (context.appearance === 'list') return renderListTemplate(context);
   const labelId = `${context.id}--label`;
   const messageId = `${context.id}--message`;
   const message = context.invalid && context.errorMessage ? context.errorMessage : context.hint;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${joinClasses('sf-choice', context.multiple ? 'sf-choice--multiple' : '', context.invalid ? 'sf-choice--invalid' : '', context.fieldDisabled ? 'sf-choice--disabled' : '', context.rootClass)}
                    style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-layout=${context.layout} data-columns=${context.columns}>
-    ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-label" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.label ? renderLabel(context, labelId) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     <div class="sf-choice-grid" role=${context.multiple ? 'group' : 'radiogroup'}
          aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
          aria-label=${!context.label && context.ariaLabel ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1012,10 +1192,15 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CHOICE_APPEARANCES: () => (/* binding */ CHOICE_APPEARANCES),
 /* harmony export */   CHOICE_COLUMNS: () => (/* binding */ CHOICE_COLUMNS),
+/* harmony export */   CHOICE_FLOWS: () => (/* binding */ CHOICE_FLOWS),
 /* harmony export */   CHOICE_LAYOUTS: () => (/* binding */ CHOICE_LAYOUTS),
+/* harmony export */   ROW_MOST: () => (/* binding */ ROW_MOST),
+/* harmony export */   SHORT_OPTION_LENGTH: () => (/* binding */ SHORT_OPTION_LENGTH),
 /* harmony export */   applyChoice: () => (/* binding */ applyChoice),
 /* harmony export */   formatValue: () => (/* binding */ formatValue),
+/* harmony export */   listFlow: () => (/* binding */ listFlow),
 /* harmony export */   normaliseItems: () => (/* binding */ normaliseItems),
 /* harmony export */   orderValues: () => (/* binding */ orderValues),
 /* harmony export */   parseValue: () => (/* binding */ parseValue)
@@ -1035,6 +1220,36 @@ const CHOICE_COLUMNS = Object.freeze(['auto', '1', '2', '3', '4']);
 // of the name line, the price at the foot; picture -- tiles whose image runs
 // to the edges, the caption under it (rows on a phone).
 const CHOICE_LAYOUTS = Object.freeze(['tile', 'list', 'picture']);
+
+// The appearance (owner decision C165 (1), dispatcher's names 2026-11-14):
+// cards -- the cards of C28 above; list -- the ready group of checks or
+// radios: a heading with its «?», the hint under it, the options as rows of
+// the class checkbox or radio (the rows sf-checkbox and sf-radio draw, C63)
+// and the error under the last row.
+const CHOICE_APPEARANCES = Object.freeze(['cards', 'list']);
+
+// How the rows of appearance list stand: the flow setting (C165 (3); name by
+// the dispatcher 2026-11-15, read only under appearance list; layout stays
+// the cards' tile, list and picture). row -- side by side, 16 apart (C105 H6),
+// a column again in a narrow field (a phone); column -- one under another;
+// auto -- a row for up to three short options, else a column.
+const CHOICE_FLOWS = Object.freeze(['auto', 'row', 'column']);
+
+// «Short» for auto (C165 (3), prototype checks-study.html#q-inline: «Да /
+// Нет», «Физлицо / Организация»): an option of one name line, no
+// description, a name of at most this many characters.
+const SHORT_OPTION_LENGTH = 20;
+const ROW_MOST = 3;
+
+// The flow a list draws: row or column as asked; auto (or anything else) a row
+// for up to three short options (no description, a short name), else a column.
+function listFlow(asked, items) {
+  if (asked === 'row' || asked === 'column') return asked;
+  const list = Array.isArray(items) ? items : [];
+  const short = list.length > 0 && list.length <= ROW_MOST
+    && list.every((item) => !item.caption && String(item.label ?? '').length <= SHORT_OPTION_LENGTH);
+  return short ? 'row' : 'column';
+}
 
 const text = (value) => (value === null || value === undefined ? '' : String(value));
 
@@ -1126,21 +1341,21 @@ function applyChoice(values, items, value, checked, multiple = false) {
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.4.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true}}},"multiple":{"type":"boolean","default":false},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.5.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true}}},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 
 /***/ "68b61d1e5ff4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option.","help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "eb10921c1c1e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Выбор","runtime":{"value-missing":"Выберите вариант."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Выбор","runtime":{"value-missing":"Выберите вариант.","help":"Подробнее: {label}"}}');
 
 /***/ }
 

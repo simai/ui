@@ -107,8 +107,9 @@ __webpack_async_result__();
 /***/ },
 
 /***/ "736e917526e6"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindProgressScale: () => (/* binding */ bindProgressScale),
@@ -123,6 +124,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _progress_threshold__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a9f36a72486a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_async_dependencies_result__[0];
+
+
 
 
 const PROGRESS_SCALE_SELECTOR = '.sf-progress-scale';
@@ -246,7 +254,13 @@ function renderProgressScale(root) {
 
   const step = lit * 10;
   const size = normalizeProgressScaleSize(root.dataset.size);
-  const tone = normalizeProgressScaleTone(root.dataset.tone);
+  const tone = normalizeProgressScaleTone(root.dataset.tone); // The thresholds (C131 (7)), as sf-progress-scale's warning-at and
+  // error-at: from data-warning-at on the scale is a warning by itself, from
+  // data-error-at an error; the more serious of that and data-tone is drawn.
+  // The page's tone stays in data-tone, so a value that falls back below the
+  // threshold draws it again.
+
+  const drawn = normalizeProgressScaleTone((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.effectiveStatus)(tone, value, (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt), (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt)));
   const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line, and a level scale, lay their track and value out
   // in a row, the value at the row's end (C185 (5)); any other scale stands
   // its value under the track.
@@ -255,7 +269,7 @@ function renderProgressScale(root) {
   root.classList.add('sf-progress-scale', 'flex', onRow ? 'flex-row' : 'flex-col');
   root.classList.remove(onRow ? 'flex-col' : 'flex-row');
   root.classList.toggle('sf-progress-scale--level', level);
-  syncScaleClasses(root, step, size, tone);
+  syncScaleClasses(root, step, size, drawn);
   root.dataset.value = String(value);
   root.dataset.size = size;
   root.dataset.tone = tone;
@@ -269,8 +283,9 @@ function renderProgressScale(root) {
   root.setAttribute('aria-valuenow', level ? String(lit) : String(value));
   if (root.dataset.label) root.setAttribute('aria-label', root.dataset.label);
   if (root.dataset.valueText || words) root.setAttribute('aria-valuetext', root.dataset.valueText || words);else root.removeAttribute('aria-valuetext');
-  const text = ensureScaleText(root);
-  text.textContent = level ? root.dataset.valueText || words : `${value}%`;
+  const text = ensureScaleText(root); // «72 %»: one spelling of a per cent (owner decision C203 (3)); a level keeps its words (C185 (5)).
+
+  text.textContent = level ? root.dataset.valueText || words : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__.percentText)(value, root);
   text.hidden = !showText;
   return true;
 }
@@ -310,7 +325,14 @@ function setProgressScaleState(target, state = {}) {
 
   if (Object.prototype.hasOwnProperty.call(state, 'showText')) {
     root.dataset.showText = String(normalizeBoolean(state.showText, true));
-  }
+  } // The thresholds in per cent; null or an empty value takes one away.
+
+
+  [['warningAt', 'warningAt'], ['errorAt', 'errorAt']].forEach(([key, data]) => {
+    if (!Object.prototype.hasOwnProperty.call(state, key)) return;
+    const threshold = (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(state[key]);
+    if (threshold === null) delete root.dataset[data];else root.dataset[data] = String(threshold);
+  });
 
   if (Object.prototype.hasOwnProperty.call(state, 'label')) {
     const label = String(state.label || '').trim();
@@ -348,6 +370,10 @@ function getProgressScaleState(target) {
     size: normalizeProgressScaleSize(root.dataset.size),
     status: normalizeProgressScaleTone(root.dataset.tone),
     tone: normalizeProgressScaleTone(root.dataset.tone),
+    // The status drawn: the tone, or the threshold the value reached.
+    drawnStatus: normalizeProgressScaleTone((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.effectiveStatus)(normalizeProgressScaleTone(root.dataset.tone), normalizeProgressScaleValue(root.dataset.value), (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt), (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt))),
+    warningAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt),
+    errorAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt),
     showText: normalizeBoolean(root.dataset.showText, true),
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
@@ -371,7 +397,9 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
       label = '',
       valueText = '',
       meter = false,
-      steps = null
+      steps = null,
+      warningAt = null,
+      errorAt = null
     } = this.params || {};
     const root = document.createElement('div');
     root.className = 'sf-progress-scale flex flex-col';
@@ -383,6 +411,8 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     if (meter) root.dataset.meter = 'true';
     if (steps !== null && steps !== undefined && steps !== '') root.dataset.steps = String(normalizeProgressScaleSteps(steps));
+    if ((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(warningAt) !== null) root.dataset.warningAt = String((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(warningAt));
+    if ((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(errorAt) !== null) root.dataset.errorAt = String((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(errorAt));
     this.template = root;
   }
 
@@ -427,6 +457,51 @@ progressScaleObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "a9f36a72486a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   STATUS_RANK: () => (/* binding */ STATUS_RANK),
+/* harmony export */   effectiveStatus: () => (/* binding */ effectiveStatus),
+/* harmony export */   readThreshold: () => (/* binding */ readThreshold),
+/* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus)
+/* harmony export */ });
+// The status a progress indicator draws (owner decision C131 (7)): the more
+// serious of the page's status and the threshold its value reached. The
+// thresholds are the page's, in per cent like the value; unset (null, an
+// empty attribute, a word) is no threshold. neutral, info and success rank
+// below warning, warning below error. One source for sf-progress-bar,
+// sf-progress-scale and the class scale (div.sf-progress-scale with
+// data-warning-at / data-error-at), so a scale and a bar with the same
+// numbers draw the same colour.
+const STATUS_RANK = {
+  warning: 1,
+  error: 2
+};
+function thresholdStatus(value, warningAt, errorAt) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '';
+  if (Number.isFinite(errorAt) && number >= errorAt) return 'error';
+  if (Number.isFinite(warningAt) && number >= warningAt) return 'warning';
+  return '';
+}
+function effectiveStatus(status, value, warningAt, errorAt) {
+  const reached = thresholdStatus(value, warningAt, errorAt);
+  return (STATUS_RANK[reached] ?? 0) > (STATUS_RANK[status] ?? 0) ? reached : status;
+} // A threshold as an attribute holds it: a number, else none. An empty or
+// missing attribute is none, never 0 (Number('') is 0).
+
+function readThreshold(raw) {
+  if (raw === null || raw === undefined || String(raw).trim() === '') return null;
+  const number = Number(raw);
+  return Number.isFinite(number) ? number : null;
+}
 
 /***/ },
 
@@ -580,6 +655,227 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
+  if (word === 'integer') return {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "b9c4b63fce15"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -590,16 +886,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _component_progress_scale_js_progress_scale__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("736e917526e6");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f65a1c6fa30a");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("14aa46a01a05");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7b37c5fdb1e6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("726336abdcb3");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7f722ca0ec9d");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_progress_threshold__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a9f36a72486a");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f65a1c6fa30a");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("14aa46a01a05");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7b37c5fdb1e6");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("726336abdcb3");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7f722ca0ec9d");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _component_progress_scale_js_progress_scale__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _component_progress_scale_js_progress_scale__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -613,10 +911,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
 };
 
 function normalizeProgressValue(value) {
@@ -634,14 +932,14 @@ function normalizeProgressValue(value) {
 // chunk; tone and setProgress are dated aliases (aliases.json).
 
 
-const ProgressScaleElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const ProgressScaleElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
     ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   actions: {
     chunk({
       done,
@@ -664,20 +962,7 @@ const ProgressScaleElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODU
     }
 
   }
-}); // The threshold the value reached (C131 (7)); unset thresholds are none.
-
-const RANK = {
-  warning: 1,
-  error: 2
-};
-
-function thresholdReached(value, warningAt, errorAt) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return '';
-  if (Number.isFinite(errorAt) && number >= errorAt) return 'error';
-  if (Number.isFinite(warningAt) && number >= warningAt) return 'warning';
-  return '';
-}
+});
 
 class SfProgressScale extends ProgressScaleElement {
   static get props() {
@@ -741,16 +1026,13 @@ class SfProgressScale extends ProgressScaleElement {
 
 
   threshold(attribute) {
-    if (!this.hasAttribute(attribute)) return null;
-    const number = Number(this.getAttribute(attribute));
-    return Number.isFinite(number) ? number : null;
+    return (0,_component_progress_threshold__WEBPACK_IMPORTED_MODULE_5__.readThreshold)(this.getAttribute(attribute));
   } // The status drawn (C131 (7), as sf-progress-bar): the more serious of the
   // page's status and the threshold the value reached.
 
 
   get drawnStatus() {
-    const reached = thresholdReached(this.value, this.threshold('warning-at'), this.threshold('error-at'));
-    return (RANK[reached] ?? 0) > (RANK[this.status] ?? 0) ? reached : this.status;
+    return (0,_component_progress_threshold__WEBPACK_IMPORTED_MODULE_5__.effectiveStatus)(this.status, this.value, this.threshold('warning-at'), this.threshold('error-at'));
   } // The accessible name: label, else the host's aria-label (§3.1, §4.8).
 
 
@@ -775,7 +1057,7 @@ class SfProgressScale extends ProgressScaleElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderProgressScaleTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderProgressScaleTemplate)(this.templateContext());
   }
 
   get state() {
@@ -801,8 +1083,8 @@ class SfProgressScale extends ProgressScaleElement {
       kind: 'action',
       from: 'getProgress',
       to: null,
-      since: _aliases_json__WEBPACK_IMPORTED_MODULE_7__.since,
-      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_7__.remove_after
+      since: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.since,
+      remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.remove_after
     });
     return normalizeProgressValue(this.value);
   }
@@ -852,10 +1134,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderProgressScaleTemplate: () => (/* binding */ renderProgressScaleTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c9ce0852ac73");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 function normalizeProgressValue(value) {
@@ -944,7 +1227,7 @@ function renderProgressScaleTemplate(context) {
     length: steps
   }, () => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-block"></div>`)}
       </div>
-      ${context.showText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-text">${levelSteps ? valueText : `${value}%`}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${context.showText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-progress-scale-text">${levelSteps ? valueText : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentText)(value, context.component ?? null)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -974,6 +1257,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
@@ -991,7 +1281,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

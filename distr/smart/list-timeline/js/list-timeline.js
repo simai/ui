@@ -414,6 +414,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   KINDS: () => (/* binding */ KINDS),
 /* harmony export */   KIND_ICONS: () => (/* binding */ KIND_ICONS),
+/* harmony export */   MAX_DEPTH: () => (/* binding */ MAX_DEPTH),
 /* harmony export */   STATES: () => (/* binding */ STATES),
 /* harmony export */   STATUSES: () => (/* binding */ STATUSES),
 /* harmony export */   SfListTimeline: () => (/* binding */ SfListTimeline),
@@ -461,6 +462,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // events and fold the rest into «Ещё N», revealed in place; state done|current|upcoming draws steps. The list keeps the
 // host's order, and stores and loads nothing.
 //
+// 1.4 (owner decision C204, route study R226): a step list's line is the one
+// sf-steps draws (C101): passed a 2 px primary line, ahead the quiet
+// hairline; the kind of a segment (walk, bus) is the event's icon, never the
+// line. An event may hold its own sub-events (items) under a quiet
+// disclosure row (summary, else «Ещё N событий»): folded until pressed,
+// drawn in place a rung smaller; the same folds the middle of a long log.
+// An event's slot names host content placed under its meta line.
+//
 // From its component.json (standard simai.smart-component 1.3.15 §3, §4,
 // §8): the settings are made by core/js/element-manifest.js, the words are
 // the language files'.
@@ -502,9 +511,11 @@ const TONES = {
 };
 const DENSITY_REMOVE_AFTER = '2027-01-01';
 
-const text = value => value === undefined || value === null ? '' : String(value).trim();
-/** An event's status: the five words; danger is read as error, anything else as neutral. */
+const text = value => value === undefined || value === null ? '' : String(value).trim(); // How deep sub-events nest (C204 (2)): an event's items, theirs, and theirs.
 
+
+const MAX_DEPTH = 3;
+/** An event's status: the five words; danger is read as error, anything else as neutral. */
 
 function statusOf(value) {
   const word = text(value).toLowerCase();
@@ -546,12 +557,12 @@ function changesOf(value) {
 /**
  * The events as given, made safe, in the host's order: an event without an
  * id or a title, or with an id seen before, is left out; a time that is no
- * date is none.
+ * date is none. An event's sub-events (items) are made safe the same way,
+ * their ids unique across the whole list, down to MAX_DEPTH levels.
  */
 
-function normalizeItems(value) {
+function normalizeItems(value, seen = new Set(), depth = 0) {
   const list = Array.isArray(value) ? value : [];
-  const seen = new Set();
   const items = [];
 
   for (const item of list) {
@@ -573,7 +584,10 @@ function normalizeItems(value) {
       status: statusOf(item.status),
       icon: text(item.icon) || KIND_ICONS[kind] || '',
       href: text(item.href),
-      changes: changesOf(item.changes ?? item.change)
+      changes: changesOf(item.changes ?? item.change),
+      summary: text(item.summary),
+      slot: text(item.slot),
+      items: depth + 1 < MAX_DEPTH ? normalizeItems(item.items, seen, depth + 1) : []
     });
   }
 
@@ -624,7 +638,9 @@ class SfListTimeline extends ListTimelineElement {
     super();
     this._uid = `sf-list-timeline-${++sequence}`;
     this._timer = 0;
-    this._opened = new Set();
+    this._opened = new Set(); // The events whose sub-events are shown (C204 (2)), by id.
+
+    this._unfolded = new Set();
     this._focusRun = null;
   }
 
@@ -718,6 +734,13 @@ class SfListTimeline extends ListTimelineElement {
       count: fold.items.length
     });
     this.requestComponentUpdate('expand');
+  } // An event's sub-events (C204 (2)): the disclosure shows them in place
+  // under the event, or folds them again; the focus stays on the button.
+
+
+  toggle(item) {
+    if (this._unfolded.has(item.id)) this._unfolded.delete(item.id);else this._unfolded.add(item.id);
+    this.requestComponentUpdate('toggle');
   } // What sf-time is asked for: the time under a day heading, auto without.
 
 
@@ -739,6 +762,20 @@ class SfListTimeline extends ListTimelineElement {
     this.sfHostState('data-loading', loading);
 
     const decorate = item => ({ ...item,
+      // Sub-events (C204 (2)): folded until the disclosure is pressed; the
+      // row says the host's summary, else «Ещё N событий».
+      open: item.items.length > 0 && this._unfolded.has(item.id),
+      summaryText: item.items.length ? item.summary || this.sfWord('run-events', {
+        count: item.items.length,
+        vars: {
+          n: item.items.length
+        }
+      }) : '',
+      subSteps: item.items.some(one => one.state),
+      items: item.items.map(decorate),
+      subId: `${this._uid}-sub-${item.id}`,
+      // Host content under the event (C204 (3)): the slot the event names.
+      slotted: Boolean(item.slot) && Boolean(this.hasSlotContent?.(item.slot)),
       iso: item.at ? item.at.toISOString() : '',
       tone: TONES[item.status] ?? 'neutral',
       // A step says its state, and its status when it has a tone (C61 round 4:
@@ -863,6 +900,12 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   sf-change list under it. Then one quiet line: sf-time · text. A comment's
 //   text stands in an outline under that line.
 // - A folded run: a button «Ещё N» on the rail, revealed in place.
+// - 1.4 (owner decision C204): an event's slot -- the host's content from the
+//   slot the event names -- stands under its meta line (a courier card,
+//   buttons). An event's sub-events (items) fold under a quiet disclosure
+//   row, an sf-button of the rung below with aria-expanded (the host's
+//   summary, else «Ещё N событий»); pressed, they are drawn in place under
+//   it as an ordered list a rung smaller, named by the event's title.
 // - has-more: an sf-button «Показать ещё» after the last event; with no
 //   events, one quiet line.
 // The rung below the list's: the marker, the avatar line and the button.
@@ -876,6 +919,13 @@ const SIZE_CLASS = {
   '1/2': 'half',
   1: '1',
   2: '2'
+}; // The rung of an event's sub-events (C204 (2)): one below the list's, 1/2 at
+// the least (the ladder's smallest list rung).
+
+const SUB = {
+  '1/2': '1/2',
+  1: '1/2',
+  2: '1'
 }; // A step's marker (owner decision C61, variant A; one logic with and without
 // an icon; C61 round 4: the shape shows the progress, the colour the status):
 // done the solid circle, current the same circle ringed outside through a gap,
@@ -941,9 +991,30 @@ function event(context, item) {
             before=${item.changes[0].before ?? ''} after=${item.changes[0].after ?? ''}></sf-change>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
       ${item.changes.length > 1 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-change class="sf-list-timeline-changes" layout="list" .changes=${item.changes}></sf-change>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${meta(context, item)}
-      ${item.kind === 'comment' && item.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-comment">${item.text}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${item.kind === 'comment' && item.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-comment">${item.text}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${// The host's content and the sub-events follow with no text between (C204): the first-paint markup of
+  // an event without them stays what it was.
+  item.slotted ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-timeline-slot">${context.component.getSlotContent(item.slot)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${item.items.length ? sub(context, item) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   </li>`;
+} // An event's sub-events (C204 (2)): the disclosure row, and the list in
+// place when it is open.
+
+
+function sub(context, item) {
+  const size = SUB[context.size] ?? '1/2';
+  const inner = { ...context,
+    size,
+    steps: item.subSteps
+  };
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-timeline-fold">
+      <sf-button class="sf-list-timeline-fold-button" size=${BELOW[context.size]} appearance="ghost" scheme="on-surface-variant"
+        icon-end=${item.open ? 'expand_less' : 'expand_more'} text=${item.summaryText} expanded=${item.open ? '' : 'false'}
+        @click=${() => context.component.toggle(item)}></sf-button>
+    </div>
+    ${item.open ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${`sf-list-timeline-sub sf-list-timeline--size-${SIZE_CLASS[size]}`}>
+      <ol class=${`sf-list-timeline-list${item.subSteps ? ' sf-list-timeline-list--steps' : ''}`} id=${item.subId}
+        aria-label=${item.title}>${item.items.map(one => event(inner, one))}</ol>
+    </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
 }
 
 function fold(context, entry) {
@@ -1089,7 +1160,7 @@ function foldRuns(items, {collapse = 5, opened = new Set()} = {}) {
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.3.2","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.4.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

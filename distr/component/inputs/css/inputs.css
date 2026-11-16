@@ -1764,7 +1764,7 @@
     --sf-field-action--ink: var(--sf-on-surface);
   }
   .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
-    --sf-field-action--ink: var(--sf-on-surface);
+    --sf-field-action--ink: var(--sf-primary);
   }
   .sf-field-action:disabled {
     --sf-field-action--ink: var(--sf-on-surface-disabled);
@@ -2093,5 +2093,30 @@
     caret-color: var(--sf-input-color, var(--sf-input-input--color));
     -webkit-transition: background-color 0s 2147483647s, color 0s 2147483647s;
     transition: background-color 0s 2147483647s, color 0s 2147483647s;
+  }
+}
+@layer sf.base {
+  .sf-input:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .sf-input:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-input-field {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-input:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-input-label {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-input:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-input-field input {
+    flex: 1 1 0%;
   }
 }

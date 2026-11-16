@@ -205,12 +205,24 @@
     box-shadow: inset 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-on-surface-variant), 0 0 0 var(--sf-online-indicator--ring-width) transparent, 0 0 0 var(--sf-online-indicator--ring-width) transparent;
     box-shadow: inset 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-on-surface-variant), 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-surface-place, transparent), 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-surface-place-ground, transparent);
   }
+  .sf-online-indicator > .sf-dot {
+    --sf-dot-item--size: var(--sf-online-indicator--width);
+    --sf-dot-item--ring: var(--sf-online-indicator--ring-width);
+  }
+  .sf-online-indicator:has(> .sf-dot) {
+    --sf-online-indicator--background-color: var(--sf-surface-place, transparent);
+    box-shadow: 0 0 0 var(--sf-online-indicator--ring-width) transparent, 0 0 0 var(--sf-online-indicator--ring-width) transparent;
+    box-shadow: 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-surface-place, transparent), 0 0 0 var(--sf-online-indicator--ring-width) var(--sf-surface-place-ground, transparent);
+  }
   @media (forced-colors: active) {
     .sf-online-indicator {
       outline: var(--sf-online-indicator--ring-width) solid Canvas;
     }
     .sf-online-indicator--away {
       border: var(--sf-online-indicator--ring-width) solid CanvasText;
+    }
+    .sf-online-indicator:has(> .sf-dot) {
+      border: 0;
     }
   }
 }

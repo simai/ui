@@ -542,3 +542,45 @@
     }
   }
 }
+@layer sf.base {
+  .sf-checkbox:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-checkbox:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-checkbox-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-checkbox:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-checkbox-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-checkbox:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-checkbox-top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-checkbox:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-checkbox-label {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+}

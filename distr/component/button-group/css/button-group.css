@@ -10,7 +10,6 @@
     overflow-x: auto;
     overflow-y: hidden;
     isolation: isolate;
-    scrollbar-width: thin;
   }
   /* A segmented track clips its own segments (it scrolls sideways), so a
      segment draws its ring inside, as a tab or a menu row does: the 2 px ring

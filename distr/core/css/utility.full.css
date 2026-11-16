@@ -3718,6 +3718,10 @@
     --sf-link-hover: var(--sf-place--step-link-hover);
     --sf-link-active: var(--sf-place--step-link-active);
   }
+  .bg-surface-inverse,
+  .bg-surface-inverse-fixed {
+    color: var(--sf-on-surface);
+  }
   .bg-surface-inverse > * {
     --sf-primary: light-dark(var(--sf-primary-80), var(--sf-primary-40));
     --sf-primary-hover: light-dark(var(--sf-primary-85), var(--sf-primary-35));
@@ -57151,66 +57155,47 @@
 }
 @layer sf.utilities {
   .scroll-hover {
-    /* Firefox: hide by default */
-    scrollbar-width: none;
-  }
-  .scroll-hover::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    --sf-scroll-bg-thumb: var(--sf-transparent);
   }
   .scroll-hover:hover {
-    /* Firefox: show thin scrollbar on hover */
-    scrollbar-width: thin;
-    scrollbar-color: var(--sf-scroll-bg-thumb) var(--sf-transparent);
+    --sf-scroll-bg-thumb: var(--sf-outline);
   }
-  .scroll-hover:hover::-webkit-scrollbar {
-    width: var(--sf-scroll-bg-width);
-    height: var(--sf-scroll-bg-width);
+  .scroll-hover[focus-within] {
+    --sf-scroll-bg-thumb: var(--sf-outline);
   }
-  .scroll-hover:hover::-webkit-scrollbar-thumb {
-    height: var(--sf-scroll-thumb-width);
-    height: var(--sf-scroll-thumb-size, var(--sf-scroll-thumb-width));
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    background-clip: padding-box;
-    border-radius: var(--sf-scroll-radius);
-    background-color: var(--sf-scroll-bg-thumb);
+  .scroll-hover:hover {
+    --sf-scroll-bg-thumb: var(--sf-outline);
   }
-  .scroll-hover:hover::-webkit-scrollbar-track {
-    background-color: var(--sf-scroll-bg-track);
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    background-clip: padding-box;
-    border-radius: var(--sf-scroll-radius);
+  .scroll-hover[focus-within] {
+    --sf-scroll-bg-thumb: var(--sf-outline);
   }
-  .scroll-hover, .scroll-hover::-webkit-scrollbar, .scroll-hover::-webkit-scrollbar-thumb, .scroll-hover::-webkit-scrollbar-track {
-    -webkit-transition: var(--sf-duration-normal) var(--sf-animation);
-    transition: var(--sf-duration-normal) var(--sf-animation);
+  .scroll-hover:focus-within {
+    --sf-scroll-bg-thumb: var(--sf-outline);
   }
 }
 @layer sf.utilities {
   .scroll-subtle {
-    --sf-scroll-thumb-subtle: color-mix(
-      in srgb,
-      var(--sf-on-surface) 10%,
-      var(--sf-transparent)
-    );
-    --sf-scroll-thumb-subtle-interactive: color-mix(
-      in srgb,
-      var(--sf-on-surface) 20%,
-      var(--sf-transparent)
-    );
     --sf-scroll-bg-track: var(--sf-transparent);
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle);
+    --sf-scroll-bg-thumb: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) 48%);
+    --sf-scroll--thumb-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) 64%);
     scrollbar-gutter: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--sf-scroll-thumb-subtle) var(--sf-transparent);
   }
-  .scroll-subtle:hover, .scroll-subtle[focus-within] {
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle-interactive);
-    scrollbar-color: var(--sf-scroll-thumb-subtle-interactive) var(--sf-transparent);
-  }
-  .scroll-subtle:hover, .scroll-subtle:focus-within {
-    --sf-scroll-bg-thumb: var(--sf-scroll-thumb-subtle-interactive);
-    scrollbar-color: var(--sf-scroll-thumb-subtle-interactive) var(--sf-transparent);
+  @supports not selector(::-webkit-scrollbar) {
+    .scroll-subtle:hover {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle[focus-within] {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle:hover {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle[focus-within] {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
+    .scroll-subtle:focus-within {
+      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
+    }
   }
   @media (forced-colors: active) {
     .scroll-subtle,

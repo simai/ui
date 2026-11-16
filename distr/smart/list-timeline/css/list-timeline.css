@@ -20,7 +20,16 @@
 
      The connector is a hairline on the rail's axis from the middle of one
      event's first line to the middle of the next one's; the last event of a
-     day has none. Steps (state): solid up to the current one, dashed after.
+     day has none. Steps (state) draw sf-steps' line (owner decision C204 (1),
+     C101 (2)): a passed step's segment is 2 px in the primary colour, the
+     current and the ahead ones keep the quiet hairline; the kind of a
+     segment (walk, bus) is the event's icon, never the line.
+
+     1.4 (C204 (2), (3)): an event's sub-events fold under a quiet disclosure
+     row (sf-button ghost of the rung below, --sf-space-1/4 under the meta
+     line) and open in place --sf-space-1/3 under it, a rung smaller (the
+     rung variables of .sf-list-timeline-sub); host content (slot) stands
+     --sf-space-1/2 under the meta line, drawn by the host.
 
      The public variables are read with the role token as their fallback and
      never set here. */
@@ -81,6 +90,27 @@
     --sf-list-timeline--control: var(--sf-ui-1\/2--control-height);
     --sf-list-timeline--button: var(--sf-ui-1\/3--control-height);
     --sf-list-timeline--dot: var(--sf-micro--dot-1\/2);
+  }
+  .sf-list-timeline-sub.sf-list-timeline--size-half {
+    --sf-list-timeline--line: var(--sf-text-height-1\/2);
+    --sf-list-timeline--font-size: var(--sf-text-size-1\/2);
+    --sf-list-timeline--below-line: var(--sf-text-height-1\/3);
+    --sf-list-timeline--below-font-size: var(--sf-text-size-1\/3);
+    --sf-list-timeline--rail: var(--sf-ui-1\/3--control-height);
+    --sf-list-timeline--control: var(--sf-ui-1\/2--control-height);
+    --sf-list-timeline--button: var(--sf-ui-1\/3--control-height);
+    --sf-list-timeline--dot: var(--sf-micro--dot-1\/2);
+  }
+  /* Sub-events a rung below a list of rung 2 (C204 (2)): rung 1 again. */
+  .sf-list-timeline-sub.sf-list-timeline--size-1 {
+    --sf-list-timeline--line: var(--sf-text-height-1);
+    --sf-list-timeline--font-size: var(--sf-text-size-1);
+    --sf-list-timeline--below-line: var(--sf-text-height-1\/2);
+    --sf-list-timeline--below-font-size: var(--sf-text-size-1\/2);
+    --sf-list-timeline--rail: var(--sf-ui-1\/2--control-height);
+    --sf-list-timeline--control: var(--sf-ui-1--control-height);
+    --sf-list-timeline--button: var(--sf-ui-1\/2--control-height);
+    --sf-list-timeline--dot: var(--sf-micro--dot-1);
   }
   .sf-list-timeline.sf-list-timeline--size-2 {
     --sf-list-timeline--line: var(--sf-text-height-2);
@@ -173,70 +203,36 @@
     inline-size: var(--sf-px);
     background: var(--sf-list-timeline--line-color);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,html:not([dir="rtl"])
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
-    border-left: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-  }
-  @supports not (border-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,html:not([dir="rtl"])
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
-    border-left: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-    }
-  }
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before:where(:dir(ltr)),
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before:where(:dir(ltr)){
-    border-left: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,[dir="rtl"]
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
-    border-right: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-  }
-  @supports not (border-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,[dir="rtl"]
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
-    border-right: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-    }
-  }
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before:where(:dir(rtl)),
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before:where(:dir(rtl)){
-    border-right: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,html:not([dir="rtl"])
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
+  /* A passed step's segment: sf-steps' line (C204 (1), C101 (2)), 2 px in the
+     primary colour on the same axis. The current and the ahead segments keep
+     the quiet hairline above. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
     left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
   }
   @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,html:not([dir="rtl"])
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
+  html:not([dir="rtl"]) .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
     left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
     }
   }
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before:where(:dir(ltr)),
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before:where(:dir(ltr)){
+  .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before:where(:dir(ltr)){
     left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,[dir="rtl"]
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
     right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
   }
   @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,[dir="rtl"]
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before{
+  [dir="rtl"] .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
     right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
     }
   }
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before:where(:dir(rtl)),
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before:where(:dir(rtl)){
+  .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before:where(:dir(rtl)){
     right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
   }
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=current]::before,
-  .sf-list-timeline-list--steps .sf-list-timeline-item[data-state=upcoming]::before {
-    background: none;
-    -webkit-border-start: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
-            border-inline-start: calc(var(--sf-px) * 2) dashed var(--sf-list-timeline--line-color);
+  .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before {
     inset-inline-start: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-    width: 0;
-    inline-size: 0;
+    width: calc(var(--sf-px) * 2);
+    inline-size: calc(var(--sf-px) * 2);
+    background: var(--sf-primary);
   }
   /* The rail: one line tall, the marker centred on it (it may be taller than
      the line and overhang it). */
@@ -288,10 +284,12 @@
   .sf-list-timeline-marker--upcoming .sf-featured-icon--neutral {
     --sf-featured-icon--foreground-color: var(--sf-on-surface-variant);
   }
-  .sf-list-timeline-item[data-state=current] .sf-list-timeline-title {
+  /* The state rules reach the event's own parts only (>): its sub-events
+     (C204 (2)) keep their own look. */
+  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-body > .sf-list-timeline-head > .sf-list-timeline-title {
     font-weight: var(--sf-font-weight-medium);
   }
-  .sf-list-timeline-item[data-state=upcoming] .sf-list-timeline-title {
+  .sf-list-timeline-item[data-state=upcoming] > .sf-list-timeline-body > .sf-list-timeline-head > .sf-list-timeline-title {
     color: var(--sf-on-surface-variant);
   }
   .sf-list-timeline .sf-list-timeline-icon {
@@ -334,22 +332,22 @@
      --sf-on-surface-variant; --sf-outline-variant, the line's 24 %, is lost on
      a dot this small), or the status colour (success, warning, error), which
      keeps the shape: an upcoming step with an error is an empty error ring. */
-  .sf-list-timeline-item[data-state=done] .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
+  .sf-list-timeline-item[data-state=done] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
     color: var(--sf-primary);
   }
-  .sf-list-timeline-item[data-state=done] .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
+  .sf-list-timeline-item[data-state=done] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
     color: var(--sf-primary);
   }
-  .sf-list-timeline-item[data-state=current] .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
+  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
     color: var(--sf-primary);
   }
-  .sf-list-timeline-item[data-state=current] .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
+  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
     color: var(--sf-primary);
   }
-  .sf-list-timeline-item[data-state=current] .sf-list-timeline-marker--dot .sf-list-timeline-dot {
+  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot .sf-list-timeline-dot {
     box-shadow: 0 0 0 var(--sf-list-timeline--ring-gap) var(--sf-list-timeline--ground), 0 0 0 var(--sf-list-timeline--ring-reach) currentColor;
   }
-  .sf-list-timeline-item[data-state=upcoming] .sf-list-timeline-marker--dot .sf-list-timeline-dot {
+  .sf-list-timeline-item[data-state=upcoming] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot .sf-list-timeline-dot {
     background: var(--sf-list-timeline--ground);
     box-shadow: inset 0 0 0 calc(var(--sf-px) * 2) currentColor;
   }
@@ -503,6 +501,38 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
+  /* Host content under an event (C204 (3)): the host draws it; the list only
+     places it under the meta line. */
+  .sf-list-timeline-slot {
+    min-width: 0;
+    min-inline-size: 0;
+    margin-top: var(--sf-space-1\/2);
+    -webkit-margin-before: var(--sf-space-1\/2);
+            margin-block-start: var(--sf-space-1\/2);
+  }
+  /* An event's sub-events (C204 (2)): the disclosure row under the meta line,
+     the list in place under it. sf-button's host is display: contents. */
+  .sf-list-timeline-fold {
+    display: flex;
+    min-width: 0;
+    min-inline-size: 0;
+    margin-top: var(--sf-space-1\/4);
+    -webkit-margin-before: var(--sf-space-1\/4);
+            margin-block-start: var(--sf-space-1\/4);
+  }
+  .sf-list-timeline-sub {
+    --sf-list-timeline--column-gap: var(--sf-space-1\/2);
+    min-width: 0;
+    min-inline-size: 0;
+    margin-top: var(--sf-space-1\/3);
+    -webkit-margin-before: var(--sf-space-1\/3);
+            margin-block-start: var(--sf-space-1\/3);
+    font-size: var(--sf-list-timeline--font-size);
+    line-height: var(--sf-list-timeline--line);
+  }
+  .sf-list-timeline-sub:has(> .sf-list-timeline-list--steps) {
+    --sf-list-timeline--column-gap: calc(var(--sf-a8) + var(--sf-list-timeline--ring-reach));
+  }
   /* No events: one quiet line, H tall. */
   .sf-list-timeline-quiet {
     box-sizing: border-box;
@@ -576,7 +606,8 @@
             padding-inline-start: 0;
   }
   @media (forced-colors: active) {
-    .sf-list-timeline-item:not(:last-child)::before {
+    .sf-list-timeline-item:not(:last-child)::before,
+    .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before {
       background: CanvasText;
     }
     /* High contrast drops shadows and forces fills: a step keeps its shape in
@@ -591,12 +622,12 @@
       background: CanvasText;
       box-shadow: none;
     }
-    .sf-list-timeline-item[data-state=current] .sf-list-timeline-marker--dot .sf-list-timeline-dot {
+    .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot .sf-list-timeline-dot {
       box-shadow: none;
       outline: calc(var(--sf-px) * 2) solid CanvasText;
       outline-offset: calc(var(--sf-px) * 2);
     }
-    .sf-list-timeline-item[data-state=upcoming] .sf-list-timeline-marker--dot .sf-list-timeline-dot {
+    .sf-list-timeline-item[data-state=upcoming] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot .sf-list-timeline-dot {
       background: Canvas;
       box-shadow: none;
       outline: calc(var(--sf-px) * 2) solid CanvasText;

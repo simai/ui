@@ -1576,9 +1576,15 @@ function focusLent(element, options) {
 
 const TYPEAHEAD_MS = 500; // The menus' own numbers for the ids of their icon options' tooltips.
 
-let menuTips = 0; // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
+let menuTips = 0; // A tooltip that repeats what is in the row's name is not its description.
+
+function dropDescription(row, id) {
+  const rest = (row.getAttribute("aria-describedby") || "").split(/\s+/u).filter(one => one && one !== id);
+  if (rest.length) row.setAttribute("aria-describedby", rest.join(" "));else row.removeAttribute("aria-describedby");
+} // How wide a popup is by what it holds (owner decision C32, 2026-11-09): the
 // class sheet sizes each from core's --sf-popup-*-width steps, which follow
 // the density. "content" (the default) is the menu's rule.
+
 
 const WIDTH_KINDS = new Set(["list", "panel", "form", "form-wide"]);
 const FORM_KINDS = new Set(["form", "form-wide"]); // On a phone -- below the md breakpoint, where core declares
@@ -1834,7 +1840,11 @@ class SfContextMenu extends ContextMenuElement {
     this.addEventListener("keydown", this.handleMenuKeyDown);
     this.addEventListener("keydown", this.handleOwnedKeyDown);
     this.addEventListener("click", this.handleEntryClick);
-    this.addEventListener("pointerover", this.handleEntryHover); // The objects of the areas named by `for` (C164): the page's events,
+    this.addEventListener("pointerover", this.handleEntryHover); // A drilling row's cut value (TT-11): its tooltip, made on the first
+    // hover or keyboard focus.
+
+    this.addEventListener("pointerover", event => this.syncValueTooltip(event));
+    this.addEventListener("focusin", event => this.syncValueTooltip(event)); // The objects of the areas named by `for` (C164): the page's events,
     // heard on the document while the menu is in the page.
 
     this._onAreaEvent = event => this.handleAreaEvent(event);
@@ -2717,6 +2727,92 @@ class SfContextMenu extends ContextMenuElement {
 
     if (selected && !entry.keepOpen) this.closeAll({
       restoreFocus: !entry.href
+    });
+  } // The value under a drilling row's name (TT-11, owner decision C160 (1)):
+  // one line, cut with an ellipsis where it is long. A cut value is the row's
+  // Framework tooltip on hover, keyboard focus or a long press, not a browser
+  // title: the surface stands after the row, named by its data-tooltip, and
+  // the tooltip controller (component tooltip, asked for here) shows it. It is
+  // measured each time the row is reached, so a value that fits loses it. The
+  // value is already in the row's name, so the surface is not its
+  // description too (a screen reader would say the value twice).
+
+
+  syncValueTooltip(event) {
+    if (event.type === "pointerover" && event.pointerType === "touch") return;
+    const row = event.target?.closest?.(".sf-context-menu-item");
+    if (!row || row.closest((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__.tagSelector)("sf-menu-context")) !== this) return;
+    const under = row.querySelector(".sf-context-menu-item-under");
+    if (!under) return;
+    const next = row.nextElementSibling;
+    let tip = next?.classList?.contains("sf-context-menu-value-tooltip") ? next : null;
+    const words = (under.textContent || "").replace(/\s+/gu, " ").trim();
+    const cut = under.scrollWidth > under.clientWidth + 1;
+
+    if (!cut || !words) {
+      if (tip) {
+        if (row.getAttribute("data-tooltip") === tip.id) row.removeAttribute("data-tooltip");
+        tip.remove();
+      }
+
+      return;
+    }
+
+    const fresh = !tip;
+
+    if (!tip) {
+      const doc = this.ownerDocument;
+      tip = doc.createElement("span");
+      tip.className = "sf-tooltip sf-tooltip--dark sf-context-menu-value-tooltip";
+      tip.hidden = true;
+      const content = doc.createElement("span");
+      content.className = "sf-tooltip-content";
+      const text = doc.createElement("span");
+      text.className = "sf-tooltip-text";
+      content.append(text);
+      tip.append(content);
+      const prefix = this._tipPrefix ??= `sf-menu-tip-${++menuTips}`;
+      tip.id = `${prefix}-${String(row.dataset.sfEntry ?? "").replace(/[^\w-]/gu, "-")}-value`;
+      row.after(tip);
+    }
+
+    const text = tip.querySelector(".sf-tooltip-text");
+    if (text && text.textContent !== words) text.textContent = words;
+    if (row.getAttribute("data-tooltip") !== tip.id) row.setAttribute("data-tooltip", tip.id);
+
+    if (!fresh) {
+      dropDescription(row, tip.id);
+      return;
+    } // The first time: the controller links the row on its own (its observer)
+    // and is handed the event that woke the tooltip while it still holds.
+
+
+    const kind = event.type;
+    const pointerType = event.pointerType;
+
+    const handOver = () => setTimeout(() => {
+      if (row.getAttribute("data-tooltip") !== tip.id) return;
+      dropDescription(row, tip.id);
+
+      if (kind === "pointerover" && row.matches(":hover")) {
+        row.dispatchEvent(new PointerEvent("pointerenter", {
+          pointerType
+        }));
+      } else if (kind === "focusin" && this.ownerDocument.activeElement === row) {
+        row.dispatchEvent(new FocusEvent("focusin"));
+      }
+    }, 0);
+
+    const loader = globalThis.SF?.Loader;
+
+    if (globalThis.SF?.ComponentRegistry?.Tooltip || loader?.ComponentRegistry?.Tooltip) {
+      handOver();
+      return;
+    }
+
+    loader?.ensurePlugin?.("tooltip");
+    if (typeof loader?.ready === "function") loader.ready("Tooltip", handOver);else globalThis.addEventListener?.("Tooltip:ready", handOver, {
+      once: true
     });
   } // A pointer resting on a row with a submenu opens it; resting on another
   // row of this menu closes the one that was open.
@@ -4027,14 +4123,15 @@ function renderMeter(entry) {
         ></sf-progress-bar>
     </div>`;
 } // The text of a row: its label, the value under it where the row shows one (a
-// drilling row), and the caption. A long label wraps and a long value is cut
-// with the whole of it in `title`, so neither widens the panel.
+// drilling row), and the caption. A long label wraps and a long value is cut,
+// so neither widens the panel; a cut value is the row's Framework tooltip
+// (the element's syncValueTooltip, C160 (1)), never a browser title.
 
 
 function renderItemText(entry, under = "") {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-text">
             <span class="sf-context-menu-item-label">${entry.text ?? ""}</span>
-            ${under ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-under" title=${under}>${under}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${under ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-under">${under}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${entry.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-caption">${entry.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </span>`;
 } // The options of a choice, side by side. Each is a menuitemradio of the menu,
@@ -4686,7 +4783,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.25.3","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.25.4","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -373,7 +373,7 @@
     padding-right: 0;
     padding-inline: 0;
   }
-  /* One row (chips="row", PROVISIONAL name; C58: filters, tables and cards).
+  /* One row (chips="row", final name, C174 (5); C58: filters, tables and cards).
      While the field is closed the chips stand in one row at their own widths;
      the component counts how many the row holds and draws «+N» after them. The
      rest stay drawn out of the flow and unseen, so they are measured but not
@@ -649,6 +649,9 @@
     border-radius: var(--sf-lookup--track);
     background-clip: padding-box;
     background-color: var(--sf-scroll-bg-thumb);
+  }
+  .sf-lookup .sf-lookup-panel::-webkit-scrollbar-thumb:hover, .sf-lookup .sf-lookup-panel::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
   }
   @supports not selector(::-webkit-scrollbar) {
     .sf-lookup .sf-lookup-panel {
@@ -1655,7 +1658,7 @@
     --sf-field-action--ink: var(--sf-on-surface);
   }
   .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
-    --sf-field-action--ink: var(--sf-on-surface);
+    --sf-field-action--ink: var(--sf-primary);
   }
   .sf-field-action:disabled {
     --sf-field-action--ink: var(--sf-on-surface-disabled);

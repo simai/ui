@@ -724,6 +724,9 @@
         "name": "badges"
       },
       {
+        "name": "dot"
+      },
+      {
         "name": "cl-icon"
       },
       {
@@ -744,6 +747,9 @@
     "relation": [
       {
         "name": "avatars"
+      },
+      {
+        "name": "dot"
       },
       {
         "name": "icons"
@@ -913,6 +919,9 @@
       },
       {
         "name": "badges"
+      },
+      {
+        "name": "dot"
       },
       {
         "lazy": true,
@@ -1285,7 +1294,8 @@
         "name": "featured-icon"
       },
       {
-        "name": "cl-progress-bar"
+        "lazy": true,
+        "name": "cl-file-preview"
       },
       {
         "name": "icon-buttons"
@@ -1416,6 +1426,10 @@
       {
         "lazy": true,
         "name": "badges"
+      },
+      {
+        "lazy": true,
+        "name": "dot"
       }
     ],
     "tags": [
@@ -1489,6 +1503,10 @@
       {
         "lazy": true,
         "name": "cl-badge"
+      },
+      {
+        "lazy": true,
+        "name": "cl-help-mark"
       }
     ],
     "tags": [
@@ -1536,6 +1554,14 @@
       {
         "lazy": true,
         "name": "cl-segmented"
+      },
+      {
+        "lazy": true,
+        "name": "cl-button"
+      },
+      {
+        "lazy": true,
+        "name": "cl-button-copy"
       }
     ],
     "tags": [
@@ -1784,6 +1810,10 @@
       {
         "lazy": true,
         "name": "cl-dropdown"
+      },
+      {
+        "lazy": true,
+        "name": "tooltip"
       }
     ],
     "tags": [

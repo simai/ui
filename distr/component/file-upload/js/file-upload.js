@@ -112,6 +112,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getFileUploadItems: () => (/* binding */ getFileUploadItems),
 /* harmony export */   initExistingFileUploads: () => (/* binding */ initExistingFileUploads),
 /* harmony export */   normalizeItemState: () => (/* binding */ normalizeItemState),
+/* harmony export */   removeFileUploadItem: () => (/* binding */ removeFileUploadItem),
 /* harmony export */   retryFileUploadItem: () => (/* binding */ retryFileUploadItem),
 /* harmony export */   setFileUploadItems: () => (/* binding */ setFileUploadItems),
 /* harmony export */   takeFiles: () => (/* binding */ takeFiles),
@@ -273,8 +274,10 @@ function syncFileUploadInteraction(root) {
   state.disabled = disabled;
   syncInputConfig(root, getInput(root));
   if (disabled && root.classList.contains('dragover')) root.classList.remove('dragover');
-  const files = getFilesContainer(root);
-  files?.querySelectorAll('button[data-action="remove"], button[data-action="retry"]').forEach(button => {
+  const files = getFilesContainer(root); // The class rows only: a Smart area's rows are sf-file-preview, which names
+  // its own buttons («Убрать <имя>», «Повторить <имя>»).
+
+  files?.querySelectorAll('.sf-upload-progress button[data-action="remove"], .sf-upload-progress button[data-action="retry"]').forEach(button => {
     let previous = state.buttons.get(button);
 
     if (!previous) {
@@ -478,8 +481,10 @@ function createUploadProgressItem(item, size = '1', owner = null) {
   removeButton.dataset.action = 'remove';
   const removeIcon = document.createElement('i');
   removeIcon.className = 'sf-icon';
-  removeIcon.setAttribute('aria-hidden', 'true');
-  removeIcon.textContent = 'delete';
+  removeIcon.setAttribute('aria-hidden', 'true'); // «×» «Убрать <имя>»: the file leaves the list, nothing is erased (C149
+  // (8)); the trash is a stored file's, in sf-file-preview.
+
+  removeIcon.textContent = 'close';
   removeButton.append(removeIcon);
   top.append(removeButton);
   content.append(top);
@@ -618,9 +623,12 @@ function normalizeFileItems(files = [], root = null) {
     state: 'ready',
     file
   }));
-}
+} // options.action says how the file left: remove («×», taken out of the list)
+// or delete (a stored file the person chose to erase; C149 (8)). detach
+// carries it, so the page knows which one to answer.
 
-function removeFileUploadItem(root, index) {
+
+function removeFileUploadItem(root, index, options = {}) {
   if (!root) return false;
   const currentItems = Array.from(root.__sfFileUploadItems || []);
   if (!currentItems.length) return false;
@@ -638,7 +646,8 @@ function removeFileUploadItem(root, index) {
     detail: {
       item: removed || null,
       index: normalizedIndex,
-      items: currentItems
+      items: currentItems,
+      action: options?.action === 'delete' ? 'delete' : 'remove'
     }
   }));
   return true;
@@ -2176,7 +2185,9 @@ function intlFormatter(kind, locale, options) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatNumber: () => (/* binding */ formatNumber),
-/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 // Numbers in the page's language by a format word: formatNumber and
@@ -2271,7 +2282,32 @@ function formatNumber(value, format = 'number', {
   if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
   const options = numberOptions(format, step);
   if (grouping === false) options.useGrouping = false;
-  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
 }
 
 /***/ },
@@ -3715,7 +3751,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploadi
 /***/ "6e4269348082"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Удалить","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
 
 /***/ },
 

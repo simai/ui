@@ -6001,3 +6001,27 @@
     cursor: default;
   }
 }
+@layer sf.base {
+  .sf-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-button-text-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+}

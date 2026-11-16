@@ -2460,6 +2460,11 @@
     background-clip: padding-box;
     background-color: var(--sf-scroll-bg-thumb);
   }
+  .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar-thumb:hover, .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar-thumb:active,
+  .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar-thumb:hover,
+  .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
+  }
   @supports not selector(::-webkit-scrollbar) {
     .sf-dropdown .sf-list > .sf-list-container-wrap,
     .sf-list--menu > .sf-list-container-wrap {
@@ -4982,7 +4987,7 @@
     --sf-field-action--ink: var(--sf-on-surface);
   }
   .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
-    --sf-field-action--ink: var(--sf-on-surface);
+    --sf-field-action--ink: var(--sf-primary);
   }
   .sf-field-action:disabled {
     --sf-field-action--ink: var(--sf-on-surface-disabled);

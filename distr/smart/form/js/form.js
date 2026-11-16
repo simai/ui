@@ -378,6 +378,145 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
+  if (word === 'integer') return {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "9ce1a42b2a85"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -552,9 +691,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   readDecimal: () => (/* binding */ readDecimal)
 /* harmony export */ });
 /* harmony import */ var _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c9ce0852ac73");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // Decimal numbers as strings, never as floats (simai.property-view-port
 // 1.18.0; Larena property types standard, notes of 2026-11-03: «Never a float
 // on the wire»). What a person typed is read into a canonical decimal string,
@@ -563,6 +702,7 @@ _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependenc
 // through a float on the way to «1 500,10 ₽». Pure, so the unit suite reads it
 // without a browser; the View set draws the editors of money, percent and
 // items with its own copy of the same rules.
+
 
 const TYPED = /^([+-]?)(\d*)(?:[.,](\d*))?$/u; // Spaces a person or a formatter puts between groups of digits: the plain
 // space, the no-break space and the narrow no-break space ru-RU writes, and
@@ -692,13 +832,14 @@ function formatMoney(value, field = {}, locale = 'en') {
 function formatPercent(value, locale = 'en') {
   const decimal = decimalOf(value);
   if (decimal === null) return '';
-  const digits = Math.min(20, fractionDigits(decimal));
-  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+  const digits = Math.min(20, fractionDigits(decimal)); // One spelling in every language (C203 (3)): «12,5 %», «12.5 %».
+
+  return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentSign)((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
     style: 'unit',
     unit: 'percent',
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
-  }).format(decimal);
+  }).format(decimal));
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1522,17 +1663,39 @@ function renderDateCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
   return defaultDateText(field, value, host);
+} // A share of a limit (owner decision C203 (5), IM-8): the `meter` variant of a
+// number 0..100 is the inline sf-progress-bar meter -- a 64 track, the number
+// «72 %» before it -- named by the field's label. The scale stays for levels
+// («4 из 5», C185 (5)). Out of range it is left as text, as the scale is.
+
+
+function meterProps(field, number) {
+  const name = typeof field.label === 'string' ? field.label : field.key || '';
+  return {
+    inline: true,
+    meter: true,
+    value: String(number),
+    ...(name ? {
+      label: name
+    } : {})
+  };
 }
 
 function renderNumericCell(field, value, host) {
   const variant = field.variant || field.filter?.variant;
   const number = Number(scalarValue(value));
 
-  if (variant !== 'scale' || !Number.isFinite(number)) {
+  if (variant !== 'scale' && variant !== 'meter' || !Number.isFinite(number)) {
     return renderHostFormattedCell(field, value, host);
   }
 
   if (number < 0 || number > 100) return null;
+  if (variant === 'meter') return {
+    component: {
+      type: 'progress-bar',
+      props: meterProps(field, number)
+    }
+  };
   return {
     component: {
       type: 'progress-scale',
@@ -3257,6 +3420,13 @@ function renderNumberView(field, value, host) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size="1" value=${String(number)}></sf-progress-scale>`;
   }
 
+  if (variant === 'meter' && Number.isFinite(number) && number >= 0 && number <= 100) {
+    const {
+      label
+    } = meterProps(field, number);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar inline meter value=${String(number)} label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>`;
+  }
+
   const text = viewText(field, value, host);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${field.unit ? `${text} ${field.unit}` : text}</span>`;
 } // A date is the host's to format first: formatFieldValue wins, and so does a
@@ -3750,6 +3920,11 @@ const PROPERTY_TYPES = Object.freeze([{
   variants: [{
     id: 'scale',
     label: typeLabel('variant-number-scale')
+  }, // meter (owner decision C203 (5)): a share of a limit, 0..100, as
+  // the inline sf-progress-bar meter; the scale stays for levels.
+  {
+    id: 'meter',
+    label: typeLabel('variant-number-meter')
   }, {
     id: 'stepper',
     label: typeLabel('variant-number-stepper')
@@ -3929,12 +4104,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e5483002f3ea");
 /* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("219db2ce051d");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ae2fca904cab");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2438c5fc3777");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("99ea38208a74");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("db3a39d580e9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("20014fad50c0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ae2fca904cab");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2438c5fc3777");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("99ea38208a74");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("db3a39d580e9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
@@ -3966,14 +4142,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle; the title, settings and events
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
 };
 
 const WIDTHS = ['s', 'm', 'full']; // The controls of the field family that say an error in their own message
@@ -4061,7 +4238,7 @@ function groupFields(fields, groups) {
   });
   return out;
 }
-const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
@@ -4581,8 +4758,9 @@ class SfForm extends FormElement {
     id
   }) {
     const value = this._values[field.key];
-    const host = this.hostOf(field);
-    const control = editing ? (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderEditField)(field, value, host, this.renderOptions()) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderViewField)(field, value, host); // A required yes/no under apply submit is a checkbox, which carries its
+    const host = this.hostOf(field); // A short choice is a ready group of radios or checks (C165 (1)).
+
+    const control = editing ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderEditField)(field, value, host, this.renderOptions()) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderViewField)(field, value, host); // A required yes/no under apply submit is a checkbox, which carries its
     // label beside the box (C165 (4)): no label row over it.
 
     const checkbox = editing && !instant && field.propertyType === 'boolean' && field.required === true && field.readonly !== true;
@@ -4621,6 +4799,104 @@ class SfForm extends FormElement {
 
 SfForm.define('sf-form');
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "20014fad50c0"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LIST_MOST: () => (/* binding */ LIST_MOST),
+/* harmony export */   choiceOptions: () => (/* binding */ choiceOptions),
+/* harmony export */   isListChoice: () => (/* binding */ isListChoice),
+/* harmony export */   renderChoiceList: () => (/* binding */ renderChoiceList)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The short choice fields of a form drawn as a ready group of radios or checks
+// (owner decision C165 (1): «sf-form рисует поля выбора через неё», names by
+// the dispatcher 2026-11-14): sf-input-choice appearance="list". A choice of
+// one is a column of radios, a choice of several a column of checks, up to
+// three short options in a row (flow auto, C165 (3)). The form keeps its own
+// label row (label, «*», «?») and hint over and under the field, as for every
+// other field; the group is named by the same words (aria-label) and says its
+// error itself under its last row (sf-input-choice is one of the speaking
+// controls, SPEAKING_TAGS).
+//
+// Which fields: an editable `choice` or `choices` of at most LIST_MOST options
+// (research 2026-11-14-checks.md §4: radios for one of few, 2-5 seen at once;
+// a dropdown for one of many). A field that asks for its own control keeps it:
+// variant `buttons` (the segmented group), `select` (the dropdown at any
+// length), `checklist` (the two-column checklist); a read-only field is shown
+// as text, as every field of the form.
+
+const LIST_MOST = 5;
+const LIST_TYPES = new Set(['choice', 'choices']);
+const KEEPS_OWN = new Set(['buttons', 'select', 'checklist']);
+
+const typeOf = field => field.propertyType || field.type || field.dataType;
+/** The options a field offers, those with a value. */
+
+
+function choiceOptions(field = {}) {
+  const options = field.options || field.filter?.options || field.constraints?.options || [];
+  return (Array.isArray(options) ? options : []).filter(option => option && option.value !== null && option.value !== undefined && String(option.value) !== '');
+}
+/** Whether the form draws this field as a group of radios or checks. */
+
+function isListChoice(field = {}) {
+  if (!LIST_TYPES.has(typeOf(field)) || field.readonly === true) return false;
+  if (KEEPS_OWN.has(String(field.variant ?? ''))) return false;
+  const count = choiceOptions(field).length;
+  return count > 0 && count <= LIST_MOST;
+}
+/**
+ * sf-input-choice appearance="list" for a choice field. The value goes back in
+ * the option's own type (a chosen "2" is the 2 the option carries); a choice
+ * of one is the value or null, of several the list in the options' order.
+ */
+
+function renderChoiceList(field, value, host, {
+  disabled = false
+} = {}) {
+  const options = choiceOptions(field);
+  const multiple = typeOf(field) === 'choices';
+  const items = options.map(option => ({
+    value: String(option.value),
+    label: String(option.label ?? option.text ?? option.value),
+    ...(option.caption ? {
+      caption: String(option.caption)
+    } : {}),
+    ...(option.disabled ? {
+      disabled: true
+    } : {})
+  }));
+
+  const own = text => options.find(option => String(option.value) === text)?.value ?? text;
+
+  const chosen = multiple ? (Array.isArray(value) ? value : []).map(one => String(one)).join(',') : value === null || value === undefined ? '' : String(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input-choice
+    appearance="list"
+    name=${field.key}
+    aria-label=${field.label || field.key || ''}
+    ?multiple=${multiple}
+    ?required=${field.required === true}
+    ?disabled=${disabled}
+    .items=${items}
+    .value=${chosen}
+    @change=${event => {
+    const values = Array.isArray(event.detail?.values) ? event.detail.values : [];
+    if (multiple) host.setFieldValue(field, values.map(own));else host.setFieldValue(field, values.length ? own(String(values[0])) : null);
+  }}
+  ></sf-input-choice>`;
+}
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
@@ -6424,21 +6700,21 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
 
 /***/ },
 
 /***/ "a54dc147fac3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет","searchInList":"Найти в списке","containsText":"Содержит…","fileKind_image":"Изображения","fileKind_document":"Документы","fileKind_archive":"Архивы","fileKind_other":"Прочие файлы","operator":"Оператор","rangeFrom":"От","rangeTo":"До","loadingOptions":"Загрузка вариантов","optionsError":"Не удалось загрузить варианты","pickRecord":"Выберите запись","pickFromList":"Выберите из списка","searchRecords":"Найти запись","loadingRecords":"Загрузка записей","recordsError":"Не удалось загрузить записи","retry":"Повторить","loadMore":"Загрузить ещё","removeFile":"Убрать","fileRemoved":"Файл убран","undo":"Вернуть","passwordSet":"Задан","passwordUnset":"Не задан","passwordKeep":"Задан; введите новый, чтобы заменить","maskIncomplete":"Заполните поле полностью","notNumber":"Введите число","precisionMax":"Не больше {n} знаков после запятой","rowCount":{"one":"{n} строка","few":"{n} строки","many":"{n} строк","other":"{n} строки"},"type-string":"Строка","variant-string-phone":"Телефон","variant-string-password":"Пароль","type-text":"Текст","type-html":"Форматированный текст","type-integer":"Целое число","variant-integer-stepper":"Кнопками «−» и «+»","type-number":"Число","variant-number-scale":"Шкала 0–100","variant-number-stepper":"Кнопками «−» и «+»","type-date":"Дата","type-datetime":"Дата и время","type-time":"Время","type-boolean":"Да или нет","type-choice":"Одно из списка","variant-choice-buttons":"Кнопками","type-choices":"Несколько из списка","variant-choices-badges":"Значками","variant-choices-checklist":"Флажками","variant-choices-select":"Выпадающим списком","type-user":"Пользователь","type-record":"Запись","type-relation":"Связь","type-lookup":"Из справочника","type-file":"Файл","variant-file-image":"Изображение","variant-file-image-card":"Изображение карточкой","variant-file-image-list":"Изображения списком","type-color":"Цвет","type-include":"Код","type-money":"Деньги","type-percent":"Процент","type-items":"Строки","type-compound":"Составное","type-ru.requisites":"Реквизиты"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет","searchInList":"Найти в списке","containsText":"Содержит…","fileKind_image":"Изображения","fileKind_document":"Документы","fileKind_archive":"Архивы","fileKind_other":"Прочие файлы","operator":"Оператор","rangeFrom":"От","rangeTo":"До","loadingOptions":"Загрузка вариантов","optionsError":"Не удалось загрузить варианты","pickRecord":"Выберите запись","pickFromList":"Выберите из списка","searchRecords":"Найти запись","loadingRecords":"Загрузка записей","recordsError":"Не удалось загрузить записи","retry":"Повторить","loadMore":"Загрузить ещё","removeFile":"Убрать","fileRemoved":"Файл убран","undo":"Вернуть","passwordSet":"Задан","passwordUnset":"Не задан","passwordKeep":"Задан; введите новый, чтобы заменить","maskIncomplete":"Заполните поле полностью","notNumber":"Введите число","precisionMax":"Не больше {n} знаков после запятой","rowCount":{"one":"{n} строка","few":"{n} строки","many":"{n} строк","other":"{n} строки"},"type-string":"Строка","variant-string-phone":"Телефон","variant-string-password":"Пароль","type-text":"Текст","type-html":"Форматированный текст","type-integer":"Целое число","variant-integer-stepper":"Кнопками «−» и «+»","type-number":"Число","variant-number-scale":"Шкала 0–100","variant-number-meter":"Доля предела","variant-number-stepper":"Кнопками «−» и «+»","type-date":"Дата","type-datetime":"Дата и время","type-time":"Время","type-boolean":"Да или нет","type-choice":"Одно из списка","variant-choice-buttons":"Кнопками","type-choices":"Несколько из списка","variant-choices-badges":"Значками","variant-choices-checklist":"Флажками","variant-choices-select":"Выпадающим списком","type-user":"Пользователь","type-record":"Запись","type-relation":"Связь","type-lookup":"Из справочника","type-file":"Файл","variant-file-image":"Изображение","variant-file-image-card":"Изображение карточкой","variant-file-image-list":"Изображения списком","type-color":"Цвет","type-include":"Код","type-money":"Деньги","type-percent":"Процент","type-items":"Строки","type-compound":"Составное","type-ru.requisites":"Реквизиты"}}');
 
 /***/ },
 
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.0.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.1.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

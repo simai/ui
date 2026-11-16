@@ -667,3 +667,45 @@
     }
   }
 }
+@layer sf.base {
+  .sf-radio-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-radio-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-radio-button-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-radio-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-radio-button-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-radio-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-radio-button-top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: start;
+    justify-items: start;
+  }
+  .sf-radio-button:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-radio-button-text {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+}

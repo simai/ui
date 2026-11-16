@@ -480,8 +480,10 @@
     --sf-file-upload-message--line-height: var(--sf-text-height-1\/3);
   }
   /* The list stood flush under the area (gap 0, FU-12): it keeps the rows' own
-     distance from the area, and from the message when there is one. */
-  .sf-file-upload ~ .sf-file-upload-files:has(> .sf-upload-progress) {
+     distance from the area, and from the message when there is one. The rows
+     are the class rows (.sf-upload-progress) or a Smart area's sf-file-preview
+     rows (.sf-file-upload-item, C81). */
+  .sf-file-upload ~ .sf-file-upload-files:has(> .sf-upload-progress, > .sf-file-upload-item) {
     margin-top: var(--sf-space-1);
     -webkit-margin-before: var(--sf-space-1);
             margin-block-start: var(--sf-space-1);

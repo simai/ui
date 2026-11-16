@@ -34,6 +34,10 @@
     --sf-scrollbar-min-thumb-size: var(--sf-d1);
     --sf-scrollbar-keyboard-step: var(--sf-d0);
     --sf-scrollbar-thumb-color: var(--sf-outline);
+    --sf-scrollbar--thumb-hover: var(--sf-on-surface);
+    --sf-scrollbar--gap-content: var(--sf-space-1\/4);
+    --sf-scrollbar--gap-edge: var(--sf-scroll--gap-edge);
+    --sf-scrollbar--inset-inline: var(--sf-space-1\/2);
     position: relative;
     min-height: 0;
     min-block-size: 0;
@@ -100,64 +104,6 @@
   }
   .sf-scrollbar:not([data-mode]):not([data-sf-scrollbar]) .sf-scrollbar__viewport::-webkit-scrollbar {
     display: none;
-  }
-  .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport {
-    scrollbar-color: var(--sf-outline) var(--sf-transparent);
-    scrollbar-width: auto;
-  }
-  .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport {
-    scrollbar-color: var(--sf-outline) var(--sf-transparent);
-    scrollbar-width: auto;
-  }
-  .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport::-webkit-scrollbar {
-    height: var(--sf-scroll-bg-width);
-    block-size: var(--sf-scroll-bg-width);
-    width: var(--sf-scroll-bg-width);
-    inline-size: var(--sf-scroll-bg-width);
-  }
-  .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport::-webkit-scrollbar {
-    height: var(--sf-scroll-bg-width);
-    block-size: var(--sf-scroll-bg-width);
-    width: var(--sf-scroll-bg-width);
-    inline-size: var(--sf-scroll-bg-width);
-  }
-  .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport::-webkit-scrollbar-track {
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    border-radius: var(--sf-scroll-radius);
-    background: var(--sf-transparent);
-    background-clip: padding-box;
-  }
-  .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport::-webkit-scrollbar-track {
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    border-radius: var(--sf-scroll-radius);
-    background: var(--sf-transparent);
-    background-clip: padding-box;
-  }
-  .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport::-webkit-scrollbar-thumb {
-    min-height: var(--sf-scroll-thumb-size);
-    min-block-size: var(--sf-scroll-thumb-size);
-    min-width: var(--sf-scroll-thumb-size);
-    min-inline-size: var(--sf-scroll-thumb-size);
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    border-radius: var(--sf-scroll-radius);
-    background: var(--sf-outline);
-    background-clip: padding-box;
-  }
-  .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport::-webkit-scrollbar-thumb {
-    min-height: var(--sf-scroll-thumb-size);
-    min-block-size: var(--sf-scroll-thumb-size);
-    min-width: var(--sf-scroll-thumb-size);
-    min-inline-size: var(--sf-scroll-thumb-size);
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    border-radius: var(--sf-scroll-radius);
-    background: var(--sf-outline);
-    background-clip: padding-box;
-  }
-  .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport:hover::-webkit-scrollbar-thumb {
-    background-color: var(--sf-on-surface);
-  }
-  .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport:hover::-webkit-scrollbar-thumb {
-    background-color: var(--sf-on-surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar__track {
     right: 0;
@@ -227,7 +173,7 @@
     min-block-size: var(--sf-scrollbar-min-thumb-size);
     padding: 0;
     border: 0;
-    border-radius: 0;
+    border-radius: var(--sf-scroll-radius);
     background: transparent;
     cursor: -webkit-grab;
     cursor: grab;
@@ -238,36 +184,36 @@
             transform: translateY(var(--sf-scrollbar-thumb-offset, 0));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar__thumb::before {
-    right: 0;
+    right: var(--sf-scrollbar--gap-edge);
   }
   @supports not (inset-inline-end: initial) {
   html:not([dir="rtl"]) .sf-scrollbar__thumb::before {
-    right: 0;
+    right: var(--sf-scrollbar--gap-edge);
     }
   }
   .sf-scrollbar__thumb::before:where(:dir(ltr)) {
-    right: 0;
+    right: var(--sf-scrollbar--gap-edge);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar__thumb::before {
-    left: 0;
+    left: var(--sf-scrollbar--gap-edge);
   }
   @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-scrollbar__thumb::before {
-    left: 0;
+    left: var(--sf-scrollbar--gap-edge);
     }
   }
   .sf-scrollbar__thumb::before:where(:dir(rtl)) {
-    left: 0;
+    left: var(--sf-scrollbar--gap-edge);
   }
   .sf-scrollbar__thumb::before {
     position: absolute;
     top: 0;
     bottom: 0;
     inset-block: 0;
-    inset-inline-end: 0;
+    inset-inline-end: var(--sf-scrollbar--gap-edge);
     width: var(--sf-scrollbar-rest-size);
     inline-size: var(--sf-scrollbar-rest-size);
-    border-radius: inherit;
+    border-radius: var(--sf-scroll-radius);
     background: var(--sf-scrollbar-thumb-color);
     content: "";
     transition: inline-size var(--sf-duration-fast) var(--sf-animation);
@@ -312,6 +258,178 @@
   .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb::before {
     width: var(--sf-scrollbar-active-size);
     inline-size: var(--sf-scrollbar-active-size);
+  }
+  .sf-scrollbar__track:hover .sf-scrollbar__thumb::before,
+  .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb::before {
+    background: var(--sf-scrollbar--thumb-hover);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    }
+  }
+  .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    }
+  }
+  .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  .sf-scrollbar[data-mode=persistent]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist) .sf-scrollbar__viewport {
+    -webkit-padding-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-inline-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent]:not([data-sf-scrollbar-overflow=false]):not([data-mode]) .sf-scrollbar__viewport {
+    -webkit-padding-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-inline-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: 0;
+    }
+  }
+  .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: 0;
+    }
+  }
+  .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: 0;
+  }
+  .sf-scrollbar[data-mode=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not(.does-not-exist) .sf-scrollbar__viewport {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+    padding-bottom: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    -webkit-padding-after: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-block-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport {
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport {
+    padding-right: 0;
+    }
+  }
+  .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport {
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport {
+    padding-left: 0;
+    }
+  }
+  .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: 0;
+  }
+  .sf-scrollbar[data-mode=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not(.does-not-exist):not([data-axis]) .sf-scrollbar__viewport {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+    padding-bottom: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    -webkit-padding-after: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-block-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-right: 0;
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport {
+    padding-left: 0;
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: 0;
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not(.does-not-exist) .sf-scrollbar__viewport {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+    padding-bottom: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    -webkit-padding-after: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-block-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport {
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport {
+    padding-right: 0;
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport:where(:dir(ltr)) {
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport {
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport {
+    padding-left: 0;
+    }
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport:where(:dir(rtl)) {
+    padding-left: 0;
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent][data-sf-scrollbar-axis=horizontal]:not([data-sf-scrollbar-overflow=false]):not([data-mode]):not([data-axis]) .sf-scrollbar__viewport {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+    padding-bottom: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+    -webkit-padding-after: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
+            padding-block-end: calc(var(--sf-scrollbar--gap-content) + var(--sf-scrollbar-active-size) + var(--sf-scrollbar--gap-edge));
   }
   .sf-scrollbar[data-mode=persistent]:not(.does-not-exist) .sf-scrollbar__track {
     opacity: 1;
@@ -409,9 +527,9 @@
     top: auto;
     bottom: 0;
     inset-block: auto 0;
-    left: 0;
-    right: 0;
-    inset-inline: 0;
+    left: var(--sf-scrollbar--inset-inline);
+    right: var(--sf-scrollbar--inset-inline);
+    inset-inline: var(--sf-scrollbar--inset-inline);
     height: var(--sf-scrollbar-hit-size);
     block-size: var(--sf-scrollbar-hit-size);
     width: auto;
@@ -459,8 +577,8 @@
   }
   .sf-scrollbar__thumb--horizontal::before {
     top: auto;
-    bottom: 0;
-    inset-block: auto 0;
+    bottom: var(--sf-scrollbar--gap-edge);
+    inset-block: auto var(--sf-scrollbar--gap-edge);
     left: 0;
     right: 0;
     inset-inline: 0;
@@ -546,21 +664,14 @@
     background: var(--sf-on-surface);
   }
   @media (pointer: coarse) {
+    .sf-scrollbar {
+      --sf-scrollbar-hit-size: var(--sf-a8);
+      --sf-scrollbar-rest-size: var(--sf-a4);
+      --sf-scrollbar-active-size: var(--sf-a4);
+    }
     .sf-scrollbar__track,
     .sf-scrollbar__thumb {
-      width: var(--sf-a8);
-      inline-size: var(--sf-a8);
       pointer-events: none;
-    }
-    .sf-scrollbar__thumb::before {
-      width: var(--sf-a4);
-      inline-size: var(--sf-a4);
-    }
-    .sf-scrollbar__thumb--horizontal::before {
-      height: var(--sf-a4);
-      block-size: var(--sf-a4);
-      width: auto;
-      inline-size: auto;
     }
   }
   @media (prefers-reduced-motion: reduce) {

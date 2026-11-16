@@ -2440,6 +2440,9 @@
     background-clip: padding-box;
     background-color: var(--sf-scroll-bg-thumb);
   }
+  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb:hover, .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
+  }
   @supports not selector(::-webkit-scrollbar) {
     .sf-context-menu--panel .sf-context-menu-body {
       scrollbar-width: thin;
@@ -2714,6 +2717,11 @@
     border-radius: var(--sf-context-menu--track);
     background-clip: padding-box;
     background-color: var(--sf-scroll-bg-thumb);
+  }
+  .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-thumb:hover, .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-thumb:active,
+  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-thumb:hover,
+  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-thumb:active {
+    background-color: var(--sf-scroll--thumb-hover);
   }
   @supports not selector(::-webkit-scrollbar) {
     .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content,

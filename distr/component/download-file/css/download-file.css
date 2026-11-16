@@ -750,3 +750,21 @@
     }
   }
 }
+@layer sf.base {
+  .sf-download-file:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    justify-items: center;
+  }
+  .sf-download-file:where(:not([data-sf-started] *):not([data-sf-static]):not([data-sf-static] *)) .sf-download-file-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    justify-items: center;
+  }
+}

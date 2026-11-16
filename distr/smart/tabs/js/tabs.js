@@ -1744,7 +1744,8 @@ class SfTabs extends TabsElement {
 
   connectedCallback() {
     // The phone's width (core/js/breakpoints, md): vertical tabs become a row
-    // with «Ещё», and fit auto shares the row (C96 items 5 and 7).
+    // with «Ещё» (C96 item 5). fit auto reads the row's own width instead
+    // (narrowPlace).
     if (!this._narrowMedia) {
       this._narrowMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.breakpointMedia)('md', {
         below: true
@@ -2204,13 +2205,15 @@ class SfTabs extends TabsElement {
         ...RETIRED
       });
     }
-  } // fit: the tabs share the row equally (C96 item 7).
+  } // fit: the tabs share the row equally (C96 item 7); auto on a narrow place,
+  // the row's own width below the h1 step (C181 (2)), as the sheet shares a
+  // printed row.
 
 
   fitsEqually(count) {
     const fit = this.fit;
     if (fit === 'never' || this.look === 'vertical') return false;
-    return fit === 'always' ? count > 1 : Boolean(this._narrow) && count >= 2 && count <= 4;
+    return fit === 'always' ? count > 1 : this.narrowPlace() && count >= 2 && count <= 4;
   }
 
   get overflow() {
@@ -2425,6 +2428,23 @@ class SfTabs extends TabsElement {
   }
 
   layoutOverflow() {
+    this.layoutRow(); // The sheet shares a narrow row of two to four tabs by itself, so the
+    // printed first frame is the laid row (C96 item 7 by C181 (2)); a narrow
+    // row whose tabs keep their own widths says so with data-sf-tabs-own.
+
+    const container = this.tabList?.parentElement;
+    if (!container) return;
+    if (container.hasAttribute('data-sf-tabs-fit') || !this.narrowPlace()) container.removeAttribute('data-sf-tabs-own');else container.setAttribute('data-sf-tabs-own', '');
+  } // The row is narrow when the sheet says so: below the h1 step of the row's
+  // own width (component.tabs, @container sf-tabs-row), not the screen's.
+
+
+  narrowPlace() {
+    const list = this.tabList;
+    return Boolean(list) && getComputedStyle(list).getPropertyValue('--sf-tabs--narrow').trim() === '1';
+  }
+
+  layoutRow() {
     const list = this.tabList;
     const more = this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > .sf-tabs-more');
     if (!list) return;
@@ -2436,6 +2456,7 @@ class SfTabs extends TabsElement {
     const container = list.parentElement; // The tabs are measured at their own widths; fit shares the row after.
 
     container?.removeAttribute('data-sf-tabs-fit');
+    container?.setAttribute('data-sf-tabs-own', '');
 
     const showMore = shown => {
       if (shown) container?.setAttribute('data-sf-tabs-more', '');else container?.removeAttribute('data-sf-tabs-more');
@@ -3438,7 +3459,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.4","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
