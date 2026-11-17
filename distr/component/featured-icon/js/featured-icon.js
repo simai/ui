@@ -164,7 +164,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -190,7 +191,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {

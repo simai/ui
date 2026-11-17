@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.list",
-  "version": "1.18.1",
+  "version": "1.20.2",
   "title": "List",
   "summary": "A list a person acts on -- conversations, letters, templates, files, members, versions: rows from data drawn as sf-list-item, grouped by day or by key, one Tab stop, the open row, row actions in one shared menu, rename in place, the next page at the end, an empty state. Fetches nothing; every request is an event.",
   "kind": "smart",
@@ -86,7 +86,7 @@
       "has-more": {
         "type": "boolean",
         "default": false,
-        "description": "A next page exists: «Показать ещё» shows, and the end brought into reach by a person's scroll asks for it (an end in reach on load waits for the button or the first scroll)."
+        "description": "Deprecated until 2027-01-01 (owner decision C167 (1)): the end of a list is sf-pagination appearance=\"more\" after it (its button, «Показано X из Y», load=button|auto, sf-pagination-load-more); noted once per element in SF.deprecations, journal attribute-list-has-more-to-pagination-more. A next page exists: «Показать ещё» shows, and the end brought into reach by a person's scroll asks for it (an end in reach on load waits for the button or the first scroll)."
       },
       "loading": {
         "type": "boolean",
@@ -578,7 +578,7 @@
       }
     },
     "requestMore": {
-      "summary": "Ask for the next page, as reaching the end and «Показать ещё» do; nothing while a request is out.",
+      "summary": "Deprecated until 2027-01-01 (owner decision C167 (1)): the end of a list is sf-pagination appearance=\"more\" after it (its button, «Показано X из Y», load=button|auto, sf-pagination-load-more); noted once per element in SF.deprecations, journal attribute-list-has-more-to-pagination-more. Ask for the next page, as reaching the end and «Показать ещё» do; nothing while a request is out.",
       "arguments": [],
       "returns": {
         "type": "object",
@@ -586,7 +586,7 @@
       }
     },
     "moreFailed": {
-      "summary": "The next page could not be loaded: «Показать ещё» and the end ask again.",
+      "summary": "Deprecated until 2027-01-01 (owner decision C167 (1)): the end of a list is sf-pagination appearance=\"more\" after it (its button, «Показано X из Y», load=button|auto, sf-pagination-load-more); noted once per element in SF.deprecations, journal attribute-list-has-more-to-pagination-more. The next page could not be loaded: «Показать ещё» and the end ask again.",
       "arguments": [],
       "returns": {
         "type": "object",
@@ -661,7 +661,7 @@
       }
     },
     "sf-list-load-more": {
-      "summary": "The next page is asked for: a person's scroll brought the end into reach, or «Показать ещё»: {direction: after, after}. Never on load by itself. Cancelling it is moreFailed().",
+      "summary": "Deprecated until 2027-01-01 (owner decision C167 (1)): the end of a list is sf-pagination appearance=\"more\" after it (its button, «Показано X из Y», load=button|auto, sf-pagination-load-more); noted once per element in SF.deprecations, journal attribute-list-has-more-to-pagination-more. The next page is asked for: a person's scroll brought the end into reach, or «Показать ещё»: {direction: after, after}. Never on load by itself. Cancelling it is moreFailed().",
       "payload": {
         "type": "object",
         "required": [
@@ -795,15 +795,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/list/index.js",
-        "sha256": "8bbd0ecb81e9004891d1d3e43d98eb5bf808810e9389356b1d0cca58a6e75b71"
+        "sha256": "03faadfb330c62a8383cb01bf990f25bf9f68d75b67012451e2c7f723ad547e8"
       },
       {
         "path": "src/smart/list/js/templates/default.js",
-        "sha256": "ab6f7829588f2239b629825cb2ef669e12bb7c9e03b0af944e33663729e082c6"
+        "sha256": "78d347497e977aa3b23845d3ae4e07db93b0c2474d0c7bc7310b6e8e383a3f45"
       },
       {
         "path": "src/smart/list/js/templates/default.css",
-        "sha256": "1dc6088f576fd262a32cd0e9e89c640c5d970772b664e8dec6c052483a810289"
+        "sha256": "fda5e1f7b1f71e22a5c72ac44b9612fa760ff98fea9b63470c83d7078473a1af"
       },
       {
         "path": "src/smart/list/rule.js",
@@ -811,11 +811,11 @@
       },
       {
         "path": "src/smart/list/docs.md",
-        "sha256": "9fca4e970e0a2f62176f8473e872ff9c1bcd3842d23a620ebfc6762c739fc050"
+        "sha256": "fda628c5bc582c99fb65801c6fc8333283c4118bfc5be08b0d5fc7cfb378c61c"
       },
       {
         "path": "src/smart/list/component.json",
-        "sha256": "b2391e715363b08aeb5ffb813fc0e06ada608acdc8c4fe8e9db00895bb17a572"
+        "sha256": "d27e62767589592fc98878864f2fb0606db24f9a05e52390e3b1caf0d727be9d"
       },
       {
         "path": "src/smart/list/lang/en.json",

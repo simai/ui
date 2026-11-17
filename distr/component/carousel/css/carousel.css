@@ -122,8 +122,8 @@
   .sf-carousel-rotation:hover {
     --sf-carousel-control--background-color: var(--sf-surface-media-hover);
   }
-  /* Pressed glass; a coloured modifier keeps its own fill when pressed. */
-  .sf-carousel-switch:not(.sf-carousel-switch--primary):not(.sf-carousel-switch--secondary-container):not(.sf-carousel-switch--surface-inverse):not(.sf-carousel-switch--surface-page):not(.sf-carousel-switch--surface-zero):active,
+  /* Pressed glass; the primary switch keeps its own fill when pressed. */
+  .sf-carousel-switch:not(.sf-carousel-switch--primary):active,
   .sf-carousel-rotation:active {
     --sf-carousel-control--background-color: var(--sf-surface-media-active);
   }
@@ -144,56 +144,20 @@
   .sf-carousel-rotation.focus-visible,
   .sf-carousel-pagination-item.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-carousel-switch:focus-visible,
   .sf-carousel-rotation:focus-visible,
   .sf-carousel-pagination-item:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
-  .sf-carousel-switch--secondary-container {
-    --sf-carousel-control--radius: var(--sf-radius--ui);
-    --sf-carousel-control--backdrop: none;
-    --sf-carousel-control--background-color: var(--sf-secondary-container);
-    --sf-carousel-control--color: var(--sf-on-secondary-container);
-  }
-  .sf-carousel-switch--secondary-container:hover {
-    --sf-carousel-control--background-color: var(--sf-secondary-container-hover);
-    --sf-carousel-control--color: var(--sf-on-secondary-container);
-  }
-  .sf-carousel-switch--surface-inverse {
-    --sf-carousel-control--radius: var(--sf-radius--ui);
-    --sf-carousel-control--backdrop: none;
-    --sf-carousel-control--background-color: var(--sf-surface-inverse);
-    --sf-carousel-control--color: var(--sf-on-surface-inverse);
-  }
-  .sf-carousel-switch--surface-inverse:hover {
-    --sf-carousel-control--background-color: var(--sf-surface-inverse-hover);
-    --sf-carousel-control--color: var(--sf-on-surface-inverse);
-  }
-  /* sf-carousel-switch--surface-page; --surface-zero is its former name (C16
-     names, journal class-carousel-surface-names, until 2027-01-01). */
-  .sf-carousel-switch.sf-carousel-switch--surface-page {
-    --sf-carousel-control--radius: var(--sf-radius--ui);
-    --sf-carousel-control--backdrop: none;
-    --sf-carousel-control--background-color: var(--sf-surface-page);
-    --sf-carousel-control--color: var(--sf-on-surface);
-  }
-  .sf-carousel-switch.sf-carousel-switch--surface-zero {
-    --sf-carousel-control--radius: var(--sf-radius--ui);
-    --sf-carousel-control--backdrop: none;
-    --sf-carousel-control--background-color: var(--sf-surface-page);
-    --sf-carousel-control--color: var(--sf-on-surface);
-  }
-  .sf-carousel-switch.sf-carousel-switch--surface-page:hover {
-    --sf-carousel-control--background-color: var(--sf-surface-area);
-    --sf-carousel-control--color: var(--sf-on-surface-hover);
-  }
-  .sf-carousel-switch.sf-carousel-switch--surface-zero:hover {
-    --sf-carousel-control--background-color: var(--sf-surface-area);
-    --sf-carousel-control--color: var(--sf-on-surface-hover);
-  }
+  /* The former colour switches --secondary-container, --surface-inverse,
+     --surface-page (and --surface-zero) drew a theme surface over a picture:
+     1.36:1 for the glyph on a dark slide, a plate 1.09-1.22:1 to the slide
+     (RG-OT 15). Over a picture a control stands on glass (C14 (3), C16), so
+     until the carousel is removed (2027-01-01) they draw the default glass; the
+     class names keep working. */
   .sf-carousel-switch--media {
     /* Glass over the slide (C16, surfaces research 5), the default since
        component.carousel 1.2.0; the class says it outright. */
@@ -215,6 +179,13 @@
     min-width: var(--sf-ui-2--control-height);
     min-inline-size: var(--sf-ui-2--control-height);
     padding: var(--sf-ui-2--space-y);
+  }
+  /* The glyph takes the step of its button (C18): 28 in the 48 switch, as an
+     icon button of step 2 (RG-OT 16); it kept 24. */
+  .sf-carousel-switch--big .sf-icon {
+    --sf-icon--font-size: var(--sf-text-height-2);
+    --sf-icon--height: var(--sf-text-height-2);
+    --sf-icon--width: var(--sf-text-height-2);
   }
   .sf-carousel .sf-carousel-switch {
     top: 50%;
@@ -376,6 +347,10 @@
     padding: 0;
     position: relative;
   }
+  /* A dot that is not shown is told from the shown one by its form, not only
+     by its fade (RG-OT 14): the shown dot is a pill as long as three dots, as
+     the slider's (C143 (4)); the others keep a fade of the ink scale, 3:1 or
+     more to the glass on any picture (WCAG 1.4.11). */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel-pagination-item::after {
     left: 50%;
   }
@@ -400,7 +375,7 @@
   }
   .sf-carousel-pagination-item::after {
     background-color: currentColor;
-    border-radius: var(--sf-radius-circle);
+    border-radius: var(--sf-radius-rounded);
     height: var(--sf-a8);
     block-size: var(--sf-a8);
     content: "";
@@ -409,7 +384,7 @@
     top: 50%;
     inset-block-start: 50%;
     inset-inline-start: 50%;
-    opacity: var(--sf-opacity-40);
+    opacity: var(--sf-opacity-60);
     position: absolute;
     -webkit-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
@@ -420,38 +395,20 @@
     opacity: 1;
     opacity: initial;
   }
+  .sf-carousel-pagination-item--active::after {
+    width: var(--sf-c2);
+    inline-size: var(--sf-c2);
+  }
   .sf-carousel-pagination--primary {
     --sf-carousel-pagination--background-color: var(--sf-primary);
     --sf-carousel-pagination-item--color: var(--sf-on-primary);
     --sf-carousel-pagination--radius: var(--sf-radius--ui);
     --sf-carousel-pagination--backdrop: none;
   }
-  .sf-carousel-pagination--primary-container {
-    --sf-carousel-pagination--radius: var(--sf-radius--ui);
-    --sf-carousel-pagination--backdrop: none;
-    --sf-carousel-pagination--background-color: var(--sf-primary-container);
-    --sf-carousel-pagination-item--color: var(--sf-on-primary-container);
-  }
-  /* sf-carousel-pagination--surface-area; --surface-2 is its former name (C16
-     names, journal class-carousel-surface-names, until 2027-01-01). */
-  .sf-carousel-pagination.sf-carousel-pagination--surface-area {
-    --sf-carousel-pagination--radius: var(--sf-radius--ui);
-    --sf-carousel-pagination--backdrop: none;
-    --sf-carousel-pagination--background-color: var(--sf-surface-area);
-    --sf-carousel-pagination-item--color: var(--sf-on-surface);
-  }
-  .sf-carousel-pagination.sf-carousel-pagination--surface-2 {
-    --sf-carousel-pagination--radius: var(--sf-radius--ui);
-    --sf-carousel-pagination--backdrop: none;
-    --sf-carousel-pagination--background-color: var(--sf-surface-area);
-    --sf-carousel-pagination-item--color: var(--sf-on-surface);
-  }
-  .sf-carousel-pagination--surface-inverse {
-    --sf-carousel-pagination--radius: var(--sf-radius--ui);
-    --sf-carousel-pagination--backdrop: none;
-    --sf-carousel-pagination--background-color: var(--sf-surface-inverse);
-    --sf-carousel-pagination-item--color: var(--sf-on-surface-inverse);
-  }
+  /* The former plates --primary-container, --surface-area (--surface-2) and
+     --surface-inverse put theme surfaces over the picture, their dots 1.1-2.3:1
+     to the plate on a photo (RG-OT 14, 15): they draw the default glass until
+     the carousel is removed (2027-01-01); the class names keep working. */
   .sf-carousel-pagination--no-background {
     --sf-carousel-pagination--backdrop: none;
     --sf-carousel-pagination--background-color: transparent;
@@ -463,9 +420,13 @@
     min-width: var(--sf-ui-1--control-height);
     min-inline-size: var(--sf-ui-1--control-height);
   }
-  .sf-carousel .swiper-button-disabled {
+  /* A switch with nowhere to go is a disabled button (the engine, C245); the
+     switch has no disabled colours of its own, so it fades by the system's
+     disabled opacity (C18). */
+  .sf-carousel .swiper-button-disabled,
+  .sf-carousel .sf-carousel-switch:disabled {
     cursor: default;
-    opacity: var(--sf-opacity-40);
+    opacity: var(--sf-opacity-disabled);
   }
   @media (prefers-reduced-motion: reduce) {
     .sf-carousel .swiper-wrapper,
@@ -477,7 +438,7 @@
     .sf-carousel-switch,
     .sf-carousel-rotation,
     .sf-carousel-pagination {
-      border: var(--sf-focus-outline-width) solid ButtonText;
+      border: var(--sf-focus--width) solid ButtonText;
       forced-color-adjust: none;
     }
     .sf-carousel-pagination-item {

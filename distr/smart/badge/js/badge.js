@@ -169,8 +169,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -846,7 +849,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

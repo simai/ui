@@ -4,12 +4,30 @@
     -webkit-animation-duration: var(--sf-duration-fast);
             animation-duration: var(--sf-duration-fast);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .animation-duration-fast {
+      -webkit-animation-duration: 0.01ms;
+              animation-duration: 0.01ms;
+    }
+  }
   .animation-duration-normal {
     -webkit-animation-duration: var(--sf-duration-normal);
             animation-duration: var(--sf-duration-normal);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .animation-duration-normal {
+      -webkit-animation-duration: 0.01ms;
+              animation-duration: 0.01ms;
+    }
+  }
   .animation-duration-slow {
     -webkit-animation-duration: var(--sf-duration-slow);
             animation-duration: var(--sf-duration-slow);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animation-duration-slow {
+      -webkit-animation-duration: 0.01ms;
+              animation-duration: 0.01ms;
+    }
   }
 }

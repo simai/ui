@@ -76,8 +76,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -235,10 +238,29 @@ class SfReferenceLink extends ReferenceLinkElement {
 
   template() {
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderReferenceLinkTemplate)(this.templateContext());
+  } // A card is in a place of its own (C181 (2), dispatcher decision
+  // 2026-11-15): its host draws a block, the container sf-reference-link its
+  // card stacks in by the place's width (the component sheet). Every other
+  // form -- in text, plain, a size, a line -- is a run or a control in a row
+  // or a cell: its host stays display: contents, as every Smart host. What
+  // the page set inline that a child inherits stays on the host before it.
+
+
+  get isCard() {
+    const appearance = this.appearance || 'card';
+    return appearance !== 'inline' && appearance !== 'plain' && !this.size && !this.line;
+  }
+
+  applyHostDisplayStyle() {
+    const next = [this.hostInheritedStyle(), `display: ${this.isCard ? 'block' : 'contents'};`].filter(Boolean).join(' ');
+    return this.writeHostStyle(next);
   }
 
   afterRender(callback) {
-    if (typeof callback === 'function') return super.afterRender(callback);
+    if (typeof callback === 'function') return super.afterRender(callback); // appearance, size or line may have changed the form since connect;
+    // the host's style is written only when it differs.
+
+    this.applyHostDisplayStyle();
     this.markCutName();
     this.observeRoom();
     return undefined;
@@ -436,19 +458,27 @@ function renderReferenceLinkTemplate(context) {
   const shownIcon = gone ? GONE_ICON : icon;
   const iconPart = shownIcon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__icon sf-icon" aria-hidden="true">${shownIcon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // A new tab says so (C147 (4)): the sign after the words and, for a screen
   // reader, the words in the link's name -- in the page's language, the
-  // words sf-file-download says for a file opened to view (C25).
+  // words sf-file-download says for a file opened to view (C25). The sign is
+  // the Framework's one new-tab sign, arrow_outward, as sf-link and core's
+  // link in text (C186 (3); content study C5, it was open_in_new).
 
-  const tabPart = newTab ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__tab sf-icon" aria-hidden="true">open_in_new</i><span class="sf-reference-link__tab-words">${words.newTab}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const tabPart = newTab ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-reference-link__tab sf-icon" aria-hidden="true">arrow_outward</i><span class="sf-reference-link__tab-words">${words.newTab}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const name = ariaLabel && newTab ? `${ariaLabel} ${words.newTab}` : ariaLabel;
   const reasonPart = gone ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__reason">${state === 'forbidden' ? words.forbidden : words.missing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
   if (inline) {
     // In text (C147 (1), (2)): one inline run that wraps with the sentence --
     // the type icon, the name, the record's number in a quiet ink, the new
-    // tab sign. No white space between the parts: the icon never parts from
-    // the name's first word at a line end.
+    // tab sign. The icon is an atomic inline, which the browser breaks after
+    // even with no space between (a word joiner does not hold it): on a
+    // narrow line it stood alone at the line end with the name on the next
+    // (content study C6). So the icon and the name's first word stand in one
+    // run that does not break, inside the label (the icon is a box, so the
+    // name's underline does not run under it).
     const numberPart = textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <span class="sf-reference-link__number">${textContent}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-    const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${iconPart}<span class="sf-reference-link__label">${labelContent}</span>${numberPart}${reasonPart}${tabPart}`;
+    const split = shownIcon && typeof labelContent === 'string' ? labelContent.match(/^(\s*\S+)([\s\S]*)$/u) : null;
+    const labelPart = split ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-reference-link__label"><span class="sf-reference-link__start">${iconPart}${split[1]}</span>${split[2]}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${iconPart}<span class="sf-reference-link__label">${labelContent}</span>`;
+    const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${labelPart}${numberPart}${reasonPart}${tabPart}`;
     const run = href && !disabled && !gone ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-reference-link__link"
           href=${href}
           target=${target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -537,7 +567,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-refer
 /***/ "02ab397b5f7e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.2.1","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","inline","plain"],"default":"card"},"copy":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"state":{"type":"enum","values":["","missing","forbidden"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.reference-link","tag":"sf-reference-link","version":"1.3.2","kind":"leaf","settings":{"appearance":{"type":"enum","values":["card","inline","plain"],"default":"card"},"copy":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"state":{"type":"enum","values":["","missing","forbidden"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

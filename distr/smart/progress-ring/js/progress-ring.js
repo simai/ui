@@ -356,10 +356,31 @@ class SfProgressRing extends ProgressRingElement {
 
   static get observedAttributes() {
     return [...new Set([...super.observedAttributes, 'aria-label'])];
-  } // An avatar put in the ring without slot="content" is not the ring's
-  // content: it stands beside the ring (AR-4, recipe C152 (8)). It is said
-  // once a page -- one console warning, wherever the ring is -- and each
-  // ring is listed in SF.deprecations, so a person or a probe finds it.
+  } // A lone avatar child is the ring's content (owner decision C152 (8), DEV
+  // AR-4, fix/avatar-ring-ar1 2026-11-16): the recipe is a ring holding an
+  // avatar, and a page that left out slot="content" got the avatar beside
+  // the ring, 60 px off its middle. The ring names the slot for it when the
+  // avatar (sf-avatar or a class .sf-avatar) is its only element child and
+  // no child names the content slot; a printed first paint (data-sf-static)
+  // is a picture of the ring, not a child.
+
+
+  captureSlotTemplates() {
+    if (!this._slotTemplatesCaptured && !this.querySelector(':scope > [slot="content"]')) {
+      const children = [...this.children].filter(child => !child.hasAttribute('data-sf-static'));
+      const [only] = children;
+
+      if (children.length === 1 && !only.hasAttribute('slot') && (only.localName === 'sf-avatar' || only.classList?.contains('sf-avatar'))) {
+        only.setAttribute('slot', 'content');
+      }
+    }
+
+    super.captureSlotTemplates();
+  } // An avatar the ring cannot take as its content -- beside other children,
+  // or under a content slot already named -- stands beside the ring (AR-4,
+  // recipe C152 (8)). It is said once a page -- one console warning,
+  // wherever the ring is -- and each ring is listed in SF.deprecations, so a
+  // person or a probe finds it.
 
 
   noteUnslottedAvatar() {
@@ -381,7 +402,7 @@ class SfProgressRing extends ProgressRingElement {
       value: true,
       configurable: true
     });
-    globalThis.console?.warn?.(`[SIMAI Framework] sf-progress-ring${this.id ? ` #${this.id}` : ''}: an sf-avatar inside the ring without slot="content" is drawn beside the ring, not in it. Give the sf-avatar slot="content" (decision C152 (8)).`);
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-progress-ring${this.id ? ` #${this.id}` : ''}: an sf-avatar inside the ring beside other content is drawn beside the ring, not in it. Give the sf-avatar slot="content" (decision C152 (8)).`);
   }
 
   templateContext() {
@@ -527,7 +548,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.5.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

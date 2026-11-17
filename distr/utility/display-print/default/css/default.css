@@ -54,9 +54,19 @@
     }
   }
   @media print {
-    .print-hidden,
+    .print-hidden {
+      display: none;
+    }
+  }
+  @media print {
+    .print-invisible,
     .print-visible-none {
       visibility: hidden;
+    }
+  }
+  @media not print {
+    .print-only {
+      display: none;
     }
   }
 }

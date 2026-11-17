@@ -33,13 +33,12 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (this.id) {
       this.element.id = this.id;
-    }
+    } // No sf-emoji--skin-* class: a skin tone is a character (withSkin
+    // below), and the class had no rule behind it in any version (content
+    // study E2, 2026-11-16).
+
 
     this.element.classList.add('sf-emoji', `sf-emoji--size-${size}`);
-
-    if (skin) {
-      this.element.classList.add(`sf-emoji--skin-${skin}`);
-    }
 
     if (className) {
       this.element.classList.add(...`${className}`.split(' ').filter(Boolean));

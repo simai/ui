@@ -42,7 +42,22 @@ const isPlainObject = value => Boolean(value) && typeof value === 'object' && !A
 
 const formatMessage = (template, index, length) => String(template).replaceAll('{{index}}', String(index + 1)).replaceAll('{{slidesLength}}', String(length));
 
-const numeric = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+const numeric = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback; // The engine owns the strip's accessibility (owner decision C245): hidden
+// slides inert, an edge button really disabled, slide names counted again on
+// update(), no autoplay under reduced motion. a11y: false (or
+// {enabled: false}) leaves all four to the caller.
+
+
+const a11yOn = params => params.a11y !== false && !(isPlainObject(params.a11y) && params.a11y.enabled === false); // The <button> of a navigation element: the element itself, or the one button
+// inside a host (an sf-button-icon around its .sf-icon-button).
+
+
+const buttonOf = element => {
+  if (!(element instanceof Element)) return null;
+  if (element instanceof HTMLButtonElement) return element;
+  const inner = element.querySelectorAll('button');
+  return inner.length === 1 ? inner[0] : null;
+};
 
 function resolveElement(value, root) {
   if (value instanceof Element) return value;
@@ -152,8 +167,11 @@ class SimaiSlider {
     this._pointerDown = event => {
       if (!allowed() || !event.isPrimary) return;
       if (event.pointerType === 'mouse' && (event.button !== 0 || this.params.simulateTouch === false)) return;
-      if (event.target instanceof Element && event.target.closest(EDITABLE)) return;
-      if (this.slides.length <= Math.ceil(this.perView())) return;
+      if (event.target instanceof Element && event.target.closest(EDITABLE)) return; // Nothing to page: every slide is in view. With a fractional count
+      // (three slides at 2.2) there is one stop more than whole slides give,
+      // and a drag reaches it as the button does (RG-OT 2).
+
+      if (!this.params.loop && this.lastIndex() === 0) return;
       this._drag = {
         id: event.pointerId,
         x: event.clientX,
@@ -272,9 +290,11 @@ class SimaiSlider {
 
   offsetSlides() {
     return Math.min(this.activeIndex, Math.max(0, this.slides.length - this.perView()));
-  } // Responsive settings (breakpoints) are read again when the window changes
-  // width; nothing listened before, so a slider kept the count of the width it
-  // was started at.
+  } // Responsive settings (breakpoints) are read again when their width changes;
+  // nothing listened before, so a slider kept the count of the width it was
+  // started at. The width is the strip's own (breakpointsBase 'container', the
+  // default since 1.2.0: a component follows the width of its place, C181
+  // (2)); breakpointsBase 'window' keeps Swiper's window width.
 
 
   attachResize() {
@@ -292,7 +312,26 @@ class SimaiSlider {
       });
     };
 
-    if (this.originalParams.breakpoints) window.addEventListener('resize', this._resize);
+    if (!this.originalParams.breakpoints) return;
+
+    if (this.breakpointsBase() === 'window' || typeof ResizeObserver !== 'function') {
+      window.addEventListener('resize', this._resize);
+      return;
+    }
+
+    this._resizeObserver = new ResizeObserver(this._resize);
+
+    this._resizeObserver.observe(this.el);
+  }
+
+  breakpointsBase() {
+    return this.originalParams.breakpointsBase === 'window' ? 'window' : 'container';
+  } // The width breakpoints are read against: the strip's own, or the window's.
+
+
+  breakpointsWidth() {
+    if (this.breakpointsBase() === 'window') return window.innerWidth;
+    return this.el.getBoundingClientRect().width;
   }
 
   gap() {
@@ -322,7 +361,9 @@ class SimaiSlider {
     const api = {
       running: false,
       start: () => {
-        if (!settings || settings.enabled === false || api.running) return false;
+        if (!settings || settings.enabled === false || api.running) return false; // Under reduced motion the slides do not turn by themselves (C245).
+
+        if (a11yOn(this.params) && prefersReducedMotion()) return false;
         api.running = true;
         timer = window.setInterval(() => this.slideNext(), numeric(settings.delay, 5000));
         this.emit('autoplayStart');
@@ -347,7 +388,8 @@ class SimaiSlider {
   }
 
   selectedParams() {
-    const points = Object.entries(this.originalParams.breakpoints || {}).map(([point, value]) => [Number(point), value]).filter(([point]) => Number.isFinite(point) && point <= window.innerWidth).sort((a, b) => a[0] - b[0]);
+    const width = this.breakpointsWidth();
+    const points = Object.entries(this.originalParams.breakpoints || {}).map(([point, value]) => [Number(point), value]).filter(([point]) => Number.isFinite(point) && point <= width).sort((a, b) => a[0] - b[0]);
     return points.length ? { ...this.originalParams,
       ...points.at(-1)[1]
     } : { ...this.originalParams
@@ -372,12 +414,20 @@ class SimaiSlider {
 
       if (a11y.itemRoleDescriptionMessage) slide.setAttribute('aria-roledescription', a11y.itemRoleDescriptionMessage); // A slide the page named keeps its name («Закат»); it used to be replaced
       // by «1 / 2» on every update, before the carousel could even remember it.
+      // A name the engine wrote is counted again on every update (C245, RG-OT
+      // 3): it is kept in data-swiper-slide-label, so a slide copied from
+      // another («1 / 2» and its mark) is renamed «3 / 3», not taken as the
+      // page's own name.
 
-      if (slide.__sfAuthoredLabel === undefined) {
-        slide.__sfAuthoredLabel = slide.getAttribute('aria-label') ?? '';
+      const current = slide.getAttribute('aria-label');
+
+      if (slide.__sfAuthoredLabel === undefined || current !== null && current !== slide.__sfAuthoredLabel && current !== slide.dataset.swiperSlideLabel) {
+        slide.__sfAuthoredLabel = current !== null && current === slide.dataset.swiperSlideLabel ? '' : current ?? '';
       }
 
-      slide.setAttribute('aria-label', slide.__sfAuthoredLabel || formatMessage(a11y.slideLabelMessage || '{{index}} / {{slidesLength}}', index, slides.length));
+      const label = slide.__sfAuthoredLabel || formatMessage(a11y.slideLabelMessage || '{{index}} / {{slidesLength}}', index, slides.length);
+      if (slide.__sfAuthoredLabel) delete slide.dataset.swiperSlideLabel;else slide.dataset.swiperSlideLabel = label;
+      slide.setAttribute('aria-label', label);
       slide.style.flexBasis = gap && slidesPerView > 1 ? `calc((100% - ${(slidesPerView - 1) * gap}px) / ${slidesPerView})` : `${100 / slidesPerView}%`;
     });
     this.activeIndex = clamp(this.activeIndex, 0, this.lastIndex());
@@ -416,8 +466,8 @@ class SimaiSlider {
     this.slides.forEach((_, index) => {
       const bullet = document.createElement(options.bulletElement || 'span');
       bullet.className = options.bulletClass || 'swiper-pagination-bullet';
-      if (bullet instanceof HTMLButtonElement) bullet.type = 'button'; // The number has its place in the word ({n}): «Go to slide 3», «3-слайдқа
-      // өту» (C177 (9)). A word registered before 2026-11-14 has none; it is put after.
+      if (bullet instanceof HTMLButtonElement) bullet.type = 'button'; // The number has its place in the word ({n}): «Go to slide 3», «Folie 3
+      // anzeigen» (C177 (9)). A word registered before 2026-11-14 has none; it is put after.
 
       const go = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.pageText)(SWIPER_TEXT, 'goToSlide', root, 'sf-swiper');
       const number = new Intl.NumberFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(root)).format(index + 1);
@@ -451,6 +501,7 @@ class SimaiSlider {
 
   sync() {
     const slides = this.slides;
+    const a11y = a11yOn(this.params);
     const slidesPerView = this.perView(); // In view: every slide the window shows a part of, from the offset (short
     // of the end at the last stop) to offset + slidesPerView.
 
@@ -460,7 +511,13 @@ class SimaiSlider {
       const visible = index + 1 > offset + 1e-6 && index < offset + slidesPerView - 1e-6;
       slide.classList.toggle('swiper-slide-active', active);
       slide.classList.toggle('swiper-slide-visible', visible);
-      slide.setAttribute('aria-hidden', String(!visible));
+      slide.setAttribute('aria-hidden', String(!visible)); // A hidden slide's links and buttons leave the Tab order (C245); an
+      // inert the page wrote stays.
+
+      if (a11y) {
+        if (slide.__sfAuthoredInert === undefined) slide.__sfAuthoredInert = slide.hasAttribute('inert');
+        slide.toggleAttribute('inert', !visible || slide.__sfAuthoredInert);
+      }
     });
 
     if (this.wrapperEl) {
@@ -470,8 +527,9 @@ class SimaiSlider {
 
     const disabledClass = this.params.navigation?.disabledClass || 'swiper-button-disabled';
     const looping = Boolean(this.params.loop);
-    this.navigation.prevEl?.classList.toggle(disabledClass, !looping && this.activeIndex === 0);
-    this.navigation.nextEl?.classList.toggle(disabledClass, !looping && this.activeIndex === this.lastIndex());
+    const edges = [[this.navigation.prevEl, !looping && this.activeIndex === 0], [this.navigation.nextEl, !looping && this.activeIndex === this.lastIndex()]];
+    edges.forEach(([element, off]) => element?.classList.toggle(disabledClass, off));
+    if (a11y) this.disableEdgeButtons(edges);
     const pagination = this.params.pagination || {};
 
     if (pagination.type === 'fraction' && this.pagination.el) {
@@ -490,6 +548,33 @@ class SimaiSlider {
       if (pagination.keyboard) bullet.tabIndex = active ? 0 : -1;
     });
     return this;
+  } // A button with nowhere to go is a disabled button (C245, RG-OT 1): out of
+  // the Tab order, drawn by its own disabled look; the mark class stays for a
+  // non-button arrow. When the focus is on the button that stops, it moves to
+  // the other one, so it does not fall to the page.
+
+
+  disableEdgeButtons(edges) {
+    const buttons = edges.map(([element, off]) => {
+      const button = buttonOf(element); // A button the page disabled stays disabled.
+
+      if (button && button.__sfSwiperDisabled === undefined) button.__sfSwiperDisabled = button.disabled;
+      return [button, off || Boolean(button?.__sfSwiperDisabled)];
+    });
+    buttons.forEach(([button, off], index) => {
+      if (!button || button.disabled === off) return;
+
+      if (off && button === button.ownerDocument?.activeElement) {
+        const [other, otherOff] = buttons[1 - index];
+
+        if (other && !otherOff) {
+          other.disabled = false;
+          other.focus?.();
+        }
+      }
+
+      button.disabled = off;
+    });
   }
 
   slideTo(index, speed = this.params.speed, runCallbacks = true) {
@@ -541,6 +626,7 @@ class SimaiSlider {
     this.keyboardEl?.removeEventListener('keydown', this._keyboard);
     if (this._paginationKeys) this.pagination.el?.removeEventListener('keydown', this._paginationKeys);
     window.removeEventListener('resize', this._resize);
+    this._resizeObserver?.disconnect();
     if (this._resizeFrame) window.cancelAnimationFrame(this._resizeFrame);
     this.el.removeEventListener('pointerdown', this._pointerDown);
     this.el.removeEventListener('pointermove', this._pointerMove);
@@ -552,7 +638,14 @@ class SimaiSlider {
     this.slides.forEach(slide => {
       slide.classList.remove('swiper-slide-active', 'swiper-slide-visible');
       slide.removeAttribute('aria-hidden');
+      if (slide.__sfAuthoredInert !== undefined) slide.toggleAttribute('inert', slide.__sfAuthoredInert);
+      delete slide.__sfAuthoredInert;
       if (cleanStyles) slide.style.removeProperty('flex-basis');
+    });
+    [this.navigation.prevEl, this.navigation.nextEl].map(buttonOf).forEach(button => {
+      if (!button || button.__sfSwiperDisabled === undefined) return;
+      button.disabled = button.__sfSwiperDisabled;
+      delete button.__sfSwiperDisabled;
     });
     this.el.classList.remove('swiper-initialized', 'swiper-horizontal');
     this.destroyed = true;
@@ -890,7 +983,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -916,7 +1010,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -969,7 +1065,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1040,15 +1137,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1250,7 +1353,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1355,7 +1458,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1396,6 +1499,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1494,8 +1616,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -1650,7 +1774,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1670,7 +1795,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1710,7 +1836,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1735,7 +1862,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1745,7 +1873,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1860,7 +1989,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1922,15 +2054,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

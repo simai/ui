@@ -76,8 +76,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -261,13 +264,12 @@ function renderProgressScale(root) {
   // threshold draws it again.
 
   const drawn = normalizeProgressScaleTone((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.effectiveStatus)(tone, value, (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt), (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt)));
-  const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line, and a level scale, lay their track and value out
-  // in a row, the value at the row's end (C185 (5)); any other scale stands
-  // its value under the track.
+  const showText = normalizeBoolean(root.dataset.showText, true); // Every scale lays its track and value out in a row, the value at the
+  // row's end, as the bar's inline-end and the level (owner decision C219,
+  // with C185 (5) and C203); it stood under the track before.
 
-  const onRow = level || /(^|\s)sf-progress-scale--line-/.test(root.className);
-  root.classList.add('sf-progress-scale', 'flex', onRow ? 'flex-row' : 'flex-col');
-  root.classList.remove(onRow ? 'flex-col' : 'flex-row');
+  root.classList.add('sf-progress-scale', 'flex', 'flex-row');
+  root.classList.remove('flex-col');
   root.classList.toggle('sf-progress-scale--level', level);
   syncScaleClasses(root, step, size, drawn);
   root.dataset.value = String(value);
@@ -378,7 +380,9 @@ function getProgressScaleState(target) {
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
     meter: root.dataset.meter === 'true',
-    steps: root.dataset.steps ? normalizeProgressScaleSteps(root.dataset.steps) : null
+    steps: root.dataset.steps ? normalizeProgressScaleSteps(root.dataset.steps) : null,
+    warningAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt),
+    errorAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt)
   };
 }
 
@@ -1194,10 +1198,10 @@ function renderProgressScaleTemplate(context) {
   const valueText = context.valueText || words;
   const tone = normalizeStatus(context.drawnStatus ?? context.status ?? context.tone);
   const meter = on(context.meter);
-  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, tone ? `sf-progress-scale--${tone}` : '', // On a text line the track and the value share the line, and a level's
-  // value stands at the row's end; otherwise the value stands under the
-  // track.
-  levelSteps ? 'sf-progress-scale--level' : '', ...(context.line ? [`sf-progress-scale--line-${context.line}`, 'flex', 'flex-row', 'items-cross-center'] : levelSteps ? ['flex', 'flex-row'] : ['flex', 'flex-col']), context.rootClass].filter(Boolean);
+  const rootClasses = ['sf-progress-scale', `sf-progress-scale--size-${size}`, tone ? `sf-progress-scale--${tone}` : '', // The track and the value share one row, the value at its end (owner
+  // decision C219, with C185 (5) and C203); on a text line the row is the
+  // line's height.
+  levelSteps ? 'sf-progress-scale--level' : '', ...(context.line ? [`sf-progress-scale--line-${context.line}`, 'flex', 'flex-row', 'items-cross-center'] : ['flex', 'flex-row']), context.rootClass].filter(Boolean);
 
   if (step > 0) {
     rootClasses.push(`sf-progress-scale--${step}`);
@@ -1281,7 +1285,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.3.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

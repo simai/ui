@@ -94,6 +94,9 @@
   .sf-figure--ratio-21x9 {
     --sf-figure--ratio: 21 / 9;
   }
+  .sf-figure--ratio-3x4 {
+    --sf-figure--ratio: 3 / 4;
+  }
   .sf-figure--ratio-1x1 > .sf-figure-media {
     aspect-ratio: var(--sf-figure--ratio);
   }
@@ -107,6 +110,9 @@
     aspect-ratio: var(--sf-figure--ratio);
   }
   .sf-figure--ratio-21x9 > .sf-figure-media {
+    aspect-ratio: var(--sf-figure--ratio);
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media {
     aspect-ratio: var(--sf-figure--ratio);
   }
   .sf-figure--ratio-1x1 > .sf-figure-media > img {
@@ -259,6 +265,36 @@
     -o-object-fit: cover;
        object-fit: cover;
   }
+  .sf-figure--ratio-3x4 > .sf-figure-media > img {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media > video {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media > svg {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media > canvas {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media > iframe {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
   .sf-figure--ratio-1x1 > .sf-figure-media > picture > img {
     height: 100%;
     block-size: 100%;
@@ -284,6 +320,12 @@
        object-fit: cover;
   }
   .sf-figure--ratio-21x9 > .sf-figure-media > picture > img {
+    height: 100%;
+    block-size: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+  .sf-figure--ratio-3x4 > .sf-figure-media > picture > img {
     height: 100%;
     block-size: 100%;
     -o-object-fit: cover;
@@ -345,11 +387,25 @@
   .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
     grid-area: media;
   }
+  .sf-figure.sf-figure--caption-over {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sf-figure.sf-figure--caption-plate {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .sf-figure.sf-figure--caption-over > .sf-figure-media {
     align-self: stretch;
+    width: 100%;
+    inline-size: 100%;
+    min-width: 0;
+    min-inline-size: 0;
   }
   .sf-figure.sf-figure--caption-plate > .sf-figure-media {
     align-self: stretch;
+    width: 100%;
+    inline-size: 100%;
+    min-width: 0;
+    min-inline-size: 0;
   }
   .sf-figure.sf-figure--caption-over > .sf-figure-media > img {
     height: 100%;

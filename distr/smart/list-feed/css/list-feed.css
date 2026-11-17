@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-list-feed. The host is display: contents (the Smart base sets it), so
@@ -29,7 +30,10 @@
     overflow-y: auto;
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
-    scrollbar-gutter: stable both-edges;
+    /* The room of the one bar on its own side only (owner decision C210 (5)):
+       kept while the feed is short, so the turns do not move when it starts
+       to scroll; the mirrored room on the other side is gone. */
+    scrollbar-gutter: stable;
     /* The Framework scrolls smoothly page-wide; the jumps the feed makes itself
        (to the end on open, keeping place on prepend) must land at once. */
     scroll-behavior: auto;
@@ -41,10 +45,10 @@
   /* The region takes focus so a keyboard can scroll it; the ring is drawn
      inside, because the region fills its container edge to edge. */
   .sf-list-feed.focus-visible {
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-list-feed:focus-visible {
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-list-feed__column,
   .sf-list-feed__earlier,
@@ -167,6 +171,21 @@
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     font-weight: var(--sf-font-weight-medium);
+  }
+  /* «Автор · время» (C167 (4)): the time quiet and regular after the name. */
+  .sf-list-feed__time {
+    color: var(--sf-on-surface-variant);
+    font-weight: var(--sf-weight--regular);
+  }
+  /* The «Новые» line over the first unread entry (C167 (3)): block list's
+     divider, its words and hairlines in primary. Written on the line itself:
+     the divider's --sf-group-heading-* variables are the page's to set. */
+  .sf-list-feed__unread > .sf-list-feed__new {
+    color: var(--sf-primary);
+  }
+  .sf-list-feed__unread > .sf-list-feed__new::before,
+  .sf-list-feed__unread > .sf-list-feed__new::after {
+    background-color: var(--sf-primary);
   }
   .sf-list-feed__text {
     margin: 0;

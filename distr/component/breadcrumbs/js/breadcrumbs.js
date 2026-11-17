@@ -361,12 +361,14 @@ function createEllipsis(root, hiddenItems) {
   ellipsis.dataset.sfBreadcrumbsGenerated = 'ellipsis';
   ellipsis.dataset.sfBreadcrumbIndex = 'ellipsis';
   ellipsis.setAttribute('aria-label', getExpandLabel(root));
-  ellipsis.setAttribute('aria-expanded', 'false'); // With sf-menu-context on the page «…» opens its crumbs as a menu (owner
-  // decision C93 item 1); a page without it opens the trail in place.
+  ellipsis.setAttribute('aria-expanded', 'false'); // «…» opens its crumbs as a menu (owner decision C93 item 1; RG-NV 3): the
+  // Loader brings sf-menu-context when the trail first folds (requestMenu).
+  // Only a page with neither the element nor the Loader opens the trail in
+  // place.
 
-  if (menuReady()) ellipsis.setAttribute('aria-haspopup', 'menu');
+  if (menuReady() || menuReachable()) ellipsis.setAttribute('aria-haspopup', 'menu');
   ellipsis.innerHTML = '<span class="sf-breadcrumbs-item-container"><span aria-hidden="true">…</span></span>';
-  ellipsis.addEventListener('click', event => {
+  ellipsis.addEventListener('click', async event => {
     const clickEvent = new CustomEvent('sf-breadcrumb-click', {
       bubbles: true,
       composed: true,
@@ -389,8 +391,8 @@ function createEllipsis(root, hiddenItems) {
       return;
     }
 
-    if (menuReady()) {
-      openHiddenMenu(root, ellipsis, hiddenItems);
+    if (menuReady() || (await requestMenu())) {
+      if (ellipsis.isConnected) openHiddenMenu(root, ellipsis, hiddenItems);
       return;
     }
 
@@ -401,16 +403,50 @@ function createEllipsis(root, hiddenItems) {
 
 function menuReady() {
   return Boolean(globalThis.customElements?.get?.('sf-menu-context'));
+} // Whether the Loader can bring sf-menu-context (SF.Loader.ensure: asked for,
+// waited for up to 3 s, never thrown), as the row engine's «Ещё» asks for it
+// (core/js/overflow-row.js standardMenu).
+
+
+function menuReachable() {
+  return typeof globalThis.SF?.Loader?.ensure === 'function';
+} // Asks the Loader for sf-menu-context; true once the element is defined.
+// Asked when a trail folds, so the menu is there by the time «…» is pressed.
+
+
+let menuRequest = null;
+
+function requestMenu() {
+  if (menuReady()) return Promise.resolve(true);
+  if (!menuReachable()) return Promise.resolve(false);
+  menuRequest ||= Promise.resolve().then(() => globalThis.SF.Loader.ensure(['sf-menu-context'])).catch(() => null).then(() => {
+    const ready = menuReady();
+    if (!ready) menuRequest = null;
+    return ready;
+  });
+  return menuRequest;
 } // A hidden crumb as a menu entry: its words and its address.
+// A menu row says the crumb's name: its aria-label when it has one (an
+// icon-only home crumb is named so), else its words without the icon's
+// ligature; the icon goes along as the row's icon.
 
 
 function crumbOf(entry) {
   const link = entry.matches?.('a[href]') ? entry : entry.querySelector?.('a[href]');
-  const label = entry.querySelector?.('.sf-breadcrumbs-item-container') || entry;
-  return {
-    label: getItemLabel(label),
+  const container = entry.querySelector?.('.sf-breadcrumbs-item-container') || entry;
+  const icon = container.querySelector?.(':scope > :is(.sf-icon, sf-icon)');
+  const named = (link || entry.querySelector?.('[aria-label]') || entry).getAttribute?.('aria-label');
+  let words = '';
+  container.childNodes.forEach(node => {
+    if (node !== icon) words += node.textContent || '';
+  });
+  const crumb = {
+    label: String(named || '').trim() || words.trim() || getItemLabel(container),
     href: link?.getAttribute('href') || ''
   };
+  const glyph = String(icon?.getAttribute?.('name') || icon?.textContent || '').trim();
+  if (glyph) crumb.icon = glyph;
+  return crumb;
 } // One menu per trail, after it; the menu owns aria-expanded on «…» and gives
 // focus back to it when it closes.
 
@@ -431,6 +467,57 @@ function openHiddenMenu(root, anchor, hiddenItems) {
   menu.toggleFor?.(anchor, {
     align: 'start'
   });
+} // A crumb's name is a <span> in its container (RG-NV 1): the sheet cuts a
+// long ancestor with an ellipsis (C93 item 6), keeps the page's name on one
+// cut line on the phone (C93 item 2) and underlines a link's words under the
+// pointer (C186 (1)) on that <span>. Markup that prints the name straight
+// into the container (the docs' examples did) wrapped to two lines and lost
+// all three; the runtime wraps such bare words, so both spellings draw alike.
+
+
+const LABEL_MARK = 'sfBreadcrumbsLabel';
+
+function wrapLabels(root) {
+  root.querySelectorAll(`${ITEM_SELECTOR} > .sf-breadcrumbs-item-container`).forEach(container => {
+    const runs = [];
+    let run = [];
+    container.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        run.push(node);
+        return;
+      }
+
+      if (run.length) runs.push(run);
+      run = [];
+    });
+    if (run.length) runs.push(run);
+    runs.forEach(nodes => {
+      const text = nodes.map(node => node.nodeValue).join('');
+      if (!text.trim()) return;
+      const label = document.createElement('span');
+      label.dataset[LABEL_MARK] = '';
+      nodes[0].before(label);
+      nodes.forEach(node => label.append(node));
+
+      if (label.firstChild?.nodeType === Node.TEXT_NODE) {
+        label.firstChild.nodeValue = label.firstChild.nodeValue.replace(/^\s+/u, '');
+      }
+
+      if (label.lastChild?.nodeType === Node.TEXT_NODE) {
+        label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\s+$/u, '');
+      }
+    });
+  });
+} // The runtime's own wrapping (a bare name put in a <span>) is no change of
+// the trail: it does not fold the trail again.
+
+
+function isLabelWrap(mutation) {
+  if (mutation.type !== 'childList') return false;
+  if (!mutation.target?.classList?.contains?.('sf-breadcrumbs-item-container')) return false;
+  const added = Array.from(mutation.addedNodes);
+  const removed = Array.from(mutation.removedNodes);
+  return added.every(node => node instanceof HTMLElement && LABEL_MARK in node.dataset) && removed.every(node => node.nodeType === Node.TEXT_NODE);
 } // A name cut with an ellipsis (C93 item 6) has its whole text as the
 // crumb's tooltip.
 
@@ -483,6 +570,7 @@ function applyRange(root, items, range) {
   const list = getList(root);
   const firstHidden = hiddenItems[0];
   const ellipsis = createEllipsis(root, hiddenItems);
+  requestMenu();
 
   if (list) {
     // One entry for «…», with the separator before it unless it opens the trail.
@@ -512,6 +600,7 @@ function getTail(items) {
 function collapseBreadcrumbs(root) {
   const maxItems = getMaxItems(root);
   const items = getContentItems(root);
+  wrapLabels(root);
   clearGenerated(root);
   setCollapsedState(root, []);
 
@@ -634,7 +723,19 @@ if (document.readyState === 'loading') {
 
 if (typeof MutationObserver !== 'undefined') {
   new MutationObserver(mutations => {
+    // A node added and gone again before the records arrive is a measuring
+    // probe (core/js/position.js puts a span into the anchor's parent while a
+    // menu opens for «…»): it is no crumb, and folding the trail again for it
+    // took the anchor out from under the open menu.
+    const transient = new Set();
     mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (!node.isConnected) transient.add(node);
+      });
+    });
+    mutations.forEach(mutation => {
+      if (isLabelWrap(mutation)) return;
+
       if (mutation.type === 'attributes') {
         const root = mutation.target;
 
@@ -647,7 +748,7 @@ if (typeof MutationObserver !== 'undefined') {
       }
 
       mutation.addedNodes.forEach(node => {
-        if (!(node instanceof HTMLElement) || isGenerated(node)) {
+        if (!(node instanceof HTMLElement) || isGenerated(node) || transient.has(node)) {
           return;
         }
 
@@ -659,7 +760,7 @@ if (typeof MutationObserver !== 'undefined') {
           collapseBreadcrumbs(root);
         }
       });
-      const changedByRemoval = Array.from(mutation.removedNodes).some(node => !isGenerated(node));
+      const changedByRemoval = Array.from(mutation.removedNodes).some(node => !isGenerated(node) && !transient.has(node));
       const mutationRoot = mutation.target.closest?.(ROOT_SELECTOR);
 
       if (changedByRemoval && mutationRoot instanceof HTMLElement && mutationRoot[BOUND_KEY]) {
@@ -999,7 +1100,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -1025,7 +1127,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -1078,7 +1182,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1149,15 +1254,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1359,7 +1470,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1464,7 +1575,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1505,6 +1616,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1603,8 +1733,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -1759,7 +1891,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1779,7 +1912,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1819,7 +1953,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1844,7 +1979,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1854,7 +1990,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1969,7 +2106,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -2031,15 +2171,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

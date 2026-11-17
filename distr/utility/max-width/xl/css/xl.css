@@ -32,19 +32,19 @@
       max-width: none;
     }
     .xl\:max-w-sm {
-      max-width: 32rem;
+      max-width: var(--sf-g6);
     }
     .xl\:max-w-md {
-      max-width: 44rem;
+      max-width: var(--sf-h1);
     }
     .xl\:max-w-lg {
-      max-width: 60rem;
+      max-width: var(--sf-h5);
     }
     .xl\:max-w-xl {
-      max-width: 72rem;
+      max-width: var(--sf-h8);
     }
     .xl\:max-w-xxl {
-      max-width: 80rem;
+      max-width: var(--sf-i0);
     }
   }
 }

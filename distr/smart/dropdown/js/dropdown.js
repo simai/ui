@@ -740,8 +740,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -1780,7 +1783,9 @@ const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1_
 });
 
 function normalizeSize(value) {
-  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-dropdown');
+  // The field ladder's five steps (field-size.js FIELD_LADDER; queue #70):
+  // 1/3 and 3 are the dropdown's own, as sf-input's.
+  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.ladderSize)(value);
 }
 
 function normalizeListItemType(value) {
@@ -1919,11 +1924,17 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
         default: '1'
       },
       // The axis is called appearance, because that is the question it answers.
-      // `type` keeps working: see contracts/public-api-axes.json.
+      // `type` keeps working: see contracts/public-api-axes.json. The field
+      // look is named bordered, as every field's (FM-9, 2026-11-16); outlined
+      // is its dated alias until 2027-01-01 (aliases.json, change journal
+      // value-dropdown-appearance-outlined-to-bordered).
       appearance: {
-        default: 'outlined',
-        values: ['filled', 'outlined'],
-        aliases: ['type']
+        default: 'bordered',
+        values: ['filled', 'bordered'],
+        aliases: ['type'],
+        valueAliases: {
+          bordered: ['outlined']
+        }
       },
       mode: {
         default: 'select',
@@ -2712,10 +2723,16 @@ function renderOptions(options = [], multiple = false) {
 // A): inline, one size below the field, so its label is one text step under
 // the field's; the field gives it its height (the field less --sf-space-1/4
 // above and below) as its line. From size 1 up it was a low chip of the
-// field's own size (C27), 32 in a 40 field.
+// field's own size (C27), 32 in a 40 field. At the field ladder's outer
+// steps the tag is sf-input-lookup's chip: 1/3 holds a 1/3 tag (the smallest
+// tag), 3 a tag of size 2.
 
 
 const FIELD_TAG = Object.freeze({
+  "1/3": {
+    size: "1/3",
+    height: ""
+  },
   "1/2": {
     size: "1/3",
     height: ""
@@ -2726,6 +2743,10 @@ const FIELD_TAG = Object.freeze({
   },
   "2": {
     size: "1",
+    height: ""
+  },
+  "3": {
+    size: "2",
     height: ""
   }
 }); // A single choice shows its picture in the field as well as its label. The
@@ -2759,7 +2780,10 @@ function renderFieldVisual(context) {
   }
 
   return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-}
+} // A value's tag is the tag's own grey (owner decision C58, as
+// sf-input-lookup's chips; RG-NV 18): no active class, which drew it
+// primary-container.
+
 
 function renderTag(context, option) {
   const label = getOptionLabel(option);
@@ -2769,7 +2793,7 @@ function renderTag(context, option) {
   const tagType = option.type === "color" ? "color" : option.type === "avatar" ? "avatar" : "icon";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
-      class="sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline${tagSpacing} flex flex-row flex-nowrap items-center active"
+      class="sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline${tagSpacing} flex flex-row flex-nowrap items-center"
       data-value=${option.value}
     >
       ${option.type === "color" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-color-icon ${option.colorClass}" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2782,7 +2806,7 @@ function renderTag(context, option) {
       <span class="sf-tag-container">${label}</span>
       <button
         type="button"
-        class="sf-icon-button sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3"
+        class="sf-icon-button sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1/3"
         aria-label=${`Remove ${label}`}
         ?disabled=${context.disabled}
         @click=${event => {
@@ -2802,12 +2826,24 @@ function renderTag(context, option) {
 
 
 const CELL = {
+  "1/3": "var(--sf-ui-1\\/3--control-height)",
   "1/2": "var(--sf-ui-1\\/2--control-height)",
   "1": "var(--sf-ui-1--control-height)",
-  "2": "var(--sf-ui-2--control-height)"
-};
+  "2": "var(--sf-ui-2--control-height)",
+  "3": "var(--sf-ui-3--control-height)"
+}; // The look's class in the base component's markup. bordered (FM-9) draws the
+// class layer's outlined modifier: .sf-dropdown--outlined stays the class
+// markup's name, so pages written in classes and the first-paint snapshots
+// keep drawing.
+
+const LOOK_CLASS = Object.freeze({
+  bordered: "outlined",
+  outlined: "outlined",
+  filled: "filled"
+});
 function renderDropdownTemplate(context) {
-  const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", // The error look, as sf-input's root carries it (owner C55).
+  const look = context.appearance ?? context.type;
+  const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${LOOK_CLASS[look] || look}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", // The error look, as sf-input's root carries it (owner C55).
   context.invalid ? "error" : "", "flex", "flex-col"].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean); // The chevron is the field's indicator (owner decision C123 (3)): the field
   // layer's .sf-field-action, a glyph without a plate the size of the field's
@@ -4444,14 +4480,14 @@ function resolveAvatarTone(setting, name) {
 /***/ "f15c795f1055"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropdown for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (setting rows), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"type","to":"appearance","kind":"setting","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"aria-label","to":null,"kind":"attribute","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read for the accessible name; no shim"},{"from":"sf-dropdown:change","to":"change","kind":"event","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","section":"§8, vocabulary §5.1","note":"the old detail adds root (the element), which §8 takes out of the new detail: the element\'s detail adapter makes it"},{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropdown for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (setting rows), split (the old detail from the element\'s adapter), host-attribute (no shim).","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"type","to":"appearance","kind":"setting","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"aria-label","to":null,"kind":"attribute","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read for the accessible name; no shim"},{"from":"sf-dropdown:change","to":"change","kind":"event","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","section":"§8, vocabulary §5.1","note":"the old detail adds root (the element), which §8 takes out of the new detail: the element\'s detail adapter makes it"},{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-dropdown","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"},{"from":"outlined","to":"bordered","kind":"value","setting":"appearance","component":"sf-dropdown","since":"2026-11-16","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-dropdown-appearance-outlined-to-bordered (FM-9, dispatcher decision 2026-11-16): the field look is named bordered in every field; outlined drew the same"}]}');
 
 /***/ },
 
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.16.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.18.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 

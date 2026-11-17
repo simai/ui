@@ -40,5 +40,14 @@
     .xl\:weight-9 {
       font-weight: 900;
     }
+    .xl\:weight-regular {
+      font-weight: var(--sf-weight--regular);
+    }
+    .xl\:weight-medium {
+      font-weight: var(--sf-weight--medium);
+    }
+    .xl\:weight-bold {
+      font-weight: var(--sf-weight--bold);
+    }
   }
 }

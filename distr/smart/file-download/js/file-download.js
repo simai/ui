@@ -23,9 +23,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c016c43b1452");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d0b5a0385ddc");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -36,6 +38,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const pick = (words, keys) => Object.fromEntries(keys.map(key => [key, words[key]]));
+
 
 const DOWNLOAD_FILE_SELECTOR = '.sf-download-file';
 const DOWNLOAD_FILE_BOUND_FLAG = 'sfDownloadFileBound';
@@ -282,13 +285,40 @@ function emitDownloadFileClick(root, href, fileName, download) {
 // sends its own cancelable `sf-download-file-download` (standard 1.3.8 §8,
 // vocabulary 1.1.5 §5.1), and the old `sf-download-file:click` follows it as a
 // dated alias. Answering false cancels the download.
+// The plain markup's parts the class does not build (the docs taught them:
+// sf-download-file-wrap, -container, -file-name, -file-size with no BEM part
+// beside them) are deprecated until 2027-01-01 (dispatcher decision
+// 2026-11-16, journal class-download-file-plain-parts): they keep their look,
+// but the type and the size never go under the name and a screen reader hears
+// the name and the size run together. The class markup carries both names.
 
+
+const PLAIN_PARTS = [['sf-download-file-wrap', 'sf-download-file__body'], ['sf-download-file-container', 'sf-download-file__main'], ['sf-download-file-file-name', 'sf-download-file__name'], ['sf-download-file-file-size', 'sf-download-file__size']];
+const PLAIN_PARTS_DEPRECATED = {
+  since: '2026-11-16',
+  remove_after: '2027-01-01'
+};
+
+function notePlainParts(root) {
+  for (const [from, to] of PLAIN_PARTS) {
+    if (root.querySelector?.(`.${from}:not(.${to})`)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({
+        component: 'download-file',
+        kind: 'class',
+        from,
+        to: `${to} (the DownloadFile class markup)`,
+        ...PLAIN_PARTS_DEPRECATED
+      });
+    }
+  }
+}
 
 function bindDownloadFile(root, {
   onActivate,
   onSize
 } = {}) {
   if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1' || !isPressableRoot(root)) return;
+  notePlainParts(root);
 
   const handleClick = event => {
     // A file being prepared (aria-busy) takes no second press: the first one
@@ -2358,7 +2388,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.5.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.5.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

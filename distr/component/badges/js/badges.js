@@ -41,10 +41,13 @@ __webpack_require__.r(__webpack_exports__);
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
- // The words, by language. A count is one phrase per plural form, separated by
-// «|» in the order of CLDR's categories -- one|few|many|other in Russian,
-// one|other in English -- with {count} where the number goes. A product adds a
-// language with SF.language.register('sf-badge', code, {count, dot}).
+ // The words, by language. A count is a plural word, one phrase per plural
+// category of the language as Intl.PluralRules names them ({one, few, many,
+// other} in Russian, {one, other} in English), with {count} where
+// the number goes: the form every language file and pack uses (C177). A
+// product adds a language with SF.language.register('sf-badge', code,
+// {count, dot}); a count written as «a|b|c» (an author's label, a product's
+// word from before) still reads in the order of the categories.
 
 const ANCHORED_BADGE_TEXT = {
   en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
@@ -76,12 +79,26 @@ function badgeFlag(value) {
   return String(value).trim().toLowerCase() !== 'false';
 }
 /**
- * The form of `forms` ("a|b|c") for `count` in `locale`. One form is used for
- * every number; with several, the n-th form answers the n-th plural category
- * the language has, and a category past the last form takes the last one.
+ * The form of `forms` for `count` in `locale`. A plural word
+ * ({one, few, many, other}) answers the category Intl.PluralRules gives,
+ * else its `other`. A string "a|b|c": one form is used for every number; with
+ * several, the n-th form answers the n-th plural category the language has,
+ * and a category past the last form takes the last one.
  */
 
 function pluralForm(forms, count, locale = 'en') {
+  if (forms && typeof forms === 'object') {
+    let category = 'other';
+
+    try {
+      category = new Intl.PluralRules(locale).select(count);
+    } catch {
+      category = 'other';
+    }
+
+    return String(forms[category] ?? forms.other ?? '');
+  }
+
   const list = String(forms ?? '').split('|');
   if (list.length === 1) return list[0];
 
@@ -1325,7 +1342,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -1351,7 +1369,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -1404,7 +1424,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1475,15 +1496,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1685,7 +1712,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1790,7 +1817,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1831,6 +1858,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1929,8 +1975,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -2085,7 +2133,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -2105,7 +2154,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -2145,7 +2195,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -2170,7 +2221,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -2180,7 +2232,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -2295,7 +2348,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -2357,15 +2413,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -2456,14 +2515,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-badge":["display/inline-flex (.i
 /***/ "7f9642eacf1b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "8714e4691010"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ }
 

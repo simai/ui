@@ -5,39 +5,39 @@
             text-decoration-color: var(--sf-inherit);
   }
   .focus\:decoration-current:focus {
-    -webkit-text-decoration-color: var(--sf-currentColor);
-            text-decoration-color: var(--sf-currentColor);
+    -webkit-text-decoration-color: var(--sf-current);
+            text-decoration-color: var(--sf-current);
   }
   .focus\:decoration-transparent:focus {
     -webkit-text-decoration-color: var(--sf-transparent);
             text-decoration-color: var(--sf-transparent);
   }
   .focus\:decoration-primary:focus {
-    -webkit-text-decoration-color: var(--sf-primary-outline);
-            text-decoration-color: var(--sf-primary-outline);
+    -webkit-text-decoration-color: var(--sf-primary);
+            text-decoration-color: var(--sf-primary);
   }
   .focus\:decoration-secondary:focus {
-    -webkit-text-decoration-color: var(--sf-secondary-outline);
-            text-decoration-color: var(--sf-secondary-outline);
+    -webkit-text-decoration-color: var(--sf-secondary);
+            text-decoration-color: var(--sf-secondary);
   }
   .focus\:decoration-tertiary:focus {
-    -webkit-text-decoration-color: var(--sf-tertiary-outline);
-            text-decoration-color: var(--sf-tertiary-outline);
+    -webkit-text-decoration-color: var(--sf-tertiary);
+            text-decoration-color: var(--sf-tertiary);
   }
   .focus\:decoration-error:focus {
-    -webkit-text-decoration-color: var(--sf-error-outline);
-            text-decoration-color: var(--sf-error-outline);
+    -webkit-text-decoration-color: var(--sf-error);
+            text-decoration-color: var(--sf-error);
   }
   .focus\:decoration-warning:focus {
-    -webkit-text-decoration-color: var(--sf-warning-outline);
-            text-decoration-color: var(--sf-warning-outline);
+    -webkit-text-decoration-color: var(--sf-warning);
+            text-decoration-color: var(--sf-warning);
   }
   .focus\:decoration-success:focus {
-    -webkit-text-decoration-color: var(--sf-success-outline);
-            text-decoration-color: var(--sf-success-outline);
+    -webkit-text-decoration-color: var(--sf-success);
+            text-decoration-color: var(--sf-success);
   }
   .focus\:decoration-info:focus {
-    -webkit-text-decoration-color: var(--sf-info-outline);
-            text-decoration-color: var(--sf-info-outline);
+    -webkit-text-decoration-color: var(--sf-info);
+            text-decoration-color: var(--sf-info);
   }
 }

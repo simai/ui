@@ -357,7 +357,20 @@ const isGrowing = entry => entry?.growing === true;
 
 const authorName = entry => String(entry?.["author-name"] ?? "");
 
-const authorOf = entry => String(entry?.author ?? authorName(entry)); // `wait` (vocabulary §5.1): delayed | stopped | network | none; null is none.
+const authorOf = entry => String(entry?.author ?? authorName(entry)); // Is the entry unread? The same mark as sf-list's rows (C167 (3), C189 (8)):
+// unread: true, or a number above 0. One's own entry is never news.
+
+
+const unreadOf = entry => entry?.own !== true && (entry?.unread === true || typeof entry?.unread === "number" && entry.unread > 0); // When the entry was written: date, as on sf-list's rows (an ISO string, a
+// number of milliseconds or a Date). An unreadable one is no time.
+
+
+const momentOf = entry => {
+  const value = entry?.date;
+  if (value === undefined || value === null || value === "") return "";
+  const moment = value instanceof Date ? value : new Date(typeof value === "number" ? value : String(value));
+  return Number.isNaN(moment.getTime()) ? "" : moment.toISOString();
+}; // `wait` (vocabulary §5.1): delayed | stopped | network | none; null is none.
 
 
 const waitOf = (entry, view) => {
@@ -1054,7 +1067,9 @@ class SfListFeed extends FeedElement {
 
   syncRuns() {
     const nodes = [...this.column.children];
-    const items = nodes.map(node => this._items.get(node.dataset.id)).filter(Boolean);
+    const items = nodes.map(node => this._items.get(node.dataset.id)).filter(Boolean); // The «Новые» line stands before the first unread entry (C167 (3)).
+
+    const unreadStart = items.findIndex(item => unreadOf(item.entry));
     items.forEach((item, index) => {
       const previous = items[index - 1]?.entry ?? null;
       const next = items[index + 1]?.entry ?? null;
@@ -1065,12 +1080,14 @@ class SfListFeed extends FeedElement {
         first: !sameAuthor(previous),
         last: !sameAuthor(next),
         index,
-        end: index === items.length - 1
+        end: index === items.length - 1,
+        unreadStart: index === unreadStart
       };
-      const changed = !item.flags || item.flags.first !== flags.first || item.flags.last !== flags.last;
+      const changed = !item.flags || item.flags.first !== flags.first || item.flags.last !== flags.last || item.flags.unreadStart !== flags.unreadStart;
       item.node.classList.toggle("sf-list-feed__item--first", flags.first);
       item.node.classList.toggle("sf-list-feed__item--last", flags.last);
       item.node.classList.toggle("sf-list-feed__item--end", flags.end);
+      item.node.classList.toggle("sf-list-feed__item--unread-start", flags.unreadStart);
       item.flags = flags;
       if (changed || !item.node.firstChild) this.draw(item, previous, next);
     });
@@ -1101,7 +1118,8 @@ class SfListFeed extends FeedElement {
       content = this.renderDefault(item.entry, context);
     }
 
-    const node = content instanceof Node ? content : this.ownerDocument.createTextNode(content == null ? "" : String(content));
+    const drawn = content instanceof Node ? content : this.ownerDocument.createTextNode(content == null ? "" : String(content));
+    const node = item.flags.unreadStart ? this.withNewLine(drawn) : drawn;
     const shown = item.node.firstChild; // The person is inside this entry -- the focus on its button, a
     // selection in its text: the new drawing is laid over the old nodes,
     // which stay, and the focus and the selection with them (§18.4).
@@ -1110,6 +1128,23 @@ class SfListFeed extends FeedElement {
     const selection = this.ownerDocument.getSelection?.();
     const inside = active && active !== item.node && item.node.contains(active) || selection && selection.rangeCount > 0 && !selection.isCollapsed && item.node.contains(selection.anchorNode);
     if (shown && inside && item.node.childNodes.length === 1 && !(node instanceof DocumentFragment)) overlay(shown, node);else item.node.replaceChildren(node);
+  } // The «Новые» line over the first unread entry, whoever draws the entry
+  // (owner decision C167 (3)): block list's divider (.sf-group-heading
+  // --divider, C167 (2)) in primary, the words its name.
+
+
+  withNewLine(content) {
+    const doc = this.ownerDocument;
+    const box = doc.createElement("div");
+    box.className = "sf-list-feed__unread";
+    const line = doc.createElement("div");
+    const words = this.sfWord("new-text");
+    line.className = "sf-group-heading sf-group-heading--divider sf-list-feed__new";
+    line.setAttribute("role", "separator");
+    line.setAttribute("aria-label", words);
+    line.textContent = words;
+    box.append(line, content);
+    return box;
   } // Without a renderer an entry is a comment (owner decision C167 (4),
   // 2026-11-14; C40): its author over the first entry of a run -- one's own
   // too, as «Вы» -- and the text under it, with no fill, at the column's
@@ -1127,12 +1162,28 @@ class SfListFeed extends FeedElement {
     const article = doc.createElement("article");
     article.className = "sf-list-feed__entry";
     const name = own ? this.sfWord("you-text") : authorName(entry);
-    if (name) article.setAttribute("aria-label", name);
+    if (name) article.setAttribute("aria-label", name); // «Автор · время» (C167 (4)): the time after the name, quiet, in
+    // sf-time (C40) without a tooltip, as on sf-list's rows.
 
-    if (first && name) {
+    const moment = momentOf(entry);
+
+    if (first && (name || moment)) {
       const author = doc.createElement("p");
       author.className = "sf-list-feed__author";
-      author.textContent = name;
+      if (name) author.append(name);
+
+      if (moment) {
+        const time = doc.createElement("span");
+        time.className = "sf-list-feed__time";
+        if (name) time.append(" · ");
+        const element = doc.createElement("sf-time");
+        element.setAttribute("datetime", moment);
+        element.setAttribute("format", "auto");
+        element.setAttribute("tooltip", "none");
+        time.append(element);
+        author.append(time);
+      }
+
       article.append(author);
     }
 
@@ -1455,21 +1506,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "7595f2639ad9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.3.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.4.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"date":{"type":"date","optional":true},"unread":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "22eb8f8fb40c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Feed","runtime":{"earlier-text":"Show earlier","empty-text":"No entries yet","latest-label":"To the latest","loading-earlier-text":"Loading earlier entries","log-label":"Entries","region-label":"Feed","you-text":"You"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Feed","runtime":{"earlier-text":"Show earlier","empty-text":"No entries yet","latest-label":"To the latest","loading-earlier-text":"Loading earlier entries","new-text":"New","log-label":"Entries","region-label":"Feed","you-text":"You"}}');
 
 /***/ },
 
 /***/ "1002fcd319ac"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Лента","runtime":{"earlier-text":"Показать предыдущие","empty-text":"Записей пока нет","latest-label":"К последней записи","loading-earlier-text":"Загружаю предыдущие записи","log-label":"Записи","region-label":"Лента","you-text":"Вы"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Лента","runtime":{"earlier-text":"Показать предыдущие","empty-text":"Записей пока нет","latest-label":"К последней записи","loading-earlier-text":"Загружаю предыдущие записи","new-text":"Новые","log-label":"Записи","region-label":"Лента","you-text":"Вы"}}');
 
 /***/ }
 

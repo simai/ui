@@ -59,6 +59,15 @@
     line-height: var(--sf-text-height-1);
   }
 
+  /* The label and its «?» of help in one row (C153 (8)): the mark after the
+     label's last word, centred on its line, the row the label's height. */
+  .sf-color-label-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-1\/4);
+    min-inline-size: 0;
+  }
+
   .sf-color-field:has(.sf-color-trigger:disabled) .sf-color-label {
     color: var(--sf-on-surface-disabled);
   }
@@ -110,7 +119,7 @@
     transition-timing-function: var(--sf-animation);
   }
 
-  .sf-color-frame:hover:not([data-disabled]) {
+  .sf-color-frame:hover:not([data-disabled], [data-readonly]) {
     background-color: var(--sf-surface-state-hover);
   }
 
@@ -126,6 +135,13 @@
   .sf-color-frame[data-disabled] {
     border-color: var(--sf-surface-disabled);
     color: var(--sf-on-surface-disabled);
+    cursor: default;
+  }
+
+  /* Read-only (as sf-input's): the value in the text's ink, the region line
+     for the edge, nothing to press. */
+  .sf-color-frame[data-readonly] {
+    border-color: var(--sf-outline-variant);
     cursor: default;
   }
 
@@ -187,7 +203,7 @@
      inherited-value slot) is the same action and keeps the same steps. */
   .sf-color-frame {
     --sf-field-action--inset: var(--sf-color--space-x);
-    --sf-field-action--glyph: var(--sf-color--text-height);
+    --sf-field-action--glyph: var(--sf-color--icon-size, var(--sf-color--text-height));
     --sf-field-action--height: var(--sf-color--control-height);
   }
 
@@ -200,15 +216,15 @@
      font-size and box size only, which the icon's own --sf-icon-- size
      overrode, so it drew the icon's 24 (20 compact) at every step. */
   .sf-color-chevron {
-    --sf-icon--font-size: var(--sf-color--text-height);
-    --sf-icon--height: var(--sf-color--text-height);
-    --sf-icon--width: var(--sf-color--text-height);
+    --sf-icon--font-size: var(--sf-color--icon-size, var(--sf-color--text-height));
+    --sf-icon--height: var(--sf-color--icon-size, var(--sf-color--text-height));
+    --sf-icon--width: var(--sf-color--icon-size, var(--sf-color--text-height));
     flex: none;
     color: var(--sf-on-surface-variant);
-    font-size: var(--sf-color--text-height);
-    inline-size: var(--sf-color--text-height);
-    block-size: var(--sf-color--text-height);
-    line-height: var(--sf-color--text-height);
+    font-size: var(--sf-color--icon-size, var(--sf-color--text-height));
+    inline-size: var(--sf-color--icon-size, var(--sf-color--text-height));
+    block-size: var(--sf-color--icon-size, var(--sf-color--text-height));
+    line-height: var(--sf-color--icon-size, var(--sf-color--text-height));
   }
 
   /* ------------------------------------------------------------ the swatch */
@@ -220,8 +236,8 @@
   .sf-color-chip {
     box-sizing: border-box;
     flex: none;
-    inline-size: var(--sf-color--text-height, var(--sf-text-height-1));
-    block-size: var(--sf-color--text-height, var(--sf-text-height-1));
+    inline-size: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
+    block-size: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
     border: var(--sf-px) solid var(--sf-color-chip-border-color, var(--sf-outline-variant));
     border-radius: var(--sf-color-chip-radius, var(--sf-radius-1\/2));
     background-color: var(--sf-color-fill, transparent);
@@ -488,7 +504,7 @@
 
   .sf-color-option:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
 
   .sf-color-check {
@@ -720,9 +736,22 @@
     --sf-color--text-height: var(--sf-text-height-3);
   }
 
+  /* The icon of 3 on a phone (field-ladder.icon-size, C151): the icon
+     ladder's 28 (--sf-icon-size-4), a step below the desktop 36, not the
+     24 of the text line there. The swatch, the chevron and the reset are
+     the field's icons and keep one size. */
+  @media not all and (min-width: 60rem) {
+    .sf-color-field--size-3,
+    .sf-color--theme.sf-color--size-3 {
+      --sf-color--icon-size: var(--sf-icon-size-4);
+    }
+  }
+
+  /* The label at 1/3 is the field ladder's label floor (C226): 12, the 1/3
+     text -- the step below, 1/4, is 10. */
   .sf-color-field--size-1\/3 .sf-color-label {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
 
   .sf-color-field--size-3 .sf-color-label {
@@ -743,8 +772,8 @@
   }
 
   .sf-color-field--size-1\/3 .sf-color-hint {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
 
   .sf-color-field--size-1\/2 .sf-color-hint {

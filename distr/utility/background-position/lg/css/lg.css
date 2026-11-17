@@ -58,5 +58,29 @@
     .lg\:bg-top {
       background-position: top;
     }
+    .lg\:bg-inline-start:where(:dir(rtl)) {
+      background-position: right;
+    }
+    .lg\:bg-inline-start-bottom:where(:dir(rtl)) {
+      background-position: right bottom;
+    }
+    .lg\:bg-inline-start-top:where(:dir(rtl)) {
+      background-position: right top;
+    }
+    .lg\:bg-inline-start-center:where(:dir(rtl)) {
+      background-position: right center;
+    }
+    .lg\:bg-inline-end:where(:dir(rtl)) {
+      background-position: left;
+    }
+    .lg\:bg-inline-end-bottom:where(:dir(rtl)) {
+      background-position: left bottom;
+    }
+    .lg\:bg-inline-end-top:where(:dir(rtl)) {
+      background-position: left top;
+    }
+    .lg\:bg-inline-end-center:where(:dir(rtl)) {
+      background-position: left center;
+    }
   }
 }

@@ -167,6 +167,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindCheckbox: () => (/* binding */ bindCheckbox),
+/* harmony export */   preloadCheckboxIcons: () => (/* binding */ preloadCheckboxIcons),
 /* harmony export */   resolveCheckboxIcon: () => (/* binding */ resolveCheckboxIcon),
 /* harmony export */   setCheckboxState: () => (/* binding */ setCheckboxState),
 /* harmony export */   syncCheckboxState: () => (/* binding */ syncCheckboxState),
@@ -200,6 +201,21 @@ function resolveCheckboxIcon(state) {
   if (state.indeterminate) return 'remove';
   if (state.checked) return 'check';
   return '';
+} // The box's glyphs are asked for when the first box binds, with the page's
+// first icons: a box that starts unchecked names no glyph, so the first
+// subset font had no «check», and the first tick stayed unseen until a second
+// font came (the Loader draws a glyph only from a font it has). Once per
+// bundle; the Loader asks nothing for a name it already has.
+
+
+let boxIconsAsked = false;
+function preloadCheckboxIcons() {
+  if (boxIconsAsked) return false;
+  const loader = globalThis.SF?.Loader;
+  if (typeof loader?.preloadIcons !== 'function') return false;
+  boxIconsAsked = true;
+  loader.preloadIcons(['check', 'remove']);
+  return true;
 }
 
 function setCheckboxIcon(iconElement, icon = '') {
@@ -258,6 +274,7 @@ function bindCheckbox(root) {
   input.addEventListener('change', handleChange);
   root.__sfCheckboxReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[CHECKBOX_BOUND_FLAG] = '1';
+  preloadCheckboxIcons();
   syncCheckboxState(root);
   (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.CHECKBOX_TEXT_PARTS);
 }
@@ -782,6 +799,14 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
     super();
     this._inputElement = null;
     this._parentWatch = null;
+  }
+
+  connectedCallback() {
+    super.connectedCallback(); // The tick and the dash are asked for before the first box draws, with
+    // the page's first icons: an unchecked box names no glyph, and its first
+    // tick waited for a second icon font.
+
+    (0,_component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__.preloadCheckboxIcons)();
   } // The checkboxes a parent stands for (controls, owner decision C165 (2)):
   // the elements its ids name now -- sf-checkbox hosts or plain checkbox
   // inputs -- in the page or the shadow root the parent stands in.
@@ -1921,7 +1946,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

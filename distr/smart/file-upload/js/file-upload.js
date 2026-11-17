@@ -76,8 +76,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -161,10 +164,14 @@ function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
   if (typeof value === 'boolean') return value;
   return ['1', 'true', 'yes', 'on', 'disabled', 'multiple'].includes(String(value).toLowerCase());
-}
+} // The area stands on the field ladder's five steps (field-size.js
+// FIELD_LADDER; queue #70). A file's row is the file family's row
+// (sf-file-preview's markup, C81, C260): one height at every size of the
+// area.
+
 
 function normalizeSize(value) {
-  return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
+  return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.ladderSize)(value);
 } // An entry's state: ready (chosen, not sent), process (being sent), done,
 // error. A chosen file was process at 0 % at once and looked like an upload
 // that had stuck (FU-3); it is ready until the host or the uploader sends it.
@@ -213,7 +220,8 @@ function getFilesContainer(root) {
   }
 
   let next = root.nextElementSibling;
-  if (next?.classList?.contains('sf-file-upload-message')) next = next.nextElementSibling;
+
+  while (next?.classList?.contains('sf-file-upload-message') || next?.classList?.contains('sf-file-upload-status')) next = next.nextElementSibling;
 
   if (next?.classList?.contains('sf-file-upload-files')) {
     return next;
@@ -269,7 +277,13 @@ function syncInputConfig(root, input) {
   const accept = getAccept(root);
   if (accept) input.setAttribute('accept', accept);else input.removeAttribute('accept');
   input.disabled = isDisabledRoot(root);
-}
+} // The rows this part names and switches off: its own (the family row's class
+// markup) and hand-written .sf-upload-progress rows.
+
+
+const CLASS_ROW = '.sf-upload-progress, .sf-file-upload-item > .sf-file-preview';
+const CLASS_ROWS = ':is(.sf-upload-progress, .sf-file-upload-item > .sf-file-preview)';
+const CLASS_ROW_NAME = '.sf-upload-progress-name, .sf-file-preview-name';
 
 function syncFileUploadInteraction(root) {
   const state = root.__sfFileUploadInteractionState ||= {
@@ -285,10 +299,16 @@ function syncFileUploadInteraction(root) {
   state.disabled = disabled;
   syncInputConfig(root, getInput(root));
   if (disabled && root.classList.contains('dragover')) root.classList.remove('dragover');
-  const files = getFilesContainer(root); // The class rows only: a Smart area's rows are sf-file-preview, which names
-  // its own buttons («Убрать <имя>», «Повторить <имя>»).
+  const files = getFilesContainer(root); // The class rows only: the ones this part draws (the family row's class
+  // markup, .sf-file-upload-item > .sf-file-preview) and hand-written
+  // .sf-upload-progress rows. A Smart area's rows are sf-file-preview
+  // elements, which name their own buttons («Убрать <имя>», «Повторить <имя>»).
 
-  files?.querySelectorAll('.sf-upload-progress button[data-action="remove"], .sf-upload-progress button[data-action="retry"]').forEach(button => {
+  files?.querySelectorAll(':scope > .sf-file-upload-item > .sf-file-preview').forEach(row => {
+    row.classList.toggle('disabled', disabled);
+    if (disabled) row.setAttribute('aria-disabled', 'true');else row.removeAttribute('aria-disabled');
+  });
+  files?.querySelectorAll(`${CLASS_ROWS} button[data-action="remove"], ${CLASS_ROWS} button[data-action="retry"]`).forEach(button => {
     let previous = state.buttons.get(button);
 
     if (!previous) {
@@ -309,9 +329,17 @@ function syncFileUploadInteraction(root) {
     const currentLabel = button.getAttribute('aria-label');
 
     if (!button.hasAttribute('aria-labelledby') && (!currentLabel || currentLabel === previous.label)) {
-      const name = button.closest('.sf-upload-progress')?.querySelector('.sf-upload-progress-name')?.textContent?.trim() || '';
-      const word = button.dataset.action === 'retry' ? button.textContent.trim() || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload');
-      const label = `${word} ${name}`.trim();
+      const name = button.closest(CLASS_ROW)?.querySelector(CLASS_ROW_NAME)?.textContent?.trim() || ''; // The name has its place in the word ({name}, remove-name / retry-name),
+      // so a language that puts it first can (C177 follow-up). A retry button
+      // the author wrote another word on keeps that word before the name; the
+      // icon-only retry (C260) carries its word in data-word.
+
+      const retry = button.dataset.action === 'retry';
+      const word = retry ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload');
+      const named = retry ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry-name', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove-name', root, 'sf-file-upload');
+      const text = retry ? (button.dataset.word || (button.querySelector?.('.sf-button-text-container') || button).textContent).trim() : '';
+      const own = text && text !== word ? text : '';
+      const label = own ? `${own} ${name}`.trim() : name ? named.replace('{name}', name) : word;
       if (currentLabel !== label) button.setAttribute('aria-label', label);
       previous.label = label;
     }
@@ -324,8 +352,8 @@ function syncFileUploadInteraction(root) {
   // hears three numbers and no way to tell them apart. It takes the file's name
   // the way the remove button does, unless the author named it.
 
-  files?.querySelectorAll('.sf-upload-progress').forEach(item => {
-    const name = item.querySelector('.sf-upload-progress-name')?.textContent?.trim() || ''; // The name has its place in the words ({name}), so a language that puts
+  files?.querySelectorAll(CLASS_ROWS).forEach(item => {
+    const name = item.querySelector(CLASS_ROW_NAME)?.textContent?.trim() || ''; // The name has its place in the words ({name}), so a language that puts
     // it first can (C177 (9)).
 
     const label = name ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'uploading-name', root, 'sf-file-upload').replace('{name}', name) : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'uploading', root, 'sf-file-upload');
@@ -445,75 +473,135 @@ function uploadItemIcon(item, state) {
   const type = String(item?.file?.type || item?.mime || EXTENSION_TYPES[extension] || '');
   const icon = (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(type);
   return icon === 'download' ? 'draft' : icon;
+} // The pictures a browser draws from a chosen file's own bytes (C81: a photo's
+// thumbnail in its row), as the Smart area draws them. A video's frame and a
+// PDF's page are the host's imageUrl: the component never decodes them.
+
+
+const DRAWN_PICTURES = /^image\/(?:png|jpeg|gif|webp|avif|bmp|svg\+xml)$/u;
+
+function rowPicture(root, item) {
+  const given = item?.imageUrl ?? item?.['image-url'];
+  if (given) return String(given);
+  const file = item?.file;
+  if (typeof Blob === 'undefined' || !(file instanceof Blob) || !DRAWN_PICTURES.test(String(file.type || ''))) return '';
+  if (typeof URL?.createObjectURL !== 'function') return '';
+  const pictures = root.__sfFileUploadPictures ||= new Map();
+  if (!pictures.has(file)) pictures.set(file, URL.createObjectURL(file));
+  return pictures.get(file);
+} // A chosen photo's address lives while its file is listed.
+
+
+function releaseRowPictures(root, items = []) {
+  const pictures = root?.__sfFileUploadPictures;
+  if (!pictures?.size) return;
+  const listed = new Set(items.map(item => item?.file).filter(Boolean));
+
+  for (const [file, address] of [...pictures]) {
+    if (listed.has(file)) continue;
+    pictures.delete(file);
+    URL.revokeObjectURL?.(address);
+  }
+} // A row is the file family's row (owner decisions C81 and C149), the class
+// markup of the sf-file-preview row the Smart area draws: the picture of a
+// photo or the type's glyph in the grey holder, the name and under it one
+// line -- the size (ready; «size · загружен» when sent), the bar (uploading)
+// or the reason (error) -- and the actions at the end: «Повторить» on a
+// failed file, «×» «Убрать <имя>» on every one. One height in every state
+// and at every zone size: the class row stacked the bar and the retry under
+// the text, so a list of four files was 44 / 68 / 44 / 84 and jumped at each
+// change of state (RG-FU-1).
+// «Повторить» as the icon alone, the Smart row's (owner decision C260): the
+// sheet draws it in place of the button with words in a row too narrow for
+// them (sf-file-preview, the container step g2). Named «Повторить <имя>» by
+// the list's labelling, «Повторить» in the Framework's plain tooltip, which
+// the anchor links to the button.
+
+
+function createRetryIcon(word) {
+  const anchor = document.createElement('span');
+  anchor.className = 'sf-file-preview-retry-icon sf-tooltip-anchor';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--primary sf-icon-button--size-1';
+  button.dataset.action = 'retry';
+  button.dataset.tooltip = '';
+  button.dataset.word = word;
+  const glyph = document.createElement('i');
+  glyph.className = 'sf-icon';
+  glyph.setAttribute('aria-hidden', 'true');
+  glyph.textContent = 'refresh';
+  button.append(glyph);
+  const tip = document.createElement('span');
+  tip.className = 'sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3';
+  tip.setAttribute('aria-hidden', 'true');
+  tip.hidden = true;
+  const content = document.createElement('span');
+  content.className = 'sf-tooltip-content';
+  const text = document.createElement('span');
+  text.className = 'sf-tooltip-text';
+  text.textContent = word;
+  content.append(text);
+  tip.append(content);
+  anchor.append(button, tip);
+  return anchor;
 }
 
-function createUploadProgressItem(item, size = '1', owner = null) {
-  const normalizedSize = normalizeSize(size);
+function createUploadProgressItem(item, owner = null) {
   const row = describeUploadItem(item, owner, 'done');
   const {
     state,
     progress
   } = row;
+  const wrap = document.createElement('div');
+  wrap.className = 'sf-file-upload-item';
+  wrap.setAttribute('role', 'listitem');
   const root = document.createElement('div');
-  root.className = ['sf-upload-progress', `sf-upload-progress--size-${normalizedSize}`, `sf-upload-progress--${state}`, 'flex', 'items-main-start', 'items-cross-start'].join(' ');
-  const leftIcon = document.createElement('i');
-  leftIcon.classList.add('sf-icon'); // The glyphs are pictures: their ligature names («cloud_upload», «check_circle»,
-  // «delete») were read as text (docs pre-check 2026-11-10 FU-03).
+  root.className = ['sf-file-preview', 'sf-file-preview--row', state === 'process' ? 'sf-file-preview--uploading' : '', state === 'error' ? 'sf-file-preview--error' : ''].filter(Boolean).join(' ');
+  root.dataset.state = state;
+  root.setAttribute('role', 'group');
+  root.setAttribute('aria-label', row.name);
+  if (state === 'process') root.setAttribute('aria-busy', 'true');
+  const holder = document.createElement('span');
+  holder.className = 'sf-file-preview-holder';
+  const picture = owner ? rowPicture(owner, item) : '';
 
-  leftIcon.setAttribute('aria-hidden', 'true');
-  leftIcon.textContent = row.icon;
-  const content = document.createElement('div');
-  content.className = 'sf-upload-progress-content flex flex-col flex-1';
-  const top = document.createElement('div');
-  top.className = 'sf-upload-progress-top flex content-main-between';
-  const left = document.createElement('div');
-  left.className = 'sf-upload-progress-left flex flex-col';
-  const nameNode = document.createElement('div');
-  nameNode.className = 'sf-upload-progress-name';
+  if (picture) {
+    holder.classList.add('sf-file-preview-holder--picture');
+    const image = document.createElement('img');
+    image.className = 'sf-file-preview-thumbnail';
+    image.src = picture;
+    image.alt = '';
+    image.decoding = 'async';
+    holder.append(image);
+  } else {
+    const glyph = document.createElement('i');
+    glyph.className = 'sf-icon'; // The glyphs are pictures: their ligature names were read as text (docs
+    // pre-check 2026-11-10 FU-03).
+
+    glyph.setAttribute('aria-hidden', 'true'); // The type's glyph in every state, as the Smart row: the error is said by
+    // the reason line in the error colour.
+
+    glyph.textContent = uploadItemIcon(item, 'ready');
+    holder.append(glyph);
+  }
+
+  const main = document.createElement('span');
+  main.className = 'sf-file-preview-main';
+  const nameNode = document.createElement('span');
+  nameNode.className = 'sf-file-preview-name';
+  nameNode.title = row.name;
   nameNode.textContent = row.name;
-  const textNode = document.createElement('div');
-  textNode.className = 'sf-upload-progress-text';
-  textNode.textContent = row.line;
-  left.append(nameNode, textNode);
-  top.append(left);
-
-  if (state === 'done') {
-    const doneIcon = document.createElement('i');
-    doneIcon.className = 'sf-icon sf-icon-solid sf-upload-progress-mark';
-    doneIcon.setAttribute('aria-hidden', 'true');
-    doneIcon.textContent = 'check_circle';
-    top.append(doneIcon);
-  } // Every state can be taken out of the list.
-
-
-  const removeButton = document.createElement('button');
-  removeButton.type = 'button';
-  removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
-  removeButton.dataset.action = 'remove';
-  const removeIcon = document.createElement('i');
-  removeIcon.className = 'sf-icon';
-  removeIcon.setAttribute('aria-hidden', 'true'); // «×» «Убрать <имя>»: the file leaves the list, nothing is erased (C149
-  // (8)); the trash is a stored file's, in sf-file-preview.
-
-  removeIcon.textContent = 'close';
-  removeButton.append(removeIcon);
-  top.append(removeButton);
-  content.append(top);
-
-  if (state === 'error') {
-    const retry = document.createElement('button');
-    retry.type = 'button';
-    retry.className = 'sf-upload-progress-repeat self-cross-start';
-    retry.dataset.action = 'retry';
-    retry.textContent = row.retryText;
-    content.append(retry);
-  } // A chosen file that is not being sent, and a sent one, have no bar: there
-  // is no transfer to show (FU-3, FU-4).
-
+  main.append(nameNode);
 
   if (state === 'process') {
+    // A chosen file that is not being sent, and a sent one, have no bar: there
+    // is no transfer to show (FU-3, FU-4). The bar stands in the size line's
+    // place, the size 1/2 bar with its per cent at the end (C131 (4)).
+    const holderBar = document.createElement('span');
+    holderBar.className = 'sf-file-preview-progress';
     const progressBar = document.createElement('div');
-    progressBar.className = `sf-progress-bar sf-progress-bar--size-${normalizedSize} flex flex-row items-cross-center`;
+    progressBar.className = 'sf-progress-bar sf-progress-bar--size-1/2 flex flex-row items-cross-center';
     if (progress === null) progressBar.dataset.indeterminate = 'true';else progressBar.dataset.value = String(progress);
     progressBar.dataset.textPosition = 'inline-end';
     const progressMain = document.createElement('div');
@@ -526,11 +614,88 @@ function createUploadProgressItem(item, size = '1', owner = null) {
     progressText.textContent = progress === null ? '' : `${progress}%`;
     progressMain.append(progressValue);
     progressBar.append(progressMain, progressText);
-    content.append(progressBar);
+    holderBar.append(progressBar);
+    main.append(holderBar);
+  } else if (state === 'error') {
+    const reason = document.createElement('span');
+    reason.className = 'sf-file-preview-error';
+    reason.textContent = row.line;
+    main.append(reason);
+  } else if (row.line) {
+    const line = document.createElement('span');
+    line.className = 'sf-file-preview-meta sf-file-preview-size';
+    line.textContent = row.line;
+    main.append(line);
   }
 
-  root.append(leftIcon, content);
-  return root;
+  const actions = document.createElement('span');
+  actions.className = 'sf-file-preview-actions';
+
+  if (state === 'error') {
+    // «Повторить» ends the row, first of its buttons (C88), the button the
+    // Smart row draws: ghost, primary, size 1, on the rung of «×» beside it
+    // (C103; it was the low button, 32 beside 40).
+    const retryHost = document.createElement('span');
+    retryHost.className = 'sf-file-preview-retry';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'sf-button sf-button--size-1 sf-button--ghost sf-button--link sf-button--primary flex items-cross-center';
+    retry.dataset.action = 'retry';
+    const retryIcon = document.createElement('i');
+    retryIcon.className = 'sf-icon pointer-event-none';
+    retryIcon.setAttribute('aria-hidden', 'true');
+    retryIcon.textContent = 'refresh';
+    const retryText = document.createElement('span');
+    retryText.className = 'sf-button-text-container text-center pointer-event-none';
+    retryText.textContent = row.retryText;
+    retry.append(retryIcon, retryText);
+    retryHost.append(retry);
+    actions.append(retryHost, createRetryIcon(row.retryText));
+  } // Every state can be taken out of the list: «×» «Убрать <имя>», nothing is
+  // erased (C149 (8)); the trash is a stored file's, in sf-file-preview.
+
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1';
+  removeButton.dataset.action = 'remove';
+  const removeIcon = document.createElement('i');
+  removeIcon.className = 'sf-icon';
+  removeIcon.setAttribute('aria-hidden', 'true');
+  removeIcon.textContent = 'close';
+  removeButton.append(removeIcon);
+  actions.append(removeButton);
+  root.append(holder, main, actions);
+  wrap.append(root);
+  return wrap;
+} // The focus inside the list keeps its place when the rows are drawn again: a
+// row taken out gives it to the row that took its place (the previous one
+// when it was the last), the area when none is left (C81, accessibility). The
+// list was rebuilt whole and the focus fell to the page's start (RG-FU-3).
+
+
+function listFocus(container) {
+  const active = container?.ownerDocument?.activeElement;
+  if (!active || !container.contains(active)) return null;
+  const row = active.closest('[data-index]');
+  return {
+    index: Number(row?.dataset.index) || 0,
+    action: active.dataset?.action || ''
+  };
+}
+
+function restoreListFocus(root, container, held) {
+  if (!held) return;
+  const rows = container.querySelectorAll(':scope > [data-index]');
+  const row = rows[Math.min(held.index, rows.length - 1)]; // A failed row holds «Повторить» twice, with words and as the icon alone;
+  // the sheet draws one of them (C260): the focus goes to the drawn one.
+
+  const drawn = selector => [...(row?.querySelectorAll(selector) || [])].find(button => button.getClientRects().length > 0);
+
+  const target = held.action && drawn(`button[data-action="${held.action}"]:not(:disabled)`) || drawn('button[data-action="remove"]:not(:disabled)') || root;
+  target?.focus?.({
+    preventScroll: true
+  });
 }
 
 function renderFileUploadItems(root, items = []) {
@@ -542,14 +707,18 @@ function renderFileUploadItems(root, items = []) {
     return;
   }
 
-  container.innerHTML = '';
-  const size = normalizeSize(Array.from(root.classList).find(cls => cls.startsWith('sf-file-upload--size-'))?.replace('sf-file-upload--size-', '') || '1');
+  const held = listFocus(container);
+  container.replaceChildren(); // The rows are a list (C81), as the Smart area's.
+
+  if (items.length && !container.hasAttribute('role')) container.setAttribute('role', 'list');
   items.forEach((item, index) => {
-    const node = createUploadProgressItem(item, size, root);
+    const node = createUploadProgressItem(item, root);
     node.dataset.index = String(index);
     container.append(node);
   });
+  releaseRowPictures(root, items);
   syncFileUploadInteraction(root);
+  restoreListFocus(root, container, held);
 }
 
 function emitFileUploadItemAdd(root, item, index, items, source = 'input') {
@@ -598,19 +767,36 @@ function emitFileUploadComplete(root, items) {
 
 function syncFileUploadStateEvents(root, nextItems = [], previousItems = []) {
   const previousMap = new Map(previousItems.map((item, index) => [getItemEventKey(item, index), normalizeItemState(item)]));
+  const said = [];
   nextItems.forEach((item, index) => {
     const key = getItemEventKey(item, index);
     const nextState = normalizeItemState(item);
     const prevState = previousMap.get(key);
 
     if (nextState === 'error' && prevState !== 'error') {
-      emitFileUploadItemError(root, item, index, nextItems);
+      emitFileUploadItemError(root, item, index, nextItems); // A list set from scratch (a stored value) is not news.
+
+      if (prevState !== undefined) {
+        const message = String(item?.errorMessage || item?.error || '');
+        said.push(fileUploadWord(root, message ? 'said-error-line' : 'said-error', {
+          vars: {
+            name: itemName(item),
+            message
+          }
+        }));
+      }
     }
 
     if (nextState === 'done' && prevState !== 'done') {
       emitFileUploadItemComplete(root, item, index, nextItems);
+      if (prevState !== undefined) said.push(fileUploadWord(root, 'said-done', {
+        vars: {
+          name: itemName(item)
+        }
+      }));
     }
   });
+  announceFileUpload(root, said);
   const hasItems = nextItems.length > 0;
   const isAllDone = hasItems && nextItems.every(item => normalizeItemState(item) === 'done');
   const wasAllDone = previousItems.length > 0 && previousItems.every(item => normalizeItemState(item) === 'done');
@@ -745,6 +931,13 @@ function applySelectedFiles(root, files = [], source = 'input') {
   added.forEach(item => {
     emitFileUploadItemAdd(root, item, nextFiles.indexOf(item), nextFiles, source);
   });
+  announceFileUpload(root, [added.length === 1 ? fileUploadWord(root, 'said-added', {
+    vars: {
+      name: itemName(added[0])
+    }
+  }) : fileUploadWord(root, 'said-added-many', {
+    count: added.length
+  })]);
   emitSelect(root, added, source);
   return added;
 }
@@ -765,7 +958,8 @@ function formatAcceptWords(accept, root = null) {
 } // Where a file that was not added is said: the line under the area (C81: the
 // message under the field, not a row in the list), a polite status a screen
 // reader announces. The Smart template draws it; an ordinary area gets one
-// after it on the first rejection.
+// after it when it is bound: a live region made at the moment of its first
+// words is often not heard (RG-FU-4).
 
 
 function getMessage(root, create = false) {
@@ -779,6 +973,43 @@ function getMessage(root, create = false) {
   message.hidden = true;
   root.after(message);
   return message;
+} // What happened to the list, for a screen reader only (C81, accessibility):
+// a file added, sent, or not sent, said politely; the per cent is not said.
+// A region of its own beside the message, made with the area (the Smart
+// template and the class draw it): the message is seen and says only what
+// was left out.
+
+
+function getStatus(root, create = false) {
+  if (!root) return null;
+  let next = root.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-message')) next = next.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-status')) return next;
+  if (!create || isManagedRenderRoot(root) || typeof document === 'undefined') return null;
+  const anchor = getMessage(root, true);
+  if (!anchor) return null;
+  const status = document.createElement('div');
+  status.className = 'sf-file-upload-status';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-atomic', 'true');
+  anchor.after(status);
+  return status;
+}
+
+function announceFileUpload(root, lines = []) {
+  const said = lines.filter(Boolean);
+  if (!said.length) return;
+  const status = getStatus(root);
+  if (!status) return;
+  const text = said.join('. '); // The same words again (a second file of one name) are said again: the
+  // region is emptied first.
+
+  if (status.textContent === text) status.textContent = '';
+  status.textContent = text;
+}
+
+function itemName(item) {
+  return String(item?.name || item?.fileName || item?.file?.name || '');
 }
 
 function showFileUploadRejections(root, rejected = []) {
@@ -911,10 +1142,31 @@ function takeFiles(root, files = [], source = 'input') {
   }
 
   return accepted.length ? applySelectedFiles(root, accepted, source) : [];
+} // The words about dragging («или перетащите их сюда») are a part of their
+// own, so a screen that cannot drag hides them (owner decision C223): the
+// author's markup wrote them as bare text after the link; they are put in
+// .sf-file-upload-drag when the zone is bound.
+
+
+function wrapDragWords(root) {
+  const block = root?.querySelector?.('.sf-file-upload-block-text');
+  if (!block || block.querySelector('.sf-file-upload-drag')) return; // Only the words after the link: without a link the text is the zone's
+  // whole call and stays.
+
+  const link = block.querySelector('.sf-file-upload-link');
+  if (!link) return;
+  const loose = Array.from(block.childNodes).filter(node => node.nodeType === 3 && node.textContent.trim() && link.compareDocumentPosition(node) & 4);
+  if (!loose.length) return;
+  const drag = document.createElement('span');
+  drag.className = 'sf-file-upload-drag';
+  drag.textContent = loose.map(node => node.textContent).join('').trim();
+  loose[0].before(' ', drag);
+  loose.forEach(node => node.remove());
 }
 
 function bindFileUpload(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.retireFieldSizeClass)(root, 'sf-file-upload');
+  // The area stands on the field ladder: 1/3 and 3 are its own steps, no
+  // class to move.
   if (!root) return;
   const input = ensureInput(root);
   const filesContainer = getFilesContainer(root); // DOM markers survive cloneNode; listeners and selected File objects do not.
@@ -936,7 +1188,11 @@ function bindFileUpload(root) {
 
   if (!root.hasAttribute('role')) {
     root.setAttribute('role', 'button');
-  }
+  } // The live regions stand from the start (RG-FU-4).
+
+
+  getStatus(root, true);
+  if (!isManagedRenderRoot(root)) wrapDragWords(root);
 
   const openInput = () => {
     if (isDisabledRoot(root)) return;
@@ -952,7 +1208,7 @@ function bindFileUpload(root) {
 
     const target = event.target;
     if (!(target instanceof Element)) return;
-    if (target.closest('.sf-upload-progress-repeat')) return;
+    if (target.closest('.sf-upload-progress-repeat, [data-action="retry"]')) return;
     if (target.closest('input[type="file"]')) return;
     if (target.closest('[data-action="remove"]')) return;
     openInput();
@@ -1025,7 +1281,7 @@ function bindFileUpload(root) {
       return;
     }
 
-    const itemNode = (removeButton || retryButton).closest('.sf-upload-progress');
+    const itemNode = (removeButton || retryButton).closest('[data-index], .sf-upload-progress');
     if (!itemNode) return;
     event.preventDefault();
     event.stopPropagation();
@@ -1197,7 +1453,10 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     const link = document.createElement('span');
     link.className = 'sf-file-upload-link';
     link.textContent = linkText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'linkText', root, 'sf-file-upload');
-    blockText.append(link, ` ${text ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'text', root, 'sf-file-upload')}`);
+    const drag = document.createElement('span');
+    drag.className = 'sf-file-upload-drag';
+    drag.textContent = text ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'text', root, 'sf-file-upload');
+    blockText.append(link, ' ', drag);
     block.append(blockText);
     bottom.append(block);
 
@@ -1213,9 +1472,15 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     message.className = 'sf-file-upload-message';
     message.setAttribute('role', 'status');
     message.hidden = true;
-    const files = document.createElement('div');
-    files.className = 'sf-file-upload-files grid grid-col-1 gap-1 w-full';
-    wrapper.append(root, message, files);
+    const status = document.createElement('div');
+    status.className = 'sf-file-upload-status';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-atomic', 'true');
+    const files = document.createElement('div'); // The rows' list, as the Smart area's (C81).
+
+    files.className = 'sf-file-upload-files grid grid-col-1 gap-1/2 w-full';
+    files.setAttribute('role', 'list');
+    wrapper.append(root, message, status, files);
     this.root = root;
     this.template = wrapper;
   }
@@ -1954,7 +2219,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -1969,6 +2235,53 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_for
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -2017,7 +2330,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -2168,16 +2481,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a0ca4643a85f");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("fb0bdf7719f0");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("35944d444d78");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3cdda2d4c43b");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8623c4e59417");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d49e89d651d7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_6__]);
-([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("35944d444d78");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("3cdda2d4c43b");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8623c4e59417");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d49e89d651d7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__]);
+([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -2192,10 +2508,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
 }; // Every word this component says is lang/<locale>.json runtime (standard
 // 1.3.8 §11); a product adds any other language through
 // SF.language.register("sf-file-upload", code, words).
@@ -2235,14 +2551,14 @@ const itemProgress = item => Math.max(0, Math.min(100, Number(item?.progress ?? 
 // outcome, and each entry is a stream the host drives through items.
 
 
-const FileUploadElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const FileUploadElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
     en,
     ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
     'remove-item'({
       index
@@ -2274,11 +2590,11 @@ function storedItem(entry, index, node) {
     value: entry
   };
   const href = shape.href ? String(shape.href) : '';
-  const name = String(shape.label || shape.name || (href ? (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_6__.fileNameFromAddress)(href) : '') || shape.value || 'File');
+  const name = String(shape.label || shape.name || (href ? (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__.fileNameFromAddress)(href) : '') || shape.value || 'File');
   return {
     id: String(shape.value || href || `${name}-${index}`),
     name,
-    fileSize: shape.size === undefined || shape.size === null ? '' : (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_6__.formatFileSize)(shape.size, {
+    fileSize: shape.size === undefined || shape.size === null ? '' : (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__.formatFileSize)(shape.size, {
       node
     }),
     state: 'done',
@@ -2308,16 +2624,17 @@ function readValueAttribute(raw) {
   }
 }
 
-class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(FileUploadElement) {
+class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(FileUploadElement) {
   static get props() {
     return { ...super.props,
       templateName: {
         attribute: 'template',
         default: 'default'
       },
+      // The field ladder's five steps (field-size.js FIELD_LADDER; queue #70).
       size: {
         default: '1',
-        values: _component_field_size__WEBPACK_IMPORTED_MODULE_4__.FIELD_SIZES
+        values: _component_field_size__WEBPACK_IMPORTED_MODULE_4__.FIELD_LADDER
       },
       ariaLabel: {
         default: ''
@@ -2382,7 +2699,7 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(this.getAttribute('size') || '1', 'sf-file-upload');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(this.getAttribute('size'));
   }
 
   get formats() {
@@ -2853,7 +3170,12 @@ class SfFileUpload extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.F
       formats: this.formats,
       supportingText: this.supportingText,
       items: this.items,
-      keyOf: itemId
+      keyOf: itemId,
+      // The visible label names the area (aria-labelledby) unless the page
+      // gave the area an aria-label of its own.
+      labelId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this, {
+        kind: 'sf-file-upload'
+      }), 'label')
     });
   }
 
@@ -3074,9 +3396,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c43efa1014a6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c43efa1014a6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_4__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__, _component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -3084,8 +3407,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+
 function normalizeSize(value) {
-  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
+  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.ladderSize)(value);
 } // A row is the family's file row, sf-file-preview (owner decisions C81 and
 // C149): one row height with sf-file-preview, sf-file-download and the image
 // field; the picture of a photo (the chosen file itself, or the host's
@@ -3106,7 +3430,7 @@ const PREVIEW_STATES = Object.freeze({
 
 function renderUploadItem(item, index, context) {
   const owner = context.component;
-  const row = (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_3__.describeUploadItem)(item, owner, 'process');
+  const row = (0,_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_4__.describeUploadItem)(item, owner, 'process');
   const {
     state
   } = row;
@@ -3139,8 +3463,25 @@ function renderUploadItem(item, index, context) {
 function renderFileUploadTemplate(context) {
   const size = normalizeSize(context.size);
   const rootClasses = ['sf-file-upload', `sf-file-upload--size-${size}`, context.disabled ? 'disabled' : '', 'flex', 'flex-col', 'items-cross-center', 'cursor-pointer', context.rootClass].filter(Boolean);
-  const featuredIconClasses = ['sf-featured-icon', `sf-featured-icon--size-${size}`, 'sf-featured-icon--soft', 'sf-featured-icon--circle', 'sf-featured-icon--neutral'].join(' ');
+  const featuredIconClasses = ['sf-featured-icon', `sf-featured-icon--size-${size}`, 'sf-featured-icon--soft', 'sf-featured-icon--circle', 'sf-featured-icon--neutral'].join(' '); // The label above the area, as every field of the family has it (C153 (1),
+  // (2), (8)): the text ink a step below the area's text, the required «*»
+  // in its ink, the «?» of help after them (helpers/field-help.js). It
+  // names the area unless the page gave the area an aria-label.
+
+  const label = context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-file-upload-label sf-file-upload-label--size-${size}`} id=${context.labelId}>
+              <span class="sf-file-upload-label-text">${context.label}</span>
+              ${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-upload-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+              ${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_3__.renderFieldHelp)({
+    help: context.help,
+    label: context.label,
+    size,
+    className: 'sf-file-upload-help',
+    component: context.component
+  })}
+          </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const labelledBy = context.label && !context.ariaLabel ? context.labelId : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        ${label}
         <div
                 class=${rootClasses.join(' ')}
                 style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -3154,6 +3495,7 @@ function renderFileUploadTemplate(context) {
                 ?multiple=${context.multiple}
                 ?disabled=${context.disabled}
                 aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-labelledby=${labelledBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
             <div class=${featuredIconClasses}>
                 <i class="sf-icon" aria-hidden="true">${context.icon}</i>
@@ -3163,7 +3505,7 @@ function renderFileUploadTemplate(context) {
                 <div class="sf-file-upload-block flex">
                     <div class="sf-file-upload-block-text">
                         <span class="sf-file-upload-link">${context.linkText}</span>
-                        ${context.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` ${context.text}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        ${context.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <span class="sf-file-upload-drag">${context.text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     </div>
                 </div>
 
@@ -3173,10 +3515,81 @@ function renderFileUploadTemplate(context) {
 
         <div class="sf-file-upload-message" role="status" hidden></div>
 
+        <div class="sf-file-upload-status" role="status" aria-atomic="true"></div>
+
         <div class="sf-file-upload-files grid grid-col-1 gap-1/2 w-full" role="list">
             ${Array.isArray(context.items) ? (0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.items, (item, index) => context.keyOf(item, index), (item, index) => renderUploadItem(item, index, context)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
     `;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3735,6 +4148,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "efa66f8927d1"
 (module) {
 
@@ -3964,14 +4384,14 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d4b3cd9346d9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","remove-name":"Remove {name}","retry-name":"Try {name} again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
 
 /***/ },
 
 /***/ "6e4269348082"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","remove-name":"Убрать {name}","retry-name":"Повторить {name}","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
 
 /***/ },
 
@@ -3999,21 +4419,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "35944d444d78"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.3.0","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.5.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
 /***/ "8623c4e59417"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo","help":"More about: {label}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
 
 /***/ },
 
 /***/ "d49e89d651d7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Загрузка файлов","runtime":{"done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","link-text":"Выберите файл","not-added":"Не добавлено {n}:","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-size":"«{name}» — {size}, а можно до {max}","reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","reject-type":"«{name}» не подходит: можно {formats}","remove":"Убрать","remove-failed":"Уберите или повторите файлы с ошибкой","retry":"Повторить","text":"или перетащите его сюда","uploading":"Загрузка","value-missing":"Добавьте файл","value-missing-many":"Добавьте хотя бы один файл","wait-for-uploads":"Дождитесь, пока файлы загрузятся","file-removed":"Файл убран","undo":"Вернуть"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Загрузка файлов","runtime":{"done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","link-text":"Выберите файл","not-added":"Не добавлено {n}:","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-size":"«{name}» — {size}, а можно до {max}","reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","reject-type":"«{name}» не подходит: можно {formats}","remove":"Убрать","remove-failed":"Уберите или повторите файлы с ошибкой","retry":"Повторить","text":"или перетащите его сюда","uploading":"Загрузка","value-missing":"Добавьте файл","value-missing-many":"Добавьте хотя бы один файл","wait-for-uploads":"Дождитесь, пока файлы загрузятся","file-removed":"Файл убран","undo":"Вернуть","help":"Подробнее: {label}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
 
 /***/ }
 

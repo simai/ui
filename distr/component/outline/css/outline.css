@@ -33,6 +33,9 @@
     padding: 0;
     list-style: none;
   }
+  /* One step down the column (OT 29): the nested list stands the same gap
+     below its parent link as any two rows do; it began right under it (8,
+     then 0, then 8). */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__list .sf-outline__list {
     padding-left: var(--sf-outline--indent);
   }
@@ -56,8 +59,33 @@
     padding-right: var(--sf-outline--indent);
   }
   .sf-outline__list .sf-outline__list {
+    padding-top: var(--sf-outline--gap);
+    -webkit-padding-before: var(--sf-outline--gap);
+            padding-block-start: var(--sf-outline--gap);
     -webkit-padding-start: var(--sf-outline--indent);
             padding-inline-start: var(--sf-outline--indent);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
+    padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-outline__link {
+    padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+    }
+  }
+  .sf-outline__link:where(:dir(ltr)) {
+    padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link {
+    padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+  }
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-outline__link {
+    padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+    }
+  }
+  .sf-outline__link:where(:dir(rtl)) {
+    padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
     border-left: var(--sf-outline--indicator-width) solid var(--sf-transparent);
@@ -92,6 +120,12 @@
     padding-left: var(--sf-outline--link-padding-inline);
     padding-right: var(--sf-outline--link-padding-inline);
     padding-inline: var(--sf-outline--link-padding-inline);
+    /* The text stands at the list's inset (C77, C105 H4; OT 30): the former
+       indicator's transparent edge, kept for forced colours, comes out of the
+       padding, so a link's text begins 16 from the edge (12 on a phone and
+       compact), not 18. */
+    -webkit-padding-start: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
+            padding-inline-start: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
     border: 0;
     -webkit-border-start: var(--sf-outline--indicator-width) solid var(--sf-transparent);
             border-inline-start: var(--sf-outline--indicator-width) solid var(--sf-transparent);
@@ -112,13 +146,13 @@
     position: relative;
     z-index: 1;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-outline__link:focus-visible {
     position: relative;
     z-index: 1;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])
   .sf-outline__link[data-sf-outline-active] {
@@ -157,13 +191,13 @@
   }
   @media (forced-colors: active) {
     .sf-outline__link.focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
       box-shadow: none;
     }
     .sf-outline__link:focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
       box-shadow: none;
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])

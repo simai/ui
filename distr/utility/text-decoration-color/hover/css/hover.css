@@ -5,39 +5,39 @@
             text-decoration-color: var(--sf-inherit);
   }
   .hover\:decoration-current:hover {
-    -webkit-text-decoration-color: var(--sf-currentColor);
-            text-decoration-color: var(--sf-currentColor);
+    -webkit-text-decoration-color: var(--sf-current);
+            text-decoration-color: var(--sf-current);
   }
   .hover\:decoration-transparent:hover {
     -webkit-text-decoration-color: var(--sf-transparent);
             text-decoration-color: var(--sf-transparent);
   }
   .hover\:decoration-primary:hover {
-    -webkit-text-decoration-color: var(--sf-primary-outline);
-            text-decoration-color: var(--sf-primary-outline);
+    -webkit-text-decoration-color: var(--sf-primary);
+            text-decoration-color: var(--sf-primary);
   }
   .hover\:decoration-secondary:hover {
-    -webkit-text-decoration-color: var(--sf-secondary-outline);
-            text-decoration-color: var(--sf-secondary-outline);
+    -webkit-text-decoration-color: var(--sf-secondary);
+            text-decoration-color: var(--sf-secondary);
   }
   .hover\:decoration-tertiary:hover {
-    -webkit-text-decoration-color: var(--sf-tertiary-outline);
-            text-decoration-color: var(--sf-tertiary-outline);
+    -webkit-text-decoration-color: var(--sf-tertiary);
+            text-decoration-color: var(--sf-tertiary);
   }
   .hover\:decoration-error:hover {
-    -webkit-text-decoration-color: var(--sf-error-outline);
-            text-decoration-color: var(--sf-error-outline);
+    -webkit-text-decoration-color: var(--sf-error);
+            text-decoration-color: var(--sf-error);
   }
   .hover\:decoration-warning:hover {
-    -webkit-text-decoration-color: var(--sf-warning-outline);
-            text-decoration-color: var(--sf-warning-outline);
+    -webkit-text-decoration-color: var(--sf-warning);
+            text-decoration-color: var(--sf-warning);
   }
   .hover\:decoration-success:hover {
-    -webkit-text-decoration-color: var(--sf-success-outline);
-            text-decoration-color: var(--sf-success-outline);
+    -webkit-text-decoration-color: var(--sf-success);
+            text-decoration-color: var(--sf-success);
   }
   .hover\:decoration-info:hover {
-    -webkit-text-decoration-color: var(--sf-info-outline);
-            text-decoration-color: var(--sf-info-outline);
+    -webkit-text-decoration-color: var(--sf-info);
+            text-decoration-color: var(--sf-info);
   }
 }

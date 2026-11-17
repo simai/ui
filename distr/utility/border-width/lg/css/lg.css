@@ -2,10 +2,10 @@
 @layer sf.utilities {
   @media (min-width: 60rem) {
     .lg\:border-1 {
-      border-width: var(--sf-a1);
+      border-width: var(--sf-line--border);
     }
     .lg\:border-2 {
-      border-width: var(--sf-a2);
+      border-width: var(--sf-line--indicator);
     }
     .lg\:border-3 {
       border-width: var(--sf-a3);
@@ -35,10 +35,10 @@
       border-width: var(--sf-0);
     }
     .lg\:border-top-1 {
-      border-top-width: var(--sf-a1);
+      border-top-width: var(--sf-line--border);
     }
     .lg\:border-top-2 {
-      border-top-width: var(--sf-a2);
+      border-top-width: var(--sf-line--indicator);
     }
     .lg\:border-top-3 {
       border-top-width: var(--sf-a3);
@@ -68,54 +68,54 @@
       border-top-width: var(--sf-0);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-end-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     @supports not (border-inline-end-width: initial) {
     html:not([dir="rtl"]) .lg\:border-inline-end-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
       }
     }
     .lg\:border-inline-end-1:where(:dir(ltr)) {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-inline-end-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .lg\:border-inline-end-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
       }
     }
     .lg\:border-inline-end-1:where(:dir(rtl)) {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     .lg\:border-inline-end-1 {
-      border-inline-end-width: var(--sf-a1);
+      border-inline-end-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-end-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-end-width: initial) {
     html:not([dir="rtl"]) .lg\:border-inline-end-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-inline-end-2:where(:dir(ltr)) {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-inline-end-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .lg\:border-inline-end-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-inline-end-2:where(:dir(rtl)) {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     .lg\:border-inline-end-2 {
-      border-inline-end-width: var(--sf-a2);
+      border-inline-end-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-end-3 {
       border-right-width: var(--sf-a3);
@@ -343,10 +343,10 @@
       border-inline-end-width: var(--sf-0);
     }
     .lg\:border-bottom-1 {
-      border-bottom-width: var(--sf-a1);
+      border-bottom-width: var(--sf-line--border);
     }
     .lg\:border-bottom-2 {
-      border-bottom-width: var(--sf-a2);
+      border-bottom-width: var(--sf-line--indicator);
     }
     .lg\:border-bottom-3 {
       border-bottom-width: var(--sf-a3);
@@ -376,54 +376,54 @@
       border-bottom-width: var(--sf-0);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-start-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     @supports not (border-inline-start-width: initial) {
     html:not([dir="rtl"]) .lg\:border-inline-start-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
       }
     }
     .lg\:border-inline-start-1:where(:dir(ltr)) {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-inline-start-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .lg\:border-inline-start-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
       }
     }
     .lg\:border-inline-start-1:where(:dir(rtl)) {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     .lg\:border-inline-start-1 {
-      border-inline-start-width: var(--sf-a1);
+      border-inline-start-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-start-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-start-width: initial) {
     html:not([dir="rtl"]) .lg\:border-inline-start-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-inline-start-2:where(:dir(ltr)) {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-inline-start-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .lg\:border-inline-start-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-inline-start-2:where(:dir(rtl)) {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     .lg\:border-inline-start-2 {
-      border-inline-start-width: var(--sf-a2);
+      border-inline-start-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-inline-start-3 {
       border-left-width: var(--sf-a3);
@@ -651,100 +651,100 @@
       border-inline-start-width: var(--sf-0);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-x-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     @supports not (border-inline-end-width: initial) {
     html:not([dir="rtl"]) .lg\:border-x-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
       }
     }
     .lg\:border-x-1:where(:dir(ltr)) {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-x-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .lg\:border-x-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
       }
     }
     .lg\:border-x-1:where(:dir(rtl)) {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-x-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     @supports not (border-inline-start-width: initial) {
     html:not([dir="rtl"]) .lg\:border-x-1 {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
       }
     }
     .lg\:border-x-1:where(:dir(ltr)) {
-      border-left-width: var(--sf-a1);
+      border-left-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-x-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .lg\:border-x-1 {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
       }
     }
     .lg\:border-x-1:where(:dir(rtl)) {
-      border-right-width: var(--sf-a1);
+      border-right-width: var(--sf-line--border);
     }
     .lg\:border-x-1 {
-      border-inline-end-width: var(--sf-a1);
-      border-inline-start-width: var(--sf-a1);
+      border-inline-end-width: var(--sf-line--border);
+      border-inline-start-width: var(--sf-line--border);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-x-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-end-width: initial) {
     html:not([dir="rtl"]) .lg\:border-x-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-x-2:where(:dir(ltr)) {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-x-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .lg\:border-x-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-x-2:where(:dir(rtl)) {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-x-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-start-width: initial) {
     html:not([dir="rtl"]) .lg\:border-x-2 {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-x-2:where(:dir(ltr)) {
-      border-left-width: var(--sf-a2);
+      border-left-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, [dir="rtl"] .lg\:border-x-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .lg\:border-x-2 {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
       }
     }
     .lg\:border-x-2:where(:dir(rtl)) {
-      border-right-width: var(--sf-a2);
+      border-right-width: var(--sf-line--indicator);
     }
     .lg\:border-x-2 {
-      border-inline-end-width: var(--sf-a2);
-      border-inline-start-width: var(--sf-a2);
+      border-inline-end-width: var(--sf-line--indicator);
+      border-inline-start-width: var(--sf-line--indicator);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:border-x-3 {
       border-right-width: var(--sf-a3);
@@ -1179,12 +1179,12 @@
       border-inline-start-width: var(--sf-0);
     }
     .lg\:border-y-1 {
-      border-top-width: var(--sf-a1);
-      border-bottom-width: var(--sf-a1);
+      border-top-width: var(--sf-line--border);
+      border-bottom-width: var(--sf-line--border);
     }
     .lg\:border-y-2 {
-      border-top-width: var(--sf-a2);
-      border-bottom-width: var(--sf-a2);
+      border-top-width: var(--sf-line--indicator);
+      border-bottom-width: var(--sf-line--indicator);
     }
     .lg\:border-y-3 {
       border-top-width: var(--sf-a3);

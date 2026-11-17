@@ -153,13 +153,12 @@ function renderProgressScale(root) {
   // threshold draws it again.
 
   const drawn = normalizeProgressScaleTone((0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.effectiveStatus)(tone, value, (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt), (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt)));
-  const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line, and a level scale, lay their track and value out
-  // in a row, the value at the row's end (C185 (5)); any other scale stands
-  // its value under the track.
+  const showText = normalizeBoolean(root.dataset.showText, true); // Every scale lays its track and value out in a row, the value at the
+  // row's end, as the bar's inline-end and the level (owner decision C219,
+  // with C185 (5) and C203); it stood under the track before.
 
-  const onRow = level || /(^|\s)sf-progress-scale--line-/.test(root.className);
-  root.classList.add('sf-progress-scale', 'flex', onRow ? 'flex-row' : 'flex-col');
-  root.classList.remove(onRow ? 'flex-col' : 'flex-row');
+  root.classList.add('sf-progress-scale', 'flex', 'flex-row');
+  root.classList.remove('flex-col');
   root.classList.toggle('sf-progress-scale--level', level);
   syncScaleClasses(root, step, size, drawn);
   root.dataset.value = String(value);
@@ -270,7 +269,9 @@ function getProgressScaleState(target) {
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || '',
     meter: root.dataset.meter === 'true',
-    steps: root.dataset.steps ? normalizeProgressScaleSteps(root.dataset.steps) : null
+    steps: root.dataset.steps ? normalizeProgressScaleSteps(root.dataset.steps) : null,
+    warningAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.warningAt),
+    errorAt: (0,_progress_threshold__WEBPACK_IMPORTED_MODULE_3__.readThreshold)(root.dataset.errorAt)
   };
 }
 
@@ -882,7 +883,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -908,7 +910,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -1169,7 +1173,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1240,15 +1245,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1450,7 +1461,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1555,7 +1566,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1596,6 +1607,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1694,8 +1724,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -1850,7 +1882,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1870,7 +1903,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1910,7 +1944,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1935,7 +1970,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1945,7 +1981,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -2060,7 +2097,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -2122,15 +2162,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

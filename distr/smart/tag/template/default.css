@@ -86,19 +86,19 @@
 
     .sf-tag .sf-tag-action:focus-visible::after {
         outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-        outline-offset: calc(var(--sf-focus--width) * -1);
+        outline-offset: var(--sf-focus--inset);
     }
 
     @media (forced-colors: active) {
         .sf-tag .sf-tag-action:focus-visible::after {
-            outline: var(--sf-focus-outline-width) solid currentColor;
-            outline-offset: calc(var(--sf-focus--width) * -1);
+            outline: var(--sf-focus--width) solid currentColor;
+            outline-offset: var(--sf-focus--inset);
         }
     }
 }
 
 @layer sf.states {
-    .sf-tag.sf-tag--color.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
+    .sf-tag.sf-tag--color.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar.disabled > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
         --sf-close-icon--background-color: var(--sf-surface-disabled);
     }
 }
@@ -106,11 +106,11 @@
 @layer sf.overrides {
     /* The remove cross is plain (C14): no spot, the tag's ink at the ink step
        64 at rest and full on hover and press. */
-    .sf-tag.sf-tag--color > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
+    .sf-tag.sf-tag--color > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
         --sf-close-icon--background-color: color-mix(in srgb, var(--sf-tag-color, var(--sf-on-surface)) 64%, transparent);
     }
 
-    .sf-tag.sf-tag--color > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--link.sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
+    .sf-tag.sf-tag--color > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--icon > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--default > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon, .sf-tag.sf-tag--avatar > :is(sf-button-icon, sf-icon-button) > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--close:not(:disabled):is(:hover, :active) > :is(sf-button-close, sf-close) > .sf-close > .sf-close-icon {
         --sf-close-icon--background-color: var(--sf-tag-color, var(--sf-on-surface));
     }
 
@@ -200,14 +200,14 @@
     .sf-tag > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--close:not(:disabled):focus-visible::before,
     .sf-tag > :is(sf-button-close, sf-close) > .sf-icon-button.sf-icon-button--close:not(:disabled):focus-visible::before {
         outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-        outline-offset: calc(var(--sf-focus--width) * -1);
+        outline-offset: var(--sf-focus--inset);
     }
 
     @media (forced-colors: active) {
         .sf-tag > :is(sf-button-icon, sf-icon-button) > .sf-icon-button.sf-icon-button--close:not(:disabled):focus-visible::before,
         .sf-tag > :is(sf-button-close, sf-close) > .sf-icon-button.sf-icon-button--close:not(:disabled):focus-visible::before {
             outline: var(--sf-focus--width) solid currentColor;
-            outline-offset: calc(var(--sf-focus--width) * -1);
+            outline-offset: var(--sf-focus--inset);
         }
     }
 

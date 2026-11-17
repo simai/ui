@@ -350,6 +350,97 @@ function writeTriggerKeyShortcuts(trigger, shortcut) {
 
 /***/ },
 
+/***/ "d0aecec474fa"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   repeatsName: () => (/* binding */ repeatsName),
+/* harmony export */   spokenText: () => (/* binding */ spokenText),
+/* harmony export */   tooltipText: () => (/* binding */ tooltipText),
+/* harmony export */   triggerName: () => (/* binding */ triggerName)
+/* harmony export */ });
+// A tooltip that only says what the trigger's name already says is not the
+// trigger's description too, or a screen reader says it twice: an icon button
+// named «Повторить Отчёт.xlsx» with the tooltip «Повторить» was heard as
+// «Повторить Отчёт.xlsx, Повторить» (sf-file-download, file rows, 2026-11-16).
+// Before, only a tooltip equal to the name was left out (docs trial 4,
+// 2026-10-15); now a tooltip whose words stand whole inside the name is too.
+// The tooltip is still drawn; only the link for assistive technology goes.
+// Pure functions over the DOM, no imports: the tooltip controller and
+// sf-button-icon's name tooltip read the same rule.
+const squash = text => String(text ?? '').replace(/\s+/gu, ' ').trim().toLocaleLowerCase();
+
+const escape = text => text.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'); // Parts a reader does not hear as words of the tooltip: the keys of its
+// shortcut (said on the trigger by aria-keyshortcuts, KB-4) and the tail.
+
+
+const UNSAID = '.sf-tooltip-shortcut, .sf-tooltip-tail'; // The words a node says: text of its descendants, without hidden or
+// aria-hidden ones (an icon's ligature, a status seen only) and without the
+// parts named by skip.
+
+function spokenText(node, skip = '') {
+  if (!node) return '';
+  let words = '';
+
+  for (const child of node.childNodes ?? []) {
+    if (child.nodeType === 3) {
+      words += child.data;
+    } else if (child.nodeType === 1) {
+      if (child.hidden || child.getAttribute?.('aria-hidden') === 'true') continue;
+      if (skip && child.matches?.(skip)) continue;
+      words += ` ${spokenText(child, skip)} `;
+    }
+  }
+
+  return words;
+} // The trigger's accessible name, as near as a page can read it: the elements
+// aria-labelledby names, else aria-label, else its own words (without a
+// tooltip surface standing inside it), else its title.
+
+function triggerName(trigger, surface = null) {
+  if (!trigger?.getAttribute) return '';
+  const doc = trigger.ownerDocument;
+  const ids = String(trigger.getAttribute('aria-labelledby') || '').split(/\s+/u).filter(Boolean);
+
+  if (ids.length && doc) {
+    const labelled = ids.map(id => doc.getElementById(id)?.textContent || '').join(' ');
+    if (squash(labelled)) return labelled;
+  }
+
+  const label = trigger.getAttribute('aria-label');
+  if (squash(label)) return label;
+  const surfaceSelector = surface?.id ? `#${globalThis.CSS?.escape ? CSS.escape(surface.id) : surface.id}` : '';
+  const own = spokenText(trigger, [UNSAID, surfaceSelector, '.sf-tooltip', 'sf-tooltip'].filter(Boolean).join(', '));
+  if (squash(own)) return own;
+  return trigger.getAttribute('title') || '';
+} // What the tooltip says: its text and supporting text, without the keys. A
+// Smart <sf-tooltip> not drawn yet says its text and supporting-text settings.
+
+function tooltipText(surface) {
+  if (!surface) return '';
+  const drawn = spokenText(surface, UNSAID);
+  if (squash(drawn)) return drawn;
+
+  if (surface.localName === 'sf-tooltip') {
+    return [surface.getAttribute('text'), surface.getAttribute('supporting-text')].filter(Boolean).join(' ');
+  }
+
+  return '';
+} // Whether the tooltip's words stand whole inside the name: equal, or a run of
+// whole words of it («Повторить» in «Повторить Отчёт.xlsx», not «Ред» in
+// «Редактировать»). An empty tooltip or name repeats nothing.
+
+function repeatsName(name, said) {
+  const whole = squash(name);
+  const part = squash(said);
+  if (!whole || !part) return false;
+  if (whole === part) return true;
+  return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escape(part)}(?:$|[^\\p{L}\\p{N}])`, 'u').test(whole);
+}
+
+/***/ },
+
 /***/ "e0dd4e1a831d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -361,6 +452,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2e9112dbdda9");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("695f21e50358");
 /* harmony import */ var _keyshortcuts_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("428001505d72");
+/* harmony import */ var _name_repeat_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d0aecec474fa");
+
 
 
 
@@ -520,20 +613,22 @@ function focusVisible(element) {
   } catch {
     return true;
   }
-} // At most two lines (owner decision C160 (2)): the sheet cuts a longer text
-// after its second line; the console says once per page which tooltip was
-// cut, so the page moves the explanation to a «?» beside the control
-// (sf-help-mark). Shared across bundles, as the group.
+} // At most two lines (owner decision C160 (2)), the whole tooltip's: the
+// sheet cuts the text after its second line, or a text and its supporting
+// text after one line each; the console says once per page which tooltip
+// was cut, so the page moves the explanation to a «?» beside the control
+// (sf-help-mark). The supporting text was not counted: a line and three
+// lines under it showed four, unsaid. Shared across bundles, as the group.
 
 
 const CUT_SAID = Symbol.for('sf.tooltip.cut-said');
 
 function sayCut(surface, trigger) {
-  const text = surface.querySelector('.sf-tooltip-text');
-  if (!text || text.scrollHeight <= text.clientHeight + 1) return;
+  const parts = [...surface.querySelectorAll('.sf-tooltip-text, .sf-tooltip-supporting-text')];
+  if (!parts.some(part => part.scrollHeight > part.clientHeight + 1)) return;
   if (globalThis[CUT_SAID]) return;
   globalThis[CUT_SAID] = true;
-  const words = text.textContent.replace(/\s+/gu, ' ').trim();
+  const words = parts.map(part => part.textContent).join(' ').replace(/\s+/gu, ' ').trim();
   globalThis.console?.warn?.(`[SIMAI Framework] tooltip: «${words.slice(0, 60)}${words.length > 60 ? '…' : ''}» (${trigger.closest?.('[id]')?.id ? `#${trigger.closest('[id]').id}` : trigger.localName}) is longer than two lines and was cut. A tooltip names a control; an explanation goes to a «?» beside it (sf-help-mark), decision C160.`);
 }
 
@@ -602,17 +697,8 @@ class SfTooltipController {
 
     this.originalDescription = this.trigger.getAttribute('aria-describedby');
     this.originalRole = this.surface.getAttribute('role');
-    this.originalHidden = this.surface.hidden; // A tooltip that only repeats the trigger's name -- the usual case for an
-    // icon-only button -- is not its description too, or a screen reader says
-    // the name twice (docs trial 4, 2026-10-15).
-
-    const squash = text => String(text ?? '').replace(/\s+/gu, ' ').trim().toLowerCase();
-
-    const name = squash(this.trigger.getAttribute('aria-label') || this.trigger.textContent);
-    const repeatsName = name !== '' && squash(this.surface.textContent) === name;
-    const descriptions = new Set(descriptionTokens(this.trigger));
-    if (!repeatsName) descriptions.add(this.surface.id);
-    if (descriptions.size) this.trigger.setAttribute('aria-describedby', [...descriptions].join(' '));
+    this.originalHidden = this.surface.hidden;
+    this.syncDescription();
     this.trigger.setAttribute('data-tooltip', this.surface.id);
     this.surface.setAttribute('role', 'tooltip'); // A shortcut the tooltip shows is said on the trigger (KB-4).
 
@@ -631,6 +717,26 @@ class SfTooltipController {
     this.trigger.addEventListener('click', this.onPress);
     this.trigger.addEventListener('contextmenu', this.onContextMenu);
     tooltipInstances.set(this.trigger, this);
+  } // A tooltip that only repeats the trigger's name -- the usual case for an
+  // icon-only button -- is not its description too, or a screen reader says
+  // the name twice (docs trial 4, 2026-10-15); nor is one whose words stand
+  // whole inside the name: «Повторить» on a button named «Повторить
+  // Отчёт.xlsx» (2026-11-16). The tooltip is still shown. Read when the link
+  // is made and again when the tooltip opens, as the name or the words may
+  // have changed since.
+
+
+  syncDescription() {
+    if (!this.trigger || !this.surface) return;
+    const descriptions = new Set(descriptionTokens(this.trigger));
+    if ((0,_name_repeat_js__WEBPACK_IMPORTED_MODULE_4__.repeatsName)((0,_name_repeat_js__WEBPACK_IMPORTED_MODULE_4__.triggerName)(this.trigger, this.surface), (0,_name_repeat_js__WEBPACK_IMPORTED_MODULE_4__.tooltipText)(this.surface))) descriptions.delete(this.surface.id);else descriptions.add(this.surface.id);
+    const value = [...descriptions].join(' ');
+
+    if (value) {
+      if (this.trigger.getAttribute('aria-describedby') !== value) this.trigger.setAttribute('aria-describedby', value);
+    } else if (this.trigger.hasAttribute('aria-describedby')) {
+      this.trigger.removeAttribute('aria-describedby');
+    }
   }
 
   destroy() {
@@ -831,6 +937,7 @@ class SfTooltipController {
     if (!this.surface || !this.surface.hidden) return;
     clearTimeout(this.openTimer);
     this.openTimer = 0;
+    this.syncDescription();
     group().open += 1;
     this.surface.hidden = false;
     this.surface.classList.add('active');
@@ -854,8 +961,11 @@ class SfTooltipController {
     const {
       side,
       align
-    } = arrowPlacement(arrow, rtl);
-    const offset = arrow === 'none' ? 'var(--sf-space-1\\/4)' : positioning().resolveLength('var(--sf-tooltip-tail-half)', tail);
+    } = arrowPlacement(arrow, rtl); // With a tail, the tail's point keeps --sf-space-1/4 from the trigger
+    // (--sf-tooltip--tail-gap): the half side it stood at let the point
+    // reach 2 px into the trigger.
+
+    const offset = arrow === 'none' ? 'var(--sf-space-1\\/4)' : positioning().resolveLength('var(--sf-tooltip--tail-gap)', tail);
     const translate = [box.style.getPropertyValue('translate'), box.style.getPropertyPriority('translate')];
     const tailNode = tail?.querySelector('.sf-tooltip-tail') || null;
     const tailTranslate = tailNode ? [tailNode.style.getPropertyValue('translate'), tailNode.style.getPropertyPriority('translate')] : null; // The static layout centres with translate; anchored coordinates are exact.

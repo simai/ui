@@ -28,3 +28,10 @@
     color: var(--sf-error);
   }
 }
+@layer sf.components {
+  .sf-verification-form .sf-verification-form-label:has(> sf-help-mark) {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-1\/4);
+  }
+}

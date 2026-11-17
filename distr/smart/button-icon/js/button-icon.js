@@ -46,10 +46,13 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
- // The words, by language. A count is one phrase per plural form, separated by
-// «|» in the order of CLDR's categories -- one|few|many|other in Russian,
-// one|other in English -- with {count} where the number goes. A product adds a
-// language with SF.language.register('sf-badge', code, {count, dot}).
+ // The words, by language. A count is a plural word, one phrase per plural
+// category of the language as Intl.PluralRules names them ({one, few, many,
+// other} in Russian, {one, other} in English), with {count} where
+// the number goes: the form every language file and pack uses (C177). A
+// product adds a language with SF.language.register('sf-badge', code,
+// {count, dot}); a count written as «a|b|c» (an author's label, a product's
+// word from before) still reads in the order of the categories.
 
 const ANCHORED_BADGE_TEXT = {
   en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
@@ -81,12 +84,26 @@ function badgeFlag(value) {
   return String(value).trim().toLowerCase() !== 'false';
 }
 /**
- * The form of `forms` ("a|b|c") for `count` in `locale`. One form is used for
- * every number; with several, the n-th form answers the n-th plural category
- * the language has, and a category past the last form takes the last one.
+ * The form of `forms` for `count` in `locale`. A plural word
+ * ({one, few, many, other}) answers the category Intl.PluralRules gives,
+ * else its `other`. A string "a|b|c": one form is used for every number; with
+ * several, the n-th form answers the n-th plural category the language has,
+ * and a category past the last form takes the last one.
  */
 
 function pluralForm(forms, count, locale = 'en') {
+  if (forms && typeof forms === 'object') {
+    let category = 'other';
+
+    try {
+      category = new Intl.PluralRules(locale).select(count);
+    } catch {
+      category = 'other';
+    }
+
+    return String(forms[category] ?? forms.other ?? '');
+  }
+
   const list = String(forms ?? '').split('|');
   if (list.length === 1) return list[0];
 
@@ -427,6 +444,97 @@ function createInlineSpinner({
 
 /***/ },
 
+/***/ "d0aecec474fa"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   repeatsName: () => (/* binding */ repeatsName),
+/* harmony export */   spokenText: () => (/* binding */ spokenText),
+/* harmony export */   tooltipText: () => (/* binding */ tooltipText),
+/* harmony export */   triggerName: () => (/* binding */ triggerName)
+/* harmony export */ });
+// A tooltip that only says what the trigger's name already says is not the
+// trigger's description too, or a screen reader says it twice: an icon button
+// named «Повторить Отчёт.xlsx» with the tooltip «Повторить» was heard as
+// «Повторить Отчёт.xlsx, Повторить» (sf-file-download, file rows, 2026-11-16).
+// Before, only a tooltip equal to the name was left out (docs trial 4,
+// 2026-10-15); now a tooltip whose words stand whole inside the name is too.
+// The tooltip is still drawn; only the link for assistive technology goes.
+// Pure functions over the DOM, no imports: the tooltip controller and
+// sf-button-icon's name tooltip read the same rule.
+const squash = text => String(text ?? '').replace(/\s+/gu, ' ').trim().toLocaleLowerCase();
+
+const escape = text => text.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'); // Parts a reader does not hear as words of the tooltip: the keys of its
+// shortcut (said on the trigger by aria-keyshortcuts, KB-4) and the tail.
+
+
+const UNSAID = '.sf-tooltip-shortcut, .sf-tooltip-tail'; // The words a node says: text of its descendants, without hidden or
+// aria-hidden ones (an icon's ligature, a status seen only) and without the
+// parts named by skip.
+
+function spokenText(node, skip = '') {
+  if (!node) return '';
+  let words = '';
+
+  for (const child of node.childNodes ?? []) {
+    if (child.nodeType === 3) {
+      words += child.data;
+    } else if (child.nodeType === 1) {
+      if (child.hidden || child.getAttribute?.('aria-hidden') === 'true') continue;
+      if (skip && child.matches?.(skip)) continue;
+      words += ` ${spokenText(child, skip)} `;
+    }
+  }
+
+  return words;
+} // The trigger's accessible name, as near as a page can read it: the elements
+// aria-labelledby names, else aria-label, else its own words (without a
+// tooltip surface standing inside it), else its title.
+
+function triggerName(trigger, surface = null) {
+  if (!trigger?.getAttribute) return '';
+  const doc = trigger.ownerDocument;
+  const ids = String(trigger.getAttribute('aria-labelledby') || '').split(/\s+/u).filter(Boolean);
+
+  if (ids.length && doc) {
+    const labelled = ids.map(id => doc.getElementById(id)?.textContent || '').join(' ');
+    if (squash(labelled)) return labelled;
+  }
+
+  const label = trigger.getAttribute('aria-label');
+  if (squash(label)) return label;
+  const surfaceSelector = surface?.id ? `#${globalThis.CSS?.escape ? CSS.escape(surface.id) : surface.id}` : '';
+  const own = spokenText(trigger, [UNSAID, surfaceSelector, '.sf-tooltip', 'sf-tooltip'].filter(Boolean).join(', '));
+  if (squash(own)) return own;
+  return trigger.getAttribute('title') || '';
+} // What the tooltip says: its text and supporting text, without the keys. A
+// Smart <sf-tooltip> not drawn yet says its text and supporting-text settings.
+
+function tooltipText(surface) {
+  if (!surface) return '';
+  const drawn = spokenText(surface, UNSAID);
+  if (squash(drawn)) return drawn;
+
+  if (surface.localName === 'sf-tooltip') {
+    return [surface.getAttribute('text'), surface.getAttribute('supporting-text')].filter(Boolean).join(' ');
+  }
+
+  return '';
+} // Whether the tooltip's words stand whole inside the name: equal, or a run of
+// whole words of it («Повторить» in «Повторить Отчёт.xlsx», not «Ред» in
+// «Редактировать»). An empty tooltip or name repeats nothing.
+
+function repeatsName(name, said) {
+  const whole = squash(name);
+  const part = squash(said);
+  if (!whole || !part) return false;
+  if (whole === part) return true;
+  return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escape(part)}(?:$|[^\\p{L}\\p{N}])`, 'u').test(whole);
+}
+
+/***/ },
+
 /***/ "19011fe45e0a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -437,20 +545,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a1821b2f45eb");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9abcb852f1cf");
 /* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("34addf781b5b");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("60a3f9a6662c");
-/* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d9c5a43b5214");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("79f8b9b70d88");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c402762d3a76");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("65ba19e2ea5c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("78f638fb05ab");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_tooltip_js_name_repeat_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d0aecec474fa");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("60a3f9a6662c");
+/* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d9c5a43b5214");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("79f8b9b70d88");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c402762d3a76");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("65ba19e2ea5c");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("78f638fb05ab");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -467,10 +577,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
 };
 const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'href', 'target', 'rel', 'download', 'pressed', 'label-pressed', 'tooltip', // The host's title is the name tooltip's text (C160 (1)), not forwarded.
 'title', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
@@ -508,14 +618,14 @@ function linkRelation(target, rel) {
 // default, as sf-button's does.
 
 
-const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
     ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
 }); // The name tooltip (owner decision C160 (1)): the icon button shows its name
 // as the Framework's tooltip by itself. The surface is the tooltip
 // composition (a .sf-tooltip the button names by data-tooltip), linked by the
@@ -550,7 +660,31 @@ function whenTooltipReady(run) {
 // itself and notes the use (change journal value-icon-button-looks-c15).
 
 
-const RETIRED_APPEARANCE = 'surface';
+const RETIRED_APPEARANCE = 'surface'; // Density on an icon button (owner decision C213, 2026-11-16): size and
+// height change it and keep it square, so spacing and tightness draw nothing.
+// Read until 2027-01-01, noted in SF.deprecations and said once per button.
+
+function noteIconButtonDensity(element) {
+  const said = [['spacing', element.getAttribute('spacing')], ['tightness', element.getAttribute('tightness')]].filter(([, value]) => value && value !== 'normal');
+  if (!said.length) return;
+
+  for (const [attribute, from] of said) {
+    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+      component: 'sf-button-icon',
+      tag: 'sf-button-icon',
+      kind: 'setting',
+      attribute,
+      from: attribute,
+      to: null,
+      since: '2026-11-16',
+      remove_after: '2027-01-01'
+    });
+  }
+
+  if (element.__sfDensitySaid) return;
+  element.__sfDensitySaid = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] sf-button-icon: ${said.map(([a, v]) => `${a}="${v}"`).join(' ')} draws nothing: an icon button has no density (owner decision C213); size and height="low|high|highest" change it and keep it square. Remove it before 2027-01-01.`, element);
+}
 
 class SfIconButton extends IconButtonElement {
   // aria-label is the host's (§3.1), not a setting, so the manifest makes no
@@ -577,14 +711,14 @@ class SfIconButton extends IconButtonElement {
 
 
   get dangerFormer() {
-    return (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_8__.dangerLook)(this.getAttribute('appearance') ?? this.getAttribute('type'), this.getAttribute('status')).former;
+    return (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_9__.dangerLook)(this.getAttribute('appearance') ?? this.getAttribute('type'), this.getAttribute('status')).former;
   }
 
   get appearance() {
     if (this.dangerFormer) return 'outline';
 
     if (this.retiredSurface) {
-      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
         component: 'sf-button-icon',
         tag: 'sf-button-icon',
         kind: 'value',
@@ -616,8 +750,8 @@ class SfIconButton extends IconButtonElement {
 
 
   cycleState() {
-    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.hasCycle)(this)) return null;
-    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.cycleState)(this, {
+    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.hasCycle)(this)) return null;
+    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.cycleState)(this, {
       base: this.getAttribute('aria-label') || '',
       words: (key, options) => this.sfWord(key, options)
     });
@@ -629,7 +763,7 @@ class SfIconButton extends IconButtonElement {
       cycle: {
         type: Array,
         default: [],
-        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.parseCycle
+        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.parseCycle
       }
     };
   } // cycle is a list setting (§4.2) whose attribute keeps its JSON form: a
@@ -662,7 +796,7 @@ class SfIconButton extends IconButtonElement {
 
   get pressed() {
     // A cycle is not a toggle: pressed is ignored beside it.
-    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.hasCycle)(this)) return undefined;
+    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.hasCycle)(this)) return undefined;
     return this.hasAttribute('pressed') ? super.pressed : undefined;
   }
 
@@ -673,12 +807,15 @@ class SfIconButton extends IconButtonElement {
   templateContext() {
     const props = this.getPropsContext();
     const cycle = this.cycleState();
-    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.warnCycleToggle)(this, ['pressed', 'label-pressed']); // success, warning, info: no such icon buttons (C13, BS-1); said once per page.
+    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.warnCycleToggle)(this, ['pressed', 'label-pressed']); // success, warning, info: no such icon buttons (C13, BS-1); said once per page.
 
-    (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_7__.warnUnknownControlStatus)('sf-button-icon', this.getAttribute('status')); // A danger tonal or surface (C116); said once per page.
+    (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_8__.warnUnknownControlStatus)('sf-button-icon', this.getAttribute('status')); // An icon button has no density (owner decision C213): spacing (and its
+    // former name tightness) draws nothing; noted, and said once per button.
+
+    noteIconButtonDensity(this); // A danger tonal or surface (C116); said once per page.
 
     const dangerFormer = this.dangerFormer;
-    if (dangerFormer) (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_8__.sayButtonSetFormers)('sf-button-icon', [{
+    if (dangerFormer) (0,_helpers_button_set__WEBPACK_IMPORTED_MODULE_9__.sayButtonSetFormers)('sf-button-icon', [{
       attribute: 'appearance',
       from: dangerFormer,
       to: 'outline',
@@ -688,7 +825,7 @@ class SfIconButton extends IconButtonElement {
     const announce = Boolean(cycle && this.__sfCycleAnnounce);
     this.__sfCycleAnnounce = false; // The icons a press can show, asked for before the press (R074).
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.preloadSwitchIcons)(this, {
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.preloadSwitchIcons)(this, {
       icons: [this.getAttribute('icon')],
       filled: Boolean(this.filled)
     });
@@ -855,10 +992,12 @@ class SfIconButton extends IconButtonElement {
     // before the tooltip is made; once made, the controller links it by
     // aria-describedby instead.
 
-    const cycle = this.cycleState();
-    const name = String(cycle ? cycle.name : this.pressed === true && this.labelPressed || this.getAttribute('aria-label') || '').trim().toLowerCase();
+    const cycle = this.cycleState(); // A text whose words the name already says (equal, or whole words of it)
+    // is no description: the shared rule of the tooltip controller.
+
+    const name = String(cycle ? cycle.name : this.pressed === true && this.labelPressed || this.getAttribute('aria-label') || '');
     const said = this.nameTooltipText();
-    if (!tip && said.toLowerCase() !== name) button.setAttribute('aria-description', said);else button.removeAttribute('aria-description');
+    if (!tip && !(0,_component_tooltip_js_name_repeat_js__WEBPACK_IMPORTED_MODULE_5__.repeatsName)(name, said)) button.setAttribute('aria-description', said);else button.removeAttribute('aria-description');
     if (!tip) return;
     const text = tip.querySelector('.sf-tooltip-text');
     if (text && text.textContent !== this.nameTooltipText()) text.textContent = this.nameTooltipText();
@@ -1065,7 +1204,7 @@ class SfIconButton extends IconButtonElement {
       this._cyclePress = event => {
         const button = this.querySelector('.sf-icon-button');
         if (!button || !(event.target instanceof Node) || !button.contains(event.target) || button.disabled) return;
-        (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.pressCycle)(this, this.cycleState());
+        (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.pressCycle)(this, this.cycleState());
       };
 
       this.addEventListener('click', this._cyclePress);
@@ -1073,7 +1212,7 @@ class SfIconButton extends IconButtonElement {
 
     if (!this._cycleTheme) {
       // A theme cycle follows the theme wherever it was set.
-      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_5__.themeCycleFollow)(this);
+      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.themeCycleFollow)(this);
 
       globalThis.addEventListener?.('sf-theme-change', this._cycleTheme);
     }
@@ -1132,15 +1271,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 const ICON_BUTTON_SIZES = new Set(['1/3', '1/2', '1', '2', '3']); // The drawing class of each appearance; surface is resolved to tonal by the
-// element (C15), a value off the list draws the default.
+// element (C15), a value off the list draws the default. Ghost is drawn by
+// sf-icon-button--ghost (component.icon-buttons 1.14.0, RG-IB-2); plain is
+// the plate-less look (C201). The former
+// --link is an alias the runtime notes, so the element never writes it.
 
 const ICON_BUTTON_LOOK = {
   default: 'default',
   tonal: 'tonal',
   outline: 'outline',
-  ghost: 'link',
-  link: 'link',
-  surface: 'surface',
+  ghost: 'ghost',
+  link: 'ghost',
+  surface: 'tonal',
   plain: 'plain'
 };
 
@@ -1177,15 +1319,17 @@ function renderIconButtonTemplate(context) {
   const rootClasses = ['sf-icon-button', // The sizes the icon button draws; a close may be smaller (1/4, the
   // closable tag's), and then sf-button-close sizes it alone: the class it got
   // here had no rule (documentation trial 6, 2026-10-18).
-  ICON_BUTTON_SIZES.has(size || '1') ? `sf-icon-button--size-${size || '1'}` : '', `sf-icon-button--${kind ?? variant ?? 'icon'}`, // ghost is drawn by the link class, the one the sheets and their
-  // consumers select (link was ghost's twin; C15 made ghost the name).
+  ICON_BUTTON_SIZES.has(size || '1') ? `sf-icon-button--size-${size || '1'}` : '', `sf-icon-button--${kind ?? variant ?? 'icon'}`, // ghost is drawn by the ghost class (C15 made ghost the name; the
+  // link class is its former twin, RG-IB-2).
   `sf-icon-button--${ICON_BUTTON_LOOK[appearance || type] || 'default'}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // One colour name, as the styles expect: the status when one is set, the
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
   // danger is a control's status (C13), drawn with the error roles: the
   // class is the danger one and the error one the sheets also select.
-  ...statusClasses(status, scheme), tightness ? `tightness-${tightness}` : '', // The height (decisions C27, C35): the class of the size's tightness
+  ...statusClasses(status, scheme), // No density class (owner decision C213): an icon button is sized by
+  // size and height only; spacing / tightness are noted by the element.
+  // The height (decisions C27, C35): the class of the size's tightness
   // step, declared after the density classes; default draws none.
   ['low', 'high', 'highest'].includes(context.height) ? `sf-icon-button--height-${context.height}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : '', // A loading icon button keeps its scheme colour (C36 follow-up); one
   // that is disabled as well wears the disabled look, so it says so.
@@ -2000,28 +2144,28 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "7f9642eacf1b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "8714e4691010"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ },
 
 /***/ "c402762d3a76"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-button-icon for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"variant","to":"kind","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"tightness","to":"spacing","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-tightness-to-spacing; its words are spacing\'s value aliases below, spacing wins when both are given"},{"from":"low","to":"compact","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"high","to":"comfortable","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"highest","to":"spacious","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"link","to":"ghost","kind":"value","setting":"appearance","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-icon-button-looks-c15 (rule C15): link and ghost drew the same; ghost is the name"},{"from":"secondary","to":"on-surface-variant","kind":"value","setting":"scheme","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-icon-button-looks-c15 (rule C15): secondary was drawn only in the tonal look and read as the quiet neutral elsewhere"},{"from":"error","to":"danger","kind":"value","setting":"status","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-control-status-error-to-danger (rule C13): a control\'s destructive status is danger; messages keep error"},{"from":"sf-icon-button","to":"sf-button-icon","kind":"tag","component":"sf-button-icon","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-button-icon; sf-icon-button is a subclass defined beside it until the date"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-button-icon for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"variant","to":"kind","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"tightness","to":"spacing","kind":"setting","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-tightness-to-spacing; its words are spacing\'s value aliases below, spacing wins when both are given"},{"from":"low","to":"compact","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"high","to":"comfortable","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"highest","to":"spacious","kind":"value","setting":"spacing","component":"sf-button-icon","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"link","to":"ghost","kind":"value","setting":"appearance","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-icon-button-looks-c15 (rule C15): link and ghost drew the same; ghost is the name"},{"from":"secondary","to":"on-surface-variant","kind":"value","setting":"scheme","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-icon-button-looks-c15 (rule C15): secondary was drawn only in the tonal look and read as the quiet neutral elsewhere"},{"from":"error","to":"danger","kind":"value","setting":"status","component":"sf-button-icon","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-control-status-error-to-danger (rule C13): a control\'s destructive status is danger; messages keep error"},{"from":"sf-icon-button","to":"sf-button-icon","kind":"tag","component":"sf-button-icon","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-button-icon; sf-icon-button is a subclass defined beside it until the date"},{"from":"spacing","to":null,"kind":"setting","component":"sf-button-icon","since":"2026-11-16","remove_after":"2027-01-01","mode":"retired","section":"owner decision C213","note":"an icon button has no density (size and height keep it square); read and noted, said once per button in the console, it draws nothing"}]}');
 
 /***/ },
 
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.12.1","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.13.3","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

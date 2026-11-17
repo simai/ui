@@ -115,6 +115,227 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
+  if (word === 'integer') return {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "51250bf01ab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -377,6 +598,75 @@ if (typeof globalThis !== 'undefined') {
 const Preferences = globalThis.SF?.Preferences;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preferences);
 
+
+/***/ },
+
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -1245,12 +1535,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("865ba3b0c2c6");
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("068ec0d4d41c");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("fc14def3c2cf");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__);
+
+
+
 
 
 
@@ -1363,7 +1661,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
   }
 
   static get observedAttributes() {
-    return [...(super.observedAttributes ?? []), "value", "inherited-value", "swatches", "disabled", "aria-label", "palette", "custom", "alpha", "variant", "target"];
+    return [...(super.observedAttributes ?? []), "value", "inherited-value", "swatches", "disabled", "readonly", "aria-label", "palette", "custom", "alpha", "variant", "target"];
   }
 
   attributeChangedCallback(name, previous, next) {
@@ -1592,6 +1890,26 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
     return this.checks.map(check => ({ ...check,
       text: this._checkText(check)
     }));
+  } // The contrast ratio in the page's language (Intl). decimal, the word once
+  // put for the decimal point, is a dated alias until 2027-01-01
+  // (languages-g1): a product that registered it keeps its sign, noted once.
+
+
+  _ratioText(ratio) {
+    const decimal = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__.registeredWord)(this.localName, "decimal", this);
+    if (decimal === undefined) return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(ratio, "number", {
+      node: this
+    });
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__.noteDeprecated)({
+      component: this.localName,
+      tag: this.localName,
+      kind: "word",
+      from: "decimal",
+      to: "Intl.NumberFormat",
+      since: "2026-11-16",
+      remove_after: "2027-01-01"
+    });
+    return String(ratio).replace(".", decimal);
   }
 
   _checkText(check) {
@@ -1600,7 +1918,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
         return this.sfWord("check-contrast", {
           vars: {
             scheme: this.sfWord(`scheme-${check.scheme}`),
-            ratio: String(check.ratio).replace(".", this.sfWord("decimal"))
+            ratio: this._ratioText(check.ratio)
           }
         });
 
@@ -1931,7 +2249,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
     anchor = null,
     view = ""
   } = {}) {
-    if (this.disabled || this._open) return Boolean(this._open);
+    if (this.disabled || this.readonly || this._open) return Boolean(this._open);
     const value = this.value || this.inheritedValue;
 
     this._seed(value);
@@ -2138,7 +2456,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
 
 
   dragOn(event, kind) {
-    if (this.disabled || event.button > 0) return;
+    if (this.disabled || this.readonly || event.button > 0) return;
     const target = event.currentTarget;
     event.preventDefault();
     target.setPointerCapture?.(event.pointerId);
@@ -2400,6 +2718,7 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
       swatchList: this.swatchList,
       clearable: this.clearable,
       disabled: this.disabled,
+      readonly: Boolean(this.readonly),
       size: this.size,
       appearance: this.appearance,
       name: this.name,
@@ -2832,11 +3151,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e138a730fd7c");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _color_math_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("487aa4186372");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4c914f7d071c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f39dc444b059");
+/* harmony import */ var _color_math_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("487aa4186372");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4c914f7d071c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _component_field_contract__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -2856,11 +3177,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 function paintStyle(value) {
   if (!value) return '';
-  if ((0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.isPaletteName)(value)) return `--sf-color-fill: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.paletteFill)(value)}; --sf-color-solid: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.paletteFill)(value)}`;
-  return `--sf-color-fill: ${value}; --sf-color-solid: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.solidOf)(value) || value}`;
+  if ((0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.isPaletteName)(value)) return `--sf-color-fill: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.paletteFill)(value)}; --sf-color-solid: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.paletteFill)(value)}`;
+  return `--sf-color-fill: ${value}; --sf-color-solid: ${(0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.solidOf)(value) || value}`;
 }
 
-const translucent = value => Boolean(value) && !(0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.isPaletteName)(value) && (0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.alphaOf)(value) < 1;
+const translucent = value => Boolean(value) && !(0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.isPaletteName)(value) && (0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.alphaOf)(value) < 1;
 
 function renderChip(value, className = 'sf-color-chip') {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${className}
@@ -2876,6 +3197,7 @@ function renderColorTemplate(context) {
     painted,
     isSet,
     disabled,
+    readonly,
     size,
     appearance,
     open
@@ -2898,23 +3220,41 @@ function renderColorTemplate(context) {
   // same place, with the shared «наследуется» marker at the end (CO-07: the
   // marker stood 16 px after where the code starts).
 
-  const text = painted ? (0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.isPaletteName)(painted) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-name">${shown}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<code>${painted}</code>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-empty">${context.hasInheritedValue ? '' : context.inheritedText}</span>`;
+  const text = painted ? (0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.isPaletteName)(painted) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-name">${shown}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<code>${painted}</code>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-empty">${context.hasInheritedValue ? '' : context.inheritedText}</span>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-color-field sf-color-field--size-${size}${field.invalid ? ' error' : ''}">
             ${context.label // One field label look for every field (FB-10, CO-04):
   // the trigger carries the same words as its name, so the
   // visible copy is hidden from the accessibility tree.
-  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-label" aria-hidden="true">${context.label}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  // The «?» of help (C153 (8), helpers/field-help.js) stands
+  // after the label in one row, outside the hidden copy so
+  // it is reached and read; without help the label is the
+  // row, as before.
+  ? context.help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-label-row"><span class="sf-color-label" aria-hidden="true">${context.label}</span>${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_3__.renderFieldHelp)({
+    help: context.help,
+    label: context.label,
+    size,
+    className: 'sf-color-help',
+    component
+  })}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-label" aria-hidden="true">${context.label}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <div class="sf-color sf-color--${appearance} sf-color--size-${size}"
                  data-set=${isSet ? 'true' : 'false'}
                  data-open=${open ? 'true' : 'false'}>
                 <div class="sf-color-frame"
                      ?data-disabled=${disabled}
+                     ?data-readonly=${readonly && !disabled}
                      @click=${event => {
-    if (disabled || event.target.closest?.('[data-inherited-reset], [data-action="clear"]')) return;
+    if (disabled || readonly || event.target.closest?.('[data-inherited-reset], [data-action="clear"]')) return;
     component.togglePicker();
   }}>
-                    <button type="button"
+                    ${readonly && !disabled // Read-only (as sf-input's readonly): the value to
+  // read, not a control -- no popup, no Tab stop of its
+  // own; «name: value» is what a screen reader hears.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-trigger" role="img" aria-label=${spoken}
+                                         aria-describedby=${field.describedBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+                                    ${renderChip(painted)}
+                                    <span class="sf-color-text">${text}</span>
+                                </span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button"
                             class="sf-color-trigger"
                             title=${context.chooseLabel}
                             aria-haspopup="dialog"
@@ -2924,16 +3264,16 @@ function renderColorTemplate(context) {
                             ?disabled=${disabled}>
                         ${renderChip(painted)}
                         <span class="sf-color-text">${text}</span>
-                    </button>
+                    </button>`}
                     ${context.hasInheritedValue // The marker while the inherited colour applies,
   // the reset once a colour is chosen: the slot every
   // field uses.
   ? (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__.renderInheritedSlot)(context.component, {
     size,
-    disabled,
+    disabled: disabled || readonly,
     className: 'sf-color-inherited-slot'
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    ${context.clearable && isSet && !context.hasInheritedValue // The reset is an action inside the field (owner
+                    ${context.clearable && isSet && !context.hasInheritedValue && !readonly // The reset is an action inside the field (owner
   // decision C123): the field layer's .sf-field-action
   // (component.inputs), the glyph sf-input's clear and
   // reveal draw -- no plate in any state, the quiet ink
@@ -2953,9 +3293,9 @@ function renderColorTemplate(context) {
     component.clear();
   }}
                                 ><sf-icon icon="restart_alt" aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    <sf-icon icon=${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+                    ${readonly && !disabled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
                              root-class="sf-color-chevron"
-                             aria-hidden="true"></sf-icon>
+                             aria-hidden="true"></sf-icon>`}
                 </div>
                 ${context.hiddenName // Without ElementInternals the form gets the value from
   // a hidden input, empty while the inherited colour applies.
@@ -3137,9 +3477,9 @@ function renderPalette(context) {
   }));
   const recent = context.recentRow.map(hex => ({
     value: hex,
-    name: (0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.alphaOf)(hex) < 1 ? word('recent-alpha', {
+    name: (0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.alphaOf)(hex) < 1 ? word('recent-alpha', {
       value: hex,
-      alpha: Math.round((0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.alphaOf)(hex) * 100)
+      alpha: Math.round((0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.alphaOf)(hex) * 100)
     }) : word('recent-one', {
       value: hex
     })
@@ -3176,7 +3516,7 @@ function renderOwn(context) {
   const [h, s, v] = context.hsv;
   const alpha = context.alphaValue;
   const percent = Math.round(alpha * 100);
-  const solid = (0,_color_math_js__WEBPACK_IMPORTED_MODULE_3__.solidOf)(context.ownColour);
+  const solid = (0,_color_math_js__WEBPACK_IMPORTED_MODULE_4__.solidOf)(context.ownColour);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-color-own">
             <div class="sf-color-area"
@@ -3311,6 +3651,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -3370,21 +3717,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.15.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.18.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
 /***/ "068ec0d4d41c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour","brand-reset":"Restore SIMAI colour","how":"How to choose the colour","palette":"Palette","own":"Custom","product":"Product colours","recent":"Recent custom colours","recent-one":"Custom colour {value}","recent-alpha":"Custom colour {value}, opacity {alpha} %","shade":"Saturation and brightness","shade-value":"saturation {saturation} %, brightness {brightness} %","hue":"Hue","hue-value":"hue {hue}°","alpha":"Transparency","alpha-value":"opacity {alpha} %","eyedropper":"Pick a colour from the screen","eyedropper-missing":"The eyedropper is only in Chrome and Edge on a computer","code":"Colour code","copy":"Copy the code","apply":"Apply","opacity":"Opacity, per cent","not-a-colour":"This does not read as a colour","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-info":"The colour is close to the information colour: an accent may read as a hint or a notice.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","decimal":".","scheme-dark":"dark","scheme-light":"light","brand":"Brand colour"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour","brand-reset":"Restore SIMAI colour","how":"How to choose the colour","palette":"Palette","own":"Custom","product":"Product colours","recent":"Recent custom colours","recent-one":"Custom colour {value}","recent-alpha":"Custom colour {value}, opacity {alpha} %","shade":"Saturation and brightness","shade-value":"saturation {saturation} %, brightness {brightness} %","hue":"Hue","hue-value":"hue {hue}°","alpha":"Transparency","alpha-value":"opacity {alpha} %","eyedropper":"Pick a colour from the screen","eyedropper-missing":"The eyedropper is only in Chrome and Edge on a computer","code":"Colour code","copy":"Copy the code","apply":"Apply","opacity":"Opacity, per cent","not-a-colour":"This does not read as a colour","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-info":"The colour is close to the information colour: an accent may read as a hint or a notice.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","scheme-dark":"dark","scheme-light":"light","brand":"Brand colour","help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "fc14def3c2cf"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы","brand-reset":"Вернуть цвет SIMAI","how":"Как выбрать цвет","palette":"Палитра","own":"Своё","product":"Цвета продукта","recent":"Недавние свои цвета","recent-one":"Свой цвет {value}","recent-alpha":"Свой цвет {value}, непрозрачность {alpha} %","shade":"Насыщенность и яркость","shade-value":"насыщенность {saturation} %, яркость {brightness} %","hue":"Оттенок","hue-value":"оттенок {hue}°","alpha":"Прозрачность","alpha-value":"непрозрачность {alpha} %","eyedropper":"Взять цвет с экрана","eyedropper-missing":"Пипетка есть только в Chrome и Edge на компьютере","code":"Код цвета","copy":"Скопировать код","apply":"Применить","opacity":"Непрозрачность, процентов","not-a-colour":"Не похоже на цвет","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-info":"Цвет похож на цвет сведений: акцент можно принять за подсказку или уведомление.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","decimal":",","scheme-dark":"тёмной","scheme-light":"светлой","brand":"Фирменный цвет"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы","brand-reset":"Вернуть цвет SIMAI","how":"Как выбрать цвет","palette":"Палитра","own":"Своё","product":"Цвета продукта","recent":"Недавние свои цвета","recent-one":"Свой цвет {value}","recent-alpha":"Свой цвет {value}, непрозрачность {alpha} %","shade":"Насыщенность и яркость","shade-value":"насыщенность {saturation} %, яркость {brightness} %","hue":"Оттенок","hue-value":"оттенок {hue}°","alpha":"Прозрачность","alpha-value":"непрозрачность {alpha} %","eyedropper":"Взять цвет с экрана","eyedropper-missing":"Пипетка есть только в Chrome и Edge на компьютере","code":"Код цвета","copy":"Скопировать код","apply":"Применить","opacity":"Непрозрачность, процентов","not-a-colour":"Не похоже на цвет","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-info":"Цвет похож на цвет сведений: акцент можно принять за подсказку или уведомление.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","scheme-dark":"тёмной","scheme-light":"светлой","brand":"Фирменный цвет","help":"Подробнее: {label}"}}');
 
 /***/ }
 

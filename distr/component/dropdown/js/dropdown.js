@@ -362,8 +362,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interaction__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3a03d4610486");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _portal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a0f23dca0b37");
-/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("421676f72963");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("421676f72963");
+/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
 
 
 
@@ -378,6 +378,10 @@ const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // A tag in the field 
 // field's own size (C27), 32 in a 40 field.
 
 const FIELD_TAG = Object.freeze({
+  "1/3": {
+    size: "1/3",
+    height: ""
+  },
   "1/2": {
     size: "1/3",
     height: ""
@@ -388,6 +392,10 @@ const FIELD_TAG = Object.freeze({
   },
   "2": {
     size: "1",
+    height: ""
+  },
+  "3": {
+    size: "2",
     height: ""
   }
 });
@@ -594,7 +602,7 @@ function syncItemCheckboxInteractivity(root) {
 function createTagNode(root, item) {
   const value = getItemValue(item);
   const label = getItemLabel(item);
-  const size = root.className.match(/sf-dropdown--size-([^\s]+)/)?.[1] || "1";
+  const size = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(root.className.match(/sf-dropdown--size-([^\s]+)/)?.[1]);
   const fieldTag = FIELD_TAG[size] || FIELD_TAG["1"];
   const tagSize = fieldTag.size;
   const tagSpacing = fieldTag.height ? ` sf-tag--height-${fieldTag.height}` : "";
@@ -603,8 +611,11 @@ function createTagNode(root, item) {
   const isColorItem = item.classList.contains("sf-list-item--color");
   const isDisabled = isDisabledDropdown(root);
   const tagType = isColorItem ? "color" : isAvatarItem ? "avatar" : "icon";
-  const tag = document.createElement("div");
-  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline${tagSpacing} flex flex-row flex-nowrap items-center active`;
+  const tag = document.createElement("div"); // A value's tag is the tag's own grey (owner decision C58: as
+  // sf-input-lookup's chips; RG-NV 18), not a pressed one: the active class
+  // drew it primary-container in both looks of the field.
+
+  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline${tagSpacing} flex flex-row flex-nowrap items-center`;
   tag.dataset.value = value;
 
   if (isDisabled) {
@@ -637,7 +648,7 @@ function createTagNode(root, item) {
   tag.append(container);
   const closeButton = document.createElement("button");
   closeButton.type = "button";
-  closeButton.className = "sf-icon-button sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3";
+  closeButton.className = "sf-icon-button sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1/3";
   closeButton.setAttribute("aria-label", `Remove ${label}`);
   closeButton.dataset.role = "remove-tag";
   closeButton.dataset.value = value;
@@ -767,7 +778,7 @@ function openDropdown(root) {
   // the list closes on its own root in the bubble phase, so without the mark
   // the panel closed first and the list never saw the key.
 
-  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(root, true);
+  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(root, true);
   syncToggleIcon(root, true);
   applyDropdownViewport(root, 4);
   positionPortalList(root);
@@ -789,7 +800,7 @@ function closeDropdown(root) {
   if (!list) return;
   root.classList.remove("sf-dropdown--open");
   list.hidden = true;
-  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(root, false);
+  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(root, false);
   syncToggleIcon(root, false);
   restorePortalList(root);
   const searchInput = getSearchInput(root);
@@ -1030,7 +1041,8 @@ function onSearchChange(event) {
 }
 
 function bindDropdown(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_3__.retireFieldSizeClass)(root, "sf-dropdown");
+  // The dropdown stands on the field ladder (field-size.js; queue #70): 1/3
+  // and 3 are its own steps, no class to move.
   if (isSmartDropdownRoot(root)) return;
   if (!root || root.dataset[BOUND_FLAG] === "1") return;
   const field = getField(root);
@@ -1058,7 +1070,7 @@ function bindDropdown(root) {
     syncItemCheckboxInteractivity(root); // The open class is the state, and a consumer may toggle it directly; the
     // mark follows the class so it cannot be left raised or missing.
 
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(root, root.classList.contains("sf-dropdown--open"));
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(root, root.classList.contains("sf-dropdown--open"));
     if (changed) syncTags(root);
 
     if (records.some(record => ['portal', 'data-portal'].includes(record.attributeName))) {
@@ -1158,7 +1170,7 @@ function bindDropdown(root) {
 
 function unbindDropdown(root) {
   if (!root || root.dataset[BOUND_FLAG] !== "1") return;
-  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(root, false);
+  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(root, false);
   root.__sfDropdownInteraction?.release();
   delete root.__sfDropdownInteraction;
   root.__sfDropdownReleaseReset?.();
@@ -1623,8 +1635,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -1858,7 +1873,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -1884,7 +1900,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {

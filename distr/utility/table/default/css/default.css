@@ -1,10 +1,10 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
-  table {
+  :where(.table) {
     caption-side: bottom;
     border-collapse: collapse;
   }
-  tbody, td, tfoot, th, thead, tr {
+  :where(.table) :where(tbody, td, tfoot, th, thead, tr) {
     border-color: inherit;
     border-style: solid;
     border-width: 0;
@@ -173,25 +173,13 @@
   .table > tbody > tr[aria-selected=true] > :first-child:dir(rtl) {
     box-shadow: inset calc(-1 * calc(var(--sf-px) * 2)) 0 0 var(--sf-primary);
   }
-  .table > :not(caption) > * > :where(:has(> sf-checkbox:not(.does-not-exist):only-child)) {
+  .table > :not(caption) > * > :where(:has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child)) {
     width: 0;
     inline-size: 0;
     white-space: nowrap;
   }
-  .table > :not(caption) > * > :where(:has(> sf-button-icon:not(.does-not-exist):only-child)) {
-    width: 0;
-    inline-size: 0;
-    white-space: nowrap;
-  }
-  .table > :not(caption) > * > :where(:has(> sf-icon-button:not(.does-not-exist):only-child)) {
-    width: 0;
-    inline-size: 0;
-    white-space: nowrap;
-  }
-  .table > :not(caption) > * > :where(:has(> input[type=checkbox]:only-child)) {
-    width: 0;
-    inline-size: 0;
-    white-space: nowrap;
+  .table .table-key-line {
+    display: none;
   }
   .table > tbody > tr > * > a:where([href]:not(.sf-button)) {
     color: var(--sf-link);
@@ -274,6 +262,43 @@
     font-variant-numeric: tabular-nums;
     text-align: end;
     white-space: nowrap;
+  }
+  @media not all and (min-width: 44rem) {
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) {
+      word-break: normal;
+      word-wrap: normal;
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) > :not(caption) > tr > :not(.table-key):not(:has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child)):not(:has(> .sr-only:only-child)) {
+      display: none;
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) > :not(caption) > tr > .table-key {
+      white-space: nowrap;
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) > :not(caption) > tr > .table-key:has(> a[href]:not(.sf-button), > .table-key-line) {
+      width: 100%;
+      inline-size: 100%;
+      max-width: 0;
+      max-inline-size: 0;
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) > :not(caption) > tr > .table-key:has(> a[href]:not(.sf-button), > .table-key-line) > a[href] {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) > :not(caption) > tr > .table-key:has(> .table-key-line) {
+      height: var(--sf-ui-2--control-height);
+      block-size: var(--sf-ui-2--control-height);
+    }
+    .table:where(:has(> tbody > tr > * > sf-button-icon[icon=menu]:only-child, > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> :not(caption) > tr > .table-key)) .table-key-line {
+      display: block;
+      overflow: hidden;
+      color: var(--sf-on-surface-variant);
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
   .table-sm > :not(caption) > * > *,
   .table-small > :not(caption) > * > * {

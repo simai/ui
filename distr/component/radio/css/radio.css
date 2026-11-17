@@ -304,9 +304,12 @@
   .sf-radio-button--size-2 {
     --sf-radio-button--gap: var(--sf-radio-button-gap, var(--sf-space-1\/2));
   }
-  .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled):hover):not(:has(sf-help-mark:hover, [slot=help]:hover)) .sf-radio-button-box {
+  .sf-radio-button:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:checked):hover):not(:has(sf-help-mark:hover, [slot=help]:hover)) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary-hover);
   }
+  /* The hover edge is the unselected ring's, as on the checkbox and the switch
+     (RG-CB-4, C66): a selected ring keeps the dot's colour, and a ring in error
+     keeps the error colour. */
   /* Hover shows on the ring alone, as on the checkbox: a fill behind the ring
      and its label marked the text, which no control here does (owner,
      2026-10-13). */
@@ -354,6 +357,16 @@
   .sf-radio-button.error .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-radio-button-invalid-border-color, var(--sf-error));
   }
+  /* Error outweighs selected (owner decision C221, RG-RB-1): the selected rule
+     above weighed more than the error rule, so a selected radio in error drew a
+     primary ring and dot. Now the ring and the dot take the error colour at every
+     size and density; disabled still greys both. */
+  .sf-radio-button.error:has(input:checked):not(:has(input:disabled)) .sf-radio-button-box {
+    --sf-radio-button-box--border-color: var(--sf-radio-button-invalid-border-color, var(--sf-error));
+  }
+  .sf-radio-button.error:has(input:checked):not(:has(input:disabled)) .sf-radio-button-mark {
+    --sf-radio-button-mark--background-color: var(--sf-radio-button-invalid-border-color, var(--sf-error));
+  }
 }
 @layer sf.states {
   @media (forced-colors: active) {
@@ -378,13 +391,13 @@
       background-color: GrayText;
     }
     .sf-radio-button:has(input:not(:disabled):not(.disabled).focus-visible) .sf-radio-button-box {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--width);
       --sf-radio-button-box--box-shadow: none;
     }
     .sf-radio-button:has(input:not(:disabled):not(.disabled):focus-visible) .sf-radio-button-box {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--width);
       --sf-radio-button-box--box-shadow: none;
     }
   }
@@ -401,6 +414,25 @@
   }
   .sf-radio-button .sf-radio-button-container {
     min-width: 0;
+  }
+  /* The hit area is the ring and its text, not the row (RG-CB-1, C63; C19: the
+     class layer, as the Smart row in src/smart/helpers/checkable-row.css): the
+     label hugs its content, so a press on the empty rest of a full-width row
+     selects nothing. With the ring at the row's end (the text column, then the
+     ring) the row is the control and keeps its full width. */
+  .sf-radio-button {
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    inline-size: -webkit-fit-content;
+    inline-size: -moz-fit-content;
+    inline-size: fit-content;
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
+  .sf-radio-button:has(> .sf-radio-button-container + .sf-radio-button-box:last-child) {
+    width: auto;
+    inline-size: auto;
   }
   .sf-radio-button .sf-radio-button-box {
     position: relative;
@@ -567,6 +599,20 @@
   .sf-radio-button--type-font {
     position: relative;
   }
+  /* The retired font-sample group (C222): the runtime redraws each tile as a
+     plain radio with its label (_radio.js, retireFontRadioWrap) and marks the
+     group; the group's title stands above, the options in a column, one
+     --sf-space-1/3 apart. The tile rules above draw only a page without the
+     runtime, until 2027-01-01. */
+  .sf-radio-wrap--type-font[data-sf-radio-font-retired] {
+    flex-direction: column;
+    gap: var(--sf-space-1\/3);
+  }
+  .sf-radio-wrap--type-font[data-sf-radio-font-retired] > .sf-radio-group--font {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: var(--sf-space-1\/3);
+  }
   .sf-radio-button--type-font .sf-radio-text {
     display: grid;
     align-items: center;
@@ -643,13 +689,13 @@
       border-color: Highlight;
     }
     .sf-radio-button--type-font:has(input.focus-visible) .sf-radio-text {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--width);
       box-shadow: none;
     }
     .sf-radio-button--type-font:has(input:focus-visible) .sf-radio-text {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--width);
       box-shadow: none;
     }
     .sf-radio-button--type-font:has(input:disabled) .sf-radio-text {

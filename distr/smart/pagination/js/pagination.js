@@ -348,6 +348,7 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ofPagesParts: () => (/* binding */ ofPagesParts),
 /* harmony export */   pageWindow: () => (/* binding */ pageWindow)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
@@ -421,7 +422,10 @@ function inReach(node, root) {
   };
   return at.top <= box.bottom + EDGE_REACH && at.bottom >= box.top - EDGE_REACH;
 } // Places of numbers: seven, five below the sm step of the ladder
-// (core/js/breakpoints.js, the sheets' media-breakpoint-down).
+// (core/js/breakpoints.js, the sheets' media-breakpoint-down) and wherever
+// the pagination's own box has no room for seven (RG-NV 12: a 30rem column
+// on a wide screen; the element decides by its own width, as the footer does
+// by its container, C181 (2)).
 // The page window of numbers (USWDS, GOV.UK; prototype pagination-study.html):
 // at most `slots` places, the first and the last page always, a gap where
 // pages are left out. Exactly `slots` places once there are more pages than
@@ -521,7 +525,23 @@ function parseActions(value, fallback = []) {
 } // The boolean settings that are on by default (component.json).
 
 
-const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_6__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name));
+const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_6__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name)); // «[3] из 12»: the field stands where the word says {page} («{page} из
+// {count}»), so a language may put the count first. The text around the
+// field, trimmed: {before, after}. A word without {page} (a product's word
+// from before 1.7.x) is all after the field, as it was.
+
+function ofPagesParts(word) {
+  const text = String(word ?? "");
+  const at = text.indexOf("{page}");
+  if (at < 0) return {
+    before: "",
+    after: text.trim()
+  };
+  return {
+    before: text.slice(0, at).trim(),
+    after: text.slice(at + "{page}".length).trim()
+  };
+}
 
 class SfPagination extends PaginationElement {
   static get props() {
@@ -1138,12 +1158,57 @@ class SfPagination extends PaginationElement {
       selected: start + index === current,
       edge: start + index === 1 || start + index === furthest
     }));
-  } // Whether the screen is narrow (below the sm step): numbers then shows five
-  // places in place of seven.
+  } // Whether numbers shows five places in place of seven: on a narrow screen
+  // (below the sm step, C97 (6)) and wherever its own box has no room for
+  // seven (fitPlaces).
 
 
   get narrow() {
-    return Boolean(this._sfNarrow?.matches);
+    return Boolean(this._sfNarrow?.matches) || this._sfCramped === true;
+  } // Seven places or five by the pagination's own room (RG-NV 12). Seven
+  // places that do not fit their box fall to five, and the width seven need
+  // is kept; five go back to seven once the box is that wide again. Started
+  // at five, the width of seven is the row's own plus two places and their
+  // gaps. Read after each drawing and whenever the box changes size.
+
+
+  fitPlaces() {
+    const nav = this.querySelector(":scope > nav.sf-pagination");
+
+    if (nav !== this._sfFitNav) {
+      this._sfFitObserver?.disconnect();
+      this._sfFitNav = nav;
+
+      if (nav && typeof ResizeObserver === "function") {
+        this._sfFitObserver = new ResizeObserver(() => this.fitPlaces());
+
+        this._sfFitObserver.observe(nav);
+      }
+    }
+
+    if (!nav || this.appearance !== "numbers" || this.footer || this._sfNarrow?.matches) return;
+    const list = nav.querySelector(":scope > .sf-pagination-list");
+    const room = nav.clientWidth;
+    if (!list || !(room > 0)) return;
+    const need = list.scrollWidth;
+    let cramped = this._sfCramped === true;
+
+    if (!cramped && need > room + 0.5) {
+      this._sfWideNeed = need;
+      cramped = true;
+    } else if (cramped) {
+      if (!(this._sfWideNeed > 0)) {
+        const slot = list.querySelector(":scope > .sf-pagination-slot");
+        const gap = Number.parseFloat(globalThis.getComputedStyle?.(list)?.columnGap) || 0;
+        this._sfWideNeed = need + 2 * ((slot?.getBoundingClientRect().width || 0) + gap);
+      }
+
+      if (room >= this._sfWideNeed - 0.5) cramped = false;
+    }
+
+    if (cramped === (this._sfCramped === true)) return;
+    this._sfCramped = cramped;
+    this.refresh("narrow");
   } // The places of numbers: page numbers and gaps, at most seven (five on a
   // narrow screen). Without an exact count the row reaches the page has_next
   // promises and ends in a gap while more follow: there is no last page to
@@ -1296,11 +1361,11 @@ class SfPagination extends PaginationElement {
       // 2027-01-01): the row says what it is without it.
       pagesLabelShown: this.hasAttribute("pages-label"),
       fieldDigits: Math.max(String(this.current).length, this.exactCount ? String(this.pageCount).length : 1, 1),
-      ofPages: this.countKnown ? this.sfWord("of-pages", {
+      ofPages: this.countKnown ? ofPagesParts(this.sfWord("of-pages", {
         vars: {
           count: this.totalExact ? this.pageCount : `~${this.pageCount}`
         }
-      }) : "",
+      })) : null,
       pageSlots: this.appearance === "numbers" ? this.pageSlots : [],
       slotDigits: String(this.exactCount ? this.pageCount : this.current + 1).length,
       previousText: this.sfWord("previous-text"),
@@ -1529,6 +1594,14 @@ class SfPagination extends PaginationElement {
       });
     }
 
+    this.sfScope?.addEventListener?.("abort", () => {
+      this._sfFitObserver?.disconnect();
+      this._sfFitObserver = null;
+      this._sfFitNav = null;
+    }, {
+      once: true
+    });
+
     if (this.pageParam && globalThis.addEventListener) {
       globalThis.addEventListener("popstate", () => this.followAddress(), {
         signal: this.sfScope
@@ -1556,6 +1629,7 @@ class SfPagination extends PaginationElement {
       this.noteFooterParts();
       this.keepMoreFocus();
       this.watchMore();
+      this.fitPlaces();
     }
 
     return result;
@@ -2153,7 +2227,7 @@ function renderDirection(context, {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <li class="sf-pagination-item">
         <a
-          class=${joinClasses(`sf-pagination-direction sf-pagination-direction--${kind} sf-pagination-link`, `sf-icon-button sf-icon-button--size-${size} sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center`, href ? "" : "disabled")}
+          class=${joinClasses(`sf-pagination-direction sf-pagination-direction--${kind} sf-pagination-link`, `sf-icon-button sf-icon-button--size-${size} sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface flex items-cross-center`, href ? "" : "disabled")}
           href=${href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           role=${href ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "link"}
           aria-disabled=${href ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "true"}
@@ -2221,7 +2295,8 @@ const last = (context, component) => context.canJumpToLast ? renderDirection(con
   disabled: !context.hasNext,
   go: () => component.lastPage()
 }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // field: |‹ ‹ [3] из 12 › ›|. «из 12» only for an exact count; an estimate
-// reads «из ~23», and no count says nothing after the field.
+// reads «из ~23», and no count says nothing after the field. The word
+// of-pages places the field ({page}): the text before it and after it.
 
 
 function renderField(context, component) {
@@ -2230,8 +2305,9 @@ function renderField(context, component) {
       ${first(context, component)}
       ${previous(context, component)}
       <li class="sf-pagination-item sf-pagination-item-field flex items-cross-center">
+        ${context.ofPages?.before ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages.before}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${renderPageField(context, component)}
-        ${context.ofPages ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${context.ofPages?.after ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages.after}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </li>
       ${next(context, component)}
       ${last(context, component)}
@@ -2425,8 +2501,10 @@ function renderRange(context, component) {
       text=${context.showCountLabel}
       @click=${() => component.requestCount("total")}
     ></sf-button>
-  `;
-  const spinner = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>`;
+  `; // The wait is a mark beside the range, not a line of words: the spinner's
+  // label is its name and stays unseen (label-hidden, SP-07), as in lookup.
+
+  const spinner = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-spinner size=${context.size} label=${context.countingLabel} label-hidden></sf-spinner>`;
   const offer = context.exactCount ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.counting ? spinner : context.canCount ? countButton : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class="sf-pagination-left flex items-cross-center">
@@ -2487,7 +2565,7 @@ function renderBand(context, component) {
       <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
       <sf-dropdown
         size=${context.size}
-        appearance="outlined"
+        appearance="bordered"
         search="false"
         mode="select"
         value=${context.action}
@@ -2648,21 +2726,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-pagin
 /***/ "344edfee8242"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.7.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.8.4","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
 
 /***/ },
 
 /***/ "38d83a636029"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Pagination","runtime":{"action-apply-text":"Apply","action-choose-label":"Choose an action","action-for-all-label":"For all","actions-label":"Action for the selected records","actions-region-label":"Actions for the selected","aria-label":"Result pages","clear-selection-label":"Clear the selection","counting-label":"Counting","cursor-next-text":"Next","first-label":"First","last-label":"Last","next-label":"Next page","next-text":"Next","of-pages":"of {count}","page-field-label":"Page:","page-label":"Page","page-size-label":"Per page:","page-size-text":"{size} per page","pages-label":"Pages:","previous-label":"Previous page","previous-text":"Back","range":"{from}–{to} of {total}","range-many":"{from}–{to} of many","selected-label":"Selected:","show-count-label":"count","show-more-count":"Show {count} more","show-more-text":"Show more","shown":"Showing {shown} of {total}","title-page":"Page {page}","total-label":"Total:"},"events":{"selection-clear":{"label":"Selection cleared"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Pagination","runtime":{"action-apply-text":"Apply","action-choose-label":"Choose an action","action-for-all-label":"For all","actions-label":"Action for the selected records","actions-region-label":"Actions for the selected","aria-label":"Result pages","clear-selection-label":"Clear the selection","counting-label":"Counting","cursor-next-text":"Next","first-label":"First","last-label":"Last","next-label":"Next page","next-text":"Next","of-pages":"{page} of {count}","page-field-label":"Page:","page-label":"Page","page-size-label":"Per page:","page-size-text":"{size} per page","pages-label":"Pages:","previous-label":"Previous page","previous-text":"Back","range":"{from}–{to} of {total}","range-many":"{from}–{to} of many","selected-label":"Selected:","show-count-label":"count","show-more-count":"Show {count} more","show-more-text":"Show more","shown":"Showing {shown} of {total}","title-page":"Page {page}","total-label":"Total:"},"events":{"selection-clear":{"label":"Selection cleared"}}}');
 
 /***/ },
 
 /***/ "96e8b718b20a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пагинация","events":{"selection-clear":{"label":"Выделение снято"}},"runtime":{"action-apply-text":"Применить","action-choose-label":"Выберите действие","action-for-all-label":"Для всех","actions-label":"Действие с выбранными элементами","actions-region-label":"Действия с отмеченными","aria-label":"Страницы результатов","clear-selection-label":"Снять выделение","counting-label":"Считаем","cursor-next-text":"Дальше","first-label":"В начало","last-label":"Последняя","next-label":"Следующая страница","next-text":"Далее","of-pages":"из {count}","page-field-label":"Страница:","page-label":"Страница","page-size-label":"На странице:","page-size-text":"По {size}","pages-label":"Страницы:","previous-label":"Предыдущая страница","previous-text":"Назад","range":"{from}–{to} из {total}","range-many":"{from}–{to} из многих","selected-label":"Отмечено:","show-count-label":"посчитать","show-more-count":"Показать ещё {count}","show-more-text":"Показать ещё","shown":"Показано {shown} из {total}","title-page":"Страница {page}","total-label":"Всего:"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Пагинация","events":{"selection-clear":{"label":"Выделение снято"}},"runtime":{"action-apply-text":"Применить","action-choose-label":"Выберите действие","action-for-all-label":"Для всех","actions-label":"Действие с выбранными элементами","actions-region-label":"Действия с отмеченными","aria-label":"Страницы результатов","clear-selection-label":"Снять выделение","counting-label":"Считаем","cursor-next-text":"Дальше","first-label":"В начало","last-label":"Последняя","next-label":"Следующая страница","next-text":"Далее","of-pages":"{page} из {count}","page-field-label":"Страница:","page-label":"Страница","page-size-label":"На странице:","page-size-text":"По {size}","pages-label":"Страницы:","previous-label":"Предыдущая страница","previous-text":"Назад","range":"{from}–{to} из {total}","range-many":"{from}–{to} из многих","selected-label":"Отмечено:","show-count-label":"посчитать","show-more-count":"Показать ещё {count}","show-more-text":"Показать ещё","shown":"Показано {shown} из {total}","title-page":"Страница {page}","total-label":"Всего:"}}');
 
 /***/ }
 

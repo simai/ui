@@ -171,6 +171,79 @@
     --sf-button--padding-inline-start: var(--sf-context-menu--item-inset-start-2);
     --sf-button--padding-inline-end: var(--sf-context-menu--item-inset-end-2);
   }
+  /* An item written as a button is a menu row (C05, C30 R083, C105 H2 and H4,
+     C107 (1), C42 (5), C32; owner decision C240; RG-NV 13), as the
+     sf-context-menu-item row and sf-menu-context draw it: its words
+     --sf-space-1/2 inside the plate -- 16 from the panel's outer edge at every
+     size, compact and phone 12 -- the label keeping no inset of its own (the
+     button's H1 step stood it 7 / 8 / 10 further in: 23 / 24 / 26), its icon
+     --sf-space-1/2 before the words (it was the button's 7) in
+     on-surface-variant, the row's hover plate (state-select) with the words'
+     ink unchanged and the icon catching up with them, and the menu's widths
+     (10-18rem, an ellipsis past them). */
+  .sf-context-menu .sf-context-menu-content > .sf-button,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button {
+    -webkit-column-gap: var(--sf-space-1\/2);
+       -moz-column-gap: var(--sf-space-1\/2);
+            column-gap: var(--sf-space-1\/2);
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button .sf-button-text-container,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button .sf-button-text-container {
+    --sf-button-text-container--padding-inline-start: 0;
+    --sf-button-text-container--padding-inline-end: 0;
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button:not(.sf-button--error):not(.sf-button--danger) .sf-icon,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button:not(.sf-button--error):not(.sf-button--danger) .sf-icon {
+    --sf-icon--color: var(--sf-on-surface-variant);
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button:not(:disabled):not([aria-disabled=true]):not(.disabled):hover,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button:not(:disabled):not([aria-disabled=true]):not(.disabled):hover {
+    --sf-button--background-color: var(--sf-surface-state-select);
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button.sf-button--on-surface:not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-button-text-container {
+    --sf-button-text-container--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button.sf-button--on-surface:not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-button-shortcut {
+    --sf-button-text-container--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button.sf-button--on-surface:not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-button-text-container {
+    --sf-button-text-container--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button.sf-button--on-surface:not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-button-shortcut {
+    --sf-button-text-container--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button:not(.sf-button--error):not(.sf-button--danger):not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-icon {
+    --sf-icon--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button:not(.sf-button--error):not(.sf-button--danger):not(:disabled):not([aria-disabled=true]):not(.disabled):active .sf-icon {
+    --sf-icon--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button:not(.sf-button--error):not(.sf-button--danger):not(:disabled):not([aria-disabled=true]):not(.disabled):hover .sf-icon {
+    --sf-icon--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button:not(.sf-button--error):not(.sf-button--danger):not(:disabled):not([aria-disabled=true]):not(.disabled):active .sf-icon {
+    --sf-icon--color: var(--sf-context-menu-color, var(--sf-on-surface));
+  }
+  .sf-context-menu .sf-context-menu-content:has(> .sf-button, > sf-button) {
+    min-width: var(--sf-popup-menu-min-width);
+    min-inline-size: var(--sf-popup-menu-min-width);
+    min-width: var(--sf-popup-menu-min-width);
+    min-width: var(--sf-context-menu--min-inline-size, var(--sf-popup-menu-min-width));
+    min-inline-size: var(--sf-context-menu--min-inline-size, var(--sf-popup-menu-min-width));
+    max-width: min(var(--sf-popup-menu-max-width), 100vw);
+    max-inline-size: min(var(--sf-popup-menu-max-width), 100vw);
+    max-width: min(var(--sf-popup-menu-max-width), 100vw);
+    max-width: min(var(--sf-context-menu--max-inline-size, var(--sf-popup-menu-max-width)), var(--sf-context-menu-available-inline-size, 100vw));
+    max-inline-size: min(var(--sf-context-menu--max-inline-size, var(--sf-popup-menu-max-width)), var(--sf-context-menu-available-inline-size, 100vw));
+  }
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-d4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
@@ -810,9 +883,37 @@
     background-color: var(--sf-context-menu-swatch, transparent);
     background-clip: padding-box;
   }
+  /* A row's icon and chevron are a step paler than its words (C107 (1)) and
+     take the row's own ink where the row says (C107 (4), C164 (4); RG-NV 14,
+     15): on the current and the chosen row on-primary-container, on a disabled
+     row the disabled ink, and under the pointer or while its submenu is open
+     they catch up with the words. The row writes the ink
+     (--sf-context-menu-item--icon); the icon wrote on-surface-variant on
+     itself, which the row's own --sf-icon--color could not reach. */
   .sf-context-menu-item-icon,
   .sf-context-menu-item-chevron {
-    --sf-icon--color: var(--sf-on-surface-variant);
+    --sf-icon--color: var(--sf-context-menu-item--icon, var(--sf-on-surface-variant));
+  }
+  .sf-context-menu-item:not(:disabled):not(.sf-context-menu-item--disabled):hover {
+    --sf-context-menu-item--icon: currentColor;
+  }
+  .sf-context-menu-item:not(:disabled):not(.sf-context-menu-item--disabled):active {
+    --sf-context-menu-item--icon: currentColor;
+  }
+  .sf-context-menu-item[aria-expanded=true]:not(:disabled):not(.sf-context-menu-item--disabled) {
+    --sf-context-menu-item--icon: currentColor;
+  }
+  .sf-context-menu-item.sf-context-menu-item--current {
+    --sf-context-menu-item--icon: var(--sf-on-primary-container);
+  }
+  .sf-context-menu-item.sf-context-menu-item--chosen {
+    --sf-context-menu-item--icon: var(--sf-on-primary-container);
+  }
+  .sf-context-menu-item:disabled {
+    --sf-context-menu-item--icon: var(--sf-on-surface-disabled);
+  }
+  .sf-context-menu-item.sf-context-menu-item--disabled {
+    --sf-context-menu-item--icon: var(--sf-on-surface-disabled);
   }
   .sf-context-menu-item--danger:not(:disabled):not(.sf-context-menu-item--disabled) .sf-context-menu-item-icon {
     --sf-icon--color: var(--sf-error);
@@ -2424,29 +2525,10 @@
     padding-inline: calc(var(--sf-space-1\/4) - var(--sf-context-menu-border-width, var(--sf-px)));
     overflow-x: hidden;
     --sf-context-menu--track: calc(2 * var(--sf-space-1\/4) + var(--sf-context-menu--thumb));
-  }
-  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar {
-    width: var(--sf-context-menu--track);
-    height: var(--sf-context-menu--track);
-  }
-  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-track {
-    border: 0;
-    background-color: transparent;
-  }
-  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb {
-    min-height: var(--sf-context-menu--row-height);
-    border: var(--sf-space-1\/4) solid transparent;
-    border-radius: var(--sf-context-menu--track);
-    background-clip: padding-box;
-    background-color: var(--sf-scroll-bg-thumb);
-  }
-  .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb:hover, .sf-context-menu--panel .sf-context-menu-body::-webkit-scrollbar-thumb:active {
-    background-color: var(--sf-scroll--thumb-hover);
-  }
-  @supports not selector(::-webkit-scrollbar) {
-    .sf-context-menu--panel .sf-context-menu-body {
-      scrollbar-width: thin;
-    }
+    --sf-scroll-bg-width: var(--sf-context-menu--track);
+    --sf-scroll--gap-content: var(--sf-space-1\/4);
+    --sf-scroll--gap-edge: var(--sf-space-1\/4);
+    --sf-scroll--thumb-min: var(--sf-context-menu--row-height);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--panel .sf-context-menu-body.sf-context-menu-body--scrollbar{
     padding-right: 0;
@@ -2699,34 +2781,34 @@
   .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content,
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list {
     --sf-context-menu--track: calc(2 * var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--thumb));
+    --sf-scroll-bg-width: var(--sf-context-menu--track);
+    --sf-scroll--gap-content: var(--sf-context-menu-content--padding-inline-end);
+    --sf-scroll--gap-edge: var(--sf-context-menu-content--padding-inline-end);
+    --sf-scroll--thumb-min: var(--sf-context-menu--row-height);
   }
-  .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar,
-  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar {
-    width: var(--sf-context-menu--track);
-    height: var(--sf-context-menu--track);
-  }
-  .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-track,
-  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-track {
-    border: 0;
-    background-color: transparent;
-  }
-  .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-thumb,
-  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-thumb {
-    min-height: var(--sf-context-menu--row-height);
-    border: var(--sf-context-menu-content--padding-inline-end) solid transparent;
-    border-radius: var(--sf-context-menu--track);
-    background-clip: padding-box;
-    background-color: var(--sf-scroll-bg-thumb);
-  }
-  .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-thumb:hover, .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content::-webkit-scrollbar-thumb:active,
-  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-thumb:hover,
-  .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list::-webkit-scrollbar-thumb:active {
-    background-color: var(--sf-scroll--thumb-hover);
-  }
-  @supports not selector(::-webkit-scrollbar) {
+  /* Class markup has no script to mark it (RG-NV 16): the area gives up its
+     inline-end padding whenever it scrolls -- a scroll timeline of its own is
+     active only while there is something to scroll -- so the thumb stands the
+     inset from the rows' plates there too (C07, C105): 4 and 4, not 8 and 4.
+     A browser without scroll timelines keeps the padding, as before. */
+  @supports (animation-timeline: scroll()) {
     .sf-context-menu:not(.sf-context-menu--panel) .sf-context-menu-content,
     .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list {
-      scrollbar-width: thin;
+      -webkit-animation: sf-context-menu-scroll-room linear both;
+              animation: sf-context-menu-scroll-room linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @-webkit-keyframes sf-context-menu-scroll-room {
+    from, to {
+      -webkit-padding-end: 0;
+              padding-inline-end: 0;
+    }
+  }
+  @keyframes sf-context-menu-scroll-room {
+    from, to {
+      -webkit-padding-end: 0;
+              padding-inline-end: 0;
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content.sf-context-menu-content--scrollbar,html:not([dir="rtl"])
@@ -2849,24 +2931,24 @@
   .sf-context-menu-item.focus-visible,
   .sf-context-menu-range-input.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-context-menu-item:focus-visible,
   .sf-context-menu-range-input:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,
   .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled).focus-visible {
     position: relative;
     z-index: 1;
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled):focus-visible,
   .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled):focus-visible {
     position: relative;
     z-index: 1;
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   /* The switch of a value row moves its knob and its track; a person who asked
      the system to stop movement gets the end state at once, as sf-switch does. */
@@ -2896,14 +2978,14 @@
   }
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,
   .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled).focus-visible {
-    outline: var(--sf-focus-outline-width) solid currentColor;
-    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    outline: var(--sf-focus--width) solid currentColor;
+    outline-offset: var(--sf-focus--inset);
     box-shadow: none;
   }
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled):focus-visible,
   .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled):focus-visible {
-    outline: var(--sf-focus-outline-width) solid currentColor;
-    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    outline: var(--sf-focus--width) solid currentColor;
+    outline-offset: var(--sf-focus--inset);
     box-shadow: none;
   }
 }

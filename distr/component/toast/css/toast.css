@@ -512,8 +512,10 @@
             padding-block-end: calc(var(--sf-toast--lead) + (var(--sf-text-height-1) - 1cap) / 4);
   }
   /* Where the action stands (owner decision C115, layout L3a; AA-7, AA-8): a
-     toast with one action puts it in the row with the text from 20rem of the
-     toast's own width (every toast of the notification area, 28rem), centred
+     toast with one action puts it in the row with the text from 24rem of the
+     toast's own width (owner decision C218: from 20rem a 330 px toast broke
+     its title onto two lines; every toast of the notification area, 28rem,
+     keeps the row), centred
      on the text block, its plate overhanging the line by the low button's
      block padding, as the close does (C35); narrower, or with two actions,
      under the text from its start. The toast with an action is the query
@@ -526,7 +528,7 @@
   .sf-toast:has(> .sf-toast-container > .sf-toast-bottom) {
     container: sf-toast/inline-size;
   }
-  @container sf-toast (min-width: 18rem) {
+  @container sf-toast (min-width: 22rem) {
     .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-container:has(> .sf-toast-bottom) {
       flex-direction: row;
       align-items: center;
@@ -1241,5 +1243,21 @@
     .sf-notifications[data-layout=stack] > .sf-toast > * {
       transition: none;
     }
+  }
+}
+@layer sf.overrides {
+  /* The close is sf-button-close, ghost (owner decision C14, RG-CL-3): its
+     cross takes --sf-button-close--ink, which the close looks set in this
+     layer, so the toast's service ink (C112, above) is handed to it here --
+     64 of the ink family at rest, the text ink under a pointer; disabled
+     keeps the close's own disabled ink. */
+  .sf-toast > .sf-icon-button.sf-button-close {
+    --sf-button-close--ink: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
+  }
+  .sf-toast > .sf-icon-button.sf-button-close:not(:disabled):hover {
+    --sf-button-close--ink: var(--sf-toast--content-color, var(--sf-on-surface));
+  }
+  .sf-toast > .sf-icon-button.sf-button-close:not(:disabled):active {
+    --sf-button-close--ink: var(--sf-toast--content-color, var(--sf-on-surface));
   }
 }

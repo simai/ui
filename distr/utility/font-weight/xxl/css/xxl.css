@@ -40,5 +40,14 @@
     .xxl\:weight-9 {
       font-weight: 900;
     }
+    .xxl\:weight-regular {
+      font-weight: var(--sf-weight--regular);
+    }
+    .xxl\:weight-medium {
+      font-weight: var(--sf-weight--medium);
+    }
+    .xxl\:weight-bold {
+      font-weight: var(--sf-weight--bold);
+    }
   }
 }

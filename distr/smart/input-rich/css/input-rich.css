@@ -159,7 +159,7 @@
      nothing moves. */
   .sf-rich-text:has(.sf-rich-text-editor:focus) .sf-rich-text-frame {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   /* !important: a page's unlayered :focus-visible rule beats any layered one, and
      drew a second frame on the editor inside the frame's ring (owner,
@@ -718,8 +718,8 @@
   }
   @media (forced-colors: active) {
     .sf-rich-text:has(.sf-rich-text-editor:focus) .sf-rich-text-frame {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(-1 * var(--sf-focus--width));
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
     }
     .sf-rich-text .sf-rich-text-tool[aria-pressed=true] {
       outline: var(--sf-px) solid currentColor;
@@ -773,8 +773,8 @@
   .sf-rich-text.sf-rich-text--size-1\/3 {
     --sf-rich-text--font-size: var(--sf-text-size-1\/3);
     --sf-rich-text--line-height: var(--sf-text-height-1\/3);
-    --sf-rich-text--label-size: var(--sf-text-size-1\/4);
-    --sf-rich-text--label-height: var(--sf-text-height-1\/4);
+    --sf-rich-text--label-size: var(--sf-text-size-1\/3);
+    --sf-rich-text--label-height: var(--sf-text-height-1\/3);
     --sf-rich-text--tool-size: var(--sf-text-size-1\/3);
     --sf-rich-text--tool-height: var(--sf-text-height-1\/3);
     --sf-rich-text--h2-size: var(--sf-text-size-1);

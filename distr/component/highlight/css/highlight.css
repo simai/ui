@@ -3,95 +3,11 @@
 @layer sf.components {
   .theme-light,
   .theme-dark {
-    --sf-highlight-text: var(--sf-on-surface);
-    --sf-highlight-background: transparent;
-    /* The hues of code are the static palette's (owner decision C186 (11),
-       2026-11-14; C13, C17), not the status roles: red said «error» on every
-       keyword and a string was the link's blue exactly. Keyword violet, string
-       and tag green, attribute (and number) blue, title amber, built-in teal,
-       at tone 40 on the light theme and 80 on the dark, as the link: each
-       holds 4.5:1 or more on the block's plate. The names are the same; a
-       project that set one keeps its value. */
-    --sf-highlight-keyword: light-dark(var(--sf-violet-40), var(--sf-violet-80));
-    --sf-highlight-title: light-dark(var(--sf-amber-40), var(--sf-amber-80));
-    --sf-highlight-attribute: light-dark(var(--sf-blue-40), var(--sf-blue-80));
-    --sf-highlight-string: light-dark(var(--sf-green-40), var(--sf-green-80));
-    --sf-highlight-built-in: light-dark(var(--sf-teal-40), var(--sf-teal-80));
-    --sf-highlight-comment: var(--sf-on-surface-variant);
-    --sf-highlight-tag: light-dark(var(--sf-green-40), var(--sf-green-80));
-    --sf-highlight-section: var(--sf-primary);
-    --sf-highlight-bullet: var(--sf-warning);
-    --sf-highlight-punctuation: var(--sf-on-surface-variant);
-    --sf-highlight-addition: var(--sf-on-success-container);
-    --sf-highlight-addition-background: var(--sf-success-container);
-    --sf-highlight-deletion: var(--sf-on-error-container);
-    --sf-highlight-deletion-background: var(--sf-error-container);
-    --sf-highlight-line-number: var(--sf-on-surface-variant);
-    --sf-highlight-line-divider: var(--sf-outline-variant);
-  }
-  .theme-light .sf-code-surface {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-light .hljs {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-dark .sf-code-surface {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-dark .hljs {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+    /* The code palette -- the --sf-highlight-* roles and the place hooks
+       the code reads them through -- is core's (core/scss/_sf_css__code_palette.scss,
+       DEV msg-75ee8dec): a page that colours its code before this sheet
+       arrives (pre-coloured docs, C252 first paint) has it with core.css. */
+    /* Each its own role, an alias of the attribute's (same blue). */
   }
   .theme-light pre code.hljs,
   .theme-dark pre code.hljs {
@@ -134,27 +50,43 @@
   .theme-dark .hljs-title.function_ {
     color: var(--sf-highlight--title);
   }
-  .theme-light .hljs-attr,
   .theme-light .hljs-attribute,
   .theme-light .hljs-literal,
   .theme-light .hljs-meta,
-  .theme-light .hljs-number,
-  .theme-light .hljs-operator,
   .theme-light .hljs-selector-attr,
   .theme-light .hljs-selector-class,
   .theme-light .hljs-selector-id,
-  .theme-light .hljs-variable,
-  .theme-dark .hljs-attr,
   .theme-dark .hljs-attribute,
   .theme-dark .hljs-literal,
   .theme-dark .hljs-meta,
-  .theme-dark .hljs-number,
-  .theme-dark .hljs-operator,
   .theme-dark .hljs-selector-attr,
   .theme-dark .hljs-selector-class,
-  .theme-dark .hljs-selector-id,
-  .theme-dark .hljs-variable {
+  .theme-dark .hljs-selector-id {
     color: var(--sf-highlight--attribute);
+  }
+  .theme-light .hljs-number,
+  .theme-dark .hljs-number {
+    color: var(--sf-highlight--number);
+  }
+  .theme-light .hljs-attr {
+    color: var(--sf-highlight--property);
+  }
+  .theme-light .hljs-property {
+    color: var(--sf-highlight--property);
+  }
+  .theme-dark .hljs-attr {
+    color: var(--sf-highlight--property);
+  }
+  .theme-dark .hljs-property {
+    color: var(--sf-highlight--property);
+  }
+  .theme-light .hljs-operator,
+  .theme-dark .hljs-operator {
+    color: var(--sf-highlight--operator);
+  }
+  .theme-light .hljs-variable,
+  .theme-dark .hljs-variable {
+    color: var(--sf-highlight--variable);
   }
   .theme-light .hljs-meta .hljs-string,
   .theme-light .hljs-regexp,
@@ -235,8 +167,31 @@
   .sf-code-lines {
     display: block;
   }
+  /* A row carries the block's side room (the inset of the code surface,
+     --sf-space-1: 16 on a desktop, 12 on a phone), not the scroller, so a
+     row's fill -- a changed or a marked line -- reaches the block's edges
+     (study F3, 2026-11-16). The scroller of a block with rows keeps its top
+     and bottom room only. */
   .sf-code-line {
     display: flex;
+    padding-left: var(--sf-space-1);
+    padding-right: var(--sf-space-1);
+    padding-inline: var(--sf-space-1);
+  }
+  .sf-highlight__wrap > .sf-scrollbar__viewport:has(> code > .sf-code-lines) {
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+  }
+  .sf--highlight-wrap > .sf-scrollbar__viewport:has(> code > .sf-code-lines) {
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+  }
+  .sf-code-surface__scroll:has(> code > .sf-code-lines) {
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
     padding-right: var(--sf-space-1\/2);
@@ -304,6 +259,120 @@
     min-width: 0;
     min-inline-size: 0;
     white-space: pre;
+  }
+  /* A wrapped line keeps its number, sign and prompt on its first line. */
+  .sf-code-line__number {
+    align-self: flex-start;
+  }
+  .sf-code-line__sign {
+    align-self: flex-start;
+  }
+  .sf-code-line__prompt {
+    align-self: flex-start;
+  }
+  /* Changed lines (owner decision C255): the row's tint and a sign, two
+     cues, colour and shape (C12). The tints are the roles the diff language
+     already paints with (success and error containers, 12 / 24 %), the code
+     on them holds 4.5:1; the sign stands in a column of its own two
+     characters wide, drawn by the stylesheet so it is neither copied nor
+     selected, and a screen reader hears the word before the line instead. */
+  .sf-code-line__sign {
+    flex: none;
+    width: 2ch;
+    inline-size: 2ch;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+  .sf-code-line[data-line-diff=add] {
+    background: var(--sf-highlight-addition-background);
+  }
+  .sf-code-line[data-line-diff=remove] {
+    background: var(--sf-highlight-deletion-background);
+  }
+  .sf-code-line[data-line-diff=add] > .sf-code-line__sign::before {
+    content: "+"/"";
+    color: var(--sf-success);
+  }
+  .sf-code-line[data-line-diff=remove] > .sf-code-line__sign::before {
+    content: "−"/"";
+    color: var(--sf-error);
+  }
+  /* Marked and focused lines (C256): a light fill, the primary container
+     (12 % light, 24 % dark), and a 2 px bar at the line's start in primary
+     -- a second cue that leaves the code's contrast alone. Focus is drawn
+     the same: the other lines are neither dimmed nor blurred. */
+  .sf-code-line[data-line-mark] {
+    /* The bar is a background layer, not an inset shadow (a shadow is the
+       retired focus ring's tool); code runs left to right here (direction:
+       ltr on the scroller), so its start is the left edge. */
+    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
+  }
+  .sf-code-line[data-line-focus] {
+    /* The bar is a background layer, not an inset shadow (a shadow is the
+       retired focus ring's tool); code runs left to right here (direction:
+       ltr on the scroller), so its start is the left edge. */
+    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
+  }
+  /* A terminal (C257): the frame is the code block of the site's theme; a
+     command's prompt is the stylesheet's, in a column of its own, so copy
+     takes the command alone, and the output is in the place's dim ink. */
+  .sf-code-line__prompt {
+    flex: none;
+    width: 2ch;
+    inline-size: 2ch;
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-highlight--punctuation, var(--sf-on-surface-variant));
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+  .sf-code-line__prompt::before {
+    content: "$"/"";
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-output] > .sf-code-line__content{
+    padding-left: 2ch;
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-code-line[data-line-output] > .sf-code-line__content{
+    padding-left: 2ch;
+    }
+  }
+  .sf-code-line[data-line-output] > .sf-code-line__content:where(:dir(ltr)){
+    padding-left: 2ch;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-output] > .sf-code-line__content{
+    padding-right: 2ch;
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-code-line[data-line-output] > .sf-code-line__content{
+    padding-right: 2ch;
+    }
+  }
+  .sf-code-line[data-line-output] > .sf-code-line__content:where(:dir(rtl)){
+    padding-right: 2ch;
+  }
+  .sf-code-line[data-line-output] > .sf-code-line__content {
+    -webkit-padding-start: 2ch;
+            padding-inline-start: 2ch;
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-highlight--comment, var(--sf-on-surface-variant));
+  }
+  .sf-code-line[data-line-output] > .sf-code-line__content * {
+    color: inherit;
+  }
+  .sf-highlight--terminal .sf-highlight__language {
+    display: inline-flex;
+    align-items: center;
+    -webkit-column-gap: var(--sf-space-1\/3);
+       -moz-column-gap: var(--sf-space-1\/3);
+            column-gap: var(--sf-space-1\/3);
+  }
+  .sf-highlight--terminal .sf-highlight__language .sf-icon {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-on-surface-icon, var(--sf-on-surface-variant));
   }
   .sf--highlight-head {
     padding: 0 var(--sf-space-1);
@@ -391,6 +460,7 @@
   }
   /* The copy status is read aloud and never shown; hidden here for the same
      reason, not through the optional sr-only utility. */
+  .sf-code-line__state,
   .sf-highlight__status {
     position: absolute;
     width: var(--sf-px);
@@ -471,6 +541,25 @@
     border-bottom: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
     -webkit-border-after: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
             border-block-end: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
+  }
+  /* A code block in running text keeps the text's rhythm (CB-3, plain
+     group 3): it ends with the paragraph's space (--sf-text--space-bottom,
+     the content contract's text role, 16 on a desktop, 12 on a phone), and
+     what follows brings its own -- a heading its larger top, with which the
+     block's end collapses, as after a paragraph. It was a fixed
+     --sf-space-4 (32 / 24) on the top of whatever came next: a paragraph
+     stood twice the text's space away and a heading lost its own top. A
+     block that ends its holder adds nothing (a card, a chat bubble). After
+     the code surface's margin: 0, which this outranks. */
+  .sf-highlight:not(:last-child) {
+    margin-bottom: var(--sf-text--space-bottom);
+    -webkit-margin-after: var(--sf-text--space-bottom);
+            margin-block-end: var(--sf-text--space-bottom);
+  }
+  .source:not(:last-child) {
+    margin-bottom: var(--sf-text--space-bottom);
+    -webkit-margin-after: var(--sf-text--space-bottom);
+            margin-block-end: var(--sf-text--space-bottom);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-surface__scroll{
     text-align: left;
@@ -556,12 +645,6 @@
   .theme-light .hljs {
     padding: 0 !important;
   }
-  .sf-highlight + * {
-    margin-top: var(--sf-space-4);
-  }
-  .source + * {
-    margin-top: var(--sf-space-4);
-  }
   .hljs-ln-numbers {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -576,26 +659,32 @@
     /* your custom style here */
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   @supports not (border-inline-end: initial){
   html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
     }
   }
   .hljs-ln-numbers div:where(:dir(ltr)){
-    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
-    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   @supports not (border-inline-end: initial){
   [dir="rtl"] .hljs-ln-numbers div{
-    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
     }
   }
   .hljs-ln-numbers div:where(:dir(rtl)){
-    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
     padding-right: var(--sf-a5);
@@ -619,9 +708,36 @@
   .hljs-ln-numbers div:where(:dir(rtl)){
     padding-left: var(--sf-a5);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  @supports not (border-inline-end: initial){
+  html:not([dir="rtl"]) .hljs-ln-numbers div{
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(ltr)){
+    border-right: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  @supports not (border-inline-end: initial){
+  [dir="rtl"] .hljs-ln-numbers div{
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(rtl)){
+    border-left: var(--sf-px) solid var(--sf-outline-variant);
+  }
   .hljs-ln-numbers div {
-    -webkit-border-end: var(--sf-px) solid var(--sf-highlight-line-divider);
-            border-inline-end: var(--sf-px) solid var(--sf-highlight-line-divider);
+    /* --sf-highlight-line-divider is read here only, as an alias of the
+       edge colour until 2027-01-01: the quiet number column (C254) has no
+       line, and the role is no longer declared. */
+    -webkit-border-end: var(--sf-px) solid var(--sf-outline-variant);
+            border-inline-end: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-end: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
+            border-inline-end: var(--sf-px) solid var(--sf-highlight-line-divider, var(--sf-outline-variant));
     -webkit-padding-end: var(--sf-a5);
             padding-inline-end: var(--sf-a5);
   }

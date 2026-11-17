@@ -60,13 +60,19 @@ const PACKS = (STORE.packs ??= {
 });
 const isBuiltIn = (code) => code === 'ru' || code === 'en';
 
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
-function needPack(code) {
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? canonicalTag(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 }
 
 // Words are kept under a component's current tag: a product that registered
@@ -251,7 +257,7 @@ export function pageText(dictionary, key, node, component) {
  */
 export function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
     if (added !== undefined) {
@@ -339,7 +345,7 @@ export function pageWord(dictionary, key, node, {component, source = '', count, 
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
@@ -371,6 +377,23 @@ export function pageWord(dictionary, key, node, {component, source = '', count, 
   }
   warnWord(owner, key, locale, 'key');
   return key;
+}
+
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+export function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+  return undefined;
 }
 
 export const language = {
@@ -453,7 +476,9 @@ export const language = {
     }
     const info = { lang: code, delivery: pack.delivery ?? 'framework', status: pack.status ?? null, coverage: pack.coverage ?? null, words, url };
     PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+    if (!PACKS.quiet) announce();
     return info;
   },
 

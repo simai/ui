@@ -32,19 +32,19 @@
       max-width: none;
     }
     .lg\:max-w-sm {
-      max-width: 32rem;
+      max-width: var(--sf-g6);
     }
     .lg\:max-w-md {
-      max-width: 44rem;
+      max-width: var(--sf-h1);
     }
     .lg\:max-w-lg {
-      max-width: 60rem;
+      max-width: var(--sf-h5);
     }
     .lg\:max-w-xl {
-      max-width: 72rem;
+      max-width: var(--sf-h8);
     }
     .lg\:max-w-xxl {
-      max-width: 80rem;
+      max-width: var(--sf-i0);
     }
   }
 }

@@ -72,7 +72,7 @@ function renderDirection(context, {kind, icon, label, page, go, disabled = false
         <a
           class=${joinClasses(
             `sf-pagination-direction sf-pagination-direction--${kind} sf-pagination-link`,
-            `sf-icon-button sf-icon-button--size-${size} sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center`,
+            `sf-icon-button sf-icon-button--size-${size} sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface flex items-cross-center`,
             href ? "" : "disabled",
           )}
           href=${href || nothing}
@@ -146,15 +146,17 @@ const last = (context, component) => (context.canJumpToLast
   : nothing);
 
 // field: |‹ ‹ [3] из 12 › ›|. «из 12» only for an exact count; an estimate
-// reads «из ~23», and no count says nothing after the field.
+// reads «из ~23», and no count says nothing after the field. The word
+// of-pages places the field ({page}): the text before it and after it.
 function renderField(context, component) {
   return html`
     <ol class="sf-pagination-list flex items-cross-center">
       ${first(context, component)}
       ${previous(context, component)}
       <li class="sf-pagination-item sf-pagination-item-field flex items-cross-center">
+        ${context.ofPages?.before ? html`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages.before}</span>` : nothing}
         ${renderPageField(context, component)}
-        ${context.ofPages ? html`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages}</span>` : nothing}
+        ${context.ofPages?.after ? html`<span class="sf-pagination-of" aria-hidden="true">${context.ofPages.after}</span>` : nothing}
       </li>
       ${next(context, component)}
       ${last(context, component)}
@@ -349,7 +351,9 @@ function renderRange(context, component) {
       @click=${() => component.requestCount("total")}
     ></sf-button>
   `;
-  const spinner = html`<sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>`;
+  // The wait is a mark beside the range, not a line of words: the spinner's
+  // label is its name and stays unseen (label-hidden, SP-07), as in lookup.
+  const spinner = html`<sf-spinner size=${context.size} label=${context.countingLabel} label-hidden></sf-spinner>`;
   const offer = context.exactCount ? nothing : context.counting ? spinner : context.canCount ? countButton : nothing;
 
   return html`
@@ -413,7 +417,7 @@ function renderBand(context, component) {
       <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
       <sf-dropdown
         size=${context.size}
-        appearance="outlined"
+        appearance="bordered"
         search="false"
         mode="select"
         value=${context.action}

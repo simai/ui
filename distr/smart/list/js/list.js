@@ -673,7 +673,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -688,6 +689,53 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_for
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -736,7 +784,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -1742,15 +1790,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8d229b7c92e9");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1c69b52a2c3c");
-/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("50e7fd61ac57");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c1c5abcf20ed");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0c29db1e15d7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1c69b52a2c3c");
+/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2677706b5ec9");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c1c5abcf20ed");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0c29db1e15d7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__);
 // A list a person acts on: a person's conversations, letters, templates,
 // files, members, versions -- rows from data, each one a title and a quiet
 // second line, which one is open, a few things one can do to a row. The block
@@ -1784,13 +1834,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // It never fetches anything: every request leaves as an event.
 //
 // Keyboard: arrows, Home and End move between rows, Enter opens, F2 renames,
-// Shift+F10 or the menu key opens the row's actions.
+// Shift+F10 or the menu key opens the row's actions; so does a right click,
+// at the pointer (1.19.0, C164 (1)).
 //
 // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8,
 // §11, §18): the settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, the actions
 // answer outcomes, and the events take the vocabulary's verbs (open, apply,
 // rename, load-more).
+
 
 
 
@@ -1818,10 +1870,10 @@ function endInReach(sentinel, root) {
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
 }; // A text longer than this is not a name; the rename field stops there, as the
 // server that stores it most likely does.
 
@@ -1943,7 +1995,7 @@ const pageArguments = (first, second) => {
   };
 };
 
-const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
@@ -2112,6 +2164,30 @@ class SfList extends ListElement {
     if (this._editing === id) this._editing = null;
     this.requestComponentUpdate("detach");
     return applied();
+  } // The list's own «Показать ещё» and its scroll request (has-more) are
+  // retired in favour of sf-pagination appearance="more" after the list
+  // (owner decision C167 (1): the end of a list is that button, with «Показано
+  // X из Y»). They still work until 2027-01-01, noted once per element in
+  // SF.deprecations (journal attribute-list-has-more-to-pagination-more).
+
+
+  ownMore() {
+    if (!this.hasMore) return false;
+
+    if (!this._ownMoreNoted) {
+      this._ownMoreNoted = true;
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
+        component: "sf-list",
+        tag: "sf-list",
+        kind: "attribute",
+        from: "has-more",
+        to: "sf-pagination appearance=\"more\"",
+        since: "2026-11-16",
+        remove_after: "2027-01-01"
+      });
+    }
+
+    return true;
   }
   /** The next page could not be loaded: reaching the end, or «Show more», asks again. */
 
@@ -2170,14 +2246,20 @@ class SfList extends ListElement {
     if (!item) return refused("unknown");
     const entries = this.menuEntries(item);
     if (!entries.length) return refused("no-actions");
-    const row = this.rowFor(id);
+    const row = this.rowFor(id); // A point {x, y} in the window: where a right click was (C164 (1)).
+
+    const point = anchorGiven && !(anchorGiven instanceof Element) && Number.isFinite(Number(anchorGiven.x)) && Number.isFinite(Number(anchorGiven.y)) ? {
+      x: Number(anchorGiven.x),
+      y: Number(anchorGiven.y)
+    } : null;
     const anchor = anchorGiven instanceof Element ? anchorGiven : row?.closest(".sf-list__row")?.querySelector(".sf-list__actions") ?? row ?? this;
     this._menuFor = id; // The page's one menu (core SF.menu.open, owner decision C184 (4)),
-    // fetched by the Loader the first time: the «⋯» and Shift+F10 open the
-    // same list, and the focus goes back to the row.
+    // fetched by the Loader the first time: the «⋯», Shift+F10 and a right
+    // click open the same list, and the focus goes back to the row.
 
-    const opening = (0,_core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__.menuOpen)({
-      anchor,
+    const opening = (0,_core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__.menuOpen)({ ...(point ?? {
+        anchor
+      }),
       entries,
       label: this.sfWord("actions-label", {
         vars: {
@@ -2468,7 +2550,7 @@ class SfList extends ListElement {
       empty,
       emptyHeading: this.emptyText,
       emptyContent: this.hasSlotContent("empty") ? this.getSlotContent("empty") : null,
-      showMore: this.hasMore && !loading,
+      showMore: this.ownMore() && !loading,
       loadingMore: this._loadingMore,
       // The label stays while the page is on its way, so the button keeps
       // its width; the wait is said by the status beside it.
@@ -2487,7 +2569,7 @@ class SfList extends ListElement {
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__.renderListTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__.renderListTemplate)(this.templateContext());
   } // The rows are drawn; the list's sheets may still be on their way. The
   // width is watched from now (C47): when the sheet comes, the observer
   // measures the frame before it is painted with it, so no frame of a
@@ -2545,7 +2627,7 @@ class SfList extends ListElement {
     // nothing. No swipe.
 
     if (!this._longPress) {
-      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_6__.watchLongPress)(this, {
+      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_7__.watchLongPress)(this, {
         accepts: event => {
           const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
           if (!row || !this.contains(row) || event.target.closest(".sf-list__actions, .sf-list__rename")) return false;
@@ -2564,8 +2646,33 @@ class SfList extends ListElement {
         if (!this._longPress.swallowed()) return;
         event.preventDefault();
         event.stopPropagation();
-      }, true);
+      }, true); // A right click on a row opens its menu at the pointer, the same
+      // list as its «⋯» (owner decision C164 (1), defect TL-2).
+
+      this.addEventListener("contextmenu", event => this.onRowContextMenu(event));
     }
+  } // The right button on a row with a menu: the row's menu where the pointer
+  // is. Shift with it leaves the browser's own menu; a finger's long press
+  // is the long-press watch's (it has opened the menu already); the menu key
+  // and Shift+F10 are onKey's (their keydown opened it at the row's «⋯»).
+
+
+  onRowContextMenu(event) {
+    if (event.shiftKey || event.defaultPrevented) return;
+    const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
+    if (!row || !this.contains(row) || event.target.closest(".sf-list__rename")) return;
+    const id = this.idOf(row);
+
+    const item = this._items.find(one => one.id === id);
+
+    if (!item || !this.hasMenu(item)) return;
+    event.preventDefault();
+    if (event.button !== 2 || event.pointerType === "touch") return;
+    this.moveTo(row);
+    this.openMenu(id, {
+      x: event.clientX,
+      y: event.clientY
+    });
   }
 
   onDisconnected() {
@@ -3165,7 +3272,7 @@ const row = (context, item, group) => {
             ${listItem}
             ${menu ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
                         type="button"
-                        class="sf-list__actions sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${context.size} flex items-cross-center content-main-center flex-none"
+                        class="sf-list__actions sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-${context.size} flex items-cross-center content-main-center flex-none"
                         tabindex="-1"
                         aria-haspopup="menu"
                         aria-label=${context.actionsLabel(text)}
@@ -3306,6 +3413,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -3472,7 +3586,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.18.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.20.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

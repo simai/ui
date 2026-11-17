@@ -293,7 +293,6 @@
   }
 }
 @layer sf.components {
-  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-thumb {
     background-color: transparent;
     background-color: var(--sf-thumb--background-color, transparent);
@@ -528,7 +527,7 @@
   @media (forced-colors: active) {
     .sf-range-slider .sf-thumb-handle {
       background-color: ButtonText;
-      border: var(--sf-focus-outline-width) solid ButtonText;
+      border: var(--sf-focus--width) solid ButtonText;
     }
     .sf-range-slider[disabled] .sf-thumb-handle {
       background: GrayText;
@@ -539,12 +538,12 @@
       border-color: GrayText;
     }
     .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle.focus-visible .sf-thumb-handle {
-      outline: var(--sf-focus-outline-width) solid Highlight;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--width);
     }
     .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle:focus-visible .sf-thumb-handle {
-      outline: var(--sf-focus-outline-width) solid Highlight;
-      outline-offset: var(--sf-focus-outline-width);
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--width);
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -851,8 +850,8 @@
     min-inline-size: 0;
   }
   .sf-range-slider-name {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-range-slider-name--color, var(--sf-on-surface-variant));
+    color: var(--sf-on-surface);
+    color: var(--sf-range-slider-name--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-range-slider--label-size, var(--sf-text-size-1\/2));
@@ -900,6 +899,16 @@
     -webkit-margin-start: auto;
             margin-inline-start: auto;
     white-space: nowrap;
+  }
+  @media not all and (min-width: 60rem) {
+    .sf-range-slider-group:not(.sf-range-slider-group--size-1\/2):not(.sf-range-slider-group--size-2) .sf-range-slider-name {
+      font-size: var(--sf-text-size-1);
+      line-height: var(--sf-text-height-1);
+    }
+    .sf-range-slider-group:not(.sf-range-slider-group--size-1\/2):not(.sf-range-slider-group--size-2) .sf-range-slider-output {
+      font-size: var(--sf-text-size-1);
+      line-height: var(--sf-text-height-1);
+    }
   }
   .sf-range-slider-line {
     align-items: flex-start;
@@ -1346,7 +1355,7 @@
     flex: none;
   }
   .sf-range-slider-group:not(.disabled):not(.readonly) .sf-range-slider-field:hover {
-    border-color: var(--sf-primary-hover);
+    border-color: var(--sf-on-surface);
   }
   .sf-range-slider-group:not(.disabled):not(.readonly) .sf-range-slider-field[focus-within] {
     border-color: var(--sf-primary);
@@ -1354,13 +1363,9 @@
   .sf-range-slider-group:not(.disabled):not(.readonly) .sf-range-slider-field:focus-within {
     border-color: var(--sf-primary);
   }
-  .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
+  .sf-range-slider-group:not(.disabled) .sf-range-slider-field:has(.sf-range-slider-field-input:focus) {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-range-slider-field:has(.sf-range-slider-field-input:focus-visible) {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-range-slider-group.readonly .sf-range-slider-field {
     border-color: var(--sf-outline-variant);
@@ -1402,11 +1407,9 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
@@ -1416,26 +1419,22 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
       padding: 0;
     }
     .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
+    .sf-range-slider-group--field:not(.disabled) .sf-range-slider-field:has(.sf-range-slider-field-input:focus) {
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
@@ -1445,11 +1444,9 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
@@ -1459,11 +1456,9 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
@@ -1474,12 +1469,9 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       width: 100%;
       inline-size: 100%;
@@ -1490,252 +1482,22 @@
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
       padding: 0;
     }
     .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
+    .sf-range-slider-group--field:not(.disabled) .sf-range-slider-field:has(.sf-range-slider-field-input:focus) {
       height: auto;
       block-size: auto;
       border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
+      display: flex;
+      flex-wrap: wrap;
       gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field:hover {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field[focus-within] {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field:hover {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field[focus-within] {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
-      height: auto;
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input:focus-visible) {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field:hover {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field[focus-within] {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field[focus-within] {
-      height: auto;
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field:focus-within {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input.focus-visible) {
-      height: auto;
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-      width: 100%;
-      width: 100%;
-      inline-size: 100%;
-      outline: none;
-      padding: 0;
-    }
-    .sf-range-slider-group--field .sf-range-slider-field,
-    .sf-range-slider-group--field .sf-range-slider-field:has(.sf-range-slider-field-input:focus-visible) {
-      height: auto;
-      block-size: auto;
-      border: 0;
-      display: grid;
-      grid-gap: var(--sf-space-1\/3);
-      gap: var(--sf-space-1\/3);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
       width: 100%;
       inline-size: 100%;
       outline: none;
@@ -1756,11 +1518,17 @@
       border-radius: var(--sf-radius--ui);
       box-sizing: border-box;
       display: grid;
+      flex: 1 1 0;
       grid-gap: var(--sf-space-1\/4);
       gap: var(--sf-space-1\/4);
-      grid-template-columns: auto minmax(0, 1fr);
-      min-width: 0;
-      min-inline-size: 0;
+      grid-template-columns: auto minmax(-webkit-min-content, 1fr);
+      grid-template-columns: auto minmax(min-content, 1fr);
+      min-width: -webkit-min-content;
+      min-width: -moz-min-content;
+      min-width: min-content;
+      min-inline-size: -webkit-min-content;
+      min-inline-size: -moz-min-content;
+      min-inline-size: min-content;
       padding-left: calc(var(--sf-ui-1--space-x) - var(--sf-px));
       padding-right: calc(var(--sf-ui-1--space-x) - var(--sf-px));
       padding-inline: calc(var(--sf-ui-1--space-x) - var(--sf-px));
@@ -1805,7 +1573,7 @@
       text-align: start;
     }
     .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field-box:hover {
-      border-color: var(--sf-primary-hover);
+      border-color: var(--sf-on-surface);
     }
     .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field-box[focus-within] {
       border-color: var(--sf-primary);
@@ -1813,13 +1581,9 @@
     .sf-range-slider-group--field:not(.disabled):not(.readonly) .sf-range-slider-field-box:focus-within {
       border-color: var(--sf-primary);
     }
-    .sf-range-slider-group--field .sf-range-slider-field-box:has(.sf-range-slider-field-input.focus-visible) {
+    .sf-range-slider-group--field:not(.disabled) .sf-range-slider-field-box:has(.sf-range-slider-field-input:focus) {
       outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-      outline-offset: var(--sf-focus--offset);
-    }
-    .sf-range-slider-group--field .sf-range-slider-field-box:has(.sf-range-slider-field-input:focus-visible) {
-      outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-      outline-offset: var(--sf-focus--offset);
+      outline-offset: var(--sf-focus--inset);
     }
     .sf-range-slider-group--field.readonly .sf-range-slider-field-box {
       border-color: var(--sf-outline-variant);

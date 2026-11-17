@@ -40,5 +40,14 @@
     .lg\:weight-9 {
       font-weight: 900;
     }
+    .lg\:weight-regular {
+      font-weight: var(--sf-weight--regular);
+    }
+    .lg\:weight-medium {
+      font-weight: var(--sf-weight--medium);
+    }
+    .lg\:weight-bold {
+      font-weight: var(--sf-weight--bold);
+    }
   }
 }

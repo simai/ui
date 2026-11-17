@@ -76,8 +76,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -2325,12 +2328,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.S
 
   get ariaLabel() {
     return this.getProp('ariaLabel') || '';
-  } // Read-only as the field draws it, not just the attribute: a range is always
-  // chosen on the grid (one field holding two dates has no single format to
-  // read back), so `range` alone makes the field read-only. The template reads
-  // this same value -- it once read `!this.typed`, which also counted
-  // `disabled`, so a range or disabled field drew read-only while the
-  // component said it was not.
+  } // Not typed: a range is always chosen on the grid (one field holding two
+  // dates has no single format to read back), so `range` alone makes the
+  // field read-only for typing. It is not read-only to the person: the field
+  // opens its calendar and changes, so the field is drawn and named as an
+  // ordinary one (RG-DP-5) -- only `valueLocked` makes the text box
+  // read-only; a range's text box takes no typing instead (pickOnly).
 
 
   get readonly() {
@@ -2354,6 +2357,26 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.S
 
   get typed() {
     return !this.readonly && !this.disabled;
+  } // Chosen on the grid only, and still changeable: a range that is neither
+  // locked nor disabled. Its text box is not read-only (the field drew as a
+  // read-only one, the pale edge of C80, and a screen reader said «read
+  // only» of a field that opens its calendar; RG-DP-5): it opens no
+  // on-screen keyboard (inputmode none) and takes no typing, paste or drop
+  // (handleInputBeforeInput).
+
+
+  get pickOnly() {
+    return !this.typed && !this.valueLocked && !this.disabled;
+  } // The popup's name (RG-DP-6): the field's own label, as the phone sheet's
+  // is; it was the shown month, which the grid and the live line say
+  // already. A field without a label or aria-label: a range is the period,
+  // the time panel the time, and a single date keeps the month.
+
+
+  get dialogLabel() {
+    if (this.label || this.ariaLabel) return this.label || this.ariaLabel;
+    if (this.mode === 'time') return this.labels.time;
+    return this.range ? this.labels.period : this.calendarLabel;
   }
 
   get formattedValue() {
@@ -3506,6 +3529,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.S
     event?.stopPropagation?.();
 
     this._openPanel();
+  } // A pickOnly field (a range) takes no typing, paste, drop or deletion: the
+  // value is chosen on the grid.
+
+
+  handleInputBeforeInput(event) {
+    if (this.pickOnly) event?.preventDefault?.();
   }
 
   handleInputKeydown(event) {
@@ -4208,7 +4237,11 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.S
       placeholder: this.placeholder,
       label: this.label,
       ariaLabel: this.ariaLabel,
-      readonly: this.readonly,
+      // The text box is read-only only where the value is locked; a range
+      // is pickOnly (RG-DP-5).
+      readonly: this.valueLocked,
+      pickOnly: this.pickOnly,
+      dialogLabel: this.dialogLabel,
       valueLocked: this.valueLocked,
       disabled: this.disabled,
       required: this.required,
@@ -4640,9 +4673,11 @@ function renderDatepickerInput(context) {
             mask-pattern=${context.maskPattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} mask-lazy=${String(context.maskLazy)}
             mask-placeholder-char=${context.maskPlaceholderChar || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             mask-options=${context.maskOptions || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} ?readonly=${context.readonly}
+            inputmode=${context.pickOnly ? 'none' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             @click=${event => context.component.handleInputClick(event)}
             @change=${event => context.component.handleInputChange(event)}
             @input=${event => context.component.handleInputInput(event)}
+            @beforeinput=${event => context.component.handleInputBeforeInput(event)}
             @keydown=${event => context.component.handleInputKeydown(event)}
         ><span slot="end" class=${context.hintIcon ? 'sf-input-hint flex' : 'sf-input-hint'} ?hidden=${!context.hintIcon} aria-hidden="true"
             ><sf-icon icon=${context.hintIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-icon></span
@@ -4724,7 +4759,7 @@ function renderPresets(context) {
 // the arrow keys already do what it does. Still a real, named button.
 
 
-const TIME_STEPPER = 'sf-datepicker-time-step sf-icon-button sf-icon-button--size-1 sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center content-main-center';
+const TIME_STEPPER = 'sf-datepicker-time-step sf-icon-button sf-icon-button--size-1 sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface flex items-cross-center content-main-center';
 
 function renderTimeStepper(context, part, direction) {
   const labels = context.labels;
@@ -4775,13 +4810,15 @@ function renderTime(context) {
 
 
 function renderDatepickerPanel(context) {
-  const rootClasses = joinClasses('sf-datepicker inline-flex', context.input ? '' : 'sf-datepicker--inline', context.presetItems.length ? 'sf-datepicker--presets' : '', context.mode !== 'date' ? `sf-datepicker--${context.mode}` : '', context.rootClass);
+  const rootClasses = joinClasses('sf-datepicker inline-flex', context.input ? '' : 'sf-datepicker--inline', context.presetItems.length ? 'sf-datepicker--presets' : '', context.mode !== 'date' ? `sf-datepicker--${context.mode}` : '', // A period's popup (C227): its days keep the control height on a phone.
+  context.range ? 'sf-datepicker--range' : '', context.rootClass);
 
   if (context.mode === 'time') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <div ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerPanel)} id=${context.panelId}
                 class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                role=${context.input ? 'dialog' : 'group'} aria-label=${context.labels.time}
+                role=${context.input ? 'dialog' : 'group'} aria-label=${context.input ? context.dialogLabel : context.labels.time}
+                aria-modal=${context.input ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @click=${event => context.component.handlePanelClick(event)}>
                 ${renderTime(context)}
@@ -4791,7 +4828,8 @@ function renderDatepickerPanel(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerPanel)} id=${context.panelId}
             class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            role=${context.input ? 'dialog' : 'group'} aria-label=${context.calendarLabel}
+            role=${context.input ? 'dialog' : 'group'} aria-label=${context.input ? context.dialogLabel : context.calendarLabel}
+            aria-modal=${context.input ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             @click=${event => context.component.handlePanelClick(event)}>
             ${renderPresets(context)}
@@ -5029,7 +5067,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.11.1","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.13.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

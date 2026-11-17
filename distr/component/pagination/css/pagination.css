@@ -9,206 +9,126 @@
 *
 */
 @layer sf.components {
-  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
+  /* A page number draws as the page button of sf-pagination (C224: the plain
+     component looks as its Smart twin; C19, RG-NV 7): the Smart numbers are
+     sf-button ghost on-surface, the current page tonal primary. The class keeps
+     its own name and variables and reads the same roles the button reads, so a
+     server-printed row and an <sf-pagination appearance="numbers"> are one
+     look: no plate at rest (RG-NV 8: the surface-page plate was a white square
+     on a card, C42 (2)), the button's hover and press fills, the current page
+     primary-container with on-primary-container words and no frame.
+     utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-page-number{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-page-number{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-top-left-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-start-start-radius: initial){
   html:not([dir="rtl"]) .sf-page-number{
-    border-top-left-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-top-right-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-start-start-radius: initial){
   [dir="rtl"] .sf-page-number{
-    border-top-right-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-page-number--border-start-start-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-top-right-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-start-end-radius: initial){
   html:not([dir="rtl"]) .sf-page-number{
-    border-top-right-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-right-radius: var(--sf-radius--ui);
+    border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-top-left-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-start-end-radius: initial){
   [dir="rtl"] .sf-page-number{
-    border-top-left-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-page-number--border-start-end-radius);
+    border-top-left-radius: var(--sf-radius--ui);
+    border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-end-start-radius: initial){
   html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-end-start-radius: initial){
   [dir="rtl"] .sf-page-number{
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-end-end-radius: initial){
   html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
+    border-bottom-right-radius: var(--sf-radius--ui);
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   @supports not (border-end-end-radius: initial){
   [dir="rtl"] .sf-page-number{
-    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     }
   }
   .sf-page-number:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-end-width, 0);
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-end-width, 0);
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-end-width, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-end-width, 0);
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-page-number{
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-end-width, 0);
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-end-width, 0);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-start-width, 0);
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-start-width, 0);
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    border-left-width: 0;
-    border-left-width: var(--sf-page-number--border-inline-start-width, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-start-width, 0);
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-page-number{
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-start-width, 0);
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    border-right-width: 0;
-    border-right-width: var(--sf-page-number--border-inline-start-width, 0);
+    border-bottom-left-radius: var(--sf-radius--ui);
+    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   .sf-page-number {
     align-items: center;
@@ -216,8 +136,8 @@
     font-family: var(--sf-page-number--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
     font-size: var(--sf-page-number--font-size, var(--sf-text-size-1));
-    font-weight: var(--sf-font-weight-regular);
-    font-weight: var(--sf-page-number--font-weight, var(--sf-font-weight-regular));
+    font-weight: var(--sf-font-weight-medium);
+    font-weight: var(--sf-page-number--font-weight, var(--sf-font-weight-medium));
     gap: var(--sf-b0);
     gap: var(--sf-page-number--gap, var(--sf-b0));
     /* A page number is a size 1 control, like the arrows beside it: it was a
@@ -229,88 +149,78 @@
     block-size: var(--sf-page-number--height, var(--sf-ui-1--control-height));
     line-height: var(--sf-text-height-1);
     line-height: var(--sf-page-number--line-height, var(--sf-text-height-1));
-    padding-bottom: var(--sf-space-1\/3);
-    -webkit-padding-after: var(--sf-space-1\/3);
-            padding-block-end: var(--sf-space-1\/3);
-    padding-bottom: var(--sf-space-1\/3);
-    padding-bottom: var(--sf-page-number--padding-bottom, var(--sf-space-1\/3));
-    -webkit-padding-after: var(--sf-page-number--padding-bottom, var(--sf-space-1\/3));
-            padding-block-end: var(--sf-page-number--padding-bottom, var(--sf-space-1\/3));
-    -webkit-padding-end: var(--sf-space-1\/3);
-            padding-inline-end: var(--sf-space-1\/3);
-    -webkit-padding-end: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-            padding-inline-end: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
-    -webkit-padding-start: var(--sf-space-1\/3);
-            padding-inline-start: var(--sf-space-1\/3);
-    -webkit-padding-start: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-            padding-inline-start: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
-    padding-top: var(--sf-space-1\/3);
-    -webkit-padding-before: var(--sf-space-1\/3);
-            padding-block-start: var(--sf-space-1\/3);
-    padding-top: var(--sf-space-1\/3);
-    padding-top: var(--sf-page-number--padding-top, var(--sf-space-1\/3));
-    -webkit-padding-before: var(--sf-page-number--padding-top, var(--sf-space-1\/3));
-            padding-block-start: var(--sf-page-number--padding-top, var(--sf-space-1\/3));
-    width: var(--sf-ui-1--control-height);
-    inline-size: var(--sf-ui-1--control-height);
-    width: var(--sf-ui-1--control-height);
-    width: var(--sf-page-number--width, var(--sf-ui-1--control-height));
-    inline-size: var(--sf-page-number--width, var(--sf-ui-1--control-height));
-    border-start-start-radius: var(--sf-page-number--border-start-start-radius);
-    border-start-end-radius: var(--sf-page-number--border-start-end-radius);
-    border-end-start-radius: var(--sf-page-number--border-end-start-radius);
-    border-end-end-radius: var(--sf-page-number--border-end-end-radius);
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-left: var(--sf-ui-1--space-x);
+    padding-right: var(--sf-ui-1--space-x);
+    padding-inline: var(--sf-ui-1--space-x);
+    padding-left: var(--sf-ui-1--space-x);
+    padding-left: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
+    padding-right: var(--sf-ui-1--space-x);
+    padding-right: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
+    padding-inline: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
+    /* Square at least, and as wide as its number with the button's side
+       padding (RG-NV 9: «10240» spilled 3.3 past a square box). A row that
+       writes --sf-pagination--digits (the widest number it shows, as
+       sf-pagination does) gives every place that one width, so the row keeps
+       its width while a person pages. */
+    width: auto;
+    inline-size: auto;
+    min-width: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
+    min-inline-size: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
+    min-width: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
+    min-width: max(var(--sf-page-number--width, var(--sf-ui-1--control-height)), var(--sf-pagination--digits, 1) * 1ch + 2 * var(--sf-page-number--space-x, var(--sf-ui-1--space-x)));
+    min-inline-size: max(var(--sf-page-number--width, var(--sf-ui-1--control-height)), var(--sf-pagination--digits, 1) * 1ch + 2 * var(--sf-page-number--space-x, var(--sf-ui-1--space-x)));
+    /* The button's corner (C237: one shape, the square; the circle is a
+       retired name). */
+    border-start-start-radius: var(--sf-radius--ui);
+    border-start-start-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
+    border-start-end-radius: var(--sf-radius--ui);
+    border-start-end-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
+    border-end-start-radius: var(--sf-radius--ui);
+    border-end-start-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
+    border-end-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     background-color: var(--sf-page-number--background-color);
     color: var(--sf-page-number--color);
     box-shadow: var(--sf-page-number--box-shadow);
+    /* The button's frame: one pixel, transparent unless a look draws it. */
     border-color: transparent;
     border-color: var(--sf-page-number--border-color, transparent);
-    border-width: 0;
-    border-width: var(--sf-page-number--border-width, 0);
-    border-top-width: 0;
-    border-block-start-width: 0;
-    border-top-width: 0;
-    border-top-width: var(--sf-page-number--border-top-width, 0);
-    border-block-start-width: var(--sf-page-number--border-top-width, 0);
-    border-inline-end-width: 0;
-    border-inline-end-width: var(--sf-page-number--border-inline-end-width, 0);
-    border-bottom-width: 0;
-    border-block-end-width: 0;
-    border-bottom-width: 0;
-    border-bottom-width: var(--sf-page-number--border-bottom-width, 0);
-    border-block-end-width: var(--sf-page-number--border-bottom-width, 0);
-    border-inline-start-width: 0;
-    border-inline-start-width: var(--sf-page-number--border-inline-start-width, 0);
     border-style: solid;
     border-style: var(--sf-page-number--border-style, solid);
+    border-width: var(--sf-px);
+    border-width: var(--sf-page-number--border-width, var(--sf-px));
     box-sizing: border-box;
     display: inline-flex;
     justify-content: center;
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
     text-decoration: none;
     white-space: nowrap;
     transition-property: background-color, border-color, box-shadow, color;
     transition-duration: var(--sf-duration-fast);
     transition-timing-function: var(--sf-animation);
-    /* sf-pagination's public variables (standard 1.3.8 §6) over the role tokens. */
-    --sf-page-number--background-color: var(--sf-pagination-page-background-color, var(--sf-surface-page));
-    --sf-page-number--color: var(--sf-pagination-page-color, var(--sf-on-surface-variant));
-    --sf-page-number--border-top-width: var(--sf-px);
-    --sf-page-number--border-bottom-width: var(--sf-px);
-    --sf-page-number--border-inline-start-width: var(--sf-px);
-    --sf-page-number--border-inline-end-width: var(--sf-px);
+    /* sf-pagination's public variables (standard 1.3.8 §6) over the role
+       tokens: ghost on-surface at rest. */
+    --sf-page-number--background-color: var(--sf-pagination-page-background-color, transparent);
+    --sf-page-number--color: var(--sf-pagination-page-color, var(--sf-on-surface));
   }
+  /* The square is the one shape (C237); the class stays as the explicit name. */
   .sf-page-number--square {
     --sf-page-number--border-end-end-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
     --sf-page-number--border-end-start-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
     --sf-page-number--border-start-end-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
     --sf-page-number--border-start-start-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
   }
-  .sf-page-number--circle {
-    --sf-page-number--border-end-end-radius: var(--sf-radius-circle);
-    --sf-page-number--border-end-start-radius: var(--sf-radius-circle);
-    --sf-page-number--border-start-end-radius: var(--sf-radius-circle);
-    --sf-page-number--border-start-start-radius: var(--sf-radius-circle);
-  }
+  /* sf-page-number--circle is a retired name (owner decision C237, 2026-11-16):
+     sf-pagination has no round numbers, and the plain component follows it
+     (C224); the dots and the picture counter went to sf-gallery and sf-slider
+     (C97 (7)). Until 2027-01-01 the class draws the square, and the Loader notes
+     it once in SF.deprecations (core/js/retired-classes.table.js). No rule of its
+     own: the number's square corner is the base rule's. */
   .sf-page-number:not(:disabled):not(.disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
@@ -319,50 +229,41 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
-  .sf-page-number:not(:disabled):not(.disabled):hover {
-    --sf-page-number--background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    --sf-page-number--color: var(--sf-on-surface);
-  }
-  .sf-page-number:not(:disabled):not(.disabled):active, .sf-page-number.selected {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
-    --sf-page-number--border-color: var(--sf-primary-active);
-    --sf-page-number--border-style: solid;
-    --sf-page-number--border-width: var(--sf-px);
-    --sf-page-number--color: var(--sf-pagination-current-color, var(--sf-primary-active));
-    --sf-page-number--font-weight: var(--sf-font-weight-medium);
-  }
-  /* The current page is the selected role (C16): primary-container at rest; a
-     press keeps the pressed step above. */
-  .sf-page-number.selected:not(:active) {
+  /* The current page is the selected role (C16) in the button's tonal primary
+     look, as sf-pagination draws it: primary-container, on-primary-container
+     words, no frame. */
+  .sf-page-number.selected,
+  .sf-page-number[aria-current=page] {
     --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+    --sf-page-number--color: var(--sf-pagination-current-color, var(--sf-on-primary-container));
   }
   .sf-page-number--ellipsis {
     --sf-page-number--background-color: transparent;
-    --sf-page-number--border-bottom-width: 0;
-    --sf-page-number--border-inline-end-width: 0;
-    --sf-page-number--border-inline-start-width: 0;
-    --sf-page-number--border-top-width: 0;
+    --sf-page-number--border-width: 0;
+    --sf-page-number--color: var(--sf-pagination-color, var(--sf-on-surface-variant));
+    --sf-page-number--font-weight: var(--sf-font-weight-regular);
     align-items: center;
     display: inline-flex;
     justify-content: center;
   }
+  /* Out of reach: the ghost button's disabled look, no plate. */
   .sf-page-number:disabled,
   .sf-page-number.disabled {
-    --sf-page-number--background-color: var(--sf-surface-disabled);
+    --sf-page-number--background-color: transparent;
     --sf-page-number--color: var(--sf-on-surface-disabled);
     cursor: not-allowed;
   }
   @media (forced-colors: active) {
     .sf-page-number:not(:disabled):not(.disabled).focus-visible {
       outline: var(--sf-a2) solid Highlight;
-      outline-offset: var(--sf-a1);
+      outline-offset: var(--sf-focus--offset);
     }
     .sf-page-number:not(:disabled):not(.disabled):focus-visible {
       outline: var(--sf-a2) solid Highlight;
-      outline-offset: var(--sf-a1);
+      outline-offset: var(--sf-focus--offset);
     }
-    .sf-page-number.selected {
+    .sf-page-number.selected,
+    .sf-page-number[aria-current=page] {
       border-color: Highlight;
     }
   }
@@ -370,6 +271,57 @@
     .sf-page-number {
       transition-duration: 0s;
     }
+  }
+}
+@layer sf.states {
+  /* Under the pointer and pressed: the ghost on-surface button's fills and
+     words (component.buttons), on a strong place the place's own steps. */
+  .sf-page-number:not(:disabled):not(.disabled):not(.sf-page-number--ellipsis):not(.selected):not([aria-current=page]):hover {
+    --sf-page-number--background-color: var(--sf-place--control-hover, var(--sf-surface-container-hover));
+    --sf-page-number--color: light-dark(var(--sf-on-surface-hover), var(--sf-on-surface));
+  }
+  .sf-page-number:not(:disabled):not(.disabled):not(.sf-page-number--ellipsis):not(.selected):not([aria-current=page]):active {
+    --sf-page-number--background-color: var(--sf-place--control-active, var(--sf-surface-container-active));
+    --sf-page-number--color: light-dark(var(--sf-on-surface-active), var(--sf-on-surface));
+  }
+  /* The current page steps along its own container, as a tonal primary
+     button does. */
+  .sf-page-number.selected:not(:disabled):not(.disabled):hover {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-hover));
+  }
+  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):hover {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-hover));
+  }
+  .sf-page-number.selected:not(:disabled):not(.disabled):active {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
+  }
+  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):active {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
+  }
+  /* The keyboard ring over no plate, as the button's. */
+  .sf-page-number:not(:disabled):not(.disabled).focus-visible {
+    --sf-page-number--background-color: var(--sf-transparent-for-focus);
+  }
+  .sf-page-number:not(:disabled):not(.disabled):focus-visible {
+    --sf-page-number--background-color: var(--sf-transparent-for-focus);
+  }
+  .sf-page-number.selected.focus-visible:not(:disabled):not(.disabled) {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+  }
+  .sf-page-number.focus-visible[aria-current=page]:not(:disabled):not(.disabled) {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+  }
+  .sf-page-number.selected:not(:disabled):not(.disabled).focus-visible {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+  }
+  .sf-page-number.selected:not(:disabled):not(.disabled):focus-visible {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+  }
+  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled).focus-visible {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
+  }
+  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):focus-visible {
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
   }
 }
 @layer sf.components {
@@ -441,10 +393,44 @@
     --sf-page-number--line-height: var(--sf-text-height-1\/2);
     --sf-page-number--height: var(--sf-ui-1\/2--control-height);
     --sf-page-number--width: var(--sf-ui-1\/2--control-height);
+    --sf-page-number--space-x: var(--sf-ui-1\/2--space-x);
     --sf-pagination--control-height: var(--sf-ui-1\/2--control-height);
     --sf-pagination--text-size: var(--sf-text-size-1\/2);
     --sf-pagination--text-height: var(--sf-text-height-1\/2);
     --sf-pagination--space-x: var(--sf-ui-1\/2--space-x);
+  }
+  /* The row's size reaches the arrows too (RG-NV 10, C103: a button in a row
+     takes the row's size; C18): class markup writes its arrows
+     sf-icon-button--size-1, and in a size 1/2 row they stood 40 beside numbers
+     of 32. The arrows take the 1/2 step's glyph and padding, as
+     sf-icon-button--size-1/2 draws them; sf-pagination writes size 1/2 on its
+     arrows itself. */
+  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button {
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button-spinner--size: var(--sf-text-height-1\/2);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button:not(.does-not-exist) .sf-icon:not(does-not-exist) {
+    --sf-icon--font-size: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+    --sf-icon--width: var(--sf-text-height-1\/2);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button:not(.does-not-exist) sf-icon:not(:defined) {
+    --sf-icon--font-size: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+    --sf-icon--width: var(--sf-text-height-1\/2);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button.sf-icon-button--icon .sf-icon:not(does-not-exist) {
+    --sf-icon--font-size: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+    --sf-icon--width: var(--sf-text-height-1\/2);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button.sf-icon-button--icon sf-icon:not(:defined) {
+    --sf-icon--font-size: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+    --sf-icon--width: var(--sf-text-height-1\/2);
   }
   /* The appearances (C97): one row of controls, gap --sf-pagination-gap. */
   .sf-pagination:not(.sf-pagination--footer) .sf-pagination-list {
@@ -487,6 +473,17 @@
     justify-content: center;
     text-decoration: none;
   }
+  /* The place's width counts the button's side padding only, so the number's
+     words take no label padding of their own and never break: with the button's
+     label padding (--sf-ui-1--text-space-x, 8 a side) on top a two-digit number
+     had 4 pixels too few and stood as two lines, a 64 high button in a 40 row
+     (found with RG-NV 9; the place stays the width the formula gives, 2 digits:
+     51). The plain sf-page-number draws the same width. */
+  .sf-pagination .sf-pagination-slot > .sf-pagination-page > .sf-button-text-container {
+    --sf-button-text-container--padding-inline-start: 0;
+    --sf-button-text-container--padding-inline-end: 0;
+    white-space: nowrap;
+  }
   /* The gap is not a control: a mark of the pages left out. */
   .sf-pagination .sf-pagination-gap {
     display: inline-flex;
@@ -512,6 +509,23 @@
     color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-color, var(--sf-on-surface-variant));
     white-space: nowrap;
+  }
+  /* The line takes the focus when the last portion removes the button
+     (tabindex -1, never a Tab stop). Its ring is the Framework's ring of words,
+     a link's: the focus tokens, a little off the letters, the ui corner; no
+     ring on a focus the browser would not show (a pointer press). */
+  .sf-pagination .sf-pagination-shown:focus {
+    outline: none;
+  }
+  .sf-pagination .sf-pagination-shown.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
+  }
+  .sf-pagination .sf-pagination-shown:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
   }
   /* The bar is as wide as eight controls of the step, or the row when it is
      narrower. */
@@ -802,10 +816,9 @@
     border-start-end-radius: var(--sf-icon-button--border-start-end-radius);
     border-start-start-radius: var(--sf-icon-button--border-start-start-radius);
   }
-  .sf-pagination .sf-pagination-main .sf-pagination-container .sf-icon-button.sf-icon-button--link:not(:disabled):not(.disabled) > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-variant);
-    color: var(--sf-icon--color);
-  }
+  /* The arrows of the row with the count keep the icon button's own ink,
+     --sf-on-surface-icon, as every other arrow of the pagination (RG-NV 11,
+     C107 (3)): a rule here forced them to --sf-on-surface-variant. */
   [dir=rtl] .sf-pagination .sf-pagination-direction .sf-icon,
   [dir=rtl] .sf-pagination .sf-pagination-direction sf-icon {
     -webkit-transform: scaleX(-1);

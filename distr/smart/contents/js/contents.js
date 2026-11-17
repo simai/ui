@@ -613,15 +613,25 @@ function triggerExtra(textBox, label) {
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
 // first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog.
+// thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
 
-async function standardMenu(owner, field, select) {
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
   await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
   if (owner[field]?.isConnected) return owner[field];
-  const menu = document.createElement('sf-menu-context');
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
   menu.setAttribute('popup', '');
-  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
-  (owner.closest('dialog[open]') || document.body).append(menu);
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
   owner[field] = menu;
   return menu;
 } // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
@@ -857,6 +867,7 @@ async function openRowMenu(owner, {
 }) {
   if (!entries.length) return null;
   const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
   owner._sfRowMoreSelect = select;
   if (label) menu.setAttribute('aria-label', label);
   menu.setAttribute('size', size);
@@ -1964,7 +1975,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-conte
 /***/ "98e539eba4a2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.7.3","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.7.7","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

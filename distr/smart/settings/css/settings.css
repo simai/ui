@@ -368,29 +368,10 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
     --sf-settings-panel--track: calc(2 * var(--sf-settings-panel--inset) + var(--sf-scroll-thumb-width));
-  }
-  .sf-settings-panel-body::-webkit-scrollbar {
-    width: var(--sf-settings-panel--track);
-    height: var(--sf-settings-panel--track);
-  }
-  .sf-settings-panel-body::-webkit-scrollbar-track {
-    border: 0;
-    background-color: transparent;
-  }
-  .sf-settings-panel-body::-webkit-scrollbar-thumb {
-    min-height: var(--sf-settings-panel--row-height);
-    border: var(--sf-settings-panel--inset) solid transparent;
-    border-radius: var(--sf-settings-panel--track);
-    background-clip: padding-box;
-    background-color: var(--sf-scroll-bg-thumb);
-  }
-  .sf-settings-panel-body::-webkit-scrollbar-thumb:hover, .sf-settings-panel-body::-webkit-scrollbar-thumb:active {
-    background-color: var(--sf-scroll--thumb-hover);
-  }
-  @supports not selector(::-webkit-scrollbar) {
-    .sf-settings-panel-body {
-      scrollbar-width: thin;
-    }
+    --sf-scroll-bg-width: var(--sf-settings-panel--track);
+    --sf-scroll--gap-content: var(--sf-settings-panel--inset);
+    --sf-scroll--gap-edge: var(--sf-settings-panel--inset);
+    --sf-scroll--thumb-min: var(--sf-settings-panel--row-height);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel-body.sf-settings-panel-body--scrollbar{
     padding-right: 0;
@@ -870,11 +851,11 @@
   /* The ring turns inwards: the row stands flush against its neighbours. */
   .sf-settings-row-main.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-settings-row-main:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-settings-panel-search[focus-within] {
     border-bottom-color: var(--sf-primary);

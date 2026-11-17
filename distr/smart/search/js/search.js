@@ -1169,6 +1169,22 @@ class SfSearch extends SearchElement {
 
   dialog() {
     return this._portal?.querySelector('.sf-search-window') ?? null;
+  } // The window is on the page: open and its portal mounted. A key, a press or
+  // an input that reaches the window's parts after it closed -- a host that
+  // closes it from a capture listener of the same key, a key typed during the
+  // close -- finds the portal gone; the window's handlers then do nothing
+  // (they neither read the removed portal nor choose a row of a closed list).
+
+
+  shown() {
+    return this.isOpen && Boolean(this._portal);
+  } // The window's writing direction: the portal's, the host's while there is no
+  // portal.
+
+
+  rtl() {
+    const node = this._portal ?? this;
+    return node.isConnected ? getComputedStyle(node).direction === 'rtl' : false;
   }
 
   field() {
@@ -1222,19 +1238,21 @@ class SfSearch extends SearchElement {
 
 
   onClearPress() {
+    if (!this.shown()) return;
     if (this.query) this.setQuery('');else if (this.tokens.length) this.setTokens([]);else this.focusField();
   } // The arrow at the head's start: back a step, else (on a phone, where it
   // stands for the window's close) close.
 
 
   onBackPress() {
+    if (!this.shown()) return;
     if (this.steps.length) this.leaveStep();else this.close({
       reason: 'close'
     });
   }
 
   onTab(event) {
-    if (!this.isOpen) return;
+    if (!this.shown()) return;
     const root = this.dialog(); // The Tab stops alone: the rows (links), the X and a row's buttons are
     // reached by the arrows, so their tabindex -1 keeps them off the cycle.
 
@@ -1258,6 +1276,7 @@ class SfSearch extends SearchElement {
 
 
   onInput(event) {
+    if (!this.shown()) return;
     this.query = event.target.value;
     this.selected = 0;
     this.announcement = '';
@@ -1268,6 +1287,15 @@ class SfSearch extends SearchElement {
 
   onFieldKeydown(event) {
     if (event.isComposing) return;
+
+    if (!this.shown()) {
+      // The keys the field always took stay taken: an Enter let through
+      // would reach what the focus went back to (the trigger) as a press,
+      // and open the window again; the arrows would scroll the page.
+      if (event.key === 'Enter' || event.key === 'ArrowDown' || event.key === 'ArrowUp') event.preventDefault();
+      return;
+    }
+
     const count = this._view?.rowCount ?? 0;
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -1292,7 +1320,7 @@ class SfSearch extends SearchElement {
       if (!count) return; // Ctrl or Command with Enter: a page in a new tab (C175 (6)).
 
       if (event.ctrlKey || event.metaKey) this.openInNewTab(this.selected);else this.choose(this.selected);
-    } else if (event.key === (getComputedStyle(this._portal).direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight') && this.atFieldEnd() && this.rowActions().length) {
+    } else if (event.key === (this.rtl() ? 'ArrowLeft' : 'ArrowRight') && this.atFieldEnd() && this.rowActions().length) {
       // To the selected row's buttons (C148 (3)), toward the row's end: →,
       // ← in a right-to-left page; the other arrow or Escape comes back.
       event.preventDefault();
@@ -1325,10 +1353,11 @@ class SfSearch extends SearchElement {
 
 
   onRowActionsKeydown(event) {
+    if (!this.shown()) return;
     const buttons = this.rowActions();
     const at = buttons.indexOf(document.activeElement);
     if (at < 0) return;
-    const rtl = getComputedStyle(this._portal).direction === 'rtl';
+    const rtl = this.rtl();
     const next = event.key === (rtl ? 'ArrowLeft' : 'ArrowRight');
     const previous = event.key === (rtl ? 'ArrowRight' : 'ArrowLeft');
     if (!next && !previous) return;
@@ -1370,7 +1399,8 @@ class SfSearch extends SearchElement {
 
 
   onScopeSelect(event) {
-    event.stopPropagation(); // «Все» is the tag of no scope; a scope released is «Все» again.
+    event.stopPropagation();
+    if (!this.shown()) return; // «Все» is the tag of no scope; a scope released is «Все» again.
 
     const {
       id,
@@ -1503,6 +1533,7 @@ class SfSearch extends SearchElement {
 
   onStateAction(event) {
     event.stopPropagation();
+    if (!this.shown()) return;
     const id = event.detail?.id;
 
     if (id === 'all') {
@@ -1516,7 +1547,7 @@ class SfSearch extends SearchElement {
   }
 
   hover(index) {
-    if (this.selected === index) return;
+    if (!this.shown() || this.selected === index) return;
     this.selected = index;
     this.renderWindow();
     this.askPreview();
@@ -1573,7 +1604,7 @@ class SfSearch extends SearchElement {
 
 
   onRowClick(event, index) {
-    if (event.defaultPrevented) return;
+    if (event.defaultPrevented || !this.shown()) return;
     if (event.target instanceof Element && event.target.closest('.sf-search-row-actions')) return;
     const link = event.currentTarget instanceof HTMLAnchorElement && event.currentTarget.href;
     if (link && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0)) return;
@@ -3681,7 +3712,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.10.1","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.1.0","contract":"src/core/contracts/ports/simai.search-port/1.1.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.10.4","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.1.0","contract":"src/core/contracts/ports/simai.search-port/1.1.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 

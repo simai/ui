@@ -58,5 +58,29 @@
     .xl\:bg-top {
       background-position: top;
     }
+    .xl\:bg-inline-start:where(:dir(rtl)) {
+      background-position: right;
+    }
+    .xl\:bg-inline-start-bottom:where(:dir(rtl)) {
+      background-position: right bottom;
+    }
+    .xl\:bg-inline-start-top:where(:dir(rtl)) {
+      background-position: right top;
+    }
+    .xl\:bg-inline-start-center:where(:dir(rtl)) {
+      background-position: right center;
+    }
+    .xl\:bg-inline-end:where(:dir(rtl)) {
+      background-position: left;
+    }
+    .xl\:bg-inline-end-bottom:where(:dir(rtl)) {
+      background-position: left bottom;
+    }
+    .xl\:bg-inline-end-top:where(:dir(rtl)) {
+      background-position: left top;
+    }
+    .xl\:bg-inline-end-center:where(:dir(rtl)) {
+      background-position: left center;
+    }
   }
 }

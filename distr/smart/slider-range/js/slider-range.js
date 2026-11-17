@@ -76,8 +76,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -1529,20 +1532,25 @@ class SfRangeSlider extends RangeSliderElement {
       scaleMarks: scaleMarks(this),
       field: this.hasAttribute('field') && this.getAttribute('field') !== 'false',
       fieldLabels: this.fieldLabels(),
-      fieldWords: [this.sfWord?.('from') || 'от', this.sfWord?.('to') || 'до'],
+      fieldWords: [this.sfWord('from'), this.sfWord('to')],
       fieldUnit: [this.prefixText, this.suffix].map(unit => String(unit ?? '').trim()).filter(Boolean).join(' '),
       fieldDecimal: String(this.step ?? '').includes('.') || Number(this.getAttribute('precision')) > 0,
       ticks: this.hasAttribute('ticks') && this.getAttribute('ticks') !== 'false'
     });
   } // Each number of the from/to field is named as its handle is: lower-label and
-  // upper-label, else the field's name or the host's aria-label with «от»/«до».
+  // upper-label, else one phrase of the language with the field's name or the
+  // host's aria-label in it (from-label «{name}, от»), else the word alone.
+  // The name has its place in the phrase, not glued before or after it (C177).
 
 
   fieldLabels() {
     const name = this.label || this.getAttribute('aria-label') || '';
     if (!this.multiple) return [name];
-    const words = [this.sfWord?.('from') || 'от', this.sfWord?.('to') || 'до'];
-    return [this.lowerLabel, this.upperLabel].map((own, index) => own || [words[index], name].filter(Boolean).join(' '));
+    return [[this.lowerLabel, 'from'], [this.upperLabel, 'to']].map(([own, key]) => own || (name ? this.sfWord(`${key}-label`, {
+      vars: {
+        name
+      }
+    }) : this.sfWord(key)));
   } // The numbers of the from/to field follow the handles; the box being typed in
   // is left alone. The rulers beside each box hold the ends of the range in the
   // slider's writing, so every box is as wide as the wider end: a value never
@@ -2296,21 +2304,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.5.0","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.6.2","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "c64f6025c3f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider","runtime":{"from":"from","to":"to"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider","runtime":{"from":"from","to":"to","from-label":"{name}, from","to-label":"{name}, to"}}');
 
 /***/ },
 
 /***/ "f6d198d7afd8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер диапазона","runtime":{"from":"от","to":"до"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер диапазона","runtime":{"from":"от","to":"до","from-label":"{name}, от","to-label":"{name}, до"}}');
 
 /***/ }
 

@@ -71,8 +71,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -150,10 +153,14 @@ function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
   if (typeof value === 'boolean') return value;
   return ['1', 'true', 'yes', 'on', 'disabled', 'multiple'].includes(String(value).toLowerCase());
-}
+} // The area stands on the field ladder's five steps (field-size.js
+// FIELD_LADDER; queue #70). A file's row is the file family's row
+// (sf-file-preview's markup, C81, C260): one height at every size of the
+// area.
+
 
 function normalizeSize(value) {
-  return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
+  return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.ladderSize)(value);
 } // An entry's state: ready (chosen, not sent), process (being sent), done,
 // error. A chosen file was process at 0 % at once and looked like an upload
 // that had stuck (FU-3); it is ready until the host or the uploader sends it.
@@ -202,7 +209,8 @@ function getFilesContainer(root) {
   }
 
   let next = root.nextElementSibling;
-  if (next?.classList?.contains('sf-file-upload-message')) next = next.nextElementSibling;
+
+  while (next?.classList?.contains('sf-file-upload-message') || next?.classList?.contains('sf-file-upload-status')) next = next.nextElementSibling;
 
   if (next?.classList?.contains('sf-file-upload-files')) {
     return next;
@@ -258,7 +266,13 @@ function syncInputConfig(root, input) {
   const accept = getAccept(root);
   if (accept) input.setAttribute('accept', accept);else input.removeAttribute('accept');
   input.disabled = isDisabledRoot(root);
-}
+} // The rows this part names and switches off: its own (the family row's class
+// markup) and hand-written .sf-upload-progress rows.
+
+
+const CLASS_ROW = '.sf-upload-progress, .sf-file-upload-item > .sf-file-preview';
+const CLASS_ROWS = ':is(.sf-upload-progress, .sf-file-upload-item > .sf-file-preview)';
+const CLASS_ROW_NAME = '.sf-upload-progress-name, .sf-file-preview-name';
 
 function syncFileUploadInteraction(root) {
   const state = root.__sfFileUploadInteractionState ||= {
@@ -274,10 +288,16 @@ function syncFileUploadInteraction(root) {
   state.disabled = disabled;
   syncInputConfig(root, getInput(root));
   if (disabled && root.classList.contains('dragover')) root.classList.remove('dragover');
-  const files = getFilesContainer(root); // The class rows only: a Smart area's rows are sf-file-preview, which names
-  // its own buttons («Убрать <имя>», «Повторить <имя>»).
+  const files = getFilesContainer(root); // The class rows only: the ones this part draws (the family row's class
+  // markup, .sf-file-upload-item > .sf-file-preview) and hand-written
+  // .sf-upload-progress rows. A Smart area's rows are sf-file-preview
+  // elements, which name their own buttons («Убрать <имя>», «Повторить <имя>»).
 
-  files?.querySelectorAll('.sf-upload-progress button[data-action="remove"], .sf-upload-progress button[data-action="retry"]').forEach(button => {
+  files?.querySelectorAll(':scope > .sf-file-upload-item > .sf-file-preview').forEach(row => {
+    row.classList.toggle('disabled', disabled);
+    if (disabled) row.setAttribute('aria-disabled', 'true');else row.removeAttribute('aria-disabled');
+  });
+  files?.querySelectorAll(`${CLASS_ROWS} button[data-action="remove"], ${CLASS_ROWS} button[data-action="retry"]`).forEach(button => {
     let previous = state.buttons.get(button);
 
     if (!previous) {
@@ -298,9 +318,17 @@ function syncFileUploadInteraction(root) {
     const currentLabel = button.getAttribute('aria-label');
 
     if (!button.hasAttribute('aria-labelledby') && (!currentLabel || currentLabel === previous.label)) {
-      const name = button.closest('.sf-upload-progress')?.querySelector('.sf-upload-progress-name')?.textContent?.trim() || '';
-      const word = button.dataset.action === 'retry' ? button.textContent.trim() || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload');
-      const label = `${word} ${name}`.trim();
+      const name = button.closest(CLASS_ROW)?.querySelector(CLASS_ROW_NAME)?.textContent?.trim() || ''; // The name has its place in the word ({name}, remove-name / retry-name),
+      // so a language that puts it first can (C177 follow-up). A retry button
+      // the author wrote another word on keeps that word before the name; the
+      // icon-only retry (C260) carries its word in data-word.
+
+      const retry = button.dataset.action === 'retry';
+      const word = retry ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove', root, 'sf-file-upload');
+      const named = retry ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry-name', root, 'sf-file-upload') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'remove-name', root, 'sf-file-upload');
+      const text = retry ? (button.dataset.word || (button.querySelector?.('.sf-button-text-container') || button).textContent).trim() : '';
+      const own = text && text !== word ? text : '';
+      const label = own ? `${own} ${name}`.trim() : name ? named.replace('{name}', name) : word;
       if (currentLabel !== label) button.setAttribute('aria-label', label);
       previous.label = label;
     }
@@ -313,8 +341,8 @@ function syncFileUploadInteraction(root) {
   // hears three numbers and no way to tell them apart. It takes the file's name
   // the way the remove button does, unless the author named it.
 
-  files?.querySelectorAll('.sf-upload-progress').forEach(item => {
-    const name = item.querySelector('.sf-upload-progress-name')?.textContent?.trim() || ''; // The name has its place in the words ({name}), so a language that puts
+  files?.querySelectorAll(CLASS_ROWS).forEach(item => {
+    const name = item.querySelector(CLASS_ROW_NAME)?.textContent?.trim() || ''; // The name has its place in the words ({name}), so a language that puts
     // it first can (C177 (9)).
 
     const label = name ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'uploading-name', root, 'sf-file-upload').replace('{name}', name) : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'uploading', root, 'sf-file-upload');
@@ -434,75 +462,135 @@ function uploadItemIcon(item, state) {
   const type = String(item?.file?.type || item?.mime || EXTENSION_TYPES[extension] || '');
   const icon = (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(type);
   return icon === 'download' ? 'draft' : icon;
+} // The pictures a browser draws from a chosen file's own bytes (C81: a photo's
+// thumbnail in its row), as the Smart area draws them. A video's frame and a
+// PDF's page are the host's imageUrl: the component never decodes them.
+
+
+const DRAWN_PICTURES = /^image\/(?:png|jpeg|gif|webp|avif|bmp|svg\+xml)$/u;
+
+function rowPicture(root, item) {
+  const given = item?.imageUrl ?? item?.['image-url'];
+  if (given) return String(given);
+  const file = item?.file;
+  if (typeof Blob === 'undefined' || !(file instanceof Blob) || !DRAWN_PICTURES.test(String(file.type || ''))) return '';
+  if (typeof URL?.createObjectURL !== 'function') return '';
+  const pictures = root.__sfFileUploadPictures ||= new Map();
+  if (!pictures.has(file)) pictures.set(file, URL.createObjectURL(file));
+  return pictures.get(file);
+} // A chosen photo's address lives while its file is listed.
+
+
+function releaseRowPictures(root, items = []) {
+  const pictures = root?.__sfFileUploadPictures;
+  if (!pictures?.size) return;
+  const listed = new Set(items.map(item => item?.file).filter(Boolean));
+
+  for (const [file, address] of [...pictures]) {
+    if (listed.has(file)) continue;
+    pictures.delete(file);
+    URL.revokeObjectURL?.(address);
+  }
+} // A row is the file family's row (owner decisions C81 and C149), the class
+// markup of the sf-file-preview row the Smart area draws: the picture of a
+// photo or the type's glyph in the grey holder, the name and under it one
+// line -- the size (ready; «size · загружен» when sent), the bar (uploading)
+// or the reason (error) -- and the actions at the end: «Повторить» on a
+// failed file, «×» «Убрать <имя>» on every one. One height in every state
+// and at every zone size: the class row stacked the bar and the retry under
+// the text, so a list of four files was 44 / 68 / 44 / 84 and jumped at each
+// change of state (RG-FU-1).
+// «Повторить» as the icon alone, the Smart row's (owner decision C260): the
+// sheet draws it in place of the button with words in a row too narrow for
+// them (sf-file-preview, the container step g2). Named «Повторить <имя>» by
+// the list's labelling, «Повторить» in the Framework's plain tooltip, which
+// the anchor links to the button.
+
+
+function createRetryIcon(word) {
+  const anchor = document.createElement('span');
+  anchor.className = 'sf-file-preview-retry-icon sf-tooltip-anchor';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--primary sf-icon-button--size-1';
+  button.dataset.action = 'retry';
+  button.dataset.tooltip = '';
+  button.dataset.word = word;
+  const glyph = document.createElement('i');
+  glyph.className = 'sf-icon';
+  glyph.setAttribute('aria-hidden', 'true');
+  glyph.textContent = 'refresh';
+  button.append(glyph);
+  const tip = document.createElement('span');
+  tip.className = 'sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3';
+  tip.setAttribute('aria-hidden', 'true');
+  tip.hidden = true;
+  const content = document.createElement('span');
+  content.className = 'sf-tooltip-content';
+  const text = document.createElement('span');
+  text.className = 'sf-tooltip-text';
+  text.textContent = word;
+  content.append(text);
+  tip.append(content);
+  anchor.append(button, tip);
+  return anchor;
 }
 
-function createUploadProgressItem(item, size = '1', owner = null) {
-  const normalizedSize = normalizeSize(size);
+function createUploadProgressItem(item, owner = null) {
   const row = describeUploadItem(item, owner, 'done');
   const {
     state,
     progress
   } = row;
+  const wrap = document.createElement('div');
+  wrap.className = 'sf-file-upload-item';
+  wrap.setAttribute('role', 'listitem');
   const root = document.createElement('div');
-  root.className = ['sf-upload-progress', `sf-upload-progress--size-${normalizedSize}`, `sf-upload-progress--${state}`, 'flex', 'items-main-start', 'items-cross-start'].join(' ');
-  const leftIcon = document.createElement('i');
-  leftIcon.classList.add('sf-icon'); // The glyphs are pictures: their ligature names («cloud_upload», «check_circle»,
-  // «delete») were read as text (docs pre-check 2026-11-10 FU-03).
+  root.className = ['sf-file-preview', 'sf-file-preview--row', state === 'process' ? 'sf-file-preview--uploading' : '', state === 'error' ? 'sf-file-preview--error' : ''].filter(Boolean).join(' ');
+  root.dataset.state = state;
+  root.setAttribute('role', 'group');
+  root.setAttribute('aria-label', row.name);
+  if (state === 'process') root.setAttribute('aria-busy', 'true');
+  const holder = document.createElement('span');
+  holder.className = 'sf-file-preview-holder';
+  const picture = owner ? rowPicture(owner, item) : '';
 
-  leftIcon.setAttribute('aria-hidden', 'true');
-  leftIcon.textContent = row.icon;
-  const content = document.createElement('div');
-  content.className = 'sf-upload-progress-content flex flex-col flex-1';
-  const top = document.createElement('div');
-  top.className = 'sf-upload-progress-top flex content-main-between';
-  const left = document.createElement('div');
-  left.className = 'sf-upload-progress-left flex flex-col';
-  const nameNode = document.createElement('div');
-  nameNode.className = 'sf-upload-progress-name';
+  if (picture) {
+    holder.classList.add('sf-file-preview-holder--picture');
+    const image = document.createElement('img');
+    image.className = 'sf-file-preview-thumbnail';
+    image.src = picture;
+    image.alt = '';
+    image.decoding = 'async';
+    holder.append(image);
+  } else {
+    const glyph = document.createElement('i');
+    glyph.className = 'sf-icon'; // The glyphs are pictures: their ligature names were read as text (docs
+    // pre-check 2026-11-10 FU-03).
+
+    glyph.setAttribute('aria-hidden', 'true'); // The type's glyph in every state, as the Smart row: the error is said by
+    // the reason line in the error colour.
+
+    glyph.textContent = uploadItemIcon(item, 'ready');
+    holder.append(glyph);
+  }
+
+  const main = document.createElement('span');
+  main.className = 'sf-file-preview-main';
+  const nameNode = document.createElement('span');
+  nameNode.className = 'sf-file-preview-name';
+  nameNode.title = row.name;
   nameNode.textContent = row.name;
-  const textNode = document.createElement('div');
-  textNode.className = 'sf-upload-progress-text';
-  textNode.textContent = row.line;
-  left.append(nameNode, textNode);
-  top.append(left);
-
-  if (state === 'done') {
-    const doneIcon = document.createElement('i');
-    doneIcon.className = 'sf-icon sf-icon-solid sf-upload-progress-mark';
-    doneIcon.setAttribute('aria-hidden', 'true');
-    doneIcon.textContent = 'check_circle';
-    top.append(doneIcon);
-  } // Every state can be taken out of the list.
-
-
-  const removeButton = document.createElement('button');
-  removeButton.type = 'button';
-  removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
-  removeButton.dataset.action = 'remove';
-  const removeIcon = document.createElement('i');
-  removeIcon.className = 'sf-icon';
-  removeIcon.setAttribute('aria-hidden', 'true'); // «×» «Убрать <имя>»: the file leaves the list, nothing is erased (C149
-  // (8)); the trash is a stored file's, in sf-file-preview.
-
-  removeIcon.textContent = 'close';
-  removeButton.append(removeIcon);
-  top.append(removeButton);
-  content.append(top);
-
-  if (state === 'error') {
-    const retry = document.createElement('button');
-    retry.type = 'button';
-    retry.className = 'sf-upload-progress-repeat self-cross-start';
-    retry.dataset.action = 'retry';
-    retry.textContent = row.retryText;
-    content.append(retry);
-  } // A chosen file that is not being sent, and a sent one, have no bar: there
-  // is no transfer to show (FU-3, FU-4).
-
+  main.append(nameNode);
 
   if (state === 'process') {
+    // A chosen file that is not being sent, and a sent one, have no bar: there
+    // is no transfer to show (FU-3, FU-4). The bar stands in the size line's
+    // place, the size 1/2 bar with its per cent at the end (C131 (4)).
+    const holderBar = document.createElement('span');
+    holderBar.className = 'sf-file-preview-progress';
     const progressBar = document.createElement('div');
-    progressBar.className = `sf-progress-bar sf-progress-bar--size-${normalizedSize} flex flex-row items-cross-center`;
+    progressBar.className = 'sf-progress-bar sf-progress-bar--size-1/2 flex flex-row items-cross-center';
     if (progress === null) progressBar.dataset.indeterminate = 'true';else progressBar.dataset.value = String(progress);
     progressBar.dataset.textPosition = 'inline-end';
     const progressMain = document.createElement('div');
@@ -515,11 +603,88 @@ function createUploadProgressItem(item, size = '1', owner = null) {
     progressText.textContent = progress === null ? '' : `${progress}%`;
     progressMain.append(progressValue);
     progressBar.append(progressMain, progressText);
-    content.append(progressBar);
+    holderBar.append(progressBar);
+    main.append(holderBar);
+  } else if (state === 'error') {
+    const reason = document.createElement('span');
+    reason.className = 'sf-file-preview-error';
+    reason.textContent = row.line;
+    main.append(reason);
+  } else if (row.line) {
+    const line = document.createElement('span');
+    line.className = 'sf-file-preview-meta sf-file-preview-size';
+    line.textContent = row.line;
+    main.append(line);
   }
 
-  root.append(leftIcon, content);
-  return root;
+  const actions = document.createElement('span');
+  actions.className = 'sf-file-preview-actions';
+
+  if (state === 'error') {
+    // «Повторить» ends the row, first of its buttons (C88), the button the
+    // Smart row draws: ghost, primary, size 1, on the rung of «×» beside it
+    // (C103; it was the low button, 32 beside 40).
+    const retryHost = document.createElement('span');
+    retryHost.className = 'sf-file-preview-retry';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'sf-button sf-button--size-1 sf-button--ghost sf-button--link sf-button--primary flex items-cross-center';
+    retry.dataset.action = 'retry';
+    const retryIcon = document.createElement('i');
+    retryIcon.className = 'sf-icon pointer-event-none';
+    retryIcon.setAttribute('aria-hidden', 'true');
+    retryIcon.textContent = 'refresh';
+    const retryText = document.createElement('span');
+    retryText.className = 'sf-button-text-container text-center pointer-event-none';
+    retryText.textContent = row.retryText;
+    retry.append(retryIcon, retryText);
+    retryHost.append(retry);
+    actions.append(retryHost, createRetryIcon(row.retryText));
+  } // Every state can be taken out of the list: «×» «Убрать <имя>», nothing is
+  // erased (C149 (8)); the trash is a stored file's, in sf-file-preview.
+
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = 'sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1';
+  removeButton.dataset.action = 'remove';
+  const removeIcon = document.createElement('i');
+  removeIcon.className = 'sf-icon';
+  removeIcon.setAttribute('aria-hidden', 'true');
+  removeIcon.textContent = 'close';
+  removeButton.append(removeIcon);
+  actions.append(removeButton);
+  root.append(holder, main, actions);
+  wrap.append(root);
+  return wrap;
+} // The focus inside the list keeps its place when the rows are drawn again: a
+// row taken out gives it to the row that took its place (the previous one
+// when it was the last), the area when none is left (C81, accessibility). The
+// list was rebuilt whole and the focus fell to the page's start (RG-FU-3).
+
+
+function listFocus(container) {
+  const active = container?.ownerDocument?.activeElement;
+  if (!active || !container.contains(active)) return null;
+  const row = active.closest('[data-index]');
+  return {
+    index: Number(row?.dataset.index) || 0,
+    action: active.dataset?.action || ''
+  };
+}
+
+function restoreListFocus(root, container, held) {
+  if (!held) return;
+  const rows = container.querySelectorAll(':scope > [data-index]');
+  const row = rows[Math.min(held.index, rows.length - 1)]; // A failed row holds «Повторить» twice, with words and as the icon alone;
+  // the sheet draws one of them (C260): the focus goes to the drawn one.
+
+  const drawn = selector => [...(row?.querySelectorAll(selector) || [])].find(button => button.getClientRects().length > 0);
+
+  const target = held.action && drawn(`button[data-action="${held.action}"]:not(:disabled)`) || drawn('button[data-action="remove"]:not(:disabled)') || root;
+  target?.focus?.({
+    preventScroll: true
+  });
 }
 
 function renderFileUploadItems(root, items = []) {
@@ -531,14 +696,18 @@ function renderFileUploadItems(root, items = []) {
     return;
   }
 
-  container.innerHTML = '';
-  const size = normalizeSize(Array.from(root.classList).find(cls => cls.startsWith('sf-file-upload--size-'))?.replace('sf-file-upload--size-', '') || '1');
+  const held = listFocus(container);
+  container.replaceChildren(); // The rows are a list (C81), as the Smart area's.
+
+  if (items.length && !container.hasAttribute('role')) container.setAttribute('role', 'list');
   items.forEach((item, index) => {
-    const node = createUploadProgressItem(item, size, root);
+    const node = createUploadProgressItem(item, root);
     node.dataset.index = String(index);
     container.append(node);
   });
+  releaseRowPictures(root, items);
   syncFileUploadInteraction(root);
+  restoreListFocus(root, container, held);
 }
 
 function emitFileUploadItemAdd(root, item, index, items, source = 'input') {
@@ -587,19 +756,36 @@ function emitFileUploadComplete(root, items) {
 
 function syncFileUploadStateEvents(root, nextItems = [], previousItems = []) {
   const previousMap = new Map(previousItems.map((item, index) => [getItemEventKey(item, index), normalizeItemState(item)]));
+  const said = [];
   nextItems.forEach((item, index) => {
     const key = getItemEventKey(item, index);
     const nextState = normalizeItemState(item);
     const prevState = previousMap.get(key);
 
     if (nextState === 'error' && prevState !== 'error') {
-      emitFileUploadItemError(root, item, index, nextItems);
+      emitFileUploadItemError(root, item, index, nextItems); // A list set from scratch (a stored value) is not news.
+
+      if (prevState !== undefined) {
+        const message = String(item?.errorMessage || item?.error || '');
+        said.push(fileUploadWord(root, message ? 'said-error-line' : 'said-error', {
+          vars: {
+            name: itemName(item),
+            message
+          }
+        }));
+      }
     }
 
     if (nextState === 'done' && prevState !== 'done') {
       emitFileUploadItemComplete(root, item, index, nextItems);
+      if (prevState !== undefined) said.push(fileUploadWord(root, 'said-done', {
+        vars: {
+          name: itemName(item)
+        }
+      }));
     }
   });
+  announceFileUpload(root, said);
   const hasItems = nextItems.length > 0;
   const isAllDone = hasItems && nextItems.every(item => normalizeItemState(item) === 'done');
   const wasAllDone = previousItems.length > 0 && previousItems.every(item => normalizeItemState(item) === 'done');
@@ -734,6 +920,13 @@ function applySelectedFiles(root, files = [], source = 'input') {
   added.forEach(item => {
     emitFileUploadItemAdd(root, item, nextFiles.indexOf(item), nextFiles, source);
   });
+  announceFileUpload(root, [added.length === 1 ? fileUploadWord(root, 'said-added', {
+    vars: {
+      name: itemName(added[0])
+    }
+  }) : fileUploadWord(root, 'said-added-many', {
+    count: added.length
+  })]);
   emitSelect(root, added, source);
   return added;
 }
@@ -754,7 +947,8 @@ function formatAcceptWords(accept, root = null) {
 } // Where a file that was not added is said: the line under the area (C81: the
 // message under the field, not a row in the list), a polite status a screen
 // reader announces. The Smart template draws it; an ordinary area gets one
-// after it on the first rejection.
+// after it when it is bound: a live region made at the moment of its first
+// words is often not heard (RG-FU-4).
 
 
 function getMessage(root, create = false) {
@@ -768,6 +962,43 @@ function getMessage(root, create = false) {
   message.hidden = true;
   root.after(message);
   return message;
+} // What happened to the list, for a screen reader only (C81, accessibility):
+// a file added, sent, or not sent, said politely; the per cent is not said.
+// A region of its own beside the message, made with the area (the Smart
+// template and the class draw it): the message is seen and says only what
+// was left out.
+
+
+function getStatus(root, create = false) {
+  if (!root) return null;
+  let next = root.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-message')) next = next.nextElementSibling;
+  if (next?.classList?.contains('sf-file-upload-status')) return next;
+  if (!create || isManagedRenderRoot(root) || typeof document === 'undefined') return null;
+  const anchor = getMessage(root, true);
+  if (!anchor) return null;
+  const status = document.createElement('div');
+  status.className = 'sf-file-upload-status';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-atomic', 'true');
+  anchor.after(status);
+  return status;
+}
+
+function announceFileUpload(root, lines = []) {
+  const said = lines.filter(Boolean);
+  if (!said.length) return;
+  const status = getStatus(root);
+  if (!status) return;
+  const text = said.join('. '); // The same words again (a second file of one name) are said again: the
+  // region is emptied first.
+
+  if (status.textContent === text) status.textContent = '';
+  status.textContent = text;
+}
+
+function itemName(item) {
+  return String(item?.name || item?.fileName || item?.file?.name || '');
 }
 
 function showFileUploadRejections(root, rejected = []) {
@@ -900,10 +1131,31 @@ function takeFiles(root, files = [], source = 'input') {
   }
 
   return accepted.length ? applySelectedFiles(root, accepted, source) : [];
+} // The words about dragging («или перетащите их сюда») are a part of their
+// own, so a screen that cannot drag hides them (owner decision C223): the
+// author's markup wrote them as bare text after the link; they are put in
+// .sf-file-upload-drag when the zone is bound.
+
+
+function wrapDragWords(root) {
+  const block = root?.querySelector?.('.sf-file-upload-block-text');
+  if (!block || block.querySelector('.sf-file-upload-drag')) return; // Only the words after the link: without a link the text is the zone's
+  // whole call and stays.
+
+  const link = block.querySelector('.sf-file-upload-link');
+  if (!link) return;
+  const loose = Array.from(block.childNodes).filter(node => node.nodeType === 3 && node.textContent.trim() && link.compareDocumentPosition(node) & 4);
+  if (!loose.length) return;
+  const drag = document.createElement('span');
+  drag.className = 'sf-file-upload-drag';
+  drag.textContent = loose.map(node => node.textContent).join('').trim();
+  loose[0].before(' ', drag);
+  loose.forEach(node => node.remove());
 }
 
 function bindFileUpload(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.retireFieldSizeClass)(root, 'sf-file-upload');
+  // The area stands on the field ladder: 1/3 and 3 are its own steps, no
+  // class to move.
   if (!root) return;
   const input = ensureInput(root);
   const filesContainer = getFilesContainer(root); // DOM markers survive cloneNode; listeners and selected File objects do not.
@@ -925,7 +1177,11 @@ function bindFileUpload(root) {
 
   if (!root.hasAttribute('role')) {
     root.setAttribute('role', 'button');
-  }
+  } // The live regions stand from the start (RG-FU-4).
+
+
+  getStatus(root, true);
+  if (!isManagedRenderRoot(root)) wrapDragWords(root);
 
   const openInput = () => {
     if (isDisabledRoot(root)) return;
@@ -941,7 +1197,7 @@ function bindFileUpload(root) {
 
     const target = event.target;
     if (!(target instanceof Element)) return;
-    if (target.closest('.sf-upload-progress-repeat')) return;
+    if (target.closest('.sf-upload-progress-repeat, [data-action="retry"]')) return;
     if (target.closest('input[type="file"]')) return;
     if (target.closest('[data-action="remove"]')) return;
     openInput();
@@ -1014,7 +1270,7 @@ function bindFileUpload(root) {
       return;
     }
 
-    const itemNode = (removeButton || retryButton).closest('.sf-upload-progress');
+    const itemNode = (removeButton || retryButton).closest('[data-index], .sf-upload-progress');
     if (!itemNode) return;
     event.preventDefault();
     event.stopPropagation();
@@ -1186,7 +1442,10 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     const link = document.createElement('span');
     link.className = 'sf-file-upload-link';
     link.textContent = linkText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'linkText', root, 'sf-file-upload');
-    blockText.append(link, ` ${text ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'text', root, 'sf-file-upload')}`);
+    const drag = document.createElement('span');
+    drag.className = 'sf-file-upload-drag';
+    drag.textContent = text ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'text', root, 'sf-file-upload');
+    blockText.append(link, ' ', drag);
     block.append(blockText);
     bottom.append(block);
 
@@ -1202,9 +1461,15 @@ class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__
     message.className = 'sf-file-upload-message';
     message.setAttribute('role', 'status');
     message.hidden = true;
-    const files = document.createElement('div');
-    files.className = 'sf-file-upload-files grid grid-col-1 gap-1 w-full';
-    wrapper.append(root, message, files);
+    const status = document.createElement('div');
+    status.className = 'sf-file-upload-status';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-atomic', 'true');
+    const files = document.createElement('div'); // The rows' list, as the Smart area's (C81).
+
+    files.className = 'sf-file-upload-files grid grid-col-1 gap-1/2 w-full';
+    files.setAttribute('role', 'list');
+    wrapper.append(root, message, status, files);
     this.root = root;
     this.template = wrapper;
   }
@@ -1754,7 +2019,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -1780,7 +2046,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -2318,7 +2586,8 @@ function percentText(value, node) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -2331,6 +2600,53 @@ __webpack_require__.r(__webpack_exports__);
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -2379,7 +2695,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -2526,7 +2842,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -2597,15 +2914,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -2807,7 +3130,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -2912,7 +3235,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -2953,6 +3276,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -3051,8 +3393,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -3207,7 +3551,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -3227,7 +3572,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -3267,7 +3613,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -3292,7 +3639,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -3302,7 +3650,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -3417,7 +3766,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -3479,15 +3831,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -3744,14 +4099,14 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d4b3cd9346d9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","remove-name":"Remove {name}","retry-name":"Try {name} again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
 
 /***/ },
 
 /***/ "6e4269348082"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","remove-name":"Убрать {name}","retry-name":"Повторить {name}","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
 
 /***/ },
 

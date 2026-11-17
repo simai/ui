@@ -143,7 +143,10 @@ const imageData = {
   width: { type: 'integer', minimum: 1, maximum: 100000 },
   height: { type: 'integer', minimum: 1, maximum: 100000 },
 };
-export const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9']);
+// One list for the figure, the media block and a card's picture (owner
+// decision C188 (6)); 3/4, the one vertical ratio, since content.figure and
+// content.media 1.2.0 (owner decision C230, 2026-11-16).
+export const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9', '3/4']);
 export const CONTENT_ALERT_STATUSES = Object.freeze(['neutral', 'info', 'success', 'warning', 'error']);
 export const CONTENT_ALERT_APPEARANCES = Object.freeze(['default', 'outlined', 'flat']);
 // A media type in its lowercase form: type/subtype, no parameters.
@@ -222,7 +225,11 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // 1.3.0 (2026-11-04): the accent variant is the primary role's own fill
     // with on-primary text (background accent), as the prototype draws it,
     // not the primary container's light tint.
-    version: '1.3.0',
+    // 1.4.0 (2026-11-16, owner decision C212 (4)): the content part's blocks
+    // stand in a flex column one gap apart (flex flex-col gap-y-3, a gap the
+    // Document sets as gap-*), no longer space-y-*, a retired class. The page
+    // draws the same; the printed HTML differs.
+    version: '1.4.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
@@ -282,7 +289,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // 1.2.0 (2026-11-04, visual parity): alignment and visibility per screen,
     // the SIMAI Framework sets a section takes (text-*, hidden/block).
     // 1.3.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
-    version: '1.3.0',
+    // 1.4.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.4.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -308,7 +316,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     type: 'content.paragraph',
     // 1.3.0 (2026-11-04): alignment and visibility per screen, as the heading.
     // 1.4.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
-    version: '1.4.0',
+    // 1.5.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.5.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -448,6 +457,9 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   // equal cells, and an empty space. Each prints SIMAI Framework utilities
   // only, through its parameter sets and props.
   layoutManifest('layout.container', {
+    // 1.1.0 (2026-11-16, owner decision C212 (4)): the content part is a flex
+    // column, its blocks gap-y-3 apart, no longer space-y-3 (retired).
+    version: '1.1.0',
     parameter_sets: ['width', 'spacing', 'background', 'visibility'],
     parameter_defaults: CONTAINER_DEFAULTS,
     slots: { default: { min: 0, max: 500, categories: ['layout', 'content', 'smart'] } },
@@ -655,7 +667,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.list-item', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ content: inlineContentSchema }, ['content']),
     // A nested list, or more paragraphs and code under the item's own line.
@@ -684,7 +697,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   // its cells, not a style attribute; it looks the same. 1.1.0: inline model
   // 1.2.0 in its caption and cells (the break, the mark strike).
   contentManifest('content.table', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'leaf',
     data_schema: closed({
       caption: inlineContentSchema,
@@ -703,8 +717,10 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html', 'rich-text'],
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
+  // 1.2.0 (2026-11-16, owner decision C230): ratio takes 3/4.
   contentManifest('content.figure', {
-    version: '1.1.0',
+    // 1.3.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.3.0',
     mode: 'leaf',
     data_schema: closed({ ...imageData, caption: inlineContentSchema }, ['src', 'alt']),
     props_schema: closed({
@@ -716,7 +732,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.alert', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     props_schema: closed({
@@ -729,7 +746,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.details', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ summary: inlineContentSchema }, ['summary']),
     props_schema: closed({
@@ -762,7 +780,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.step', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     slots: { default: contentSlot(0, 100) },
@@ -776,13 +795,29 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     }),
     slots: { default: contentSlot(1, 48) },
   }),
+  // 1.1.0 (2026-11-16, owner decision C231, fulfils C188 (1)): the card's
+  // header, sf-card-header -- the title (inline, drawn as the card's title)
+  // and one action at its end, an icon link of size 1/2: action_icon, its
+  // name for a screen reader action_label and action_href by the Document's
+  // URL rule; it is drawn when all three are given. All optional; a card
+  // without them is drawn as in 1.0.0.
   contentManifest('content.card', {
+    version: '1.1.0',
     mode: 'composite',
+    data_schema: closed({
+      title: inlineContentSchema,
+      action_icon: iconName,
+      action_label: plainText(120),
+      action_href: urlSchema,
+    }),
     props_schema: closed({ variant: { enum: ['default', 'plain'] } }),
     slots: { default: contentSlot(0, 100) },
-    assets: ['component/card'],
+    assets: ['component/card', 'component/icon-buttons'],
+    capabilities: ['html', 'rich-text'],
   }),
+  // 1.1.0 (2026-11-16, owner decision C230): ratio takes 3/4.
   contentManifest('content.media', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ ...imageData }, ['src', 'alt']),
     props_schema: closed({
@@ -965,7 +1000,7 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...schemaFields('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.3.0',
+    type_version: '1.4.0',
     fields: [
       {
         key: 'surface',
@@ -1028,7 +1063,7 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...schemaFields('simai.composition.editor-manifest', 1),
     type: 'content.heading',
-    type_version: '1.3.0',
+    type_version: '1.4.0',
     fields: [
       {
         key: 'level',
@@ -1119,8 +1154,8 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
   ]),
   // The layout and element types of the one block editor (2026-11-04).
-  { ...contentEditor('content.paragraph', parameterSetFields({ parameter_sets: TEXT_SETS })), type_version: '1.4.0' },
-  contentEditor('layout.container', parameterSetFields({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })),
+  { ...contentEditor('content.paragraph', parameterSetFields({ parameter_sets: TEXT_SETS })), type_version: '1.5.0' },
+  { ...contentEditor('layout.container', parameterSetFields({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })), type_version: '1.1.0' },
   { ...contentEditor('layout.grid', parameterSetFields({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })), type_version: '1.1.0' },
   contentEditor('layout.spacer', [
     contentField('layout.spacer', 'size', 'props', 'integer', { constraints: { min: 1, max: 8 }, default: 6 }),
@@ -1215,24 +1250,24 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   ]),
   { ...contentEditor('content.table', [
     contentField('content.table', 'header', 'props', 'choice', { choices: ['row', 'column', 'both', 'none'], default: 'row' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   // src is the one field the type requires besides alt: a host draws a
   // complete form from the manifest alone (simai/ui-source#64). The address
   // is a text field; validate applies the Document's URL rule on top.
   { ...contentEditor('content.figure', [
     contentField('content.figure', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.figure', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
-    contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', '1/1', '4/3', '3/2', '16/9', '21/9'], default: 'auto' }),
+    contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', ...CONTENT_RATIOS], default: 'auto' }),
     contentField('content.figure', 'fit', 'props', 'choice', { choices: ['cover', 'contain'], default: 'cover' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.3.0' },
   { ...contentEditor('content.alert', [
     contentField('content.alert', 'status', 'props', 'choice', { choices: ['neutral', 'info', 'success', 'warning', 'error'], default: 'neutral' }),
     contentField('content.alert', 'appearance', 'props', 'choice', { choices: ['default', 'outlined', 'flat'], default: 'default' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   { ...contentEditor('content.details', [
     contentField('content.details', 'open', 'props', 'toggle', { default: false }),
     contentField('content.details', 'layout', 'props', 'choice', { choices: ['surface', 'lines'], default: 'surface' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   contentEditor('content.tabs', [
     contentField('content.tabs', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
   ]),
@@ -1247,15 +1282,18 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('content.grid', 'columns', 'props', 'integer', { constraints: { min: 1, max: 4 }, default: 3 }),
     contentField('content.grid', 'gap', 'props', 'integer', { ...advanced, constraints: { min: 0, max: 4 }, default: 2 }),
   ]),
-  contentEditor('content.card', [
+  { ...contentEditor('content.card', [
     contentField('content.card', 'variant', 'props', 'choice', { choices: ['default', 'plain'], default: 'default' }),
-  ]),
-  contentEditor('content.media', [
+    contentField('content.card', 'action_icon', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('content.card', 'action_label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
+    contentField('content.card', 'action_href', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 2048 } }),
+  ]), type_version: '1.1.0' },
+  { ...contentEditor('content.media', [
     contentField('content.media', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.media', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.media', 'side', 'props', 'choice', { choices: ['left', 'right'], default: 'right' }),
-    contentField('content.media', 'ratio', 'props', 'choice', { choices: ['1/1', '4/3', '3/2', '16/9', '21/9'], default: '16/9' }),
-  ]),
+    contentField('content.media', 'ratio', 'props', 'choice', { choices: [...CONTENT_RATIOS], default: '16/9' }),
+  ]), type_version: '1.1.0' },
   contentEditor('content.file', [
     contentField('content.file', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
     contentField('content.file', 'href', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),

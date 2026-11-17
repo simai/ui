@@ -338,15 +338,84 @@
   }
   .sf-datepicker-day:not(:disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
     position: relative;
     z-index: var(--sf-z-index-1);
   }
   .sf-datepicker-day:not(:disabled):focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
     position: relative;
     z-index: var(--sf-z-index-1);
+  }
+  /* On a chosen day -- the selected one, a period's start or end -- the focus
+     colour lay on the primary fill, 1.44:1 light and 1.31:1 dark (RG-DP-3;
+     WCAG 2.4.11 asks 3:1). There the ring is the fill's own ink (on-primary,
+     the number's colour) one ring width further in, so a rim of the fill
+     stays round it and it reads as a ring on the surface as well as on a
+     period's band. */
+  .sf-datepicker-day.active.focus-visible:not(:disabled) {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-start.focus-visible:not(:disabled) {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-end.focus-visible:not(:disabled) {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.active:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.active:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.active:not(:disabled):focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-start:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-start:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-start:not(:disabled):focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-end:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-end:not(:disabled).focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
+  }
+  .sf-datepicker-day.sf-datepicker-day-end:not(:disabled):focus-visible {
+    outline-color: var(--sf-on-primary);
+    outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
+    outline-offset: calc(var(--sf-focus--width) * -2);
   }
   .sf-datepicker-day:not(:disabled):not(.disabled):active .sf-datepicker-day-date, .sf-datepicker-day.active .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
@@ -370,6 +439,36 @@
     --sf-datepicker-day-info--color: var(--sf-on-surface-disabled);
   }
   @media (forced-colors: active) {
+    .sf-datepicker-day.active.focus-visible:not(:disabled) {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-start.focus-visible:not(:disabled) {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-end.focus-visible:not(:disabled) {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day:not(:disabled).focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.active:not(:disabled).focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.active:not(:disabled):focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-start:not(:disabled).focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-start:not(:disabled):focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-end:not(:disabled).focus-visible {
+      outline-color: Highlight;
+    }
+    .sf-datepicker-day.sf-datepicker-day-end:not(:disabled):focus-visible {
+      outline-color: Highlight;
+    }
     .sf-datepicker-day:not(:disabled).focus-visible {
       outline-color: Highlight;
     }
@@ -388,6 +487,28 @@
     .sf-datepicker-day.disabled .sf-datepicker-day-info {
       --sf-datepicker-day-info--color: GrayText;
     }
+  }
+}
+/* Today (owner decision C62, prototypes/datepicker.html:178; RG-DP-1): a
+   hairline ring of the primary colour inside the day and the number in the
+   primary colour. The day says it with aria-current="date" (sf-input-date)
+   or with the class sf-datepicker-day-today (class markup); either draws it.
+   A chosen day -- the selected one, a period's end, a day held pressed -- is
+   the primary fill already and keeps its own look; inside a period's band the
+   ring and the number stay. The overrides layer: the days-off and the
+   neighbouring month's inks there step aside for today. */
+@layer sf.overrides {
+  .sf-datepicker-day.sf-datepicker-day-today:not(:disabled):not(.disabled):not(.active):not(:active):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end) {
+    box-shadow: inset 0 0 0 var(--sf-px) var(--sf-primary);
+  }
+  .sf-datepicker-day[aria-current=date]:not(:disabled):not(.disabled):not(.active):not(:active):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end) {
+    box-shadow: inset 0 0 0 var(--sf-px) var(--sf-primary);
+  }
+  .sf-datepicker-day.sf-datepicker-day-today:not(:disabled):not(.disabled):not(.active):not(:active):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end) .sf-datepicker-day-date {
+    --sf-datepicker-day-date--color: var(--sf-primary);
+  }
+  .sf-datepicker-day[aria-current=date]:not(:disabled):not(.disabled):not(.active):not(:active):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end) .sf-datepicker-day-date {
+    --sf-datepicker-day-date--color: var(--sf-primary);
   }
 }
 @layer sf.components {
@@ -608,11 +729,11 @@
   }
   .sf-datepicker-text:not(:disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-text:not(:disabled):focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-text:not(:disabled):not(.disabled):active, .sf-datepicker-text:not(:disabled):not(.disabled).active {
     --sf-datepicker-text--background-color: var(--sf-primary);
@@ -661,7 +782,7 @@
      and an elevation class re-points it on a raised one, so the popup keeps it
      in the dark theme too. The opacity hook stays for projects that set it,
      at full by default. */
-  .sf-datepicker-day.sf-datepicker-another-month:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) {
+  .sf-datepicker-day.sf-datepicker-another-month:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end) {
     --sf-datepicker-another-month--opacity: 1;
     opacity: var(--sf-datepicker-another-month--opacity);
   }
@@ -672,14 +793,14 @@
      beside this month's full one, as before DP-02 (dispatcher ruling
      2026-11-11: the shared ink and the DEV hold 7fddefd9 had made both the
      same full error red); still 4.5:1 on the panel in both themes. */
-  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
+  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end):not(.sf-datepicker-day-today):not([aria-current=date]) .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-surface-variant);
   }
-  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
+  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end):not(.sf-datepicker-day-today):not([aria-current=date]) .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
     --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
   }
-  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-info {
+  .sf-datepicker .sf-datepicker-day.sf-datepicker-another-month.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end):not(.sf-datepicker-day-today):not([aria-current=date]) .sf-datepicker-day-info {
     --sf-datepicker-day-date--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
     --sf-datepicker-day-info--color: color-mix(in srgb, var(--sf-datepicker--day-off-color) 80%, transparent);
   }
@@ -912,7 +1033,12 @@
     padding-right: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
   }
   .sf-datepicker {
-    --sf-datepicker--inline-size: calc(var(--sf-ui-1--control-height) * 7 + var(--sf-space-1));
+    /* Seven days of the control height and the panel's own two paddings
+       (RG-DP-4): it added --sf-space-1 to the grid while the paddings are two
+       --sf-space-1/3, so a day came out 35.4 on a phone and 32.6 compact,
+       steps of no ladder. The day's height and the paddings are read where
+       they are set, so a product that changes them keeps square days. */
+    --sf-datepicker--inline-size: calc(var(--sf-datepicker-day--height, var(--sf-ui-1--control-height)) * 7 + var(--sf-datepicker--padding-left, var(--sf-space-1\/3)) + var(--sf-datepicker--padding-right, var(--sf-space-1\/3)));
     /* The whole calendar floats on step 3, not only its top band: on the plain
        surface its body was the page's colour in the dark theme. */
     background-color: var(--sf-surface-popup);
@@ -1583,10 +1709,13 @@
   .sf-datepicker {
     --sf-datepicker--day-off-color: var(--sf-datepicker-day-off, light-dark(var(--sf-red-40), var(--sf-red-80)));
   }
-  .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-date {
+  /* A period's ends are the chosen days whether or not the markup also says
+     active (the class markup of the docs' «Период» example does not): a day
+     off at an end kept its red on the primary fill, 1.01:1 (RG-DP-2). */
+  .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end):not(.sf-datepicker-day-today):not([aria-current=date]) .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-datepicker--day-off-color);
   }
-  .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected) .sf-datepicker-day-info {
+  .sf-datepicker .sf-datepicker-day.sf-datepicker-day-off:not(:disabled):not(.active):not(.disabled):not(.sf-datepicker-day-selected):not(.sf-datepicker-day-start):not(.sf-datepicker-day-end):not(.sf-datepicker-day-today):not([aria-current=date]) .sf-datepicker-day-info {
     --sf-datepicker-day-info--color: var(--sf-datepicker--day-off-color);
   }
   /* The weekday headers of the days off take the same ink (owner decision
@@ -1633,6 +1762,14 @@
     -webkit-margin-start: calc(var(--sf-field-action--inset) / 4);
             margin-inline-start: calc(var(--sf-field-action--inset) / 4);
   }
+  /* A field chosen on the grid only (a period, sf-input-date pickOnly,
+     RG-DP-5) is an ordinary field, not a read-only one, but its text box
+     takes no typing and opens no keyboard (inputmode none): no caret blinks
+     in it, and the pointer says it opens, as sf-dropdown's field does. */
+  .sf-datepicker-wrap .sf-input-field > input[inputmode=none]:not(:disabled) {
+    caret-color: transparent;
+    cursor: pointer;
+  }
 }
 /* The date field's indicator (owner decision C197, 2026-11-15): the calendar
    at the field's end, the field layer's .sf-field-action (inputs
@@ -1647,5 +1784,22 @@
   .sf-datepicker-wrap .sf-input-field:has(> input:disabled) > .sf-datepicker-indicator {
     --sf-field-action--ink: var(--sf-on-surface-disabled);
     cursor: default;
+  }
+}
+/* C227 (owner 2026-11-16; prototypes/forms-datepicker-study.html
+   #q-dp-phone-cells): on a phone the popup that picks one date draws its days
+   at the control height of size 2, 44 x 44, a finger's target as the period
+   sheet's days, the date ribbon and the slider (C78 S6); seven of them and
+   the panel's paddings are 316, inside a 390 screen. A period keeps its days
+   (the sheet has them at 44 already; a period popup, sf-datepicker--range or
+   class markup with a chosen start or end, stays at the control height), a
+   calendar drawn in the page (sf-datepicker--inline) keeps its own, and a
+   desktop is unchanged. The panel's width reads the day height, so the days
+   stay square. */
+@layer sf.components {
+  @media not all and (min-width: 60rem) {
+    .sf-datepicker:not(.sf-datepicker--inline):not(.sf-datepicker--sheet):not(.sf-datepicker--range):not(:has(.sf-datepicker-day-start, .sf-datepicker-day-end)) {
+      --sf-datepicker-day--height: var(--sf-ui-2--control-height);
+    }
   }
 }

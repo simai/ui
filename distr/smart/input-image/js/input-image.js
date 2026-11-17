@@ -189,8 +189,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -829,7 +832,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -844,6 +848,53 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_for
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -892,7 +943,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -1082,7 +1133,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1102,7 +1154,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1142,7 +1195,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1167,7 +1221,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1177,7 +1232,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1297,7 +1353,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1359,15 +1418,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1416,6 +1478,75 @@ if (typeof globalThis !== 'undefined') {
       list: listTagAliases
     });
   }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1970,24 +2101,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("15360766166a");
-/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("a5c6bf6ad612");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("1a493783d3b8");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("8278668e929b");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("6e7f9092a98a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c317333b88f8");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("8ddd5798abe5");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_9__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("15360766166a");
+/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("a5c6bf6ad612");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1a493783d3b8");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8278668e929b");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("6e7f9092a98a");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("c317333b88f8");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("8ddd5798abe5");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_contract__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _value_mjs__WEBPACK_IMPORTED_MODULE_11__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_contract__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _value_mjs__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__);
 // sf-input-image: a form field that holds one image (simai/ui-source#27; the
 // single-file view of the upload family, C81; its looks and parts, C94). It
 // shows the image -- as a row (thumbnail, name and size, the buttons) or as a
@@ -2034,18 +2169,20 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+
  // Only the words on screen ship in the bundle; the title, settings and events
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__.runtime
 };
  // Every word this component says is lang/<locale>.json runtime (standard
-// 1.3.8 §11). `quoted` wraps a file name the way the language quotes: «…» in
-// Russian, “…” in English.
+// 1.3.8 §11). A word that names a file says where the name goes and how the
+// language quotes it: «{name}» in Russian, “{name}” in English.
 
 const WORD_KEYS = Object.keys(en.runtime).filter(key => typeof en.runtime[key] === 'string');
 
@@ -2056,7 +2193,7 @@ const kebab = key => key.replace(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`
 const DEFAULT_ACCEPT = 'image/*';
 const SOURCES = ['device', 'library', 'url'];
 const EDITS = ['crop', 'focus'];
-const MENU = `:scope .sf-image-field-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`;
+const MENU = `:scope .sf-image-field-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
 const EDITOR_WINDOW = ':scope > .sf-image-field > .sf-image-field-window'; // Whether the pointer is a finger: no hover, no drag words (IF-1).
 
 const coarseQuery = () => {
@@ -2086,22 +2223,30 @@ function readDimensions(href) {
 
     image.src = href;
   });
-} // sf-input-image from its component.json (standard simai.smart-component
+}
+
+const FORMER_FILE_LEADS = {
+  'chosen-file': 'chosen-file',
+  'replace-file': 'replace-name',
+  'remove-file': 'remove-name',
+  'edit-file': 'edit-name',
+  'cancel-upload-file': 'cancel-upload-name',
+  'retry-file': 'retry-name'
+}; // sf-input-image from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §4.4, §8, §16.20, §17.1, §17.2): the settings are attributes
 // and properties made by core/js/element-manifest.js, the actions answer an
 // outcome, the events have their vocabulary names (the shim sends the colon
 // names after them), and the host is the form control through
 // ElementInternals.
 
-
-const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
     ru
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
   actions: {
     // Opens the platform's file dialog, as «Заменить…» and «Выбрать…» do.
     choose() {
@@ -2150,9 +2295,10 @@ const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
     }
 
   }
-});
+}); // The word each file word was built from before languages-g1 (the
+// quoted / chosen aliases, fileWord).
 
-class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.FormField)(ImageFieldElement) {
+class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_9__.FormField)(ImageFieldElement) {
   static get props() {
     return { ...super.props,
       templateName: {
@@ -2164,9 +2310,10 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
       value: {
         default: ''
       },
+      // The field ladder's five steps (field-size.js FIELD_LADDER; queue #70).
       size: {
         default: '1',
-        values: _component_field_size__WEBPACK_IMPORTED_MODULE_6__.FIELD_SIZES
+        values: _component_field_size__WEBPACK_IMPORTED_MODULE_8__.FIELD_LADDER
       },
       // The group's name when no label is drawn: a field renderer's panel
       // prints the label beside the field, and a second, visible one inside it
@@ -2194,7 +2341,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     if (Object.prototype.hasOwnProperty.call(this, 'value')) {
       const early = this.value;
       delete this.value;
-      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(early);
+      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseImageValue)(early);
     } // The page's transfer, a property like sf-file-upload's.
 
 
@@ -2264,14 +2411,14 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     const query = coarseQuery();
     this._coarse = Boolean(query?.matches);
     query?.addEventListener?.('change', this._onCoarse);
-    this._phoneQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__.breakpointMedia)('md', {
+    this._phoneQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.breakpointMedia)('md', {
       below: true
     });
     this._phone = Boolean(this._phoneQuery?.matches);
     this._phoneQuery?.addEventListener?.('change', this._onPhone); // C153 (3): never the browser's bubble; the first wrong field of a
     // submit takes the focus (helpers/form-field.js ownInvalid).
 
-    this._invalidListener = (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.ownInvalid)(this, this._onInvalid);
+    this._invalidListener = (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_9__.ownInvalid)(this, this._onInvalid);
     this.addEventListener('focusout', this._onFocusOut);
   }
 
@@ -2286,7 +2433,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_6__.fieldSize)(this.getAttribute('size') || '1', 'sf-input-image');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_8__.ladderSize)(this.getAttribute('size'));
   }
 
   get accept() {
@@ -2310,12 +2457,12 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
   }
 
   get sourceList() {
-    const list = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.listOf)(this.hasAttribute('sources') ? this.getAttribute('sources') : 'device', SOURCES);
+    const list = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.listOf)(this.hasAttribute('sources') ? this.getAttribute('sources') : 'device', SOURCES);
     return list.length ? list : ['device'];
   }
 
   get editList() {
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.listOf)(this.getAttribute('edit'), EDITS);
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.listOf)(this.getAttribute('edit'), EDITS);
   }
 
   get altMode() {
@@ -2325,16 +2472,16 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
 
   get limits() {
     return {
-      maxSize: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('max-size')),
-      minWidth: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('min-width')),
-      minHeight: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.positiveLimit)(this.getAttribute('min-height'))
+      maxSize: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.positiveLimit)(this.getAttribute('max-size')),
+      minWidth: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.positiveLimit)(this.getAttribute('min-width')),
+      minHeight: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.positiveLimit)(this.getAttribute('min-height'))
     };
   } // The ids the template writes come from the instance path (§7.1.1), never
   // from a counter.
 
 
   get _id() {
-    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.instancePath)(this, {
       kind: 'sf-input-image'
     }));
   } // The image the field holds, in the file shape, or null when it is empty.
@@ -2342,7 +2489,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
 
   get value() {
     if (this._value !== undefined) return this._value;
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(this.getAttribute('value'));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseImageValue)(this.getAttribute('value'));
   } // Set from code, the value is not a change: no event, as for a native field.
 
 
@@ -2351,7 +2498,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
   }
 
   setValue(next) {
-    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(next);
+    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseImageValue)(next);
     if (value?.href !== this._objectUrl) this._releaseObjectUrl();
     this._value = value;
     if (value) this._missingShown = false;
@@ -2444,17 +2591,54 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
 
   text(key) {
     return this.sfWord(kebab(key));
-  }
+  } // A word that names the file: the name has its place in the word ({name},
+  // quotes and all), so a language may put it first (C177 follow-up).
+  //
+  // quoted («%s») and chosen, the words once glued around the name, are dated
+  // aliases until 2027-01-01 (languages-g1): a product that registered them
+  // and not the new key keeps the old phrase («Заменить «logo.png»»), noted
+  // once in SF.deprecations.
 
-  quote(name) {
-    return this.text('quoted').replace('%s', name);
+
+  fileWord(key, name) {
+    const lead = FORMER_FILE_LEADS[key];
+
+    if (lead && (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__.registeredWord)(this.localName, key, this) === undefined) {
+      const quoted = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__.registeredWord)(this.localName, 'quoted', this);
+      const chosen = key === 'chosen-file' ? (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__.registeredWord)(this.localName, 'chosen', this) : undefined;
+
+      if (chosen !== undefined || quoted !== undefined && key !== 'chosen-file') {
+        for (const [from, word] of [['quoted', quoted], ['chosen', chosen]]) {
+          if (word !== undefined) {
+            (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+              component: this.localName,
+              tag: this.localName,
+              kind: 'word',
+              from,
+              to: key,
+              since: '2026-11-16',
+              remove_after: '2027-01-01'
+            });
+          }
+        }
+
+        const shown = quoted !== undefined ? String(quoted).replace('%s', name) : `«${name}»`;
+        return `${chosen ?? this.sfWord(lead)} ${shown}`;
+      }
+    }
+
+    return this.sfWord(key, {
+      vars: {
+        name
+      }
+    });
   } // A size as people read it, in the page's language: «2 КБ», «1,4 МБ». Text
   // the host already formatted is shown as it came.
 
 
   formatSize(size) {
     const units = ['bytes', 'kilobytes', 'megabytes', 'gigabytes'].map(key => this.text(key));
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.formatFileSize)(size, {
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.formatFileSize)(size, {
       units,
       node: this
     });
@@ -2548,7 +2732,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
         continue;
       }
 
-      const reason = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.fileRejection)(file, {
+      const reason = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.fileRejection)(file, {
         accept: this.accept,
         maxSize
       });
@@ -2623,7 +2807,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     const vars = {
       name
     };
-    if (reason === 'type') vars.formats = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.acceptFormats)(this.accept, kind => this.sfWord(`formats-${kind}`));
+    if (reason === 'type') vars.formats = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.acceptFormats)(this.accept, kind => this.sfWord(`formats-${kind}`));
     if (reason === 'size') Object.assign(vars, {
       size: this.formatSize(file?.size),
       max: this.formatSize(max)
@@ -2684,7 +2868,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     this._missingShown = false;
     this._urlOpen = false;
     this._editor = null;
-    this.announce(`${this.text('chosen')} ${this.quote(file.name)}`);
+    this.announce(this.fileWord('chosen-file', file.name));
     this.requestComponentUpdate('value');
 
     this._emitValue({
@@ -2754,7 +2938,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
       }
 
       delete next.file;
-      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)(next);
+      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseImageValue)(next);
       this.announce(this.sfWord('uploaded'));
       this.requestComponentUpdate('upload-done');
 
@@ -3025,7 +3209,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
 
     this._releaseObjectUrl();
 
-    this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseImageValue)({
+    this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseImageValue)({
       value: '',
       href: address,
       width: dimensions.width,
@@ -3105,7 +3289,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
 
 
   get cropAspect() {
-    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.aspectRatio)(this.getAttribute('aspect'));
+    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.aspectRatio)(this.getAttribute('aspect'));
     if (own) return own;
     if (this.shapeName === 'circle') return '1 / 1';
     return this.layoutName === 'row' ? '1 / 1' : '16 / 9';
@@ -3117,13 +3301,13 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     if (!value?.href || !modes.length || !this.interactive) return 'unchanged';
     this._editor = {
       mode: modes[0],
-      crop: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCrop)(value.crop) || {
+      crop: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseCrop)(value.crop) || {
         aspect: this.cropAspect.replace(/\s/gu, ''),
         zoom: 1,
         x: 0.5,
         y: 0.5
       },
-      focus: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseFocus)(value.focus) || {
+      focus: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.normaliseFocus)(value.focus) || {
         x: 0.5,
         y: 0.5
       }
@@ -3203,7 +3387,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     const editor = this._editor;
     if (!editor) return;
     const zoom = Math.round((editor.crop.zoom + step) * 100) / 100;
-    editor.crop.zoom = Math.max(_value_mjs__WEBPACK_IMPORTED_MODULE_9__.ZOOM_MIN, Math.min(_value_mjs__WEBPACK_IMPORTED_MODULE_9__.ZOOM_MAX, zoom));
+    editor.crop.zoom = Math.max(_value_mjs__WEBPACK_IMPORTED_MODULE_11__.ZOOM_MIN, Math.min(_value_mjs__WEBPACK_IMPORTED_MODULE_11__.ZOOM_MAX, zoom));
     this.requestComponentUpdate('editor');
   }
 
@@ -3429,7 +3613,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
     const upload = this._upload;
     const notice = this._notice;
     const missing = this._missingShown && this.required && !value && !this.disabled;
-    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_5__.createFieldContract)(this, {
+    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_7__.createFieldContract)(this, {
       prefix: 'sf-image-field',
       required: this.required,
       // error is a dated alias of invalid (§17.2, aliases.json).
@@ -3471,8 +3655,8 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
       fit: this.fitName,
       // The frame of the preview: the page's aspect, else a circle's square,
       // else the picture's own proportion once known.
-      frameAspect: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.aspectRatio)(this.getAttribute('aspect')) || (this.shapeName === 'circle' ? '1 / 1' : dimensions ? `${dimensions.width} / ${dimensions.height}` : '16 / 9'),
-      transparent: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_9__.mayBeTransparent)(value),
+      frameAspect: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.aspectRatio)(this.getAttribute('aspect')) || (this.shapeName === 'circle' ? '1 / 1' : dimensions ? `${dimensions.width} / ${dimensions.height}` : '16 / 9'),
+      transparent: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_11__.mayBeTransparent)(value),
       accept: this.accept,
       fileName: shownName,
       metaText: this.metaText(value),
@@ -3493,7 +3677,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
           url: 'link'
         }[source]
       })) : [],
-      menuSize: this.size === '1/2' ? '1/2' : '1',
+      menuSize: this.size === '1/2' || this.size === '1/3' ? '1/2' : '1',
       edits: this.editList,
       editor,
       editorState: this._editorState(),
@@ -3509,11 +3693,11 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
       names: {
         group: this.label || this.ariaLabel || words.group,
         choose: words.chooseName,
-        replace: fileName ? `${words.replaceName} ${this.quote(fileName)}` : words.replaceName,
-        remove: fileName ? `${words.removeName} ${this.quote(fileName)}` : words.removeName,
-        edit: fileName ? `${words.editName} ${this.quote(fileName)}` : words.editName,
-        cancel: fileName ? `${words.cancelUploadName} ${this.quote(fileName)}` : words.cancelUploadName,
-        retry: fileName ? `${words.retryName} ${this.quote(fileName)}` : words.retryName,
+        replace: fileName ? this.fileWord('replace-file', fileName) : words.replaceName,
+        remove: fileName ? this.fileWord('remove-file', fileName) : words.removeName,
+        edit: fileName ? this.fileWord('edit-file', fileName) : words.editName,
+        cancel: fileName ? this.fileWord('cancel-upload-file', fileName) : words.cancelUploadName,
+        retry: fileName ? this.fileWord('retry-file', fileName) : words.retryName,
         upload: this.sfWord('upload-name', {
           vars: {
             name: fileName || words.group
@@ -3528,7 +3712,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.F
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderImageFieldTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.renderImageFieldTemplate)(this.templateContext());
   }
 
 }
@@ -3549,17 +3733,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderImageFieldTemplate: () => (/* binding */ renderImageFieldTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
  // The buttons are one rung below the field, as a field's own trailing controls
-// are: a size 1 field (a 40px control row) carries size 1/2 buttons.
+// are: a size 1 field (a 40px control row) carries size 1/2 buttons. 1/3 has
+// no rung below it: its buttons are the ladder's smallest, 1/3.
 
 const BUTTON_SIZE = {
+  '1/3': '1/3',
   '1/2': '1/3',
   '1': '1/2',
-  '2': '1'
+  '2': '1',
+  '3': '2'
 }; // The ring over a thumbnail is the smallest; over a preview one rung up.
 
 const RING_SIZE = {
@@ -3568,9 +3756,11 @@ const RING_SIZE = {
 }; // The inner fields (description, address) are the field's own size, at most 1.
 
 const INNER_SIZE = {
+  '1/3': '1/3',
   '1/2': '1/2',
   '1': '1',
-  '2': '1'
+  '2': '1',
+  '3': '1'
 }; // What stands in the thumbnail when there is no picture to show: an invitation
 // while the field is empty, a broken image when the address did not load, and
 // a plain image glyph for a value the host gave without an address.
@@ -3943,6 +4133,13 @@ function renderImageFieldTemplate(context) {
           <span class="sf-image-field-label" id=${labelId}>
             <span class="sf-image-field-label-text">${context.label}</span>
             ${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-image-field-required">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help: context.help,
+    label: context.label,
+    size: context.size,
+    className: 'sf-image-field-help',
+    component
+  })}
           </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
       ${context.layout === 'preview' ? renderPreview(context) : renderRow(context)}
@@ -4412,21 +4609,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1a493783d3b8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.7.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.9.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "6e7f9092a98a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Image field","runtime":{"alt-hint":"For screen readers and search engines.","alt-hint-required":"A screen reader reads it, and mail shows it when images are off.","alt-label":"Image description","alt-missing":"Describe the image or mark it decorative.","alt-placeholder":"What the picture shows","bytes":"B","cancel-upload":"Cancel","cancel-upload-name":"Cancel the upload","choose":"Choose…","choose-menu":"Choose","choose-name":"Choose an image","chosen":"Image chosen","crop":"Frame","crop-hint":"Drag the picture or use the arrows; zoom with the buttons or + and −. Enter to finish, Esc to cancel.","crop-state":"Frame {aspect}, zoom {zoom} %, centre {x} % across, {y} % down","decorative":"Decorative — no description needed","drop":"Drop the file to use it","edit":"Edit","edit-cancel":"Cancel","edit-done":"Done","edit-name":"Edit the frame","edit-title":"Edit the image","empty":"No image chosen","empty-hint":"Drop or paste an image","empty-hint-coarse":"Take a photo or choose one","focus":"Focal point","focus-hint":"Click the main part of the picture or move the point with the arrows: it stays in the frame at any width.","focus-state":"Focal point: {x} % across, {y} % down","formats-audio":"audio","formats-image":"images","formats-video":"video","gigabytes":"GB","group":"Image","kilobytes":"KB","megabytes":"MB","quoted":"“%s”","reject-count":"“{name}” was not added: this field holds one image","reject-empty":"“{name}” is empty","reject-min-height":"“{name}” is {width}×{height} px; it must be at least {min} px high","reject-min-width":"“{name}” is {width}×{height} px; it must be at least {min} px wide","reject-size":"“{name}” is {size}; the limit is {max}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-unreadable":"“{name}” does not open as an image","rejected":"This file is not accepted","remove":"Remove","remove-name":"Remove the image","removed":"Image removed","replace":"Replace…","replace-menu":"Replace","replace-name":"Replace the image","retry":"Try again","retry-name":"Try the upload again","source-device":"From this computer","source-device-coarse":"From this device","source-library":"From the library","source-url":"By address","sources-name":"Where to take the image from","stage-name":"frame","taken-first":"The first image of {n} was taken: this field holds one","upload-cancelled":"Upload cancelled","upload-failed-line":"Not uploaded: {message}","upload-failed-plain":"Not uploaded","upload-failed-validity":"The image was not uploaded: try again or choose another","upload-name":"Uploading {name}","uploaded":"Image uploaded","uploading":"Uploading · {n} %","uploading-plain":"Uploading…","url-close":"Close the address field","url-failed":"The image at this address could not be opened. Check the address.","url-label":"Image address","url-take":"Use","value-missing":"Choose an image.","wait-for-upload":"Wait until the image is uploaded","zoom-in":"Zoom in","zoom-out":"Zoom out"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Image field","runtime":{"alt-hint":"For screen readers and search engines.","alt-hint-required":"A screen reader reads it, and mail shows it when images are off.","alt-label":"Image description","alt-missing":"Describe the image or mark it decorative.","alt-placeholder":"What the picture shows","bytes":"B","cancel-upload":"Cancel","cancel-upload-name":"Cancel the upload","choose":"Choose…","choose-menu":"Choose","choose-name":"Choose an image","chosen-file":"Image chosen: “{name}”","replace-file":"Replace the image “{name}”","remove-file":"Remove the image “{name}”","edit-file":"Edit the frame of “{name}”","cancel-upload-file":"Cancel the upload of “{name}”","retry-file":"Try the upload of “{name}” again","crop":"Frame","crop-hint":"Drag the picture or use the arrows; zoom with the buttons or + and −. Enter to finish, Esc to cancel.","crop-state":"Frame {aspect}, zoom {zoom} %, centre {x} % across, {y} % down","decorative":"Decorative — no description needed","drop":"Drop the file to use it","edit":"Edit","edit-cancel":"Cancel","edit-done":"Done","edit-name":"Edit the frame","edit-title":"Edit the image","empty":"No image chosen","empty-hint":"Drop or paste an image","empty-hint-coarse":"Take a photo or choose one","focus":"Focal point","focus-hint":"Click the main part of the picture or move the point with the arrows: it stays in the frame at any width.","focus-state":"Focal point: {x} % across, {y} % down","formats-audio":"audio","formats-image":"images","formats-video":"video","gigabytes":"GB","group":"Image","kilobytes":"KB","megabytes":"MB","reject-count":"“{name}” was not added: this field holds one image","reject-empty":"“{name}” is empty","reject-min-height":"“{name}” is {width}×{height} px; it must be at least {min} px high","reject-min-width":"“{name}” is {width}×{height} px; it must be at least {min} px wide","reject-size":"“{name}” is {size}; the limit is {max}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-unreadable":"“{name}” does not open as an image","rejected":"This file is not accepted","remove":"Remove","remove-name":"Remove the image","removed":"Image removed","replace":"Replace…","replace-menu":"Replace","replace-name":"Replace the image","retry":"Try again","retry-name":"Try the upload again","source-device":"From this computer","source-device-coarse":"From this device","source-library":"From the library","source-url":"By address","sources-name":"Where to take the image from","stage-name":"frame","taken-first":"The first image of {n} was taken: this field holds one","upload-cancelled":"Upload cancelled","upload-failed-line":"Not uploaded: {message}","upload-failed-plain":"Not uploaded","upload-failed-validity":"The image was not uploaded: try again or choose another","upload-name":"Uploading {name}","uploaded":"Image uploaded","uploading":"Uploading · {n} %","uploading-plain":"Uploading…","url-close":"Close the address field","url-failed":"The image at this address could not be opened. Check the address.","url-label":"Image address","url-take":"Use","value-missing":"Choose an image.","wait-for-upload":"Wait until the image is uploaded","zoom-in":"Zoom in","zoom-out":"Zoom out","help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "c317333b88f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Поле изображения","runtime":{"alt-hint":"Для незрячих и поисковиков.","alt-hint-required":"Его прочитает диктор и покажет почта, если картинки выключены.","alt-label":"Описание изображения","alt-missing":"Опишите изображение или отметьте его декоративным.","alt-placeholder":"Что на картинке","bytes":"Б","cancel-upload":"Отменить","cancel-upload-name":"Отменить загрузку","choose":"Выбрать…","choose-menu":"Выбрать","choose-name":"Выбрать изображение","chosen":"Выбрано изображение","crop":"Кадр","crop-hint":"Перетащите картинку или нажимайте стрелки; масштаб — кнопками или + и −. Enter — готово, Esc — отмена.","crop-state":"Кадр {aspect}, масштаб {zoom} %, центр {x} % по ширине, {y} % по высоте","decorative":"Декоративная — описание не нужно","drop":"Отпустите файл, чтобы поставить его","edit":"Изменить","edit-cancel":"Отмена","edit-done":"Готово","edit-name":"Изменить кадр","edit-title":"Изменить изображение","empty":"Изображение не выбрано","empty-hint":"Перетащите или вставьте изображение","empty-hint-coarse":"Сфотографируйте или выберите","focus":"Точка фокуса","focus-hint":"Щёлкните главное на картинке или двигайте точку стрелками: оно останется в кадре при любой ширине.","focus-state":"Точка фокуса: {x} % по ширине, {y} % по высоте","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","gigabytes":"ГБ","group":"Изображение","kilobytes":"КБ","megabytes":"МБ","quoted":"«%s»","reject-count":"«{name}» не добавлен: в этом поле одно изображение","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-height":"«{name}» — {width}×{height} px, а нужно от {min} px в высоту","reject-min-width":"«{name}» — {width}×{height} px, а нужно от {min} px в ширину","reject-size":"«{name}» — {size}, а можно до {max}","reject-type":"«{name}» не подходит: можно {formats}","reject-unreadable":"«{name}» не открывается как изображение","rejected":"Этот файл не подходит","remove":"Убрать","remove-name":"Убрать изображение","removed":"Изображение убрано","replace":"Заменить…","replace-menu":"Заменить","replace-name":"Заменить изображение","retry":"Повторить","retry-name":"Повторить загрузку","source-device":"С компьютера","source-device-coarse":"С устройства","source-library":"Из библиотеки","source-url":"По ссылке","sources-name":"Откуда взять изображение","stage-name":"кадр","taken-first":"Взято первое изображение из {n}: в этом поле одно","upload-cancelled":"Загрузка отменена","upload-failed-line":"Не загрузилось: {message}","upload-failed-plain":"Не загрузилось","upload-failed-validity":"Изображение не загрузилось: повторите или выберите другое","upload-name":"Загрузка {name}","uploaded":"Изображение загружено","uploading":"Загружается · {n} %","uploading-plain":"Загружается…","url-close":"Закрыть ввод адреса","url-failed":"Не удалось открыть изображение по ссылке. Проверьте адрес.","url-label":"Адрес изображения","url-take":"Взять","value-missing":"Выберите изображение.","wait-for-upload":"Дождитесь, пока изображение загрузится","zoom-in":"Увеличить","zoom-out":"Уменьшить"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Поле изображения","runtime":{"alt-hint":"Для незрячих и поисковиков.","alt-hint-required":"Его прочитает диктор и покажет почта, если картинки выключены.","alt-label":"Описание изображения","alt-missing":"Опишите изображение или отметьте его декоративным.","alt-placeholder":"Что на картинке","bytes":"Б","cancel-upload":"Отменить","cancel-upload-name":"Отменить загрузку","choose":"Выбрать…","choose-menu":"Выбрать","choose-name":"Выбрать изображение","chosen-file":"Выбрано изображение «{name}»","replace-file":"Заменить изображение «{name}»","remove-file":"Убрать изображение «{name}»","edit-file":"Изменить кадр «{name}»","cancel-upload-file":"Отменить загрузку «{name}»","retry-file":"Повторить загрузку «{name}»","crop":"Кадр","crop-hint":"Перетащите картинку или нажимайте стрелки; масштаб — кнопками или + и −. Enter — готово, Esc — отмена.","crop-state":"Кадр {aspect}, масштаб {zoom} %, центр {x} % по ширине, {y} % по высоте","decorative":"Декоративная — описание не нужно","drop":"Отпустите файл, чтобы поставить его","edit":"Изменить","edit-cancel":"Отмена","edit-done":"Готово","edit-name":"Изменить кадр","edit-title":"Изменить изображение","empty":"Изображение не выбрано","empty-hint":"Перетащите или вставьте изображение","empty-hint-coarse":"Сфотографируйте или выберите","focus":"Точка фокуса","focus-hint":"Щёлкните главное на картинке или двигайте точку стрелками: оно останется в кадре при любой ширине.","focus-state":"Точка фокуса: {x} % по ширине, {y} % по высоте","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","gigabytes":"ГБ","group":"Изображение","kilobytes":"КБ","megabytes":"МБ","reject-count":"«{name}» не добавлен: в этом поле одно изображение","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-height":"«{name}» — {width}×{height} px, а нужно от {min} px в высоту","reject-min-width":"«{name}» — {width}×{height} px, а нужно от {min} px в ширину","reject-size":"«{name}» — {size}, а можно до {max}","reject-type":"«{name}» не подходит: можно {formats}","reject-unreadable":"«{name}» не открывается как изображение","rejected":"Этот файл не подходит","remove":"Убрать","remove-name":"Убрать изображение","removed":"Изображение убрано","replace":"Заменить…","replace-menu":"Заменить","replace-name":"Заменить изображение","retry":"Повторить","retry-name":"Повторить загрузку","source-device":"С компьютера","source-device-coarse":"С устройства","source-library":"Из библиотеки","source-url":"По ссылке","sources-name":"Откуда взять изображение","stage-name":"кадр","taken-first":"Взято первое изображение из {n}: в этом поле одно","upload-cancelled":"Загрузка отменена","upload-failed-line":"Не загрузилось: {message}","upload-failed-plain":"Не загрузилось","upload-failed-validity":"Изображение не загрузилось: повторите или выберите другое","upload-name":"Загрузка {name}","uploaded":"Изображение загружено","uploading":"Загружается · {n} %","uploading-plain":"Загружается…","url-close":"Закрыть ввод адреса","url-failed":"Не удалось открыть изображение по ссылке. Проверьте адрес.","url-label":"Адрес изображения","url-take":"Взять","value-missing":"Выберите изображение.","wait-for-upload":"Дождитесь, пока изображение загрузится","zoom-in":"Увеличить","zoom-out":"Уменьшить","help":"Подробнее: {label}"}}');
 
 /***/ }
 

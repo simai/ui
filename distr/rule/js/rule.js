@@ -394,7 +394,11 @@ SF.RuleLoader.highlight = {
   // one that holds it: sf-language draws .sf-language-parts, and the old
   // [^"']*language- loaded highlight, clipboard, scrollbar and the icon
   // buttons on every page with a language switcher (2026-11-07).
-  regex: /(?:class\s*=\s*["'](?:[^"']*\s)?language-[^"']*["']|<pre\b[^>]*>\s*<code\b[^>]*>)/i,
+  // data-lang is the docs' minimal markup, <pre><code data-lang="js">: the
+  // Loader reads attributes of elements inside code and pre, but its markup
+  // scan skips both, so the <pre><code> branch alone never matched and a page
+  // with only data-lang got no highlight (content study X1, 2026-11-16).
+  regex: /(?:class\s*=\s*["'](?:[^"']*\s)?language-[^"']*["']|\bdata-lang\s*=|<pre\b[^>]*>\s*<code\b[^>]*>)/i,
   type: 'component',
   js: true,
   css: true,
@@ -406,6 +410,9 @@ SF.RuleLoader.highlight = {
     name: 'icons'
   }, {
     name: 'scrollbar'
+  }, // The head buttons' names (C48, C217).
+  {
+    name: 'tooltip'
   }]
 };
 
@@ -459,8 +466,10 @@ SF.RuleLoader.kbd = {
   regex: /(?:<kbd\b|\bsf-kbd\b)/i,
   type: 'component',
   css: true,
-  // The script fills <kbd data-sf-shortcut> (owner decision C191, 2026-11-15).
-  js: true
+  // The sheet draws every key; the script only fills <kbd data-sf-shortcut>
+  // (owner decision C191, 2026-11-15), so it comes where one is on the page.
+  js: false,
+  jsWhen: 'kbd[data-sf-shortcut]'
 };
 
 /***/ },
@@ -693,7 +702,11 @@ SF.RuleLoader['skeleton'] = {
 () {
 
 SF.RuleLoader['slider'] = {
-  regex: /sf-slider/,
+  // The class token (sf-slider and its parts), not the name
+  // anywhere in the attributes: sf-slider-range's field label id
+  // "sf-slider-range-field-1" fetched the carousel's sheets and
+  // swiper on a page without a slider.
+  regex: /class\s*=\s*["'](?:[^"']*\s)?sf-slider(?:[\s"']|-)/i,
   type: 'component',
   css: true,
   js: true,
@@ -3660,8 +3673,9 @@ SF.RuleLoader['cl-alert'] = {
     name: 'alerts'
   }, {
     name: 'buttons'
-  }, {
-    name: 'cl-button-icon'
+  }, // The close button: sf-button-close (owner decision C14, RG-CL-3); it was sf-button-icon kind="close".
+  {
+    name: 'cl-button-close'
   }, {
     name: 'cl-icon'
   }]
@@ -4326,6 +4340,8 @@ SF.RuleLoader['cl-empty-state'] = {
   relation: [{
     name: 'featured-icon'
   }, {
+    name: 'placeholder'
+  }, {
     name: 'cl-button'
   }, {
     name: 'cl-icon'
@@ -4401,6 +4417,9 @@ SF.RuleLoader['cl-file-preview'] = {
   {
     name: 'cl-button',
     lazy: true
+  }, // «Повторить» drawn as the icon alone in a narrow failed row (decision C260): its word in the Framework's plain tooltip, shown on hover, keyboard focus and a long press.
+  {
+    name: 'tooltip'
   }, // The page's full-screen viewer, SF.Gallery.view, asked for when a picture, a PDF or a video is opened (decision C149 (6)).
   {
     name: 'cl-gallery',
@@ -4433,6 +4452,9 @@ SF.RuleLoader['cl-file-upload'] = {
     lazy: true
   }, {
     name: 'icon-buttons'
+  }, // The «?» after the label (help, owner decision C153 (8)) is sf-help-mark: fetched with the field.
+  {
+    name: 'cl-help-mark'
   }]
 };
 
@@ -4647,7 +4669,10 @@ SF.RuleLoader['cl-input-code'] = {
   mode: 'smart',
   js: true,
   css: true,
-  relation: [{
+  relation: [// The «?» after the label (help, owner decision C153 (8)) is sf-help-mark: fetched with the field.
+  {
+    name: 'cl-help-mark'
+  }, {
     name: 'verification'
   }, {
     name: 'sr-only/default'
@@ -4670,7 +4695,10 @@ SF.RuleLoader['cl-input-color'] = {
   mode: 'smart',
   js: true,
   css: true,
-  relation: [{
+  relation: [// The «?» after the label (help, owner decision C153 (8)) is sf-help-mark: fetched with the field.
+  {
+    name: 'cl-help-mark'
+  }, {
     name: 'icons'
   }, // inputs: the field layer's .sf-field-action rules (owner decision C123), which the reset inside the frame takes, as sf-input's clear and reveal do.
   {
@@ -4783,6 +4811,9 @@ SF.RuleLoader['cl-input-image'] = {
   }, {
     name: 'cl-modal',
     lazy: true
+  }, // The «?» after the label (help, owner decision C153 (8)) is sf-help-mark: fetched with the field.
+  {
+    name: 'cl-help-mark'
   }]
 };
 
@@ -5072,6 +5103,10 @@ SF.RuleLoader['cl-list-feed'] = {
     name: 'cl-empty-state'
   }, {
     name: 'sr-only/default'
+  }, {
+    name: 'group-heading'
+  }, {
+    name: 'cl-time'
   }]
 };
 
@@ -7260,7 +7295,7 @@ SF.RuleLoader['cursor/default'] = new RegExp("^(?:cursor-(?:a(?:l(?:ias|l-scroll
 /***/ "6fda327b023a"
 () {
 
-SF.RuleLoader['display-print/default'] = new RegExp("^(?:print-(?:block|flex|hidden|inline(?:-(?:block|flex))?|table|visible(?:-none)?))(?![\\s\\S])");
+SF.RuleLoader['display-print/default'] = new RegExp("^(?:print-(?:block|flex|hidden|in(?:line(?:-(?:block|flex))?|visible)|only|table|visible(?:-none)?))(?![\\s\\S])");
 
 /***/ },
 
@@ -8044,49 +8079,49 @@ SF.RuleLoader['font-variant/default'] = new RegExp("^(?:small-caps(?:-none)?)(?!
 /***/ "5d46f7653b04"
 () {
 
-SF.RuleLoader['font-weight/default'] = new RegExp("^(?:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/default'] = new RegExp("^(?:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "05ab06011343"
 () {
 
-SF.RuleLoader['font-weight/hover'] = new RegExp("^(?:hover:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/hover'] = new RegExp("^(?:hover:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "7f972aaa572c"
 () {
 
-SF.RuleLoader['font-weight/lg'] = new RegExp("^(?:lg:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/lg'] = new RegExp("^(?:lg:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "52483faad1a5"
 () {
 
-SF.RuleLoader['font-weight/md'] = new RegExp("^(?:md:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/md'] = new RegExp("^(?:md:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "a22854750f5c"
 () {
 
-SF.RuleLoader['font-weight/sm'] = new RegExp("^(?:sm:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/sm'] = new RegExp("^(?:sm:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "b712a32829ee"
 () {
 
-SF.RuleLoader['font-weight/xl'] = new RegExp("^(?:xl:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/xl'] = new RegExp("^(?:xl:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "cb9468c02697"
 () {
 
-SF.RuleLoader['font-weight/xxl'] = new RegExp("^(?:xxl:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9)))(?![\\s\\S])");
+SF.RuleLoader['font-weight/xxl'] = new RegExp("^(?:xxl:(?:bold(?:er)?|lighter|regular|weight-(?:1|2|3|4|5|6|7|8|9|bold|medium|regular)))(?![\\s\\S])");
 
 /***/ },
 
@@ -8929,7 +8964,7 @@ SF.RuleLoader['justify-self/xxl'] = new RegExp("^(?:xxl:self-main-(?:auto|center
 /***/ "3533ab6b6455"
 () {
 
-SF.RuleLoader['letter-spacing/default'] = new RegExp("^(?:tracking-(?:no-tracking|tight(?:er)?|wide(?:(?:r|st))?))(?![\\s\\S])");
+SF.RuleLoader['letter-spacing/default'] = new RegExp("^(?:tracking-(?:no(?:-tracking|rmal)|tight(?:er)?|wide(?:(?:r|st))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -9041,42 +9076,42 @@ SF.RuleLoader['margin-ext/xxl'] = new RegExp("^(?:(?:-xxl:m-(?:a(?:0|1|2|3|4|5|6
 /***/ "55a1df8cc52f"
 () {
 
-SF.RuleLoader['margin/default'] = new RegExp("^(?:(?:-m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/default'] = new RegExp("^(?:(?:-m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "14a3ad5ccf0b"
 () {
 
-SF.RuleLoader['margin/lg'] = new RegExp("^(?:(?:-lg:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|lg:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/lg'] = new RegExp("^(?:(?:-lg:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|lg:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "cbbb3b7bfdce"
 () {
 
-SF.RuleLoader['margin/md'] = new RegExp("^(?:(?:-md:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|md:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/md'] = new RegExp("^(?:(?:-md:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|md:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "3ec64f0bc36f"
 () {
 
-SF.RuleLoader['margin/sm'] = new RegExp("^(?:(?:-sm:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|sm:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/sm'] = new RegExp("^(?:(?:-sm:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|sm:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "7cef0fa37bf5"
 () {
 
-SF.RuleLoader['margin/xl'] = new RegExp("^(?:(?:-xl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|xl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/xl'] = new RegExp("^(?:(?:-xl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|xl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "418e818ba46b"
 () {
 
-SF.RuleLoader['margin/xxl'] = new RegExp("^(?:(?:-xxl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|xxl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
+SF.RuleLoader['margin/xxl'] = new RegExp("^(?:(?:-xxl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|xxl:m-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|auto))))(?![\\s\\S])");
 
 /***/ },
 
@@ -9790,7 +9825,7 @@ SF.RuleLoader['padding/xxl'] = new RegExp("^(?:xxl:p-(?:0|1(?:\\/(?:2|3|4))?|2|3
 /***/ "a8a4e78cd3e9"
 () {
 
-SF.RuleLoader['pattern/default'] = new RegExp("^(?:pattern-(?:1|2|3|4|5|6|7|8|9))(?![\\s\\S])");
+SF.RuleLoader['pattern/default'] = new RegExp("^(?:pattern-(?:1|2|3|4|5|6|7|8|9|c(?:hecker|olor-(?:amber|b(?:lue|rown)|cyan|error|gr(?:ay|een)|in(?:digo|fo)|lime|neutral|orange|p(?:ink|rimary|urple)|red|s(?:econdary|ky|uccess)|te(?:al|rtiary)|violet|warning|yellow)|ross)|dots|fade-(?:clear|down|none|spot)|gr(?:ain|id)|hatch|s(?:ize-(?:1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|trength-(?:1(?:2|6)|24|8))))(?![\\s\\S])");
 
 /***/ },
 
@@ -10492,14 +10527,14 @@ SF.RuleLoader['stripe/xxl'] = new RegExp("^(?:xxl:stripe-(?:1|2|3|4))(?![\\s\\S]
 /***/ "9f6698331a41"
 () {
 
-SF.RuleLoader['stroke-color/default'] = new RegExp("^(?:stroke(?:-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))?)(?![\\s\\S])");
+SF.RuleLoader['stroke-color/default'] = new RegExp("^(?:stroke(?:-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "e94e0aef8fa2"
 () {
 
-SF.RuleLoader['stroke-color/hover'] = new RegExp("^(?:hover:stroke(?:-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))?)(?![\\s\\S])");
+SF.RuleLoader['stroke-color/hover'] = new RegExp("^(?:hover:stroke(?:-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))?)(?![\\s\\S])");
 
 /***/ },
 
@@ -10891,7 +10926,7 @@ SF.RuleLoader['transform-origin/default'] = new RegExp("^(?:origin-(?:bottom(?:-
 /***/ "e19144f52b4b"
 () {
 
-SF.RuleLoader['transform-rotate/default'] = new RegExp("^(?:rotate-(?:0|1(?:(?:5|80))?|2|3|45|5|90))(?![\\s\\S])");
+SF.RuleLoader['transform-rotate/default'] = new RegExp("^(?:rotate-(?:0|1(?:(?:5|80))?|2|3|45|5|90)|-rotate-(?:1(?:(?:5|80))?|2|3|45|5|90))(?![\\s\\S])");
 
 /***/ },
 

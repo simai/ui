@@ -16,14 +16,45 @@
      was cut at the track's bottom (owner report R242, DEV's audit 2026-11-14). */
   .sf-button-group--segmented .focus-visible,
   .sf-button-group--segmented .focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-button-group--segmented :focus-visible,
   .sf-button-group--segmented .focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
+  }
+  .sf-button-group > sf-button > .sf-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-button-group > sf-button > .sf-icon-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-button-group > sf-button-icon > .sf-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-button-group > sf-icon-button > .sf-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button {
+    flex: 0 0 auto;
+    min-width: 0;
+    min-inline-size: 0;
   }
   .sf-button-group > sf-button,
-  .sf-button-group > .sf-button {
+  .sf-button-group > .sf-button,
+  .sf-button-group > .sf-icon-button {
     flex: 0 0 auto;
     min-width: 0;
     min-inline-size: 0;
@@ -38,6 +69,31 @@
     overflow-x: hidden;
     overflow-y: auto;
   }
+  .sf-button-group[data-sf-stacked] {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  /* A group wider than its container stands in a column at its full width,
+     drawn as the vertical group (owner decision C215); the script decides and
+     writes data-sf-stacked, never the author's data-orientation. */
+  .sf-button-group[data-sf-stacked] {
+    display: flex;
+    width: 100%;
+    inline-size: 100%;
+  }
+  /* Until the script has measured (it writes data-orientation when it binds),
+     a row that does not fit wraps instead of running out of its box: the
+     sheet can arrive a frame before the script, and a clipped 40 px row then
+     grew into a 120 px column (C215 first paint). A row that fits is not
+     touched; an author's orientation, the track and sf-segmented's own group
+     are left alone. */
+  .sf-button-group:not([data-orientation]):not([aria-orientation]):not(.sf-button-group--segmented):not([overflow]):not(sf-segmented > *) {
+    flex-wrap: wrap;
+  }
+  .sf-button-group:not([data-orientation]):not([aria-orientation]):not(.sf-button-group--segmented):not([overflow]):not(sf-button-group > *) {
+    flex-wrap: wrap;
+  }
   .sf-button-group[data-orientation=vertical] > sf-button {
     width: 100%;
     inline-size: 100%;
@@ -46,7 +102,31 @@
     width: 100%;
     inline-size: 100%;
   }
+  .sf-button-group[data-sf-stacked] > sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
   .sf-button-group[data-orientation=vertical] > sf-button > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button-icon > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-orientation=vertical] > sf-icon-button > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button-icon > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-orientation=vertical] > sf-icon-button > .sf-icon-button {
     width: 100%;
     inline-size: 100%;
   }
@@ -54,11 +134,71 @@
     width: 100%;
     inline-size: 100%;
   }
+  .sf-button-group[aria-orientation=vertical] > sf-button > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-button-icon > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-icon-button > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-button-icon > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-icon-button > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button-icon > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-icon-button > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button-icon > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > sf-icon-button > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
   .sf-button-group[data-orientation=vertical] > .sf-button {
     width: 100%;
     inline-size: 100%;
   }
+  .sf-button-group[data-orientation=vertical] > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
   .sf-button-group[aria-orientation=vertical] > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[aria-orientation=vertical] > .sf-icon-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-button-group[data-sf-stacked] > .sf-icon-button {
     width: 100%;
     inline-size: 100%;
   }
@@ -223,6 +363,188 @@
   .sf-button-group > .sf-button:focus-visible,
   .sf-button-group > [aria-pressed=true],
   .sf-button-group > .active {
+    position: relative;
+    z-index: 1;
+  }
+  /* A Smart host draws no box (display: contents), so its control is the one
+     that stands above its neighbours, as a class button does. */
+  .sf-button-group > sf-button > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button[aria-pressed=true] {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-button-icon > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > sf-icon-button > .sf-icon-button.active {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > .sf-icon-button.focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-button-group > .sf-icon-button:focus-visible {
     position: relative;
     z-index: 1;
   }
@@ -1128,6 +1450,32 @@
     border-right-width: var(--sf-px);
     border-inline-width: var(--sf-px);
   }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme] > .sf-button[class*=segment-] {
+    --sf-button--border-top-width: 0;
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    border-top-width: 0;
+    border-block-start-width: 0;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-left-width: var(--sf-px);
+    border-right-width: var(--sf-px);
+    border-inline-width: var(--sf-px);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme] > .sf-button[class*=segment-] {
+    --sf-button--border-top-width: 0;
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    border-top-width: 0;
+    border-block-start-width: 0;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-left-width: var(--sf-px);
+    border-right-width: var(--sf-px);
+    border-inline-width: var(--sf-px);
+  }
   .sf-button-group[data-orientation=vertical] > .sf-button[class*=segment-] {
     --sf-button--border-top-width: 0;
     --sf-button--border-bottom-width: var(--sf-px);
@@ -1142,6 +1490,19 @@
     border-inline-width: var(--sf-px);
   }
   .sf-button-group[aria-orientation=vertical] > .sf-button[class*=segment-] {
+    --sf-button--border-top-width: 0;
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    border-top-width: 0;
+    border-block-start-width: 0;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-left-width: var(--sf-px);
+    border-right-width: var(--sf-px);
+    border-inline-width: var(--sf-px);
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-] {
     --sf-button--border-top-width: 0;
     --sf-button--border-bottom-width: var(--sf-px);
     --sf-button--border-inline-start-width: var(--sf-px);
@@ -1542,6 +1903,200 @@
     border-end-start-radius: 0;
     border-end-end-radius: 0;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:first-child > .sf-button[class*=segment-] {
+    --sf-button--border-top-width: var(--sf-px);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-start-start-radius: var(--sf-button--radius);
+    border-start-end-radius: var(--sf-button--radius);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-] {
+    --sf-button--border-top-width: var(--sf-px);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-start-start-radius: var(--sf-button--radius);
+    border-start-end-radius: var(--sf-button--radius);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-orientation=vertical] > .sf-button[class*=segment-]:first-child{
     border-top-left-radius: var(--sf-button--radius);
   }
@@ -1728,6 +2283,103 @@
     border-bottom-left-radius: 0;
   }
   .sf-button-group[aria-orientation=vertical] > .sf-button[class*=segment-]:first-child {
+    --sf-button--border-top-width: var(--sf-px);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-start-start-radius: var(--sf-button--radius);
+    border-start-end-radius: var(--sf-button--radius);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(ltr)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(rtl)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(rtl)){
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(ltr)){
+    border-bottom-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(rtl)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-right-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(ltr)){
+    border-bottom-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-left-radius: 0;
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child{
+    border-bottom-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child:where(:dir(rtl)){
+    border-bottom-left-radius: 0;
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:first-child {
     --sf-button--border-top-width: var(--sf-px);
     border-top-width: var(--sf-px);
     border-block-start-width: var(--sf-px);
@@ -2112,6 +2764,194 @@
     border-end-start-radius: var(--sf-button--radius);
     border-end-end-radius: var(--sf-button--radius);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][appearance][scheme]:last-child > .sf-button[class*=segment-] {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: var(--sf-button--radius);
+    border-end-end-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(ltr)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-]:where(:dir(rtl)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button[segment][type][scheme]:last-child > .sf-button[class*=segment-] {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: var(--sf-button--radius);
+    border-end-end-radius: var(--sf-button--radius);
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-orientation=vertical] > .sf-button[class*=segment-]:last-child{
     border-top-left-radius: 0;
   }
@@ -2300,29 +3140,344 @@
     border-end-start-radius: var(--sf-button--radius);
     border-end-end-radius: var(--sf-button--radius);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(ltr)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(rtl)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-right-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-right-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(ltr)){
+    border-top-right-radius: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-left-radius: 0;
+  }
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-top-left-radius: 0;
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(rtl)){
+    border-top-left-radius: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(rtl)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(ltr)){
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child{
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child:where(:dir(rtl)){
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > .sf-button[class*=segment-]:last-child {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: var(--sf-button--radius);
+    border-end-end-radius: var(--sf-button--radius);
+  }
+  /* Icon buttons join the same way (RG-BG-1, DEV 2026-11-16): the group gives
+     them segment positions, and the one perimeter above is drawn through the
+     icon button's own edge and corner variables, so its padding still gives
+     each edge back and every look stands in the button's height. The corners
+     of a position are the icon button's own (segment-start, -middle, -end). */
+  .sf-button-group > sf-button-icon[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    border-top-color: var(--sf-outline);
+    border-bottom-color: var(--sf-outline);
+    border-block-color: var(--sf-outline);
+    border-left-color: var(--sf-outline);
+    border-right-color: var(--sf-outline);
+    border-inline-color: var(--sf-outline);
+  }
+  .sf-button-group > sf-icon-button[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    border-top-color: var(--sf-outline);
+    border-bottom-color: var(--sf-outline);
+    border-block-color: var(--sf-outline);
+    border-left-color: var(--sf-outline);
+    border-right-color: var(--sf-outline);
+    border-inline-color: var(--sf-outline);
+  }
+  .sf-button-group > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    border-top-color: var(--sf-outline);
+    border-bottom-color: var(--sf-outline);
+    border-block-color: var(--sf-outline);
+    border-left-color: var(--sf-outline);
+    border-right-color: var(--sf-outline);
+    border-inline-color: var(--sf-outline);
+  }
+  .sf-button-group > sf-button-icon[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  .sf-button-group > sf-icon-button[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  .sf-button-group > .sf-icon-button.segment-start {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button-icon[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-sf-stacked] > sf-icon-button[segment] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-orientation=vertical] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[aria-orientation=vertical] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-sf-stacked] > .sf-icon-button[class*=segment-] {
+    --sf-icon-button--border-top-width: 0;
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button-icon[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-sf-stacked] > sf-icon-button[segment] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-orientation=vertical] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[aria-orientation=vertical] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-sf-stacked] > .sf-icon-button.segment-start {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-top-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-top-right-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[data-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-button-icon[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[aria-orientation=vertical] > sf-icon-button[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > sf-button-icon[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > sf-icon-button[segment] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[data-orientation=vertical] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[aria-orientation=vertical] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
+  .sf-button-group[data-sf-stacked] > .sf-icon-button.segment-end {
+    --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
+    --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
+    --sf-icon-button--border-bottom-left-radius: var(--sf-icon-button--radius);
+    --sf-icon-button--border-bottom-right-radius: var(--sf-icon-button--radius);
+  }
   /* A button in a seamless group draws the same ring as a standalone one, only
      turned inwards, so it never covers the separator of its neighbour. No
      shadow is involved any more, so nothing has to be suppressed for pointer
      focus either. */
   .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-button-group > sf-button:has(> .sf-button:focus-visible) > .sf-button,
   .sf-button-group > .sf-button:focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   @media (forced-colors: active) {
     .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
     .sf-button-group > .sf-button.focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
       --sf-button--box-shadow: none;
     }
     .sf-button-group > sf-button:has(> .sf-button:focus-visible) > .sf-button,
     .sf-button-group > .sf-button:focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
       --sf-button--box-shadow: none;
     }
   }
@@ -2332,13 +3487,40 @@
   .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > .sf-button {
     --sf-button--radius: var(--sf-radius--ui);
   }
+  .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > sf-button-icon > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius--ui);
+  }
+  .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > sf-icon-button > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius--ui);
+  }
+  .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius--ui);
+  }
   .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > sf-button > .sf-button,
   .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > .sf-button {
     --sf-button--radius: var(--sf-radius-square);
   }
+  .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > sf-button-icon > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-square);
+  }
+  .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > sf-icon-button > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-square);
+  }
+  .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-square);
+  }
   .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > sf-button > .sf-button,
   .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > .sf-button {
     --sf-button--radius: var(--sf-radius-rounded);
+  }
+  .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > sf-button-icon > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-rounded);
+  }
+  .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > sf-icon-button > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-rounded);
+  }
+  .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > .sf-icon-button {
+    --sf-icon-button--radius: var(--sf-radius-rounded);
   }
   .sf-button-group > sf-button > .sf-button,
   .sf-button-group > .sf-button {
@@ -2368,8 +3550,9 @@
    (radius="default|square|rounded" as sf-button reads it) and the track is
    that radius plus the padding: rounded makes both pills.
 
-   In a narrow container the track scrolls inside itself, as every button group
-   does; it never widens the page. full-width shares the width equally instead.
+   In a narrow container the track scrolls inside itself; it never widens the
+   page. full-width shares the width equally instead. (A joined group stacks
+   into a column instead, decision C215; the track keeps its scroll.)
 
    Public variables (core/contracts/public-variables.v1.json), read here and
    never set by the Framework: --sf-button-group-background-color (the track),
@@ -2919,11 +4102,11 @@
       color: GrayText;
     }
     .sf-button-group--segmented > .sf-button-group-segment.focus-visible {
-      outline: var(--sf-focus-outline-width) solid CanvasText;
+      outline: var(--sf-focus--width) solid CanvasText;
       outline-offset: 0;
     }
     .sf-button-group--segmented > .sf-button-group-segment:focus-visible {
-      outline: var(--sf-focus-outline-width) solid CanvasText;
+      outline: var(--sf-focus--width) solid CanvasText;
       outline-offset: 0;
     }
   }

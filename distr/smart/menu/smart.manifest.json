@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.menu",
-  "version": "1.11.1",
+  "version": "1.13.5",
   "title": "Menu",
   "summary": "Site navigation built from data -- nested sections, the current page, groups that open and close -- or from a nested list of links in the markup, drawn as the class menu: a column whose branches open in place, or a row whose branches open as panels placed by SF.Position, which becomes a button opening the same links when it does not fit. The WAI-ARIA disclosure navigation pattern, not an application menu.",
   "kind": "smart",
@@ -68,12 +68,13 @@
       "appearance": {
         "type": "string",
         "default": "default",
-        "description": "The class menu's presentations: default; documentation-tree, the tree with no borders and an indent per level; rail, a rail of first-level icons whose words stay in the link's name and whose branches do not open (both columns); navigation, a site header's sections -- rows with no frame and no fill at rest, a state-layer fill under the pointer and a plate on the current page -- a row or a column as orientation says. The old value compact is a dated alias of rail until 2027-01-01 (owner decision C134: compact means density only; noted in SF.deprecations, journal value-menu-appearance-compact-to-rail).",
+        "description": "The class menu's presentations: default, the C30 site menu -- drawn as navigation (rows with no frame, the current page filled in a column, the 2 px line in a header row; owner decisions C23, C30); documentation-tree, the tree with no borders and an indent per level; rail, a rail of first-level icons whose words stay in the link's name and whose branches do not open (both columns); navigation, a site header's sections -- rows with no frame and no fill at rest, a state-layer fill under the pointer and a plate on the current page -- a row or a column as orientation says. framed, the former default's framed rows (a 1 px frame on every row, no current mark), is a dated name until 2027-01-01 (owner decision C238: the default is the navigation look; the class sf-menu--framed it writes is noted in SF.deprecations, journal class-c238-menu-default-navigation). The old value compact is a dated alias of rail until 2027-01-01 (owner decision C134: compact means density only; noted in SF.deprecations, journal value-menu-appearance-compact-to-rail).",
         "enum": [
           "default",
           "documentation-tree",
           "rail",
-          "navigation"
+          "navigation",
+          "framed"
         ]
       },
       "current-from-location": {
@@ -746,15 +747,15 @@
       },
       {
         "path": "src/smart/menu/items.mjs",
-        "sha256": "fcf8f8c185eb1097c17664e898cd3520c56c31745ac2926073413bc2fa2c272d"
+        "sha256": "f156efa2f18eee7b10c579f9e6e843a08b3e98474ddb5d5faaca4cf02314ece9"
       },
       {
         "path": "src/smart/menu/js/templates/default.js",
-        "sha256": "8e61d8b5afb3941c09bd2e9676734fd1ca39b8741ece9d4be214a1e353e8d7f7"
+        "sha256": "2e8e3014dce98b96c384d825c29af318c1afb7eceb2ffcacda9888dae4c3e3ef"
       },
       {
         "path": "src/smart/menu/scss/_smart__menu.scss",
-        "sha256": "2d93d1f202d71e8ac28f9f0353709e493bc3f9da4319e996ecf97f889ec3b5d1"
+        "sha256": "844486b8ce98fd10b00ec27a3409d71c31714f0077144676009a91b569b0c404"
       },
       {
         "path": "src/smart/menu/rule.js",
@@ -762,7 +763,7 @@
       },
       {
         "path": "src/smart/menu/docs.md",
-        "sha256": "8f9e375560de740406242c32eb14d797b61340956edc370eb23bc886cb12095e"
+        "sha256": "62c2ef42e24cdbacf2bd0bd4610ef6be469e9e9408a7e2904793dd65e410736e"
       }
     ],
     "generated_runtime": []

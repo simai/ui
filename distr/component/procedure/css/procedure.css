@@ -4,6 +4,8 @@
     --sf-procedure--marker-size: var(--sf-text-height-1);
     --sf-procedure--gap: var(--sf-procedure-gap, var(--sf-content--space-related));
     --sf-procedure--line-width: var(--sf-procedure-line-width, var(--sf-px));
+    --sf-procedure--ring: calc(var(--sf-px) * 2);
+    --sf-procedure--check: var(--sf-px);
     display: flex;
     flex-direction: column;
     gap: var(--sf-procedure--gap);
@@ -20,15 +22,15 @@
     display: grid;
     grid-template-columns: var(--sf-procedure--marker-size) minmax(0, 1fr);
     align-content: start;
-    grid-column-gap: var(--sf-space-1);
-    -webkit-column-gap: var(--sf-space-1);
-       -moz-column-gap: var(--sf-space-1);
-            column-gap: var(--sf-space-1);
-    grid-column-gap: var(--sf-space-1);
-    grid-column-gap: var(--sf-procedure-indent, var(--sf-space-1));
-    -webkit-column-gap: var(--sf-procedure-indent, var(--sf-space-1));
-       -moz-column-gap: var(--sf-procedure-indent, var(--sf-space-1));
-            column-gap: var(--sf-procedure-indent, var(--sf-space-1));
+    grid-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
+    -webkit-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
+       -moz-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
+            column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
+    grid-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
+    grid-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
+    -webkit-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
+       -moz-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
+            column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
     grid-row-gap: var(--sf-content--space-text);
     row-gap: var(--sf-content--space-text);
     min-width: 0;
@@ -48,8 +50,8 @@
     inline-size: var(--sf-procedure--marker-size);
     height: var(--sf-procedure--marker-size);
     block-size: var(--sf-procedure--marker-size);
-    color: var(--sf-on-surface);
-    color: var(--sf-procedure-marker-color, var(--sf-on-surface));
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-procedure-marker-color, var(--sf-on-surface-variant));
     background-color: transparent;
     background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, transparent));
     border: var(--sf-px) solid var(--sf-outline);
@@ -128,15 +130,30 @@
             padding-block-start: calc((var(--sf-procedure--marker-size) - var(--sf-text--height)) / 2);
   }
   .sf-procedure-step--complete::before {
+    content: "";
     color: var(--sf-on-primary);
     background-color: var(--sf-primary);
     border-color: var(--sf-primary);
+    background-image: linear-gradient(to top right, var(--sf-transparent) calc(50% - var(--sf-procedure--check)), var(--sf-on-primary) calc(50% - var(--sf-procedure--check)) calc(50% + var(--sf-procedure--check)), var(--sf-transparent) calc(50% + var(--sf-procedure--check))), linear-gradient(to bottom right, var(--sf-transparent) calc(50% - var(--sf-procedure--check)), var(--sf-on-primary) calc(50% - var(--sf-procedure--check)) calc(50% + var(--sf-procedure--check)), var(--sf-transparent) calc(50% + var(--sf-procedure--check)));
+    background-origin: border-box;
+    background-repeat: no-repeat;
+    background-size: 17% 17%, 39.2% 39.2%;
+    background-position: 27.2% 63.1%, 65.1% 49.7%;
   }
   .sf-procedure-step--current::before {
-    color: var(--sf-on-primary-container);
-    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary);
+    background-color: var(--sf-primary);
     border-color: var(--sf-primary);
-    box-shadow: var(--sf-0) var(--sf-0) var(--sf-0) var(--sf-px) var(--sf-primary);
+    outline: var(--sf-procedure--ring) solid var(--sf-primary);
+    outline-offset: var(--sf-procedure--ring);
+  }
+  .sf-procedure-step--current:not(:last-child)::after {
+    top: calc(var(--sf-procedure--marker-size) + var(--sf-procedure--ring) * 2 + var(--sf-space-1\/4));
+    inset-block-start: calc(var(--sf-procedure--marker-size) + var(--sf-procedure--ring) * 2 + var(--sf-space-1\/4));
+  }
+  .sf-procedure-step:has(+ .sf-procedure-step--current)::after {
+    bottom: calc(var(--sf-space-1\/4) + var(--sf-procedure--ring) * 2 - var(--sf-procedure--gap));
+    inset-block-end: calc(var(--sf-space-1\/4) + var(--sf-procedure--ring) * 2 - var(--sf-procedure--gap));
   }
   .sf-procedure--list > .sf-procedure-step::after {
     content: none;
@@ -147,6 +164,12 @@
     }
     .sf-procedure-step:not(:last-child)::after {
       background-color: CanvasText;
+    }
+    .sf-procedure-step--complete::before {
+      content: counter(sf-procedure);
+    }
+    .sf-procedure-step--current::before {
+      outline-color: CanvasText;
     }
   }
 }

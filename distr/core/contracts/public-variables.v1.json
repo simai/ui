@@ -1079,20 +1079,6 @@
           "varies_with": [
             "appearance"
           ]
-        },
-        {
-          "name": "--sf-avatar-offline-background-color",
-          "role": "background",
-          "summary": "The colour of the offline dot: the place's dim ink (since 2026-11-11; it was the place colour under the disabled ink, under 3:1), laid over the nearest opaque place (--sf-surface-place-ground), so neither the photo nor the initials show through the dot, on a soft coloured place too.",
-          "default": "var(--sf-on-surface-variant)",
-          "since": "2026-11-10"
-        },
-        {
-          "name": "--sf-avatar-offline-overlay",
-          "role": "overlay",
-          "summary": "A layer over that colour, none by default (it was the disabled ink until 2026-11-11). A page may lay an image or a gradient over the dot here.",
-          "default": "none",
-          "since": "2026-11-10"
         }
       ]
     },
@@ -1570,7 +1556,7 @@
           "name": "--sf-menu-submenu-radius",
           "role": "radius",
           "summary": "A horizontal menu's panel corner radius.",
-          "default": "var(--sf-radius--ui)",
+          "default": "var(--sf-radius--surface)",
           "since": "2026-10-25",
           "varies_with": [
             "orientation"
@@ -1942,8 +1928,8 @@
         {
           "name": "--sf-steps-gap",
           "role": "gap",
-          "summary": "The space between two steps of a row (sf-steps 1.4.0).",
-          "default": "var(--sf-space-1\\/2)",
+          "summary": "The space between two steps of a row (sf-steps 1.4.0): the line stands this far before the next marker, as far as the step's own gap after the label (owner decision C241).",
+          "default": "var(--sf-space-1\\/3)",
           "since": "2026-10-27"
         },
         {
@@ -2596,7 +2582,7 @@
         {
           "name": "--sf-spinner-text-color",
           "role": "color",
-          "summary": "The words under the drawing: the ink of the place, the on-colour of the fill under the spinner.",
+          "summary": "The words under the drawing: the spinner's own ink (currentColor), so on-surface-variant for a spinner on its own (C130 (6)) and the control's ink inside a button or another control.",
           "default": "currentColor",
           "since": "2026-10-27"
         }
@@ -2656,8 +2642,8 @@
         {
           "name": "--sf-empty-state-max-inline-size",
           "role": "max-inline-size",
-          "summary": "The widest the block form grows.",
-          "default": "var(--sf-g4)",
+          "summary": "The widest the block form grows; unset, the place sets the width, as for sf-placeholder.",
+          "default": "none",
           "since": "2026-10-27"
         },
         {
@@ -2677,21 +2663,15 @@
         {
           "name": "--sf-empty-state-gap",
           "role": "gap",
-          "summary": "Space between the icon, the heading and the sentence.",
-          "default": "var(--sf-space-1/2)",
-          "varies_with": [
-            "size"
-          ],
+          "summary": "Space from the icon to the words and from the words to the actions (sf-placeholder's gaps; the heading and the sentence keep the placeholder's header gap).",
+          "default": "var(--sf-space-1)",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-empty-state-padding-block",
           "role": "padding-block",
-          "summary": "Room above and below the block form.",
-          "default": "var(--sf-space-1)",
-          "varies_with": [
-            "size"
-          ],
+          "summary": "Room above and below the block form; none unless a size-2 state draws the expressive circle (--sf-space-2 then).",
+          "default": "0",
           "since": "2026-10-27"
         },
         {
@@ -3062,8 +3042,8 @@
         {
           "name": "--sf-tree-gap",
           "role": "gap",
-          "summary": "The space between rows.",
-          "default": "var(--sf-space-1\\/3)",
+          "summary": "The space between rows: 4, as the menu column's (owner decision C243).",
+          "default": "var(--sf-space-1\\/4)",
           "since": "2026-10-27"
         },
         {
@@ -3787,8 +3767,8 @@
         {
           "name": "--sf-procedure-marker-color",
           "role": "color",
-          "summary": "The number in a step's marker.",
-          "default": "var(--sf-on-surface)",
+          "summary": "The number in the marker of a step ahead; the explanation's ink, as the sf-steps marker (C194). A complete step draws a check and a current one its own number in on-primary.",
+          "default": "var(--sf-on-surface-variant)",
           "since": "2026-11-01"
         },
         {
@@ -3815,8 +3795,8 @@
         {
           "name": "--sf-procedure-indent",
           "role": "gap",
-          "summary": "The space between a marker and its step's content.",
-          "default": "var(--sf-space-1)",
+          "summary": "The space between a marker and its step's content: 12 at every width and density, the sf-steps marker-to-label step (C234).",
+          "default": "calc(var(--sf-a8) + var(--sf-procedure--ring) * 2)",
           "since": "2026-11-01"
         }
       ]

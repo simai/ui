@@ -5,14 +5,30 @@
             animation-name: sf-animation-fade;
     -webkit-animation-duration: var(--sf-duration-normal);
             animation-duration: var(--sf-duration-normal);
-    -webkit-animation-timing-function: var(--sf-animation);
-            animation-timing-function: var(--sf-animation);
+    -webkit-animation-timing-function: var(--sf-ease-enter);
+            animation-timing-function: var(--sf-ease-enter);
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animation {
+      -webkit-animation-duration: 0.01ms;
+              animation-duration: 0.01ms;
+      -webkit-animation-iteration-count: 1;
+              animation-iteration-count: 1;
+    }
   }
   .infinite {
     -webkit-animation-iteration-count: infinite;
             animation-iteration-count: infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .infinite {
+      -webkit-animation-duration: 0.01ms;
+              animation-duration: 0.01ms;
+      -webkit-animation-iteration-count: 1;
+              animation-iteration-count: 1;
+    }
   }
   .animation-from-left {
     -webkit-animation-name: sf-animation-from-left;

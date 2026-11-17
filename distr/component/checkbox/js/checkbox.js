@@ -159,6 +159,7 @@ const SWITCH_TEXT_PARTS = Object.freeze({
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindCheckbox: () => (/* binding */ bindCheckbox),
+/* harmony export */   preloadCheckboxIcons: () => (/* binding */ preloadCheckboxIcons),
 /* harmony export */   resolveCheckboxIcon: () => (/* binding */ resolveCheckboxIcon),
 /* harmony export */   setCheckboxState: () => (/* binding */ setCheckboxState),
 /* harmony export */   syncCheckboxState: () => (/* binding */ syncCheckboxState),
@@ -189,6 +190,21 @@ function resolveCheckboxIcon(state) {
   if (state.indeterminate) return 'remove';
   if (state.checked) return 'check';
   return '';
+} // The box's glyphs are asked for when the first box binds, with the page's
+// first icons: a box that starts unchecked names no glyph, so the first
+// subset font had no «check», and the first tick stayed unseen until a second
+// font came (the Loader draws a glyph only from a font it has). Once per
+// bundle; the Loader asks nothing for a name it already has.
+
+
+let boxIconsAsked = false;
+function preloadCheckboxIcons() {
+  if (boxIconsAsked) return false;
+  const loader = globalThis.SF?.Loader;
+  if (typeof loader?.preloadIcons !== 'function') return false;
+  boxIconsAsked = true;
+  loader.preloadIcons(['check', 'remove']);
+  return true;
 }
 
 function setCheckboxIcon(iconElement, icon = '') {
@@ -247,6 +263,7 @@ function bindCheckbox(root) {
   input.addEventListener('change', handleChange);
   root.__sfCheckboxReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[CHECKBOX_BOUND_FLAG] = '1';
+  preloadCheckboxIcons();
   syncCheckboxState(root);
   (0,_checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.linkCheckableText)(root, _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__.CHECKBOX_TEXT_PARTS);
 }

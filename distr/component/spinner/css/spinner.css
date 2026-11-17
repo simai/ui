@@ -66,10 +66,10 @@
     --sf-loader-comet-duration: calc(var(--sf-duration-slow) * 2);
     /* A spinner on its own is the place's quiet ink, on-surface-variant (owner
        decision C130 (6)): quieter than the text beside it, as the «готовится»
-       glyph of C120. A control that draws one (a button, an icon button, a
-       badge, a modal) sets the colour on its own spinner, so a spinner in a
-       button keeps the button's ink. --sf-spinner-color and --sf-loader--color
-       still set it. */
+       glyph of C120; the words under it read the same ink (below). A control
+       that draws one (a button, an icon button, a badge, a modal) sets the
+       colour on its own spinner, so a spinner in a button keeps the button's
+       ink. --sf-spinner-color and --sf-loader--color still set it. */
     color: var(--sf-on-surface-variant);
     color: var(--sf-spinner-color, var(--sf-loader--color, var(--sf-on-surface-variant)));
     display: flex;
@@ -83,9 +83,10 @@
     font-weight: 400;
     font-size: var(--sf-loader-text-size);
     line-height: var(--sf-loader-text-line);
-    /* The words take the ink of the place, the on-colour of the fill under the
-       spinner (DEV J1/S1): on-surface on a page, on-primary on a primary plate.
-       --sf-spinner-text-color still sets them apart. */
+    /* The words take the spinner's own ink, currentColor (DEV J1/S1; RG-SP-1):
+       on-surface-variant for a spinner on its own, as its arc (C130 (6), set on
+       the container above), and the control's ink inside a button or another
+       control. --sf-spinner-text-color still sets them apart. */
     color: currentColor;
     color: var(--sf-spinner-text-color, currentColor);
   }
@@ -374,8 +375,13 @@
       opacity: var(--sf-opacity-20);
     }
   }
-  /* Reduced motion: the arc stands still at its own 30 % of the ring (the
-     look under reduced motion waits for the owner, C130 (7)). */
+  /* Reduced motion (owner decision C220, closes C130 (7)): nothing turns, and
+     no arc stands still either -- a 30 % arc read as an amount done. The whole
+     ring is tinted with the spinner's ink at 32 %, the top of the fill family,
+     and the arc is not drawn: the picture of the paused and reduced-motion bar
+     and ring (C131 (8)). The same in every place, as every spinner -- on its
+     own, in a button, an icon button, a field, a badge, a modal -- is this
+     drawing under this sheet. */
   @media (prefers-reduced-motion: reduce) {
     .sf-loader-container .sf-loader-svg,
     .sf-loader-container .sf-loader-ring-accent,
@@ -384,7 +390,11 @@
               animation: none !important;
     }
     .sf-loader-container .sf-loader-ring-accent {
+      display: none;
+    }
+    .sf-loader-container .sf-loader-ring-filled {
       opacity: 1;
+      stroke: color-mix(in srgb, currentColor 32%, transparent);
     }
   }
 }

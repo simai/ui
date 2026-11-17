@@ -16,15 +16,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("32f2d60c5165");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ad38f797cd15");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b99c8b8e2c4b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2484a115f83a");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1c518e38db07");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("32f2d60c5165");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ad38f797cd15");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("b99c8b8e2c4b");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2484a115f83a");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1c518e38db07");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__);
 // sf-change: a field's change as text (owner decision C40, 2026-11-09):
 //
 //   <sf-change label="Статус" before="Собран" after="Передан в доставку"></sf-change>
@@ -44,14 +48,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
+
  // Only the words on screen ship in the bundle; the title, settings and events
 // stay in the language files for the Studio and the docs (localization study LC-2).
 
 const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
+  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
 };
 const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
+  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
 };
  // A value longer than this (in graphemes, roughly characters) is not put in a sentence.
 
@@ -90,7 +96,7 @@ function normalizeChanges(value) {
 function isLong(text) {
   return text !== null && Array.from(text).length > LONG;
 }
-const ChangeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+const ChangeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
     en,
@@ -176,7 +182,7 @@ class SfChange extends ChangeElement {
       blocksId: `${this._uid}-blocks`,
       words: {
         empty: this.sfWord('empty-text'),
-        to: this.sfWord('to-text'),
+        change: (before, after) => this.changePhrase(before, after),
         separator: this.sfWord('label-separator'),
         show: this.sfWord('show-text'),
         hide: this.sfWord('hide-text'),
@@ -185,10 +191,37 @@ class SfChange extends ChangeElement {
       },
       rootClass: this.getRootClass()
     });
+  } // The phrase a screen reader hears. to-text, the word once glued between
+  // the values, is a dated alias until 2027-01-01 (languages-g1): a product
+  // that registered it and not change-text keeps «A to B», noted once.
+
+
+  changePhrase(before, after) {
+    const to = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__.registeredWord)(this.localName, 'to-text', this);
+
+    if (to === undefined || (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__.registeredWord)(this.localName, 'change-text', this) !== undefined) {
+      return this.sfWord('change-text', {
+        vars: {
+          before,
+          after
+        }
+      });
+    }
+
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+      component: this.localName,
+      tag: this.localName,
+      kind: 'word',
+      from: 'to-text',
+      to: 'change-text',
+      since: '2026-11-16',
+      remove_after: '2027-01-01'
+    });
+    return `${before} ${to} ${after}`;
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderChangeTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderChangeTemplate)(this.templateContext());
   }
 
 }
@@ -217,8 +250,8 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
  // sf-change's markup (scss/ draws it).
 //
 // - inline: [label: ] old value, then the arrow glued to the start of the new
-//   value; the values wrap. The arrow is a picture; a visually hidden
-//   word between the values says the change to a screen reader.
+//   value; the values wrap. The values and the arrow are a picture; a
+//   visually hidden phrase says the change to a screen reader.
 // - list: a dl, a term (the label) and a description (the pair) per change.
 // - folded (a long value in a sentence): the button «Показать изменения»
 //   (aria-expanded, aria-controls) and, revealed, the two values as blocks
@@ -244,13 +277,20 @@ const value = (context, text, part) => {
   if (text === null) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-change__${part} sf-change__empty`}>${context.words.empty}</span>`;
   const shown = String(text).trim();
   return whole(shown) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-change__${part} sf-change__whole`}>${unbroken(shown)}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-change__${part}`}>${shown}</span>`;
-}; // The arrow and the new value are joined by a no-break space (the hidden word
-// is out of flow and makes no break), so the arrow never ends a line alone;
-// both values wrap like any text.
+}; // The arrow and the new value are joined by a no-break space (the hidden
+// phrase is out of flow and makes no break), so the arrow never ends a line
+// alone; both values wrap like any text. The values and the arrow are a
+// picture for the eye; a screen reader hears one phrase of the language with
+// both values in it (change-text, «было {before}, стало {after}»): a word
+// glued between two values cannot be said in a language that ends the values
+// themselves (C177 follow-up).
 
 
-const pair = (context, change) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${value(context, change.before, 'before')}<span class="sf-change__pair"> <span
-  class="sf-change__arrow" aria-hidden="true">→</span><span class="sr-only"> ${context.words.to}</span>\u00a0${value(context, change.after, 'after')}</span>`;
+const said = (context, text) => text === null ? context.words.empty : String(text).trim();
+
+const pair = (context, change) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span aria-hidden="true">${value(context, change.before, 'before')}</span><span class="sf-change__pair"> <span
+  class="sf-change__arrow" aria-hidden="true">→</span><span class="sr-only">${context.words.change(said(context, change.before), said(context, change.after))}</span>\u00a0<span
+  aria-hidden="true">${value(context, change.after, 'after')}</span></span>`;
 
 const label = (context, change) => context.showLabel && change.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-change__label">${change.label}${context.words.separator} </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
@@ -300,6 +340,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -314,6 +361,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "deb1a4d61565"
 (module) {
 
@@ -324,21 +378,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "ad38f797cd15"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.0.5","kind":"leaf","settings":{"before":{"type":"string","default":""},"after":{"type":"string","default":""},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.1.1","kind":"leaf","settings":{"before":{"type":"string","default":""},"after":{"type":"string","default":""},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "b99c8b8e2c4b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Change","runtime":{"empty-text":"empty","to-text":"to","label-separator":":","show-text":"Show changes","hide-text":"Hide changes","before-text":"Before","after-text":"After"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Change","runtime":{"empty-text":"empty","change-text":"was {before}, now {after}","label-separator":":","show-text":"Show changes","hide-text":"Hide changes","before-text":"Before","after-text":"After"}}');
 
 /***/ },
 
 /***/ "2484a115f83a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение","runtime":{"empty-text":"пусто","to-text":"на","label-separator":":","show-text":"Показать изменения","hide-text":"Скрыть изменения","before-text":"Было","after-text":"Стало"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение","runtime":{"empty-text":"пусто","change-text":"было {before}, стало {after}","label-separator":":","show-text":"Показать изменения","hide-text":"Скрыть изменения","before-text":"Было","after-text":"Стало"}}');
 
 /***/ }
 

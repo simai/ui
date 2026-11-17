@@ -46,10 +46,13 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
- // The words, by language. A count is one phrase per plural form, separated by
-// «|» in the order of CLDR's categories -- one|few|many|other in Russian,
-// one|other in English -- with {count} where the number goes. A product adds a
-// language with SF.language.register('sf-badge', code, {count, dot}).
+ // The words, by language. A count is a plural word, one phrase per plural
+// category of the language as Intl.PluralRules names them ({one, few, many,
+// other} in Russian, {one, other} in English), with {count} where
+// the number goes: the form every language file and pack uses (C177). A
+// product adds a language with SF.language.register('sf-badge', code,
+// {count, dot}); a count written as «a|b|c» (an author's label, a product's
+// word from before) still reads in the order of the categories.
 
 const ANCHORED_BADGE_TEXT = {
   en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
@@ -81,12 +84,26 @@ function badgeFlag(value) {
   return String(value).trim().toLowerCase() !== 'false';
 }
 /**
- * The form of `forms` ("a|b|c") for `count` in `locale`. One form is used for
- * every number; with several, the n-th form answers the n-th plural category
- * the language has, and a category past the last form takes the last one.
+ * The form of `forms` for `count` in `locale`. A plural word
+ * ({one, few, many, other}) answers the category Intl.PluralRules gives,
+ * else its `other`. A string "a|b|c": one form is used for every number; with
+ * several, the n-th form answers the n-th plural category the language has,
+ * and a category past the last form takes the last one.
  */
 
 function pluralForm(forms, count, locale = 'en') {
+  if (forms && typeof forms === 'object') {
+    let category = 'other';
+
+    try {
+      category = new Intl.PluralRules(locale).select(count);
+    } catch {
+      category = 'other';
+    }
+
+    return String(forms[category] ?? forms.other ?? '');
+  }
+
   const list = String(forms ?? '').split('|');
   if (list.length === 1) return list[0];
 
@@ -282,8 +299,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -973,6 +993,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _shared__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
+ // The name and the role wrap (owner decision C152 (7): a printed name is
+// read whole, the class sheet breaks a word longer than the line); with
+// no-wrap they end in an ellipsis and the full text is the line's title
+// (register RG-S1-24, 2026-11-16).
 
 function renderLabelTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -988,10 +1012,10 @@ function renderLabelTemplate(context) {
     nameShown: Boolean(context.heading)
   })}
       <div class="sf-avatar-label-group-container flex flex-col">
-        ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-avatar-label-group-title${context.noWrap ? ' overflow-hidden wrap-none t-ellipsis' : ''}">
+        ${context.heading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-avatar-label-group-title${context.noWrap ? ' overflow-hidden wrap-none t-ellipsis' : ''}" title=${context.noWrap ? context.heading : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
               ${context.heading}
             </div>` : ""}
-        ${context.description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-avatar-label-group-text${context.noWrap ? ' overflow-hidden wrap-none t-ellipsis' : ''}">
+        ${context.description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-avatar-label-group-text${context.noWrap ? ' overflow-hidden wrap-none t-ellipsis' : ''}" title=${context.noWrap ? context.description : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
               ${context.description}
             </div>` : ""}
       </div>
@@ -1937,14 +1961,14 @@ function resolveAvatarTone(setting, name) {
 /***/ "7f9642eacf1b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "8714e4691010"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ },
 
@@ -1958,7 +1982,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.8.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"href":{"type":"string","default":""},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"hue":{"type":"enum","values":["","auto","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"expressive":{"type":"boolean","default":false},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","away","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.8.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"href":{"type":"string","default":""},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"hue":{"type":"enum","values":["","auto","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"expressive":{"type":"boolean","default":false},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","away","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 

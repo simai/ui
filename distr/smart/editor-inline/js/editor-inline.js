@@ -315,15 +315,25 @@ function triggerExtra(textBox, label) {
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
 // first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog.
+// thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
 
-async function standardMenu(owner, field, select) {
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
   await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
   if (owner[field]?.isConnected) return owner[field];
-  const menu = document.createElement('sf-menu-context');
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
   menu.setAttribute('popup', '');
-  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
-  (owner.closest('dialog[open]') || document.body).append(menu);
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
   owner[field] = menu;
   return menu;
 } // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
@@ -559,6 +569,7 @@ async function openRowMenu(owner, {
 }) {
   if (!entries.length) return null;
   const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
   owner._sfRowMoreSelect = select;
   if (label) menu.setAttribute('aria-label', label);
   menu.setAttribute('size', size);
@@ -816,7 +827,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -836,7 +848,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -876,7 +889,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -901,7 +915,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -911,7 +926,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1031,7 +1047,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1093,15 +1112,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1427,7 +1449,10 @@ function atomEntry(element) {
     if (!element.hasAttribute(key)) continue;
     props[key] = kind === 'boolean' ? true : element.getAttribute(key);
   }
-  const entry = { type: 'component', name, ...(Object.keys(props).length ? { props } : {}) };
+  // An element read back is written under the current names: a dated alias
+  // attribute (sf-badge compact) becomes its new prop (icon-only).
+  const current = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.currentInlineProps)(name, props);
+  const entry = { type: 'component', name, ...(Object.keys(current).length ? { props: current } : {}) };
   return (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_4__.isInlineComponent)(entry) ? entry : null;
 }
 
@@ -2483,8 +2508,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   INLINE_MARKS: () => (/* binding */ INLINE_MARKS),
 /* harmony export */   INLINE_MODEL_VERSION: () => (/* binding */ INLINE_MODEL_VERSION),
 /* harmony export */   INLINE_OBJECT: () => (/* binding */ INLINE_OBJECT),
+/* harmony export */   INLINE_PROP_ALIASES: () => (/* binding */ INLINE_PROP_ALIASES),
 /* harmony export */   INLINE_RESERVED_KEYS: () => (/* binding */ INLINE_RESERVED_KEYS),
 /* harmony export */   breakSegment: () => (/* binding */ breakSegment),
+/* harmony export */   currentInlineProps: () => (/* binding */ currentInlineProps),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fromSegments: () => (/* binding */ fromSegments),
 /* harmony export */   inlineComponentSchemas: () => (/* binding */ inlineComponentSchemas),
@@ -2573,11 +2600,32 @@ const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048
 // component reads from a fixed set) or a boolean. Nothing else is drawn, so
 // no prop can become an event handler or markup.
 const INLINE_COMPONENTS = Object.freeze({
-  badge: Object.freeze({ tag: 'sf-badge', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', status: 'token', size: 'token', compact: 'boolean' }) }),
+  badge: Object.freeze({ tag: 'sf-badge', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', status: 'token', size: 'token', 'icon-only': 'boolean', compact: 'boolean' }) }),
   kbd: Object.freeze({ tag: 'kbd', required: ['text'], props: Object.freeze({ text: 'text' }) }),
   icon: Object.freeze({ tag: 'sf-icon', required: ['icon'], props: Object.freeze({ icon: 'token', label: 'text', size: 'token', filled: 'boolean' }) }),
   button: Object.freeze({ tag: 'sf-button', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', size: 'token' }) }),
 });
+// Dated prop aliases of an atom: the old prop is still accepted and drawn as
+// the new one, until remove_after. The badge that shows its icon alone is
+// icon-only (owner decision C134: the word compact means density only,
+// sf-badge 1.6.0); compact is its alias in a Document, as on the element
+// (journal property-inline-badge-compact-to-icon-only). An entry that has
+// both draws the new one.
+const INLINE_PROP_ALIASES = Object.freeze({
+  badge: Object.freeze({ compact: Object.freeze({ to: 'icon-only', since: '2026-11-16', remove_after: '2027-01-01' }) }),
+});
+const aliasOf = (name, key) => INLINE_PROP_ALIASES[name]?.[key]?.to ?? null;
+
+/** The atom's props under their current names: a dated alias moved to its new prop (the new prop wins). */
+function currentInlineProps(name, props = {}) {
+  const out = {};
+  for (const [key, value] of Object.entries(props)) if (!aliasOf(name, key)) out[key] = value;
+  for (const [key, value] of Object.entries(props)) {
+    const to = aliasOf(name, key);
+    if (to && !(to in out)) out[to] = value;
+  }
+  return out;
+}
 const TOKEN = '^[a-z0-9][a-z0-9_/-]{0,63}$';
 const TOKEN_PATTERN = new RegExp(TOKEN, 'u');
 // The one unit an atom or an opaque node holds in segment offsets.
@@ -2624,7 +2672,7 @@ function isInlineComponent(node) {
 function inlineComponentView(node) {
   if (!isInlineComponent(node)) return null;
   const entry = INLINE_COMPONENTS[node.name];
-  const props = node.props ?? {};
+  const props = currentInlineProps(node.name, node.props ?? {});
   if (node.name === 'kbd') return { tag: entry.tag, attributes: [], text: props.text };
   const attributes = Object.keys(entry.props).filter((key) => key in props && props[key] !== false)
     .map((key) => [key, props[key] === true ? '' : props[key]]);
@@ -2933,7 +2981,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.11.2","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.11.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 

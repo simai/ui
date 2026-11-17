@@ -10,10 +10,10 @@
     text-decoration-thickness: var(--sf-a0);
   }
   .decoration-1 {
-    text-decoration-thickness: var(--sf-a1);
+    text-decoration-thickness: var(--sf-line--border);
   }
   .decoration-2 {
-    text-decoration-thickness: var(--sf-a2);
+    text-decoration-thickness: var(--sf-line--indicator);
   }
   .decoration-3 {
     text-decoration-thickness: var(--sf-a3);

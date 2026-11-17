@@ -376,6 +376,9 @@ __webpack_async_result__();
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   requireParts: () => (/* binding */ requireParts)
+/* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("adbddb2f4d35");
@@ -441,7 +444,22 @@ const ConfirmSurface = (0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2
   kind: "sf-confirm",
   block: "sf-confirm",
   answerId: "confirmId"
-});
+}); // The label «Чтобы подтвердить, введите DELETE»: the text before and after
+// {name} in the word, the name drawn between them. A word without {name} (a
+// product's word from before 1.4.0) is followed by the name, as it was.
+
+function requireParts(word) {
+  const text = String(word ?? "");
+  const at = text.indexOf("{name}");
+  if (at < 0) return {
+    before: `${text.trim()} `,
+    after: ""
+  };
+  return {
+    before: text.slice(0, at),
+    after: text.slice(at + "{name}".length)
+  };
+}
 
 class SfConfirm extends ConfirmSurface {
   static get props() {
@@ -521,7 +539,15 @@ class SfConfirm extends ConfirmSurface {
       hasOptions: this.appearance === "window" && this.hasSlotContent("options"),
       optionsContent: this.appearance === "window" && this.hasSlotContent("options") ? this.getSlotContent("options") : null,
       require: this.requiredName,
-      requireText: this.sfWord("require-text"),
+      // One phrase with the name in it ({name}): the label draws the name
+      // as code where the phrase says it (C177 follow-up), the field's
+      // name is the same phrase as text.
+      requireText: this.sfWord("require-text", {
+        vars: {
+          name: this.requiredName
+        }
+      }),
+      requireParts: requireParts(this.sfWord("require-text")),
       requireError: this.sfWord("require-error", {
         vars: {
           name: this.requiredName
@@ -781,11 +807,11 @@ function renderConfirmWindow(context) {
                 </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${context.hasOptions ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__options">${context.optionsContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${context.require ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__require">
-                    <p class="sf-confirm__require-label" aria-hidden="true">${context.requireText} <code class="sf-confirm__name">${context.require}</code></p>
+                    <p class="sf-confirm__require-label" aria-hidden="true">${context.requireParts.before}<code class="sf-confirm__name">${context.require}</code>${context.requireParts.after}</p>
                     <sf-input
                             class="sf-confirm__field"
                             autocomplete="off"
-                            aria-label=${`${context.requireText} ${context.require}`}
+                            aria-label=${context.requireText}
                             ?invalid=${context.requireInvalid}
                             error-message=${context.requireInvalid ? context.requireError : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                             ?disabled=${context.answersLocked}
@@ -1409,21 +1435,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.3.8","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.4.0","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "2382ba7a3e18"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Done","accepting-text":"Working…","decline-text":"Cancel","declining-text":"Cancelling…","expired-text":"The time to answer has passed","question-label":"Confirmation","require-error":"Type “{name}” exactly as above","require-text":"To confirm, type","until-text":"Answer by {time}"},"events":{"expired":{"label":"Expired"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Done","accepting-text":"Working…","decline-text":"Cancel","declining-text":"Cancelling…","expired-text":"The time to answer has passed","question-label":"Confirmation","require-error":"Type “{name}” exactly as above","require-text":"To confirm, type {name}","until-text":"Answer by {time}"},"events":{"expired":{"label":"Expired"}}}');
 
 /***/ },
 
 /***/ "f357767ed4d2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение","runtime":{"accept-text":"Подтвердить","accepted-text":"Готово","accepting-text":"Выполняется…","decline-text":"Отмена","declining-text":"Отменяется…","expired-text":"Время ответа истекло","question-label":"Подтверждение","require-error":"Введите «{name}» — так же, как выше","require-text":"Чтобы подтвердить, введите","until-text":"Ответить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение","runtime":{"accept-text":"Подтвердить","accepted-text":"Готово","accepting-text":"Выполняется…","decline-text":"Отмена","declining-text":"Отменяется…","expired-text":"Время ответа истекло","question-label":"Подтверждение","require-error":"Введите «{name}» — так же, как выше","require-text":"Чтобы подтвердить, введите {name}","until-text":"Ответить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
 
 /***/ }
 

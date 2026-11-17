@@ -1,6 +1,7 @@
 import {html, nothing} from 'lit';
 import {createFieldContract} from '../../../../component/field-contract';
 import {renderInheritedSlot} from '../../../helpers/inherited-value';
+import {renderFieldHelp} from '../../../helpers/field-help';
 import {alphaOf, isPaletteName, paletteFill, solidOf} from '../color-math.js';
 import './default.css';
 
@@ -35,7 +36,7 @@ function renderChip(value, className = 'sf-color-chip') {
 
 export function renderColorTemplate(context) {
     if (context.variant === 'theme') return renderThemeTemplate(context);
-    const {painted, isSet, disabled, size, appearance, open} = context;
+    const {painted, isSet, disabled, readonly, size, appearance, open} = context;
     const component = context.component;
     const name = context.label || context.ariaLabel || (context.brand ? context.brandLabel : context.chooseLabel);
     const shown = context.paintedName;
@@ -65,18 +66,34 @@ export function renderColorTemplate(context) {
                     // One field label look for every field (FB-10, CO-04):
                     // the trigger carries the same words as its name, so the
                     // visible copy is hidden from the accessibility tree.
-                    ? html`<span class="sf-color-label" aria-hidden="true">${context.label}</span>`
+                    // The «?» of help (C153 (8), helpers/field-help.js) stands
+                    // after the label in one row, outside the hidden copy so
+                    // it is reached and read; without help the label is the
+                    // row, as before.
+                    ? (context.help
+                        ? html`<span class="sf-color-label-row"><span class="sf-color-label" aria-hidden="true">${context.label}</span>${renderFieldHelp({help: context.help, label: context.label, size, className: 'sf-color-help', component})}</span>`
+                        : html`<span class="sf-color-label" aria-hidden="true">${context.label}</span>`)
                     : nothing}
             <div class="sf-color sf-color--${appearance} sf-color--size-${size}"
                  data-set=${isSet ? 'true' : 'false'}
                  data-open=${open ? 'true' : 'false'}>
                 <div class="sf-color-frame"
                      ?data-disabled=${disabled}
+                     ?data-readonly=${readonly && !disabled}
                      @click=${(event) => {
-                         if (disabled || event.target.closest?.('[data-inherited-reset], [data-action="clear"]')) return;
+                         if (disabled || readonly || event.target.closest?.('[data-inherited-reset], [data-action="clear"]')) return;
                          component.togglePicker();
                      }}>
-                    <button type="button"
+                    ${readonly && !disabled
+                            // Read-only (as sf-input's readonly): the value to
+                            // read, not a control -- no popup, no Tab stop of its
+                            // own; «name: value» is what a screen reader hears.
+                            ? html`<span class="sf-color-trigger" role="img" aria-label=${spoken}
+                                         aria-describedby=${field.describedBy || nothing}>
+                                    ${renderChip(painted)}
+                                    <span class="sf-color-text">${text}</span>
+                                </span>`
+                            : html`<button type="button"
                             class="sf-color-trigger"
                             title=${context.chooseLabel}
                             aria-haspopup="dialog"
@@ -86,14 +103,14 @@ export function renderColorTemplate(context) {
                             ?disabled=${disabled}>
                         ${renderChip(painted)}
                         <span class="sf-color-text">${text}</span>
-                    </button>
+                    </button>`}
                     ${context.hasInheritedValue
                             // The marker while the inherited colour applies,
                             // the reset once a colour is chosen: the slot every
                             // field uses.
-                            ? renderInheritedSlot(context.component, {size, disabled, className: 'sf-color-inherited-slot'})
+                            ? renderInheritedSlot(context.component, {size, disabled: disabled || readonly, className: 'sf-color-inherited-slot'})
                             : nothing}
-                    ${context.clearable && isSet && !context.hasInheritedValue
+                    ${context.clearable && isSet && !context.hasInheritedValue && !readonly
                             // The reset is an action inside the field (owner
                             // decision C123): the field layer's .sf-field-action
                             // (component.inputs), the glyph sf-input's clear and
@@ -115,9 +132,11 @@ export function renderColorTemplate(context) {
                                         }}
                                 ><sf-icon icon="restart_alt" aria-hidden="true"></sf-icon></button>`
                             : nothing}
-                    <sf-icon icon=${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+                    ${readonly && !disabled
+                            ? nothing
+                            : html`<sf-icon icon=${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
                              root-class="sf-color-chevron"
-                             aria-hidden="true"></sf-icon>
+                             aria-hidden="true"></sf-icon>`}
                 </div>
                 ${context.hiddenName
                         // Without ElementInternals the form gets the value from

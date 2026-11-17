@@ -111,7 +111,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.1"
+    "version": "1.6.2"
   },
   "sf-button": {
     "inputs": {
@@ -311,7 +311,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.2"
+    "version": "1.16.3"
   },
   "sf-button-icon": {
     "inputs": {
@@ -491,7 +491,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.12.1"
+    "version": "1.13.3"
   },
   "sf-checkbox": {
     "inputs": {
@@ -563,7 +563,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.5.1"
+    "version": "1.5.2"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -587,14 +587,6 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     "inputs": {
       "additionalProperties": false,
       "properties": {
-        "appearance": {
-          "default": "outlined",
-          "enum": [
-            "filled",
-            "outlined"
-          ],
-          "type": "string"
-        },
         "aria-label": {
           "default": "",
           "type": "string"
@@ -683,9 +675,11 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "size": {
           "default": "1",
           "enum": [
+            "1/3",
             "1/2",
             "1",
-            "2"
+            "2",
+            "3"
           ],
           "type": "string"
         },
@@ -698,7 +692,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.16.1"
+    "version": "1.18.1"
   },
   "sf-icon": {
     "inputs": {
@@ -790,7 +784,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.0"
+    "version": "1.4.1"
   },
   "sf-input": {
     "inputs": {
@@ -999,7 +993,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.13.2"
+    "version": "1.14.2"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -1175,7 +1169,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.12.2"
+    "version": "1.12.3"
   },
   "sf-switch": {
     "inputs": {

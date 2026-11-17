@@ -146,6 +146,7 @@ function syncCountryAccessibility(root) {
     input,
     toggle,
     list,
+    itemsWrap,
     items
   } = getNodes(root);
   const config = root.__sfCountryConfig || {};
@@ -163,7 +164,7 @@ function syncCountryAccessibility(root) {
       setCountryName(toggle, unknown ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageText)(COUNTRY_CODE_TEXT, 'countryUnknown', root, 'sf-input-country') : `${countryName}${selected ? `: ${getCountryLabel(selected, config.locale)}` : ''}`);
       toggle.setAttribute('role', 'button');
       toggle.setAttribute('aria-haspopup', 'listbox');
-      toggle.setAttribute('aria-controls', ensureCountryId(list));
+      toggle.setAttribute('aria-controls', ensureCountryId(itemsWrap || list));
       toggle.setAttribute('aria-expanded', String(open));
     } else {
       // With one fixed country the flag and code are a picture, not a control.
@@ -183,11 +184,23 @@ function syncCountryAccessibility(root) {
 
       toggle.tabIndex = -1;
     }
-  }
+  } // The panel holds the search and the list of countries (RG-CC-4, the
+  // combobox pattern, as sf-dropdown's search): only the rows' wrap is the
+  // listbox, so it holds options alone; the search field stands before it.
+  // The panel itself has no role.
+
 
   if (list) {
-    list.setAttribute('role', 'listbox');
-    setCountryName(list, countryName);
+    if (itemsWrap && list.getAttribute('role') === 'listbox') list.removeAttribute('role');
+
+    if (itemsWrap && list.getAttribute('aria-label') === countryGeneratedNames.get(list)) {
+      list.removeAttribute('aria-label');
+      countryGeneratedNames.delete(list);
+    }
+
+    const box = itemsWrap || list;
+    box.setAttribute('role', 'listbox');
+    setCountryName(box, countryName);
     list.setAttribute('aria-hidden', String(!open));
     list.inert = !open;
   }
@@ -681,8 +694,12 @@ function bindCountryViewport(root) {
       // that counts only the list's box (DEV acceptance 2026-11-11, CC-01).
       // At least the field's width; the list with its search is the panel
       // step (C32: 20rem) where the field is narrower.
+      // The list hangs from the field itself, --sf-space-1/4 below it, as the
+      // datepicker's popup does; anchored to the root it hung under the hint
+      // (RG-CC-6).
 
-      anchor = positioning().anchor(root, list, {
+      const field = root.querySelector('.sf-country-code-field') || root;
+      anchor = positioning().anchor(field, list, {
         side: 'block-end',
         align: 'start',
         matchWidth: 'min',
@@ -743,6 +760,7 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
     delete root.__sfCountryMask;
   }
 
+  root.__sfCountryMaskPattern = maskPattern || '';
   if (!maskPattern) return;
   const service = await (0,_mask_service__WEBPACK_IMPORTED_MODULE_5__.maskService)();
   if (token !== root.__sfCountryMaskToken) return;
@@ -999,14 +1017,16 @@ function syncDisabledState(root) {
   if (disabled) setOpenState(root, false);
   syncCountryAccessibility(root);
 } // The code is locked in the text only where the person cannot choose another
-// country (fixed-country) or a country mask writes the text (use-mask); in
-// every other field the code is the start of the text the person edits
-// (owner C87, readTypedNumber).
+// country (fixed-country); in every other field, a masked one too, the code is
+// the start of the text the person edits and names the country (owner C87,
+// readTypedNumber). A masked field locked it as well, so a pasted
+// «+49 30 123456» was read as Russian digits, «+7 301 234-56», and the code
+// could not be erased and typed again (RG-CC-1).
 
 
 function getLockedPrefix(root, config) {
   if (!config?.showCode) return '';
-  if (config.multiCountry && !config.useMask) return '';
+  if (config.multiCountry) return '';
   const dialCode = String(root?.dataset?.dialCode || '').trim();
   if (!dialCode) return '';
   return `${dialCode} `;
@@ -1037,6 +1057,33 @@ function keepCaretAfterPrefix(input, prefix) {
 function countryTextPattern(config, country) {
   const base = !config?.useCountryMasks && config?.fixedMaskPattern ? config.fixedMaskPattern : country?.maskPattern;
   return normalizeMaskPatternByStyle(base, config?.maskStyle);
+} // Where the text names the country (a masked field with a choice of
+// countries, RG-CC-1), the mask follows the text, never the other way round:
+// the country's mask lays out the number while the number fits it; with no
+// country named (the code erased, an unknown code) or more digits than the
+// pattern holds (another country's number pasted or typed over), the mask
+// stands back and the text stays as typed -- a mask reads every digit as a
+// slot of its pattern, so it put a German number into the Russian slots and
+// cut what did not fit. Called before the mask's own input listener runs:
+// a mask dropped here does not see this input event.
+
+
+function patternSlots(pattern) {
+  return (String(pattern || '').replace(/\\./gu, '').replace(/\{[^}]*\}/gu, '').match(/0/gu) || []).length;
+}
+
+function syncTextMask(root, input, config, country) {
+  if (!config?.useMask) return;
+  const text = String(input.value || '').trim();
+  const digits = text.replace(/\D/gu, '');
+  const pattern = country ? countryTextPattern(config, country) : ''; // A text that starts with another code than the country's is not laid out
+  // by this country's pattern either.
+
+  const ownCode = !text.startsWith('+') || digits.startsWith(String(country?.dialCode || '').replace(/\D/gu, ''));
+  const wanted = pattern && ownCode && digits.length <= patternSlots(pattern) ? pattern : ''; // Asked for already: the mask is there, or on its way.
+
+  if (wanted === (root.__sfCountryMaskPattern || '')) return;
+  applyMaskForRoot(root, input, wanted, config);
 } // A field without a placeholder of its own hints the chosen country's code
 // (owner C87: «код «+994» стоит в начале номера»): an empty Azerbaijan field
 // shows «+994», never another country's pattern. An unknown code hints «+».
@@ -1109,7 +1156,11 @@ function applyCountrySelection(root, country, source = 'runtime') {
     }));
   }
 
-  if (config.useMask) {
+  if (config.useMask && config.showCode && config.multiCountry) {
+    // The text names the country here: the mask lays the number out only
+    // where the number fits it, and never cuts a digit (syncTextMask).
+    syncTextMask(root, input, config, country);
+  } else if (config.useMask) {
     const basePattern = config.useCountryMasks ? country.maskPattern : config.fixedMaskPattern || country.maskPattern;
     const pattern = normalizeMaskPatternByStyle(basePattern, config.maskStyle);
     applyMaskForRoot(root, input, pattern, config);
@@ -1195,10 +1246,11 @@ function ensureCountryGroups(itemsWrap) {
       head = document.createElement('span');
       head.className = 'sf-country-code-group';
       head.dataset.group = kind;
-      head.setAttribute('role', 'presentation');
       itemsWrap.append(head);
-    }
+    } // A heading drawn between the rows; the listbox holds options only.
 
+
+    head.setAttribute('aria-hidden', 'true');
     heads[kind] = head;
   }
 
@@ -1214,8 +1266,9 @@ function syncCountryEmpty(root, itemsWrap, search, empty) {
 
   if (!row) {
     row = document.createElement('span');
-    row.className = 'sf-country-code-empty';
-    row.setAttribute('role', 'presentation');
+    row.className = 'sf-country-code-empty'; // Read through the search field's description, not as a row of the listbox.
+
+    row.setAttribute('aria-hidden', 'true');
     itemsWrap.append(row);
   }
 
@@ -1558,8 +1611,15 @@ function bindCountryCode(root, {
 
     if (!read.wait && before.trim()) {
       if (read.country) {
-        if (read.country !== root.__sfCountrySelected) applyCountrySelection(root, read.country, 'text');else root.classList.remove('sf-country-code--unknown');
+        if (read.country !== root.__sfCountrySelected) applyCountrySelection(root, read.country, 'text');else {
+          root.classList.remove('sf-country-code--unknown'); // A live mask keeps its length: a digit past the pattern is refused,
+          // as before. A mask that stood back comes again once the number fits.
+
+          if (!root.__sfCountryMask) syncTextMask(root, input, config, read.country);
+        }
       } else {
+        // No country: the mask must not put the old code back (RG-CC-1).
+        syncTextMask(root, input, config, null);
         markCountryUnknown(root);
       }
     }
@@ -1843,6 +1903,7 @@ function unbindCountryCode(root) {
   delete root.__sfCountryCodeBeforeInput;
   delete root.__sfCountryMask;
   delete root.__sfCountryMaskToken;
+  delete root.__sfCountryMaskPattern;
   delete root.__sfCountrySelected;
   delete root.__sfCountryConfig;
   delete root.__sfCountryOptions;
@@ -2307,8 +2368,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -2660,7 +2724,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -2680,7 +2745,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -2720,7 +2786,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -2745,7 +2812,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -2755,7 +2823,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -2875,7 +2944,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -2937,15 +3009,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -4246,7 +4321,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1870676d0d14"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.8.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.9.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

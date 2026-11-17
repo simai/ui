@@ -46,10 +46,13 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
- // The words, by language. A count is one phrase per plural form, separated by
-// «|» in the order of CLDR's categories -- one|few|many|other in Russian,
-// one|other in English -- with {count} where the number goes. A product adds a
-// language with SF.language.register('sf-badge', code, {count, dot}).
+ // The words, by language. A count is a plural word, one phrase per plural
+// category of the language as Intl.PluralRules names them ({one, few, many,
+// other} in Russian, {one, other} in English), with {count} where
+// the number goes: the form every language file and pack uses (C177). A
+// product adds a language with SF.language.register('sf-badge', code,
+// {count, dot}); a count written as «a|b|c» (an author's label, a product's
+// word from before) still reads in the order of the categories.
 
 const ANCHORED_BADGE_TEXT = {
   en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
@@ -81,12 +84,26 @@ function badgeFlag(value) {
   return String(value).trim().toLowerCase() !== 'false';
 }
 /**
- * The form of `forms` ("a|b|c") for `count` in `locale`. One form is used for
- * every number; with several, the n-th form answers the n-th plural category
- * the language has, and a category past the last form takes the last one.
+ * The form of `forms` for `count` in `locale`. A plural word
+ * ({one, few, many, other}) answers the category Intl.PluralRules gives,
+ * else its `other`. A string "a|b|c": one form is used for every number; with
+ * several, the n-th form answers the n-th plural category the language has,
+ * and a category past the last form takes the last one.
  */
 
 function pluralForm(forms, count, locale = 'en') {
+  if (forms && typeof forms === 'object') {
+    let category = 'other';
+
+    try {
+      category = new Intl.PluralRules(locale).select(count);
+    } catch {
+      category = 'other';
+    }
+
+    return String(forms[category] ?? forms.other ?? '');
+  }
+
   const list = String(forms ?? '').split('|');
   if (list.length === 1) return list[0];
 
@@ -521,18 +538,12 @@ function step(value, fallback = '1') {
   const text = String(value ?? '').trim();
   const named = SIZE_NAMES[text] ?? text;
   return SIZES.includes(named) ? named : fallback;
-} // How far the avatars of a group overlap, by the size they are drawn at: the
-// --sf-space step of the overlap, in the size names (1.2.4, docs precheck
-// AV-06; xs, sm and md before, journal class-avatar-group-overlap-size-names).
-// Owner decision C152 (6), 2026-11-14: 4 up to size 1 and 8 at 2 and 3, so the
-// next circle with its 2 px cut-out leaves the letters whole (12 at size 1
-// covered the second letter: «АБ» read «АЕ»).
-
-
-function groupStep(size) {
-  if (size === '2' || size === '3') return '1/3';
-  return '1/4';
-} // Up to four people are shown; the fifth place is «+N» (C152 (6)).
+} // How far the avatars of a group overlap is the group sheet's, from the
+// avatars' own size (component.avatars 1.11.0, owner decision C152 (6): 4 up
+// to size 1, 8 at 2 and 3). The group prints no overlap modifier since 1.5.1;
+// the sf-avatar-group--size-* modifiers are dated aliases (journal
+// class-avatar-group-overlap-by-size).
+// Up to four people are shown; the fifth place is «+N» (C152 (6)).
 
 
 const SHOWN = 4;
@@ -697,7 +708,7 @@ function renderGroupTemplate(context) {
   }
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${['sf-avatar-group', `sf-avatar-group--size-${groupStep(size)}`, 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="group" aria-label=${groupLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <div class=${['sf-avatar-group', 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="group" aria-label=${groupLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       <div class="sf-avatar-group-avatars flex">
         ${shown.map((item, index) => member(item, size, index, context))}
         ${tail}
@@ -1485,14 +1496,14 @@ function resolveAvatarTone(setting, name) {
 /***/ "7f9642eacf1b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "8714e4691010"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ },
 
@@ -1506,7 +1517,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.5.0","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.5.1","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 

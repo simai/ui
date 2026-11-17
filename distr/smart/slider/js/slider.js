@@ -72,7 +72,26 @@ const DOTS_LIMIT = 7; // Cards (sf-slider--content: news, reviews, products) sho
 // edge (C143 (7)): 1.15 cards on a phone, 2.2 from the sm step up.
 
 const PEEK_PER_VIEW = 1.15;
-const PEEK_PER_VIEW_WIDE = 2.2;
+const PEEK_PER_VIEW_WIDE = 2.2; // The parts of a slider block. sf-carousel, the slider's former name until
+// 2027-01-01, binds through the same code with its own class names and keeps
+// its look (owner decision C247): one path, one set of keys, names and words.
+
+const SLIDER_PARTS = {
+  main: '.sf-slider-main.swiper, .swiper',
+  prev: '.sf-slider-button-prev',
+  next: '.sf-slider-button-next',
+  pagination: '.sf-slider-pagination',
+  thumbs: '.sf-slider-thumbnails.swiper',
+  rotation: '.sf-slider-rotation',
+  bulletClass: 'sf-slider-dots-dot',
+  bulletActiveClass: 'active',
+  // From eight slides a counter stands in the dots' place.
+  counter: true,
+  // The motion: the slider's own duration token.
+  speed: undefined,
+  delay: 3000,
+  stopped: 'stopped'
+};
 const SLIDER_BOUND_FLAG = 'sfSliderBound';
 const SLIDER_WAITING_FLAG = 'sfSliderWaiting';
 const SWIPER_NESTED_OPTION_PREFIXES = ['a11y', 'autoplay', 'cardsEffect', 'coverflowEffect', 'creativeEffect', 'cubeEffect', 'fadeEffect', 'flipEffect', 'freeMode', 'grid', 'keyboard', 'mousewheel', 'scrollbar', 'thumbs', 'virtual'];
@@ -226,12 +245,12 @@ function normalizeAutoplayOptions(options = {}) {
   return options;
 }
 
-function createPaginationOptions(paginationEl, slidesCount) {
+function createPaginationOptions(paginationEl, slidesCount, parts = SLIDER_PARTS) {
   if (!paginationEl) return undefined; // From eight slides the dots give way to a counter; the slides' own names
   // («2 из 12») and the live strip say it to a reader, so the counter is
   // only drawn.
 
-  if (slidesCount > DOTS_LIMIT) {
+  if (parts.counter && slidesCount > DOTS_LIMIT) {
     paginationEl.classList.add('sf-slider-dots--count');
     paginationEl.setAttribute('aria-hidden', 'true');
     return {
@@ -246,8 +265,8 @@ function createPaginationOptions(paginationEl, slidesCount) {
   paginationEl.removeAttribute('aria-hidden');
   return {
     el: paginationEl,
-    bulletActiveClass: 'active',
-    bulletClass: 'sf-slider-dots-dot',
+    bulletActiveClass: parts.bulletActiveClass,
+    bulletClass: parts.bulletClass,
     bulletElement: 'button',
     clickable: true,
     // One Tab stop for all the dots; the arrow keys page (C143 (5)).
@@ -386,12 +405,13 @@ function applyNavigationLabelDefaults(options, labels) {
   };
 }
 
-function createAutoplayOptions(root, element) {
+function createAutoplayOptions(root, element, parts = SLIDER_PARTS) {
   const autoplay = toBoolean(getOption(root, element, 'autoplay'), false);
   if (!autoplay) return undefined;
   return {
     enabled: true,
-    delay: toNumber(getOption(root, element, 'autoplayDelay'), 3000),
+    // data-delay is the carousel's former word for the same delay.
+    delay: toNumber(getOption(root, element, 'autoplayDelay') ?? getOption(root, element, 'delay'), parts.delay),
     disableOnInteraction: toBoolean(getOption(root, element, 'autoplayDisableOnInteraction'), true),
     pauseOnMouseEnter: toBoolean(getOption(root, element, 'autoplayPauseOnMouseEnter'), false),
     reverseDirection: toBoolean(getOption(root, element, 'autoplayReverseDirection'), false),
@@ -399,19 +419,21 @@ function createAutoplayOptions(root, element) {
   };
 }
 
-function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
+function createBaseOptions(root, element, fallbackSlidesPerView = 1, parts = SLIDER_PARTS) {
   const peek = element instanceof Element && !element.classList.contains('sf-slider-thumbnails') && isContentSlider(root) && !hasAuthoredPerView(root, element);
   let options = {
     centeredSlides: toBoolean(getOption(root, element, 'centeredSlides'), false),
     loop: toBoolean(getOption(root, element, 'loop'), false),
     slidesPerView: toSlidesPerView(getOption(root, element, 'slidesPerView'), fallbackSlidesPerView),
     spaceBetween: toNumber(getOption(root, element, 'spaceBetween'), resolveCssLength(root, '--sf-slider--space-between', 0)),
-    speed: toNumber(getOption(root, element, 'speed'), resolveCssDuration(root, '--sf-slider--duration', 300)),
+    speed: toNumber(getOption(root, element, 'speed'), parts.speed ?? resolveCssDuration(root, '--sf-slider--duration', 300)),
     watchSlidesProgress: true
   };
 
   if (peek) {
-    options.slidesPerView = PEEK_PER_VIEW; // From the sm step of the Framework's ladder (rem, as the sheets write it).
+    options.slidesPerView = PEEK_PER_VIEW; // From the sm step of the Framework's ladder (rem, as the sheets write it),
+    // read against the slider's own width, not the window's (C181 (2), RG-OT
+    // 7): a 264 column on a wide screen shows 1.15 cards, not 2.2 cards of 113.
 
     const from = Number.parseFloat(_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__.BREAKPOINTS.sm) * 16;
     options.breakpoints = {
@@ -419,9 +441,10 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
         slidesPerView: PEEK_PER_VIEW_WIDE
       }
     };
+    options.breakpointsBase = 'container';
   }
 
-  const autoplay = createAutoplayOptions(root, element);
+  const autoplay = createAutoplayOptions(root, element, parts);
 
   if (autoplay) {
     options.autoplay = autoplay;
@@ -435,84 +458,17 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
   }
 
   return normalizeAutoplayOptions(options);
-}
-
-function createSlideInteractivityGuard(slider) {
-  const authoredState = new Map();
-
-  const sync = () => {
-    const slides = Array.from(slider?.slides || []);
-    slides.forEach(slide => {
-      if (!(slide instanceof HTMLElement)) return;
-
-      if (!authoredState.has(slide)) {
-        authoredState.set(slide, slide.hasAttribute('inert'));
-      }
-
-      const reachable = slide.classList.contains('swiper-slide-visible') || slide.classList.contains('swiper-slide-active');
-
-      if (!reachable) {
-        slide.setAttribute('inert', '');
-      } else if (!authoredState.get(slide)) {
-        slide.removeAttribute('inert');
-      }
-    });
-  };
-
-  ['init', 'slideChange', 'transitionEnd', 'update', 'resize'].forEach(event => {
-    slider?.on?.(event, sync);
-  });
-  sync();
-  return () => {
-    ['init', 'slideChange', 'transitionEnd', 'update', 'resize'].forEach(event => {
-      slider?.off?.(event, sync);
-    });
-    authoredState.forEach((authored, slide) => {
-      if (!slide.isConnected) return;
-      if (authored) slide.setAttribute('inert', '');else slide.removeAttribute('inert');
-    });
-  };
-} // An arrow with nowhere to go is disabled, not only pale. Swiper marks it with
-// swiper-button-disabled and the sheet takes pointer events away, but the
-// button kept its tab stop and a keyboard press did nothing (docs pre-check
-// 2026-11-10 SL-04). The native button is disabled with the mark; when the
-// arrow that holds the focus is the one that stops, the focus moves to the
-// other arrow, so it does not fall to the page.
-
-
-function createArrowStateGuard(slider, prevEl, nextEl) {
-  const arrows = [prevEl, nextEl].filter(arrow => arrow instanceof HTMLElement);
-  if (!arrows.length || typeof slider?.on !== 'function') return () => {};
-
-  const buttonOf = arrow => arrow.matches('button') ? arrow : arrow.querySelector('button');
-
-  const sync = () => {
-    arrows.forEach(arrow => {
-      const button = buttonOf(arrow);
-      if (!button) return;
-      const off = arrow.classList.contains('swiper-button-disabled');
-
-      if (off && !button.disabled && button === button.ownerDocument?.activeElement) {
-        const other = arrows.map(buttonOf).find(candidate => candidate && candidate !== button && !candidate.disabled);
-        other?.focus?.();
-      }
-
-      if (button.disabled !== off) button.disabled = off;
-    });
-  };
-
-  const events = ['afterInit', 'slideChange', 'reachBeginning', 'reachEnd', 'fromEdge', 'update', 'lock', 'unlock', 'navigationNext', 'navigationPrev'];
-  events.forEach(name => slider.on(name, sync));
-  sync();
-  return () => events.forEach(name => slider.off?.(name, sync));
-} // Autoplay turns the slides only with a pause button the person can see
+} // Hidden slides leave the Tab order and an edge arrow is a disabled button:
+// the engine does both since swiper 1.2.0 (owner decision C245), so the
+// slider, the carousel and any later strip get them from one place.
+// Autoplay turns the slides only with a pause button the person can see
 // (C143 (6), WCAG 2.2.2, as sf-carousel required): .sf-slider-rotation, a
 // button or an sf-button-icon host whose button carries it. Without one the
 // slider does not turn.
 
 
-function findRotationButton(root) {
-  const marked = root.querySelector('.sf-slider-rotation');
+function findRotationButton(root, selector = '.sf-slider-rotation') {
+  const marked = root.querySelector(selector);
   if (!(marked instanceof HTMLElement)) return null;
   const button = marked.matches('button') ? marked : marked.querySelector('button');
   return button instanceof HTMLButtonElement ? button : null;
@@ -532,9 +488,23 @@ function isShown(element) {
 // (APG carousel). The pointer over the slider and a hidden tab only hold it
 // while they last. The button is named by what it does next (C12: no
 // aria-pressed on a toggle whose name changes).
+// The glyph shows the action the name says (C12): «pause» while the slides
+// turn, «play_arrow» when stopped. The Smart host takes it as its icon
+// attribute; class markup (a button with an .sf-icon inside) had its name
+// changed and kept the pause glyph (RG-OT 8, 13). A glyph the page drew in
+// another way (a picture, its own word) is left alone.
 
 
-function createAutoplayGuard(root, slider, rotationButton) {
+const ROTATION_GLYPHS = ['pause', 'play_arrow'];
+
+function paintRotationGlyph(button, stopped) {
+  const glyph = button.querySelector('.sf-icon');
+  if (!glyph || !ROTATION_GLYPHS.includes(glyph.textContent.trim())) return;
+  const next = stopped ? 'play_arrow' : 'pause';
+  if (glyph.textContent.trim() !== next) glyph.textContent = next;
+}
+
+function createAutoplayGuard(root, slider, rotationButton, words = {}) {
   if (!slider?.autoplay || !slider.params?.autoplay || prefersReducedMotion()) return () => {};
   const holds = new Set();
   let stopped = false;
@@ -553,9 +523,10 @@ function createAutoplayGuard(root, slider, rotationButton) {
       host.setAttribute('aria-label', label(key));
     } else {
       rotationButton.setAttribute('aria-label', label(key));
+      paintRotationGlyph(rotationButton, stopped);
     }
 
-    root.dataset.rotation = stopped ? 'stopped' : 'playing';
+    root.dataset.rotation = stopped ? words.stopped || 'stopped' : 'playing';
   };
 
   const apply = () => {
@@ -622,8 +593,14 @@ function createAutoplayGuard(root, slider, rotationButton) {
   root.addEventListener('pointerleave', onPointerLeave);
   document.addEventListener('visibilitychange', onVisibilityChange);
   onVisibilityChange();
-  paint();
+  paint(); // The page's own stop and start (SF.Carousel.pause / play) are the person's.
+
+  root._sfSliderRotation = {
+    start,
+    stop
+  };
   return () => {
+    delete root._sfSliderRotation;
     slider.off?.('autoplayStop', onEngineStop);
     rotationButton?.removeEventListener('click', onRotation);
     root.removeEventListener('focusin', onFocusIn);
@@ -669,7 +646,8 @@ function slideMessages(root) {
   const position = root.dataset.slideLabel || sliderWord(root, 'position');
   return {
     itemRoleDescriptionMessage: root.dataset.slideRoledescription || sliderWord(root, 'slide'),
-    slideLabelMessage: position.replaceAll('{n}', '{{index}}').replaceAll('{count}', '{{slidesLength}}')
+    // {n} / {count}, or the former carousel words {{index}} / {{count}}.
+    slideLabelMessage: position.replaceAll('{n}', '{{index}}').replaceAll('{{count}}', '{{slidesLength}}').replaceAll('{count}', '{{slidesLength}}')
   };
 } // While autoplay turns the slides, the change is not announced; stopped, the
 // new slide is announced politely (APG carousel).
@@ -730,30 +708,34 @@ function waitForSliderReady(root) {
   return null;
 }
 
-function bindSlider(root) {
+function bindSlider(root, parts) {
   if (!(root instanceof HTMLElement)) return null;
   if (root.dataset[SLIDER_BOUND_FLAG] === 'true') return root._sfSlider;
+  if (parts) root._sfSliderParts = { ...SLIDER_PARTS,
+    ...parts
+  };
+  parts = root._sfSliderParts || SLIDER_PARTS;
 
   if (typeof window === 'undefined' || typeof window.Swiper !== 'function') {
     return waitForSliderReady(root);
   }
 
-  const mainEl = root.querySelector('.sf-slider-main.swiper, .swiper');
+  const mainEl = root.querySelector(parts.main);
   if (!(mainEl instanceof HTMLElement)) return null;
 
   if (hasPendingSmartArrowRender(root)) {
     return waitForSliderReady(root);
   }
 
-  const prevEl = root.querySelector('.sf-slider-button-prev');
-  const nextEl = root.querySelector('.sf-slider-button-next');
-  const paginationEl = root.querySelector('.sf-slider-pagination');
-  const thumbsEl = root.querySelector('.sf-slider-thumbnails.swiper');
+  const prevEl = root.querySelector(parts.prev);
+  const nextEl = root.querySelector(parts.next);
+  const paginationEl = root.querySelector(parts.pagination);
+  const thumbsEl = parts.thumbs ? root.querySelector(parts.thumbs) : null;
   let thumbs = null;
   const thumbsCount = getSlidesCount(thumbsEl);
 
   if (thumbsEl instanceof HTMLElement && thumbsCount > 0) {
-    thumbs = new window.Swiper(thumbsEl, { ...createBaseOptions(root, thumbsEl, Math.min(thumbsCount, 6)),
+    thumbs = new window.Swiper(thumbsEl, { ...createBaseOptions(root, thumbsEl, Math.min(thumbsCount, 6), parts),
       loop: false,
       centeredSlides: false,
       spaceBetween: toNumber(getOption(root, thumbsEl, 'spaceBetween'), resolveCssLength(root, '--sf-slider-thumbnails--space-between', 0)),
@@ -766,11 +748,11 @@ function bindSlider(root) {
     });
   }
 
-  const sliderOptions = { ...createBaseOptions(root, mainEl, 1)
+  const sliderOptions = { ...createBaseOptions(root, mainEl, 1, parts)
   };
   const navigation = createNavigationOptions(prevEl, nextEl);
-  const pagination = createPaginationOptions(paginationEl, getSlidesCount(mainEl));
-  const rotationButton = findRotationButton(root);
+  const pagination = createPaginationOptions(paginationEl, getSlidesCount(mainEl), parts);
+  const rotationButton = findRotationButton(root, parts.rotation);
 
   if (sliderOptions.autoplay && !(rotationButton && isShown(rotationButton))) {
     delete sliderOptions.autoplay;
@@ -819,7 +801,7 @@ function bindSlider(root) {
 
   root._sfSliderRegion = applyRegionSemantics(root);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider, rotationButton), createArrowStateGuard(slider, prevEl, nextEl), linkThumbnails(root, slider, thumbs), createLiveRegionGuard(slider, mainEl)];
+  root._sfSliderCleanup = [createAutoplayGuard(root, slider, rotationButton, parts), linkThumbnails(root, slider, thumbs), createLiveRegionGuard(slider, mainEl)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));
@@ -867,6 +849,7 @@ function unbindSlider(root) {
   delete root._sfSliderCleanup;
   delete root._sfSlider;
   delete root._sfSliderThumbs;
+  delete root._sfSliderParts;
   delete root.dataset[SLIDER_BOUND_FLAG];
 }
 
@@ -1051,7 +1034,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1071,7 +1055,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1111,7 +1096,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1136,7 +1122,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1146,7 +1133,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1266,7 +1254,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1328,15 +1319,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1863,9 +1857,14 @@ function renderArrows(context) {
     type: 'ghost',
     scheme: 'on-surface'
   } : getButtonOptions(context.buttonType);
-  const buttonSize = context.buttonSize || '1';
+  const buttonSize = context.buttonSize || '1'; // button-type light is the class look --light: ghost arrows on the light
+  // circle (sf-slider 1.2.1, FW-B-3). The template wrote the ghost buttons
+  // without the class, so their dark glyph lay on the picture, 1.28:1 on a
+  // dark photo (RG-OT 9, C224: the Smart twin draws the class look).
+
+  const light = !plated && normalizeOption(context.buttonType) === 'light';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${joinClasses('sf-slider-arrows sf-slider-arrows--size-2', plated && 'sf-slider-arrows--plate')}>
+    <div class=${joinClasses('sf-slider-arrows sf-slider-arrows--size-2', plated && 'sf-slider-arrows--plate', light && 'sf-slider-arrows--light')}>
       <sf-button-icon
         root-class="sf-slider-button-prev"
         icon="keyboard_arrow_left"
@@ -2016,7 +2015,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-slide
 /***/ "85a15fb0aee7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.3.3","kind":"leaf","settings":{"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""},"ratio":{"type":"enum","values":["16/9","4/3","3/2","1/1","21/9","auto"],"default":"16/9"}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.3.6","kind":"leaf","settings":{"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""},"ratio":{"type":"enum","values":["16/9","4/3","3/2","1/1","21/9","auto"],"default":"16/9"}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

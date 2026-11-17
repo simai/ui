@@ -302,7 +302,11 @@ function renderInline(context) {
                  @click=${() => context.component.act(action.id)}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
-}
+} // The block form is drawn from sf-placeholder's parts (RG-PH-2, C19): the
+// root, the circle as its visual, the title and the sentence in its header,
+// the buttons in its actions, all inside its content. The sf-empty-state-*
+// names stay on the same parts for pages that style or read them.
+
 
 function renderEmptyStateTemplate(context) {
   if (context.layout === 'inline') return renderInline(context);
@@ -312,19 +316,23 @@ function renderEmptyStateTemplate(context) {
   const slotted = context.component?.hasSlotContent?.('actions') ? context.component.getSlotContent('actions') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const ring = context.share !== null && context.share !== undefined;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${['sf-empty-state', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.expressive ? 'sf-empty-state--expressive' : '', context.rootClass].filter(Boolean).join(' ')}
+    <div class=${['sf-placeholder', 'sf-empty-state', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.expressive ? 'sf-empty-state--expressive' : '', context.rootClass].filter(Boolean).join(' ')}
          role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-      <span class=${`sf-featured-icon sf-featured-icon--size-${ICON_SIZE[context.size] ?? '2'} sf-featured-icon--${context.tone} sf-featured-icon--soft sf-empty-state-icon${ring ? ' sf-empty-state-icon--ring' : ''}`}
+      <span class=${`sf-placeholder__visual sf-featured-icon sf-featured-icon--size-${ICON_SIZE[context.size] ?? '2'} sf-featured-icon--${context.tone} sf-featured-icon--soft sf-empty-state-icon${ring ? ' sf-empty-state-icon--ring' : ''}`}
             aria-hidden=${ring ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}>${renderGlyph(context, ICON_SIZE[context.size] ?? '2')}</span>
-      ${(0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class="sf-empty-state-title">${context.shownTitle}</${tag}>`}
-      ${context.shownText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-empty-state-text">${context.shownText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ${actions.length || slotted !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-empty-state-actions">
-            ${slotted}
-            ${actions.map(action => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${BUTTON_SIZE[context.size] ?? '1'} appearance=${action.appearance ?? 'default'}
-                scheme=${action.scheme ?? (action.appearance === 'outline' ? 'on-surface' : 'primary')}
-                text=${action.text ?? ''} data-action=${String(action.id)}
-                @click=${() => context.component.act(action.id)}></sf-button>`)}
-          </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      <div class="sf-placeholder__content">
+        <div class="sf-placeholder__header">
+          ${(0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class="sf-placeholder__title sf-empty-state-title">${context.shownTitle}</${tag}>`}
+          ${context.shownText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-placeholder__description sf-empty-state-text">${context.shownText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+        ${actions.length || slotted !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-placeholder__actions sf-empty-state-actions">
+              ${slotted}
+              ${actions.map(action => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${BUTTON_SIZE[context.size] ?? '1'} appearance=${action.appearance ?? 'default'}
+                  scheme=${action.scheme ?? (action.appearance === 'outline' ? 'on-surface' : 'primary')}
+                  text=${action.text ?? ''} data-action=${String(action.id)}
+                  @click=${() => context.component.act(action.id)}></sf-button>`)}
+            </div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      </div>
     </div>
   `;
 }
@@ -441,7 +449,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.4.3","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.5.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

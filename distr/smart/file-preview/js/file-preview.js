@@ -631,7 +631,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -646,6 +647,53 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_for
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -694,7 +742,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -1592,7 +1640,7 @@ function renderAction({
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
       type="button"
-      class="sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${size}"
+      class="sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-${size}"
       data-action=${action}
       ?disabled=${disabled}
       aria-label=${label}
@@ -1601,6 +1649,28 @@ function renderAction({
       <i class="sf-icon" aria-hidden="true">${icon}</i>
     </button>
   `;
+} // «Повторить» as the icon alone (owner decision C260): a row too narrow for
+// the button with its words draws this one in its place -- the sheet shows
+// one of the two by the row's width -- instead of moving the words under the
+// text (C88). The same ghost primary refresh on the rung of its neighbours,
+// named «Повторить <имя>», and «Повторить» in the Framework's plain tooltip
+// on hover, keyboard focus and a long press. The anchor links the tooltip to
+// its button, so no id is written here.
+
+
+function renderRetryIcon(context, size) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-retry-icon sf-tooltip-anchor">
+    <button
+      type="button"
+      class="sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--primary sf-icon-button--size-${size}"
+      data-action="retry"
+      data-tooltip=""
+      aria-label=${context.words.retryLabel}
+      @click=${context.onRetry}
+    ><i class="sf-icon" aria-hidden="true">refresh</i></button><span
+      class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3" aria-hidden="true" hidden><span
+      class="sf-tooltip-content"><span class="sf-tooltip-text">${context.words.retry}</span></span></span>
+  </span>`;
 } // A file name breaks between its words only (C34): spaces, and after the
 // joints names use instead of spaces -- «_», «-», «–», «—», «/», «+» -- where
 // a <wbr> lets the line end. Never inside a word, never before the extension's
@@ -1740,14 +1810,13 @@ function renderFilePreviewTemplate(context) {
             ${retry ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
                 class="sf-file-preview-retry"
                 size=${size}
-                height="low"
                 appearance="ghost"
                 scheme="primary"
                 icon-start="refresh"
                 text=${context.words.retry}
                 aria-label=${context.words.retryLabel}
                 @click=${context.onRetry}
-              ></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+              ></sf-button>${renderRetryIcon(context, size)}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${hasActions && download ? renderAction({
     // A file opened in a new tab shows the sign of it (C25): the
     // download glyph promised a download the browser never made.
@@ -1935,7 +2004,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.4.3","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.0","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

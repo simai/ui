@@ -46,10 +46,13 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
- // The words, by language. A count is one phrase per plural form, separated by
-// «|» in the order of CLDR's categories -- one|few|many|other in Russian,
-// one|other in English -- with {count} where the number goes. A product adds a
-// language with SF.language.register('sf-badge', code, {count, dot}).
+ // The words, by language. A count is a plural word, one phrase per plural
+// category of the language as Intl.PluralRules names them ({one, few, many,
+// other} in Russian, {one, other} in English), with {count} where
+// the number goes: the form every language file and pack uses (C177). A
+// product adds a language with SF.language.register('sf-badge', code,
+// {count, dot}); a count written as «a|b|c» (an author's label, a product's
+// word from before) still reads in the order of the categories.
 
 const ANCHORED_BADGE_TEXT = {
   en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
@@ -81,12 +84,26 @@ function badgeFlag(value) {
   return String(value).trim().toLowerCase() !== 'false';
 }
 /**
- * The form of `forms` ("a|b|c") for `count` in `locale`. One form is used for
- * every number; with several, the n-th form answers the n-th plural category
- * the language has, and a category past the last form takes the last one.
+ * The form of `forms` for `count` in `locale`. A plural word
+ * ({one, few, many, other}) answers the category Intl.PluralRules gives,
+ * else its `other`. A string "a|b|c": one form is used for every number; with
+ * several, the n-th form answers the n-th plural category the language has,
+ * and a category past the last form takes the last one.
  */
 
 function pluralForm(forms, count, locale = 'en') {
+  if (forms && typeof forms === 'object') {
+    let category = 'other';
+
+    try {
+      category = new Intl.PluralRules(locale).select(count);
+    } catch {
+      category = 'other';
+    }
+
+    return String(forms[category] ?? forms.other ?? '');
+  }
+
   const list = String(forms ?? '').split('|');
   if (list.length === 1) return list[0];
 
@@ -216,6 +233,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DIRECTIONAL_ICONS: () => (/* binding */ DIRECTIONAL_ICONS),
 /* harmony export */   checkIconGlyph: () => (/* binding */ checkIconGlyph),
 /* harmony export */   markCustomGlyph: () => (/* binding */ markCustomGlyph),
+/* harmony export */   markMirrorGlyph: () => (/* binding */ markMirrorGlyph),
 /* harmony export */   mirrorsInRtl: () => (/* binding */ mirrorsInRtl),
 /* harmony export */   nearestIconName: () => (/* binding */ nearestIconName),
 /* harmony export */   registerIcon: () => (/* binding */ registerIcon),
@@ -359,6 +377,24 @@ function mirrorsInRtl(name, mode = 'auto') {
   if (value === 'off') return false;
   if (value === 'on') return true;
   return DIRECTIONAL_ICONS.has(String(name || '').trim());
+} // The class markup <i class="sf-icon">arrow_forward</i> is marked the way the
+// Smart icon marks its glyph, so the icons sheet turns it over in a
+// right-to-left part. Before, only sf-icon did, and a class glyph pointed the
+// wrong way in dir="rtl" (content study Z2, 2026-11-16). The author's mode is
+// data-mirror="auto|on|off" (the Smart icon's mirror). The mark follows the
+// name: a glyph renamed to a non-directional one gives it back.
+
+function markMirrorGlyph(el, name) {
+  if (!el?.setAttribute) return false;
+  const mirrors = mirrorsInRtl(name, el.getAttribute('data-mirror') || 'auto');
+
+  if (mirrors) {
+    if (!el.hasAttribute('data-sf-icon-mirror')) el.setAttribute('data-sf-icon-mirror', '');
+  } else if (el.hasAttribute('data-sf-icon-mirror')) {
+    el.removeAttribute('data-sf-icon-mirror');
+  }
+
+  return mirrors;
 } // ---------------------------------------------------------------- point 2
 // An unknown or misspelt name is drawn by the icon font as its letters: wider
 // than the glyph's box. The box clips them (the icons sheet), the glyph is
@@ -425,16 +461,47 @@ function nearestIconName(name, names = []) {
   }
 
   return bestDistance <= Math.max(2, Math.ceil(wanted.length / 3)) ? best : '';
-}
+} // Only an unknown name is said (C151 (2)). A name the font's list holds is
+// a face still on its way -- the subset that grows, a family whose face came
+// later than the check -- not a misspelling: it is not said ("no icon
+// "favorite"; nearest: "favorite"", content study Z1, 2026-11-16), it waits
+// unseen and is read again when a face arrives (recheckMissing).
 
 function warnMissing(name) {
   const state = shared();
   if (state.warned.has(name)) return;
   state.warned.add(name);
   loadNames().then(names => {
+    if (names.includes(name)) {
+      state.warned.delete(name);
+      watchFaces();
+      return;
+    }
+
     const near = nearestIconName(name, names);
     globalThis.console?.warn?.(`[SIMAI Framework] sf-icon: no icon "${name}"${near ? `; nearest: "${near}"` : ''}. The box stays empty.`);
   });
+} // The glyphs marked missing are read again once a face has loaded (a subset
+// swapped in, a family's own face): one that now draws leaves the state.
+
+
+function recheckMissing() {
+  const doc = globalThis.document;
+  doc?.querySelectorAll?.('.sf-icon[data-sf-icon-missing]').forEach(el => checkIconGlyph(el));
+}
+
+function watchFaces() {
+  const state = shared();
+  if (state.watching) return;
+  state.watching = true;
+
+  const later = () => {
+    const raf = globalThis.requestAnimationFrame;
+    if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
+  };
+
+  globalThis.document?.fonts?.addEventListener?.('loadingdone', later);
+  globalThis.addEventListener?.('sf-icons-subset:ready', later);
 } // A glyph is judged only once the face that draws it is in: marked loaded,
 // its family can still be on its way (font-display: block draws the name
 // unseen at the fallback's width, as wide as letters). Until then the check
@@ -479,10 +546,15 @@ function checkIconGlyph(el) {
       if (!glyph.isConnected || glyph.hasAttribute('data-sf-icon-custom')) return null;
       const box = glyph.getBoundingClientRect(); // Not rendered (a closed panel): read again when it loads anew.
 
-      if (!box.width || !box.height) return null;
+      if (!box.width || !box.height) return null; // The glyph's em, not its box alone: a box squeezed narrower than its
+      // font size (a 12 px slot for a 16 px glyph, RG-CC-5) made one real
+      // ligature look like letters and dropped it.
+
+      const view = glyph.ownerDocument?.defaultView;
+      const em = parseFloat(view?.getComputedStyle?.(glyph).fontSize) || 0;
       return {
         glyph,
-        box: box.width,
+        box: Math.max(box.width, em),
         text: textWidth(glyph)
       };
     });
@@ -494,7 +566,7 @@ function checkIconGlyph(el) {
         box,
         text
       } = reading;
-      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one box wide; letters are several.
+      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one em (or one box) wide; letters are several.
 
       const missing = text > box * 1.5;
 
@@ -1107,14 +1179,14 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "7f9642eacf1b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "8714e4691010"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ },
 
@@ -1128,21 +1200,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.0","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.1","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 
 /***/ "5d30914d54d5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Icons","runtime":{"count":"{count} unread","dot":"new"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Icons","runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
 
 /***/ },
 
 /***/ "d5970e8c0f65"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Иконки","runtime":{"count":"{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного","dot":"есть новое"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Иконки","runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ }
 

@@ -1734,6 +1734,21 @@ class SfTree extends TreeElement {
     }
 
     return spinner;
+  } // Whether an entry's descendants hold the current page (an entry that is
+  // active, aria-current="page").
+
+
+  holdsCurrent(entry, seen = new Set()) {
+    for (const id of entry?.childIds ?? []) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+
+      const child = this._entries.get(id);
+
+      if (child?.active || this.holdsCurrent(child, seen)) return true;
+    }
+
+    return false;
   }
 
   rowContext(row, tabStopId) {
@@ -1788,6 +1803,10 @@ class SfTree extends TreeElement {
       setsize: row.setsize,
       posinset: row.posinset,
       tabStop: row.id === tabStopId,
+      // A closed branch that holds the current page: a medium label, as the
+      // menu column's (C129, R065 a; RG-NV 31h). The class markup finds it by
+      // :has; the tree draws only the open rows, so it says it.
+      itemClass: row.branch && !row.open && this.holdsCurrent(entry) ? 'sf-tree-item--holds-current' : '',
       tipId: this._cut.has(row.id) ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__.partId)(this._tipPath, `tip-${idWord(row.id)}`) : '',
       selection: this.selection,
       onToggle: row.onToggle,
@@ -2145,7 +2164,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tree 
 /***/ "fb5cbd0ee7de"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.3.2","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many","check"],"default":"none"},"icons":{"type":"enum","values":["all","branches","none"],"default":"all"},"file-types":{"type":"enum","values":["name","none"],"default":"name"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"static":{"type":"boolean","default":false},"reorder":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","note":{"type":"string"},"mark":{"type":"boolean"},"more":{"type":"boolean"},"hidden":{"type":"boolean"},"error":{"type":"boolean"},"revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"retry":{"carries":{"id":"id","value":"string"}},"move":{"carries":{"ids":"list","parent":{"type":"id","nullable":true},"before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}},"expand-all":{"with":{}},"collapse-all":{"with":{}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.4.0","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many","check"],"default":"none"},"icons":{"type":"enum","values":["all","branches","none"],"default":"all"},"file-types":{"type":"enum","values":["name","none"],"default":"name"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"static":{"type":"boolean","default":false},"reorder":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","note":{"type":"string"},"mark":{"type":"boolean"},"more":{"type":"boolean"},"hidden":{"type":"boolean"},"error":{"type":"boolean"},"revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"retry":{"carries":{"id":"id","value":"string"}},"move":{"carries":{"ids":"list","parent":{"type":"id","nullable":true},"before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}},"expand-all":{"with":{}},"collapse-all":{"with":{}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 

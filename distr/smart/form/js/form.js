@@ -1021,7 +1021,7 @@ function renderRangeFilterControl(field, host) {
             </div>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1101,7 +1101,7 @@ function renderNumberFilterControl(field, host) {
             </div>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1149,7 +1149,7 @@ function renderDateFilterControl(field, host) {
             ></sf-input-date>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1380,12 +1380,14 @@ function renderColorCell(field, value) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-color size="1/2" appearance="plain" value=${String(hex)}
-                  aria-label=${field.label || field.key || ''} disabled></sf-input-color>
+                  aria-label=${field.label || field.key || ''} readonly></sf-input-color>
     `;
 } // Reads what port 1.8.0 declares: `inherited` says a value comes from somewhere
 // else, `inheritedValue` says what it is. A view that drew the inherited colour as
 // the value would make «not set» and «set to the same colour» look identical, and
-// only the first follows the theme when the theme moves.
+// only the first follows the theme when the theme moves. The view and the cell
+// draw the field read-only (sf-input-color 1.17.0): the value in the text's ink;
+// disabled drew it in the disabled ink, as a field nobody may use.
 
 
 function renderColorView(field, value) {
@@ -1399,7 +1401,7 @@ function renderColorView(field, value) {
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
-                disabled
+                readonly
         ></sf-input-color>
     `;
 }
@@ -1416,7 +1418,7 @@ function renderColorEdit(field, value, host) {
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 swatches=${field.swatches ? String(field.swatches) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?clearable=${Boolean(inherited) || field.required !== true}
-                ?disabled=${field.readonly === true}
+                ?readonly=${field.readonly === true}
                 aria-label=${field.label || field.key || ''}
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? '')}
         ></sf-input-color>
@@ -2598,7 +2600,7 @@ function renderChoiceEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
-                appearance="outlined"
+                appearance="bordered"
                 mode="select"
                 search="false"
                 name=${fieldName(field)}
@@ -2652,7 +2654,7 @@ function renderChoicesEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
-                appearance="outlined"
+                appearance="bordered"
                 mode="select"
                 multiple
                 search="false"
@@ -2923,7 +2925,7 @@ function renderRecordPicker(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     search="true"
                     name=${fieldName(field)}
@@ -3068,7 +3070,7 @@ function renderLookupEdit(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     ?multiple=${multiple}
                     search="true"
@@ -4158,7 +4160,17 @@ const WIDTHS = ['s', 'm', 'full']; // The controls of the field family that say 
 // invalid and error-message. Every other control gets its error line from the
 // form. Read by tag, so it is known before the control's bundle arrives.
 
-const SPEAKING_TAGS = new Set(['sf-input', 'sf-input-choice', 'sf-input-code', 'sf-input-color', 'sf-input-country', 'sf-input-date', 'sf-input-image', 'sf-input-lookup', 'sf-input-quantity', 'sf-input-rich', 'sf-input-textarea', 'sf-dropdown']);
+const SPEAKING_TAGS = new Set(['sf-input', 'sf-input-choice', 'sf-input-code', 'sf-input-color', 'sf-input-country', 'sf-input-date', 'sf-input-image', 'sf-input-lookup', 'sf-input-quantity', 'sf-input-rich', 'sf-input-textarea', 'sf-dropdown']); // The element a screen reader reads a field's description with: a group of
+// choices as a whole, else the control's own focus target, else its first
+// native control.
+
+function messageTarget(control) {
+  const group = control.querySelector('[role="radiogroup"], [role="group"]');
+  if (group) return group;
+  const delegate = typeof control.focusDelegate === 'function' ? control.focusDelegate() : null;
+  if (delegate && delegate !== control && control.contains(delegate)) return delegate;
+  return control.querySelector('input:not([type="hidden"]), textarea, select, button, [role="combobox"], [contenteditable="true"], [tabindex]:not([tabindex="-1"])');
+}
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 
@@ -4288,7 +4300,13 @@ class SfForm extends FormElement {
 
     this._onFocusOut = event => this.onFieldLeave(event);
 
-    this._onInput = event => this.onFieldInput(event);
+    this._onInput = event => this.onFieldInput(event); // A control's own drawing may rewrite its native control's
+    // aria-describedby: the form's lines are linked again after it.
+
+
+    this._onControlDrawn = event => {
+      if (event.target !== this && event.target?.closest?.('.sf-form-control')) this.linkMessages();
+    };
   }
 
   onConnected() {
@@ -4296,6 +4314,7 @@ class SfForm extends FormElement {
     this.addEventListener('submit', this._onSubmit);
     this.addEventListener('focusout', this._onFocusOut);
     this.addEventListener('input', this._onInput);
+    this.addEventListener('sf-after-render', this._onControlDrawn);
   }
 
   onDisconnected() {
@@ -4303,6 +4322,7 @@ class SfForm extends FormElement {
     this.removeEventListener('submit', this._onSubmit);
     this.removeEventListener('focusout', this._onFocusOut);
     this.removeEventListener('input', this._onInput);
+    this.removeEventListener('sf-after-render', this._onControlDrawn);
   } // The ids the template writes come from the instance path (§7.1.1), never
   // from a counter.
 
@@ -4700,6 +4720,28 @@ class SfForm extends FormElement {
         if (control.getAttribute('label') !== field.label) control.setAttribute('label', field.label);
         control.toggleAttribute('invalid', Boolean(message));
       }
+    }
+
+    this.linkMessages();
+  } // The hint or the error line the form draws under a control is read with
+  // that control: its id joins the aria-describedby of the control's native
+  // focus target, and leaves it once the line is gone (the error gives the
+  // hint's place back). A screen reader heard the label and the value of a
+  // field and never its hint. Ids the control set itself are kept.
+
+
+  linkMessages() {
+    for (const box of this.querySelectorAll('.sf-form-field')) {
+      const key = box.getAttribute('data-key');
+      const control = key ? this.controlOf(key) : null;
+      const target = control ? messageTarget(control) : null;
+      if (!target) continue;
+      const lines = [...box.children].filter(node => node.matches('.sf-form-hint, .sf-form-error') && node.id).map(node => node.id);
+      const before = String(target.getAttribute('aria-describedby') || '').split(/\s+/u).filter(Boolean);
+      const own = before.filter(id => !id.endsWith(`--hint-${key}`) && !id.endsWith(`--error-${key}`));
+      const next = [...new Set([...own, ...lines])];
+      if (next.join(' ') === before.join(' ')) continue;
+      if (next.length) target.setAttribute('aria-describedby', next.join(' '));else target.removeAttribute('aria-describedby');
     }
   }
 
@@ -6714,7 +6756,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет"
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.1.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.2.1","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

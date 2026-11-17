@@ -153,6 +153,10 @@
   .sf-list-attention {
     --sf-list-attention--row: var(--sf-ui-3--control-height);
     --sf-list-attention--line: var(--sf-text-height-1);
+    /* The heading is a card title (R082 N1, C34, C44): the card title's size
+       and line, held in a compact region as a card's is. */
+    --sf-list-attention--title-size: var(--sf-heading-6--size);
+    --sf-list-attention--title-line: var(--sf-title--height-card);
     --sf-list-attention--font-size: var(--sf-text-size-1);
     --sf-list-attention--meta-line: var(--sf-text-height-1\/2);
     --sf-list-attention--meta-font-size: var(--sf-text-size-1\/2);
@@ -249,8 +253,8 @@
             border-block-end: var(--sf-px) solid var(--sf-list-attention--divider);
   }
   .sf-list-attention--frame-none .sf-list-attention-head {
-    min-height: var(--sf-list-attention--line);
-    min-block-size: var(--sf-list-attention--line);
+    min-height: var(--sf-list-attention--title-line);
+    min-block-size: var(--sf-list-attention--title-line);
     margin-bottom: var(--sf-list-attention--gap);
     -webkit-margin-after: var(--sf-list-attention--gap);
             margin-block-end: var(--sf-list-attention--gap);
@@ -272,7 +276,10 @@
     min-inline-size: 0;
     color: var(--sf-on-surface);
     color: var(--sf-list-attention-heading-color, var(--sf-on-surface));
-    font-weight: var(--sf-font-weight-medium);
+    font-size: var(--sf-list-attention--title-size);
+    line-height: var(--sf-list-attention--title-line);
+    /* Semibold, the card title's weight (C34; R082 N2): it was medium. */
+    font-weight: var(--sf-weight--semi-bold);
   }
   .sf-list-attention-heading-text {
     min-width: 0;
@@ -812,11 +819,11 @@
   }
   .sf-list-attention-group-toggle.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-list-attention-group-toggle:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-list-attention .sf-list-attention-chevron {
     --sf-icon--font-size: var(--sf-list-attention--icon);
@@ -1025,12 +1032,12 @@
       align-items: center;
       grid-gap: 0 var(--sf-list-attention--gap);
       gap: 0 var(--sf-list-attention--gap);
-      padding-top: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
-      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
-      padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
-      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
-      -webkit-padding-after: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
-              padding-block-end: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+      padding-top: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
+      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+      -webkit-padding-after: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
+              padding-block-end: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
     }
     .sf-list-attention--frame-none .sf-list-attention-head:has(.sf-list-attention-summary-line) {
       padding-top: 0;

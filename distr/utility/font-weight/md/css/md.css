@@ -40,5 +40,14 @@
     .md\:weight-9 {
       font-weight: 900;
     }
+    .md\:weight-regular {
+      font-weight: var(--sf-weight--regular);
+    }
+    .md\:weight-medium {
+      font-weight: var(--sf-weight--medium);
+    }
+    .md\:weight-bold {
+      font-weight: var(--sf-weight--bold);
+    }
   }
 }

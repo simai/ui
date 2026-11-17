@@ -3,10 +3,25 @@
   .duration-fast {
     transition-duration: var(--sf-duration-fast);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .duration-fast {
+      transition-duration: 0.01ms;
+    }
+  }
   .duration-normal {
     transition-duration: var(--sf-duration-normal);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .duration-normal {
+      transition-duration: 0.01ms;
+    }
+  }
   .duration-slow {
     transition-duration: var(--sf-duration-slow);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .duration-slow {
+      transition-duration: 0.01ms;
+    }
   }
 }

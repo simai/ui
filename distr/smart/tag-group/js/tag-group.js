@@ -51,7 +51,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -71,7 +72,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -111,7 +113,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -136,7 +139,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -146,7 +150,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -266,7 +271,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -328,15 +336,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -719,6 +730,13 @@ class SfTagGroup extends GroupElement {
   }
 
   fit() {
+    // A printed first paint (static/<example>.html) carries its own «+N» item;
+    // the row's own one replaces it, so the page never shows two (first-paint
+    // status R222 open item 10: the gate found the printed one left beside the
+    // drawn row). The printed row stands until the row's own «+N» has drawn:
+    // measured before it draws, the trigger has no box, and the row showed
+    // one tag too many for a frame (a layout shift at 390).
+    if (!this.replacePrintedMore()) return;
     const tags = this.tags;
 
     for (const tag of tags) {
@@ -751,6 +769,36 @@ class SfTagGroup extends GroupElement {
 
     (0,_tag_js_tag_row_js__WEBPACK_IMPORTED_MODULE_3__.setAttr)(shown[0], SHRINK, true);
     this.fillPanel(shown.slice(1));
+  } // True when no printed «+N» is left; otherwise the row's own one is made,
+  // drawn out of view with the printed count, and the row is laid out again
+  // once it has drawn.
+
+
+  replacePrintedMore() {
+    const printed = [...this.querySelectorAll(`:scope > [${MORE}]`)].filter(node => node !== this._more);
+    if (!printed.length) return true;
+    const more = this.moreElement(this.tags.filter(tag => !tag.hidden));
+    const trigger = more.querySelector(':scope > sf-popover > sf-tag[slot="trigger"]');
+
+    if (!trigger.isRendered) {
+      const text = printed[0].querySelector('sf-tag[slot="trigger"]')?.getAttribute('text');
+      if (text && !trigger.hasAttribute('text')) trigger.setAttribute('text', text);
+
+      if (more.parentElement !== this) {
+        more.hidden = true;
+        this.append(more);
+      }
+
+      const again = () => this.schedule();
+
+      if (typeof trigger.whenRendered === 'function') trigger.whenRendered(again);else globalThis.customElements?.whenDefined('sf-tag').then(() => requestAnimationFrame(again));
+      return false;
+    }
+
+    for (const node of printed) node.remove();
+
+    more.hidden = false;
+    return true;
   } // «+N»: an sf-popover whose trigger is an interactive tag of the first
   // tag's size, whose surface lists the hidden tags (C145 (5)). It is the last
   // child of the row, a listitem of its own.
@@ -1551,7 +1599,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "ed7222252ccc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag-group","tag":"sf-tag-group","version":"1.0.0","kind":"leaf","settings":{"layout":{"type":"enum","values":["row","wrap"],"default":"row"},"selection":{"type":"enum","values":["none","one","many"],"default":"none"}},"values":{"selected":{"type":"id"},"selected-ids":{"type":"list","of":{"id":"id"}}},"events":{"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}}},"actions":{},"css-variables":{}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag-group","tag":"sf-tag-group","version":"1.0.1","kind":"leaf","settings":{"layout":{"type":"enum","values":["row","wrap"],"default":"row"},"selection":{"type":"enum","values":["none","one","many"],"default":"none"}},"values":{"selected":{"type":"id"},"selected-ids":{"type":"list","of":{"id":"id"}}},"events":{"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}}},"actions":{},"css-variables":{}}');
 
 /***/ },
 

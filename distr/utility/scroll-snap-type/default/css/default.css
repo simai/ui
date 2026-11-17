@@ -1,24 +1,32 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@property --sf-snap-strictness {
+  syntax: "*";
+  inherits: false;
+}
 @layer sf.utilities {
   .snap-x {
-    -ms-scroll-snap-type: x;
-        scroll-snap-type: x;
-  }
-  .snap-y {
-    -ms-scroll-snap-type: y;
-        scroll-snap-type: y;
-  }
-  .snap-both {
-    -ms-scroll-snap-type: both;
-        scroll-snap-type: both;
-  }
-  .snap-mandatory {
-    -ms-scroll-snap-type: x mandatory;
-        scroll-snap-type: x mandatory;
-  }
-  .snap-proximity {
     -ms-scroll-snap-type: x proximity;
         scroll-snap-type: x proximity;
+    -ms-scroll-snap-type: x var(--sf-snap-strictness, proximity);
+        scroll-snap-type: x var(--sf-snap-strictness, proximity);
+  }
+  .snap-y {
+    -ms-scroll-snap-type: y proximity;
+        scroll-snap-type: y proximity;
+    -ms-scroll-snap-type: y var(--sf-snap-strictness, proximity);
+        scroll-snap-type: y var(--sf-snap-strictness, proximity);
+  }
+  .snap-both {
+    -ms-scroll-snap-type: both proximity;
+        scroll-snap-type: both proximity;
+    -ms-scroll-snap-type: both var(--sf-snap-strictness, proximity);
+        scroll-snap-type: both var(--sf-snap-strictness, proximity);
+  }
+  .snap-mandatory {
+    --sf-snap-strictness: mandatory;
+  }
+  .snap-proximity {
+    --sf-snap-strictness: proximity;
   }
   .snap-none {
     -ms-scroll-snap-type: none;

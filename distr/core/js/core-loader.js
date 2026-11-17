@@ -693,8 +693,15 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     });
     const isNewIcon = !this.uniqueIcons.has(normalizedIcon);
     const iconAttrs = isNewIcon ? new Map() : this.uniqueIcons.get(normalizedIcon);
-    let hasNewAttrs = false;
-    Object.entries(attrs).forEach(([key, value]) => {
+    let hasNewAttrs = false; // The family goes in as the load key has it, the default one too: a name
+    // drawn outlined and rounded on one page was held as rounded alone (an
+    // unset type added nothing to the name's families), the outlined request
+    // left it out and the outlined glyph drew its letters, reported as "no
+    // icon" (content study Z1, 2026-11-16).
+
+    Object.entries({ ...attrs,
+      type: loadAttrs.type
+    }).forEach(([key, value]) => {
       if (value == null || value === "") return;
       const normalizedValue = String(value).trim();
       if (!normalizedValue) return;
@@ -949,6 +956,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     if (el.closest?.("sf-icon")) return null;
     const icon = String(el.getAttribute("data-icon") || el.textContent || "").trim();
     (0,_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_2__.markCustomGlyph)(el, icon);
+    (0,_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_2__.markMirrorGlyph)(el, icon);
     if (!icon) return null;
     const attrs = {
       weight: defaultIconWeight
@@ -2219,6 +2227,37 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       generation,
       reason: new Error(deadlineMs ? `icon subset request timed out after ${deadlineMs} ms; the full font draws these icons while the subset grows` : "the full font already draws this family; the subset grows in the background")
     });
+  }; // The stylesheet a subset answer is drawn with. The service's stylesheet
+  // names every family 'Material Symbols Outlined Subset' and sets it on every
+  // .sf-icon, while its manifest says the family it sent (Rounded, Sharp): put
+  // in as it came, a rounded subset redeclared the outlined family's faces and
+  // the face the manifest names was never declared, so the check found no
+  // font, Rounded and Sharp fell back to the old Material Icons files on every
+  // load (no axes, favorite drawn filled) and outlined glyphs were judged
+  // missing (content study Z1, 2026-11-16). When the stylesheet does not
+  // declare the manifest's family, the sheet is written from the manifest, as
+  // a remembered manifest is: the family it names, scoped to its own icons,
+  // which draw in it even under the outlined answer's .sf-icon family.
+
+
+  SFLoaderPlugin.prototype.iconSubsetSheetText = function (cssText = "", manifest = null) {
+    if (!manifest || !Array.isArray(manifest.fonts) || !manifest.fonts.length) {
+      return cssText;
+    }
+
+    const family = this.getIconManifestFontFamily(manifest);
+    const text = String(cssText || "");
+
+    if (text.includes(`'${family}'`) || text.includes(`"${family}"`)) {
+      return cssText;
+    }
+
+    const rebuilt = (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconSubsetCssFromManifest)(manifest).cssText;
+    if (!rebuilt) return cssText; // The outlined answer sets its family on every .sf-icon itself, not
+    // through --sf-icon--font-family; the family's own selector is more
+    // specific and takes the face back for its icons.
+
+    return rebuilt + `\n${this.getIconSubsetSelector(manifest)} {\n` + `  font-family: var(--sf-icon--font-family);\n` + `}\n`;
   }; // One subset request: fetch the stylesheet, load its face, swap it in.
   // Resolves true when the subset draws, false when it was dropped (outrun
   // by a newer request, or arriving behind the full font without every name
@@ -2270,7 +2309,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       request.answered = true;
       request.onAnswered?.();
       manifest = this.decodeIconManifestHeader(response.headers.get("X-SIMAI-Font-Manifest"));
-      const cssText = await response.text();
+      const cssText = this.iconSubsetSheetText(await response.text(), manifest);
       const manifestType = manifest ? this.getIconManifestType(manifest) : type;
 
       if (manifest && manifestType !== type) {
@@ -3278,6 +3317,7 @@ SFLoaderPlugin.prototype.rulesChanged = function () {
   this.customElementRules = null;
   this.clearAttributeRuleIndex();
   this.clearRegexpScanRules();
+  this.scriptWhenRules = null;
   this.attrMatchCache.clear();
   this.regexMatchCache.clear();
 
@@ -3289,6 +3329,7 @@ SFLoaderPlugin.prototype.rulesChanged = function () {
     this.scanCustomElements(document.body);
     this.scanAttributes(document.body);
     if (!this.pendingRegex) this.searchRegexp('');
+    this.loadScriptsWhen(document.body);
   });
 }; // The base a Smart rule's files are fetched from: its package's, or the Smart
 // base when it has none. A package rule whose package is unknown or has no
@@ -3410,9 +3451,13 @@ function parseParams(str) {
   }
 
   return result;
-}
+} // Code shows its text as written: a [!name] in a code block or inline code
+// is text, not a shortcode. A code block's line marker, // [!code ++]
+// (owner decision C258), was read as the shortcode «code» and dropped
+// before the highlighter saw it.
 
-const SHORTCODE_SKIPPED = 'script, style, yamap, head, meta, link, [data-sf-observer="ignore"]';
+
+const SHORTCODE_SKIPPED = 'script, style, yamap, head, meta, link, pre, code, [data-sf-observer="ignore"]';
 
 SFLoaderPlugin.prototype.findShortCodes = function (node) {
   const regex = /\[!([a-zA-Z0-9_-]+)(?:\s+([^\](]+?))?](?:\(([^)]*)\))?(?:#([a-zA-Z0-9_-]+))?/g;
@@ -3420,13 +3465,14 @@ SFLoaderPlugin.prototype.findShortCodes = function (node) {
 
   if (this.shouldSkipNode(host)) {
     return;
-  } // Both text and comment placeholders (the boot script hides a shortcode in
+  }
+
+  if (node.nodeType !== Node.COMMENT_NODE && host?.closest?.('pre, code')) return; // Both text and comment placeholders (the boot script hides a shortcode in
   // a comment). The walk is the browser's: a recursive walk in script over
   // every node of the page, for a `[!` that is almost never there, was the
   // larger part of the Loader's task at the window's load (stand 25, D9:
   // 378 ms on the admin at 4x CPU). Text is read only when the subtree's text
   // holds a `[!` at all; comments are few and the browser filters them.
-
 
   if (node.nodeType === Node.ELEMENT_NODE) {
     const show = (node.textContent || '').includes('[!') ? NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT : NodeFilter.SHOW_COMMENT;
@@ -4551,7 +4597,11 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
         if (converted !== value) {
           HtmlElement.setAttribute('class', converted);
           nextValue = converted;
-        }
+        } // A retired modifier is noted only beside the class it modifies
+        // (C212 (3): text-N heading is title-N); a bare one is the page's own.
+
+
+        (0,_utility_class_aliases_js__WEBPACK_IMPORTED_MODULE_14__.noteRetiredModifiers)(HtmlElement.classList);
       }
 
       arr.push(`${attrName}="${nextValue}"`);
@@ -5393,10 +5443,20 @@ SFLoaderPlugin.prototype.search = function () {
 
       if (!objHTML || objHTML.nodeType === 3 || !objHTML.tagName) {
         return;
-      } // The root passed shouldSkipNode; the walker rejects an ignored or
+      } // An element a regexp rule names (a kbd, a pre > code) added later: the
+      // attribute scan below does not see a bare tag (queue item 203).
+
+
+      for (const [key, rule] of this.getRegexpScanRules()) {
+        if (this.module[key] || !this.ruleMatchesElements(rule, objHTML)) continue;
+        this.setExistCookie(key);
+        totalItemCount++;
+        newPlugins.push(key);
+      }
+
+      this.loadScriptsWhen(objHTML); // The root passed shouldSkipNode; the walker rejects an ignored or
       // excluded subtree below it, and only an element with an attribute a
       // rule reads is read (scanAttributes does the same).
-
 
       const nodes = [objHTML];
       const walker = this.createFilteredElementWalker(objHTML);
@@ -5468,6 +5528,7 @@ SFLoaderPlugin.prototype.search = function () {
 
             processedAttributeTargets.add(change.target);
             processedAttributeTargetsCount++;
+            this.loadScriptsWhen(change.target);
             const staticIconMutation = this.processStaticIconMutation(change.target, false);
 
             if (staticIconMutation.handled) {
@@ -6706,7 +6767,10 @@ SFLoaderPlugin.prototype.searchRegexp = function (event, html = null) {
     return;
   }
 
-  const matched = [];
+  const matched = []; // The elements a rule names by tag are looked for in the whole scope as
+  // well: the markup above is its first 4 KB, without pre and code.
+
+  const scope = html ? html.nodeType === Node.ELEMENT_NODE ? html : null : document.body;
 
   for (const [key] of filteredRules) {
     const item = SF.RuleLoader[key];
@@ -6716,6 +6780,9 @@ SFLoaderPlugin.prototype.searchRegexp = function (event, html = null) {
 
     if (re.test(body)) {
       matched.push(key);
+      this.setExistCookie(key);
+    } else if (scope && this.ruleMatchesElements(item, scope)) {
+      // Not cached by the prefix: the prefix alone did not match.
       this.setExistCookie(key);
     }
   }
@@ -6795,6 +6862,101 @@ SFLoaderPlugin.prototype.getObserverFilteredHTMLPrefix = function (node, limit) 
 
   write(node);
   return out;
+}; // The element names a regexp rule writes as markup, `<kbd\b`, `<sf-tree(?=`,
+// `<pre\b[^>]*>\s*<code\b`: '' for one that names none (`<\s*i`, a class).
+
+
+const RULE_ELEMENT = /<([a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?=\\b|\(\?=|\[|\\s|$)/giu;
+
+function ruleElementNames(rule) {
+  const regex = rule?.regex ? rule.regex : rule;
+  const source = regex instanceof RegExp ? regex.source : typeof regex === 'string' ? regex : '';
+  return [...new Set([...source.matchAll(RULE_ELEMENT)].map(match => match[1].toLowerCase()))];
+} // The start of an element as the markup scan writes it, with its first child
+// element when only white space stands before it (`<pre><code>`).
+
+
+function elementStart(el) {
+  let out = `<${el.localName}`;
+
+  for (const attribute of el.attributes) out += ` ${attribute.name}="${escapeAttribute(attribute.value)}"`;
+
+  out += '>';
+  const child = el.firstElementChild;
+  if (!child) return out;
+  let before = '';
+
+  for (let node = el.firstChild; node && node !== child; node = node.nextSibling) before += node.textContent || '';
+
+  if (before.trim()) return out;
+  out += `<${child.localName}`;
+
+  for (const attribute of child.attributes) out += ` ${attribute.name}="${escapeAttribute(attribute.value)}"`;
+
+  return `${out}>`;
+} // A regexp rule that names an element (kbd, pre > code) matches one anywhere
+// in `scope`, not only in the first 4 KB of the page's markup the regexp scan
+// reads (simai/ui-source loader, queue item 203: a kbd low on a long page, a bare
+// pre > code, which that markup leaves out). The rule's own pattern is tested
+// on the element's start, so it matches what it matched in the markup. As in
+// the markup scan, nothing inside pre or code (a code sample), in an ignored
+// subtree or in a script or template counts.
+
+
+SFLoaderPlugin.prototype.ruleMatchesElements = function (rule, scope) {
+  if (!scope?.querySelectorAll) return false;
+  if (!this.ruleElementNamesCache) this.ruleElementNamesCache = new WeakMap();
+  const key = rule && typeof rule === 'object' ? rule : null;
+  let names = key ? this.ruleElementNamesCache.get(key) : null;
+
+  if (!names) {
+    names = ruleElementNames(rule);
+    if (key) this.ruleElementNamesCache.set(key, names);
+  }
+
+  if (!names.length) return false;
+  const regex = rule?.regex ? rule.regex : rule;
+  const re = regex instanceof RegExp ? regex : new RegExp(regex, regex?.flags || '');
+  const selector = names.join(',');
+  const candidates = scope.matches?.(selector) ? [scope, ...scope.querySelectorAll(selector)] : scope.querySelectorAll(selector);
+
+  for (const el of candidates) {
+    if (el.parentElement?.closest?.('pre, code')) continue;
+    if (el.closest?.(`${OBSERVER_IGNORE_SELECTOR}, script, style, template, noscript`)) continue;
+    if (re.global || re.sticky) re.lastIndex = 0;
+    if (re.test(elementStart(el))) return true;
+  }
+
+  return false;
+}; // Rules whose script comes only where an element asks for it (`jsWhen`, a
+// selector): kbd's sheet draws every <kbd>, its script only fills
+// <kbd data-sf-shortcut> (C191), so a page of plain keys fetches no script
+// (queue item 164). Looked for in `root` (the page, an added subtree, an element
+// whose attribute changed); the script is fetched once, as loadScriptOnCall
+// fetches it.
+
+
+SFLoaderPlugin.prototype.loadScriptsWhen = function (root) {
+  if (!root?.querySelectorAll) return 0;
+
+  if (!this.scriptWhenRules) {
+    this.scriptWhenRules = Object.entries(this.findPlugins || {}).filter(([, rule]) => rule && typeof rule.jsWhen === 'string' && rule.jsWhen.trim());
+  }
+
+  if (!this.scriptWhenRules.length) return 0;
+  if (!this.scriptsWhenAsked) this.scriptsWhenAsked = new Set();
+  let asked = 0;
+
+  for (const [name, rule] of this.scriptWhenRules) {
+    if (this.scriptsWhenAsked.has(name)) continue;
+    const found = (root.matches?.(rule.jsWhen) ? [root] : []).concat([...root.querySelectorAll(rule.jsWhen)]);
+    const real = found.some(el => !el.parentElement?.closest?.('pre, code') && !el.closest?.(`${OBSERVER_IGNORE_SELECTOR}, script, style, template, noscript`));
+    if (!real) continue;
+    this.scriptsWhenAsked.add(name);
+    if (this.loadScriptOnCall(name)) asked++;
+  }
+
+  return asked;
 };
 
 SFLoaderPlugin.prototype.stripIgnoredBlocks = function (html) {
@@ -7500,6 +7662,7 @@ SFLoaderPlugin.prototype.prepare = function (observer = null) {
       this.searchAttr(false);
       await yieldToPage();
       this.searchRegexp('');
+      this.loadScriptsWhen(document.body);
       await this.scanAttributesInSlices(document.body);
 
       if (Object.keys(this.module || {}).length) {
@@ -7537,6 +7700,7 @@ SFLoaderPlugin.prototype.prepareTurboEvents = function () {
     this.scanStaticIcons(newBody);
     this.scanAttributes(newBody);
     this.searchRegexp('', newBody);
+    this.loadScriptsWhen(newBody);
     this.turboFontCheck(newBody);
     this.checkTheme(newBody);
 
@@ -8210,7 +8374,7 @@ SFLoaderPlugin.prototype.ensurePlugin = function (name) {
 
 SFLoaderPlugin.prototype.loadScriptOnCall = function (name) {
   const rule = this.findPlugins?.[name];
-  if (!rule || rule.jsOnCall !== true || this.ComponentRegistry?.[name]) return false;
+  if (!rule || rule.jsOnCall !== true && !rule.jsWhen || this.ComponentRegistry?.[name]) return false;
   const type = rule.type === 'component' || rule.type === 'attribute' ? 'component' : 'utility';
   const file = this.pathPluginJs(name, false, name, type);
   if (!file) return false;
@@ -8504,6 +8668,50 @@ __webpack_require__.r(__webpack_exports__);
       "t-clip": "truncate"
     }
   }, {
+    "journal": "class-c212-text",
+    "decision": "C212 (3)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One way per text job: text-N (size and line of step N), title-N (the same size on its title line), line-N, measure (+ -wide, -narrow) and three weights, weight-regular, weight-medium (the weight of headings and labels) and weight-bold on --sf-weight--*. These old names draw exactly what their new name draws: max-w-prose is measure (65ch), regular and weight-4 are weight-regular (400), weight-5 is weight-medium (500), bold and weight-7 are weight-bold (700), and the heading modifier beside text-N is title-N. They keep drawing until remove_after.",
+    "names": {
+      "max-w-prose": "measure",
+      "regular": "weight-regular",
+      "weight-4": "weight-regular",
+      "weight-5": "weight-medium",
+      "bold": "weight-bold",
+      "weight-7": "weight-bold"
+    },
+    "modifiers": {
+      "heading": {
+        "with": "^text-(1[0-2]?|[2-9])$",
+        "to": "title-$1"
+      }
+    }
+  }, {
+    "journal": "class-c212-text-nearest",
+    "decision": "C212 (3)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Names with no exact public twin: they keep drawing what they drew until remove_after, and the name to write is the nearest role, which looks different. weight-1, weight-2, weight-3 and lighter -> weight-regular; weight-6 -> weight-medium; weight-8, weight-9 and bolder -> weight-bold. line-tight, -snug, -normal, -relaxed, -loose and -none wrote a number of their own (1.25, 1.375, 1.5, 1.625, 2, 1) beside the line ladder: the line is line-N of the text's step N, which text-N and title-N already set.",
+    "names": {
+      "weight-1": "weight-regular",
+      "weight-2": "weight-regular",
+      "weight-3": "weight-regular",
+      "lighter": "weight-regular",
+      "weight-6": "weight-medium",
+      "weight-8": "weight-bold",
+      "weight-9": "weight-bold",
+      "bolder": "weight-bold",
+      "line-tight": "line-N",
+      "line-snug": "line-N",
+      "line-normal": "line-N",
+      "line-relaxed": "line-N",
+      "line-loose": "line-N",
+      "line-none": "line-N"
+    }
+  }, {
     "journal": "utility-c187-retired-sheets",
     "decision": "C187 (2)",
     "component": "utility",
@@ -8518,6 +8726,462 @@ __webpack_require__.r(__webpack_exports__);
       "background-size-ext": null,
       "transform-translate-ext": null
     }
+  }, {
+    "journal": "class-c212-length",
+    "decision": "C212 (4)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Lengths only in the system steps, one name per length. These old names draw exactly what their new name draws and keep drawing until remove_after: g-* is gap-* (g-x-* gap-x-*, g-y-* gap-y-*); a fraction is written in lowest terms (w-2/4, w-3/6 and w-6/12 are w-1/2; the same for basis-, h-, h-screen-, top-, bottom-, inline-start- and inline-end-), and 1/1 is full; w-20, w-25, w-40, w-50, w-60, w-75 and w-80 are the fractions w-1/5, w-1/4, w-2/5, w-1/2, w-3/5, w-3/4 and w-4/5. The same rule for the other spellings (C212 (4), dispatcher, 2026-11-16): col-gap-* and row-gap-* are gap-x-* and gap-y-* (under a cq- container condition they stay: query-layout has no gap-x/gap-y), basis-20, -25, -40, -50, -60, -75, -80 are basis-1/5 ... basis-4/5 and basis-100 is basis-full, h-content-min and h-content-max are h-min and h-max.",
+    "names": {
+      "w-1/1": "w-full",
+      "w-10/12": "w-5/6",
+      "w-2/12": "w-1/6",
+      "w-2/4": "w-1/2",
+      "w-2/6": "w-1/3",
+      "w-3/12": "w-1/4",
+      "w-3/6": "w-1/2",
+      "w-4/12": "w-1/3",
+      "w-4/6": "w-2/3",
+      "w-6/12": "w-1/2",
+      "w-8/12": "w-2/3",
+      "w-9/12": "w-3/4",
+      "basis-1/1": "basis-full",
+      "basis-10/12": "basis-5/6",
+      "basis-2/12": "basis-1/6",
+      "basis-2/4": "basis-1/2",
+      "basis-2/6": "basis-1/3",
+      "basis-3/12": "basis-1/4",
+      "basis-3/6": "basis-1/2",
+      "basis-4/12": "basis-1/3",
+      "basis-4/6": "basis-2/3",
+      "basis-6/12": "basis-1/2",
+      "basis-8/12": "basis-2/3",
+      "basis-9/12": "basis-3/4",
+      "h-2/4": "h-1/2",
+      "h-2/6": "h-1/3",
+      "h-3/6": "h-1/2",
+      "h-4/6": "h-2/3",
+      "h-screen-2/4": "h-screen-1/2",
+      "top-10/12": "top-5/6",
+      "top-2/12": "top-1/6",
+      "top-2/4": "top-1/2",
+      "top-2/6": "top-1/3",
+      "top-3/12": "top-1/4",
+      "top-3/6": "top-1/2",
+      "top-4/12": "top-1/3",
+      "top-4/6": "top-2/3",
+      "top-6/12": "top-1/2",
+      "top-8/12": "top-2/3",
+      "top-9/12": "top-3/4",
+      "bottom-10/12": "bottom-5/6",
+      "bottom-2/12": "bottom-1/6",
+      "bottom-2/4": "bottom-1/2",
+      "bottom-2/6": "bottom-1/3",
+      "bottom-3/12": "bottom-1/4",
+      "bottom-3/6": "bottom-1/2",
+      "bottom-4/12": "bottom-1/3",
+      "bottom-4/6": "bottom-2/3",
+      "bottom-6/12": "bottom-1/2",
+      "bottom-8/12": "bottom-2/3",
+      "bottom-9/12": "bottom-3/4",
+      "inline-start-10/12": "inline-start-5/6",
+      "inline-start-2/12": "inline-start-1/6",
+      "inline-start-2/4": "inline-start-1/2",
+      "inline-start-2/6": "inline-start-1/3",
+      "inline-start-3/12": "inline-start-1/4",
+      "inline-start-3/6": "inline-start-1/2",
+      "inline-start-4/12": "inline-start-1/3",
+      "inline-start-4/6": "inline-start-2/3",
+      "inline-start-6/12": "inline-start-1/2",
+      "inline-start-8/12": "inline-start-2/3",
+      "inline-start-9/12": "inline-start-3/4",
+      "inline-end-10/12": "inline-end-5/6",
+      "inline-end-2/12": "inline-end-1/6",
+      "inline-end-2/4": "inline-end-1/2",
+      "inline-end-2/6": "inline-end-1/3",
+      "inline-end-3/12": "inline-end-1/4",
+      "inline-end-3/6": "inline-end-1/2",
+      "inline-end-4/12": "inline-end-1/3",
+      "inline-end-4/6": "inline-end-2/3",
+      "inline-end-6/12": "inline-end-1/2",
+      "inline-end-8/12": "inline-end-2/3",
+      "inline-end-9/12": "inline-end-3/4",
+      "g-0": "gap-0",
+      "g-1": "gap-1",
+      "g-1/2": "gap-1/2",
+      "g-1/3": "gap-1/3",
+      "g-1/4": "gap-1/4",
+      "g-2": "gap-2",
+      "g-3": "gap-3",
+      "g-4": "gap-4",
+      "g-5": "gap-5",
+      "g-6": "gap-6",
+      "g-7": "gap-7",
+      "g-8": "gap-8",
+      "g-x-0": "gap-x-0",
+      "g-x-1": "gap-x-1",
+      "g-x-1/2": "gap-x-1/2",
+      "g-x-1/3": "gap-x-1/3",
+      "g-x-1/4": "gap-x-1/4",
+      "g-x-2": "gap-x-2",
+      "g-x-3": "gap-x-3",
+      "g-x-4": "gap-x-4",
+      "g-x-5": "gap-x-5",
+      "g-x-6": "gap-x-6",
+      "g-x-7": "gap-x-7",
+      "g-x-8": "gap-x-8",
+      "g-y-0": "gap-y-0",
+      "g-y-1": "gap-y-1",
+      "g-y-1/2": "gap-y-1/2",
+      "g-y-1/3": "gap-y-1/3",
+      "g-y-1/4": "gap-y-1/4",
+      "g-y-2": "gap-y-2",
+      "g-y-3": "gap-y-3",
+      "g-y-4": "gap-y-4",
+      "g-y-5": "gap-y-5",
+      "g-y-6": "gap-y-6",
+      "g-y-7": "gap-y-7",
+      "g-y-8": "gap-y-8",
+      "w-20": "w-1/5",
+      "w-25": "w-1/4",
+      "w-40": "w-2/5",
+      "w-50": "w-1/2",
+      "w-60": "w-3/5",
+      "w-75": "w-3/4",
+      "w-80": "w-4/5",
+      "basis-20": "basis-1/5",
+      "basis-25": "basis-1/4",
+      "basis-40": "basis-2/5",
+      "basis-50": "basis-1/2",
+      "basis-60": "basis-3/5",
+      "basis-75": "basis-3/4",
+      "basis-80": "basis-4/5",
+      "basis-100": "basis-full",
+      "h-content-min": "h-min",
+      "h-content-max": "h-max"
+    },
+    "patterns": [{
+      "from": "col-gap-*",
+      "pattern": "^col-gap-(0|1\\/[234]|[1-8])$",
+      "to": "gap-x-$1",
+      "variants_except": "(?:^|:)cq-"
+    }, {
+      "from": "row-gap-*",
+      "pattern": "^row-gap-(0|1\\/[234]|[1-8])$",
+      "to": "gap-y-$1",
+      "variants_except": "(?:^|:)cq-"
+    }]
+  }, {
+    "journal": "class-c212-length-nearest",
+    "decision": "C212 (4)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Lengths with no exact twin in the system steps: they keep drawing what they drew until remove_after, and the name to write is the nearest, which looks different. w-1 ... w-99 (percent) -> the nearest fraction in lowest terms (w-33 -> w-1/3). space-x-N / space-y-N (margins on every child but the first) -> gap-x-N / gap-y-N on a flex or grid parent; space-x-reverse and space-y-reverse go with them (a gap needs no reverse). The raw rungs a0 ... i9 of margin-ext, padding-ext, scroll-margin-ext and scroll-padding-ext (retired by C187 (2)) -> the space step nearest to the rung on a desktop at the default root size (m-b6 -> m-1; a step is 4 ... 80 and follows the device, a rung does not); scroll-p-inline-start/-end -> scroll-pl/-pr; a negative scroll rung has no step. basis-1 ... basis-99 (percent, flex-basis-ext) -> the nearest fraction in lowest terms, as w-N (basis-33 -> basis-1/3).",
+    "names": {
+      "w-1": "w-1/12",
+      "w-2": "w-1/12",
+      "w-3": "w-1/12",
+      "w-4": "w-1/12",
+      "w-5": "w-1/12",
+      "w-6": "w-1/12",
+      "w-7": "w-1/12",
+      "w-8": "w-1/12",
+      "w-9": "w-1/12",
+      "w-10": "w-1/12",
+      "w-11": "w-1/12",
+      "w-12": "w-1/12",
+      "w-13": "w-1/6",
+      "w-14": "w-1/6",
+      "w-15": "w-1/6",
+      "w-16": "w-1/6",
+      "w-17": "w-1/6",
+      "w-18": "w-1/6",
+      "w-19": "w-1/5",
+      "w-21": "w-1/5",
+      "w-22": "w-1/5",
+      "w-23": "w-1/4",
+      "w-24": "w-1/4",
+      "w-26": "w-1/4",
+      "w-27": "w-1/4",
+      "w-28": "w-1/4",
+      "w-29": "w-1/4",
+      "w-30": "w-1/3",
+      "w-31": "w-1/3",
+      "w-32": "w-1/3",
+      "w-33": "w-1/3",
+      "w-34": "w-1/3",
+      "w-35": "w-1/3",
+      "w-36": "w-1/3",
+      "w-37": "w-2/5",
+      "w-38": "w-2/5",
+      "w-39": "w-2/5",
+      "w-41": "w-5/12",
+      "w-42": "w-5/12",
+      "w-43": "w-5/12",
+      "w-44": "w-5/12",
+      "w-45": "w-5/12",
+      "w-46": "w-1/2",
+      "w-47": "w-1/2",
+      "w-48": "w-1/2",
+      "w-49": "w-1/2",
+      "w-51": "w-1/2",
+      "w-52": "w-1/2",
+      "w-53": "w-1/2",
+      "w-54": "w-1/2",
+      "w-55": "w-7/12",
+      "w-56": "w-7/12",
+      "w-57": "w-7/12",
+      "w-58": "w-7/12",
+      "w-59": "w-7/12",
+      "w-61": "w-3/5",
+      "w-62": "w-3/5",
+      "w-63": "w-3/5",
+      "w-64": "w-2/3",
+      "w-65": "w-2/3",
+      "w-66": "w-2/3",
+      "w-67": "w-2/3",
+      "w-68": "w-2/3",
+      "w-69": "w-2/3",
+      "w-70": "w-2/3",
+      "w-71": "w-3/4",
+      "w-72": "w-3/4",
+      "w-73": "w-3/4",
+      "w-74": "w-3/4",
+      "w-76": "w-3/4",
+      "w-77": "w-3/4",
+      "w-78": "w-4/5",
+      "w-79": "w-4/5",
+      "w-81": "w-4/5",
+      "w-82": "w-5/6",
+      "w-83": "w-5/6",
+      "w-84": "w-5/6",
+      "w-85": "w-5/6",
+      "w-86": "w-5/6",
+      "w-87": "w-5/6",
+      "w-88": "w-11/12",
+      "w-89": "w-11/12",
+      "w-90": "w-11/12",
+      "w-91": "w-11/12",
+      "w-92": "w-11/12",
+      "w-93": "w-11/12",
+      "w-94": "w-11/12",
+      "w-95": "w-11/12",
+      "w-96": "w-full",
+      "w-97": "w-full",
+      "w-98": "w-full",
+      "w-99": "w-full",
+      "space-x-reverse": null,
+      "space-y-reverse": null,
+      "basis-1": "basis-1/12",
+      "basis-2": "basis-1/12",
+      "basis-3": "basis-1/12",
+      "basis-4": "basis-1/12",
+      "basis-5": "basis-1/12",
+      "basis-6": "basis-1/12",
+      "basis-7": "basis-1/12",
+      "basis-8": "basis-1/12",
+      "basis-9": "basis-1/12",
+      "basis-10": "basis-1/12",
+      "basis-11": "basis-1/12",
+      "basis-12": "basis-1/12",
+      "basis-13": "basis-1/6",
+      "basis-14": "basis-1/6",
+      "basis-15": "basis-1/6",
+      "basis-16": "basis-1/6",
+      "basis-17": "basis-1/6",
+      "basis-18": "basis-1/6",
+      "basis-19": "basis-1/5",
+      "basis-21": "basis-1/5",
+      "basis-22": "basis-1/5",
+      "basis-23": "basis-1/4",
+      "basis-24": "basis-1/4",
+      "basis-26": "basis-1/4",
+      "basis-27": "basis-1/4",
+      "basis-28": "basis-1/4",
+      "basis-29": "basis-1/4",
+      "basis-30": "basis-1/3",
+      "basis-31": "basis-1/3",
+      "basis-32": "basis-1/3",
+      "basis-33": "basis-1/3",
+      "basis-34": "basis-1/3",
+      "basis-35": "basis-1/3",
+      "basis-36": "basis-1/3",
+      "basis-37": "basis-2/5",
+      "basis-38": "basis-2/5",
+      "basis-39": "basis-2/5",
+      "basis-41": "basis-5/12",
+      "basis-42": "basis-5/12",
+      "basis-43": "basis-5/12",
+      "basis-44": "basis-5/12",
+      "basis-45": "basis-5/12",
+      "basis-46": "basis-1/2",
+      "basis-47": "basis-1/2",
+      "basis-48": "basis-1/2",
+      "basis-49": "basis-1/2",
+      "basis-51": "basis-1/2",
+      "basis-52": "basis-1/2",
+      "basis-53": "basis-1/2",
+      "basis-54": "basis-1/2",
+      "basis-55": "basis-7/12",
+      "basis-56": "basis-7/12",
+      "basis-57": "basis-7/12",
+      "basis-58": "basis-7/12",
+      "basis-59": "basis-7/12",
+      "basis-61": "basis-3/5",
+      "basis-62": "basis-3/5",
+      "basis-63": "basis-3/5",
+      "basis-64": "basis-2/3",
+      "basis-65": "basis-2/3",
+      "basis-66": "basis-2/3",
+      "basis-67": "basis-2/3",
+      "basis-68": "basis-2/3",
+      "basis-69": "basis-2/3",
+      "basis-70": "basis-2/3",
+      "basis-71": "basis-3/4",
+      "basis-72": "basis-3/4",
+      "basis-73": "basis-3/4",
+      "basis-74": "basis-3/4",
+      "basis-76": "basis-3/4",
+      "basis-77": "basis-3/4",
+      "basis-78": "basis-4/5",
+      "basis-79": "basis-4/5",
+      "basis-81": "basis-4/5",
+      "basis-82": "basis-5/6",
+      "basis-83": "basis-5/6",
+      "basis-84": "basis-5/6",
+      "basis-85": "basis-5/6",
+      "basis-86": "basis-5/6",
+      "basis-87": "basis-5/6",
+      "basis-88": "basis-11/12",
+      "basis-89": "basis-11/12",
+      "basis-90": "basis-11/12",
+      "basis-91": "basis-11/12",
+      "basis-92": "basis-11/12",
+      "basis-93": "basis-11/12",
+      "basis-94": "basis-11/12",
+      "basis-95": "basis-11/12",
+      "basis-96": "basis-full",
+      "basis-97": "basis-full",
+      "basis-98": "basis-full",
+      "basis-99": "basis-full"
+    },
+    "patterns": [{
+      "from": "space-x-*",
+      "pattern": "^space-x-(0|1\\/[234]|[1-8])$",
+      "to": "gap-x-$1"
+    }, {
+      "from": "space-y-*",
+      "pattern": "^space-y-(0|1\\/[234]|[1-8])$",
+      "to": "gap-y-$1"
+    }, {
+      "from": "m-, p-, scroll-m-, scroll-p- <a0-i9>",
+      "pattern": "^(scroll-m-inline-start|scroll-p-inline-start|scroll-m-inline-end|scroll-p-inline-end|-m-inline-start|m-inline-start|p-inline-start|-m-inline-end|m-inline-end|p-inline-end|-m-bottom|scroll-mb|scroll-mt|scroll-pb|scroll-pt|m-bottom|p-bottom|scroll-m|scroll-p|-m-top|m-top|p-top|-m|m|p)-([a-i][0-9])$",
+      "to": "$1-$2",
+      "values": {
+        "1": {
+          "scroll-p-inline-start": "scroll-pl",
+          "scroll-p-inline-end": "scroll-pr"
+        },
+        "2": {
+          "a0": "0",
+          "a1": "0",
+          "a2": "1/4",
+          "a3": "1/4",
+          "a4": "1/4",
+          "a5": "1/4",
+          "a6": "1/3",
+          "a7": "1/3",
+          "a8": "1/3",
+          "a9": "1/3",
+          "b0": "1/2",
+          "b1": "1/2",
+          "b2": "1/2",
+          "b3": "1/2",
+          "b4": "1",
+          "b5": "1",
+          "b6": "1",
+          "b7": "1",
+          "b8": "2",
+          "b9": "2",
+          "c0": "2",
+          "c1": "3",
+          "c2": "3",
+          "c3": "3",
+          "c4": "4",
+          "c5": "4",
+          "c6": "4",
+          "c7": "4",
+          "c8": "5",
+          "c9": "5",
+          "d0": "5",
+          "d1": "6",
+          "d2": "6",
+          "d3": "6",
+          "d4": "7",
+          "d5": "7",
+          "d6": "7",
+          "d7": "7",
+          "d8": "8",
+          "d9": "8",
+          "e0": "8",
+          "e1": "8",
+          "e2": "8",
+          "e3": "8",
+          "e4": "8",
+          "e5": "8",
+          "e6": "8",
+          "e7": "8",
+          "e8": "8",
+          "e9": "8",
+          "f0": "8",
+          "f1": "8",
+          "f2": "8",
+          "f3": "8",
+          "f4": "8",
+          "f5": "8",
+          "f6": "8",
+          "f7": "8",
+          "f8": "8",
+          "f9": "8",
+          "g0": "8",
+          "g1": "8",
+          "g2": "8",
+          "g3": "8",
+          "g4": "8",
+          "g5": "8",
+          "g6": "8",
+          "g7": "8",
+          "g8": "8",
+          "g9": "8",
+          "h0": "8",
+          "h1": "8",
+          "h2": "8",
+          "h3": "8",
+          "h4": "8",
+          "h5": "8",
+          "h6": "8",
+          "h7": "8",
+          "h8": "8",
+          "h9": "8",
+          "i0": "8",
+          "i1": "8",
+          "i2": "8",
+          "i3": "8",
+          "i4": "8",
+          "i5": "8",
+          "i6": "8",
+          "i7": "8",
+          "i8": "8",
+          "i9": "8"
+        }
+      }
+    }, {
+      "from": "-scroll-m-, -scroll-p- <a0-i9>",
+      "pattern": "^(-scroll-m-inline-start|-scroll-p-inline-start|-scroll-m-inline-end|-scroll-p-inline-end|-scroll-mb|-scroll-mt|-scroll-pb|-scroll-pt|-scroll-m|-scroll-p)-([a-i][0-9])$",
+      "to": null
+    }]
   }, {
     "journal": "class-c187-utility-renames",
     "decision": "C187 (3)",
@@ -8562,6 +9226,424 @@ __webpack_require__.r(__webpack_exports__);
       "divider-opacity": "divide-outline-variant"
     }
   }, {
+    "journal": "utility-c16-background-names",
+    "decision": "C212 (5)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One list of roles for every colour property (owner decision C212 (5)): bg, color, border, fill, stroke, ring, ring-offset, outline, divide, caret, accent, placeholder, decoration, drop-shadow and stripe take the same role words -- the places (surface-page, -area, -card, -popup, -inverse, -container, -container-strong, -veil, -disabled), the inks (on-surface, on-surface-variant, on-surface-disabled, on-surface-inverse), outline and outline-variant, and the seven accents with -container, -container-strong and, where the property draws text, on-<accent> and on-<accent>-container; a state is hover:/active: <role>-state. The C16 background names (2026-11-08) draw exactly what their role draws: bg-surface-0 is bg-surface-page, bg-surface-1 is bg-surface-area, bg-<colour>-transparent-select is bg-<colour>-state-select, bg-<colour>-transparent-overlay is bg-<colour>-container-strong, bg-disable is bg-surface-disabled. From C212 (5) the Loader notes them; they keep drawing until remove_after.",
+    "names": {
+      "bg-disable": "bg-surface-disabled",
+      "bg-error-transparent-overlay": "bg-error-container-strong",
+      "bg-error-transparent-select": "bg-error-state-select",
+      "bg-primary-transparent-overlay": "bg-primary-container-strong",
+      "bg-primary-transparent-select": "bg-primary-state-select",
+      "bg-secondary-transparent-overlay": "bg-secondary-container-strong",
+      "bg-secondary-transparent-select": "bg-secondary-state-select",
+      "bg-success-transparent-overlay": "bg-success-container-strong",
+      "bg-success-transparent-select": "bg-success-state-select",
+      "bg-surface-0": "bg-surface-page",
+      "bg-surface-1": "bg-surface-area",
+      "bg-surface-transparent-overlay": "bg-surface-container-strong",
+      "bg-surface-transparent-select": "bg-surface-state-select",
+      "bg-tertiary-transparent-overlay": "bg-tertiary-container-strong",
+      "bg-tertiary-transparent-select": "bg-tertiary-state-select",
+      "bg-warning-transparent-overlay": "bg-warning-container-strong",
+      "bg-warning-transparent-select": "bg-warning-state-select"
+    }
+  }, {
+    "journal": "utility-c16-colour-family-names",
+    "decision": "C212 (5)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One list of roles for every colour property (owner decision C212 (5)): bg, color, border, fill, stroke, ring, ring-offset, outline, divide, caret, accent, placeholder, decoration, drop-shadow and stripe take the same role words -- the places (surface-page, -area, -card, -popup, -inverse, -container, -container-strong, -veil, -disabled), the inks (on-surface, on-surface-variant, on-surface-disabled, on-surface-inverse), outline and outline-variant, and the seven accents with -container, -container-strong and, where the property draws text, on-<accent> and on-<accent>-container; a state is hover:/active: <role>-state. The C16 names of the other colour families (2026-11-08) draw exactly what their role draws: surface-0 is surface-page, surface-1 is surface-area, surface-overlay is surface-veil, <colour>-transparent-overlay is <colour>-container-strong, <colour>-transparent-select is <colour>-state-select, disable is surface-disabled and on-disable is on-surface-disabled, for border-, ring-, ring-offset-, drop-shadow-, fill-, stripe-, color- and placeholder-. From C212 (5) the Loader notes them; they keep drawing until remove_after.",
+    "names": {
+      "border-error-transparent-overlay": "border-error-container-strong",
+      "border-primary-transparent-overlay": "border-primary-container-strong",
+      "border-secondary-transparent-overlay": "border-secondary-container-strong",
+      "border-success-transparent-overlay": "border-success-container-strong",
+      "border-surface-0": "border-surface-page",
+      "border-surface-1": "border-surface-area",
+      "border-surface-overlay": "border-surface-veil",
+      "border-surface-transparent-overlay": "border-surface-container-strong",
+      "border-tertiary-transparent-overlay": "border-tertiary-container-strong",
+      "border-warning-transparent-overlay": "border-warning-container-strong",
+      "color-on-disable": "color-on-surface-disabled",
+      "drop-shadow-error-transparent-overlay": "drop-shadow-error-container-strong",
+      "drop-shadow-error-transparent-select": "drop-shadow-error-state-select",
+      "drop-shadow-primary-transparent-overlay": "drop-shadow-primary-container-strong",
+      "drop-shadow-primary-transparent-select": "drop-shadow-primary-state-select",
+      "drop-shadow-secondary-transparent-overlay": "drop-shadow-secondary-container-strong",
+      "drop-shadow-secondary-transparent-select": "drop-shadow-secondary-state-select",
+      "drop-shadow-success-transparent-overlay": "drop-shadow-success-container-strong",
+      "drop-shadow-success-transparent-select": "drop-shadow-success-state-select",
+      "drop-shadow-surface-0": "drop-shadow-surface-page",
+      "drop-shadow-surface-1": "drop-shadow-surface-area",
+      "drop-shadow-tertiary-transparent-overlay": "drop-shadow-tertiary-container-strong",
+      "drop-shadow-tertiary-transparent-select": "drop-shadow-tertiary-state-select",
+      "drop-shadow-warning-transparent-overlay": "drop-shadow-warning-container-strong",
+      "drop-shadow-warning-transparent-select": "drop-shadow-warning-state-select",
+      "fill-disable": "fill-surface-disabled",
+      "fill-error-transparent-overlay": "fill-error-container-strong",
+      "fill-error-transparent-select": "fill-error-state-select",
+      "fill-primary-transparent-overlay": "fill-primary-container-strong",
+      "fill-primary-transparent-select": "fill-primary-state-select",
+      "fill-secondary-transparent-overlay": "fill-secondary-container-strong",
+      "fill-secondary-transparent-select": "fill-secondary-state-select",
+      "fill-success-transparent-overlay": "fill-success-container-strong",
+      "fill-success-transparent-select": "fill-success-state-select",
+      "fill-surface-0": "fill-surface-page",
+      "fill-surface-1": "fill-surface-area",
+      "fill-surface-transparent-overlay": "fill-surface-container-strong",
+      "fill-surface-transparent-select": "fill-surface-state-select",
+      "fill-tertiary-transparent-overlay": "fill-tertiary-container-strong",
+      "fill-tertiary-transparent-select": "fill-tertiary-state-select",
+      "fill-warning-transparent-overlay": "fill-warning-container-strong",
+      "fill-warning-transparent-select": "fill-warning-state-select",
+      "placeholder-on-disable": "placeholder-on-surface-disabled",
+      "ring-error-transparent-overlay": "ring-error-container-strong",
+      "ring-offset-error-transparent-overlay": "ring-offset-error-container-strong",
+      "ring-offset-primary-transparent-overlay": "ring-offset-primary-container-strong",
+      "ring-offset-secondary-transparent-overlay": "ring-offset-secondary-container-strong",
+      "ring-offset-success-transparent-overlay": "ring-offset-success-container-strong",
+      "ring-offset-surface-0": "ring-offset-surface-page",
+      "ring-offset-surface-1": "ring-offset-surface-area",
+      "ring-offset-surface-overlay": "ring-offset-surface-veil",
+      "ring-offset-surface-transparent-overlay": "ring-offset-surface-container-strong",
+      "ring-offset-tertiary-transparent-overlay": "ring-offset-tertiary-container-strong",
+      "ring-offset-warning-transparent-overlay": "ring-offset-warning-container-strong",
+      "ring-primary-transparent-overlay": "ring-primary-container-strong",
+      "ring-secondary-transparent-overlay": "ring-secondary-container-strong",
+      "ring-success-transparent-overlay": "ring-success-container-strong",
+      "ring-surface-0": "ring-surface-page",
+      "ring-surface-1": "ring-surface-area",
+      "ring-surface-overlay": "ring-surface-veil",
+      "ring-surface-transparent-overlay": "ring-surface-container-strong",
+      "ring-tertiary-transparent-overlay": "ring-tertiary-container-strong",
+      "ring-warning-transparent-overlay": "ring-warning-container-strong",
+      "stripe-surface-transparent-overlay": "stripe-surface-container-strong"
+    }
+  }, {
+    "journal": "class-c212-colour",
+    "decision": "C212 (5)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One list of roles for every colour property (owner decision C212 (5)): bg, color, border, fill, stroke, ring, ring-offset, outline, divide, caret, accent, placeholder, decoration, drop-shadow and stripe take the same role words -- the places (surface-page, -area, -card, -popup, -inverse, -container, -container-strong, -veil, -disabled), the inks (on-surface, on-surface-variant, on-surface-disabled, on-surface-inverse), outline and outline-variant, and the seven accents with -container, -container-strong and, where the property draws text, on-<accent> and on-<accent>-container; a state is hover:/active: <role>-state. These old spellings, which no C16 record lists, draw exactly what their role draws: the bare surface is surface-area (bg-, border-, ring-, ring-offset-, fill-, drop-shadow-), and bg-<colour>-transparent and fill-<colour>-transparent, built as hover: and active: only, are <colour>-state. They keep drawing until remove_after.",
+    "names": {
+      "bg-error-transparent": "bg-error-state",
+      "bg-primary-transparent": "bg-primary-state",
+      "bg-secondary-transparent": "bg-secondary-state",
+      "bg-success-transparent": "bg-success-state",
+      "bg-surface": "bg-surface-area",
+      "bg-surface-transparent": "bg-surface-state",
+      "bg-tertiary-transparent": "bg-tertiary-state",
+      "bg-warning-transparent": "bg-warning-state",
+      "border-surface": "border-surface-area",
+      "drop-shadow-surface": "drop-shadow-surface-area",
+      "fill-error-transparent": "fill-error-state",
+      "fill-primary-transparent": "fill-primary-state",
+      "fill-secondary-transparent": "fill-secondary-state",
+      "fill-success-transparent": "fill-success-state",
+      "fill-surface": "fill-surface-area",
+      "fill-surface-transparent": "fill-surface-state",
+      "fill-tertiary-transparent": "fill-tertiary-state",
+      "fill-warning-transparent": "fill-warning-state",
+      "ring-offset-surface": "ring-offset-surface-area",
+      "ring-surface": "ring-surface-area"
+    }
+  }, {
+    "journal": "utility-c17-legacy-palette-classes",
+    "decision": "C212 (5)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Palette tones are variables, not utilities (C212 (5), C17). The legacy palette classes color-, bg- and border-<hue>[-<0..9>] (the ten names of SF4's colour array) keep drawing the static tone they read until remove_after. The hint is the role nearest to that tone in the light theme among the roles of the hue's family: the neutral places and inks for the greys and the two extremes, and error, warning, success, primary or tertiary for the others (journal utility-c17-legacy-palette-classes names the family of each). A role follows the theme and a tone does not, so a person checks the look; a colour that must stay its hue is the hue role (sf-hue-<hue> color-hue) or the tone as a variable (var(--sf-<hue>-<tone>)).",
+    "names": {
+      "color-white": "color-on-surface-inverse",
+      "color-black": "color-on-surface",
+      "color-gray": "color-on-surface-variant",
+      "color-gray-0": "color-on-surface-inverse",
+      "color-gray-1": "color-on-surface-inverse",
+      "color-gray-2": "color-on-surface-inverse",
+      "color-gray-3": "color-on-surface-inverse",
+      "color-gray-4": "color-on-surface-variant",
+      "color-gray-5": "color-on-surface-variant",
+      "color-gray-6": "color-on-surface-variant",
+      "color-gray-7": "color-on-surface-variant",
+      "color-gray-8": "color-on-surface",
+      "color-gray-9": "color-on-surface",
+      "color-red": "color-error",
+      "color-red-0": "color-on-error",
+      "color-red-1": "color-on-error",
+      "color-red-2": "color-on-error",
+      "color-red-3": "color-error",
+      "color-red-4": "color-error",
+      "color-red-5": "color-error",
+      "color-red-6": "color-error",
+      "color-red-7": "color-error",
+      "color-red-8": "color-error",
+      "color-red-9": "color-error",
+      "color-orange": "color-warning",
+      "color-orange-0": "color-on-warning",
+      "color-orange-1": "color-on-warning",
+      "color-orange-2": "color-on-warning",
+      "color-orange-3": "color-on-warning",
+      "color-orange-4": "color-warning",
+      "color-orange-5": "color-warning",
+      "color-orange-6": "color-warning",
+      "color-orange-7": "color-warning",
+      "color-orange-8": "color-warning",
+      "color-orange-9": "color-warning",
+      "color-yellow": "color-on-warning",
+      "color-yellow-0": "color-on-warning",
+      "color-yellow-1": "color-on-warning",
+      "color-yellow-2": "color-on-warning",
+      "color-yellow-3": "color-on-warning",
+      "color-yellow-4": "color-on-warning",
+      "color-yellow-5": "color-on-warning",
+      "color-yellow-6": "color-on-warning",
+      "color-yellow-7": "color-warning",
+      "color-yellow-8": "color-warning",
+      "color-yellow-9": "color-warning",
+      "color-green": "color-success",
+      "color-green-0": "color-on-success",
+      "color-green-1": "color-on-success",
+      "color-green-2": "color-on-success",
+      "color-green-3": "color-on-success",
+      "color-green-4": "color-success",
+      "color-green-5": "color-success",
+      "color-green-6": "color-success",
+      "color-green-7": "color-success",
+      "color-green-8": "color-success",
+      "color-green-9": "color-on-success-container",
+      "color-blue": "color-primary",
+      "color-blue-0": "color-on-primary",
+      "color-blue-1": "color-on-primary",
+      "color-blue-2": "color-on-primary",
+      "color-blue-3": "color-primary",
+      "color-blue-4": "color-primary",
+      "color-blue-5": "color-primary",
+      "color-blue-6": "color-primary",
+      "color-blue-7": "color-primary",
+      "color-blue-8": "color-on-primary-container",
+      "color-blue-9": "color-on-primary-container",
+      "color-purple": "color-tertiary",
+      "color-purple-0": "color-on-tertiary",
+      "color-purple-1": "color-on-tertiary",
+      "color-purple-2": "color-on-tertiary",
+      "color-purple-3": "color-tertiary",
+      "color-purple-4": "color-tertiary",
+      "color-purple-5": "color-tertiary",
+      "color-purple-6": "color-tertiary",
+      "color-purple-7": "color-tertiary",
+      "color-purple-8": "color-on-tertiary-container",
+      "color-purple-9": "color-on-tertiary-container",
+      "color-pink": "color-tertiary",
+      "color-pink-0": "color-on-tertiary",
+      "color-pink-1": "color-on-tertiary",
+      "color-pink-2": "color-on-tertiary",
+      "color-pink-3": "color-tertiary",
+      "color-pink-4": "color-tertiary",
+      "color-pink-5": "color-tertiary",
+      "color-pink-6": "color-tertiary",
+      "color-pink-7": "color-tertiary",
+      "color-pink-8": "color-tertiary",
+      "color-pink-9": "color-tertiary",
+      "bg-white": "bg-surface-page",
+      "bg-black": "bg-surface-inverse",
+      "bg-gray": "bg-surface-inverse",
+      "bg-gray-0": "bg-surface-area",
+      "bg-gray-1": "bg-surface-area",
+      "bg-gray-2": "bg-surface-container-strong",
+      "bg-gray-3": "bg-surface-container-strong",
+      "bg-gray-4": "bg-surface-container-strong",
+      "bg-gray-5": "bg-surface-inverse",
+      "bg-gray-6": "bg-surface-inverse",
+      "bg-gray-7": "bg-surface-inverse",
+      "bg-gray-8": "bg-surface-inverse",
+      "bg-gray-9": "bg-surface-inverse",
+      "bg-red": "bg-error",
+      "bg-red-0": "bg-error-container",
+      "bg-red-1": "bg-error-container-strong",
+      "bg-red-2": "bg-error-container-strong",
+      "bg-red-3": "bg-error-container-strong",
+      "bg-red-4": "bg-error",
+      "bg-red-5": "bg-error",
+      "bg-red-6": "bg-error",
+      "bg-red-7": "bg-error",
+      "bg-red-8": "bg-error",
+      "bg-red-9": "bg-error",
+      "bg-orange": "bg-warning",
+      "bg-orange-0": "bg-warning-container",
+      "bg-orange-1": "bg-warning-container",
+      "bg-orange-2": "bg-warning-container-strong",
+      "bg-orange-3": "bg-warning-container-strong",
+      "bg-orange-4": "bg-warning-container-strong",
+      "bg-orange-5": "bg-warning",
+      "bg-orange-6": "bg-warning",
+      "bg-orange-7": "bg-warning",
+      "bg-orange-8": "bg-warning",
+      "bg-orange-9": "bg-warning",
+      "bg-yellow": "bg-warning-container-strong",
+      "bg-yellow-0": "bg-warning-container",
+      "bg-yellow-1": "bg-warning-container",
+      "bg-yellow-2": "bg-warning-container",
+      "bg-yellow-3": "bg-warning-container-strong",
+      "bg-yellow-4": "bg-warning-container-strong",
+      "bg-yellow-5": "bg-warning-container-strong",
+      "bg-yellow-6": "bg-warning-container-strong",
+      "bg-yellow-7": "bg-warning-container-strong",
+      "bg-yellow-8": "bg-warning",
+      "bg-yellow-9": "bg-warning",
+      "bg-green": "bg-success",
+      "bg-green-0": "bg-success-container",
+      "bg-green-1": "bg-success-container",
+      "bg-green-2": "bg-success-container-strong",
+      "bg-green-3": "bg-success-container-strong",
+      "bg-green-4": "bg-success-container-strong",
+      "bg-green-5": "bg-success",
+      "bg-green-6": "bg-success",
+      "bg-green-7": "bg-success",
+      "bg-green-8": "bg-success",
+      "bg-green-9": "bg-success",
+      "bg-blue": "bg-primary",
+      "bg-blue-0": "bg-primary-container",
+      "bg-blue-1": "bg-primary-container",
+      "bg-blue-2": "bg-primary-container-strong",
+      "bg-blue-3": "bg-primary-container-strong",
+      "bg-blue-4": "bg-primary",
+      "bg-blue-5": "bg-primary",
+      "bg-blue-6": "bg-primary",
+      "bg-blue-7": "bg-primary",
+      "bg-blue-8": "bg-primary",
+      "bg-blue-9": "bg-primary",
+      "bg-purple": "bg-tertiary",
+      "bg-purple-0": "bg-tertiary-container",
+      "bg-purple-1": "bg-tertiary-container-strong",
+      "bg-purple-2": "bg-tertiary-container-strong",
+      "bg-purple-3": "bg-tertiary-container-strong",
+      "bg-purple-4": "bg-tertiary",
+      "bg-purple-5": "bg-tertiary",
+      "bg-purple-6": "bg-tertiary",
+      "bg-purple-7": "bg-tertiary",
+      "bg-purple-8": "bg-tertiary",
+      "bg-purple-9": "bg-tertiary",
+      "bg-pink": "bg-tertiary",
+      "bg-pink-0": "bg-tertiary-container",
+      "bg-pink-1": "bg-tertiary-container-strong",
+      "bg-pink-2": "bg-tertiary-container-strong",
+      "bg-pink-3": "bg-tertiary-container-strong",
+      "bg-pink-4": "bg-tertiary",
+      "bg-pink-5": "bg-tertiary",
+      "bg-pink-6": "bg-tertiary",
+      "bg-pink-7": "bg-tertiary",
+      "bg-pink-8": "bg-tertiary",
+      "bg-pink-9": "bg-tertiary",
+      "border-white": "border-surface-page",
+      "border-black": "border-on-surface",
+      "border-gray": "border-on-surface-variant",
+      "border-gray-0": "border-surface-page",
+      "border-gray-1": "border-surface-page",
+      "border-gray-2": "border-outline-variant",
+      "border-gray-3": "border-outline-variant",
+      "border-gray-4": "border-outline",
+      "border-gray-5": "border-on-surface-variant",
+      "border-gray-6": "border-on-surface-variant",
+      "border-gray-7": "border-on-surface-variant",
+      "border-gray-8": "border-on-surface",
+      "border-gray-9": "border-on-surface",
+      "border-red": "border-error",
+      "border-red-0": "border-error-container",
+      "border-red-1": "border-error-container-strong",
+      "border-red-2": "border-error-container-strong",
+      "border-red-3": "border-error-container-strong",
+      "border-red-4": "border-error",
+      "border-red-5": "border-error",
+      "border-red-6": "border-error",
+      "border-red-7": "border-error",
+      "border-red-8": "border-error",
+      "border-red-9": "border-error",
+      "border-orange": "border-warning",
+      "border-orange-0": "border-warning-container",
+      "border-orange-1": "border-warning-container",
+      "border-orange-2": "border-warning-container-strong",
+      "border-orange-3": "border-warning-container-strong",
+      "border-orange-4": "border-warning",
+      "border-orange-5": "border-warning",
+      "border-orange-6": "border-warning",
+      "border-orange-7": "border-warning",
+      "border-orange-8": "border-warning",
+      "border-orange-9": "border-warning",
+      "border-yellow": "border-warning-container-strong",
+      "border-yellow-0": "border-warning-container",
+      "border-yellow-1": "border-warning-container",
+      "border-yellow-2": "border-warning-container",
+      "border-yellow-3": "border-warning-container-strong",
+      "border-yellow-4": "border-warning-container-strong",
+      "border-yellow-5": "border-warning-container-strong",
+      "border-yellow-6": "border-warning-container-strong",
+      "border-yellow-7": "border-warning",
+      "border-yellow-8": "border-warning",
+      "border-yellow-9": "border-warning",
+      "border-green": "border-success",
+      "border-green-0": "border-success-container",
+      "border-green-1": "border-success-container",
+      "border-green-2": "border-success-container-strong",
+      "border-green-3": "border-success-container-strong",
+      "border-green-4": "border-success",
+      "border-green-5": "border-success",
+      "border-green-6": "border-success",
+      "border-green-7": "border-success",
+      "border-green-8": "border-success",
+      "border-green-9": "border-success",
+      "border-blue": "border-primary",
+      "border-blue-0": "border-primary-container",
+      "border-blue-1": "border-primary-container",
+      "border-blue-2": "border-primary-container-strong",
+      "border-blue-3": "border-primary-container-strong",
+      "border-blue-4": "border-primary",
+      "border-blue-5": "border-primary",
+      "border-blue-6": "border-primary",
+      "border-blue-7": "border-primary",
+      "border-blue-8": "border-primary",
+      "border-blue-9": "border-primary",
+      "border-purple": "border-tertiary",
+      "border-purple-0": "border-tertiary-container",
+      "border-purple-1": "border-tertiary-container-strong",
+      "border-purple-2": "border-tertiary-container-strong",
+      "border-purple-3": "border-tertiary",
+      "border-purple-4": "border-tertiary",
+      "border-purple-5": "border-tertiary",
+      "border-purple-6": "border-tertiary",
+      "border-purple-7": "border-tertiary",
+      "border-purple-8": "border-tertiary",
+      "border-purple-9": "border-tertiary",
+      "border-pink": "border-tertiary",
+      "border-pink-0": "border-tertiary-container",
+      "border-pink-1": "border-tertiary-container-strong",
+      "border-pink-2": "border-tertiary-container-strong",
+      "border-pink-3": "border-tertiary-container-strong",
+      "border-pink-4": "border-tertiary",
+      "border-pink-5": "border-tertiary",
+      "border-pink-6": "border-tertiary",
+      "border-pink-7": "border-tertiary",
+      "border-pink-8": "border-tertiary",
+      "border-pink-9": "border-tertiary"
+    }
+  }, {
+    "journal": "class-c212-colour-nearest",
+    "decision": "C212 (5)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "color-disable and placeholder-disable paint text in the disabled surface colour (--sf-surface-disabled), a fill, not an ink. The disabled ink is on-surface-disabled (color-on-surface-disabled, placeholder-on-surface-disabled); it looks different, so a person checks. The old names keep drawing until remove_after.",
+    "names": {
+      "placeholder-disable": "placeholder-on-surface-disabled",
+      "color-disable": "color-on-surface-disabled"
+    }
+  }, {
     "journal": "utility-c187-retired-sheets",
     "decision": "C187 (5)",
     "component": "utility",
@@ -8595,6 +9677,114 @@ __webpack_require__.r(__webpack_exports__);
       "mask-size": null,
       "mask-type": null
     }
+  }, {
+    "journal": "class-c212-gradient",
+    "decision": "C212 (1)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Gradients (C212 (1)): the six C65 kinds by default; a free gradient only as bg-gradient-to-<side> with from-, via- and to-<role>. These old names draw exactly what their new name draws and keep drawing until remove_after: gr1-*, gr2-* and gr3-* set the same three stops as from-*, via-* and to-* (journal utility-c65-gradient-names), and the stop colours surface-0 and surface-1 are the places surface-page and surface-area.",
+    "names": {
+      "gr1-transparent": "from-transparent",
+      "gr1-current": "from-current",
+      "gr1-inherit": "from-inherit",
+      "gr1-surface-0": "from-surface-page",
+      "gr1-surface-page": "from-surface-page",
+      "gr1-surface-1": "from-surface-area",
+      "gr1-surface-area": "from-surface-area",
+      "gr1-on-surface": "from-on-surface",
+      "gr1-primary": "from-primary",
+      "gr1-primary-container": "from-primary-container",
+      "gr1-secondary": "from-secondary",
+      "gr1-secondary-container": "from-secondary-container",
+      "gr1-tertiary": "from-tertiary",
+      "gr1-tertiary-container": "from-tertiary-container",
+      "gr1-success": "from-success",
+      "gr1-warning": "from-warning",
+      "gr1-info": "from-info",
+      "gr2-transparent": "via-transparent",
+      "gr2-current": "via-current",
+      "gr2-inherit": "via-inherit",
+      "gr2-surface-0": "via-surface-page",
+      "gr2-surface-page": "via-surface-page",
+      "gr2-surface-1": "via-surface-area",
+      "gr2-surface-area": "via-surface-area",
+      "gr2-on-surface": "via-on-surface",
+      "gr2-primary": "via-primary",
+      "gr2-primary-container": "via-primary-container",
+      "gr2-secondary": "via-secondary",
+      "gr2-secondary-container": "via-secondary-container",
+      "gr2-tertiary": "via-tertiary",
+      "gr2-tertiary-container": "via-tertiary-container",
+      "gr2-success": "via-success",
+      "gr2-warning": "via-warning",
+      "gr2-info": "via-info",
+      "gr3-transparent": "to-transparent",
+      "gr3-current": "to-current",
+      "gr3-inherit": "to-inherit",
+      "gr3-surface-0": "to-surface-page",
+      "gr3-surface-page": "to-surface-page",
+      "gr3-surface-1": "to-surface-area",
+      "gr3-surface-area": "to-surface-area",
+      "gr3-on-surface": "to-on-surface",
+      "gr3-primary": "to-primary",
+      "gr3-primary-container": "to-primary-container",
+      "gr3-secondary": "to-secondary",
+      "gr3-secondary-container": "to-secondary-container",
+      "gr3-tertiary": "to-tertiary",
+      "gr3-tertiary-container": "to-tertiary-container",
+      "gr3-success": "to-success",
+      "gr3-warning": "to-warning",
+      "gr3-info": "to-info",
+      "from-surface-0": "from-surface-page",
+      "from-surface-1": "from-surface-area",
+      "via-surface-0": "via-surface-page",
+      "via-surface-1": "via-surface-area",
+      "to-surface-0": "to-surface-page",
+      "to-surface-1": "to-surface-area"
+    }
+  }, {
+    "journal": "class-c212-gradient-nearest",
+    "decision": "C212 (1)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Gradients (C212 (1)) with no exact twin: they keep drawing what they drew until remove_after, and the name to write looks different. gr-line-2 and gr-line-3 (a line at --sf-gradient--angle, 90deg by default) -> bg-gradient-to-<side> with from-/via-/to-<role> (bg-gradient-to-r is the default angle); gr-radial-* -> a C65 kind (gradient-glow for a soft spot); gr-conic-* has no successor. A stop at a palette tone (from-teal-40, to-primary-90) -> a role stop for the theme palettes and statuses (from-primary), and for a static hue or neutral a C65 kind in that hue (gradient-color-<hue>, gradient-to-<hue> for the partner; neutral is gray). surface-2 (neutral 95, dark 15) has no place of the same colour in both themes: surface-area is the nearest.",
+    "names": {
+      "gr1-surface-2": "from-surface-area",
+      "gr2-surface-2": "via-surface-area",
+      "gr3-surface-2": "to-surface-area",
+      "from-surface-2": "from-surface-area",
+      "via-surface-2": "via-surface-area",
+      "to-surface-2": "to-surface-area",
+      "gr-line-2": "bg-gradient-to-r",
+      "gr-line-3": "bg-gradient-to-r",
+      "gr-radial-2": "gradient-glow",
+      "gr-radial-3": "gradient-glow",
+      "gr-conic-2": null,
+      "gr-conic-3": null
+    },
+    "patterns": [{
+      "from": "from-, via-, to-<role>-<tone>",
+      "pattern": "^(from|via|to)-(primary|secondary|tertiary|error|warning|success|info)-(?:5|10|15|20|25|30|35|40|50|60|70|80|85|90|95|98)$",
+      "to": "$1-$2"
+    }, {
+      "from": "from-, via-<hue>-<tone>",
+      "pattern": "^(?:from|via)-(red|orange|amber|yellow|lime|green|teal|cyan|sky|blue|indigo|violet|purple|pink|brown|gray)-(?:5|10|15|20|25|30|35|40|50|60|70|80|85|90|95|98)$",
+      "to": "gradient-color-$1"
+    }, {
+      "from": "to-<hue>-<tone>",
+      "pattern": "^to-(red|orange|amber|yellow|lime|green|teal|cyan|sky|blue|indigo|violet|purple|pink|brown|gray)-(?:5|10|15|20|25|30|35|40|50|60|70|80|85|90|95|98)$",
+      "to": "gradient-to-$1"
+    }, {
+      "from": "from-, via-neutral-<tone>",
+      "pattern": "^(?:from|via)-neutral-(?:5|10|15|20|25|30|35|40|50|60|70|80|85|90|95|98)$",
+      "to": "gradient-color-gray"
+    }, {
+      "from": "to-neutral-<tone>",
+      "pattern": "^to-neutral-(?:5|10|15|20|25|30|35|40|50|60|70|80|85|90|95|98)$",
+      "to": "gradient-to-gray"
+    }]
   }, {
     "journal": "class-c187-utility-renames",
     "decision": "C187 (6)",
@@ -8655,6 +9845,56 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   }, {
+    "journal": "class-c212-alignment",
+    "decision": "C212 (2)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "Alignment is written with the SIMAI Framework axis names: content-main-*, content-cross-*, items-main-*, items-cross-*, self-main-*, self-cross-*, and for both axes items-*, content-*, self-*. justify-* is the Tailwind spelling of content-main-*: the Loader converts it (Tailwind names work through the Loader conversion only), and the class keeps drawing for pages without the Loader until remove_after. The nine two-axis classes of flex-align (start-start ... end-end, main axis first) become two classes, content-main-<main> items-cross-<cross>; they wrote flex-start and flex-end on the cross axis where items-cross-* writes start and end (the same place except under flex-wrap: wrap-reverse).",
+    "names": {
+      "justify-start": "content-main-start",
+      "justify-end": "content-main-end",
+      "justify-center": "content-main-center",
+      "justify-between": "content-main-between",
+      "justify-around": "content-main-around",
+      "justify-evenly": "content-main-evenly",
+      "start-start": "content-main-start items-cross-start",
+      "start-center": "content-main-start items-cross-center",
+      "start-end": "content-main-start items-cross-end",
+      "center-start": "content-main-center items-cross-start",
+      "center-center": "content-main-center items-cross-center",
+      "center-end": "content-main-center items-cross-end",
+      "end-start": "content-main-end items-cross-start",
+      "end-center": "content-main-end items-cross-center",
+      "end-end": "content-main-end items-cross-end"
+    }
+  }, {
+    "journal": "class-c187-doc-to-docara",
+    "decision": "C187 (8)",
+    "component": "doc",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "The documentation helpers (sample frame, pair, source, lead, code, checkerboard and stripes) belong to the documentation site: Docara draws them (D20 already holds the example frame). The Framework keeps the sheet until the date.",
+    "names": {
+      "sf-doc-example": null,
+      "sf-doc-pair": null,
+      "sf-doc-source": null,
+      "sf-doc-lead": null,
+      "sf-doc-code": null,
+      "sf-doc-checkerboard": null,
+      "sf-doc-stripes": null
+    }
+  }, {
+    "journal": "class-editor-utility-retired",
+    "decision": "C170",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "src/utility/editor held one rule, .editor--default.active on the popover layer, and no Loader rule or build ever shipped it. An editor's layers belong to sf-editor-overlay (C170); the folder leaves after the date.",
+    "names": {
+      "editor--default": "sf-editor-overlay"
+    }
+  }, {
     "journal": "class-c96-tabs-looks",
     "decision": "C96 (1)",
     "component": "sf-tabs",
@@ -8663,6 +9903,184 @@ __webpack_require__.r(__webpack_exports__);
     "note": "Two looks of the tabs: the line (default, no modifier) and the plate (sf-tabs--pills). sf-tabs--full draws the line with the tabs sharing the row equally until remove_after.",
     "names": {
       "sf-tabs--full": "sf-tabs"
+    }
+  }, {
+    "journal": "class-steps-1-2-stages-retired",
+    "decision": "C187 (1), C134, C101",
+    "component": "step",
+    "since": "2026-11-14",
+    "remove_after": "2027-01-01",
+    "note": "The sf-steps 1.2.0 markup: stage classes, the class selected (with aria-current=\"step\") on the current step and a «›» icon between steps. Until the date they draw the C101 look -- a numbered marker (the step's own icon for a done or failed step), the label, the line -- so the current step stays marked. Write sf-step--state-ahead (or sf-step--state-current for the selected step), -done, -error with an sf-step-body; the line is drawn by the list's layout.",
+    "names": {
+      "sf-step--stage-default": "sf-step--state-ahead",
+      "sf-step--stage-completed": "sf-step--state-done",
+      "sf-step--stage-error": "sf-step--state-error",
+      "sf-steps-separator--directional": null
+    }
+  }, {
+    "journal": "class-page-number-circle-retired",
+    "decision": "C237",
+    "component": "pagination",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One shape for a page number, the square of the button (sf-pagination has no round numbers, and the plain component follows it, C224); the dots and the picture counter belong to sf-gallery and sf-slider (C97 (7)). sf-page-number--circle draws the square until the date.",
+    "names": {
+      "sf-page-number--circle": "sf-page-number--square"
+    }
+  }, {
+    "journal": "class-c238-menu-default-navigation",
+    "decision": "C238",
+    "component": "sf-menu",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "The navigation look is the menu's default (C23, C30): a .sf-menu without a look modifier draws it. sf-menu--framed draws the former default's framed rows until remove_after.",
+    "names": {
+      "sf-menu--framed": "sf-menu"
+    }
+  }, {
+    "journal": "class-avatar-offline-point-retired",
+    "decision": "C152 (5), C185 (8)",
+    "component": "avatars",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "An avatar shows only «online» and, on request, «away»; offline is a word in the avatar's name. sf-online-indicator--offline draws nothing (component.avatars 1.11.0).",
+    "names": {
+      "sf-online-indicator--offline": null
+    }
+  }, {
+    "journal": "class-avatar-group-overlap-by-size",
+    "decision": "C152 (6)",
+    "component": "avatars",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "The group's overlap follows the avatars' own size: 4 up to size 1, 8 at 2 and 3 (component.avatars 1.11.0). The overlap modifiers keep drawing what they drew until the date (xs, sm and md: journal class-avatar-group-overlap-size-names).",
+    "names": {
+      "sf-avatar-group--size-1/4": "sf-avatar-group",
+      "sf-avatar-group--size-1/3": "sf-avatar-group",
+      "sf-avatar-group--size-1/2": "sf-avatar-group"
+    }
+  }, {
+    "journal": "class-avatar-card-portrait-9x16",
+    "decision": "C230",
+    "component": "avatars",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "The avatar card's portrait is 3:4, the one vertical ratio of the shared list (component.avatars 1.11.0). sf-avatar-card--portrait-9x16 keeps the former 9:16 until the date.",
+    "names": {
+      "sf-avatar-card--portrait-9x16": "sf-avatar-card--portrait"
+    }
+  }, {
+    "journal": "class-c212-hide-print",
+    "decision": "C212 (6)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One set to hide: hidden, invisible, sr-only (in the core sheet) and on paper print-hidden, print-only, print-invisible. print-block, print-inline, print-inline-block, print-flex, print-inline-flex and print-table hid an element on screen and set its display on paper: print-only hides it on screen and leaves the display its own classes give it on paper. print-visible-none is print-invisible (invisible on paper, its room kept). print-hidden removes the element on paper (display: none); use print-invisible to keep the space. The old names keep drawing what they drew until remove_after.",
+    "names": {
+      "print-block": "print-only",
+      "print-inline": "print-only",
+      "print-inline-block": "print-only",
+      "print-flex": "print-only",
+      "print-inline-flex": "print-only",
+      "print-table": "print-only",
+      "print-visible-none": "print-invisible"
+    }
+  }, {
+    "journal": "class-ut1-layout-col-auto",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "layout-col-auto wrote column-count: auto; without a column width, which no utility gives, a block with it is always one column, so the class did nothing. Write layout-col-<n> for n columns. It keeps drawing what it drew until remove_after.",
+    "names": {
+      "layout-col-auto": null
+    }
+  }, {
+    "journal": "class-ut1-grid-row",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One set per job (C212): rows are row-*, as columns are col-*. grid-row-auto and grid-row-span-* were one rule with row-auto and row-span-*. They keep drawing until remove_after.",
+    "names": {
+      "grid-row-auto": "row-auto",
+      "grid-row-span-1": "row-span-1",
+      "grid-row-span-2": "row-span-2",
+      "grid-row-span-3": "row-span-3",
+      "grid-row-span-4": "row-span-4",
+      "grid-row-span-5": "row-span-5",
+      "grid-row-span-6": "row-span-6",
+      "grid-row-span-full": "row-span-full"
+    }
+  }, {
+    "journal": "class-ut1-negative-auto",
+    "decision": "IN-4 (RG-UT-L)",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "A negative margin takes a step away; auto has none. -m-auto, -m-top-auto and the other negative auto classes wrote calc(0rem - auto), which the browser drops, so they drew nothing; the sheets no longer write them (utility.margin 1.1.0). Remove the class, or write m-*-auto for an auto margin.",
+    "names": {
+      "-m-auto": null,
+      "-m-top-auto": null,
+      "-m-bottom-auto": null,
+      "-m-inline-start-auto": null,
+      "-m-inline-end-auto": null,
+      "-m-inline-auto": null,
+      "-m-block-auto": null
+    }
+  }, {
+    "journal": "class-ut1-bg-position",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One set per job (C212): the background position is written with the logical sides, bg-inline-start* and bg-inline-end*, which follow dir=\"rtl\" (utility.background-position 1.1.0). bg-left, bg-right and their -top/-bottom forms keep drawing their physical side until remove_after; the Loader's Tailwind conversion already writes the logical names.",
+    "names": {
+      "bg-left": "bg-inline-start",
+      "bg-left-top": "bg-inline-start-top",
+      "bg-left-bottom": "bg-inline-start-bottom",
+      "bg-right": "bg-inline-end",
+      "bg-right-top": "bg-inline-end-top",
+      "bg-right-bottom": "bg-inline-end-bottom"
+    }
+  }, {
+    "journal": "class-ut1-blur",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One name per job (C212): blur and backdrop-blur drew the same 4 px as blur-medium and backdrop-blur-medium. They keep drawing until remove_after.",
+    "names": {
+      "blur": "blur-medium",
+      "backdrop-blur": "backdrop-blur-medium"
+    }
+  }, {
+    "journal": "class-ut1-radius-square",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "One name per job (C212): radius-square and its side forms drew the same 0 as radius-0 (--sf-radius-square is 0). They keep drawing until remove_after.",
+    "names": {
+      "radius-square": "radius-0",
+      "radius-top-square": "radius-top-0",
+      "radius-bottom-square": "radius-bottom-0",
+      "radius-inline-start-square": "radius-inline-start-0",
+      "radius-inline-end-square": "radius-inline-end-0",
+      "radius-top-inline-start-square": "radius-top-inline-start-0",
+      "radius-top-inline-end-square": "radius-top-inline-end-0",
+      "radius-bottom-inline-start-square": "radius-bottom-inline-start-0",
+      "radius-bottom-inline-end-square": "radius-bottom-inline-end-0"
+    }
+  }, {
+    "journal": "class-ut1-tracking",
+    "decision": "C212",
+    "component": "utility",
+    "since": "2026-11-16",
+    "remove_after": "2027-01-01",
+    "note": "tracking-normal is the name of the default letter spacing; tracking-no-tracking repeated the word and keeps drawing the same value until remove_after.",
+    "names": {
+      "tracking-no-tracking": "tracking-normal"
     }
   }, {
     "journal": "utility-c208-scrollbar-retired-sheets",
@@ -8675,6 +10093,30 @@ __webpack_require__.r(__webpack_exports__);
       "scroll-slider-color": null,
       "scroll-slider-width": null,
       "scroll-backdrop-width": null
+    }
+  }, {
+    "journal": "utility-c210-scrollbar-retired-sheets",
+    "decision": "C210 (5)",
+    "component": "utility",
+    "since": "2026-11-15",
+    "remove_after": "2027-01-01",
+    "note": "One bar everywhere: it hides 1 s after it stops by itself, keeps its room, takes the place's boundary and rounds its ends. scroll-hover is the default now (remove it); scroll-subtle, the track colours scroll-bg-<colour> and the track and thumb roundings scroll-bg-radius-1 ... 4, scroll-radius-1 ... 4 and scroll-thumb-radius-1 ... 4 leave (remove them; a square bar is scrollbar-square). The modifiers are scrollbar-always, scrollbar-thin, scrollbar-flush, scrollbar-square, scrollbar-hidden.",
+    "sheets": {
+      "scroll-hover": null,
+      "scroll-subtle": null,
+      "scroll-backdrop-color": null,
+      "scroll-backdrop-radius": null,
+      "scroll-slider-radius": null
+    }
+  }, {
+    "journal": "class-c210-scrollbar-class",
+    "decision": "C210 (5)",
+    "component": "scrollbar",
+    "since": "2026-11-15",
+    "remove_after": "2027-01-01",
+    "note": "The legacy .scrollbar class (an 8 strip, named in no document) leaves: every scrolling area has the one bar without a class.",
+    "names": {
+      "scrollbar": null
     }
   }],
   "extended": {
@@ -8877,13 +10319,18 @@ function mapTailwindBaseClass(className) {
     'float-right': 'float-inline-end',
     'clear-left': 'clear-inline-start',
     'clear-right': 'clear-inline-end',
+    // RG-TW-4 (C212 (3)): a weight converts to a public role where it is the
+    // same weight (font-normal 400, font-medium 500, font-bold 700). Thin,
+    // light, semibold, extrabold and black have no role of their weight:
+    // they keep their dated alias weight-1..9 (it draws the same weight) and
+    // the Loader notes it with the role to write.
     'font-thin': 'weight-1',
     'font-extralight': 'weight-2',
     'font-light': 'weight-3',
-    'font-normal': 'regular',
-    'font-medium': 'weight-5',
+    'font-normal': 'weight-regular',
+    'font-medium': 'weight-medium',
     'font-semibold': 'weight-6',
-    'font-bold': 'bold',
+    'font-bold': 'weight-bold',
     'font-extrabold': 'weight-8',
     'font-black': 'weight-9',
     'font-sans': 'sans',
@@ -8898,10 +10345,13 @@ function mapTailwindBaseClass(className) {
     'not-italic': 'italic-none',
     'normal-case': 'normalcase',
     'no-underline': 'decoration-none',
-    'text-ellipsis': 't-ellipsis',
-    'text-clip': 't-clip',
+    // The current names, not the retired ones (C186 (8): t-ellipsis and
+    // t-clip are truncate, wrap-none is text-nowrap; RG-UT-V TYP-2): a
+    // converted page took a SF.deprecations entry for a name it never wrote.
+    'text-ellipsis': 'truncate',
+    'text-clip': 'truncate',
     'bg-no-repeat': 'bg-repeat-none',
-    'whitespace-nowrap': 'wrap-none',
+    'whitespace-nowrap': 'text-nowrap',
     'whitespace-pre': 'pre',
     'whitespace-pre-line': 'pre-line',
     'whitespace-pre-wrap': 'pre-wrap',
@@ -9004,10 +10454,13 @@ function mapTailwindBaseClass(className) {
 
   if (zMatch) {
     const value = parseInt(zMatch[1], 10);
-    if (value === 0) return `${negative}z-0`;
+    if (value === 0) return 'z-0'; // The pair has one layer below the page, spelled z--1 (utility/z-index);
+    // -z-1 is not a class it serves (RG-TW-1, 2026-11-16).
+
+    if (negative) return 'z--1';
 
     if (value % 10 === 0 && value >= 10 && value <= 90) {
-      return `${negative}z-${Math.round(value / 10)}`;
+      return `z-${Math.round(value / 10)}`;
     }
   }
 
@@ -9021,7 +10474,11 @@ function mapTailwindBaseClass(className) {
 
   if (bgClipMatch) {
     return `bg-clip-${bgClipMatch[1]}`;
-  }
+  } // RG-TW-4 (C212 (3)): leading-* keeps its target line-* (a dated alias).
+  // A relative line has no public twin -- line-N is the fixed line of the
+  // text step N -- so converting it to one would change the line; the Loader
+  // notes line-* with the name to write.
+
 
   const leadingMatch = base.match(/^leading-(tight|snug|relaxed|loose|none|normal)$/);
 
@@ -9063,12 +10520,16 @@ function mapTailwindBaseClass(className) {
 
   if (justifySelfMatch) {
     return `self-main-${justifySelfMatch[1]}`;
-  }
+  } // self-auto|start|end|center|stretch and content-start|end|center|between|
+  // around|evenly|stretch are the Framework's own both-axes names (utility/
+  // place-self, utility/place-content; C212 (2)). Rewriting them as Tailwind's
+  // align-self/align-content made the pair's classes unreachable and converted
+  // place-self-center twice, to self-cross-center (RG-TW-1, 2026-11-16). Only
+  // self-baseline, which the Framework does not name, is Tailwind's.
 
-  const alignSelfMatch = base.match(/^self-(auto|start|end|center|stretch|baseline)$/);
 
-  if (alignSelfMatch) {
-    return `self-cross-${alignSelfMatch[1]}`;
+  if (base === 'self-baseline') {
+    return 'self-cross-baseline';
   }
 
   const placeItemsMatch = base.match(/^place-items-(start|end|center|stretch)$/);
@@ -9089,14 +10550,6 @@ function mapTailwindBaseClass(className) {
     return `content-${placeContentMatch[1]}`;
   }
 
-  if (base.startsWith('content-') && !base.includes('[')) {
-    const contentMatch = base.match(/^content-(start|end|center|between|around|evenly|stretch)$/);
-
-    if (contentMatch) {
-      return `content-cross-${contentMatch[1]}`;
-    }
-  }
-
   const bgPositionMatch = base.match(/^bg-(left|right)(?:-(top|bottom|center))?$/);
 
   if (bgPositionMatch) {
@@ -9111,7 +10564,10 @@ function mapTailwindBaseClass(className) {
     const side = objectPositionMatch[1] === 'left' ? 'inline-start' : 'inline-end';
     const pos = objectPositionMatch[2] ? `-${objectPositionMatch[2]}` : '';
     return `object-${side}${pos}`;
-  }
+  } // mask-* positions convert into utility/mask-position, a sheet retired
+  // until 2027-01-01 (C187 (5)); this conversion leaves with that sheet
+  // (RG-UT-V MSK-3).
+
 
   const maskPositionMatch = base.match(/^mask-(left|right)(?:-(top|bottom))?$/);
 
@@ -9162,7 +10618,14 @@ function convertTailwindClassToken(token) {
   }
 
   const mapped = mapTailwindBaseClass(base);
-  if (!mapped) return token;
+  if (!mapped) return token; // A negative value with a variant carries its sign before the variant, the
+  // way the pair spells it: md:-mt-4 is -md:m-top-4 (RG-TW-2, 2026-11-16);
+  // md:-m-top-4 is not a class the pair serves.
+
+  if (variants.length && mapped.startsWith('-')) {
+    return `-${variants.join(':')}:${mapped.slice(1)}`;
+  }
+
   parts.push(mapped);
   return parts.join(':');
 }
@@ -9188,6 +10651,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   RETIRED_CLASSES: () => (/* binding */ RETIRED_CLASSES),
 /* harmony export */   UTILITY_CLASS_ALIASES: () => (/* binding */ UTILITY_CLASS_ALIASES),
 /* harmony export */   UTILITY_CLASS_ALIAS_DATES: () => (/* binding */ UTILITY_CLASS_ALIAS_DATES),
+/* harmony export */   noteRetiredModifiers: () => (/* binding */ noteRetiredModifiers),
 /* harmony export */   noteRetiredUtilitySheets: () => (/* binding */ noteRetiredUtilitySheets),
 /* harmony export */   noteUtilityClassAlias: () => (/* binding */ noteUtilityClassAlias),
 /* harmony export */   retiredClassName: () => (/* binding */ retiredClassName)
@@ -9195,7 +10659,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cef5a448c23d");
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
 // Retired class names (owner decisions C185 (2), C186 (8) and C187 (1), 2026-11-14;
-// C208 (2), (3), 2026-11-15).
+// C208 (2), (3), 2026-11-15; C212 (6), 2026-11-16; C208 (2), (3) and C210 (5), 2026-11-15; C208 (2), (3) and C210 (5), 2026-11-15; C212 (6), 2026-11-16).
 // One table, core/js/retired-classes.table.js, lists every class
 // the Framework retires: a name, a family (pattern) or a whole utility sheet.
 // A retired class keeps drawing what it drew until remove_after, and the
@@ -9204,7 +10668,13 @@ __webpack_require__.r(__webpack_exports__);
 // whatever the page opted into). Journals: class-table-sm-to-density,
 // class-text-flow-utility-aliases,
 // class-c187-retired-utilities, class-c187-retired-parts, class-c96-tabs-looks,
-// utility-c208-scrollbar-retired-sheets.
+// utility-c208-scrollbar-retired-sheets, class-c187-doc-to-docara,
+// class-editor-utility-retired, class-c212-hide-print,
+// class-ut1-layout-col-auto, class-ut1-grid-row, class-ut1-negative-auto,
+// class-ut1-bg-position, class-ut1-blur, class-ut1-radius-square,
+// class-ut1-tracking, utility-c210-scrollbar-retired-sheets,
+// class-c210-scrollbar-class, class-avatar-offline-point-retired,
+// class-c238-menu-default-navigation, class-steps-1-2-stages-retired.
 
 
 const VARIANT = /^((?:[a-z-]+:)*)(.*)$/;
@@ -9224,15 +10694,23 @@ function entry(record, from, value) {
 const NAMES = new Map();
 const PATTERNS = [];
 const SHEETS = new Map();
+const MODIFIERS = [];
 
 for (const record of _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__["default"].records) {
   for (const [from, value] of Object.entries(record.names || {})) NAMES.set(from, entry(record, from, value));
 
   for (const item of record.patterns || []) PATTERNS.push({ ...entry(record, item.from, item.to),
-    re: new RegExp(item.pattern)
+    re: new RegExp(item.pattern),
+    values: item.values,
+    except: item.variants_except ? new RegExp(item.variants_except, 'u') : null
   });
 
   for (const [sheet, to] of Object.entries(record.sheets || {})) SHEETS.set(sheet, entry(record, sheet, to));
+
+  for (const [name, item] of Object.entries(record.modifiers || {})) MODIFIERS.push({ ...entry(record, name, item.to),
+    name,
+    re: new RegExp(item.with)
+  });
 }
 
 const TEXT_FLOW = _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__["default"].records.find(record => record.journal === 'class-text-flow-utility-aliases'); // The C186 (8) text-flow names and their dates, as C186 published them.
@@ -9275,19 +10753,33 @@ function retiredClassName(token) {
 
   if (!found) {
     for (const item of PATTERNS) {
+      // variants_except names the prefixes under which the family keeps its
+      // name (C212 (4): cq-md:col-gap-2 stays, query-layout has no gap-x-*).
+      if (item.except?.test(variants)) continue;
       const match = base.match(item.re);
       if (!match) continue;
-      found = item;
-      to = item.to === null ? null : base.replace(item.re, item.to);
+      found = item; // values maps a group to the name it stands for in `to` (C212 (4): the
+      // rung m-b6 is written m-1, its nearest space step; journal
+      // class-c212-length-nearest).
+
+      to = item.to === null ? null : base.replace(item.re, item.values ? (...groups) => item.to.replace(/\$(\d)/gu, (ref, n) => item.values[n]?.[groups[n]] ?? groups[n]) : item.to);
       break;
     }
   }
 
-  if (!found) return null;
+  if (!found) return null; // A name may retire into two classes (C212 (2), journal class-c212-alignment:
+  // md:center-center -> md:content-main-center md:items-cross-center); the
+  // variant prefix goes on each of them.
+
+  if (to === null) return {
+    found,
+    from: token,
+    to: ''
+  };
   return {
     found,
     from: token,
-    to: to === null ? '' : `${variants}${to}`
+    to: to.split(' ').map(name => `${variants}${name}`).join(' ')
   };
 }
 /**
@@ -9320,6 +10812,31 @@ function noteRetiredUtilitySheets(token, keys, now = Date.now()) {
   const [, variants] = token.match(VARIANT);
   note(found, token, found.to ? `${variants}${found.to}` : null, now);
   return true;
+}
+/**
+ * Notes a retired modifier class (C212 (3): heading beside text-N, which is
+ * title-N) when `classList` holds it next to the class it modifies; returns
+ * the class to write instead, or null. A modifier alone is an author's own
+ * class (a site's .heading), not the Framework's, and is not noted.
+ * Journals class-c212-text and class-c212-text-nearest (C212 (3)).
+ */
+
+function noteRetiredModifiers(classList, now = Date.now()) {
+  if (!classList || !MODIFIERS.length) return null;
+
+  for (const item of MODIFIERS) {
+    if (!classList.contains(item.name)) continue;
+
+    for (const token of classList) {
+      const match = token.match(item.re);
+      if (!match) continue;
+      const to = item.to === null ? null : token.replace(item.re, item.to);
+      note(item, `${token} ${item.name}`, to, now);
+      return to;
+    }
+  }
+
+  return null;
 }
 
 /***/ },
@@ -9439,7 +10956,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-preview":["display/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

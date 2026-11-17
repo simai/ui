@@ -6,30 +6,86 @@
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a87f2d95f709");
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MODES: () => (/* binding */ MODES),
+/* harmony export */   RETIRED_MODES: () => (/* binding */ RETIRED_MODES),
+/* harmony export */   modesOf: () => (/* binding */ modesOf)
+/* harmony export */ });
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a87f2d95f709");
+
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
 
+ // sf-scrollbar is a wrapper around one scrolling area, .sf-scrollbar__viewport
+// (owner decision C210, 2026-11-15). The bar itself is the one bar of the
+// Framework, drawn by core over the room the native bar keeps
+// (core/js/scrollbars.js, core/scss/_sf_css__scroll.scss); the component gives
+// the area a keyboard stop and a name, says which edge has more (the edge
+// fade, C91) and turns its data-mode words into the modifier classes of the
+// one bar: always, thin, flush, square, hidden, in any combination
+// (data-mode="thin flush"). The modes of C208 and before are dated aliases
+// until 2027-01-01: overlay and standard are the default now, persistent is
+// always (journal component-c210-scrollbar-modes).
 
 const SCROLLBAR_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"].ru
 };
 const ROOT_SELECTOR = '.sf-scrollbar';
 const VIEWPORT_SELECTOR = '.sf-scrollbar__viewport';
-const TRACK_CLASS = 'sf-scrollbar__track';
-const THUMB_CLASS = 'sf-scrollbar__thumb';
-const MANAGED_PRESETS = new Set(['overlay', 'persistent']);
-const VALID_PRESETS = new Set(['overlay', 'standard', 'persistent', 'hidden']);
-const VALID_AXES = new Set(['vertical', 'horizontal']);
-const IDLE_DELAY = 900;
-const controllers = new WeakMap();
-let viewportId = 0;
+const MODES = Object.freeze(['always', 'thin', 'flush', 'square', 'hidden']);
+const VALID_MODES = new Set(MODES); // The modes that leave, and the words to write instead ('' -- the default).
 
-function getPreset(root) {
-  const value = String(root.getAttribute('data-mode') || root.getAttribute('data-sf-scrollbar') || 'overlay').trim().toLowerCase();
-  return VALID_PRESETS.has(value) ? value : 'overlay';
+const RETIRED_MODES = Object.freeze({
+  overlay: '',
+  standard: '',
+  persistent: 'always'
+});
+const RETIRED_SINCE = '2026-11-15';
+const RETIRED_UNTIL = '2027-01-01';
+const VALID_AXES = new Set(['vertical', 'horizontal']);
+const controllers = new WeakMap(); // The data-mode words, the retired ones read as their successors and noted
+// once in SF.deprecations.
+
+function modesOf(root) {
+  const canonical = root.getAttribute('data-mode');
+  const legacy = root.getAttribute('data-sf-scrollbar');
+
+  if (canonical === null && legacy !== null) {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+      component: 'sf-scrollbar',
+      kind: 'attribute',
+      from: 'data-sf-scrollbar',
+      to: 'data-mode',
+      since: RETIRED_SINCE,
+      remove_after: RETIRED_UNTIL
+    });
+  }
+
+  const words = String(canonical ?? legacy ?? '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const modes = new Set();
+
+  for (const word of words) {
+    if (VALID_MODES.has(word)) {
+      modes.add(word);
+    } else if (word in RETIRED_MODES) {
+      const to = RETIRED_MODES[word];
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+        component: 'sf-scrollbar',
+        kind: 'value',
+        attribute: 'data-mode',
+        from: word,
+        to: to || null,
+        since: RETIRED_SINCE,
+        remove_after: RETIRED_UNTIL
+      });
+      if (to) modes.add(to);
+    }
+  }
+
+  return modes;
 }
 
 function getAxis(root) {
@@ -37,370 +93,81 @@ function getAxis(root) {
   return VALID_AXES.has(value) ? value : 'vertical';
 }
 
-function createTrack(viewport, axis) {
-  const track = document.createElement('div');
-  const thumb = document.createElement('button');
-  track.className = `${TRACK_CLASS} ${TRACK_CLASS}--${axis}`;
-  thumb.className = `${THUMB_CLASS} ${THUMB_CLASS}--${axis}`;
-  thumb.type = 'button';
-  thumb.setAttribute('role', 'scrollbar');
-  thumb.setAttribute('aria-orientation', axis);
-  thumb.setAttribute('aria-valuemin', '0');
-  thumb.setAttribute('aria-valuemax', '100');
-  thumb.setAttribute('aria-valuenow', '0');
-  const labelledBy = viewport.getAttribute('aria-labelledby');
-  const label = viewport.getAttribute('aria-label');
-  if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);else thumb.setAttribute('aria-label', label || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.pageText)(SCROLLBAR_TEXT, 'scroll', viewport, 'sf-scrollbar'));
-
-  if (!viewport.id) {
-    viewportId += 1;
-    viewport.id = `sf-scrollbar-viewport-${viewportId}`;
-  }
-
-  thumb.setAttribute('aria-controls', viewport.id);
-  track.append(thumb);
-  return {
-    track,
-    thumb
-  };
-}
-
-function measureTokenLength(root, propertyName) {
-  const probe = document.createElement('span');
-  probe.setAttribute('aria-hidden', 'true');
-  probe.style.position = 'absolute';
-  probe.style.blockSize = `var(${propertyName})`;
-  probe.style.pointerEvents = 'none';
-  probe.style.visibility = 'hidden';
-  root.append(probe);
-  const value = probe.offsetHeight;
-  probe.remove();
-  return value;
-}
-
 class ScrollbarController {
-  constructor(root, viewport, preset, axis) {
+  constructor(root, viewport) {
     this.root = root;
     this.viewport = viewport;
-    this.preset = preset;
-    this.axis = axis;
-    this.idleTimer = 0;
-    this.dragging = false;
-    this.pointerOverTrack = false;
-    this.dragPointerOffset = 0;
     this.cleanup = [];
-    this.keyboardStep = measureTokenLength(root, '--sf-scrollbar-keyboard-step');
-    const {
-      track,
-      thumb
-    } = createTrack(viewport, axis);
-    this.track = track;
-    this.thumb = thumb;
-    root.append(track); // The keyboard stop is the scrolling area, not the thumb: a focused region
-    // scrolls with the arrow keys natively, the way every scrolling area in a
-    // browser does, and one stop per area is enough. The thumb stays for the
-    // pointer. A labelled area becomes a region so its label is announced.
+    this.applied = []; // The keyboard stop is the scrolling area: a focused region scrolls with
+    // the arrow keys natively, the way every scrolling area in a browser
+    // does, and one stop per area is enough. It needs a name to be a region;
+    // an unnamed one is called by the component's word.
 
-    thumb.tabIndex = -1;
     if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
 
-    if (!viewport.hasAttribute('role') && (viewport.hasAttribute('aria-label') || viewport.hasAttribute('aria-labelledby'))) {
-      viewport.setAttribute('role', 'region');
+    if (!viewport.hasAttribute('aria-label') && !viewport.hasAttribute('aria-labelledby')) {
+      const rootLabel = root.getAttribute('aria-label');
+      viewport.setAttribute('aria-label', rootLabel || (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageText)(SCROLLBAR_TEXT, 'scroll', viewport, 'sf-scrollbar'));
     }
 
-    this.bind();
-    this.sync();
-    this.setIdle();
-  }
+    if (!viewport.hasAttribute('role')) viewport.setAttribute('role', 'region');
 
-  listen(target, type, listener, options) {
-    target.addEventListener(type, listener, options);
-    this.cleanup.push(() => target.removeEventListener(type, listener, options));
-  }
+    const onScroll = () => this.sync();
 
-  isHorizontalRtl() {
-    return this.axis === 'horizontal' && getComputedStyle(this.viewport).direction === 'rtl';
-  }
-
-  getLogicalScrollPosition(maxScroll) {
-    if (this.axis === 'vertical') return this.viewport.scrollTop;
-    const position = this.isHorizontalRtl() ? -this.viewport.scrollLeft : this.viewport.scrollLeft;
-    return Math.min(maxScroll, Math.max(0, position));
-  } // A step the reader asks for (a key, a page click on the track, Home and
-  // End) glides, unless the reader prefers reduced motion. Core sets smooth
-  // scrolling on the page only (html), so a viewport asks for it here; a
-  // thumb drag follows the pointer and stays instant.
-
-
-  stepBehavior() {
-    return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
-  }
-
-  scrollStep(delta) {
-    this.viewport.scrollBy({ ...delta,
-      behavior: this.stepBehavior()
-    });
-  }
-
-  setLogicalScrollPosition(position, maxScroll, glide = false) {
-    const boundedPosition = Math.min(maxScroll, Math.max(0, position));
-
-    if (glide) {
-      const target = this.axis === 'vertical' ? {
-        top: boundedPosition
-      } : {
-        left: this.isHorizontalRtl() ? -boundedPosition : boundedPosition
-      };
-      this.viewport.scrollTo({ ...target,
-        behavior: this.stepBehavior()
-      });
-      return;
-    }
-
-    if (this.axis === 'vertical') {
-      this.viewport.scrollTop = boundedPosition;
-      return;
-    }
-
-    this.viewport.scrollLeft = this.isHorizontalRtl() ? -boundedPosition : boundedPosition;
-  }
-
-  getKeyboardStep() {
-    return this.keyboardStep > 0 ? this.keyboardStep : this.thumb.offsetHeight;
-  }
-
-  bind() {
-    this.listen(this.viewport, 'scroll', () => {
-      this.sync();
-      this.activate();
-    }, {
+    viewport.addEventListener('scroll', onScroll, {
       passive: true
     });
-    this.listen(this.track, 'pointerenter', () => {
-      this.pointerOverTrack = true;
-      this.activate();
-    });
-    this.listen(this.track, 'pointerleave', () => {
-      this.pointerOverTrack = false;
-      this.scheduleIdle();
-    });
-    this.listen(this.track, 'pointerdown', event => {
-      if (event.target !== this.track) return;
-      event.preventDefault();
-      const thumbRect = this.thumb.getBoundingClientRect();
-      const pointer = this.axis === 'horizontal' ? event.clientX : event.clientY;
-      const thumbStart = this.axis === 'horizontal' ? thumbRect.left : thumbRect.top;
-      const direction = pointer < thumbStart ? -1 : 1;
-      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
-      const step = this.getKeyboardStep();
-      const page = Math.max(step, viewportSize - step);
-      this.scrollStep(this.axis === 'horizontal' ? {
-        left: direction * page
-      } : {
-        top: direction * page
-      });
-      this.activate();
-    });
-    this.listen(this.thumb, 'pointerdown', event => {
-      event.preventDefault();
-      const thumbRect = this.thumb.getBoundingClientRect();
-      this.dragging = true;
-      this.dragPointerOffset = this.axis === 'horizontal' ? event.clientX - thumbRect.left : event.clientY - thumbRect.top;
-      this.root.dataset.sfScrollbarDragging = 'true';
-      this.thumb.setPointerCapture?.(event.pointerId);
-      this.activate();
-    });
-    this.listen(this.thumb, 'pointermove', event => {
-      if (!this.dragging) return;
-      const trackRect = this.track.getBoundingClientRect();
-      const trackSize = this.axis === 'horizontal' ? this.track.clientWidth : this.track.clientHeight;
-      const thumbSize = this.axis === 'horizontal' ? this.thumb.offsetWidth : this.thumb.offsetHeight;
-      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
-      const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-      const pointer = this.axis === 'horizontal' ? event.clientX : event.clientY;
-      const trackStart = this.axis === 'horizontal' ? trackRect.left : trackRect.top;
-      const maxThumbOffset = Math.max(1, trackSize - thumbSize);
-      const maxScroll = Math.max(0, contentSize - viewportSize);
-      const pointerOffset = pointer - trackStart - this.dragPointerOffset;
-      const thumbOffset = Math.min(maxThumbOffset, Math.max(0, pointerOffset));
-      const ratio = this.isHorizontalRtl() ? 1 - thumbOffset / maxThumbOffset : thumbOffset / maxThumbOffset;
-      this.setLogicalScrollPosition(ratio * maxScroll, maxScroll);
-    });
-
-    const endDrag = event => {
-      if (!this.dragging) return;
-      this.dragging = false;
-      this.root.dataset.sfScrollbarDragging = 'false';
-
-      if (this.thumb.hasPointerCapture?.(event.pointerId)) {
-        this.thumb.releasePointerCapture(event.pointerId);
-      }
-
-      this.scheduleIdle();
-    };
-
-    this.listen(this.thumb, 'pointerup', endDrag);
-    this.listen(this.thumb, 'pointercancel', endDrag);
-    this.listen(this.thumb, 'lostpointercapture', endDrag);
-    this.listen(this.thumb, 'focus', () => this.activate());
-    this.listen(this.thumb, 'blur', () => this.scheduleIdle());
-    this.listen(this.viewport, 'focus', () => this.activate());
-    this.listen(this.viewport, 'blur', () => this.scheduleIdle());
-    this.listen(this.thumb, 'keydown', event => {
-      const line = this.getKeyboardStep();
-      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
-      const page = Math.max(line, viewportSize - line);
-      const verticalCommands = {
-        ArrowUp: () => this.scrollStep({
-          top: -line
-        }),
-        ArrowDown: () => this.scrollStep({
-          top: line
-        }),
-        PageUp: () => this.scrollStep({
-          top: -page
-        }),
-        PageDown: () => this.scrollStep({
-          top: page
-        })
-      };
-      const horizontalCommands = {
-        ArrowLeft: () => this.scrollStep({
-          left: -line
-        }),
-        ArrowRight: () => this.scrollStep({
-          left: line
-        }),
-        PageUp: () => this.scrollStep({
-          left: -page
-        }),
-        PageDown: () => this.scrollStep({
-          left: page
-        })
-      };
-      const commands = { ...(this.axis === 'horizontal' ? horizontalCommands : verticalCommands),
-        Home: () => {
-          const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-          this.setLogicalScrollPosition(0, Math.max(0, contentSize - viewportSize), true);
-        },
-        End: () => {
-          const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-          const maxScroll = Math.max(0, contentSize - viewportSize);
-          this.setLogicalScrollPosition(maxScroll, maxScroll, true);
-        }
-      };
-      if (!commands[event.key]) return;
-      event.preventDefault();
-      commands[event.key]();
-      this.activate();
-    });
+    this.cleanup.push(() => viewport.removeEventListener('scroll', onScroll));
 
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => this.sync());
-      this.resizeObserver.observe(this.viewport);
-      Array.from(this.viewport.children).forEach(child => {
-        if (child instanceof HTMLElement) this.resizeObserver.observe(child);
-      });
-    } else {
-      this.listen(window, 'resize', () => this.sync(), {
-        passive: true
-      });
+      this.resizeObserver.observe(viewport);
+      Array.from(viewport.children).forEach(child => this.resizeObserver.observe(child));
     }
 
-    if (typeof MutationObserver !== 'undefined') {
-      this.contentObserver = new MutationObserver(() => {
-        if (this.resizeObserver) {
-          Array.from(this.viewport.children).forEach(child => {
-            if (child instanceof HTMLElement) this.resizeObserver.observe(child);
-          });
-        }
+    this.apply();
+  } // The modes as the one bar's classes on the area.
 
-        this.sync();
-      });
-      this.contentObserver.observe(this.viewport, {
-        attributes: true,
-        attributeFilter: ['class', 'hidden', 'style'],
-        characterData: true,
-        childList: true,
-        subtree: true
-      });
-    }
-  }
+
+  apply() {
+    const modes = modesOf(this.root);
+    const classes = [...modes].map(mode => `scrollbar-${mode}`);
+    this.applied.filter(name => !classes.includes(name)).forEach(name => this.viewport.classList.remove(name));
+    classes.forEach(name => this.viewport.classList.add(name));
+    this.applied = classes;
+    this.axis = getAxis(this.root);
+    this.sync();
+    globalThis.SF?.scrollbars?.refresh?.(this.viewport);
+  } // Where the content goes on past the edge (owner decision C91, level 1):
+  // the sheet fades that edge out, so an area says "there is more" without
+  // its bar. start, end or both, in the logical direction.
+
 
   sync() {
-    const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
-    const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-    const maxScroll = Math.max(0, contentSize - viewportSize);
-    const hasOverflow = maxScroll > 1;
-    this.root.dataset.sfScrollbarOverflow = String(hasOverflow); // The thumb runs along the track, which a horizontal strip insets to the
-    // content's inset (owner decision C208 (5)); the area's own length only
-    // where the track is not laid out yet.
-
-    const trackLength = this.axis === 'horizontal' ? this.track.clientWidth : this.track.clientHeight;
-    const trackSize = trackLength > 0 ? trackLength : viewportSize;
-    const requestedThumbSize = hasOverflow ? Math.round(trackSize * viewportSize / contentSize) : trackSize;
-
-    if (this.axis === 'horizontal') {
-      this.thumb.style.inlineSize = `${requestedThumbSize}px`;
-    } else {
-      this.thumb.style.blockSize = `${requestedThumbSize}px`;
-    }
-
-    const thumbSize = this.axis === 'horizontal' ? this.thumb.offsetWidth : this.thumb.offsetHeight;
-    const maxThumbOffset = Math.max(0, trackSize - thumbSize);
-    const position = maxScroll ? this.getLogicalScrollPosition(maxScroll) : 0;
-    const ratio = maxScroll ? position / maxScroll : 0; // Where the content goes on past the edge (owner decision C91, level 1):
-    // the sheet fades that edge out, so an area says "there is more" without
-    // its bar. start, end or both, in the logical direction; none at rest
-    // when everything fits.
-
-    const before = hasOverflow && position > 1;
-    const after = hasOverflow && position < maxScroll - 1;
+    const vp = this.viewport;
+    const horizontal = this.axis === 'horizontal';
+    const size = horizontal ? vp.clientWidth : vp.clientHeight;
+    const content = horizontal ? vp.scrollWidth : vp.scrollHeight;
+    const max = Math.max(0, content - size);
+    const overflow = max > 1;
+    const raw = horizontal ? vp.scrollLeft : vp.scrollTop;
+    const position = horizontal && getComputedStyle(vp).direction === 'rtl' ? -raw : raw;
+    const before = overflow && position > 1;
+    const after = overflow && position < max - 1;
     const more = before && after ? 'both' : before ? 'start' : after ? 'end' : '';
+    this.root.dataset.sfScrollbarOverflow = String(overflow);
 
     if (more) {
       if (this.root.dataset.sfScrollbarMore !== more) this.root.dataset.sfScrollbarMore = more;
     } else if ('sfScrollbarMore' in this.root.dataset) {
       delete this.root.dataset.sfScrollbarMore;
     }
-
-    const physicalOffset = Math.round(maxThumbOffset * ratio) * (this.isHorizontalRtl() ? -1 : 1);
-    this.thumb.style.setProperty('--sf-scrollbar-thumb-offset', `${physicalOffset}px`);
-    this.thumb.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-    this.thumb.disabled = !hasOverflow;
-  }
-
-  activate() {
-    window.clearTimeout(this.idleTimer);
-    this.root.dataset.sfScrollbarState = 'active';
-
-    if (this.preset === 'overlay') {
-      this.scheduleIdle();
-    }
-  }
-
-  scheduleIdle() {
-    window.clearTimeout(this.idleTimer);
-
-    if (this.preset === 'persistent' || this.dragging || this.pointerOverTrack || document.activeElement === this.thumb) {
-      return;
-    }
-
-    this.idleTimer = window.setTimeout(() => this.setIdle(), IDLE_DELAY);
-  }
-
-  setIdle() {
-    this.root.dataset.sfScrollbarState = this.preset === 'persistent' ? 'active' : 'idle';
   }
 
   destroy() {
-    window.clearTimeout(this.idleTimer);
     this.resizeObserver?.disconnect();
-    this.contentObserver?.disconnect();
     this.cleanup.forEach(remove => remove());
-    this.track.remove();
-    delete this.root.dataset.sfScrollbarState;
-    delete this.root.dataset.sfScrollbarDragging;
+    this.applied.forEach(name => this.viewport.classList.remove(name));
     delete this.root.dataset.sfScrollbarOverflow;
     delete this.root.dataset.sfScrollbarMore;
     delete this.root.dataset.sfScrollbarReady;
@@ -417,24 +184,18 @@ function destroyScrollbar(root) {
 
 function initScrollbar(root) {
   if (!(root instanceof HTMLElement) || !root.matches(ROOT_SELECTOR)) return;
-  const preset = getPreset(root);
-  const axis = getAxis(root);
-  const canonicalPreset = root.getAttribute('data-mode');
-  const legacyPreset = root.getAttribute('data-sf-scrollbar');
-  const requestedPreset = String(canonicalPreset || legacyPreset || '').trim().toLowerCase();
+  const viewport = root.querySelector(`:scope > ${VIEWPORT_SELECTOR}`);
+  const existing = controllers.get(root);
 
-  if (requestedPreset && !VALID_PRESETS.has(requestedPreset)) {
-    root.setAttribute(canonicalPreset !== null ? 'data-mode' : 'data-sf-scrollbar', preset);
+  if (existing && existing.viewport === viewport) {
+    existing.apply();
+    return;
   }
 
-  const existing = controllers.get(root);
-  if (existing?.preset === preset && existing?.axis === axis) return;
   if (existing) destroyScrollbar(root);
   root.dataset.sfScrollbarReady = 'true';
-  if (!MANAGED_PRESETS.has(preset)) return;
-  const viewport = root.querySelector(`:scope > ${VIEWPORT_SELECTOR}`);
   if (!(viewport instanceof HTMLElement)) return;
-  controllers.set(root, new ScrollbarController(root, viewport, preset, axis));
+  controllers.set(root, new ScrollbarController(root, viewport));
 }
 
 function initScrollbars(target = document) {
@@ -445,13 +206,15 @@ function initScrollbars(target = document) {
   target.querySelectorAll?.(ROOT_SELECTOR).forEach(initScrollbar);
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => initScrollbars(document));
-} else {
-  initScrollbars(document);
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initScrollbars(document));
+  } else {
+    initScrollbars(document);
+  }
 }
 
-if (typeof MutationObserver !== 'undefined') {
+if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
   new MutationObserver(mutations => {
     mutations.forEach(mutation => {
       if (mutation.type === 'attributes' && mutation.target instanceof HTMLElement && mutation.target.matches(ROOT_SELECTOR)) {
@@ -821,7 +584,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -847,7 +611,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -900,7 +666,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -971,15 +738,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1181,7 +954,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1286,7 +1059,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1327,6 +1100,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1425,8 +1217,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -1581,7 +1375,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1601,7 +1396,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1641,7 +1437,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1666,7 +1463,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1676,7 +1474,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1791,7 +1590,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1853,15 +1655,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

@@ -252,6 +252,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _checkable_text_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("61d50f69160a");
 /* harmony import */ var _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("48d00b6bd847");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("06e8cd089f28");
+
 
 
 
@@ -335,6 +337,90 @@ function syncRadioState(root) {
   if (mark) {
     mark.setAttribute('aria-hidden', 'true');
   }
+} // The font-sample tiles («Aa», type: 'font' and the sf-radio-wrap--type-font
+// markup) are retired (owner decision C222, 2026-11-16; journal
+// class-radio-type-font-to-segmented): until 2027-01-01 such a group still
+// works -- the same native radios, names, values and checked one -- but each
+// option is drawn as a plain radio with its label (the option's name: its
+// description, else its aria-label, else its value), the labels standing in a
+// column. A choice of one short value from buttons is sf-segmented (D11b). The
+// first group on a page is noted in SF.deprecations and named once on the
+// console.
+
+
+const RADIO_FONT_RETIRED_FLAG = 'sfRadioFontRetired';
+const RADIO_FONT_REMOVE_AFTER = '2027-01-01';
+
+function layoutClasses(selector) {
+  return (_json_radio_utility_json__WEBPACK_IMPORTED_MODULE_4__[selector] || []).flatMap(hint => (hint.match(/\(\.[^)\s]+\)/g) || []).map(match => match.slice(2, -1)));
+}
+
+function noteFontRadioRetired() {
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
+    component: 'sf-radio',
+    kind: 'class',
+    from: 'sf-radio-wrap--type-font',
+    to: 'sf-segmented',
+    since: '2026-11-10',
+    remove_after: RADIO_FONT_REMOVE_AFTER
+  });
+  const root = globalThis.SF = globalThis.SF || {};
+  if (root.__sfRadioFontWarned) return;
+  Object.defineProperty(root, '__sfRadioFontWarned', {
+    value: true,
+    configurable: true
+  });
+  globalThis.console?.warn?.(`[SIMAI Framework] sf-radio: the font-sample tiles (type "font", sf-radio-wrap--type-font) are deprecated until ${RADIO_FONT_REMOVE_AFTER} and draw as plain radios with their labels; write sf-segmented for a choice of one short value (C222, D11b). See contracts/changes/journal.json (class-radio-type-font-to-segmented).`);
+}
+
+function retireFontRadioWrap(wrap) {
+  if (!(wrap instanceof Element) || wrap.dataset[RADIO_FONT_RETIRED_FLAG] === '1') return;
+  wrap.dataset[RADIO_FONT_RETIRED_FLAG] = '1';
+  noteFontRadioRetired();
+  const descriptions = toArray(wrap.dataset.sfRadioDescriptions || '');
+  const group = wrap.querySelector('.sf-radio-group--font');
+  const options = Array.from(wrap.querySelectorAll('label.sf-radio-button--type-font'));
+  let namedByDescriptions = options.length > 0;
+  options.forEach((option, index) => {
+    const input = option.querySelector('input[type="radio"]');
+    if (!input) return;
+    const fontIndex = toNumber(input.dataset.sfRadioFontIndex, index);
+    const name = descriptions[fontIndex] || input.getAttribute('aria-label') || input.value || '';
+    if (!descriptions[fontIndex]) namedByDescriptions = false;
+    option.classList.remove('sf-radio-button--type-font');
+    option.classList.add('sf-radio-button--type-default', ...layoutClasses('.sf-radio-button'));
+    const box = document.createElement('span');
+    box.classList.add('sf-radio-button-box', ...layoutClasses('.sf-radio-button .sf-radio-button-box'));
+    input.classList.remove('sr-only');
+    hideNativeRadioInput(input);
+    const mark = document.createElement('span');
+    mark.classList.add('sf-radio-button-mark');
+    mark.setAttribute('aria-hidden', 'true');
+    box.append(input, mark);
+    const container = document.createElement('span');
+    container.classList.add('sf-radio-button-container', ...layoutClasses('.sf-radio-button .sf-radio-button-container'));
+    const top = document.createElement('span');
+    top.classList.add('sf-radio-button-top', ...layoutClasses('.sf-radio-button .sf-radio-button-top'));
+    const text = document.createElement('span');
+    text.classList.add('sf-radio-button-text');
+    text.textContent = name;
+    top.append(text);
+    container.append(top);
+    option.replaceChildren(box, container);
+  }); // The shared description repeated the selected option's name; each option
+  // now carries its own, so it goes when every name came from it.
+
+  const shared = Array.from(wrap.children).find(node => node.classList.contains('sf-radio-button-container'));
+
+  if (shared) {
+    if (namedByDescriptions) shared.querySelector('.sf-radio-button-description')?.remove();
+
+    if (shared.childElementCount) {
+      wrap.insertBefore(shared, group || wrap.firstChild);
+    } else {
+      shared.remove();
+    }
+  }
 }
 
 function syncFontRadioWrap(input) {
@@ -408,6 +494,12 @@ function unbindRadio(root) {
 
 function initRadioTree(target) {
   if (!(target instanceof Element) && target !== document) return;
+
+  if (target instanceof Element && target.matches?.(RADIO_FONT_WRAP_SELECTOR)) {
+    retireFontRadioWrap(target);
+  }
+
+  target.querySelectorAll?.(RADIO_FONT_WRAP_SELECTOR).forEach(retireFontRadioWrap);
 
   if (target instanceof Element && target.matches?.(RADIO_SELECTOR)) {
     bindRadio(target);
@@ -711,6 +803,7 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     wrap.append(group, container);
+    retireFontRadioWrap(wrap);
     return wrap;
   }
 
@@ -908,6 +1001,128 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired,
+  package: pkg
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
 }
 
 /***/ },

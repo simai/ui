@@ -1021,7 +1021,7 @@ function renderRangeFilterControl(field, host) {
             </div>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1101,7 +1101,7 @@ function renderNumberFilterControl(field, host) {
             </div>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1149,7 +1149,7 @@ function renderDateFilterControl(field, host) {
             ></sf-input-date>
             <sf-dropdown
                     size=${filterSize(host)}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
                     root-class="flex-1"
@@ -1380,12 +1380,14 @@ function renderColorCell(field, value) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-color size="1/2" appearance="plain" value=${String(hex)}
-                  aria-label=${field.label || field.key || ''} disabled></sf-input-color>
+                  aria-label=${field.label || field.key || ''} readonly></sf-input-color>
     `;
 } // Reads what port 1.8.0 declares: `inherited` says a value comes from somewhere
 // else, `inheritedValue` says what it is. A view that drew the inherited colour as
 // the value would make «not set» and «set to the same colour» look identical, and
-// only the first follows the theme when the theme moves.
+// only the first follows the theme when the theme moves. The view and the cell
+// draw the field read-only (sf-input-color 1.17.0): the value in the text's ink;
+// disabled drew it in the disabled ink, as a field nobody may use.
 
 
 function renderColorView(field, value) {
@@ -1399,7 +1401,7 @@ function renderColorView(field, value) {
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
-                disabled
+                readonly
         ></sf-input-color>
     `;
 }
@@ -1416,7 +1418,7 @@ function renderColorEdit(field, value, host) {
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 swatches=${field.swatches ? String(field.swatches) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?clearable=${Boolean(inherited) || field.required !== true}
-                ?disabled=${field.readonly === true}
+                ?readonly=${field.readonly === true}
                 aria-label=${field.label || field.key || ''}
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? '')}
         ></sf-input-color>
@@ -2598,7 +2600,7 @@ function renderChoiceEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
-                appearance="outlined"
+                appearance="bordered"
                 mode="select"
                 search="false"
                 name=${fieldName(field)}
@@ -2652,7 +2654,7 @@ function renderChoicesEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
-                appearance="outlined"
+                appearance="bordered"
                 mode="select"
                 multiple
                 search="false"
@@ -2923,7 +2925,7 @@ function renderRecordPicker(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     search="true"
                     name=${fieldName(field)}
@@ -3068,7 +3070,7 @@ function renderLookupEdit(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
-                    appearance="outlined"
+                    appearance="bordered"
                     mode="select"
                     ?multiple=${multiple}
                     search="true"

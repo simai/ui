@@ -27,6 +27,14 @@
 * - Base styles (_css__component_name.scss)
 *
 */
+@layer sf.base {
+  .sf-divider {
+    box-sizing: border-box;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
 @layer sf.components {
   .sf-divider {
     --sf-divider--background-color: var(--sf-outline-variant);
@@ -36,16 +44,12 @@
     );
     --sf-divider--thickness: var(--sf-px);
     --sf-divider--gap: var(--sf-space-1\/2);
-    --sf-divider--length: var(--sf-d0);
+    --sf-divider--length: var(--sf-text-height-1);
     --sf-divider-content--padding: var(--sf-0);
     --sf-divider-content--background-color: var(--sf-transparent);
     --sf-divider-content--color: var(--sf-on-surface-variant);
     --sf-divider-content--font-size: var(--sf-text-size-1\/2);
     --sf-divider-content--line-height: var(--sf-text-height-1\/2);
-    box-sizing: border-box;
-    border: 0;
-    margin: 0;
-    padding: 0;
     color: var(--sf-divider-content--color);
     text-align: center;
   }
@@ -125,11 +129,10 @@
   .sf-divider-content-border {
     border: 0;
   }
-  .sf-divider-content--small {
-    --sf-divider-content--font-size: var(--sf-text-small--size);
-    --sf-divider-content--line-height: var(--sf-text-small--height);
-    color: var(--sf-on-surface-variant);
-  }
+  /* The small caption is an alias until 2027-01-01 (owner decision C233,
+     2026-11-16): the caption on the line is already small (C188 (3)), so
+     --small draws the plain caption and the component's script notes it once
+     in SF.deprecations. It has no rule of its own. */
   .sf-divider-buttons {
     --sf-divider-buttons--gap: var(--sf-gap--actions);
     position: relative;
@@ -140,6 +143,13 @@
     max-width: 100%;
     max-inline-size: 100%;
   }
+  /* The legacy pair stands joined, as it did before C188 (4): the left
+     button has no end edge and square end corners, and the right one closes
+     the pair. With the actions gap between them the left one stood open on
+     its end side (content study R3). */
+  .sf-divider-buttons:has(> .sf-divider-button) {
+    --sf-divider-buttons--gap: var(--sf-0);
+  }
   /* Buttons on the line (owner decision C188 (4)) are real sf-button size 1/2
      outline in .sf-divider-buttons, one group 8 apart (4 compact):
      <span class="sf-divider-buttons"><sf-button size="1/2" appearance="outline" text="Ещё 20"></sf-button>...</span>.
@@ -148,10 +158,11 @@
      class-content-divider-c188-aliases).
      The height is the button ladder's, the border drawn inside it (C01): 40
      on a desktop, 36 on a phone, 32 compact (border-box, no block padding;
-     it was 42 / 38, the border added to the height). The fill is the place
-     the divider stands on, its cut-out colour (C16): a card's on a card, the
-     page's on the page (it was always the page's, a dark patch on a card in
-     the dark theme). */
+     it was 42 / 38, the border added to the height). The fill is the place the
+     divider stands on (C16): no fill of its own, so it is a card's on a
+     card and the page's on the page (it was the page's, a dark patch on a
+     card in the dark theme; then the place's cut-out colour, which a place
+     without one still painted as the page). */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-divider-button{
     border-right-width: 0;
   }
@@ -184,8 +195,7 @@
     padding: var(--sf-0) var(--sf-space-1);
     border: var(--sf-divider--thickness) solid var(--sf-outline);
     border-inline-end-width: 0;
-    background-color: var(--sf-surface-page);
-    background-color: var(--sf-surface-place, var(--sf-surface-page));
+    background-color: var(--sf-transparent);
     color: var(--sf-on-surface);
     font-family: inherit;
     font-size: var(--sf-text-size-1);
@@ -593,13 +603,13 @@
     position: relative;
     z-index: 1;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-divider-button:focus-visible {
     position: relative;
     z-index: 1;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   @media (forced-colors: active) {
     .sf-divider-horizontal:empty,
@@ -614,13 +624,13 @@
       border-color: CanvasText;
     }
     .sf-divider-button.focus-visible {
-      outline: var(--sf-focus-outline-width) solid Highlight;
-      outline-offset: calc(-1 * var(--sf-focus-outline-width));
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--inset);
       box-shadow: none;
     }
     .sf-divider-button:focus-visible {
-      outline: var(--sf-focus-outline-width) solid Highlight;
-      outline-offset: calc(-1 * var(--sf-focus-outline-width));
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--inset);
       box-shadow: none;
     }
   }

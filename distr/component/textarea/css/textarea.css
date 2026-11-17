@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
@@ -18,7 +19,6 @@
     gap: var(--sf-space-1\/4);
     gap: var(--sf-textarea--gap, var(--sf-space-1\/4));
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-textarea .sf-textarea-hint-text-wrap {
     --sf-textarea-hint-text-wrap--background-color: transparent;
     background-color: var(--sf-textarea-hint-text-wrap--background-color);
@@ -57,136 +57,136 @@
     font-weight: var(--sf-textarea-text--font-weight);
     line-height: var(--sf-textarea-text--line-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-end-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-textarea textarea{
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-end-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-start-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-textarea-textarea--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-textarea textarea{
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-start-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-textarea-textarea--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     border-top-right-radius: var(--sf-textarea-textarea--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     border-top-right-radius: var(--sf-textarea-textarea--border-start-end-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     border-top-right-radius: var(--sf-textarea-textarea--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     border-top-left-radius: var(--sf-textarea-textarea--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-textarea textarea{
     border-top-left-radius: var(--sf-textarea-textarea--border-start-end-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     border-top-left-radius: var(--sf-textarea-textarea--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     border-top-left-radius: var(--sf-textarea-textarea--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     border-top-left-radius: var(--sf-textarea-textarea--border-start-start-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     border-top-left-radius: var(--sf-textarea-textarea--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     border-top-right-radius: var(--sf-textarea-textarea--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-textarea textarea{
     border-top-right-radius: var(--sf-textarea-textarea--border-start-start-radius);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     border-top-right-radius: var(--sf-textarea-textarea--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     padding-right: var(--sf-textarea-textarea--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     padding-right: var(--sf-textarea-textarea--padding-inline-end);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     padding-right: var(--sf-textarea-textarea--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     padding-left: var(--sf-textarea-textarea--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-textarea textarea{
     padding-left: var(--sf-textarea-textarea--padding-inline-end);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     padding-left: var(--sf-textarea-textarea--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea textarea{
     padding-left: var(--sf-textarea-textarea--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-textarea textarea {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-textarea textarea{
     padding-left: var(--sf-textarea-textarea--padding-inline-start);
     }
   }
-  .sf-textarea textarea:where(:dir(ltr)) {
+  .sf-textarea textarea:where(:dir(ltr)){
     padding-left: var(--sf-textarea-textarea--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea textarea{
     padding-right: var(--sf-textarea-textarea--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-textarea textarea {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-textarea textarea{
     padding-right: var(--sf-textarea-textarea--padding-inline-start);
     }
   }
-  .sf-textarea textarea:where(:dir(rtl)) {
+  .sf-textarea textarea:where(:dir(rtl)){
     padding-right: var(--sf-textarea-textarea--padding-inline-start);
   }
   .sf-textarea textarea {
@@ -559,6 +559,70 @@
     overflow-y: auto;
     resize: none;
   }
+  /* C225 (owner 2026-11-16; prototypes/forms-textarea-study.html
+     #q-ta-grow-placeholder): an empty growing field keeps its first height --
+     one row, or min-rows -- whatever its placeholder. field-sizing measured the
+     placeholder as text, so «Напишите сообщение для команды» in a narrow phone
+     field made it two rows (56 beside a 36 button) and the first letter took it
+     back to one. The placeholder stands on one line and ends in «…»; the field
+     grows only from typed text. The cap is the min-rows height itself. The
+     ellipsis needs the line rules on the empty field as well as on its
+     ::placeholder: Chrome draws «…» only with both (one alone clips). */
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]:-moz-placeholder-shown {
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]:-ms-input-placeholder {
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]:placeholder-shown {
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(1 * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-height: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    max-block-size: calc(var(--sf-textarea--min-rows, 1) * var(--sf-textarea--line) + var(--sf-textarea--row-frame));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]::-webkit-input-placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]::-moz-placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]:-ms-input-placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]::-ms-input-placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-textarea.sf-textarea--auto-grow textarea[rows]::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .sf-textarea:has(textarea:disabled) textarea::-webkit-input-placeholder {
     --sf-textarea-placeholder--color: var(--sf-on-surface-disabled);
   }
@@ -587,15 +651,30 @@
      cut it), nothing moves. */
   .sf-textarea:has(textarea:enabled:not(:disabled):not(.disabled):focus) textarea {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
-  .sf-textarea:not(.error).sf-textarea--bordered:has(textarea:-moz-read-only:not(:disabled)) textarea {
+  /* A read-only field is not filled (C16): no plate, the line of a region for
+     its edge, in both looks -- the filled one drops its plate and its bottom
+     line too, as sf-input's. */
+  .sf-textarea.sf-textarea--bordered:not(.error):has(textarea:-moz-read-only:not(:disabled)) textarea {
     --sf-textarea-textarea--background-color: var(--sf-transparent);
     --sf-textarea-textarea--border-color: var(--sf-outline-variant);
+    --sf-textarea-textarea--line-color: var(--sf-outline-variant);
   }
-  .sf-textarea:not(.error).sf-textarea--bordered:has(textarea:read-only:not(:disabled)) textarea {
+  .sf-textarea.sf-textarea--bordered:not(.error):has(textarea:read-only:not(:disabled)) textarea {
     --sf-textarea-textarea--background-color: var(--sf-transparent);
     --sf-textarea-textarea--border-color: var(--sf-outline-variant);
+    --sf-textarea-textarea--line-color: var(--sf-outline-variant);
+  }
+  .sf-textarea.sf-textarea--filled:not(.error):has(textarea:-moz-read-only:not(:disabled)) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-transparent);
+    --sf-textarea-textarea--border-color: var(--sf-outline-variant);
+    --sf-textarea-textarea--line-color: var(--sf-outline-variant);
+  }
+  .sf-textarea.sf-textarea--filled:not(.error):has(textarea:read-only:not(:disabled)) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-transparent);
+    --sf-textarea-textarea--border-color: var(--sf-outline-variant);
+    --sf-textarea-textarea--line-color: var(--sf-outline-variant);
   }
   /* Flush: the field inside a composite control -- a chat composer, say -- whose
      own box draws the border, the fill, the shadow and the focus. The field draws
@@ -652,8 +731,8 @@
   }
   @media (forced-colors: active) {
     .sf-textarea textarea:not(:disabled):not(.disabled):focus {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(-1 * var(--sf-focus--width));
+      outline: var(--sf-focus--width) solid currentColor;
+      outline-offset: var(--sf-focus--inset);
       --sf-textarea-textarea--box-shadow: none;
     }
   }
@@ -699,9 +778,16 @@
     --sf-textarea--radius: min(var(--sf-textarea-radius, var(--sf-radius--ui)), var(--sf-ui-1--control-height) / 2);
     --sf-textarea--value-inset: calc(var(--sf-textarea--inset) + max(calc(var(--sf-px) * 0), var(--sf-textarea--radius) - var(--sf-radius-1\/2)) / 2);
   }
+  /* Size 2 reads the shared ladder (C77, C141): 20 on a desktop, compact 16,
+     12 on a phone as sf-input -- --sf-space-2 alone left 16 there. */
   .sf-textarea.sf-textarea--size-2 {
-    --sf-textarea--inset: var(--sf-space-2);
     --sf-textarea--radius: min(var(--sf-textarea-radius, var(--sf-radius--ui)), var(--sf-ui-2--control-height) / 2);
+    --sf-textarea--inset: var(--sf-space-1);
+  }
+  @media (min-width: 60rem) {
+    .sf-textarea.sf-textarea--size-2 {
+      --sf-textarea--inset: var(--sf-space-2);
+    }
   }
   /* Size 1/2 never goes below 12 (--sf-b2): on a phone, and in a compact
      region, where C79 brings it down a step to 28 and --sf-space-1/2 is 8.
@@ -747,16 +833,16 @@
   .sf-textarea.sf-textarea--size-1\/3 .sf-textarea-hint-text-wrap {
     --sf-textarea-hint-text-wrap--font-family: var(--sf-text--family);
     --sf-textarea-hint-text-wrap--font-weight: var(--sf-font-weight-regular);
-    --sf-textarea-hint-text-wrap--font-size: var(--sf-text-size-1\/4);
-    --sf-textarea-hint-text-wrap--line-height: var(--sf-text-height-1\/4);
+    --sf-textarea-hint-text-wrap--font-size: var(--sf-text-size-1\/3);
+    --sf-textarea-hint-text-wrap--line-height: var(--sf-text-height-1\/3);
   }
   .sf-textarea.sf-textarea--size-1\/3 .sf-textarea-required {
-    --sf-textarea-required--font-size: var(--sf-text-size-1\/4);
-    --sf-textarea-required--line-height: var(--sf-text-height-1\/4);
+    --sf-textarea-required--font-size: var(--sf-text-size-1\/3);
+    --sf-textarea-required--line-height: var(--sf-text-height-1\/3);
   }
   .sf-textarea.sf-textarea--size-1\/3 .sf-textarea-text {
-    --sf-textarea-text--font-size: var(--sf-text-size-1\/4);
-    --sf-textarea-text--line-height: var(--sf-text-height-1\/4);
+    --sf-textarea-text--font-size: var(--sf-text-size-1\/3);
+    --sf-textarea-text--line-height: var(--sf-text-height-1\/3);
   }
   .sf-textarea.sf-textarea--size-1\/3 textarea {
     --sf-textarea-textarea--font-family: var(--sf-text--family);
@@ -910,26 +996,26 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea .sf-textarea-count {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea .sf-textarea-count{
     margin-left: auto;
   }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-textarea .sf-textarea-count {
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-textarea .sf-textarea-count{
     margin-left: auto;
     }
   }
-  .sf-textarea .sf-textarea-count:where(:dir(ltr)) {
+  .sf-textarea .sf-textarea-count:where(:dir(ltr)){
     margin-left: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea .sf-textarea-count {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea .sf-textarea-count{
     margin-right: auto;
   }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-textarea .sf-textarea-count {
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-textarea .sf-textarea-count{
     margin-right: auto;
     }
   }
-  .sf-textarea .sf-textarea-count:where(:dir(rtl)) {
+  .sf-textarea .sf-textarea-count:where(:dir(rtl)){
     margin-right: auto;
   }
   .sf-textarea .sf-textarea-count {
@@ -945,8 +1031,8 @@
     white-space: nowrap;
   }
   .sf-textarea.sf-textarea--size-1\/3 .sf-textarea-count {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
   .sf-textarea.sf-textarea--size-1\/2 .sf-textarea-count {
     font-size: var(--sf-text-size-1\/3);

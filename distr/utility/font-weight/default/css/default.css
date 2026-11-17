@@ -39,4 +39,13 @@
   .weight-9 {
     font-weight: 900;
   }
+  .weight-regular {
+    font-weight: var(--sf-weight--regular);
+  }
+  .weight-medium {
+    font-weight: var(--sf-weight--medium);
+  }
+  .weight-bold {
+    font-weight: var(--sf-weight--bold);
+  }
 }

@@ -18,14 +18,18 @@ __webpack_require__.r(__webpack_exports__);
 // caption as the plain one), and this notes each once in SF.deprecations (a
 // console line under data-sf-deprecations="warn", and after the date whatever
 // the page opted into). Journal: class-content-divider-c188-aliases.
+// Owner decision C233, 2026-11-16: the small caption is one more alias of the
+// same kind -- the caption is already small, so --small draws it as it is.
 
-const DEPRECATED = Object.freeze({
-  since: '2026-11-14',
-  remove_after: '2027-01-01'
-});
 const CONTENT_DIVIDER_CLASS_ALIASES = Object.freeze({
   'sf-divider-content-border': 'sf-divider-content',
-  'sf-divider-button': 'sf-button'
+  'sf-divider-button': 'sf-button',
+  'sf-divider-content--small': 'sf-divider-content'
+});
+const SINCE = Object.freeze({
+  'sf-divider-content-border': '2026-11-14',
+  'sf-divider-button': '2026-11-14',
+  'sf-divider-content--small': '2026-11-16'
 });
 const pending = new Set(Object.keys(CONTENT_DIVIDER_CLASS_ALIASES));
 
@@ -47,7 +51,8 @@ function noteAliases(target = document) {
         kind: 'class',
         from: name,
         to: CONTENT_DIVIDER_CLASS_ALIASES[name],
-        ...DEPRECATED
+        since: SINCE[name],
+        remove_after: '2027-01-01'
       });
     }
 
@@ -157,7 +162,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -183,7 +189,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {

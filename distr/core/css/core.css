@@ -68,6 +68,7 @@
     --sf-radius--surface: var(--sf-radius-1);
     --sf-focus--color: var(--sf-focus);
     --sf-focus--offset: var(--sf-px);
+    --sf-focus--inset: calc(var(--sf-focus--width) * -1);
     --sf-focus--style: solid;
     --sf-focus-outline-width: var(--sf-focus--width);
     --sf-focus-room: var(--sf-space-1\/4);
@@ -163,6 +164,17 @@
      exactly as before: the values here are var() references, resolved after the
      branch is chosen, and a per-theme override still wins by being more
      specific. */
+  /* No theme class yet (OT 37): the first frame follows the device. The
+     theme is set by the Loader from the deferred core.js, after the page has
+     painted once; with no class the roles below were not declared at all and
+     the canvas stayed white, so a reader with a dark device saw a white
+     flash on every page. Until a class arrives the root takes the device's
+     scheme and the roles, which light-dark() resolves by it; a class, from
+     the Loader, a head script or the server (docs/developer/theme-first-paint.md),
+     wins as before: same weight, written after. */
+  :root {
+    color-scheme: light dark;
+  }
   .theme-light {
     color-scheme: light;
   }
@@ -184,6 +196,7 @@
   .theme-dark {
     color: var(--sf-on-surface);
   }
+  :root,
   .theme-light,
   .theme-dark {
     --sf-neutral: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
@@ -374,6 +387,17 @@
        --sf-scrim-opacity still dims the colour further. */
     --sf-scrim-color: var(--sf-black--alfa-64);
     --sf-scrim-opacity: 1;
+    /* A control on the scrim (study VP-16, C14 (3)): the outside close and
+       «Открыть полностью» beside a floating panel. A round plate of the
+       glass (black at 64, --sf-surface-media; 80 under reduced transparency),
+       a white glyph, the same in both themes as the scrim is. Hover and press
+       lay the state family's white over the plate, 8 and 12: the plate stands
+       on black, where a darker plate step (80) or the 4 step does not show in
+       the dark theme (1.01:1, measured). */
+    --sf-scrim-control: var(--sf-surface-media);
+    --sf-scrim-control-state-hover: var(--sf-white--alfa-8);
+    --sf-scrim-control-state-active: var(--sf-white--alfa-12);
+    --sf-on-scrim-control: var(--sf-on-surface-media);
     --sf-surface-2: light-dark(var(--sf-neutral-95), var(--sf-neutral-15));
     --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
@@ -998,6 +1022,10 @@
     --sf-opacity-70: 70%;
     --sf-opacity-80: 80%;
     --sf-opacity-90: 90%;
+    /* A part that cannot be used and has no disabled look of its own (an
+       edge arrow that is not a button): one step of the scale (C18, RG-OT 1).
+       Buttons, fields and choices draw their disabled colours instead. */
+    --sf-opacity-disabled: var(--sf-opacity-40);
   }
 }
 @layer sf.base {
@@ -1297,18 +1325,18 @@
     --sf-outline--alfa: 1;
     --sf-bg--alfa: 1;
     --sf-stripe--alfa: 1;
-    --sf-ring-color: ;
+    --sf-ring-color: currentColor;
     --sf-gradient--angle: 90deg;
     --sf-gradient--alfa-1: 1;
     --sf-gradient--alfa-2: 1;
     --sf-gradient--alfa-3: 1;
-    --sf-stripe--size: var(--sf-a1);
+    --sf-stripe--size: var(--sf-space-1\/2);
     --sf-accent--alfa: 1;
     --sf-caret--alfa: 1;
     --sf-scroll--alfa: 1;
     --sf-scroll-thumb--alfa: 1;
     --sf-scroll-track--alfa: 1;
-    --sf-stripe--color: var(--sf-surface-inverse);
+    --sf-stripe--color: var(--sf-surface-state-select);
     --sf-drop-shadow--alfa: 1;
     --sf-shadow--alfa: 1;
   }
@@ -2542,10 +2570,9 @@
   }
 }
 body {
-  --sf-stripe--color: var(--sf-surface-inverse);
+  --sf-stripe--color: var(--sf-surface-state-select);
 }
 
-/* width */
 @layer sf.base {
   html {
     scrollbar-gutter: auto;
@@ -2556,76 +2583,205 @@ body {
     }
   }
   * {
-    --sf-scroll-bg-track: var(--sf-transparent);
-    --sf-scroll-bg-thumb: var(--sf-outline);
-    --sf-scroll--thumb-hover: var(--sf-on-surface);
     --sf-scroll-bg-width: var(--sf-b4);
     --sf-scroll-thumb-size: var(--sf-a6);
     --sf-scroll-thumb-width: var(--sf-scroll-thumb-size);
     --sf-scroll-thumb-inset: var(--sf-a4);
     --sf-scroll--gap-content: var(--sf-scroll-thumb-inset);
     --sf-scroll--gap-edge: var(--sf-scroll-thumb-inset);
+    --sf-scroll--rest: var(--sf-scroll-thumb-size);
+    --sf-scroll--thumb-min: var(--sf-c2);
     --sf-scroll-radius: var(--sf-d6);
+    --sf-scroll-bg-thumb: var(--sf-outline);
+    --sf-scroll--thumb-held: var(--sf-on-surface-variant);
+    --sf-scroll-bg-track: var(--sf-transparent);
+    --sf-scroll--appear: 0.12s;
+    --sf-scroll--hide: var(--sf-duration-normal);
+    --sf-scroll--grow: 0.15s;
   }
-  ::-webkit-scrollbar {
-    width: var(--sf-scroll-bg-width);
-    height: var(--sf-scroll-bg-width);
+  .scrollbar-thin {
+    --sf-scroll--rest: var(--sf-a2);
   }
-  ::-webkit-scrollbar-thumb {
-    min-height: var(--sf-scroll-thumb-width);
-    min-height: var(--sf-scroll-thumb-size, var(--sf-scroll-thumb-width));
-    min-width: var(--sf-scroll-thumb-width);
-    min-width: var(--sf-scroll-thumb-size, var(--sf-scroll-thumb-width));
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    background-clip: padding-box;
-    border-radius: var(--sf-scroll-radius);
-    background-color: var(--sf-scroll-bg-thumb);
+  .scrollbar-flush {
+    --sf-scroll--gap-edge: var(--sf-a0);
+    --sf-scroll-bg-width: calc(var(--sf-scroll--gap-content) + var(--sf-scroll-thumb-size));
   }
-  ::-webkit-scrollbar-thumb:vertical {
-    border-left-width: var(--sf-scroll--gap-content);
-    border-right-width: var(--sf-scroll--gap-edge);
+  .scrollbar-square {
+    --sf-scroll-radius: var(--sf-a0);
   }
-  ::-webkit-scrollbar-thumb:horizontal {
-    border-top-width: var(--sf-scroll--gap-content);
-    border-bottom-width: var(--sf-scroll--gap-edge);
+  .scrollbar-hidden {
+    scrollbar-width: none;
   }
-  _:-ms-input-placeholder, [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
-    border-left-width: var(--sf-scroll--gap-edge);
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
   }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
-    border-left-width: var(--sf-scroll--gap-edge);
+  @media not ((pointer: coarse) or (forced-colors: active)) {
+    ::-webkit-scrollbar {
+      width: var(--sf-scroll-bg-width);
+      height: var(--sf-scroll-bg-width);
+    }
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+      background: var(--sf-transparent);
+    }
+    html::-webkit-scrollbar-thumb {
+      border: var(--sf-scroll--gap-edge) solid var(--sf-transparent);
+      border-left-width: var(--sf-scroll--gap-content);
+      border-radius: var(--sf-scroll-radius);
+      background: var(--sf-scroll-bg-thumb) padding-box;
+    }
+    html::-webkit-scrollbar-thumb:horizontal {
+      border-left-width: var(--sf-scroll--gap-edge);
+      border-top-width: var(--sf-scroll--gap-content);
+    }
+    _:-ms-input-placeholder, html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
+      border-left-width: var(--sf-scroll--gap-edge);
+    }
+    @supports not (border-inline-end-width: initial){
+    html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
+      border-left-width: var(--sf-scroll--gap-edge);
+    }
+    }
+    _:-ms-input-placeholder, html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
+      border-right-width: var(--sf-scroll--gap-content);
+    }
+    @supports not (border-inline-start-width: initial){
+    html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
+      border-right-width: var(--sf-scroll--gap-content);
+    }
+    }
+    html:where(:dir(rtl))::-webkit-scrollbar-thumb:vertical {
+      border-left-width: var(--sf-scroll--gap-edge);
+      border-right-width: var(--sf-scroll--gap-content);
+    }
+    html::-webkit-scrollbar-thumb:active {
+      background-color: var(--sf-scroll--thumb-held);
+    }
+    @supports not selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-color: var(--sf-transparent) var(--sf-transparent);
+        scrollbar-width: thin;
+      }
+      html {
+        scrollbar-color: var(--sf-scroll-bg-thumb) var(--sf-transparent);
+      }
+      .scrollbar-hidden {
+        scrollbar-width: none;
+      }
+    }
   }
+  .sf-scrollbar__track {
+    --sf-scroll--gap: var(--sf-scroll--gap-content, var(--sf-0));
+    --sf-scroll--edge: var(--sf-scroll--gap-edge, var(--sf-0));
+    --sf-scroll--room: var(--sf-scroll-bg-width);
+    --sf-scroll--rest-at: var(--sf-scroll--rest, var(--sf-scroll-thumb-size));
+    --sf-scroll--rest-colour: var(--sf-scroll-bg-thumb);
+    --sf-scroll--held-colour: var(--sf-scroll--thumb-held, var(--sf-on-surface-variant));
+    position: absolute;
+    z-index: 1;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border-radius: 4rem;
+    border-radius: var(--sf-scroll--radius, var(--sf-d6));
+    background: var(--sf-transparent);
+    background: var(--sf-scroll--track, var(--sf-transparent));
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity var(--sf-scroll--hide) var(--sf-ease-exit);
+    --sf-scroll--size: calc(var(--sf-scroll--room) - var(--sf-scroll--gap) - var(--sf-scroll--edge));
+    --sf-scroll--rest-size: min(var(--sf-scroll--rest-at), var(--sf-scroll--size));
+    --sf-scroll--shown: var(--sf-scroll--rest-size);
   }
-  _:-ms-input-placeholder, [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
-    border-right-width: var(--sf-scroll--gap-content);
+  .sf-scrollbar__track[data-sf-scrollbar-on] {
+    opacity: 1;
+    pointer-events: auto;
+    transition-duration: var(--sf-scroll--appear);
+    transition-timing-function: var(--sf-ease-enter);
   }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] ::-webkit-scrollbar-thumb:vertical {
-    border-right-width: var(--sf-scroll--gap-content);
+  .sf-scrollbar__track[data-sf-scrollbar-off] {
+    visibility: hidden;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar__thumb{
+    left: 0;
   }
-  :where(:dir(rtl))::-webkit-scrollbar-thumb:vertical {
-    border-left-width: var(--sf-scroll--gap-edge);
-    border-right-width: var(--sf-scroll--gap-content);
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-scrollbar__thumb{
+    left: 0;
+    }
   }
-  ::-webkit-scrollbar-thumb:hover,
-  ::-webkit-scrollbar-thumb:active {
-    background-color: var(--sf-scroll--thumb-hover);
+  .sf-scrollbar__thumb:where(:dir(ltr)){
+    left: 0;
   }
-  ::-webkit-scrollbar-corner {
-    background-color: var(--sf-transparent);
+  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar__thumb{
+    right: 0;
   }
-  ::-webkit-scrollbar-track {
-    background-color: var(--sf-scroll-bg-track);
-    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
-    background-clip: padding-box;
-    border-radius: var(--sf-scroll-radius);
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-scrollbar__thumb{
+    right: 0;
+    }
   }
-  @supports not selector(::-webkit-scrollbar) {
-    * {
-      scrollbar-color: var(--sf-scroll-bg-thumb) var(--sf-scroll-bg-track);
-      scrollbar-width: thin;
+  .sf-scrollbar__thumb:where(:dir(rtl)){
+    right: 0;
+  }
+  .sf-scrollbar__thumb {
+    position: absolute;
+    top: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    cursor: default;
+    will-change: transform;
+  }
+  .sf-scrollbar__track--vertical > .sf-scrollbar__thumb {
+    left: 0;
+    right: 0;
+  }
+  .sf-scrollbar__track--horizontal > .sf-scrollbar__thumb {
+    top: 0;
+    bottom: 0;
+  }
+  .sf-scrollbar__thumb::before {
+    position: absolute;
+    border-radius: min(4rem, var(--sf-scroll--size) / 2);
+    border-radius: min(var(--sf-scroll--radius, var(--sf-d6)), var(--sf-scroll--size) / 2);
+    background-color: var(--sf-scroll--rest-colour);
+    content: "";
+    transition: width var(--sf-scroll--grow) var(--sf-ease-move), height var(--sf-scroll--grow) var(--sf-ease-move), background-color var(--sf-scroll--grow) var(--sf-ease-move);
+  }
+  .sf-scrollbar__track--vertical > .sf-scrollbar__thumb::before {
+    top: 0;
+    bottom: 0;
+    right: var(--sf-scroll--edge);
+    width: var(--sf-scroll--shown);
+  }
+  .sf-scrollbar__track--vertical[data-sf-scrollbar-side=left] > .sf-scrollbar__thumb::before {
+    right: auto;
+    left: var(--sf-scroll--edge);
+  }
+  .sf-scrollbar__track--horizontal > .sf-scrollbar__thumb::before {
+    left: 0;
+    right: 0;
+    bottom: var(--sf-scroll--edge);
+    height: var(--sf-scroll--shown);
+  }
+  .sf-scrollbar__track:hover,
+  .sf-scrollbar__track[data-sf-scrollbar-held] {
+    --sf-scroll--shown: var(--sf-scroll--size);
+  }
+  .sf-scrollbar__track[data-sf-scrollbar-held] > .sf-scrollbar__thumb::before {
+    background-color: var(--sf-scroll--held-colour);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-scrollbar__track,
+    .sf-scrollbar__thumb::before {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .sf-scrollbar__track {
+      display: none;
     }
   }
 }
@@ -3549,17 +3705,65 @@ body {
     margin-top: var(--sf-text--margin);
   }
 }
+@property --sf-icon--text-middle {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0;
+}
 @layer sf.base {
-  /* An icon waits at font-size 0 for the Loader's sf-icon-loaded mark -- on a
+  /* An icon waits unseen for the Loader's sf-icon-loaded mark -- on a
      page the Loader runs on (data-sf-loader, set by core.js). Without it
      nothing ever marks an icon, and the icons sheet draws each one once its
      font is in; the hold then must not apply, or the sheet had to answer it
      with an important size of its own, which beat every size a page, a
      utility or the density gave the glyph (a late icon in a compact row drew
      24px in a 16px box). Before core.js runs the sheet's rule already won,
-     so the first paint of every icon is the same. */
+     so the first paint of every icon is the same.
+
+     The wait keeps the glyph's box (2026-11-16, first paint R222 open item
+     1): at font-size 0 an icon sized in em or lh (an inline reference's
+     1lh, a new-tab sign's 1em) was 0 wide until its font came, and a drawn
+     line grew 24 px when it did. The name's letters are unseen and clipped
+     instead, and the box is the one the icons sheet gives the glyph -- the
+     same size variables, the line's height when none is set -- so it stands
+     before that sheet arrives too. The sheet's own rules are unlayered and
+     replace these sizes when it is in; only the letters' ink and the clip
+     stay important, so nothing a component sets shows the name; the box
+     has no weight (:where), so any rule of a component or a utility wins.
+     It stands where the sheet puts the glyph: on the middle of its text
+     line (C151 point 5), the parent's middle read as the sheet reads it
+     (the registered --sf-icon--text-middle below); a hold on middle stood
+     4 px lower and grew a 24 line to 28 until the sheet came. */
   :root[data-sf-loader] body .sf-icon:not(.sf-icon-loaded) {
-    font-size: 0 !important;
+    overflow: clip !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+  :where(:root[data-sf-loader] body .sf-icon:not(.sf-icon-loaded)) {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: middle;
+    font-size: var(--sf-text-height-1);
+    font-size: var(--sf-icon-glyph-size, var(--sf-icon--font-size, var(--sf-text-height-1)));
+    line-height: 1;
+    width: var(--sf-text-height-1);
+    inline-size: var(--sf-text-height-1);
+    width: var(--sf-text-height-1);
+    width: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
+    inline-size: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
+    height: var(--sf-text-height-1);
+    block-size: var(--sf-text-height-1);
+    height: var(--sf-text-height-1);
+    height: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
+    block-size: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
+  }
+  @supports selector(:has(*)) {
+    :where(:root[data-sf-loader] body :has(> .sf-icon:not(.sf-icon-loaded))) {
+      --sf-icon--text-middle: var(--sf-text--middle);
+    }
+    :where(:root[data-sf-loader] body .sf-icon:not(.sf-icon-loaded)) {
+      vertical-align: calc(var(--sf-icon--text-middle) - var(--sf-text-height-1) / 2);
+      vertical-align: calc(var(--sf-icon--text-middle) - var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1))) / 2);
+    }
   }
   button {
     padding: 0;
@@ -3594,6 +3798,7 @@ body {
     --sf-text--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
     --sf-heading--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
     --sf-display--family: "Inter Variable", "Inter Fallback", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", sans-serif;
+    --sf-text--middle: 0.3633em;
     --sf-text--size: var(--sf-text--size-1);
     --sf-text--height: var(--sf-text--height-1);
     --sf-text--weight: var(--sf-weight--regular);
@@ -4234,8 +4439,12 @@ body {
             text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
   }
   a:not([class]),
-  a[class*=link-],
-  [class*=link-] ~ a {
+  a[class^=link-],
+  a[class*=" link-"],
+  a[class*=":link-"],
+  [class^=link-] ~ a,
+  [class*=" link-"] ~ a,
+  [class*=":link-"] ~ a {
     color: var(--sf-link);
     color: var(--sf-place--ink, var(--sf-link));
     -webkit-text-decoration-line: underline;
@@ -4247,8 +4456,12 @@ body {
     text-underline-offset: var(--sf-a3);
   }
   a:not([class]):hover,
-  a[class*=link-]:hover,
-  [class*=link-] ~ a:hover {
+  a[class^=link-]:hover,
+  a[class*=" link-"]:hover,
+  a[class*=":link-"]:hover,
+  [class^=link-] ~ a:hover,
+  [class*=" link-"] ~ a:hover,
+  [class*=":link-"] ~ a:hover {
     -webkit-text-decoration-color: var(--sf-link-hover);
             text-decoration-color: var(--sf-link-hover);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
@@ -4257,8 +4470,12 @@ body {
     color: var(--sf-place--ink, var(--sf-link-hover));
   }
   a:not([class]):active,
-  a[class*=link-]:active,
-  [class*=link-] ~ a:active {
+  a[class^=link-]:active,
+  a[class*=" link-"]:active,
+  a[class*=":link-"]:active,
+  [class^=link-] ~ a:active,
+  [class*=" link-"] ~ a:active,
+  [class*=":link-"] ~ a:active {
     -webkit-text-decoration-color: var(--sf-link-active);
             text-decoration-color: var(--sf-link-active);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
@@ -4291,8 +4508,12 @@ body {
             text-decoration-line: underline;
   }
   :where([data-sf-visited=on]) a:not([class]):visited,
-  :where([data-sf-visited=on]) a[class*=link-]:visited,
-  :where([data-sf-visited=on]) [class*=link-] ~ a:visited {
+  :where([data-sf-visited=on]) a[class^=link-]:visited,
+  :where([data-sf-visited=on]) a[class*=" link-"]:visited,
+  :where([data-sf-visited=on]) a[class*=":link-"]:visited,
+  :where([data-sf-visited=on]) [class^=link-] ~ a:visited,
+  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited,
+  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited {
     color: var(--sf-link-visited);
     color: var(--sf-place--ink, var(--sf-link-visited));
     -webkit-text-decoration-color: color-mix(in srgb, var(--sf-link-visited) var(--sf-link--underline-ink), transparent);
@@ -4312,33 +4533,85 @@ body {
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
-  :where([data-sf-visited=on]) a[class*=link-]:visited:hover {
+  :where([data-sf-visited=on]) a[class^=link-]:visited:hover {
     -webkit-text-decoration-color: var(--sf-link-visited);
             text-decoration-color: var(--sf-link-visited);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
-  :where([data-sf-visited=on]) a[class*=link-]:visited:active {
+  :where([data-sf-visited=on]) a[class^=link-]:visited:active {
     -webkit-text-decoration-color: var(--sf-link-visited);
             text-decoration-color: var(--sf-link-visited);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
-  :where([data-sf-visited=on]) [class*=link-] ~ a:visited:hover {
+  :where([data-sf-visited=on]) a[class*=" link-"]:visited:hover {
     -webkit-text-decoration-color: var(--sf-link-visited);
             text-decoration-color: var(--sf-link-visited);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
-  :where([data-sf-visited=on]) [class*=link-] ~ a:visited:active {
+  :where([data-sf-visited=on]) a[class*=" link-"]:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) a[class*=":link-"]:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) a[class*=":link-"]:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class^=link-] ~ a:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class^=link-] ~ a:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited:active {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited:hover {
+    -webkit-text-decoration-color: var(--sf-link-visited);
+            text-decoration-color: var(--sf-link-visited);
+    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
+  }
+  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited:active {
     -webkit-text-decoration-color: var(--sf-link-visited);
             text-decoration-color: var(--sf-link-visited);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
   a:not([class]).focus-visible,
-  a[class*=link-].focus-visible,
-  [class*=link-] ~ a.focus-visible {
+  a[class^=link-].focus-visible,
+  a[class*=" link-"].focus-visible,
+  a[class*=":link-"].focus-visible,
+  [class^=link-] ~ a.focus-visible,
+  [class*=" link-"] ~ a.focus-visible,
+  [class*=":link-"] ~ a.focus-visible {
     outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
@@ -4346,8 +4619,12 @@ body {
     box-decoration-break: clone;
   }
   a:not([class]).focus-visible,
-  a[class*=link-].focus-visible,
-  [class*=link-] ~ a.focus-visible {
+  a[class^=link-].focus-visible,
+  a[class*=" link-"].focus-visible,
+  a[class*=":link-"].focus-visible,
+  [class^=link-] ~ a.focus-visible,
+  [class*=" link-"] ~ a.focus-visible,
+  [class*=":link-"] ~ a.focus-visible {
     outline-offset: 0.125rem;
     outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
@@ -4356,8 +4633,12 @@ body {
     box-decoration-break: clone;
   }
   a:not([class]):focus-visible,
-  a[class*=link-]:focus-visible,
-  [class*=link-] ~ a:focus-visible {
+  a[class^=link-]:focus-visible,
+  a[class*=" link-"]:focus-visible,
+  a[class*=":link-"]:focus-visible,
+  [class^=link-] ~ a:focus-visible,
+  [class*=" link-"] ~ a:focus-visible,
+  [class*=":link-"] ~ a:focus-visible {
     outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
@@ -4426,8 +4707,12 @@ body {
   .disabled a,
   .disabled a[href],
   .disabled a:not([class]),
-  .disabled a[class*=link-],
-  .disabled [class*=link-] ~ a {
+  .disabled a[class^=link-],
+  .disabled a[class*=" link-"],
+  .disabled a[class*=":link-"],
+  .disabled [class^=link-] ~ a,
+  .disabled [class*=" link-"] ~ a,
+  .disabled [class*=":link-"] ~ a {
     color: inherit;
     cursor: default;
     -webkit-text-decoration-color: currentColor;
@@ -4463,6 +4748,122 @@ body {
   .link-dashed a {
     -webkit-text-decoration-style: dashed;
             text-decoration-style: dashed;
+  }
+}
+@layer sf.base {
+  .theme-light,
+  .theme-dark {
+    --sf-highlight-text: var(--sf-on-surface);
+    --sf-highlight-background: transparent;
+    /* The hues of code are the static palette's (owner decision C186 (11),
+       2026-11-14; C13, C17), not the status roles: red said «error» on every
+       keyword and a string was the link's blue exactly. Keyword violet, string
+       and tag green, attribute (and number) blue, title amber, built-in teal,
+       at tone 40 on the light theme and 80 on the dark, as the link: each
+       holds 4.5:1 or more on the block's plate. The names are the same; a
+       project that set one keeps its value. */
+    --sf-highlight-keyword: light-dark(var(--sf-violet-40), var(--sf-violet-80));
+    --sf-highlight-title: light-dark(var(--sf-amber-40), var(--sf-amber-80));
+    --sf-highlight-attribute: light-dark(var(--sf-blue-40), var(--sf-blue-80));
+    --sf-highlight-string: light-dark(var(--sf-green-40), var(--sf-green-80));
+    --sf-highlight-built-in: light-dark(var(--sf-teal-40), var(--sf-teal-80));
+    --sf-highlight-comment: var(--sf-on-surface-variant);
+    --sf-highlight-tag: light-dark(var(--sf-green-40), var(--sf-green-80));
+    --sf-highlight-section: var(--sf-primary);
+    --sf-highlight-bullet: var(--sf-warning);
+    --sf-highlight-punctuation: var(--sf-on-surface-variant);
+    --sf-highlight-addition: var(--sf-on-success-container);
+    --sf-highlight-addition-background: var(--sf-success-container);
+    --sf-highlight-deletion: var(--sf-on-error-container);
+    --sf-highlight-deletion-background: var(--sf-error-container);
+    --sf-highlight-line-number: var(--sf-on-surface-variant);
+    /* Roles a host can aim at one kind of token (DEV msg-75ee8dec): numbers,
+       properties, operators and plain variables. Aliases of the attribute
+       role they were drawn with, no new hue (C186 (11)). */
+    --sf-highlight-number: var(--sf-highlight-attribute);
+    --sf-highlight-property: var(--sf-highlight-attribute);
+    --sf-highlight-operator: var(--sf-highlight-attribute);
+    --sf-highlight-variable: var(--sf-highlight-attribute);
+  }
+  .theme-light .sf-code-surface {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
+    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
+    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
+    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-light .hljs {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
+    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
+    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
+    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-dark .sf-code-surface {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
+    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
+    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
+    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
+  }
+  .theme-dark .hljs {
+    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
+    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
+    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
+    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
+    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
+    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
+    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
+    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
+    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
+    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
+    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
+    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
+    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
+    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
+    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
+    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
+    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
+    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
   }
 }
 @layer sf.base {
@@ -4937,6 +5338,11 @@ body {
     min-width: 0;
     min-inline-size: 0;
   }
+  :where([data-sf-composition-part=content].flex.flex-col) {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--sf-space-3);
+  }
 }
 @layer sf.components {
   :where([data-sf-composition-part=content]) > :first-child {
@@ -4949,10 +5355,55 @@ body {
     -webkit-margin-after: 0;
             margin-block-end: 0;
   }
-  :where([data-sf-composition-part=content].grid) > * {
+  .grid[data-sf-composition-part=content] > * {
     margin-top: 0;
     margin-bottom: 0;
     margin-block: 0;
+  }
+  .flex[data-sf-composition-part=content] > * {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-block: 0;
+  }
+  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :first-child {
+    margin-top: 0;
+    -webkit-margin-before: 0;
+            margin-block-start: 0;
+  }
+  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :first-child {
+    margin-top: 0;
+    -webkit-margin-before: 0;
+            margin-block-start: 0;
+  }
+  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child > :last-child {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
   }
 }
 @layer sf.components {
@@ -5894,7 +6345,8 @@ body {
      own sheet arrives and lets both go (block-size auto, the row visible).
      Static markup printed inside (data-sf-static) is its own box and is left
      alone. A row taller than the bar (size 1/2 with size-1 controls in it)
-     is the one thing the attributes cannot tell. */
+     is read from its children's sizes (below); a bar narrower than the window
+     that collapses on its own width is the one thing the hold cannot tell. */
   :where(sf-header-site) {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
   }
@@ -5906,6 +6358,64 @@ body {
   }
   [size="1/2"]:where(sf-site-header) {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1\/2--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  /* A 1/2 bar whose row holds a size-1 control is as tall as that control: its
+     sheet keeps the bar's height as a floor and lets the row grow (RG-S2-7: a
+     1/2 bar with an sf-menu of its default size in the nav, or a tool written
+     without a size, held 65 and drew 73 when its sheet came; 390: 53 -> 61).
+     Its children say it in their attributes: a button, a segmented control, a
+     language picker or a menu of size 1 (no size is the ladder's 1). The tools
+     stay in the bar at every width; the nav, the actions and the settings
+     tools (the language and the theme switch, which a collapsed bar moves to
+     its panel, C161 (8)) only above the collapse step, read here on the window (the bar's own width is a container
+     condition of its sheet; a site bar is the window's width). Before the
+     element is defined they are its children; once it has drawn, its row's.
+     The lists are :where and :not: the build's :is() fallback writes out
+     every combination, and nested :is() lists multiplied past what a string
+     holds (the tag pair keeps its :is(), the alias contract's spelling). */
+  [size="1/2"]:where(sf-header-site):where(:has(> [slot=tools]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]))) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  [size="1/2"]:where(sf-site-header):where(:has(> [slot=tools]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]))) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  [size="1/2"][collapse=none]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  [size="1/2"][collapse=none]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+  }
+  @media (min-width: 32rem) {
+    [size="1/2"][collapse=sm]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+    [size="1/2"][collapse=sm]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+  }
+  @media (min-width: 44rem) {
+    [size="1/2"][collapse=md]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+    [size="1/2"][collapse=md]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+  }
+  @media (min-width: 60rem) {
+    [size="1/2"]:where(sf-header-site):not([collapse=none]):not([collapse=sm]):not([collapse=md]):not([collapse=xl]):not([collapse=always]):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+    [size="1/2"]:where(sf-site-header):not([collapse=none]):not([collapse=sm]):not([collapse=md]):not([collapse=xl]):not([collapse=always]):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+  }
+  @media (min-width: 72rem) {
+    [size="1/2"][collapse=xl]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
+    [size="1/2"][collapse=xl]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    }
   }
   :where(sf-header-site):not(:defined):not(:has(> [data-sf-static])) {
     display: block;
@@ -5985,10 +6495,14 @@ body {
      field's gap. Until the element is defined it holds that box itself.
      Static markup printed inside (data-sf-static) is its own box, so nothing
      is reserved then; a hidden field (appearance="hidden") has no box. A hint
-     that wraps is the one thing the attributes cannot tell. */
+     that wraps is the one thing the attributes cannot tell. Below the desktop
+     breakpoint a field of size 1 sets its label in the body text, 16 so iOS
+     does not zoom, on its line (sf-input's sheet, FP-1 of the first-paint
+     status R222: 56 held, 60 drawn at 390); its message keeps the step below. */
   :where(sf-input:not(:defined)) {
     --sf-input--box-control: var(--sf-ui-1--control-height);
     --sf-input--box-line: var(--sf-text-height-1\/2);
+    --sf-input--box-label-line: var(--sf-input--box-line);
     --sf-input--box-gap: var(--sf-input--gap, var(--sf-space-1\/4));
     --sf-input--box-label: 0;
     --sf-input--box-message: 0;
@@ -6020,8 +6534,40 @@ body {
   }
   :where(sf-input:not(:defined):not([appearance=hidden])):not(:has(> [data-sf-static])) {
     display: block;
-    height: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
-    block-size: calc(var(--sf-input--box-control) + (var(--sf-input--box-label) + var(--sf-input--box-message)) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
+    height: calc(var(--sf-input--box-control) + var(--sf-input--box-label) * (var(--sf-input--box-label-line) + var(--sf-input--box-gap)) + var(--sf-input--box-message) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
+    block-size: calc(var(--sf-input--box-control) + var(--sf-input--box-label) * (var(--sf-input--box-label-line) + var(--sf-input--box-gap)) + var(--sf-input--box-message) * (var(--sf-input--box-line) + var(--sf-input--box-gap)));
+  }
+  @media not all and (min-width: 60rem) {
+    :where(sf-input:not([size="1/3"]):not([size="1/2"]):not([size="2"]):not([size="3"]):not(:defined)) {
+      --sf-input--box-label-line: var(--sf-text-height-1);
+    }
+  }
+  /* sf-profile-picker before it draws (first-paint status R222: a bare tag was
+     0 px until its code, then the folded trigger pushed the page down by 40,
+     36 on a phone). The trigger is one sf-button of the picker's size, 1 by
+     default, as wide as the line (the element is a block): until the element is
+     defined it holds that control's height. Printed markup (data-sf-static) is
+     its own box. */
+  :where(sf-profile-picker:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    height: var(--sf-ui-1--control-height);
+    block-size: var(--sf-ui-1--control-height);
+  }
+  :where(sf-profile-picker[size="1/2"]:not(:defined)):not(:has(> [data-sf-static])) {
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+  }
+  /* sf-search before it draws (FP-6 of the first-paint status R222): the
+     element is its trigger, the button or icon button the page writes inside
+     it, as wide as its words. Until the element is defined the host holds the
+     trigger at that width on the top of its line, where the inline host let
+     the trigger's block stretch across the whole line (1440 x 40 held, 40 x 40
+     drawn). */
+  :where(sf-search:not(:defined)) {
+    display: inline-flex;
+    vertical-align: top;
+    max-width: 100%;
+    max-inline-size: 100%;
   }
   /* sf-tile-metric before it draws (tile study TM-3, owner decision C130 (2):
      a row of tiles was 0 px for 80-230 ms, then 300 at once). Its box is known
@@ -6072,6 +6618,12 @@ body {
       --sf-tile-metric--box-badge: calc(var(--sf-text-height-1) + 2 * var(--sf-ui-1--space-y-tightness-low));
     }
   }
+  /* A tile with no value and not loading is the empty tile: the label and the
+     dash, no change line (FP-5 of the first-paint status R222: 110 held, 79
+     drawn at size 1/2). The change line comes back with what promises it. */
+  :where(sf-tile-metric:not([value]:not([value=""])):not([loading]:not([loading=false])):not(:defined)) {
+    --sf-tile-metric--box-change: 0;
+  }
   :where(sf-tile-metric[max]:not([max=""]):not(:defined)) {
     --sf-tile-metric--box-change: 0;
     --sf-tile-metric--box-meter: 1;
@@ -6117,6 +6669,8 @@ body {
     --sf-tag--box-line: var(--sf-text-height-1\/2);
     --sf-tag--box-lead-on: 0;
     --sf-tag--box-cross-on: 0;
+    --sf-tag--box-pull: calc(var(--sf-px) * 0);
+    --sf-tag--box-cross-gap: var(--sf-tag--box-gap);
   }
   :where(sf-tag[size="1/3"]:not(:defined)) {
     --sf-tag--box-control: var(--sf-ui-1\/3--control-height);
@@ -6230,6 +6784,37 @@ body {
   :where(sf-tag[type=color][size="3"]:not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-3);
   }
+  /* The picture's optical pull (the tag sheet): a Material Symbols glyph's box
+     moves out by a twelfth of its size on both sides, an avatar or a colour dot
+     by a sixteenth at the start, so the lead takes that much less room (FP-5 of
+     the first-paint status R222: a chosen filter tag held 4 px too wide). */
+  :where(sf-tag[kind=icon]:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
+  }
+  :where(sf-tag[type=icon]:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
+  }
+  :where(sf-tag[active]:not([kind]):not([type]):not([active=false]):not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
+  }
+  :where(sf-tag[kind=checkbox][active]:not([active=false]):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
+  }
+  :where(sf-tag[type=checkbox][active]:not([active=false]):not(.does-not-exist):not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
+  }
+  :where(sf-tag[kind=avatar]:not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
+  }
+  :where(sf-tag[type=avatar]:not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
+  }
+  :where(sf-tag[kind=color]:not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
+  }
+  :where(sf-tag[type=color]:not(:defined)) {
+    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
+  }
   :where(sf-tag[closable]:not([closable=false]):not(:defined)) {
     --sf-tag--box-cross-on: 1;
   }
@@ -6286,6 +6871,7 @@ body {
   :where(sf-tag[line]:not([line=""]):not(:defined)) {
     --sf-tag--box-edge: var(--sf-space-1\/3);
     --sf-tag--box-gap: var(--sf-space-1\/3);
+    --sf-tag--box-pull: calc(var(--sf-px) * 0);
   }
   :where(sf-tag[line="1/2"]:not(:defined)) {
     --sf-tag--box-control: var(--sf-text-height-1\/2);
@@ -6305,58 +6891,82 @@ body {
     --sf-tag--box-text: var(--sf-text-size-1);
     --sf-tag--box-lead: var(--sf-text-height-2);
   }
-  /* A status that is neither pressed nor removed is the tonal badge (C140 (6)). */
+  /* A status that is neither pressed nor removed is the tonal badge (C140 (6)):
+     its text stands the badge's side room from its edges, --sf-space-1/2 (12 on
+     a desktop, 8 on a phone and in a compact region; component.badges R020).
+     Off a text line it is the 1/3 badge, 24 high with the 1/3 text; on a text
+     line (line="...") it keeps the line's height and text above, as the badge's
+     own line rule does (first-paint status R222 open item 8: the status held
+     8 px narrow on a desktop, the status on a line 14 px narrow). */
   :where(sf-tag[status]:not([status=""]):not([interactive]):not([closable]):not(:defined)) {
-    --sf-tag--box-control: var(--sf-c2);
-    --sf-tag--box-text: var(--sf-text-size-1\/3);
-    --sf-tag--box-line: var(--sf-text-height-1\/3);
-    --sf-tag--box-edge: var(--sf-a8);
+    --sf-tag--box-edge: var(--sf-space-1\/2);
     --sf-tag--box-lead-on: 0;
     --sf-tag--box-cross-on: 0;
   }
+  :where(sf-tag[status]:not([status=""]):not([interactive]):not([closable]):not([line]:not([line=""])):not(:defined)) {
+    --sf-tag--box-control: var(--sf-c2);
+    --sf-tag--box-text: var(--sf-text-size-1\/3);
+    --sf-tag--box-line: var(--sf-text-height-1\/3);
+  }
+  /* The badge's words are medium and it stands on the line's middle, as the
+     drawn badge (component.badges) does. */
+  :where(sf-tag[status]:not([status=""]):not([interactive]):not([closable]):not(:defined)):not(:has(> [data-sf-static])) {
+    vertical-align: middle;
+  }
+  :where(sf-tag[status]:not([status=""]):not([interactive]):not([closable]):not(:defined)):not(:has(> [data-sf-static]))::before {
+    font-weight: var(--sf-font-weight-medium);
+  }
+  /* A pressable tag that can be removed: its cross stands after the label's
+     button, centred in a --sf-c2 target (sf-tag's template), so the gap before
+     it is half of what the target leaves around the cross: 6 beside a 12 cross,
+     8 beside an 8 one (open item 8: held 1 px wide on a desktop, 2 px narrow on
+     a phone). */
+  :where(sf-tag[interactive]:not([interactive=false])[closable]:not([closable=false]):not([line]:not([line=""])):not(:defined)) {
+    --sf-tag--box-cross-gap: max(calc(var(--sf-px) * 0), calc((var(--sf-c2) - var(--sf-tag--box-cross)) / 2));
+  }
   _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
     }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
   }
   _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
     }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
     }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
   }
   _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
     }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])) {
     display: inline-block;
@@ -6373,10 +6983,10 @@ body {
     max-width: min(20rem, 100%);
     max-width: min(var(--sf-g0), 100%);
     max-inline-size: min(var(--sf-g0), 100%);
-    -webkit-padding-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
-            padding-inline-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) + var(--sf-tag--box-gap)));
-    -webkit-padding-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
-            padding-inline-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-gap)));
+    -webkit-padding-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
+            padding-inline-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
+    -webkit-padding-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
+            padding-inline-end: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static]))::before {
     content: attr(text);
@@ -6385,6 +6995,43 @@ body {
     line-height: var(--sf-tag--box-line);
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* A count stands after the label at the part gap, in the label's text (FP-5
+     of the first-paint status R222: a tag with a count held 18 px narrow). */
+  :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static])) {
+    display: inline-flex;
+    vertical-align: top;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
+    margin-left: var(--sf-tag--box-gap);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
+    margin-left: var(--sf-tag--box-gap);
+    }
+  }
+  :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after:where(:dir(ltr)){
+    margin-left: var(--sf-tag--box-gap);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
+    margin-right: var(--sf-tag--box-gap);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
+    margin-right: var(--sf-tag--box-gap);
+    }
+  }
+  :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after:where(:dir(rtl)){
+    margin-right: var(--sf-tag--box-gap);
+  }
+  :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after {
+    content: attr(count);
+    display: block;
+    -webkit-margin-start: var(--sf-tag--box-gap);
+            margin-inline-start: var(--sf-tag--box-gap);
+    font-size: var(--sf-tag--box-text);
+    line-height: var(--sf-tag--box-line);
     white-space: nowrap;
   }
   /* sf-accordion before it draws (accordion study AC-9: a bare tag was 0 px
@@ -6408,9 +7055,13 @@ body {
        «Развернуть все» over them: the button's height and a group's step
        (C154 (7)).
 
-     Sections given as data (items) cannot be counted by a sheet; for them a
-     host prints the first paint (standard §5.4). Static markup printed inside
-     (data-sf-static) is its own box, so nothing is reserved then. */
+     Sections given as data (items) cannot be counted by a sheet, nor which of
+     them are open: for them the host holds the box, printing the first paint
+     (standard §5.4) or sizing the element (--sf-skeleton-block-size); there is
+     no attribute that declares the rows (owner decision C253, 2026-11-16; the
+     held 56 against 128-332 drawn of FP-3 of the first-paint status R222 are
+     such examples). Static markup printed inside (data-sf-static) is its own
+     box, so nothing is reserved then. */
   :where(sf-accordion:not(:defined)) {
     --sf-accordion--box-header: var(--sf-ui-3--control-height);
     --sf-accordion--box-inset: var(--sf-space-3);
@@ -6507,10 +7158,13 @@ body {
   /* sf-reference-link before it draws (RL-18: a bare tag was 0 px for about
      100 ms, then the 56 px card pushed the page down). Its box is known from its
      attributes alone, from the same ladder its sheet draws with: as wide as its
-     container; a card one control of size 3 high; a size one control of that
-     step; a line, or plain, one line of the text of its step. On a phone a card
-     stacks: the label line, the card's gap and the route line when there is a
-     route, the card's --sf-space-1 above and below and its border. Static markup
+     container; a card one control of size 3 high, and with a route (text) its
+     route under the name at every width (owner decision C236): the card's
+     --sf-space-1 above and below and its border, the name's line and the
+     route's 1/2 line (78 at 1440, 62 on a phone); a size one control of that
+     step; a line, or plain, one line of the text of its step. On a phone a plain
+     reference stacks: the label line, the gap and the route line when there is
+     a route. Static markup
      printed inside (data-sf-static) is its own box, so nothing is reserved then.
      A label that wraps in a card is the one thing the attributes cannot tell. */
   :where(sf-reference-link:not(:defined)) {
@@ -6577,6 +7231,11 @@ body {
     height: var(--sf-reference-link--box);
     block-size: var(--sf-reference-link--box);
   }
+  /* C236: a card with a route holds the name and the route under it. */
+  :where(sf-reference-link[text]:not([text=""]):not(:defined):not([appearance=inline]):not([appearance=plain]):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
+    height: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-text-height-1\/2));
+    block-size: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-text-height-1\/2));
+  }
   /* In text (appearance inline, C147 (1)) the reference is a run of words in
      the sentence, not a box: no height of its own, and its name is written
      from the label attribute in the link's ink and line until the element
@@ -6606,8 +7265,257 @@ body {
     -webkit-text-decoration-line: none;
             text-decoration-line: none;
   }
+  /* Its picture and a gone record's reason (FP-6 of the first-paint status
+     R222: a missing record held 61, drew 167). An icon, or the broken link a
+     gone record shows, stands before the name: the line's height and the
+     icon's 4 px gap. The reason follows the name after « · », in the words of
+     the page's language (the element's lang files). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])) {
+    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
+            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
+    -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+            padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])) {
+    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
+            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
+    -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+            padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])) {
+    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
+            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
+    -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+            padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  /* The record's number follows the name after a space; a link that opens a
+     new tab ends with its sign, the icon's 4 px gap and the line's height. */
+  :where(sf-reference-link[appearance=inline][label][text]:not([text=""]):not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label) " " attr(text);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums; /* the number's figures, as its sheet draws them */
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+    }
+  }
+  :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
+    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+    }
+  }
+  :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
+    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  }
+  :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])) {
+    -webkit-padding-end: calc(var(--sf-text-height-1) + 0.25rem);
+            padding-inline-end: calc(var(--sf-text-height-1) + 0.25rem);
+    -webkit-padding-end: calc(var(--sf-text-height-1) + var(--sf-a4));
+            padding-inline-end: calc(var(--sf-text-height-1) + var(--sf-a4));
+  }
+  :where(sf-reference-link[appearance=inline][label][state=missing]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label) " · удалена";
+  }
+  :where(sf-reference-link[appearance=inline][label][state=forbidden]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label) " · нет доступа";
+  }
+  :where(sf-reference-link[appearance=inline][label][state=missing]:lang(en):not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label) " · deleted";
+  }
+  :where(sf-reference-link[appearance=inline][label][state=forbidden]:lang(en):not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(label) " · no access";
+  }
   @media (max-width: 31.999rem) {
-    :where(sf-reference-link:not(:defined):not([appearance=inline]):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
+    :where(sf-reference-link[appearance=plain]:not(:defined):not([line]:not([line=""])):not([size]:not([size=""]))):not(:has(> [data-sf-static])) {
       height: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
       block-size: calc(var(--sf-reference-link--box-pad) + var(--sf-reference-link--box-line) + var(--sf-space-1) + var(--sf-reference-link--box-route) * var(--sf-reference-link--box-line));
     }
@@ -6616,7 +7524,7 @@ body {
      0 px for about 100 ms, then 48, and the list under it jumped). Its row is
      known from its attributes and the ladder its sheet draws with: the holder,
      a size 2 control high (48 on a desktop, 44 on a phone); on a fill
-     (surface) a size 3 control; compact is the small tile alone. A name long
+     (surface) a size 3 control; compact is a row as high as the small tile. A name long
      enough to wrap is the one thing the attributes cannot tell. */
   :where(sf-file-preview:not(:defined)):not(:has(> [data-sf-static])) {
     display: block;
@@ -6631,18 +7539,36 @@ body {
     block-size: var(--sf-ui-3--control-height);
   }
   /* The chip and the tile (decision C149 (1)): a chip is 48 high and at most
-     --sf-f8 (288) wide in the line of attachments; a tile is its 4:3 picture, the
-     one-line name and the meta line beside its size 1/2 buttons. */
+     --sf-f8 (288) wide in the line of attachments, as wide as its name: the
+     inset, the 1/2 holder and the inset again before the name, the inset, the
+     1/2 «×» and the inset after it (the chip's inset is the size 2 control less
+     the 1/2 holder, halved), the name one line a step smaller (FP-5 of the
+     first-paint status R222: 288 held, 248 drawn). A tile is its 4:3 picture,
+     the one-line name and the meta line beside its size 1/2 buttons. */
   :where(sf-file-preview[appearance=chip]:not(:defined)):not(:has(> [data-sf-static])) {
     display: inline-block;
     vertical-align: middle;
-    width: min(100%, 18rem);
-    inline-size: min(100%, 18rem);
-    width: min(100%, 18rem);
-    width: min(100%, var(--sf-f8));
-    inline-size: min(100%, var(--sf-f8));
+    box-sizing: border-box;
+    max-width: min(100%, 18rem);
+    max-inline-size: min(100%, 18rem);
+    max-width: min(100%, 18rem);
+    max-width: min(100%, var(--sf-f8));
+    max-inline-size: min(100%, var(--sf-f8));
     height: var(--sf-ui-2--control-height);
     block-size: var(--sf-ui-2--control-height);
+    padding-left: var(--sf-ui-2--control-height);
+    padding-right: var(--sf-ui-2--control-height);
+    padding-inline: var(--sf-ui-2--control-height);
+  }
+  :where(sf-file-preview[appearance=chip][file-name]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: attr(file-name);
+    display: block;
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    visibility: hidden;
   }
   :where(sf-file-preview[appearance=tile]:not(:defined)):not(:has(> [data-sf-static])) {
     height: auto;
@@ -6657,13 +7583,7 @@ body {
     aspect-ratio: 4/3;
   }
   :where(sf-file-preview[compact]:not([compact=false]):not(:defined)):not(:has(> [data-sf-static])) {
-    display: inline-block;
-    vertical-align: middle;
-    width: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
-    inline-size: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
-    width: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
-    width: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
-    inline-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+    display: block;
     height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
     block-size: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
     height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
@@ -6679,7 +7599,7 @@ body {
      text line of a form size with line; the label template holds its
      height (below), its width being its text's. Only the box: nothing is
      drawn in it, so a photo that arrives is not preceded by a plate it does
-     not have. The card template's box is its container's. Static markup
+     not have. The card template holds its picture and lines (below). Static markup
      printed inside (data-sf-static) is its own box. Here, not in the avatars
      sheet, because core.css is the one sheet a page links before any code. */
   :where(sf-avatar:not(:defined)) {
@@ -6725,6 +7645,38 @@ body {
     inline-size: var(--sf-avatar--box);
     height: var(--sf-avatar--box);
     block-size: var(--sf-avatar--box);
+  }
+  /* The card template (FP-5 of the first-paint status R222: the host was 0 x 0
+     before its code, then 1426 x 2591 at 1440): as wide as its container, its
+     picture box in the card's ratio (square 1 / 1 by default, portrait 9 / 16,
+     avatars sheet), the card's gap, then a line of the body text for the
+     heading and one for the meta or the description when they are set. */
+  :where(sf-avatar[template=card]:not(:defined)) {
+    --sf-avatar--card-heading: 0;
+    --sf-avatar--card-row: 0;
+  }
+  :where(sf-avatar[template=card][heading]:not([heading=""]):not(:defined)) {
+    --sf-avatar--card-heading: 1;
+  }
+  :where(sf-avatar[template=card][meta]:not([meta=""]):not(:defined)) {
+    --sf-avatar--card-row: 1;
+  }
+  :where(sf-avatar[template=card][description]:not([description=""]):not(:defined)) {
+    --sf-avatar--card-row: 1;
+  }
+  :where(sf-avatar[template=card]:not(:defined)):not(:has(> [data-sf-static])) {
+    display: block;
+    padding-bottom: calc(var(--sf-space-1\/3) + (var(--sf-avatar--card-heading) + var(--sf-avatar--card-row)) * var(--sf-text-height-1));
+    -webkit-padding-after: calc(var(--sf-space-1\/3) + (var(--sf-avatar--card-heading) + var(--sf-avatar--card-row)) * var(--sf-text-height-1));
+            padding-block-end: calc(var(--sf-space-1\/3) + (var(--sf-avatar--card-heading) + var(--sf-avatar--card-row)) * var(--sf-text-height-1));
+  }
+  :where(sf-avatar[template=card]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    content: "";
+    display: block;
+    aspect-ratio: 1/1;
+  }
+  :where(sf-avatar[template=card][card-variant=portrait]:not(:defined)):not(:has(> [data-sf-static]))::before {
+    aspect-ratio: 9/16;
   }
   /* The label template: the avatar beside its heading and description, each one
      text line of the size step (the avatars sheet's label group), so the box is
@@ -6794,6 +7746,14 @@ body {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     visibility: hidden;
+  }
+  /* format="datetime" writes the date and the time (FP-6 of the first-paint
+     status R222: «00:00» held 46, «9 ноября 2026 г. в 14:32» drew 196): on a
+     Russian page the held words are that shape, a one-digit day and a month
+     of six letters (a day or month of other length moves by a few px);
+     relative words stay the server's to print. */
+  :where(sf-time[datetime]:not([datetime=""])[format=datetime]:lang(ru):not(:defined)):empty::before {
+    content: "0 ноября 0000 г. в 00:00";
   }
   /* Its menu waits for its own code in the parts the element drew: an empty
      undefined sf-menu-context would stand in the row as one more item, a gap
@@ -6925,6 +7885,13 @@ body {
        object-fit: cover;
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-container);
+    /* A picture not yet in (or missing) shows its alt text, and that text set
+       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
+       tile of size s (FP-5 of the first-paint status R222). The tile's shape
+       holds, as the drawn tile's does. */
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
   }
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img) {
     display: block;
@@ -6936,6 +7903,13 @@ body {
        object-fit: cover;
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-container);
+    /* A picture not yet in (or missing) shows its alt text, and that text set
+       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
+       tile of size s (FP-5 of the first-paint status R222). The tile's shape
+       holds, as the drawn tile's does. */
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
   }
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img) {
     display: block;
@@ -6947,6 +7921,13 @@ body {
        object-fit: cover;
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-container);
+    /* A picture not yet in (or missing) shows its alt text, and that text set
+       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
+       tile of size s (FP-5 of the first-paint status R222). The tile's shape
+       holds, as the drawn tile's does. */
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
   }
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > a :where(img) {
     display: block;
@@ -6958,6 +7939,13 @@ body {
        object-fit: cover;
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-container);
+    /* A picture not yet in (or missing) shows its alt text, and that text set
+       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
+       tile of size s (FP-5 of the first-paint status R222). The tile's shape
+       holds, as the drawn tile's does. */
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
   }
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img {
     display: block;
@@ -6969,6 +7957,13 @@ body {
        object-fit: cover;
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-container);
+    /* A picture not yet in (or missing) shows its alt text, and that text set
+       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
+       tile of size s (FP-5 of the first-paint status R222). The tile's shape
+       holds, as the drawn tile's does. */
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
   }
   /* One ratio for every tile; ratio="auto" and the masonry look keep each
      picture's own, which its width and height give before it arrives. */
@@ -7778,6 +8773,57 @@ body {
     visibility: hidden;
   }
 }
+/* sf-hide-show before its script (OT 27; retired by C187 (8), a dated alias
+   until 2027-01-01). The component has no sheet: its script hides the button
+   whose action is done, and it came 300 ms after the first paint, so both
+   buttons of a pair stood side by side until then. Until the root is started
+   (data-hide-show-init), the start state is read the way the script reads
+   it -- data-state="hidden", or owned content already hidden -- and the
+   button of the action already done is out of the flow. Out of any layer, as
+   the script's [hidden] is: a button's own display must not win. */
+.sf-hide-show[data-state=hidden]:not([data-hide-show-init]):not(.does-not-exist) [data-action=hide] {
+  display: none;
+}
+.sf-hide-show[data-state=hidden]:not([data-hide-show-init]):not(.does-not-exist) .sf-hide {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has([data-content][hidden]) [data-action=hide] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has(.sf-hide-show-content[hidden]) [data-action=hide] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has(.hide-show-block[hidden]) [data-action=hide] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has([data-content][hidden]) .sf-hide {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has(.sf-hide-show-content[hidden]) .sf-hide {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):has(.hide-show-block[hidden]) .sf-hide {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has([data-content][hidden])) [data-action=show] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has([data-content][hidden])) .sf-show {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.sf-hide-show-content[hidden])) [data-action=show] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.sf-hide-show-content[hidden])) .sf-show {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.hide-show-block[hidden])) [data-action=show] {
+  display: none;
+}
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.hide-show-block[hidden])) .sf-show {
+  display: none;
+}
+
 @media (hover: none) and (pointer: coarse) {
   @media not all and (min-width: 60rem) {
     @layer sf.states {
@@ -7796,6 +8842,39 @@ body {
         font-size: 16px;
       }
     }
+  }
+}
+@layer sf.utilities {
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    width: var(--sf-px) !important;
+    height: 1px !important;
+    height: var(--sf-px) !important;
+    padding: 0 !important;
+    margin: calc(-1 * 1px) !important;
+    margin: calc(-1 * var(--sf-px)) !important;
+    overflow: hidden !important;
+    -webkit-clip-path: inset(50%) !important;
+            clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border-width: 0 !important;
+  }
+  @media not print {
+    .print-only {
+      display: none;
+    }
+  }
+  .not-sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    -webkit-clip-path: none !important;
+            clip-path: none !important;
+    white-space: normal !important;
   }
 }
 @layer sf.base {

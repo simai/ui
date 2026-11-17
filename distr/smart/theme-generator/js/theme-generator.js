@@ -2,6 +2,227 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "15b4e93ff6ed"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
+// (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
+
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+
+function intlFormatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = formatterCache();
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   percentSign: () => (/* binding */ percentSign),
+/* harmony export */   percentText: () => (/* binding */ percentText)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number. Words join with a space: a kind (currency-,
+ * unit-, percent) and a precision (integer, decimal-<n>, compact), so
+ * «currency-RUB integer» is 1 235 ₽, «currency-RUB decimal-2» 1 234,50 ₽ and
+ * «currency-RUB compact» 1,1 млн ₽. The precision wins whatever the order.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const words = String(format || 'number').trim().split(/\s+/u).filter(Boolean);
+
+  if (words.length > 1) {
+    const PRECISION = /^(?:integer|compact|decimal-\d{1,2})$/u;
+    const kinds = words.filter(one => !PRECISION.test(one));
+    const precision = words.filter(one => PRECISION.test(one));
+    return [...kinds, ...precision].reduce((options, one) => ({ ...options,
+      ...numberOptions(one, step)
+    }), {});
+  }
+
+  const word = words[0] ?? 'number';
+  if (word === 'integer') return {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  const text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+  return options.style === 'percent' || options.unit === 'percent' ? percentSign(text) : text;
+}
+/**
+ * One spelling of a per cent in every language (owner decision C203 (3), DEV
+ * msg-913fd9e4, 2026-11-15): the number, a no-break space (U+00A0) and «%» --
+ * «72 %», «12,5 %», and «72 %» in English too, where Intl writes «72%». A
+ * language that writes the sign first («%72») keeps its order.
+ */
+
+function percentSign(text) {
+  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+}
+/**
+ * A value that already is a per cent (0..100, «72», «72.5») as the progress
+ * family shows and says it (owner decision C203 (3), IM-3): the number in the
+ * language of the node's part of the page, as many digits as it has (up to
+ * 2), a no-break space and «%» -- «72 %», «72,5 %».
+ */
+
+function percentText(value, node) {
+  const number = Number(value);
+  return percentSign(`${formatNumber(Number.isFinite(number) ? number : 0, 'number', {
+    node,
+    grouping: false
+  })}%`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "e16a74b1f0e0"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -743,11 +964,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1ec50e997e9a");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d7615363c74c");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b4c25f97bb99");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_10__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_10__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11__);
 // sf-theme-generator: a theme from one colour (owner, 2026-10-10: «a Smart
 // component where a person chooses the main colour and it makes all the
 // other variables»).
@@ -782,6 +1006,8 @@ const en = {
 const ru = {
   runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
 };
+
+
  // The journal record component-theme-generator-to-input-color-brand.
 
 const RETIRED = Object.freeze({
@@ -970,6 +1196,26 @@ class SfThemeGenerator extends ThemeGeneratorElement {
 
   get checks() {
     return (0,_core_js_theme_palette_js__WEBPACK_IMPORTED_MODULE_3__.themeChecks)(this._currentTheme());
+  } // The contrast ratio in the page's language (Intl). decimal, the word once
+  // put for the decimal point, is a dated alias until 2027-01-01
+  // (languages-g1): a product that registered it keeps its sign, noted once.
+
+
+  _ratioText(ratio) {
+    const decimal = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_11__.registeredWord)(this.localName, 'decimal', this);
+    if (decimal === undefined) return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_10__.formatNumber)(ratio, 'number', {
+      node: this
+    });
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: this.localName,
+      tag: this.localName,
+      kind: 'word',
+      from: 'decimal',
+      to: 'Intl.NumberFormat',
+      since: '2026-11-16',
+      remove_after: '2027-01-01'
+    });
+    return String(ratio).replace('.', decimal);
   } // A check in words: the language file's check-<code>, with its numbers.
 
 
@@ -981,7 +1227,7 @@ class SfThemeGenerator extends ThemeGeneratorElement {
         return this.sfWord('check-contrast', {
           vars: {
             scheme: word(`scheme-${check.scheme}`),
-            ratio: String(check.ratio).replace('.', word('decimal'))
+            ratio: this._ratioText(check.ratio)
           }
         });
 
@@ -1357,6 +1603,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "43090d1c8307"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -3249,21 +3502,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-theme
 /***/ "bc9a73b2d5a7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.3.1","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.3.5","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string","checks":"list"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "1ec50e997e9a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Theme generator","runtime":{"advanced":"Advanced","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","chroma":"Chroma","chroma-hint":"0 to 150","color":"Main colour","decimal":".","hue":"Hue","hue-hint":"0 to 360","inherited":"SIMAI Framework colour","neutral":"Neutral","preview":"Theme preview","primary":"Primary","reset":"Reset","scheme-dark":"dark","scheme-light":"light","secondary":"Secondary","tertiary":"Tertiary","title":"Theme generator"},"events":{"committed":{"label":"Theme committed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Theme generator","runtime":{"advanced":"Advanced","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","chroma":"Chroma","chroma-hint":"0 to 150","color":"Main colour","hue":"Hue","hue-hint":"0 to 360","inherited":"SIMAI Framework colour","neutral":"Neutral","preview":"Theme preview","primary":"Primary","reset":"Reset","scheme-dark":"dark","scheme-light":"light","secondary":"Secondary","tertiary":"Tertiary","title":"Theme generator"},"events":{"committed":{"label":"Theme committed"}}}');
 
 /***/ },
 
 /***/ "d7615363c74c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Генератор темы","runtime":{"advanced":"Тонкая настройка","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","chroma":"Насыщенность","chroma-hint":"От 0 до 150","color":"Основной цвет","decimal":",","hue":"Тон","hue-hint":"От 0 до 360","inherited":"цвет SIMAI Framework","neutral":"Нейтральная","preview":"Предпросмотр темы","primary":"Основная","reset":"Сбросить","scheme-dark":"тёмной","scheme-light":"светлой","secondary":"Вторичная","tertiary":"Дополнительная","title":"Генератор темы"},"events":{"committed":{"label":"Тема выбрана"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Генератор темы","runtime":{"advanced":"Тонкая настройка","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","chroma":"Насыщенность","chroma-hint":"От 0 до 150","color":"Основной цвет","hue":"Тон","hue-hint":"От 0 до 360","inherited":"цвет SIMAI Framework","neutral":"Нейтральная","preview":"Предпросмотр темы","primary":"Основная","reset":"Сбросить","scheme-dark":"тёмной","scheme-light":"светлой","secondary":"Вторичная","tertiary":"Дополнительная","title":"Генератор темы"},"events":{"committed":{"label":"Тема выбрана"}}}');
 
 /***/ }
 

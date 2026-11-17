@@ -371,12 +371,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c8d66dd2c299");
-/* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3f3a6e2680d5");
-/* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("78628e837a32");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("418134b64ef5");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("42f1649d1a1b");
+/* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("418134b64ef5");
+
+
+
 
 
 
@@ -401,7 +407,24 @@ function joinClasses(...parts) {
 function normalizePosition(value = 'center') {
   const normalized = String(value || 'center').trim().toLowerCase();
   return ['center', 'left', 'right', 'inline-start', 'inline-end', 'top', 'bottom'].includes(normalized) ? normalized : 'center';
-}
+} // The window's size by name (owner decision C159 (1), followed by the class
+// window under C224): question 28rem, form 36rem, wide 48rem, full the whole
+// screen; no size, `auto` or anything else is a form, as on <sf-modal>.
+
+
+const SIZES = ['question', 'form', 'wide', 'full'];
+
+function normalizeSize(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return SIZES.includes(normalized) ? normalized : 'form';
+} // A side window or a sheet is sf-drawer's (owner decision C157 (1)): these
+// positions are its old names until this date, noted once per value, as
+// <sf-modal> notes them.
+
+
+const EDGE_POSITIONS = ['inline-start', 'inline-end', 'left', 'right', 'bottom'];
+const OLD_NAMES_UNTIL = '2027-01-01';
+const OLD_NAMES_SINCE = '2026-11-16';
 
 function normalizeBlurType(value = 'medium') {
   const normalized = String(value || 'medium').trim().toLowerCase();
@@ -436,8 +459,8 @@ function normalizeDisplay(value) {
 
 
 const UNTITLED = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__["default"].ru
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__["default"].ru
 }; // The node the words are looked up from: the modal once it is on the page,
 // else the document, which is where a modal not yet attached will be.
 
@@ -458,13 +481,13 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   static baseZIndex = 9000;
 
   static getTopModal() {
-    return (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getTopModalLayer)();
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_10__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document (layer-stack.js): a
   // drawer or a list opened from it stands above it.
 
 
   static isTopModal(modal) {
-    return (0,_stack__WEBPACK_IMPORTED_MODULE_7__.isTopModalLayer)(modal);
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_10__.isTopModalLayer)(modal);
   }
 
   static addToStack(modal) {
@@ -475,7 +498,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.addModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_10__.addModalLayer)(modal);
   }
 
   static removeFromStack(modal) {
@@ -485,7 +508,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.removeModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_10__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -495,11 +518,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.raiseModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_10__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.updateModalLayers)();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_10__.updateModalLayers)();
   }
 
   constructor(props) {
@@ -522,6 +545,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.preserveScrollGap = this.toBoolean(params.preserveScrollGap, true);
     this.autoload = this.toBoolean(params.autoload, false);
     this.position = normalizePosition(params.position);
+    this.size = normalizeSize(params.size);
     this.fullscreen = this.toBoolean(params.fullscreen, false);
     this.mode = normalizeMode(params.mode);
     this.display = normalizeDisplay(params.display);
@@ -535,8 +559,17 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this._loadingDebounceMs = 500;
     this.blur = isBlurTypeValue(params.blur) ? true : this.toBoolean(params.blur, false);
     this.hasCustomBlurType = isBlurTypeValue(params.blurType) || isBlurTypeValue(params.blur);
-    this.blurType = normalizeBlurType(params.blurType || (isBlurTypeValue(params.blur) ? params.blur : ''));
+    this.blurType = normalizeBlurType(params.blurType || (isBlurTypeValue(params.blur) ? params.blur : '')); // The scrim, as <sf-modal> draws it (C224): default, the shared black 64;
+    // focus, the same with the small backdrop blur (C159 (7), C157 (6): one
+    // scrim). `blur` -- true or a strength -- is the focus scrim: blur: true
+    // laid the overlay surface with a 64 px blur and 'large' 8 px, weaker
+    // than true (study Ok6). The strengths and blurType are old names until
+    // 2027-01-01.
+
+    this.overlayPreset = String(params.overlayPreset || '').trim().toLowerCase() === 'focus' || this.blur ? 'focus' : 'default';
+    this.noteOldNames(params);
     this.onOverlayClick = this.onOverlayClick.bind(this);
+    this.onSheetPointerDown = this.onSheetPointerDown.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this._modalState = 'closed';
     this._stackIndex = -1;
@@ -741,6 +774,135 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
   getBlurClasses() {
     return this.hasCustomBlurType ? [getBlurClass(this.blurType)] : [];
+  } // The scrim's classes: the preset's marker, and the focus preset's small
+  // blur (the Smart template's overlayClasses). Its colour is the sheet's
+  // shared scrim (--sf-scrim-color), not a utility, so the window over
+  // another lays none (C159 (7)).
+
+
+  overlayClasses() {
+    return joinClasses(`sf-modal-overlay--${this.overlayPreset}`, this.overlayPreset === 'focus' ? getBlurClass('small') : '');
+  } // The names the class window keeps for a while (SF.deprecations): a side
+  // or bottom position (sf-drawer's, C157 (1)), and the blur strengths.
+
+
+  noteOldNames(params = {}) {
+    const dated = {
+      tag: 'sf-modal',
+      since: OLD_NAMES_SINCE,
+      remove_after: OLD_NAMES_UNTIL
+    };
+
+    if (EDGE_POSITIONS.includes(this.position)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'modal',
+        kind: 'value',
+        attribute: 'position',
+        from: this.position,
+        to: this.position === 'bottom' ? 'sf-drawer placement="bottom"' : 'sf-drawer',
+        ...dated
+      });
+    }
+
+    if (isBlurTypeValue(params.blur)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'modal',
+        kind: 'value',
+        attribute: 'blur',
+        from: String(params.blur).trim().toLowerCase(),
+        to: "blur: true (overlayPreset: 'focus')",
+        ...dated
+      });
+    }
+
+    if (isBlurTypeValue(params.blurType)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'modal',
+        kind: 'value',
+        attribute: 'blurType',
+        from: String(params.blurType).trim().toLowerCase(),
+        to: "overlayPreset: 'focus'",
+        ...dated
+      });
+    }
+  } // On a phone (below sm, owner decision C159 (2)) a window left at the
+  // centre is a sheet at the bottom, the screen's width, its answers sharing
+  // the row; a wide or full window and a form of more than three fields take
+  // the whole screen. The class window stayed a card the width of its text
+  // (332 of 390, study Ok2). The same rule as <sf-modal> (C224).
+
+
+  get onPhone() {
+    return this.display !== 'inline' && Boolean(this._phoneQuery?.matches);
+  }
+
+  contentFields() {
+    const body = this.template?.querySelector('[data-sf-modal-body-scroll]');
+    return body ? (0,_focus__WEBPACK_IMPORTED_MODULE_3__.windowFields)(body) : [];
+  }
+
+  get phoneFullScreen() {
+    if (!this.onPhone || this.position !== 'center') return false;
+    return this.size === 'wide' || this.size === 'full' || this.size === 'form' && this.contentFields().length > 3;
+  }
+
+  get shownPosition() {
+    if (this.position === 'center' && this.onPhone && !this.phoneFullScreen) return 'bottom';
+    return this.position;
+  }
+
+  get shownFullscreen() {
+    return Boolean(this.fullscreen) || this.size === 'full' || this.phoneFullScreen;
+  } // Writes where the window stands now: its position (with the old misspelt
+  // alias class) and whether it takes the whole screen.
+
+
+  applyPlacement() {
+    const root = this.template;
+    if (!root) return;
+    const position = this.display === 'inline' ? this.position : this.shownPosition;
+
+    for (const name of [...root.classList]) {
+      if (/^sf-modal--posit(?:i)?on-/.test(name)) root.classList.remove(name);
+    }
+
+    root.classList.add(`sf-modal--position-${position}`, `sf-modal--positon-${position}`);
+    root.setAttribute('data-sf-modal-position', position);
+    root.setAttribute('data-sf-modal-fullscreen', String(this.display === 'inline' ? this.fullscreen : this.shownFullscreen));
+  }
+
+  watchPhone() {
+    if (this.display === 'inline' || this._phoneQuery) return;
+    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__.breakpointMedia)('sm', {
+      below: true
+    });
+    if (!query) return;
+    this._phoneQuery = query;
+
+    this._onPhoneChange = () => this.applyPlacement();
+
+    query.addEventListener?.('change', this._onPhoneChange);
+  } // A window at the bottom is the one sheet (C157 (5)): a swipe down from its
+  // handle row closes it as the x does. The class window drew the grab bar
+  // and did not follow the finger.
+
+
+  onSheetPointerDown(event) {
+    if (event.button !== 0 || !this.isOpen || this.shownPosition !== 'bottom' || this.shownFullscreen) return;
+    const surface = this.template?.querySelector('[data-sf-modal-surface]');
+    const panel = this.template?.querySelector('[data-sf-modal-panel]');
+    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_6__.startsOnControl)(event.target)) return;
+    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_6__.inHandleRow)(event, surface)) return;
+    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_6__.trackSwipe)(event, {
+      surface: panel,
+      direction: 'down',
+      variable: '--sf-sheet--drag',
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss && !this.unclose) this.close();
+      }
+    });
   }
 
   setOverlay(nextValue) {
@@ -760,16 +922,19 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     const root = document.createElement('div'); // sf-modal--positon-* is the legacy misspelt alias of sf-modal--position-*,
     // written beside it until contracts/changes/journal.json removes it.
 
-    root.className = isInline ? `sf-modal sf-modal--inline sf-modal--position-${this.position} sf-modal--positon-${this.position} inline-block w-full` : `sf-modal sf-modal--position-${this.position} sf-modal--positon-${this.position} hidden fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center`;
+    root.className = isInline ? `sf-modal sf-modal--size-${this.size} sf-modal--inline sf-modal--position-${this.position} sf-modal--positon-${this.position} inline-block w-full` : `sf-modal sf-modal--size-${this.size} sf-modal--position-${this.position} sf-modal--positon-${this.position} hidden fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center`;
     root.setAttribute('role', isInline ? 'region' : 'dialog');
     root.setAttribute('aria-modal', isInline ? 'false' : 'true');
     root.setAttribute('data-sf-modal-position', this.position);
-    root.setAttribute('data-sf-modal-fullscreen', String(this.fullscreen));
+    root.setAttribute('data-sf-modal-size', this.size);
+    root.setAttribute('data-sf-modal-fullscreen', String(this.fullscreen || this.size === 'full'));
     root.setAttribute('data-sf-modal-display', this.display);
+    root.setAttribute('data-sf-modal-overlay-preset', this.overlayPreset);
     root.setAttribute('data-sf-modal-state', isInline ? 'inline' : 'closed');
     const overlay = document.createElement('div');
-    overlay.className = joinClasses('absolute top-0 inline-start-0 w-full h-full', this.blur ? this.hasCustomBlurType ? this.getBlurClasses().join(' ') : 'bg-surface-overlay' : 'bg-black opacity-6', params.overlayClass);
+    overlay.className = joinClasses('absolute top-0 inline-start-0 w-full h-full', this.overlayClasses(), params.overlayClass);
     overlay.setAttribute('data-sf-modal-overlay', '');
+    overlay.setAttribute('data-sf-modal-overlay-preset', this.overlayPreset);
 
     if (!this.overlay || isInline) {
       overlay.classList.add('hidden');
@@ -796,10 +961,15 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     // title --sf-space-1 above the content, no line under the header, and the
     // close button on the frame's corner, the title centred on its line. The
     // frame was --sf-space-2 with a line under the header.
+    // The surface is <sf-modal>'s (C224): the modal surface, and over the
+    // page the elevated one -- the popup place with the modal shadow (C16,
+    // C20). It was the bg-surface utility, in the dark theme 26·27·31 next
+    // to a 15·17·21 page (study Ok4), and its frame variables were the Smart
+    // surface's alone, so a side window lost its frame (Ok3).
 
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses('sf-modal-surface flex flex-col min-w-0', !isInline && 'sf-modal-surface--elevated', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
     header.className = joinClasses('sf-modal-header flex items-start min-w-0 gap-1', params.headerClass);
@@ -820,14 +990,18 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       header.append(title);
 
       if (this.showClose) {
+        // The close button is sf-button-close's class markup (C14, C15), as
+        // <sf-modal> draws it: it was the icon button's old link look.
         const closeButton = document.createElement('button');
         closeButton.type = 'button';
-        closeButton.className = joinClasses('sf-icon-button sf-modal-header-action sf-modal-close-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', params.closeClass); // The page language's word, as the Smart window has; the glyph inside is
+        closeButton.className = joinClasses( // The close is sf-button-close, ghost (owner decision C14, RG-CL-3):
+        // the class markup of the Smart window's header close.
+        'sf-icon-button sf-icon-button--size-1/3 sf-icon-button--close sf-button-close sf-button-close--ghost sf-button-close--on-surface flex items-cross-center sf-modal-header-action sf-modal-close-button sf-modal-close-button--inline-end m-0', params.closeClass); // The page language's word, as the Smart window has; the glyph inside is
         // decoration and carries no name of its own.
 
         closeButton.setAttribute('aria-label', (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'close', closeButton.isConnected ? closeButton : document.documentElement, 'sf-modal'));
         closeButton.setAttribute('data-sf-modal-close', this.modalId);
-        closeButton.innerHTML = '            <span\n' + '              class="sf-close sf-close--size-1/3 flex justify-center items-center"\n' + '              aria-hidden="true"\n' + '            >\n' + '              <span class="sf-close-icon"></span>\n' + '            </span>';
+        closeButton.innerHTML = '            <span\n' + '              class="sf-close sf-close--size-1/3 flex content-main-center items-center pointer-event-none"\n' + '              aria-hidden="true"\n' + '            >\n' + '              <span class="sf-close-icon"></span>\n' + '            </span>';
         header.append(closeButton);
       }
     }
@@ -926,7 +1100,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     loading.append(text); // The Framework's one spinner, in the page's look (simai/ui-source#11);
     // the modal sheet draws its slot.
 
-    loading.prepend((0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_6__.createInlineSpinner)({
+    loading.prepend((0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_9__.createInlineSpinner)({
       className: 'sf-modal-spinner'
     }));
     container.append(loading);
@@ -1205,6 +1379,9 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
 
     this.template.addEventListener('click', this.onOverlayClick);
+    this.template.addEventListener('pointerdown', this.onSheetPointerDown);
+    this.watchPhone();
+    this.applyPlacement();
     Modal.registry.set(this.modalId, this);
     Modal.bindGlobalEvents();
     const shouldOpen = this.toBoolean(this.params?.open, false) || this.autoload;
@@ -1237,6 +1414,9 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.removeFromStack(this);
     this.template.removeEventListener('click', this.onOverlayClick);
+    this.template.removeEventListener('pointerdown', this.onSheetPointerDown);
+    this._phoneQuery?.removeEventListener?.('change', this._onPhoneChange);
+    this._phoneQuery = null;
     Modal.registry.delete(this.modalId);
   }
 
@@ -1296,7 +1476,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     (0,_focus__WEBPACK_IMPORTED_MODULE_3__.focusModalInitial)(panel);
   }
 
-  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getModalLayerIndex)(this)) {
+  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_10__.getModalLayerIndex)(this)) {
     this._stackIndex = index;
 
     if (!this.template || this.display === 'inline') {
@@ -1306,11 +1486,18 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     if (index < 0) {
       this.template.style.removeProperty('z-index');
       this.template.style.removeProperty('--sf-modal-stack-index');
+      this.template.removeAttribute('data-sf-modal-stacked');
       return this;
     }
 
     this.template.style.setProperty('--sf-modal-stack-index', String(index));
-    this.template.style.zIndex = String((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__.layerZIndexAt)(index));
+    this.template.style.zIndex = String((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__.layerZIndexAt)(index)); // One scrim (owner decision C159 (7)), as <sf-modal> keeps it: a window
+    // over another open window -- a class one or a Smart one, the document's
+    // one stack -- lays none of its own. Two class windows laid two, the page
+    // at about 87 % (study Ok5).
+
+    const windows = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__.openLayers)('modal');
+    this.template.toggleAttribute('data-sf-modal-stacked', windows.indexOf(this) > 0);
     return this;
   }
 
@@ -1366,11 +1553,14 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (this._modalState !== 'closing') {
       this.lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.captureModalFocusAncestors)(this.lastActive);
+      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_10__.captureModalFocusAncestors)(this.lastActive);
       this.placeIn(this.overlayHomeFor(this.lastActive));
     }
 
-    this.cancelCloseTransition();
+    this.cancelCloseTransition(); // Where it stands now: a sheet or the whole screen on a phone (C159 (2)),
+    // read as it opens, since the fields that decide may have come since.
+
+    this.applyPlacement();
     this.template.classList.remove('hidden');
     this.template.classList.add('flex');
     this.template.setAttribute('aria-hidden', 'false');
@@ -1387,7 +1577,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    (0,_motion__WEBPACK_IMPORTED_MODULE_5__.scheduleModalFrame)(() => {
+    (0,_motion__WEBPACK_IMPORTED_MODULE_8__.scheduleModalFrame)(() => {
       if (!this.isOpen || this._modalState === 'closing') {
         return;
       }
@@ -1427,8 +1617,8 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.template.setAttribute('data-sf-modal-state', 'closing');
     this.isOpen = false;
     const panel = this.template.querySelector('[data-sf-modal-panel]');
-    this._releaseClosingContent = (0,_closing__WEBPACK_IMPORTED_MODULE_4__.freezeModalContent)(panel, Modal.isTopModal(this));
-    this._closeTransitionAbort = (0,_motion__WEBPACK_IMPORTED_MODULE_5__.scheduleModalClose)(() => this.template, () => this.finishClose());
+    this._releaseClosingContent = (0,_closing__WEBPACK_IMPORTED_MODULE_7__.freezeModalContent)(panel, Modal.isTopModal(this));
+    this._closeTransitionAbort = (0,_motion__WEBPACK_IMPORTED_MODULE_8__.scheduleModalClose)(() => this.template, () => this.finishClose());
   }
 
   toggle() {
@@ -1529,7 +1719,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this._modalState = 'closed';
     const wasTop = Modal.isTopModal(this);
     Modal.removeFromStack(this);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_10__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
     this.emitAfterClose();
   }
 
@@ -1589,7 +1779,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
 
   static lockPage(preserveScrollGap = true) {
-    if (!Modal.lockState) Modal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__.lockPageScroll)({
+    if (!Modal.lockState) Modal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__.lockPageScroll)({
       preserveScrollGap
     });
   }
@@ -2493,6 +2683,92 @@ function readTagAliases(table, {
 
 /***/ },
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2546,7 +2822,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -2572,7 +2849,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -3458,7 +3737,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -3529,15 +3809,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -3739,7 +4025,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -3844,7 +4130,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -3885,6 +4171,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -3983,8 +4288,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -4090,6 +4397,229 @@ if (typeof window !== 'undefined') {
 
 /***/ },
 
+/***/ "42f1649d1a1b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SWIPE_SHARE: () => (/* binding */ SWIPE_SHARE),
+/* harmony export */   SWIPE_SPEED: () => (/* binding */ SWIPE_SPEED),
+/* harmony export */   handleRowHeight: () => (/* binding */ handleRowHeight),
+/* harmony export */   inHandleRow: () => (/* binding */ inHandleRow),
+/* harmony export */   scrollsAlong: () => (/* binding */ scrollsAlong),
+/* harmony export */   startsOnControl: () => (/* binding */ startsOnControl),
+/* harmony export */   swipeToClose: () => (/* binding */ swipeToClose),
+/* harmony export */   trackSwipe: () => (/* binding */ trackSwipe)
+/* harmony export */ });
+// A finger closing a panel by pushing it toward its edge (owner decision C157
+// (4) and (5), 2026-11-14): the bottom sheet -- sf-drawer placement="bottom"
+// and every phone sheet drawn from core/scss/mix/_mix__sheet.scss -- follows
+// a drag down and closes past a quarter of its height or on a quick flick; a
+// side panel on a phone does the same toward its own edge. The panel follows
+// the finger through a length in a custom property the owner's rule reads
+// (translate), and settles back when the drag stops short.
+//
+//   const stop = trackSwipe(pointerdownEvent, {
+//     surface,                      the box that moves
+//     direction: 'down' | 'left' | 'right' | 'up',
+//     variable: '--sf-sheet--drag', the property set on the surface
+//     onEnd: ({dismiss, back}) => ...,
+//   });
+//
+// dismiss: the drag passed the share or the speed toward the edge; back: it
+// did so the other way (a sheet at rest may open further). A drag along the
+// other axis is let go at once (a list scrolling inside a side panel), and a
+// drag shorter than the slop is a press, not a swipe.
+const SWIPE_SHARE = 0.25;
+const SWIPE_SPEED = 0.5;
+const SLOP = 4;
+const AXES = {
+  down: {
+    axis: 'y',
+    sign: 1
+  },
+  up: {
+    axis: 'y',
+    sign: -1
+  },
+  right: {
+    axis: 'x',
+    sign: 1
+  },
+  left: {
+    axis: 'x',
+    sign: -1
+  }
+}; // What a swipe must not start on: a control keeps its own presses, a field
+// its text selection, a box that scrolls along the swipe's axis its scroll.
+
+const KEEPS_PRESS = 'button, a[href], input, select, textarea, [contenteditable="true"], [role="slider"], [role="scrollbar"], [draggable="true"], sf-resizer';
+function startsOnControl(target) {
+  return Boolean(target instanceof Element && target.closest(KEEPS_PRESS));
+} // Whether something between the target and the surface scrolls along this
+// axis toward the swipe (a wide table in a side panel, a carousel).
+
+function scrollsAlong(target, surface, axis) {
+  for (let node = target instanceof Element ? target : null; node && node !== surface; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    const overflow = axis === 'x' ? style.overflowX : style.overflowY;
+    if (!/(auto|scroll)/u.test(overflow)) continue;
+    if (axis === 'x' ? node.scrollWidth > node.clientWidth + 1 : node.scrollHeight > node.clientHeight + 1) return true;
+  }
+
+  return false;
+}
+function trackSwipe(event, {
+  surface,
+  direction = 'down',
+  variable = '--sf-sheet--drag',
+  onEnd,
+  onMove
+} = {}) {
+  const spec = AXES[direction] || AXES.down;
+  if (!surface || !event) return () => {};
+  const grip = event.currentTarget instanceof Element ? event.currentTarget : surface;
+  const start = {
+    x: event.clientX,
+    y: event.clientY,
+    t: event.timeStamp
+  };
+  const rect = surface.getBoundingClientRect();
+  const size = (spec.axis === 'y' ? rect.height : rect.width) || 1; // The owner names the physical edge: a length along x is left-to-right
+  // whatever the page's direction.
+
+  const physical = spec.sign;
+  let moved = false;
+  let given = false;
+  let delta = 0;
+
+  const along = e => spec.axis === 'y' ? e.clientY - start.y : e.clientX - start.x;
+
+  const across = e => spec.axis === 'y' ? e.clientX - start.x : e.clientY - start.y; // The moves are heard on the document, not the grip: a pointer that leaves
+  // the grip before it is captured (a quick drag off a handle row) still
+  // reports to it.
+
+
+  const doc = grip.ownerDocument || document;
+
+  const clear = () => {
+    doc.removeEventListener('pointermove', move, true);
+    doc.removeEventListener('pointerup', end, true);
+    doc.removeEventListener('pointercancel', end, true);
+    surface.classList.remove('is-dragging');
+    surface.style.removeProperty(variable);
+  };
+
+  const move = e => {
+    if (given || e.pointerId !== event.pointerId) return;
+    const a = along(e);
+
+    if (!moved) {
+      if (Math.abs(a) < SLOP && Math.abs(across(e)) < SLOP) return; // Across the axis first: a scroll or a selection, not this swipe.
+
+      if (Math.abs(across(e)) > Math.abs(a)) {
+        given = true;
+        clear();
+        return;
+      }
+
+      moved = true;
+      surface.classList.add('is-dragging'); // Captured only once it is a swipe: captured at the press, the click
+      // of a tap went to the grip instead of what was tapped.
+
+      try {
+        grip.setPointerCapture?.(event.pointerId);
+      } catch {
+        /* a synthetic event has no pointer */
+      }
+    }
+
+    delta = a; // The panel follows toward its edge only; the other way it holds.
+
+    const toward = Math.max(0, delta * physical);
+    surface.style.setProperty(variable, `${toward * physical}px`);
+    onMove?.(toward);
+  };
+
+  function end(e) {
+    if (e.pointerId !== event.pointerId) return;
+    clear();
+    if (given || !moved || e.type === 'pointercancel') return; // A drag that ends on the grip is not also a press of it.
+    // The click, if any, comes in the same task as the release; one that
+    // never comes must not eat a later press.
+
+    const swallow = click => click.stopImmediatePropagation();
+
+    grip.addEventListener('click', swallow, {
+      capture: true,
+      once: true
+    });
+    setTimeout(() => grip.removeEventListener('click', swallow, {
+      capture: true
+    }));
+    const toward = delta * physical;
+    const speed = toward / Math.max(1, e.timeStamp - start.t);
+    const dismiss = toward > size * SWIPE_SHARE || speed > SWIPE_SPEED;
+    const back = !dismiss && (-toward > size * SWIPE_SHARE || speed < -SWIPE_SPEED);
+    onEnd?.({
+      dismiss,
+      back,
+      distance: toward
+    });
+  }
+
+  doc.addEventListener('pointermove', move, true);
+  doc.addEventListener('pointerup', end, true);
+  doc.addEventListener('pointercancel', end, true);
+  return clear;
+} // The handle row of a sheet drawn by the mixin's ::before: a press within it
+// -- from the sheet's top, the 1/2 control's height (the row the bar is
+// centred in) -- starts the swipe.
+
+function handleRowHeight(surface) {
+  const value = getComputedStyle(surface).getPropertyValue('--sf-ui-1/2--control-height').trim();
+  const match = /^(-?\d*\.?\d+)(px|rem|em)?$/u.exec(value);
+  if (!match) return 32;
+  const unit = match[2] || 'px';
+  const base = unit === 'px' ? 1 : parseFloat(getComputedStyle(unit === 'rem' ? document.documentElement : surface).fontSize) || 16;
+  return Number(match[1]) * base;
+}
+function inHandleRow(event, surface) {
+  const top = surface.getBoundingClientRect().top;
+  return event.clientY >= top && event.clientY - top <= handleRowHeight(surface);
+} // A sheet that a swipe down from its handle row closes: binds the press on
+// the surface and answers the unbinding. `when` says whether the surface is
+// a sheet now (a form anchored on a wide screen is not); a press on a
+// control keeps the control's own press.
+//
+//   const unbind = swipeToClose(surface, {when: () => owned.sheet, onDismiss: () => close()});
+
+function swipeToClose(surface, {
+  when = () => true,
+  onDismiss
+} = {}) {
+  if (!surface) return () => {};
+
+  const onPress = event => {
+    if (event.button !== 0 || !when()) return;
+    if (startsOnControl(event.target) || !inHandleRow(event, surface)) return;
+    trackSwipe(event, {
+      surface,
+      direction: 'down',
+      onEnd: ({
+        dismiss
+      }) => {
+        if (dismiss) onDismiss?.();
+      }
+    });
+  };
+
+  surface.addEventListener('pointerdown', onPress);
+  return () => surface.removeEventListener('pointerdown', onPress);
+}
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -4139,7 +4669,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -4159,7 +4690,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -4199,7 +4731,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -4224,7 +4757,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -4234,7 +4768,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -4349,7 +4884,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -4411,15 +4949,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

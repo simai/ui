@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.input-color",
-  "version": "1.15.0",
+  "version": "1.18.1",
   "title": "Color",
   "summary": "A colour field: a swatch, the value and a chevron that open the Framework's own compact window -- the static palette first, the product's own colours, recent own colours and «Своё» (shade area, eyedropper, hue and alpha strips, a hex code with «Применить») -- and a way back to an inherited colour. The value is a palette name or a code. Built as a general part because a colour is set in a theme, in a site look, on a label and on a chart series, not only on a record.",
   "kind": "smart",
@@ -29,6 +29,7 @@
       "smart.button",
       "smart.button-copy",
       "smart.button-icon",
+      "smart.help-mark",
       "smart.icon",
       "smart.segmented"
     ],
@@ -136,6 +137,11 @@
         "type": "boolean",
         "default": false
       },
+      "readonly": {
+        "type": "boolean",
+        "default": false,
+        "description": "The colour can be read but not changed, as sf-input's readonly: the swatch and the name or code in the text's ink, the region line (outline-variant) for the frame, no chevron, no window, no reset; the field is not a Tab stop of its own and a screen reader reads «name: value» with the field. It is sent with the form. A record card's view draws a colour so (module.smart-field-renderers); disabled stays the field a person cannot use now."
+      },
       "name": {
         "type": "string",
         "default": "",
@@ -150,6 +156,11 @@
         "type": "string",
         "default": "",
         "description": "Help text under the field, as sf-input's: the label's type, a step below the field's text."
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "description": "The explanation behind a «?» (sf-help-mark, C133's look) after the label text (C153 (8)), as sf-input's help: a step below the value as the label; the label row keeps its height. The mark is named by its subject («Подробнее: <label>»). Empty, or without a label: no mark."
       },
       "invalid": {
         "type": "boolean",
@@ -486,19 +497,19 @@
     "source_artifacts": [
       {
         "path": "src/smart/input-color/index.js",
-        "sha256": "fb2cc6d1a9ac6771ddf66832ac592178a733d37d2ae56c87980ec322f854c2d6"
+        "sha256": "233a6ab31e275f3a422de753af6fd0b77048d8a78f926522c7a93399156d446d"
       },
       {
         "path": "src/smart/input-color/rule.js",
-        "sha256": "e03f4620e85e58c4779d62a266dfbd43dab47a1ce368fbc9629aa3bd134c8e47"
+        "sha256": "328ba5a8d9040f014c389ae033c13348872d50a8d1605d4099b81cbf319caa1e"
       },
       {
         "path": "src/smart/input-color/js/templates/default.js",
-        "sha256": "b8516c77a7db4f862ae6ba1a15a002d1a343d0465cda462a4c1217ad4b77eba2"
+        "sha256": "b9e224a046ca52477ab9a887c078eef3c5c37a1e24a8d21ff6ee554369d36002"
       },
       {
         "path": "src/smart/input-color/js/templates/default.css",
-        "sha256": "f86750f5a5845a2cc210d53d3be5a67e7a505176b9543584683369d6abd0fe62"
+        "sha256": "ec5c4ef3800295f33896c67ff64b91167c1e1b1d1ce88c39e9288b3d44121aef"
       },
       {
         "path": "src/smart/helpers/inherited-value.js",

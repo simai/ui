@@ -1,2 +1,2 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
-@layer sf.utilities{.outline-1{outline-width:var(--sf-a1)}.outline-2{outline-width:var(--sf-a2)}.outline-3{outline-width:var(--sf-a3)}.outline-4{outline-width:var(--sf-a4)}.outline-0{outline-width:var(--sf-0)}}
+@layer sf.utilities{.outline-1{outline-width:var(--sf-line--border)}:where(.outline-1){outline-style:solid}.outline-2{outline-width:var(--sf-line--indicator)}:where(.outline-2){outline-style:solid}.outline-3{outline-width:var(--sf-a3)}:where(.outline-3){outline-style:solid}.outline-4{outline-width:var(--sf-a4)}:where(.outline-4){outline-style:solid}.outline-0{outline-width:var(--sf-0)}:where(.outline-0){outline-style:solid}}

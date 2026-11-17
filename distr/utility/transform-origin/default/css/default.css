@@ -36,4 +36,28 @@
     -webkit-transform-origin: top left;
             transform-origin: top left;
   }
+  .origin-top-inline-end:where(:dir(rtl)) {
+    -webkit-transform-origin: top left;
+            transform-origin: top left;
+  }
+  .origin-inline-end:where(:dir(rtl)) {
+    -webkit-transform-origin: left;
+            transform-origin: left;
+  }
+  .origin-bottom-inline-end:where(:dir(rtl)) {
+    -webkit-transform-origin: bottom left;
+            transform-origin: bottom left;
+  }
+  .origin-bottom-inline-start:where(:dir(rtl)) {
+    -webkit-transform-origin: bottom right;
+            transform-origin: bottom right;
+  }
+  .origin-inline-start:where(:dir(rtl)) {
+    -webkit-transform-origin: right;
+            transform-origin: right;
+  }
+  .origin-top-inline-start:where(:dir(rtl)) {
+    -webkit-transform-origin: top right;
+            transform-origin: top right;
+  }
 }

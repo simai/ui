@@ -556,6 +556,26 @@ function fieldMessage(control, word) {
   if (validity.valueMissing) return word('required');
   if (validity.customError) return control.validationMessage || word('invalid');
   return word('invalid');
+} // A plain control (no Framework field around it) shows the browser's own
+// bubble; the wizard gives that bubble the Framework's words through the
+// control's custom validity (C153 (3), study WZ-6) and marks what it set, so
+// the next check and the person's edit take it off again. A custom error the
+// page set itself is never touched.
+
+
+const OWN_WORDS = 'data-sf-wizard-words';
+
+function sayInWords(control, message) {
+  if (!message || typeof control?.setCustomValidity !== 'function') return;
+  if (control.validity?.customError && !control.hasAttribute(OWN_WORDS)) return;
+  control.setCustomValidity(message);
+  control.setAttribute(OWN_WORDS, '');
+}
+
+function dropWords(control) {
+  if (!control?.hasAttribute?.(OWN_WORDS)) return;
+  control.removeAttribute(OWN_WORDS);
+  control.setCustomValidity?.('');
 }
 
 function hiddenWithin(node, root) {
@@ -1096,7 +1116,10 @@ class SfWizard extends WizardElement {
       if (hiddenWithin(node, root)) return false;
       if (['input', 'select', 'textarea'].includes(node.localName)) return node.willValidate !== false;
       return node.constructor?.formAssociated === true && node.willValidate;
-    }); // checkValidity fires the native invalid events this wizard listens to:
+    }); // The words the last check gave plain controls go first: the browser
+    // checks the value as it is now.
+
+    controls.forEach(dropWords); // checkValidity fires the native invalid events this wizard listens to:
     // the wizard's own check speaks once, below.
 
     this._validating = true;
@@ -1162,6 +1185,8 @@ class SfWizard extends WizardElement {
 
       this._marked.add(field);
     } else {
+      // A plain control: the browser's bubble, in the Framework's words.
+      sayInWords(control, fieldMessage(control, key => this.sfWord(key)));
       control.setAttribute('aria-invalid', 'true');
       control.setAttribute('data-sf-wizard-invalid', '');
 
@@ -1188,6 +1213,7 @@ class SfWizard extends WizardElement {
         }
       } else {
         node.removeAttribute('aria-invalid');
+        dropWords(node);
       }
     }
   }
@@ -1395,7 +1421,11 @@ class SfWizard extends WizardElement {
 
           if (href) this.follow(next && !last ? next.name : step.name, href, event);
           return;
-        }
+        } // The browser checks the post: the words the last check gave plain
+        // controls go first, it sees the value as it is now.
+
+
+        step.element?.querySelectorAll(`[${OWN_WORDS}]`).forEach(dropWords);
 
         if (which === 'skip') {
           // Skip posts without validation: the browser reads novalidate on
@@ -1783,7 +1813,7 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //                          the list of all steps on demand
 //     .sf-wizard-main      the column of steps (progress column: as tall as
 //                          the body, never taller -- it scrolls inside, an
-//                          sf-scrollbar in standard mode) and the body:
+//                          sf-scrollbar with the one bar) and the body:
 //                          the step's title (heading, the focus target), its
 //                          «why», the running line, the result, the steps
 //                          themselves (data-sf-live: the page's live nodes,
@@ -1991,7 +2021,7 @@ function frame(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} data-sf-wizard=${context.id} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} role="region" aria-label=${name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${head(context)}
     <div class="sf-wizard-main">
-      ${shape === 'column' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<nav class="sf-wizard-column sf-scrollbar" data-mode="standard" aria-label=${context.words.steps}>
+      ${shape === 'column' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<nav class="sf-wizard-column sf-scrollbar" aria-label=${context.words.steps}>
         <div class="sf-wizard-column-scroll sf-scrollbar__viewport">${stepList(context, 'sf-wizard-list--column')}</div>
       </nav>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${body(context)}
@@ -2073,7 +2103,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "c784a72456f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.4.3","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","drawer","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.4.7","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","drawer","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

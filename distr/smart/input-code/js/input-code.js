@@ -189,8 +189,11 @@ function fieldSize(value, component = 'field', fallback = '1') {
 // and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
 // 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
 // the stylesheets size their parts from the same steps
-// (component/inputs/scss/_field-ladder.scss). The other fields (textarea,
-// dropdown, file upload, image, rich text) keep the three sizes for now.
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
 
 const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
 const INPUT_SIZES = FIELD_LADDER;
@@ -213,6 +216,75 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1486,10 +1558,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_live_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2d6390ae26b0");
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("efa66f8927d1");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f39dc444b059");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -1566,7 +1640,13 @@ function renderCodeInputTemplate(context) {
       data-groups=${groups ? String(groups) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-sf-verification-owner="smart"
     >
-      ${hasLabel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-verification-form-label" id=${labelId} for=${field.controlId}>${labelContent}${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-code-input-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</label>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${hasLabel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-verification-form-label" id=${labelId} for=${field.controlId}>${labelContent}${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-code-input-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_3__.renderFieldHelp)({
+    help: context.help,
+    label: context.label,
+    size,
+    className: 'sf-code-input-help',
+    component: context.component
+  })}</label>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <div class=${joinClasses('sf-verification', `sf-verification--size-${size}`, filled ? 'sf-verification--filled' : '', field.invalid ? 'error' : '')}>
         <input
           class="sf-verification-input"
@@ -1959,6 +2039,7 @@ const CODE_INPUT_TEXT = {
     group: 'Code',
     'too-short': 'Enter the whole code',
     'value-missing': 'Enter the code',
+    help: 'More about: {label}',
   },
   ru: {
     digit: 'цифра {n} из {m}',
@@ -1966,6 +2047,7 @@ const CODE_INPUT_TEXT = {
     group: 'Код',
     'too-short': 'Введите код целиком',
     'value-missing': 'Введите код',
+    help: 'Подробнее: {label}',
   },
 };
 
@@ -1986,21 +2068,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a4a487df7872"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.6.0","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.7.0","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
 /***/ "e01f2016b34a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Code input","runtime":{"character":"character {n} of {m}","digit":"digit {n} of {m}","group":"Code","too-short":"Enter the whole code","value-missing":"Enter the code"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Code input","runtime":{"character":"character {n} of {m}","digit":"digit {n} of {m}","group":"Code","too-short":"Enter the whole code","value-missing":"Enter the code","help":"More about: {label}"}}');
 
 /***/ },
 
 /***/ "8498c2b6b41c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Код подтверждения","runtime":{"character":"символ {n} из {m}","digit":"цифра {n} из {m}","group":"Код","too-short":"Введите код целиком","value-missing":"Введите код"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Код подтверждения","runtime":{"character":"символ {n} из {m}","digit":"цифра {n} из {m}","group":"Код","too-short":"Введите код целиком","value-missing":"Введите код","help":"Подробнее: {label}"}}');
 
 /***/ }
 

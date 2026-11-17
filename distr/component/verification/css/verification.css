@@ -114,23 +114,18 @@
   .sf-verification-input:focus {
     outline: 0 !important;
   }
-  /* The focus ring is the active cell's, not the row's (K1, owner R136), and
-     only when the focus came from the keyboard: a text input matches
-     :focus-visible after a click too, so the runtime that owns the field
-     (sf-input-code, or the class runtime) marks a pointer focus with
-     .sf-verification--pointer-focus until the field loses the focus, as
-     sf-input does with .sf-input--pointer-focus; a pointer focus keeps the
-     primary border of the current cell only. The retired one-input-per-cell
-     markup rings its focused cell, which is already one cell. */
-  .sf-verification:not(.sf-verification--pointer-focus):has(.sf-verification-input.focus-visible) .sf-verification-cell.current,
-  .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
+  /* The focus is the current cell's, not the row's (K1, owner R136), and it is
+     the text field's focus look (owner decision C153 (4), newer than C82): by
+     mouse and by keys alike, a 2 px edge of the focus colour inside the cell,
+     over its own border -- the outline at minus its width, as sf-input. No ring
+     outside, so nothing next to the cells is covered and nothing moves
+     (RG-VR-5). .sf-verification--pointer-focus no longer changes the look. The
+     retired one-input-per-cell markup draws it on its focused cell, which is
+     already one cell. */
+  .sf-verification:has(.sf-verification-input:enabled:focus) .sf-verification-cell.current,
+  .sf-verification-form-wrap .sf-verification:has(input:enabled:focus) {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-verification:not(.sf-verification--pointer-focus):has(.sf-verification-input:focus-visible) .sf-verification-cell.current,
-  .sf-verification-form-wrap .sf-verification:has(input:focus-visible) {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
+    outline-offset: var(--sf-focus--inset);
   }
   /* The cell the next character goes to is marked only while the field has the
      focus: a field at rest drew a primary cell, so three fields on one page all
@@ -245,12 +240,13 @@
   }
   /* Hover marks the one cell under the pointer, set by the runtime that owns the
      field (.hover); the whole group lit up before and hid the current cell's
-     mark (K4, owner R139). A filled cell takes the fill's hover step, without a
+     mark (K4, owner R139). Its border is the text ink, as a hovered sf-input
+     (C153 (4)): the primary edge is the focus's alone. A filled cell takes the fill's hover step, without a
      border, as a filled sf-input. The retired one-input-per-cell markup hovers
      its cell, which is already one. */
   .sf-verification-cell.hover,
   .sf-verification-form-wrap .sf-verification:hover {
-    border-color: var(--sf-primary-hover);
+    border-color: var(--sf-on-surface);
   }
   .sf-verification--filled .sf-verification-cell.hover {
     border-color: var(--sf-transparent);
@@ -309,15 +305,10 @@
       background: Highlight;
       color: HighlightText;
     }
-    .sf-verification:not(.sf-verification--pointer-focus):has(.sf-verification-input.focus-visible) .sf-verification-cell.current,
-    .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
-      outline: var(--sf-px) solid Highlight;
-      outline-offset: var(--sf-px);
-    }
-    .sf-verification:not(.sf-verification--pointer-focus):has(.sf-verification-input:focus-visible) .sf-verification-cell.current,
-    .sf-verification-form-wrap .sf-verification:has(input:focus-visible) {
-      outline: var(--sf-px) solid Highlight;
-      outline-offset: var(--sf-px);
+    .sf-verification:has(.sf-verification-input:enabled:focus) .sf-verification-cell.current,
+    .sf-verification-form-wrap .sf-verification:has(input:enabled:focus) {
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--inset);
     }
   }
 }
@@ -342,7 +333,7 @@
 /* A filled field with the focus is drawn bordered, and hovers as one. */
 @layer sf.components {
   .sf-verification--filled:not(.error):has(.sf-verification-input:enabled:focus) .sf-verification-cell.hover {
-    border-color: var(--sf-primary-hover);
+    border-color: var(--sf-on-surface);
   }
 }
 /* A selection of several cells (K2): drag, double click, Shift with the
@@ -365,10 +356,11 @@
     gap: var(--sf-space-1\/4);
   }
   /* One field label look for every field (docs pre-check 2026-11-10 FB-10, CI-04):
-     the label of sf-input -- regular weight, on-surface-variant, one text step
-     below the field's text (14 at size 1). It was 16/500 on-surface. */
+     the label of sf-input -- regular weight, one text step below the field's
+     text (14 at size 1), in the text ink (owner decision C153 (1), RG-VR-4); the
+     hint keeps the hint ink. */
   .sf-verification-form-label {
-    color: var(--sf-on-surface-variant);
+    color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-regular);
@@ -381,6 +373,16 @@
   .sf-verification-form--size-2 .sf-verification-form-label {
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
+  }
+  /* On a phone (below 60rem, the text tokens' own break) the label of size 1
+     stays 14, the step of the value there, not the 12 of a step below it, as
+     sf-input (C153 (1)). */
+  @media not all and (min-width: 60rem) {
+    .sf-verification-form--size-1 .sf-verification-form-label,
+    .sf-verification-form:not([class*=sf-verification-form--size-]) .sf-verification-form-label {
+      font-size: var(--sf-text-size-1);
+      line-height: var(--sf-text-height-1);
+    }
   }
   .sf-verification-form:has(input:disabled) .sf-verification-form-label {
     color: var(--sf-on-surface-disabled);
@@ -413,8 +415,8 @@
     --sf-verification--line-height: var(--sf-text-height-1\/3);
   }
   .sf-verification-form.sf-verification-form--size-1\/3 .sf-verification-form-label {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
   .sf-verification.sf-verification--size-3,
   .sf-verification-form.sf-verification-form--size-3 {
@@ -427,8 +429,8 @@
     line-height: var(--sf-text-height-2);
   }
   .sf-verification-form.sf-verification-form--size-1\/3 .sf-verification-form-hint {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
   .sf-verification-form.sf-verification-form--size-1\/2 .sf-verification-form-hint {
     font-size: var(--sf-text-size-1\/3);

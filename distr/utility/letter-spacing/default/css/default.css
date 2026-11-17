@@ -18,4 +18,7 @@
   .tracking-no-tracking {
     letter-spacing: var(--sf-text--tracking-no-tracking);
   }
+  .tracking-normal {
+    letter-spacing: var(--sf-text--tracking-no-tracking);
+  }
 }

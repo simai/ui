@@ -3,11 +3,11 @@
   .small-caps {
     -webkit-font-feature-settings: "smcp";
             font-feature-settings: "smcp";
-    font-variant: small-caps;
+    font-variant-caps: small-caps;
   }
   .small-caps-none {
-    -webkit-font-feature-settings: "kern" off;
-            font-feature-settings: "kern" off;
-    font-variant: none;
+    -webkit-font-feature-settings: normal;
+            font-feature-settings: normal;
+    font-variant-caps: normal;
   }
 }

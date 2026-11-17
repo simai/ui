@@ -1635,8 +1635,12 @@ const WORDS = {
 const DURATION = 2000;
 /** The failures that are the source's, not the browser's: nothing is selected for them. */
 
-const SOURCE_ERRORS = new Set(['ambiguous_source', 'empty_source', 'missing_source', 'missing_target']);
-const HOLDER_STYLE = 'position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
+const SOURCE_ERRORS = new Set(['ambiguous_source', 'empty_source', 'missing_source', 'missing_target']); // The hidden holder of a value stands at the corner of its containing block
+// (as sf-clipboard's status since RG-CP-4): with no offsets an absolute box
+// keeps its static place, and after a button in a scrolled table with no
+// positioned wrapper that place lies outside the scroller and widens the page.
+
+const HOLDER_STYLE = 'position:absolute;inset-block-start:0;inset-inline-start:0;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
 
 const isField = (element, View) => Boolean(element) && (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement); // The keys copy what the button would have copied (acceptance L3,
 // 2026-11-11): a selected element gives the browser its drawn text, and a
@@ -1713,8 +1717,14 @@ function readCopyText(element) {
   const View = element.ownerDocument?.defaultView ?? globalThis;
   if (View.HTMLInputElement && element instanceof View.HTMLInputElement || View.HTMLTextAreaElement && element instanceof View.HTMLTextAreaElement) return element.value;
   const rows = element.querySelectorAll?.(':scope .sf-code-lines > .sf-code-line > .sf-code-line__content'); // An empty line is drawn as a space so its row keeps a height; it copies empty.
+  // A row marked data-copy="false" is left out: a code block's removed line
+  // and a terminal's output (owner decisions C255, C257), so what is copied
+  // is the code after the change, or the commands alone.
 
-  if (rows?.length) return Array.from(rows, row => row.textContent === ' ' ? '' : row.textContent).join('\n');
+  if (rows?.length) {
+    return Array.from(rows).filter(row => row.parentElement?.dataset?.copy !== 'false').map(row => row.textContent === ' ' ? '' : row.textContent).join('\n');
+  }
+
   return element.textContent ?? '';
 }
 /**
@@ -2190,7 +2200,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -2216,7 +2227,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -6140,7 +6153,8 @@ function percentText(value, node) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   intlSpeaks: () => (/* binding */ intlSpeaks)
 /* harmony export */ });
 /* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
@@ -6153,6 +6167,53 @@ __webpack_require__.r(__webpack_exports__);
 function capitalise(text, locale) {
   const first = Array.from(text)[0] ?? '';
   return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // «сегодня», «вчера», «завтра» are the platform's words, except where the
+// platform has no words of the language: a browser without a language's
+// relative-time data says «yesterday» on a page in it. Then the words come
+// from core's language files (core/js/lang/relative-day, registered as
+// `sf-relative-day`), which a language pack or a product brings
+// (SF.language.register('sf-relative-day', 'de', {today, yesterday,
+// tomorrow})). ru and en are never looked up: every platform speaks them.
+
+
+const DAY_KEYS = /* @__PURE__ */Object.freeze({
+  0: 'today',
+  [-1]: 'yesterday',
+  1: 'tomorrow'
+});
+/** Whether Intl's relative-time words are those of the locale's language, not a fallback's. */
+
+function intlSpeaks(locale) {
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-').split('-')[0];
+  if (!wanted) return true;
+  if (wanted === 'en') return true;
+
+  try {
+    const own = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    });
+    if (String(own.resolvedOptions().locale).toLowerCase().split('-')[0] !== wanted) return false; // A platform may answer the locale's name over English data (a trimmed
+    // ICU): its «yesterday» is then English's.
+
+    return own.format(-1, 'day') !== (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', 'en', {
+      numeric: 'auto'
+    }).format(-1, 'day');
+  } catch {
+    return false;
+  }
+}
+
+function packDayWord(offset, locale) {
+  if (intlSpeaks(locale)) return null;
+  const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+
+  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const word = words?.get?.(code)?.[DAY_KEYS[offset]];
+    if (typeof word === 'string' && word.trim()) return word;
+  }
+
+  return null;
 }
 /**
  * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
@@ -6201,7 +6262,7 @@ function formatRelativeDay(value, {
   if (own) {
     text = String(own);
   } else if (offset >= -1 && offset <= 1) {
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+    text = packDayWord(offset, locale) ?? (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
       numeric: 'auto'
     }).format(offset, 'day');
   } else if (weekday && offset < -1 && offset > -7) {
@@ -6884,6 +6945,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DIRECTIONAL_ICONS: () => (/* binding */ DIRECTIONAL_ICONS),
 /* harmony export */   checkIconGlyph: () => (/* binding */ checkIconGlyph),
 /* harmony export */   markCustomGlyph: () => (/* binding */ markCustomGlyph),
+/* harmony export */   markMirrorGlyph: () => (/* binding */ markMirrorGlyph),
 /* harmony export */   mirrorsInRtl: () => (/* binding */ mirrorsInRtl),
 /* harmony export */   nearestIconName: () => (/* binding */ nearestIconName),
 /* harmony export */   registerIcon: () => (/* binding */ registerIcon),
@@ -7027,6 +7089,24 @@ function mirrorsInRtl(name, mode = 'auto') {
   if (value === 'off') return false;
   if (value === 'on') return true;
   return DIRECTIONAL_ICONS.has(String(name || '').trim());
+} // The class markup <i class="sf-icon">arrow_forward</i> is marked the way the
+// Smart icon marks its glyph, so the icons sheet turns it over in a
+// right-to-left part. Before, only sf-icon did, and a class glyph pointed the
+// wrong way in dir="rtl" (content study Z2, 2026-11-16). The author's mode is
+// data-mirror="auto|on|off" (the Smart icon's mirror). The mark follows the
+// name: a glyph renamed to a non-directional one gives it back.
+
+function markMirrorGlyph(el, name) {
+  if (!el?.setAttribute) return false;
+  const mirrors = mirrorsInRtl(name, el.getAttribute('data-mirror') || 'auto');
+
+  if (mirrors) {
+    if (!el.hasAttribute('data-sf-icon-mirror')) el.setAttribute('data-sf-icon-mirror', '');
+  } else if (el.hasAttribute('data-sf-icon-mirror')) {
+    el.removeAttribute('data-sf-icon-mirror');
+  }
+
+  return mirrors;
 } // ---------------------------------------------------------------- point 2
 // An unknown or misspelt name is drawn by the icon font as its letters: wider
 // than the glyph's box. The box clips them (the icons sheet), the glyph is
@@ -7093,16 +7173,47 @@ function nearestIconName(name, names = []) {
   }
 
   return bestDistance <= Math.max(2, Math.ceil(wanted.length / 3)) ? best : '';
-}
+} // Only an unknown name is said (C151 (2)). A name the font's list holds is
+// a face still on its way -- the subset that grows, a family whose face came
+// later than the check -- not a misspelling: it is not said ("no icon
+// "favorite"; nearest: "favorite"", content study Z1, 2026-11-16), it waits
+// unseen and is read again when a face arrives (recheckMissing).
 
 function warnMissing(name) {
   const state = shared();
   if (state.warned.has(name)) return;
   state.warned.add(name);
   loadNames().then(names => {
+    if (names.includes(name)) {
+      state.warned.delete(name);
+      watchFaces();
+      return;
+    }
+
     const near = nearestIconName(name, names);
     globalThis.console?.warn?.(`[SIMAI Framework] sf-icon: no icon "${name}"${near ? `; nearest: "${near}"` : ''}. The box stays empty.`);
   });
+} // The glyphs marked missing are read again once a face has loaded (a subset
+// swapped in, a family's own face): one that now draws leaves the state.
+
+
+function recheckMissing() {
+  const doc = globalThis.document;
+  doc?.querySelectorAll?.('.sf-icon[data-sf-icon-missing]').forEach(el => checkIconGlyph(el));
+}
+
+function watchFaces() {
+  const state = shared();
+  if (state.watching) return;
+  state.watching = true;
+
+  const later = () => {
+    const raf = globalThis.requestAnimationFrame;
+    if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
+  };
+
+  globalThis.document?.fonts?.addEventListener?.('loadingdone', later);
+  globalThis.addEventListener?.('sf-icons-subset:ready', later);
 } // A glyph is judged only once the face that draws it is in: marked loaded,
 // its family can still be on its way (font-display: block draws the name
 // unseen at the fallback's width, as wide as letters). Until then the check
@@ -7147,10 +7258,15 @@ function checkIconGlyph(el) {
       if (!glyph.isConnected || glyph.hasAttribute('data-sf-icon-custom')) return null;
       const box = glyph.getBoundingClientRect(); // Not rendered (a closed panel): read again when it loads anew.
 
-      if (!box.width || !box.height) return null;
+      if (!box.width || !box.height) return null; // The glyph's em, not its box alone: a box squeezed narrower than its
+      // font size (a 12 px slot for a 16 px glyph, RG-CC-5) made one real
+      // ligature look like letters and dropped it.
+
+      const view = glyph.ownerDocument?.defaultView;
+      const em = parseFloat(view?.getComputedStyle?.(glyph).fontSize) || 0;
       return {
         glyph,
-        box: box.width,
+        box: Math.max(box.width, em),
         text: textWidth(glyph)
       };
     });
@@ -7162,7 +7278,7 @@ function checkIconGlyph(el) {
         box,
         text
       } = reading;
-      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one box wide; letters are several.
+      const name = String(glyph.getAttribute('data-icon') || glyph.textContent || '').trim(); // A ligature is one glyph, one em (or one box) wide; letters are several.
 
       const missing = text > box * 1.5;
 
@@ -7526,15 +7642,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _new_tab_link_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("a583dcca136f");
 /* harmony import */ var _menu_open_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("8d229b7c92e9");
 /* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("a1e33ce15a5e");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _scrollbars_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("e138ee90aa60");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("a1e33ce15a5e");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__("6c7f357fe960");
  // The text faces the page needs, started before anything else runs, so a
 // quick network brings Inter in before the first frame (core/js/text-fonts.js).
 
@@ -7593,6 +7710,9 @@ __webpack_require__.r(__webpack_exports__);
  // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): SF.readingPosition, which sf-list-feed and sf-list keep a place by.
 
+ // The one scrollbar of every scrolling area (owner decision C210): a drawn
+// bar over the room the native bar keeps, SF.scrollbars.
+
  // The glyphs a person chooses from (duplication audit 2026-11-03, A-1):
 // SF.icons.choices.
 
@@ -7624,10 +7744,10 @@ if (typeof window !== 'undefined') {
 
   if (SF.deprecations && !('warn' in SF.deprecations)) SF.deprecations.warn = false; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_32__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_33__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_35__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_36__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -7691,9 +7811,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_36__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -7779,10 +7899,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_33__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_34__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_34__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_35__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -7888,12 +8008,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   // them at once and is left alone, as it was.
 
   const holdUndefinedUntilDefined = () => {
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) {
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_37__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_37__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_38__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_38__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -7901,12 +8021,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: var(--sf-layer--window, 9000);background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_38__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_38__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_39__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_39__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
@@ -7914,8 +8034,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return; // Preloaded modules draw their elements before this runs: nothing is
     // left for a preloader to stand in for (input-choice audit 2026-11-11).
 
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.createPreloaderContent)(cfg);
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) return;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -7935,7 +8055,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -7945,7 +8065,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // Read when the preloader would show, after its delay, when the
       // server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageHasPreloadedModules)(window)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -7967,10 +8087,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
       // preloader over drawn content (R216, any site).
 
-      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_38__.watchForContent)(() => {
+      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.watchForContent)(() => {
         preloaderRun = false;
         stopAnimation();
         hide();
@@ -8015,7 +8135,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_38__.pageShowsContent)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageShowsContent)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -8215,20 +8335,29 @@ __webpack_require__.r(__webpack_exports__);
 // Fetching language packs (owner decision C177, 2026-11-14; format
 // docs/developer/language-packs.md, schema core/contracts/language-pack.v1.schema.json).
 //
-// ru and en are built into every component. Any other language is one file
-// per language and delivery: the Framework's own are core/lang/<code>.json,
-// listed in core/lang/index.json (written by scripts/build-language-packs.mjs),
-// so a page asks only for a pack that exists. A page fetches a pack only when
-// it speaks that language: <html lang> when core starts, SF.language.use(),
-// or the first word a component looks up in it (a part of the page with a
-// [lang] of its own). A product names its own pack the same way, one line:
-// SF.language.addPack('kk', '/assets/product/lang/kk.json') or
-// SF_BOOT_CONFIG.languages = {kk: '/assets/product/lang/kk.json'}.
+// ru and en are built into every component. Any other language is one pack
+// per language and delivery. The Framework's own is written in parts, one per
+// component family (core/lang/<code>/<family>.json, listed with the
+// components each holds in core/lang/index.json, written by
+// scripts/build-language-packs.mjs), so a page asks only for a part that
+// exists and only for the families it shows (C177 follow-up: one language file
+// had reached 15.2 KB gzip with half the words to come). A page fetches when
+// it speaks that language: <html lang> when core starts (core's words and the
+// families of the elements already in the document, again when the document
+// is parsed), SF.language.use(), or the first word a component looks up in it
+// (its family's part; a part of the page with a [lang] of its own).
+// SF.language.load(code) fetches every part. A product names its own pack,
+// one file, the same way, one line:
+// SF.language.addPack('de', '/assets/product/lang/de.json') or
+// SF_BOOT_CONFIG.languages = {de: '/assets/product/lang/de.json'}.
 //
 // Only core fetches: every bundle carries page-language.js, which asks through
 // the shared store (globalThis.__sfPageLanguage.packs) and reads the words.
 
+ // The family of core's own words (file sizes, relative days): fetched with the
+// language, as core formats without a component to ask for them.
 
+const CORE_PART = 'core';
 const STORE = globalThis.__sfPageLanguage;
 const PACKS = STORE?.packs; // Where core came from (public-path.js): core/lang/ beside core/js/.
 
@@ -8259,42 +8388,112 @@ function installLanguagePacks({
   // `again` is for tests.
   if (!PACKS || PACKS.request && !again) return PACKS;
   const sources = new Map();
+  const parts = new Map();
   const asked = new Set();
   const fetched = new Set();
+  const inFlight = new Map();
 
   const get = fetchJson ?? (url => globalThis.fetch(url, {
     credentials: 'same-origin'
   }).then(response => {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
-  }));
+  })); // One drawing for the parts that arrive before the next frame, not one per
+  // part.
 
-  const fetchSome = code => {
-    const urls = (sources.get(code) ?? []).filter(url => !fetched.has(url));
-    if (!urls.length) return PACKS.pending.get(code) ?? Promise.resolve([]);
 
-    for (const url of urls) fetched.add(url);
+  let drawing = false;
 
-    const before = PACKS.pending.get(code) ?? Promise.resolve([]);
-    const run = before.then(() => Promise.all(urls.map(url => get(url).then(pack => ({
+  const redraw = () => {
+    if (drawing) return;
+    drawing = true;
+
+    const run = () => {
+      drawing = false;
+      (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.refreshLanguage)();
+    };
+
+    if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(run);else run();
+  };
+
+  const fetchSome = (code, urls) => {
+    const fresh = [...new Set(urls)].filter(url => !fetched.has(url));
+    if (!fresh.length) return PACKS.pending.get(code) ?? Promise.resolve([]);
+
+    for (const url of fresh) fetched.add(url);
+
+    inFlight.set(code, (inFlight.get(code) ?? 0) + 1);
+    const mine = Promise.all(fresh.map(url => get(url).then(pack => ({
       pack,
       url
     }), error => {
       globalThis.console?.warn?.(`[SIMAI Framework] language pack ${url} not loaded (${error?.message ?? error}); its words are said in English`);
       return null;
-    })))).then(arrived => {
+    }))).then(arrived => {
       // No longer pending before the words are taken: the drawing that
       // registering starts reports what the packs still lack (C177 (4)).
-      if (PACKS.pending.get(code) === run) PACKS.pending.delete(code);
-      const taken = arrived.filter(Boolean).map(({
-        pack,
-        url
-      }) => _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.registerPack(pack, url));
-      if (!taken.some(Boolean)) (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.refreshLanguage)();
+      const left = inFlight.get(code) - 1;
+      if (left) inFlight.set(code, left);else {
+        inFlight.delete(code);
+        PACKS.pending.delete(code);
+      }
+      PACKS.quiet = (PACKS.quiet ?? 0) + 1;
+      let taken;
+
+      try {
+        taken = arrived.filter(Boolean).map(({
+          pack,
+          url
+        }) => _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.registerPack(pack, url));
+      } finally {
+        PACKS.quiet -= 1;
+      }
+
+      redraw();
       return taken;
     });
-    PACKS.pending.set(code, run);
-    return run;
+    const before = PACKS.pending.get(code);
+    const all = before ? Promise.all([before, mine]).then(([earlier, now]) => [...earlier, ...now]) : mine;
+    PACKS.pending.set(code, all);
+    return all;
+  }; // The Framework's parts of a language: {url of a family, family of a component}.
+
+
+  const partUrl = (code, family) => parts.get(code)?.urls.get(family);
+
+  const familyOf = (code, component) => parts.get(code)?.families.get(component); // What the page shows now: core's words and the families of the elements
+  // already in the document. While the document is parsed, again once it is.
+
+
+  const shown = code => {
+    const known = parts.get(code);
+    if (!known) return [];
+    const families = new Set([CORE_PART]);
+    const doc = globalThis.document;
+    const tags = [...known.families.keys()].filter(id => /^[a-z][a-z0-9]*-[a-z0-9-]*$/u.test(id));
+
+    try {
+      for (const element of doc?.querySelectorAll?.(tags.join(',')) ?? []) {
+        const family = known.families.get(String(element.localName ?? element.tagName ?? '').toLowerCase());
+        if (family) families.add(family);
+      }
+    } catch {// A document that cannot be asked: the parts come with the first words.
+    }
+
+    return [...families].map(family => partUrl(code, family)).filter(Boolean);
+  };
+
+  const begin = code => {
+    if (asked.has(code)) return;
+    asked.add(code);
+    fetchSome(code, [...(sources.get(code) ?? []), ...shown(code)]);
+    const doc = globalThis.document;
+
+    if (parts.has(code) && doc?.readyState === 'loading' && typeof doc.addEventListener === 'function') {
+      doc.addEventListener('DOMContentLoaded', () => fetchSome(code, shown(code)), {
+        once: true
+      });
+    }
   };
 
   PACKS.add = (code, url) => {
@@ -8303,25 +8502,47 @@ function installLanguagePacks({
     if (!sources.has(code)) sources.set(code, []);
     if (!sources.get(code).includes(href)) sources.get(code).push(href); // A pack named after its language was asked for is fetched now.
 
-    if (asked.has(code)) fetchSome(code);
+    if (asked.has(code)) fetchSome(code, [href]);
     return true;
   };
 
   PACKS.load = code => {
     const codes = [...new Set([code.split('-')[0], code])];
 
-    for (const one of codes) asked.add(one);
+    for (const one of codes) begin(one);
 
-    return Promise.all(codes.map(fetchSome)).then(lists => lists.flat());
+    return Promise.all(codes.map(one => fetchSome(one, [...(sources.get(one) ?? []), ...(parts.get(one)?.urls.values() ?? [])]))).then(lists => lists.flat());
+  }; // A bundle asks for a language and, from page-language.js of this pair on,
+  // names the component that looks up a word: its family's part comes too.
+
+
+  PACKS.request = (code, component) => {
+    begin(code);
+    const family = component ? familyOf(code, component) : null;
+    if (family) fetchSome(code, [partUrl(code, family)]);
   };
 
-  PACKS.request = code => {
-    if (asked.has(code)) return;
-    asked.add(code);
-    if (sources.has(code)) fetchSome(code);
-  };
+  for (const code of packs?.languages ?? []) {
+    const byFamily = packs?.parts?.[code];
 
-  for (const code of packs?.languages ?? []) PACKS.add(code, `${root}lang/${code}.json`);
+    if (!byFamily || typeof byFamily !== 'object') {
+      PACKS.add(code, `${root}lang/${code}.json`);
+      continue;
+    }
+
+    const known = {
+      urls: new Map(),
+      families: new Map()
+    };
+
+    for (const [family, components] of Object.entries(byFamily)) {
+      known.urls.set(family, resolve(`${root}lang/${code}/${family}.json`));
+
+      for (const component of [].concat(components)) known.families.set(component, family);
+    }
+
+    parts.set(code, known);
+  }
 
   const configured = globalThis.SF_BOOT_CONFIG?.languages;
 
@@ -11277,7 +11498,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -11348,15 +11570,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -11558,7 +11786,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -11663,7 +11891,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -11704,6 +11932,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -11802,8 +12049,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -14356,6 +14605,760 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "e138ee90aa60"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   HIDE_AFTER: () => (/* binding */ HIDE_AFTER),
+/* harmony export */   installScrollbars: () => (/* binding */ install),
+/* harmony export */   pageStep: () => (/* binding */ pageStep),
+/* harmony export */   thumbFor: () => (/* binding */ thumbFor),
+/* harmony export */   trackEnds: () => (/* binding */ trackEnds)
+/* harmony export */ });
+// The one scrollbar (owner decision C210, 2026-11-15): every scrolling area of
+// the page gets the same bar -- a strip of 14 (gap 4, thumb 6, 4 to the edge),
+// shown while it scrolls, while the pointer is at its strip, while the focus
+// is inside and once when it appears, hidden 1 s after the last of these.
+//
+// A native bar cannot fade or grow (Chrome repaints ::-webkit-scrollbar only
+// on its own events), so core's sheet keeps the native bar as a transparent
+// spacer that holds the room, and this script lays a drawn track and thumb
+// over that room: a track per axis beside the area, the thumb max(--sf-scroll--thumb-min, the visible share of the
+// content), a click on the track pages, the thumb drags. The look -- the
+// thumb's size, its colours, the corners -- is the area's own values, read off
+// it when the bar shows (core/scss/_sf_css__scroll.scss), so the modifiers and
+// the place's roles reach the bar without a selector of their own.
+//
+// Cheap by design: no element is measured until it scrolls, the pointer
+// reaches its strip, the focus enters it or an idle scan finds it overflowing;
+// only the areas that overflow get a track, and only the shown ones and the
+// scrollbar-always ones are kept in step. One scroll listener (capture), one
+// pointer listener, one focus pair, one IntersectionObserver for the first
+// showing, one ResizeObserver and one MutationObserver for the whole page;
+// reads and writes are batched in one animation frame. A touch screen and
+// forced colours keep the system's bar: nothing is installed there.
+//
+// The page's own bar is not drawn: nothing a page paints reaches the window's
+// scrollbar room (a fixed track there is clipped to the layout viewport), so
+// core's sheet paints the native thumb of the root in the same look and
+// colours, shown at rest (core/scss/_sf_css__scroll.scss).
+const HIDE_AFTER = 1000;
+const ALWAYS = 'scrollbar-always';
+const HIDDEN = 'scrollbar-hidden';
+const SKIP_TAGS = new Set(['SELECT', 'INPUT', 'IFRAME', 'OBJECT', 'EMBED', 'VIDEO', 'AUDIO', 'CANVAS']);
+const SCROLLS = new Set(['auto', 'scroll']); // The thumb along a track of `track` px for a view of `client` px over
+// `scroll` px of content scrolled to `position` px: its length (never under
+// `min` nor over the track) and its offset from the track's start. Pure, so
+// the arithmetic is tested on its own.
+
+function thumbFor({
+  track,
+  client,
+  scroll,
+  position,
+  min = 0
+}) {
+  const span = Math.max(0, scroll - client);
+  const length = Math.min(track, Math.max(min, span ? track * client / scroll : track));
+  const at = span ? Math.min(1, Math.max(0, position / span)) : 0;
+  return {
+    length,
+    offset: (track - length) * at,
+    at
+  };
+} // How far the track keeps off the area's corners: the corner radius on each
+// end of the bar's side, never more than a quarter of the run.
+
+function trackEnds({
+  run,
+  start = 0,
+  end = 0
+}) {
+  const cap = Math.max(0, run / 4);
+  return {
+    start: Math.min(cap, Math.max(0, start)),
+    end: Math.min(cap, Math.max(0, end))
+  };
+} // A click on the track pages by the view less a line (the keyboard's step),
+// toward the pointer.
+
+function pageStep(client, line) {
+  return Math.max(line, client - line);
+}
+
+const num = value => parseFloat(value) || 0;
+
+function install(win) {
+  const doc = win.document;
+  const SF = win.SF = win.SF || {};
+  if (SF.scrollbars?.installed) return SF.scrollbars;
+
+  const media = query => win.matchMedia?.(query).matches === true;
+
+  const off = media('(pointer: coarse)') || media('(forced-colors: active)');
+  const webkit = !!win.CSS?.supports?.('selector(::-webkit-scrollbar)');
+
+  const reduced = () => media('(prefers-reduced-motion: reduce)');
+
+  const states = new WeakMap(); // area -> state
+
+  const ofTrack = new WeakMap(); // track -> state
+
+  const styled = new WeakMap(); // element -> scroll area by its style
+
+  const live = new Set(); // states that have tracks
+
+  let hover = null;
+  let frame = 0;
+  const dirty = new Set();
+  const api = {
+    installed: true,
+
+    // Shows the bar of `area` as a scroll would.
+    show(area) {
+      const state = stateOf(area);
+      if (state) show(state);
+    },
+
+    // Reads `area` again (its modifiers, its place's values, its size): a
+    // component calls it after it changes the area's classes.
+    refresh(area) {
+      if (!area) {
+        live.forEach(state => queue(state));
+        return;
+      }
+
+      styled.delete(area);
+      const state = states.get(area) || stateOf(area);
+      if (!state) return;
+      state.values = null;
+      state.always = isAlways(state);
+      if (state.always || state.on) show(state);else queue(state);
+    },
+
+    // The areas that have a bar now, for a probe.
+    count: () => live.size
+  };
+  SF.scrollbars = api;
+  if (off) return api;
+
+  function pageArea() {
+    return doc.scrollingElement || doc.documentElement;
+  }
+
+  function isPage(el) {
+    return el === pageArea() || el === doc.body || el === doc.documentElement;
+  } // An area by its style: it scrolls on an axis (auto, scroll) and has a bar
+  // to draw. Read once per element; whether it overflows is read live.
+
+
+  function scrolls(el) {
+    if (!el || el.nodeType !== 1 || ofTrack.has(el) || SKIP_TAGS.has(el.tagName)) return false;
+    if (isPage(el)) return true;
+    let known = styled.get(el);
+
+    if (known === undefined) {
+      const cs = win.getComputedStyle(el);
+      known = (SCROLLS.has(cs.overflowY) || SCROLLS.has(cs.overflowX)) && !el.classList.contains(HIDDEN) && cs.scrollbarWidth !== 'none';
+      styled.set(el, known);
+    }
+
+    return known;
+  }
+
+  function overflows(el) {
+    return el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1;
+  }
+
+  function isAlways(state) {
+    return state.area.classList.contains(ALWAYS);
+  }
+
+  function stateOf(el) {
+    if (!el || isPage(el)) return null;
+    const area = el;
+    let state = states.get(area);
+    if (state) return state;
+    if (!scrolls(area)) return null;
+    state = {
+      area,
+      tracks: null,
+      timer: 0,
+      on: false,
+      held: false,
+      values: null,
+      hinted: false,
+      always: false
+    };
+    state.always = isAlways(state);
+    states.set(area, state);
+    return state;
+  }
+
+  function makeTrack(state, axis) {
+    const track = doc.createElement('div');
+    track.className = `sf-scrollbar__track sf-scrollbar__track--${axis === 'y' ? 'vertical' : 'horizontal'}`;
+    track.setAttribute('aria-hidden', 'true');
+    track.style.left = '0px';
+    track.style.top = '0px';
+    const thumb = doc.createElement('div');
+    thumb.className = 'sf-scrollbar__thumb';
+    track.append(thumb);
+    ofTrack.set(track, state);
+    track.addEventListener('pointerdown', onTrackDown);
+    return track;
+  } // The tracks stand right after the area (an absolutely placed sibling
+  // leaves the layout alone).
+
+
+  function attach(state) {
+    if (!state.tracks) state.tracks = {
+      y: makeTrack(state, 'y'),
+      x: makeTrack(state, 'x')
+    };
+    const {
+      y,
+      x
+    } = state.tracks;
+    const parent = state.area.parentNode;
+    if (!parent) return false;
+    if (y.parentNode !== parent || state.area.nextSibling !== y) state.area.after(y, x);
+    live.add(state);
+    return true;
+  }
+
+  function detach(state) {
+    clearTimeout(state.timer);
+
+    if (state.tracks) {
+      state.tracks.y.remove();
+      state.tracks.x.remove();
+    }
+
+    live.delete(state);
+    if (hover === state) hover = null;
+  } // The area's values, read when the bar shows: the room is measured, the
+  // rest are its custom properties, written onto the tracks as they are.
+
+
+  function read(state) {
+    const cs = win.getComputedStyle(state.area);
+
+    const prop = name => cs.getPropertyValue(name).trim();
+
+    const rtl = cs.direction === 'rtl';
+    state.values = {
+      bl: num(cs.borderLeftWidth),
+      br: num(cs.borderRightWidth),
+      bt: num(cs.borderTopWidth),
+      bb: num(cs.borderBottomWidth),
+      radius: {
+        topRight: num(cs.borderTopRightRadius),
+        bottomRight: num(cs.borderBottomRightRadius),
+        topLeft: num(cs.borderTopLeftRadius),
+        bottomLeft: num(cs.borderBottomLeftRadius)
+      },
+      rtl,
+      style: {
+        '--sf-scroll--gap': prop('--sf-scroll--gap-content') || '0px',
+        '--sf-scroll--edge': prop('--sf-scroll--gap-edge') || '0px',
+        '--sf-scroll--rest-at': prop('--sf-scroll--rest') || prop('--sf-scroll-thumb-size'),
+        '--sf-scroll--min': prop('--sf-scroll--thumb-min') || '0px',
+        '--sf-scroll--radius': prop('--sf-scroll-radius'),
+        '--sf-scroll--rest-colour': prop('--sf-scroll-bg-thumb'),
+        '--sf-scroll--held-colour': prop('--sf-scroll--thumb-held'),
+        '--sf-scroll--track': prop('--sf-scroll-bg-track'),
+        '--sf-scroll--strip': prop('--sf-scroll-bg-width')
+      },
+      fresh: true
+    };
+    return state.values;
+  } // Measures the area and writes the tracks. Reads first, then writes.
+
+
+  function measure(state) {
+    const {
+      area
+    } = state;
+    const values = state.values || read(state);
+    const rect = area.getBoundingClientRect();
+    const roomY = area.offsetWidth - area.clientWidth - values.bl - values.br;
+    const roomX = area.offsetHeight - area.clientHeight - values.bt - values.bb;
+    const leftSide = area.clientLeft - values.bl > 0.5;
+    const client = {
+      h: area.clientHeight,
+      w: area.clientWidth
+    };
+    const overY = area.scrollHeight - client.h > 1 && (roomY > 0 || !webkit);
+    const overX = area.scrollWidth - client.w > 1 && (roomX > 0 || !webkit);
+    const origin = originOf(state);
+    return {
+      rect,
+      roomY,
+      roomX,
+      leftSide,
+      overY,
+      overX,
+      client,
+      origin,
+      top: area.scrollTop,
+      left: area.scrollLeft,
+      sh: area.scrollHeight,
+      sw: area.scrollWidth
+    };
+  }
+
+  function originOf(state) {
+    const track = state.tracks.y;
+    const r = track.getBoundingClientRect();
+    return {
+      x: r.left - num(track.style.left),
+      y: r.top - num(track.style.top)
+    };
+  }
+
+  function write(state, m) {
+    const {
+      y,
+      x
+    } = state.tracks;
+    const values = state.values;
+    const style = values.style;
+
+    if (values.fresh) {
+      values.fresh = false;
+
+      for (const track of [y, x]) {
+        for (const name in style) if (style[name]) track.style.setProperty(name, style[name]);
+      }
+    }
+
+    const {
+      bl,
+      br,
+      bt,
+      bb,
+      radius
+    } = values; // The vertical bar.
+
+    if (m.overY) {
+      const side = m.leftSide ? 'left' : 'right';
+      const ends = trackEnds({
+        run: m.client.h,
+        start: m.leftSide ? radius.topLeft : radius.topRight,
+        end: m.overX ? 0 : m.leftSide ? radius.bottomLeft : radius.bottomRight
+      });
+      const run = Math.max(0, m.client.h - ends.start - ends.end);
+      const room = webkit || m.roomY > 0 ? `${m.roomY}px` : style['--sf-scroll--strip'];
+      const x0 = side === 'left' ? m.rect.left + bl : m.rect.right - br - m.roomY;
+      y.style.left = `${x0 - m.origin.x}px`;
+      y.style.top = `${m.rect.top + bt + ends.start - m.origin.y}px`;
+      y.style.width = room;
+      y.style.marginLeft = !webkit && m.roomY <= 0 && side === 'right' ? `calc(-1 * ${room})` : '';
+      y.style.height = `${run}px`;
+      y.style.setProperty('--sf-scroll--room', room);
+      y.setAttribute('data-sf-scrollbar-side', side);
+      thumb(y, 'y', run, m.client.h, m.sh, m.top);
+      y.removeAttribute('data-sf-scrollbar-off');
+    } else {
+      y.setAttribute('data-sf-scrollbar-off', '');
+    } // The horizontal bar.
+
+
+    if (m.overX) {
+      const ends = trackEnds({
+        run: m.client.w,
+        start: m.overY ? 0 : values.rtl ? radius.bottomRight : radius.bottomLeft,
+        end: m.overY ? 0 : values.rtl ? radius.bottomLeft : radius.bottomRight
+      });
+      const lead = m.overY && m.leftSide ? m.roomY : 0;
+      const run = Math.max(0, m.client.w - ends.start - ends.end);
+      const room = webkit || m.roomX > 0 ? `${m.roomX}px` : style['--sf-scroll--strip'];
+      const startLeft = values.rtl ? ends.end : ends.start;
+      x.style.left = `${m.rect.left + bl + lead + startLeft - m.origin.x}px`;
+      x.style.top = `${m.rect.bottom - bb - Math.max(0, m.roomX) - m.origin.y}px`;
+      x.style.marginTop = !webkit && m.roomX <= 0 ? `calc(-1 * ${room})` : '';
+      x.style.width = `${run}px`;
+      x.style.height = room;
+      x.style.setProperty('--sf-scroll--room', room); // Physical position from the left: a right-to-left area counts its
+      // scrollLeft from 0 down to minus the span.
+
+      const span = Math.max(0, m.sw - m.client.w);
+      const physical = values.rtl && m.left <= 0 ? span + m.left : m.left;
+      thumb(x, 'x', run, m.client.w, m.sw, physical);
+      x.removeAttribute('data-sf-scrollbar-off');
+    } else {
+      x.setAttribute('data-sf-scrollbar-off', '');
+    }
+  }
+
+  function thumb(track, axis, run, client, scroll, position) {
+    const knob = track.firstChild;
+    const min = minLength(track);
+    const {
+      length,
+      offset
+    } = thumbFor({
+      track: run,
+      client,
+      scroll,
+      position,
+      min
+    });
+
+    if (axis === 'y') {
+      knob.style.height = `${length}px`;
+      knob.style.transform = `translateY(${offset}px)`;
+    } else {
+      knob.style.width = `${length}px`;
+      knob.style.transform = `translateX(${offset}px)`;
+    }
+  } // The shortest thumb, in px: a custom property may be any length, so the
+  // track resolves it once per value.
+
+
+  const minCache = new Map();
+
+  function minLength(track) {
+    const value = track.style.getPropertyValue('--sf-scroll--min');
+    if (minCache.has(value)) return minCache.get(value);
+    const probe = doc.createElement('span');
+    probe.style.cssText = `position:absolute;visibility:hidden;inline-size:${value || '0px'}`;
+    track.append(probe);
+    const px = probe.offsetWidth;
+    probe.remove();
+    minCache.set(value, px);
+    return px;
+  }
+
+  function queue(state) {
+    dirty.add(state);
+    if (!frame) frame = win.requestAnimationFrame(flush);
+  }
+
+  function flush() {
+    frame = 0;
+    const work = [...dirty];
+    dirty.clear();
+    const measured = [];
+
+    for (const state of work) {
+      if (!state.area.isConnected) {
+        detach(state);
+        continue;
+      }
+
+      if (!state.tracks || !attach(state)) continue;
+      measured.push([state, measure(state)]);
+    }
+
+    for (const [state, m] of measured) write(state, m);
+  }
+
+  function setOn(state, on) {
+    if (!state.tracks) return;
+    state.on = on;
+
+    for (const track of [state.tracks.y, state.tracks.x]) {
+      if (on) track.setAttribute('data-sf-scrollbar-on', '');else track.removeAttribute('data-sf-scrollbar-on');
+    }
+  }
+
+  function show(state) {
+    if (!state.on || !state.values) state.values = null;
+    if (!attach(state)) return;
+    queue(state);
+    setOn(state, true);
+    schedule(state);
+  }
+
+  function busy(state) {
+    if (state.held || hover === state) return true;
+    const active = doc.activeElement;
+    return !!active && active !== doc.body && state.area.contains(active);
+  }
+
+  function schedule(state) {
+    clearTimeout(state.timer);
+    state.always = isAlways(state);
+
+    if (state.always) {
+      watch(state);
+      return;
+    }
+
+    state.timer = win.setTimeout(() => {
+      if (busy(state)) schedule(state);else setOn(state, false);
+    }, HIDE_AFTER);
+  } // scrollbar-always areas are kept in step with their size and content.
+
+
+  let sizes = null;
+
+  function watch(state) {
+    if (state.watched || typeof win.ResizeObserver === 'undefined') return;
+
+    if (!sizes) {
+      sizes = new win.ResizeObserver(entries => {
+        for (const entry of entries) {
+          const owner = states.get(entry.target) || states.get(entry.target.parentElement);
+          if (owner) queue(owner);
+        }
+      });
+    }
+
+    state.watched = true;
+    sizes.observe(state.area);
+
+    for (const child of state.area.children) sizes.observe(child);
+  } // Scrolling of any area (scroll does not bubble: capture).
+
+
+  doc.addEventListener('scroll', event => {
+    const state = event.target === doc ? null : stateOf(event.target);
+    if (!state) return;
+    if (state.on) queue(state);else show(state);
+    schedule(state);
+  }, {
+    capture: true,
+    passive: true
+  }); // The pointer at a strip: over the drawn track or over an area's own room.
+
+  let pointer = null;
+  let pointerFrame = 0;
+  doc.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+    pointer = event;
+    if (!pointerFrame) pointerFrame = win.requestAnimationFrame(atPointer);
+  }, {
+    passive: true
+  });
+  doc.addEventListener('pointerout', event => {
+    if (!event.relatedTarget) setHover(null);
+  }, {
+    passive: true
+  });
+
+  function atPointer() {
+    pointerFrame = 0;
+    const event = pointer;
+    if (!event) return;
+    const target = event.target;
+    let found = target && ofTrack.get(target.closest?.('.sf-scrollbar__track') || target);
+
+    if (!found && target?.nodeType === 1 && !isPage(target) && scrolls(target)) {
+      const state = stateOf(target);
+      if (state && overflows(target) && inStrip(state, event)) found = state;
+    }
+
+    setHover(found || null);
+  }
+
+  function inStrip(state, event) {
+    const area = state.area;
+    const r = area.getBoundingClientRect();
+    const cs = win.getComputedStyle(area);
+    const bl = num(cs.borderLeftWidth);
+    const br = num(cs.borderRightWidth);
+    const bb = num(cs.borderBottomWidth);
+    const roomY = area.offsetWidth - area.clientWidth - bl - br;
+    const roomX = area.offsetHeight - area.clientHeight - num(cs.borderTopWidth) - bb;
+    const left = area.clientLeft - bl > 0.5;
+    const inY = roomY > 0 && (left ? event.clientX <= r.left + bl + roomY : event.clientX >= r.right - br - roomY);
+    const inX = roomX > 0 && event.clientY >= r.bottom - bb - roomX;
+    return inY || inX;
+  }
+
+  function setHover(state) {
+    if (state === hover) return;
+    const was = hover;
+    hover = state;
+    if (was) schedule(was);
+    if (state) show(state);
+  } // The focus inside an area keeps its bar shown.
+
+
+  doc.addEventListener('focusin', event => {
+    for (let el = event.target; el && el !== doc.body && el.nodeType === 1; el = el.parentElement) {
+      if (isPage(el) || !scrolls(el) || !overflows(el)) continue;
+      const state = stateOf(el);
+      if (state) show(state);
+      break;
+    }
+  }); // Dragging the thumb, paging on the track.
+
+  function onTrackDown(event) {
+    const track = event.currentTarget;
+    const state = ofTrack.get(track);
+    if (!state || event.button !== 0) return;
+    const vertical = track.classList.contains('sf-scrollbar__track--vertical');
+    const knob = track.firstChild;
+    const kr = knob.getBoundingClientRect();
+    const tr = track.getBoundingClientRect();
+    const at = vertical ? event.clientY : event.clientX;
+    const from = vertical ? kr.top : kr.left;
+    const to = vertical ? kr.bottom : kr.right;
+    const area = state.area;
+    event.preventDefault();
+
+    if (at < from || at > to) {
+      const client = vertical ? area.clientHeight : area.clientWidth;
+      const step = pageStep(client, lineOf());
+      const delta = (at < from ? -1 : 1) * step;
+      area.scrollBy({
+        [vertical ? 'top' : 'left']: delta,
+        behavior: reduced() ? 'instant' : 'smooth'
+      });
+      show(state);
+      return;
+    }
+
+    const room = Math.max(1, vertical ? tr.height - kr.height : tr.width - kr.width);
+    const span = vertical ? area.scrollHeight - area.clientHeight : area.scrollWidth - area.clientWidth;
+    const start = at;
+    const begin = vertical ? area.scrollTop : area.scrollLeft;
+    state.held = true;
+    track.setPointerCapture?.(event.pointerId);
+    track.setAttribute('data-sf-scrollbar-held', '');
+
+    const move = e => {
+      const value = begin + ((vertical ? e.clientY : e.clientX) - start) / room * span;
+      if (vertical) area.scrollTop = value;else area.scrollLeft = value;
+    };
+
+    const end = () => {
+      track.removeEventListener('pointermove', move);
+      track.removeEventListener('pointerup', end);
+      track.removeEventListener('pointercancel', end);
+      track.removeAttribute('data-sf-scrollbar-held');
+      state.held = false;
+      schedule(state);
+    };
+
+    track.addEventListener('pointermove', move);
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+    show(state);
+  }
+
+  let line = 0;
+
+  function lineOf() {
+    if (!line) line = num(win.getComputedStyle(doc.documentElement).getPropertyValue('--sf-d0')) * num(win.getComputedStyle(doc.documentElement).fontSize) || 40;
+    return line;
+  } // Once when an area appears: a hint that there is more.
+
+
+  const seen = typeof win.IntersectionObserver === 'function' ? new win.IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting || entry.intersectionRatio < 0.6) continue;
+      seen.unobserve(entry.target);
+      const state = stateOf(entry.target);
+      if (!state || state.hinted || !overflows(entry.target)) continue;
+      state.hinted = true;
+      show(state);
+    }
+  }, {
+    threshold: 0.6
+  }) : null;
+
+  function found(el) {
+    const state = stateOf(el);
+    if (!state) return;
+    if (state.always) show(state);else if (seen && !state.hinted && !state.observed) {
+      state.observed = true;
+      seen.observe(el);
+    }
+  } // The idle scan: the areas that overflow now, without measuring the rest.
+
+
+  const pending = [];
+  let scanning = false;
+  const idle = win.requestIdleCallback ? fn => win.requestIdleCallback(fn, {
+    timeout: 2000
+  }) : fn => win.setTimeout(() => fn({
+    timeRemaining: () => 8,
+    didTimeout: false
+  }), 50);
+
+  function scan(root) {
+    if (root && root.nodeType === 1) pending.push(root);
+    if (scanning) return;
+    scanning = true;
+    idle(step);
+  }
+
+  function step(deadline) {
+    while (pending.length && (deadline.timeRemaining() > 1 || deadline.didTimeout)) {
+      const root = pending.shift();
+      if (!root.isConnected) continue;
+      const walker = doc.createTreeWalker(root, 1);
+      let n = 0;
+
+      for (let el = walker.currentNode; el; el = walker.nextNode()) {
+        if (!ofTrack.has(el) && !isPage(el) && overflows(el) && scrolls(el)) found(el);
+
+        if (++n % 200 === 0 && deadline.timeRemaining() <= 1 && !deadline.didTimeout) {
+          const next = walker.nextNode();
+          if (next) pending.unshift(next);
+          break;
+        }
+      }
+    }
+
+    if (pending.length) idle(step);else scanning = false;
+  } // Content added later: scanned when idle; areas removed take their tracks.
+
+
+  if (typeof win.MutationObserver === 'function') {
+    new win.MutationObserver(records => {
+      let removed = false;
+
+      for (const record of records) {
+        if (record.removedNodes.length) removed = true;
+
+        for (const node of record.addedNodes) {
+          if (node.nodeType === 1 && !ofTrack.has(node)) scan(node);
+        }
+      }
+
+      if (removed || live.size) {
+        for (const state of live) {
+          if (!state.area.isConnected) detach(state);else if (state.on || state.always) queue(state);
+        }
+      }
+    }).observe(doc.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  win.addEventListener('resize', () => {
+    for (const state of live) {
+      state.values = null;
+      if (state.on || state.always) queue(state);
+    }
+  }, {
+    passive: true
+  });
+
+  const start = () => {
+    if (doc.body) scan(doc.body);
+  };
+
+  if (doc.readyState === 'complete') start();else win.addEventListener('load', start, {
+    once: true
+  });
+  return api;
+}
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined') install(window);
+
+
+/***/ },
+
 /***/ "a30ed252d965"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -14413,7 +15416,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.58.0';
+const CORE_RUNTIME = '1.59.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -14689,7 +15692,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -14709,7 +15713,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -14749,7 +15754,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -14774,7 +15780,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -14784,7 +15791,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -14900,7 +15908,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -14962,15 +15973,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -15055,7 +16069,7 @@ __webpack_require__.r(__webpack_exports__);
 // Opt out with SF_BOOT_CONFIG.fonts.early = false.
 const TEXT_FONT_FAMILY = 'Inter Variable'; // Languages written in Cyrillic (ISO 639-1), read from <html lang>.
 
-const CYRILLIC_LANGUAGE = /^(ru|uk|be|bg|sr|mk|kk|ky|tg|mn|ba|tt|cv|ce|os|sah|ab)(-|$)/i;
+const CYRILLIC_LANGUAGE = /^(ru|uk|be|bg|sr|mk|ky|tg|mn|ba|tt|cv|ce|os|sah|ab)(-|$)/i;
 const LATIN_PROBE = 0x61; // a
 
 const CYRILLIC_PROBE = 0x430; // а
@@ -20872,7 +21886,10 @@ const imageData = {
   width: { type: 'integer', minimum: 1, maximum: 100000 },
   height: { type: 'integer', minimum: 1, maximum: 100000 },
 };
-const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9']);
+// One list for the figure, the media block and a card's picture (owner
+// decision C188 (6)); 3/4, the one vertical ratio, since content.figure and
+// content.media 1.2.0 (owner decision C230, 2026-11-16).
+const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9', '3/4']);
 const CONTENT_ALERT_STATUSES = Object.freeze(['neutral', 'info', 'success', 'warning', 'error']);
 const CONTENT_ALERT_APPEARANCES = Object.freeze(['default', 'outlined', 'flat']);
 // A media type in its lowercase form: type/subtype, no parameters.
@@ -20951,7 +21968,11 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // 1.3.0 (2026-11-04): the accent variant is the primary role's own fill
     // with on-primary text (background accent), as the prototype draws it,
     // not the primary container's light tint.
-    version: '1.3.0',
+    // 1.4.0 (2026-11-16, owner decision C212 (4)): the content part's blocks
+    // stand in a flex column one gap apart (flex flex-col gap-y-3, a gap the
+    // Document sets as gap-*), no longer space-y-*, a retired class. The page
+    // draws the same; the printed HTML differs.
+    version: '1.4.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
@@ -21011,7 +22032,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // 1.2.0 (2026-11-04, visual parity): alignment and visibility per screen,
     // the SIMAI Framework sets a section takes (text-*, hidden/block).
     // 1.3.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
-    version: '1.3.0',
+    // 1.4.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.4.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -21037,7 +22059,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     type: 'content.paragraph',
     // 1.3.0 (2026-11-04): alignment and visibility per screen, as the heading.
     // 1.4.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
-    version: '1.4.0',
+    // 1.5.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.5.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -21177,6 +22200,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   // equal cells, and an empty space. Each prints SIMAI Framework utilities
   // only, through its parameter sets and props.
   layoutManifest('layout.container', {
+    // 1.1.0 (2026-11-16, owner decision C212 (4)): the content part is a flex
+    // column, its blocks gap-y-3 apart, no longer space-y-3 (retired).
+    version: '1.1.0',
     parameter_sets: ['width', 'spacing', 'background', 'visibility'],
     parameter_defaults: CONTAINER_DEFAULTS,
     slots: { default: { min: 0, max: 500, categories: ['layout', 'content', 'smart'] } },
@@ -21384,7 +22410,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.list-item', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ content: inlineContentSchema }, ['content']),
     // A nested list, or more paragraphs and code under the item's own line.
@@ -21413,7 +22440,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   // its cells, not a style attribute; it looks the same. 1.1.0: inline model
   // 1.2.0 in its caption and cells (the break, the mark strike).
   contentManifest('content.table', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'leaf',
     data_schema: closed({
       caption: inlineContentSchema,
@@ -21432,8 +22460,10 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html', 'rich-text'],
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
+  // 1.2.0 (2026-11-16, owner decision C230): ratio takes 3/4.
   contentManifest('content.figure', {
-    version: '1.1.0',
+    // 1.3.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.3.0',
     mode: 'leaf',
     data_schema: closed({ ...imageData, caption: inlineContentSchema }, ['src', 'alt']),
     props_schema: closed({
@@ -21445,7 +22475,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.alert', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     props_schema: closed({
@@ -21458,7 +22489,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.details', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ summary: inlineContentSchema }, ['summary']),
     props_schema: closed({
@@ -21491,7 +22523,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   }),
   // 1.1.0 (2026-11-10): inline model 1.2.0, the break and the mark strike.
   contentManifest('content.step', {
-    version: '1.1.0',
+    // 1.2.0 (2026-11-16): inline model 1.3.0, the badge atom's icon-only (C134; compact its alias).
+    version: '1.2.0',
     mode: 'composite',
     data_schema: closed({ title: inlineContentSchema }),
     slots: { default: contentSlot(0, 100) },
@@ -21505,13 +22538,29 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     }),
     slots: { default: contentSlot(1, 48) },
   }),
+  // 1.1.0 (2026-11-16, owner decision C231, fulfils C188 (1)): the card's
+  // header, sf-card-header -- the title (inline, drawn as the card's title)
+  // and one action at its end, an icon link of size 1/2: action_icon, its
+  // name for a screen reader action_label and action_href by the Document's
+  // URL rule; it is drawn when all three are given. All optional; a card
+  // without them is drawn as in 1.0.0.
   contentManifest('content.card', {
+    version: '1.1.0',
     mode: 'composite',
+    data_schema: closed({
+      title: inlineContentSchema,
+      action_icon: iconName,
+      action_label: plainText(120),
+      action_href: urlSchema,
+    }),
     props_schema: closed({ variant: { enum: ['default', 'plain'] } }),
     slots: { default: contentSlot(0, 100) },
-    assets: ['component/card'],
+    assets: ['component/card', 'component/icon-buttons'],
+    capabilities: ['html', 'rich-text'],
   }),
+  // 1.1.0 (2026-11-16, owner decision C230): ratio takes 3/4.
   contentManifest('content.media', {
+    version: '1.1.0',
     mode: 'composite',
     data_schema: closed({ ...imageData }, ['src', 'alt']),
     props_schema: closed({
@@ -21694,7 +22743,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.3.0',
+    type_version: '1.4.0',
     fields: [
       {
         key: 'surface',
@@ -21757,7 +22806,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'content.heading',
-    type_version: '1.3.0',
+    type_version: '1.4.0',
     fields: [
       {
         key: 'level',
@@ -21848,8 +22897,8 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
   ]),
   // The layout and element types of the one block editor (2026-11-04).
-  { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.4.0' },
-  contentEditor('layout.container', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })),
+  { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.5.0' },
+  { ...contentEditor('layout.container', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })), type_version: '1.1.0' },
   { ...contentEditor('layout.grid', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })), type_version: '1.1.0' },
   contentEditor('layout.spacer', [
     contentField('layout.spacer', 'size', 'props', 'integer', { constraints: { min: 1, max: 8 }, default: 6 }),
@@ -21944,24 +22993,24 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   ]),
   { ...contentEditor('content.table', [
     contentField('content.table', 'header', 'props', 'choice', { choices: ['row', 'column', 'both', 'none'], default: 'row' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   // src is the one field the type requires besides alt: a host draws a
   // complete form from the manifest alone (simai/ui-source#64). The address
   // is a text field; validate applies the Document's URL rule on top.
   { ...contentEditor('content.figure', [
     contentField('content.figure', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.figure', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
-    contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', '1/1', '4/3', '3/2', '16/9', '21/9'], default: 'auto' }),
+    contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', ...CONTENT_RATIOS], default: 'auto' }),
     contentField('content.figure', 'fit', 'props', 'choice', { choices: ['cover', 'contain'], default: 'cover' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.3.0' },
   { ...contentEditor('content.alert', [
     contentField('content.alert', 'status', 'props', 'choice', { choices: ['neutral', 'info', 'success', 'warning', 'error'], default: 'neutral' }),
     contentField('content.alert', 'appearance', 'props', 'choice', { choices: ['default', 'outlined', 'flat'], default: 'default' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   { ...contentEditor('content.details', [
     contentField('content.details', 'open', 'props', 'toggle', { default: false }),
     contentField('content.details', 'layout', 'props', 'choice', { choices: ['surface', 'lines'], default: 'surface' }),
-  ]), type_version: '1.1.0' },
+  ]), type_version: '1.2.0' },
   contentEditor('content.tabs', [
     contentField('content.tabs', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
   ]),
@@ -21976,15 +23025,18 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('content.grid', 'columns', 'props', 'integer', { constraints: { min: 1, max: 4 }, default: 3 }),
     contentField('content.grid', 'gap', 'props', 'integer', { ...advanced, constraints: { min: 0, max: 4 }, default: 2 }),
   ]),
-  contentEditor('content.card', [
+  { ...contentEditor('content.card', [
     contentField('content.card', 'variant', 'props', 'choice', { choices: ['default', 'plain'], default: 'default' }),
-  ]),
-  contentEditor('content.media', [
+    contentField('content.card', 'action_icon', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('content.card', 'action_label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
+    contentField('content.card', 'action_href', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 2048 } }),
+  ]), type_version: '1.1.0' },
+  { ...contentEditor('content.media', [
     contentField('content.media', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.media', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.media', 'side', 'props', 'choice', { choices: ['left', 'right'], default: 'right' }),
-    contentField('content.media', 'ratio', 'props', 'choice', { choices: ['1/1', '4/3', '3/2', '16/9', '21/9'], default: '16/9' }),
-  ]),
+    contentField('content.media', 'ratio', 'props', 'choice', { choices: [...CONTENT_RATIOS], default: '16/9' }),
+  ]), type_version: '1.1.0' },
   contentEditor('content.file', [
     contentField('content.file', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
     contentField('content.file', 'href', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
@@ -23854,7 +24906,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.1"
+    "version": "1.6.2"
   },
   "sf-button": {
     "inputs": {
@@ -24054,7 +25106,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.2"
+    "version": "1.16.3"
   },
   "sf-button-icon": {
     "inputs": {
@@ -24234,7 +25286,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.12.1"
+    "version": "1.13.3"
   },
   "sf-checkbox": {
     "inputs": {
@@ -24306,7 +25358,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.5.1"
+    "version": "1.5.2"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -24330,14 +25382,6 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     "inputs": {
       "additionalProperties": false,
       "properties": {
-        "appearance": {
-          "default": "outlined",
-          "enum": [
-            "filled",
-            "outlined"
-          ],
-          "type": "string"
-        },
         "aria-label": {
           "default": "",
           "type": "string"
@@ -24426,9 +25470,11 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "size": {
           "default": "1",
           "enum": [
+            "1/3",
             "1/2",
             "1",
-            "2"
+            "2",
+            "3"
           ],
           "type": "string"
         },
@@ -24441,7 +25487,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.16.1"
+    "version": "1.18.1"
   },
   "sf-icon": {
     "inputs": {
@@ -24533,7 +25579,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.0"
+    "version": "1.4.1"
   },
   "sf-input": {
     "inputs": {
@@ -24742,7 +25788,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.13.2"
+    "version": "1.14.2"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -24918,7 +25964,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.12.2"
+    "version": "1.12.3"
   },
   "sf-switch": {
     "inputs": {
@@ -27033,6 +28079,9 @@ function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
     if (node.type === 'form.form' && typeof node.data?.action === 'string' && !validUrl(node.data.action)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.action`, 'Form address protocol is not allowed'));
     }
+    if (node.type === 'content.card' && typeof node.data?.action_href === 'string' && !validUrl(node.data.action_href)) {
+      diagnostics.push(diagnostic('unsafe_url', `${path}.data.action_href`, 'Link protocol is not allowed'));
+    }
     if (node.type === 'content.file' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'File address protocol is not allowed'));
     }
@@ -27409,6 +28458,20 @@ function renderImage(data) {
 // sf-download-file's row, drawn as a plain link: it downloads with no script,
 // the name falls back to the address's last part, and the size reads in the
 // Document's language.
+// The card's header (content.card 1.1.0, owner decision C231): the title as
+// the card's title -- an h3, which the card draws at its title step whatever
+// the level -- and one action at its end, an icon link of size 1/2 in the
+// quiet on-surface look (component.card .sf-card-header). Nothing when the
+// card has neither.
+function renderCardHeader(node) {
+  const data = node.data || {};
+  const title = Array.isArray(data.title) && data.title.length ? `<h3>${renderInline(data.title)}</h3>` : '';
+  const action = typeof data.action_icon === 'string' && typeof data.action_label === 'string' && typeof data.action_href === 'string' && validUrl(data.action_href)
+    ? `<a class="sf-icon-button sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface sf-icon-button--size-1/2" href="${escapeHtml(data.action_href)}" aria-label="${escapeHtml(data.action_label)}"><i class="sf-icon" aria-hidden="true">${escapeHtml(data.action_icon)}</i></a>`
+    : '';
+  return title || action ? `<div class="sf-card-header">${title}${action}</div>` : '';
+}
+
 function renderFile(node, locale) {
   const { href, label, mime, size } = node.data;
   const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileNameFromAddress)(href) || href;
@@ -27499,22 +28562,19 @@ const elementBlock = (node, html) => (html ? `<div class="flex"${id(node)}>${htm
 
 // The space between the blocks of a section or a container (visual parity,
 // 2026-11-04): the prototype's 24 px at the desktop, space-3 of the SIMAI
-// Framework ladder (16 px on the phone). Blocks in a column stand one rhythm
-// apart (space-y-*, their own margins collapse into it); a gap the Document
-// sets is the rhythm, per screen. Columns make the content a grid, whose gap
-// the grid set prints: no rhythm then.
+// Framework ladder (16 px on the phone). The content part is a flex column
+// and the blocks stand one gap apart (layout.section 1.4.0, layout.container
+// 1.1.0; owner decision C212 (4): lengths only in system steps, space-x/y
+// retired for gap-x/y on a flex or grid parent); core.styles clears the
+// blocks' own block margins there, as in a grid. A gap the Document sets is
+// the rhythm, per screen: the grid set prints it (gap-*), so the rhythm adds
+// no second one. Columns make the content a grid, whose gap the grid set
+// prints: no rhythm then.
 const BLOCK_RHYTHM = 3;
 function rhythm(props) {
   if (props.columns !== undefined) return '';
-  const values = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint)(props.gap ?? BLOCK_RHYTHM);
-  const classes = [];
-  let previous;
-  _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS.forEach((breakpoint) => {
-    const value = values[breakpoint];
-    if (value !== previous && Number.isInteger(value)) classes.push(`${breakpoint === 'xs' ? '' : `${breakpoint}:`}space-y-${value}`);
-    previous = value;
-  });
-  return classes.length ? ` class="${classes.join(' ')}"` : '';
+  const gap = props.gap === undefined ? ` gap-y-${BLOCK_RHYTHM}` : '';
+  return ` class="flex flex-col${gap}"`;
 }
 
 const BUILTIN_RENDERERS = {
@@ -27714,7 +28774,7 @@ const BUILTIN_RENDERERS = {
     const gap = Number.isInteger(node.props?.gap) ? node.props.gap : 2;
     return `<div class="grid ${columns} gap-${gap}"${id(node)}>${(slots.defaultList || []).map((child) => `<div class="min-w-0">${child}</div>`).join('')}</div>`;
   },
-  'content.card': ({ node, slots }) => `<div class="sf-card${node.props?.variant === 'plain' ? ' sf-card--plain' : ''}"${id(node)}>${slots.default || ''}</div>`,
+  'content.card': ({ node, slots }) => `<div class="sf-card${node.props?.variant === 'plain' ? ' sf-card--plain' : ''}"${id(node)}>${renderCardHeader(node)}${slots.default || ''}</div>`,
   'content.media': ({ node, slots }) => renderMedia(node, slots),
   'content.file': ({ node, locale }) => renderFile(node, locale),
   // Cleaned at render by the html@1 subset's one rule: no script, no style, no
@@ -28140,8 +29200,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   INLINE_MARKS: () => (/* binding */ INLINE_MARKS),
 /* harmony export */   INLINE_MODEL_VERSION: () => (/* binding */ INLINE_MODEL_VERSION),
 /* harmony export */   INLINE_OBJECT: () => (/* binding */ INLINE_OBJECT),
+/* harmony export */   INLINE_PROP_ALIASES: () => (/* binding */ INLINE_PROP_ALIASES),
 /* harmony export */   INLINE_RESERVED_KEYS: () => (/* binding */ INLINE_RESERVED_KEYS),
 /* harmony export */   breakSegment: () => (/* binding */ breakSegment),
+/* harmony export */   currentInlineProps: () => (/* binding */ currentInlineProps),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fromSegments: () => (/* binding */ fromSegments),
 /* harmony export */   inlineComponentSchemas: () => (/* binding */ inlineComponentSchemas),
@@ -28230,11 +29292,32 @@ const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048
 // component reads from a fixed set) or a boolean. Nothing else is drawn, so
 // no prop can become an event handler or markup.
 const INLINE_COMPONENTS = Object.freeze({
-  badge: Object.freeze({ tag: 'sf-badge', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', status: 'token', size: 'token', compact: 'boolean' }) }),
+  badge: Object.freeze({ tag: 'sf-badge', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', status: 'token', size: 'token', 'icon-only': 'boolean', compact: 'boolean' }) }),
   kbd: Object.freeze({ tag: 'kbd', required: ['text'], props: Object.freeze({ text: 'text' }) }),
   icon: Object.freeze({ tag: 'sf-icon', required: ['icon'], props: Object.freeze({ icon: 'token', label: 'text', size: 'token', filled: 'boolean' }) }),
   button: Object.freeze({ tag: 'sf-button', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', size: 'token' }) }),
 });
+// Dated prop aliases of an atom: the old prop is still accepted and drawn as
+// the new one, until remove_after. The badge that shows its icon alone is
+// icon-only (owner decision C134: the word compact means density only,
+// sf-badge 1.6.0); compact is its alias in a Document, as on the element
+// (journal property-inline-badge-compact-to-icon-only). An entry that has
+// both draws the new one.
+const INLINE_PROP_ALIASES = Object.freeze({
+  badge: Object.freeze({ compact: Object.freeze({ to: 'icon-only', since: '2026-11-16', remove_after: '2027-01-01' }) }),
+});
+const aliasOf = (name, key) => INLINE_PROP_ALIASES[name]?.[key]?.to ?? null;
+
+/** The atom's props under their current names: a dated alias moved to its new prop (the new prop wins). */
+function currentInlineProps(name, props = {}) {
+  const out = {};
+  for (const [key, value] of Object.entries(props)) if (!aliasOf(name, key)) out[key] = value;
+  for (const [key, value] of Object.entries(props)) {
+    const to = aliasOf(name, key);
+    if (to && !(to in out)) out[to] = value;
+  }
+  return out;
+}
 const TOKEN = '^[a-z0-9][a-z0-9_/-]{0,63}$';
 const TOKEN_PATTERN = new RegExp(TOKEN, 'u');
 // The one unit an atom or an opaque node holds in segment offsets.
@@ -28281,7 +29364,7 @@ function isInlineComponent(node) {
 function inlineComponentView(node) {
   if (!isInlineComponent(node)) return null;
   const entry = INLINE_COMPONENTS[node.name];
-  const props = node.props ?? {};
+  const props = currentInlineProps(node.name, node.props ?? {});
   if (node.name === 'kbd') return { tag: entry.tag, attributes: [], text: props.text };
   const attributes = Object.keys(entry.props).filter((key) => key in props && props[key] !== false)
     .map((key) => [key, props[key] === true ? '' : props[key]]);
@@ -30844,7 +31927,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["kk"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":[],"parts":{},"coverage":{}}');
 
 /***/ }
 

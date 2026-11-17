@@ -1,10 +1,18 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@property --sf-place-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --sf-ring-shadow {
+  syntax: "*";
+  inherits: false;
+}
 @layer sf.utilities {
   .hover\:ring-offset-1:hover {
-    --sf-ring-offset-width: var(--sf-a1);
+    --sf-ring-offset-width: var(--sf-line--border);
   }
   .hover\:ring-offset-2:hover {
-    --sf-ring-offset-width: var(--sf-a2);
+    --sf-ring-offset-width: var(--sf-line--indicator);
   }
   .hover\:ring-offset-3:hover {
     --sf-ring-offset-width: var(--sf-a3);

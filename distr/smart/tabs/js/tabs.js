@@ -613,15 +613,25 @@ function triggerExtra(textBox, label) {
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
 // first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog.
+// thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
 
-async function standardMenu(owner, field, select) {
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
   await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
   if (owner[field]?.isConnected) return owner[field];
-  const menu = document.createElement('sf-menu-context');
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
   menu.setAttribute('popup', '');
-  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
-  (owner.closest('dialog[open]') || document.body).append(menu);
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
   owner[field] = menu;
   return menu;
 } // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
@@ -857,6 +867,7 @@ async function openRowMenu(owner, {
 }) {
   if (!entries.length) return null;
   const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
   owner._sfRowMoreSelect = select;
   if (label) menu.setAttribute('aria-label', label);
   menu.setAttribute('size', size);
@@ -917,7 +928,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -937,7 +949,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -977,7 +990,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1002,7 +1016,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1012,7 +1027,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1132,7 +1148,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1194,15 +1213,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1345,6 +1367,17 @@ const INVALID = '[aria-invalid="true"], [invalid]:not([invalid="false"]), :inval
 
 const FOCUSABLE = ['a[href]', 'area[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', 'iframe', 'audio[controls]', 'video[controls]', 'summary', '[contenteditable]:not([contenteditable="false"])', '[tabindex]:not([tabindex="-1"])'].join(', '); // Which item a tab in the list draws. An sf-button moves its data attributes
 // to the button inside it, so the index is read wherever it landed.
+// A panel with something to read or to show: an element, or words. The
+// drawing's comment marks and white space are nothing.
+
+function panelHasContent(panel) {
+  for (const node of panel.childNodes) {
+    if (node.nodeType === 1) return true;
+    if (node.nodeType === 3 && node.textContent.trim()) return true;
+  }
+
+  return false;
+}
 
 function tabIndexOf(element) {
   const own = element?.dataset?.sfTabIndex ?? element?.querySelector?.(':scope > [data-sf-tab-index]')?.dataset?.sfTabIndex;
@@ -1615,7 +1648,8 @@ class SfTabs extends TabsElement {
     }
 
     this.syncTabSemantics();
-    this.syncPanelFocus(); // The box that has a size: sf-tabs is display:contents, so observing the
+    this.syncPanelFocus();
+    this.followPlace(); // The box that has a size: sf-tabs is display:contents, so observing the
     // element itself never fired and «Ещё» was laid out once, wrong after any
     // resize (docs trial 4, 2026-10-15).
 
@@ -1743,25 +1777,29 @@ class SfTabs extends TabsElement {
   }
 
   connectedCallback() {
-    // The phone's width (core/js/breakpoints, md): vertical tabs become a row
-    // with «Ещё» (C96 item 5). fit auto reads the row's own width instead
-    // (narrowPlace).
+    // Vertical tabs become a row with «Ещё» (C96 item 5) on a narrow place:
+    // below the h1 step (md, 44rem) of the width they stand in, not of the
+    // screen (C181 (2)) -- a vertical column in a 30rem panel of a wide page
+    // stayed a column beside a squeezed panel, one in a wide frame of a phone
+    // preview folded. The window's step is left only for a place with no
+    // width yet. fit auto reads the row's own width (narrowPlace).
     if (!this._narrowMedia) {
       this._narrowMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.breakpointMedia)('md', {
         below: true
       });
-      this._narrow = this._narrowMedia?.matches === true;
 
-      this._onNarrow = () => {
-        const narrow = this._narrowMedia?.matches === true;
-        if (narrow === this._narrow) return;
-        this._narrow = narrow;
-        this.requestComponentUpdate('narrow');
-      };
+      this._onNarrow = () => this.followPlace();
 
       this._narrowMedia?.addEventListener?.('change', this._onNarrow);
     }
 
+    this._narrow = this.readNarrow();
+
+    if (!this._placeObserver && typeof ResizeObserver === 'function') {
+      this._placeObserver = new ResizeObserver(() => this.followPlace());
+    }
+
+    this.watchPlace();
     super.connectedCallback?.(); // The address is read again when it changes (Back, Forward, a link to
     // #<id> on the page); the listener answers only with hash on.
 
@@ -1778,6 +1816,8 @@ class SfTabs extends TabsElement {
   disconnectedCallback() {
     this._narrowMedia?.removeEventListener?.('change', this._onNarrow);
     this._narrowMedia = null;
+    this._placeObserver?.disconnect();
+    this._watchedPlace = null;
 
     if (this._addressListener) {
       globalThis.removeEventListener?.('hashchange', this._addressListener);
@@ -1796,6 +1836,8 @@ class SfTabs extends TabsElement {
     }
 
     this._panelObserver?.disconnect();
+    this._panelContentObserver?.disconnect();
+    this._panelContentWatched = null;
     this._moreMenu?.close?.({
       restoreFocus: false
     });
@@ -2156,8 +2198,53 @@ class SfTabs extends TabsElement {
 
   set selected(value) {
     if (value === null || value === undefined || value === '') this.removeAttribute('selected');else this.setAttribute('selected', String(value));
+  } // The width the vertical look folds on (C181 (2)): the tabs' own block,
+  // which is as wide as their place in either look (sf-tabs itself is
+  // display: contents); before the first drawing, the parent's content box.
+
+
+  placeWidth() {
+    const root = this.querySelector(':scope > .sf-tabs');
+    if (root) return root.getBoundingClientRect().width;
+    const parent = this.parentElement;
+    if (!parent) return 0;
+    const style = globalThis.getComputedStyle?.(parent);
+    const inset = (Number.parseFloat(style?.paddingInlineStart) || 0) + (Number.parseFloat(style?.paddingInlineEnd) || 0);
+    return Math.max(0, parent.getBoundingClientRect().width - inset);
+  }
+
+  readNarrow() {
+    if (this.getAttribute('type') !== 'vertical') return false;
+    const width = this.placeWidth();
+
+    if (width > 0) {
+      const rem = Number.parseFloat(globalThis.getComputedStyle?.(document.documentElement).fontSize) || 16;
+      return width < Number.parseFloat(_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.BREAKPOINTS.md) * rem;
+    }
+
+    return this._narrowMedia?.matches === true;
+  }
+
+  followPlace() {
+    this.watchPlace();
+    const narrow = this.readNarrow();
+    if (narrow === this._narrow) return;
+    this._narrow = narrow;
+    this.requestComponentUpdate('narrow');
+  } // Only vertical tabs fold, so only they watch their place.
+
+
+  watchPlace() {
+    if (!this._placeObserver) return;
+    const place = this.getAttribute('type') === 'vertical' ? this.querySelector(':scope > .sf-tabs') || this.parentElement : null;
+    if (place === this._watchedPlace) return;
+
+    this._placeObserver.disconnect();
+
+    this._watchedPlace = place;
+    if (place) this._placeObserver.observe(place);
   } // The look drawn (C96 item 1): line unless pills or vertical; vertical on a
-  // phone is the line with «Ещё» (item 5). type="full" is the line with fit
+  // narrow place is the line with «Ещё» (item 5). type="full" is the line with fit
   // always; no type and the scheme fills draw the line.
 
 
@@ -2289,15 +2376,41 @@ class SfTabs extends TabsElement {
     return !this.lazy || item.selected || this._openedPanels.has(item.key);
   } // A panel is a tab stop of its own only when nothing in it takes the focus
   // (APG tabs; R184 T8: every panel was, even one that starts with a field).
+  // An empty panel is no stop either: tabs that drive the host's content
+  // elsewhere (sf-view-properties' vertical tabs) drew a stop with nothing to
+  // read. A panel the host fills later becomes one then (watched below).
   // A page's panel written with a tabindex keeps it.
 
 
   syncPanelFocus() {
     const links = this.links;
+    const panels = this.drawnPanels();
 
-    for (const panel of this.drawnPanels()) {
+    for (const panel of panels) {
       if (this._authoredPanelFocus.has(panel)) continue;
-      if (links || panel.querySelector(FOCUSABLE)) panel.removeAttribute('tabindex');else panel.setAttribute('tabindex', '0');
+      if (links || !panelHasContent(panel) || panel.querySelector(FOCUSABLE)) panel.removeAttribute('tabindex');else panel.setAttribute('tabindex', '0');
+    }
+
+    this.watchPanelContent(panels);
+  } // The words or parts a host writes into a drawn panel after the drawing
+  // decide its stop again.
+
+
+  watchPanelContent(panels) {
+    if (typeof MutationObserver !== 'function') return;
+    this._panelContentObserver ||= new MutationObserver(() => this.schedulePanelFocus());
+    this._panelContentWatched ||= new WeakSet();
+
+    for (const panel of panels) {
+      if (this._panelContentWatched.has(panel)) continue;
+
+      this._panelContentWatched.add(panel);
+
+      this._panelContentObserver.observe(panel, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
     }
   }
 
@@ -3459,7 +3572,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.3.4","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.0","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

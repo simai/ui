@@ -26,7 +26,6 @@
   * - Base styles (_css__component_name.scss)
   *
   */
-/* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
 _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion{
   border-bottom-right-radius: var(--sf-accordion--radius);
 }
@@ -362,13 +361,13 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-accordion-trigger{
 .sf-accordion-trigger.focus-visible {
   z-index: 1;
   outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-  outline-offset: calc(var(--sf-focus--width) * -1);
+  outline-offset: var(--sf-focus--inset);
 }
 
 .sf-accordion-trigger:focus-visible {
   z-index: 1;
   outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-  outline-offset: calc(var(--sf-focus--width) * -1);
+  outline-offset: var(--sf-focus--inset);
 }
 
 .sf-accordion .sf-accordion-title {
@@ -534,13 +533,13 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-accordion-trigger{
 
 @media (forced-colors: active) {
   .sf-accordion-trigger.focus-visible {
-    outline: var(--sf-focus-outline-width) solid currentColor;
-    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    outline: var(--sf-focus--width) solid currentColor;
+    outline-offset: var(--sf-focus--inset);
     box-shadow: none;
   }
   .sf-accordion-trigger:focus-visible {
-    outline: var(--sf-focus-outline-width) solid currentColor;
-    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    outline: var(--sf-focus--width) solid currentColor;
+    outline-offset: var(--sf-focus--inset);
     box-shadow: none;
   }
 }

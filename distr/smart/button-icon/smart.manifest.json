@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.button-icon",
-  "version": "1.12.1",
+  "version": "1.13.3",
   "title": "Icon Buttons",
   "summary": "Native icon-only action with token geometry, accessible naming and shared loading semantics.",
   "kind": "smart",
@@ -137,7 +137,7 @@
       "spacing": {
         "type": "string",
         "default": "normal",
-        "description": "Semantic internal spacing profile.",
+        "description": "Retired (owner decision C213, 2026-11-16): an icon button has no density; size and height change it and keep it square. Read and noted until 2027-01-01, it draws nothing.",
         "enum": [
           "compact",
           "normal",
@@ -220,7 +220,7 @@
       "pressed": {
         "type": "boolean",
         "default": false,
-        "description": "Whether this toggle button is on: aria-pressed on the native button and the pressed look -- the primary container fill, its ink, no visible edge and the icon filled (rule C12); pressed=\"false\" says off; absent, the button is not a toggle and nothing is said"
+        "description": "Whether this toggle button is on: aria-pressed on the native button and the pressed look -- the primary container fill, its ink, no visible edge and the icon filled (rule C12), on a toggle only: outline or ghost in the neutral scheme (owner decision C211 (1)); another look keeps its own with aria-pressed and the console says once that it is no toggle; one choice among several is sf-segmented. pressed=\"false\" says off; absent, the button is not a toggle and nothing is said"
       },
       "label-pressed": {
         "type": "string",
@@ -644,7 +644,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/button-icon/index.js",
-        "sha256": "ee3f3b33eb6c9a9f8098002a38e1ff777221bee473eafc529e8d5b3a7ca7d528"
+        "sha256": "9d8078bf6c347eef92c30804de80e911ebac07434576f258c993193f14a782a1"
       }
     ],
     "generated_runtime": [

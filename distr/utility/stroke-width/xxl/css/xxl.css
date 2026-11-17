@@ -2,10 +2,10 @@
 @layer sf.utilities {
   @media (min-width: 80rem) {
     .xxl\:stroke-1 {
-      stroke-width: var(--sf-a1);
+      stroke-width: var(--sf-line--border);
     }
     .xxl\:stroke-2 {
-      stroke-width: var(--sf-a2);
+      stroke-width: var(--sf-line--indicator);
     }
     .xxl\:stroke-3 {
       stroke-width: var(--sf-a3);

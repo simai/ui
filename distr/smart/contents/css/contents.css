@@ -140,11 +140,11 @@
      drawn outside. */
   .sf-contents-link.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-contents-link:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(-1 * var(--sf-focus--width));
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-contents-mark {
     display: none;
@@ -222,6 +222,9 @@
      into «Ещё (n)» (overflow more, the default, C54 as sf-tabs); with overflow
      scroll the row scrolls sideways. */
   .sf-contents--layout-column {
+    /* The row is square against the line, its keyboard ring is not (C186 (4),
+       OT 31): the ring takes the control corner, as sf-outline's and a text
+       link's do. Only the ring: the row draws no fill. */
     /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
        element draws none, and the current mark lies on its inline-start edge,
        over the divider's pixel, the host having put it flush against the
@@ -374,6 +377,12 @@
     padding-block: var(--sf-space-1\/4);
     padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
     border-radius: var(--sf-0);
+  }
+  .sf-contents--layout-column .sf-contents-link.focus-visible {
+    border-radius: var(--sf-radius--ui);
+  }
+  .sf-contents--layout-column .sf-contents-link:focus-visible {
+    border-radius: var(--sf-radius--ui);
   }
   .sf-contents--layout-column.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-column.sf-contents--line-none .sf-contents-list::after {
     content: none;
@@ -1623,6 +1632,9 @@
      step, so the printed markup is right before the script arrives. */
   @media (min-width: 32rem) {
     .sf-contents--layout-auto.sf-contents--collapse-sm {
+      /* The row is square against the line, its keyboard ring is not (C186 (4),
+         OT 31): the ring takes the control corner, as sf-outline's and a text
+         link's do. Only the ring: the row draws no fill. */
       /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
          element draws none, and the current mark lies on its inline-start edge,
          over the divider's pixel, the host having put it flush against the
@@ -1775,6 +1787,12 @@
       padding-block: var(--sf-space-1\/4);
       padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link.focus-visible {
+      border-radius: var(--sf-radius--ui);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:focus-visible {
+      border-radius: var(--sf-radius--ui);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--line-none .sf-contents-list::after {
       content: none;
@@ -2243,6 +2261,9 @@
   }
   @media (min-width: 44rem) {
     .sf-contents--layout-auto.sf-contents--collapse-md {
+      /* The row is square against the line, its keyboard ring is not (C186 (4),
+         OT 31): the ring takes the control corner, as sf-outline's and a text
+         link's do. Only the ring: the row draws no fill. */
       /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
          element draws none, and the current mark lies on its inline-start edge,
          over the divider's pixel, the host having put it flush against the
@@ -2395,6 +2416,12 @@
       padding-block: var(--sf-space-1\/4);
       padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link.focus-visible {
+      border-radius: var(--sf-radius--ui);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:focus-visible {
+      border-radius: var(--sf-radius--ui);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--line-none .sf-contents-list::after {
       content: none;
@@ -2863,6 +2890,9 @@
   }
   @media (min-width: 60rem) {
     .sf-contents--layout-auto.sf-contents--collapse-lg {
+      /* The row is square against the line, its keyboard ring is not (C186 (4),
+         OT 31): the ring takes the control corner, as sf-outline's and a text
+         link's do. Only the ring: the row draws no fill. */
       /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
          element draws none, and the current mark lies on its inline-start edge,
          over the divider's pixel, the host having put it flush against the
@@ -3015,6 +3045,12 @@
       padding-block: var(--sf-space-1\/4);
       padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link.focus-visible {
+      border-radius: var(--sf-radius--ui);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:focus-visible {
+      border-radius: var(--sf-radius--ui);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--line-none .sf-contents-list::after {
       content: none;
@@ -3483,6 +3519,9 @@
   }
   @media (min-width: 72rem) {
     .sf-contents--layout-auto.sf-contents--collapse-xl {
+      /* The row is square against the line, its keyboard ring is not (C186 (4),
+         OT 31): the ring takes the control corner, as sf-outline's and a text
+         link's do. Only the ring: the row draws no fill. */
       /* line edge (C95 point 1, CT-01): the host's divider is the line -- the
          element draws none, and the current mark lies on its inline-start edge,
          over the divider's pixel, the host having put it flush against the
@@ -3635,6 +3674,12 @@
       padding-block: var(--sf-space-1\/4);
       padding-inline: var(--sf-contents--inset) var(--sf-space-1\/2);
       border-radius: var(--sf-0);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link.focus-visible {
+      border-radius: var(--sf-radius--ui);
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:focus-visible {
+      border-radius: var(--sf-radius--ui);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--line-edge .sf-contents-list::after, .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--line-none .sf-contents-list::after {
       content: none;

@@ -57,4 +57,28 @@
   .bg-top {
     background-position: top;
   }
+  .bg-inline-start:where(:dir(rtl)) {
+    background-position: right;
+  }
+  .bg-inline-start-bottom:where(:dir(rtl)) {
+    background-position: right bottom;
+  }
+  .bg-inline-start-top:where(:dir(rtl)) {
+    background-position: right top;
+  }
+  .bg-inline-start-center:where(:dir(rtl)) {
+    background-position: right center;
+  }
+  .bg-inline-end:where(:dir(rtl)) {
+    background-position: left;
+  }
+  .bg-inline-end-bottom:where(:dir(rtl)) {
+    background-position: left bottom;
+  }
+  .bg-inline-end-top:where(:dir(rtl)) {
+    background-position: left top;
+  }
+  .bg-inline-end-center:where(:dir(rtl)) {
+    background-position: left center;
+  }
 }

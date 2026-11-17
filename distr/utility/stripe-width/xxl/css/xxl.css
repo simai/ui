@@ -2,16 +2,16 @@
 @layer sf.utilities {
   @media (min-width: 80rem) {
     .xxl\:stripe-size-1 {
-      --sf-stripe--size: var(--sf-a2);
+      --sf-stripe--size: var(--sf-space-1\/4);
     }
     .xxl\:stripe-size-2 {
-      --sf-stripe--size: var(--sf-a3);
+      --sf-stripe--size: var(--sf-space-1\/3);
     }
     .xxl\:stripe-size-3 {
-      --sf-stripe--size: var(--sf-a4);
+      --sf-stripe--size: var(--sf-space-1\/2);
     }
     .xxl\:stripe-size-4 {
-      --sf-stripe--size: var(--sf-a5);
+      --sf-stripe--size: var(--sf-space-1);
     }
   }
 }

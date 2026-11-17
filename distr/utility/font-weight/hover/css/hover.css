@@ -39,4 +39,13 @@
   .hover\:weight-9:hover {
     font-weight: 900;
   }
+  .hover\:weight-regular:hover {
+    font-weight: var(--sf-weight--regular);
+  }
+  .hover\:weight-medium:hover {
+    font-weight: var(--sf-weight--medium);
+  }
+  .hover\:weight-bold:hover {
+    font-weight: var(--sf-weight--bold);
+  }
 }

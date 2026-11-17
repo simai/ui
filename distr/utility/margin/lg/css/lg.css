@@ -4,14 +4,8 @@
     .lg\:m-auto {
       margin: var(--sf-space-auto);
     }
-    .-lg\:m-auto {
-      margin: calc(0rem - var(--sf-space-auto));
-    }
     .lg\:m-top-auto {
       margin-top: var(--sf-space-auto);
-    }
-    .-lg\:m-top-auto {
-      margin-top: calc(0rem - var(--sf-space-auto));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:m-inline-end-auto {
       margin-right: var(--sf-space-auto);
@@ -39,37 +33,8 @@
       -webkit-margin-end: var(--sf-space-auto);
               margin-inline-end: var(--sf-space-auto);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-lg\:m-inline-end-auto {
-      margin-right: calc(0rem - var(--sf-space-auto));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-lg\:m-inline-end-auto {
-      margin-right: calc(0rem - var(--sf-space-auto));
-      }
-    }
-    .-lg\:m-inline-end-auto:where(:dir(ltr)) {
-      margin-right: calc(0rem - var(--sf-space-auto));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-lg\:m-inline-end-auto {
-      margin-left: calc(0rem - var(--sf-space-auto));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-lg\:m-inline-end-auto {
-      margin-left: calc(0rem - var(--sf-space-auto));
-      }
-    }
-    .-lg\:m-inline-end-auto:where(:dir(rtl)) {
-      margin-left: calc(0rem - var(--sf-space-auto));
-    }
-    .-lg\:m-inline-end-auto {
-      -webkit-margin-end: calc(0rem - var(--sf-space-auto));
-              margin-inline-end: calc(0rem - var(--sf-space-auto));
-    }
     .lg\:m-bottom-auto {
       margin-bottom: var(--sf-space-auto);
-    }
-    .-lg\:m-bottom-auto {
-      margin-bottom: calc(0rem - var(--sf-space-auto));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:m-inline-start-auto {
       margin-left: var(--sf-space-auto);
@@ -97,51 +62,15 @@
       -webkit-margin-start: var(--sf-space-auto);
               margin-inline-start: var(--sf-space-auto);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-lg\:m-inline-start-auto {
-      margin-left: calc(0rem - var(--sf-space-auto));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-lg\:m-inline-start-auto {
-      margin-left: calc(0rem - var(--sf-space-auto));
-      }
-    }
-    .-lg\:m-inline-start-auto:where(:dir(ltr)) {
-      margin-left: calc(0rem - var(--sf-space-auto));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-lg\:m-inline-start-auto {
-      margin-right: calc(0rem - var(--sf-space-auto));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-lg\:m-inline-start-auto {
-      margin-right: calc(0rem - var(--sf-space-auto));
-      }
-    }
-    .-lg\:m-inline-start-auto:where(:dir(rtl)) {
-      margin-right: calc(0rem - var(--sf-space-auto));
-    }
-    .-lg\:m-inline-start-auto {
-      -webkit-margin-start: calc(0rem - var(--sf-space-auto));
-              margin-inline-start: calc(0rem - var(--sf-space-auto));
-    }
     .lg\:m-inline-auto {
       margin-left: var(--sf-space-auto);
       margin-right: var(--sf-space-auto);
       margin-inline: var(--sf-space-auto);
     }
-    .-lg\:m-inline-auto {
-      margin-left: calc(0rem - var(--sf-space-auto));
-      margin-right: calc(0rem - var(--sf-space-auto));
-      margin-inline: calc(0rem - var(--sf-space-auto));
-    }
     .lg\:m-block-auto {
       margin-top: var(--sf-space-auto);
       margin-bottom: var(--sf-space-auto);
       margin-block: var(--sf-space-auto);
-    }
-    .-lg\:m-block-auto {
-      margin-top: calc(0rem - var(--sf-space-auto));
-      margin-bottom: calc(0rem - var(--sf-space-auto));
-      margin-block: calc(0rem - var(--sf-space-auto));
     }
     .lg\:m-0 {
       margin: var(--sf-space-0);

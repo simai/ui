@@ -168,6 +168,7 @@
   }
   :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(.sf-kbd-join) {
     display: inline;
+    line-height: 1;
   }
   :where([role=tooltip], .sf-tooltip) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
     color: color-mix(in srgb, currentColor 64%, transparent);
@@ -242,6 +243,7 @@
   }
   :where(kbd[appearance=plain]:has(> kbd), .sf-kbd--group[appearance=plain]) > :where(.sf-kbd-join) {
     display: inline;
+    line-height: 1;
   }
   :where(kbd[appearance=key]:not(:has(> kbd)), .sf-kbd[appearance=key], kbd[appearance=key] kbd) {
     width: auto;

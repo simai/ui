@@ -9,7 +9,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c71a77b9cdfb");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
-/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _button_checks_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("01473540635d");
+/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50d2a204ba4c");
+
 
 
 
@@ -130,7 +132,7 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
 
     if (loading) {
       const overlay = !startNode && !endNode;
-      this.spinner = (0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_3__.createInlineSpinner)({
+      this.spinner = (0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createInlineSpinner)({
         className: 'sf-button-spinner',
         overlay
       });
@@ -183,7 +185,267 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
 }
 
 Buttons.utilityMap = _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__;
-(0,_register_helper__WEBPACK_IMPORTED_MODULE_2__["default"])('Buttons', Buttons);
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_2__["default"])('Buttons', Buttons); // The pressed look on a toggle only, a square icon-only button with a name,
+// the set's former classes (C116, C211): said once in the console.
+
+(0,_button_checks_js__WEBPACK_IMPORTED_MODULE_3__.watchButtons)();
+
+/***/ },
+
+/***/ "01473540635d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BUTTON_CLASS_ALIASES: () => (/* binding */ BUTTON_CLASS_ALIASES),
+/* harmony export */   BUTTON_ICON_ONLY: () => (/* binding */ BUTTON_ICON_ONLY),
+/* harmony export */   BUTTON_TOGGLE: () => (/* binding */ BUTTON_TOGGLE),
+/* harmony export */   ICON_BUTTON_CLASS_ALIASES: () => (/* binding */ ICON_BUTTON_CLASS_ALIASES),
+/* harmony export */   ICON_BUTTON_CLOSE_LOOKS: () => (/* binding */ ICON_BUTTON_CLOSE_LOOKS),
+/* harmony export */   ICON_BUTTON_DENSITY_CLASSES: () => (/* binding */ ICON_BUTTON_DENSITY_CLASSES),
+/* harmony export */   ICON_BUTTON_TOGGLE: () => (/* binding */ ICON_BUTTON_TOGGLE),
+/* harmony export */   checkButton: () => (/* binding */ checkButton),
+/* harmony export */   watchButtons: () => (/* binding */ watchButtons)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+ // What the button sheets draw only on their own terms, said once in the
+// console so a page author sees why a look is missing (owner decisions C116,
+// C211, 2026-11-16). Shared by the buttons and icon-buttons runtimes: each
+// bundle carries its own copy of this module, so what was said lives on one
+// shared global and a button is named once whichever copy sees it first.
+//
+// - aria-pressed (or the --pressed class) on a button that is no toggle: the
+//   pressed look is drawn only on outline or ghost in the neutral scheme
+//   (C211 (1)); the button keeps its own look.
+// - an sf-button with an icon and no label: square, as an icon button, and it
+//   needs aria-label (C211 (2)).
+// - the set's former classes sf-button--secondary and sf-button--surface
+//   (C116 (3), (6)): drawn as on-surface and as tonal on-surface until
+//   2027-01-01, noted in SF.deprecations (journal class-button-set-c116).
+// - the icon button's former looks sf-icon-button--surface and
+//   sf-icon-button--link (component.icon-buttons 1.14.0, RG-IB-2): drawn
+//   exactly as tonal and ghost until 2027-01-01, said once per button in the
+//   console and noted in SF.deprecations (journals
+//   class-icon-button-retired-looks-c15, class-icon-button-link-to-ghost).
+// - density on an icon button (owner decision C213): spacing-compact,
+//   -comfortable, -spacious and the older tightness-low, -high, -highest draw
+//   nothing on sf-icon-button; said once per button, noted until 2027-01-01
+//   (journal class-icon-button-density-c213).
+// - a close in a look of the icon button (component.icon-buttons 1.15.0,
+//   RG-CL-3; owner decision C14: no squares, no solid plate under a cross):
+//   sf-icon-button--close with --default, --tonal, --outline or --surface is
+//   drawn as ghost until 2027-01-01, said once per button and noted in
+//   SF.deprecations (journal class-icon-button-close-looks-c14). A close of
+//   its own is sf-button-close.
+
+const DEPRECATED = Object.freeze({
+  since: '2026-11-16',
+  remove_after: '2027-01-01'
+});
+const BUTTON_CLASS_ALIASES = Object.freeze({
+  'sf-button--secondary': 'sf-button--on-surface',
+  'sf-button--surface': 'sf-button--tonal sf-button--on-surface'
+});
+const ICON_DEPRECATED = Object.freeze({
+  since: '2026-11-16',
+  remove_after: '2027-01-01'
+});
+const ICON_BUTTON_CLASS_ALIASES = Object.freeze({
+  'sf-icon-button--surface': 'sf-icon-button--tonal',
+  'sf-icon-button--link': 'sf-icon-button--ghost'
+});
+const ICON_BUTTON_CLOSE_LOOKS = Object.freeze(['sf-icon-button--default', 'sf-icon-button--tonal', 'sf-icon-button--outline', 'sf-icon-button--surface']);
+const ICON_BUTTON_DENSITY_CLASSES = Object.freeze(['spacing-compact', 'spacing-comfortable', 'spacing-spacious', 'tightness-low', 'tightness-high', 'tightness-highest']);
+const BUTTON_TOGGLE = ':is(.sf-button--outline, .sf-button--ghost, .sf-button--link):is(.sf-button--on-surface, .sf-button--secondary)';
+const ICON_BUTTON_TOGGLE = ':is(.sf-icon-button--outline, .sf-icon-button--ghost, .sf-icon-button--link):is(.sf-icon-button--on-surface, .sf-icon-button--on-surface-variant, .sf-icon-button--secondary)';
+const BUTTON_ICON_ONLY = ':has(> :is(.sf-icon, sf-icon, .sf-button-spinner)):not(:has(> .sf-button-text-container:not(:empty)))';
+const KINDS = {
+  'sf-button': {
+    pressedClass: 'sf-button--pressed',
+    toggle: BUTTON_TOGGLE,
+    iconOnly: BUTTON_ICON_ONLY
+  },
+  'sf-icon-button': {
+    pressedClass: 'sf-icon-button--pressed',
+    toggle: ICON_BUTTON_TOGGLE,
+    iconOnly: null
+  }
+};
+
+function said() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__buttonChecks instanceof WeakMap)) {
+    Object.defineProperty(root, '__buttonChecks', {
+      value: new WeakMap(),
+      configurable: true
+    });
+  }
+
+  return root.__buttonChecks;
+}
+
+function sayOnce(element, topic, message) {
+  const map = said();
+  let topics = map.get(element);
+
+  if (!topics) {
+    topics = new Set();
+    map.set(element, topics);
+  }
+
+  if (topics.has(topic)) return;
+  topics.add(topic);
+  globalThis.console?.warn?.(message, element);
+}
+
+function nameOf(element) {
+  const label = element.getAttribute('aria-label') || element.querySelector('.sf-button-text-container')?.textContent?.trim() || element.textContent?.trim() || '';
+  const classes = [...element.classList].filter(name => /^sf-(icon-)?button--/u.test(name)).join(' ');
+  return `<${element.localName}${element.id ? `#${element.id}` : ''} class="${classes}">${label ? ` «${label.slice(0, 40)}»` : ''}`;
+}
+
+function hasName(element) {
+  return Boolean(element.getAttribute('aria-label')?.trim() || element.getAttribute('aria-labelledby')?.trim() || element.getAttribute('title')?.trim());
+}
+
+function matches(element, selector) {
+  try {
+    return element.matches(selector);
+  } catch {
+    return false;
+  }
+}
+
+function checkButton(element, block) {
+  const kind = KINDS[block];
+  if (!kind || !element?.classList?.contains(block)) return;
+  const pressedSaid = element.hasAttribute('aria-pressed') || element.classList.contains(kind.pressedClass);
+
+  if (pressedSaid && !matches(element, kind.toggle)) {
+    sayOnce(element, 'pressed', `[SIMAI Framework] ${block}: ${nameOf(element)} says aria-pressed, but the pressed look is drawn only on a toggle -- outline or ghost in on-surface (owner decision C211); this button keeps its own look. A choice of one among several (a view, a width, a theme) is sf-segmented.`);
+  }
+
+  if (kind.iconOnly && matches(element, kind.iconOnly) && !hasName(element)) {
+    sayOnce(element, 'name', `[SIMAI Framework] ${block}: ${nameOf(element)} has an icon and no label; it is drawn square and needs aria-label (owner decision C211).`);
+  }
+
+  if (block === 'sf-button') {
+    for (const [from, to] of Object.entries(BUTTON_CLASS_ALIASES)) {
+      if (element.classList.contains(from)) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        component: 'buttons',
+        kind: 'class',
+        from,
+        to,
+        ...DEPRECATED
+      });
+    }
+  }
+
+  if (block === 'sf-icon-button') {
+    for (const [from, to] of Object.entries(ICON_BUTTON_CLASS_ALIASES)) {
+      if (!element.classList.contains(from)) continue;
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        component: 'icon-buttons',
+        kind: 'class',
+        from,
+        to,
+        ...ICON_DEPRECATED
+      });
+      sayOnce(element, from, `[SIMAI Framework] ${block}: ${nameOf(element)} writes ${from}, a former look drawn exactly as ${to} until ${ICON_DEPRECATED.remove_after}; write ${to} (component.icon-buttons 1.14.0).`);
+    }
+
+    if (element.classList.contains('sf-icon-button--close') && !element.classList.contains('sf-button-close')) {
+      const looks = ICON_BUTTON_CLOSE_LOOKS.filter(name => element.classList.contains(name));
+
+      for (const from of looks) {
+        (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+          component: 'icon-buttons',
+          kind: 'class',
+          from: `sf-icon-button--close ${from}`,
+          to: 'sf-icon-button--close sf-icon-button--ghost',
+          ...ICON_DEPRECATED
+        });
+      }
+
+      if (looks.length) {
+        sayOnce(element, 'close-look', `[SIMAI Framework] ${block}: ${nameOf(element)} draws a close in ${looks.join(' ')}: a cross has no square and no solid plate (owner decision C14), so it is drawn as ghost until ${ICON_DEPRECATED.remove_after}; write sf-button-close (sf-button-close--ghost, --plain or --media) or sf-icon-button--ghost (component.icon-buttons 1.15.0).`);
+      }
+    }
+
+    const density = ICON_BUTTON_DENSITY_CLASSES.filter(name => element.classList.contains(name));
+
+    for (const from of density) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        component: 'icon-buttons',
+        kind: 'class',
+        from,
+        to: null,
+        ...ICON_DEPRECATED
+      });
+    }
+
+    if (density.length) {
+      sayOnce(element, 'density', `[SIMAI Framework] ${block}: ${nameOf(element)} writes ${density.join(' ')}: an icon button has no density (owner decision C213) and these classes draw nothing; size and height (sf-icon-button--height-low|high|highest) change it and keep it square. Remove them before ${ICON_DEPRECATED.remove_after}.`);
+    }
+  }
+}
+let pending = null;
+const queue = new Set();
+
+function flush() {
+  pending = null;
+  const elements = [...queue];
+  queue.clear();
+
+  for (const element of elements) {
+    if (!element.isConnected) continue;
+    checkButton(element, 'sf-button');
+    checkButton(element, 'sf-icon-button');
+  }
+}
+
+function enqueue(node) {
+  if (!(node instanceof Element)) return;
+  if (node.matches('.sf-button, .sf-icon-button')) queue.add(node);
+  node.querySelectorAll?.('.sf-button, .sf-icon-button').forEach(element => queue.add(element)); // After the current task: a Smart host writes the name and the state on the
+  // button it draws in the same turn.
+
+  if (!pending) pending = setTimeout(flush, 0);
+}
+
+function watchButtons() {
+  if (typeof document === 'undefined') return;
+  const root = globalThis.SF = globalThis.SF || {};
+  if (root.__buttonChecksWatching) return;
+  Object.defineProperty(root, '__buttonChecksWatching', {
+    value: true,
+    configurable: true
+  });
+
+  const start = () => {
+    enqueue(document.documentElement);
+    new MutationObserver(mutations => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes') {
+          if (mutation.target.matches?.('.sf-button, .sf-icon-button')) {
+            queue.add(mutation.target);
+            if (!pending) pending = setTimeout(flush, 0);
+          }
+        } else mutation.addedNodes.forEach(enqueue);
+      }
+    }).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'aria-pressed', 'aria-label', 'aria-labelledby', 'title']
+    });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {
+    once: true
+  });else start();
+}
 
 /***/ },
 
@@ -567,6 +829,128 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired,
+  package: pkg
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
 }
 
 /***/ },

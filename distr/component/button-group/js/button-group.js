@@ -13,7 +13,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
-/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2db3a835ac11");
+
 
 
 
@@ -21,10 +23,18 @@ __webpack_require__.r(__webpack_exports__);
 const ROOT_SELECTOR = '.sf-button-group';
 const SEGMENTS = ['start', 'middle', 'end'];
 const OBSERVER_KEY = '__sfButtonGroupObserver';
-const ORIENTED_ROLES = new Set(['listbox', 'menu', 'radiogroup', 'tablist', 'toolbar', 'tree']);
+const ORIENTED_ROLES = new Set(['listbox', 'menu', 'radiogroup', 'tablist', 'toolbar', 'tree']); // The members of a joined group: buttons and icon buttons, as classes or as
+// Smart hosts (RG-BG-1, DEV 2026-11-16: icon buttons stood apart, each with its
+// own corners). A host carries its position as the segment attribute.
+
+const HOSTS = 'sf-button, sf-button-icon, sf-icon-button';
+const ITEMS = `${HOSTS}, .sf-button, .sf-icon-button`;
 const OUT = 'sf-button-group-out';
 const MORE = 'sf-button-group-more';
-const OVERFLOW_KEY = '__sfButtonGroupOverflow'; // Every word this part says (owner decision C155: «Ещё» names ⋯). A product
+const OVERFLOW_KEY = '__sfButtonGroupOverflow';
+const STACKED = 'data-sf-stacked';
+const STACK_KEY = '__sfButtonGroupStack';
+const AUTHOR_ORIENTATION_KEY = '__sfButtonGroupAuthorOrientation'; // Every word this part says (owner decision C155: «Ещё» names ⋯). A product
 // adds a language with SF.language.register('sf-button-group', code, words).
 
 const WORDS = {
@@ -38,16 +48,16 @@ const WORDS = {
 // it shows (C155).
 
 function getItems(root) {
-  return Array.from(root.children).filter(item => item.matches?.('sf-button, .sf-button') && !item.classList.contains(OUT));
+  return Array.from(root.children).filter(item => item.matches?.(ITEMS) && !item.classList.contains(OUT));
 } // The group's own buttons, ⋯ aside.
 
 
 function ownItems(root) {
-  return Array.from(root.children).filter(item => item.matches?.('sf-button, .sf-button') && !item.classList.contains(MORE));
+  return Array.from(root.children).filter(item => item.matches?.(ITEMS) && !item.classList.contains(MORE));
 }
 
 function setSegment(item, segment) {
-  if (item.matches('sf-button')) {
+  if (item.matches(HOSTS)) {
     if (segment) {
       item.setAttribute('segment', segment);
     } else {
@@ -145,23 +155,23 @@ function layoutOverflow(root) {
       const {
         rank,
         pin
-      } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.readPriority)(element.getAttribute('priority'));
+      } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.readPriority)(element.getAttribute('priority'));
       return {
         element,
         rank,
-        pin: pin || (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.isMainAction)(element) || (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.isPressed)(element),
+        pin: pin || (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.isMainAction)(element) || (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.isPressed)(element),
         group: 0
       };
     });
     const parent = root.parentElement;
     const {
       out
-    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutActionRow)({
+    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.layoutActionRow)({
       row: root,
       units,
       more,
       outClass: OUT,
-      room: parent ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.rowRoom)(parent) : null
+      room: parent ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.rowRoom)(parent) : null
     });
     state.out = out.map(at => units[at].element);
     root.setAttribute('data-sf-row-laid', '');
@@ -174,14 +184,14 @@ function layoutOverflow(root) {
 function openMore(root, event) {
   const state = root[OVERFLOW_KEY];
   const left = state?.out ?? [];
-  const entries = left.map((element, at) => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.actionEntry)(element, at)).filter(entry => entry.text);
+  const entries = left.map((element, at) => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.actionEntry)(element, at)).filter(entry => entry.text);
   const first = ownItems(root)[0];
-  (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.openRowMenu)(root, {
-    anchor: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.controlOf)(event.currentTarget),
+  (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.openRowMenu)(root, {
+    anchor: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.controlOf)(event.currentTarget),
     entries,
     label: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(WORDS, 'more', root, 'sf-button-group'),
     size: (first?.getAttribute('size') || '1') === '1/2' ? '1/2' : '1',
-    select: id => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.controlOf)(left[Number(id)])?.click()
+    select: id => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.controlOf)(left[Number(id)])?.click()
   });
 }
 
@@ -227,19 +237,134 @@ function bindOverflow(root) {
   }
 
   layoutOverflow(root);
+} // A group wider than its container stacks (owner decision C215): it draws as
+// the vertical group -- one frame, one line at each join, the radius outside
+// only -- at the container's full width, and stands in a row again once the
+// row fits. It never scrolls sideways. data-sf-stacked carries the state, so
+// an author's data-orientation is never rewritten, and a group whose author
+// set an orientation keeps it. The segmented track and sf-segmented keep their
+// own answer (a scroll, a fold), and overflow="more" keeps its row.
+//
+// A container query cannot ask whether the content fits, so the group
+// measures: the row's extent against its own box, both read with the row laid
+// out. It decides synchronously when it binds and in a ResizeObserver
+// callback, both before paint, so a stacked group's first frame is a column.
+
+
+function stackWanted(root) {
+  return !root[AUTHOR_ORIENTATION_KEY] && root.getAttribute('data-orientation') !== 'vertical' && !root.classList.contains('sf-button-group--segmented') && root.getAttribute('overflow') !== 'more' && !root.parentElement?.matches((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-segmented')) && typeof ResizeObserver !== 'undefined';
+} // The drawn boxes of the row: a Smart host draws none (display: contents),
+// its control does.
+
+
+function drawnBoxes(element, boxes = []) {
+  for (const child of element.children) {
+    if (getComputedStyle(child).display === 'contents') {
+      drawnBoxes(child, boxes);
+      continue;
+    }
+
+    const box = child.getBoundingClientRect();
+    if (box.width || box.height) boxes.push(box);
+  }
+
+  return boxes;
+}
+
+function rowOverflows(root) {
+  if (!root.getClientRects().length) return false;
+  const boxes = drawnBoxes(root);
+  if (boxes.length < 2) return false;
+  const extent = Math.max(...boxes.map(box => box.right)) - Math.min(...boxes.map(box => box.left)); // Half a pixel of rounding, as the row engine allows.
+
+  return extent > (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.rowRoom)(root) + 0.5;
+}
+
+function layoutStack(root) {
+  const state = root[STACK_KEY];
+  if (!state || state.busy) return;
+  state.busy = true;
+
+  try {
+    const was = root.hasAttribute(STACKED); // Read the row as a row; the attribute comes back in the same task, so no
+    // frame ever shows the probe.
+
+    if (was) root.removeAttribute(STACKED);
+    const stacked = rowOverflows(root);
+    if (stacked) root.setAttribute(STACKED, '');
+
+    if (stacked !== was && state.observing) {
+      // The change resizes the boxes this observer watches; it looks again
+      // from the next frame, so the change never reads as a resize loop.
+      state.observer.disconnect();
+      state.observing = false;
+      requestAnimationFrame(() => watchStack(root));
+    }
+  } finally {
+    state.busy = false;
+  }
+}
+
+function watchStack(root) {
+  const state = root[STACK_KEY];
+  if (!state || state.observing) return; // The room (the parent and the group) and each button, whose box widens
+  // when its face arrives later.
+
+  for (const box of [root.parentElement, root, ...drawnChildren(root)].filter(Boolean)) {
+    state.observer.observe(box);
+  }
+
+  state.observing = true;
+}
+
+function drawnChildren(root) {
+  return getItems(root).map(item => item.matches(HOSTS) ? item.firstElementChild : item).filter(Boolean);
+}
+
+function bindStack(root) {
+  const state = root[STACK_KEY];
+
+  if (!stackWanted(root)) {
+    if (state) {
+      state.observer.disconnect();
+      root[STACK_KEY] = null;
+    }
+
+    root.removeAttribute(STACKED);
+    return;
+  }
+
+  if (!state) {
+    root[STACK_KEY] = {
+      observer: new ResizeObserver(() => layoutStack(root)),
+      busy: false,
+      observing: false
+    };
+  } else if (state.observing) {
+    // The buttons may have changed: watch the current ones.
+    state.observer.disconnect();
+    state.observing = false;
+  }
+
+  layoutStack(root);
+  watchStack(root);
 }
 
 function bindButtonGroup(root) {
   if (!(root instanceof HTMLElement) || root[OBSERVER_KEY]) {
     if (root instanceof HTMLElement && !root[OVERFLOW_KEY]?.busy) bindOverflow(root);
+    if (root instanceof HTMLElement) bindStack(root);
     return syncButtonGroup(root);
-  }
+  } // An orientation the author wrote is kept, before the group writes its own.
 
+
+  root[AUTHOR_ORIENTATION_KEY] = root.hasAttribute('data-orientation') || root.hasAttribute('aria-orientation');
   syncButtonGroup(root);
   root[OBSERVER_KEY] = new MutationObserver(() => {
     if (root[OVERFLOW_KEY]?.busy) return;
     syncButtonGroup(root);
     bindOverflow(root);
+    bindStack(root);
   });
   root[OBSERVER_KEY].observe(root, {
     childList: true,
@@ -247,6 +372,7 @@ function bindButtonGroup(root) {
     attributeFilter: ['role', 'data-orientation', 'aria-orientation', 'class', 'overflow']
   });
   bindOverflow(root);
+  bindStack(root);
   return root;
 }
 
@@ -910,7 +1036,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -936,7 +1063,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -1142,15 +1271,25 @@ function triggerExtra(textBox, label) {
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
 // first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog.
+// thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
 
-async function standardMenu(owner, field, select) {
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
   await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
   if (owner[field]?.isConnected) return owner[field];
-  const menu = document.createElement('sf-menu-context');
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
   menu.setAttribute('popup', '');
-  menu.addEventListener('sf-menu-context-select', event => select?.(event.detail?.id, event));
-  (owner.closest('dialog[open]') || document.body).append(menu);
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
   owner[field] = menu;
   return menu;
 } // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
@@ -1386,6 +1525,7 @@ async function openRowMenu(owner, {
 }) {
   if (!entries.length) return null;
   const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
   owner._sfRowMoreSelect = select;
   if (label) menu.setAttribute('aria-label', label);
   menu.setAttribute('size', size);
@@ -1410,7 +1550,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1481,15 +1622,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1691,7 +1838,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1796,7 +1943,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1837,6 +1984,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1935,8 +2101,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -2091,7 +2259,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -2111,7 +2280,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -2151,7 +2321,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -2176,7 +2347,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -2186,7 +2358,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -2301,7 +2474,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -2363,15 +2539,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the

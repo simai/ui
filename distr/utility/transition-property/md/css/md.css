@@ -9,6 +9,13 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-all {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition {
       transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, -webkit-text-decoration-color, -webkit-transform, -webkit-filter, -webkit-backdrop-filter;
       transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -16,6 +23,13 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-colors {
       transition-property: color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;
       transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -23,16 +37,37 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-colors {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-opacity {
       transition-property: opacity;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-opacity {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-shadow {
       transition-property: box-shadow;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-shadow {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-transform {
       transition-property: -webkit-transform;
       transition-property: transform;
@@ -40,50 +75,118 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-transform {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-width {
       transition-property: width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-width {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-height {
       transition-property: height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-height {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-size {
       transition-property: width, height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-size {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-max-width {
       transition-property: max-width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-max-width {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-max-height {
       transition-property: max-height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-max-height {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-max-size {
       transition-property: max-width, max-height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-max-size {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-flex {
       transition-property: flex, flex-basis;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-flex {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-flex-basis {
       transition-property: flex-basis;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-flex-basis {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 44rem) {
     .md\:transition-layout {
       transition-property: flex-grow, flex-shrink, flex-basis, width, min-width, max-width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
+    }
+  }
+  @media (min-width: 44rem) and (prefers-reduced-motion: reduce) {
+    .md\:transition-layout {
+      transition-duration: 0.01ms;
     }
   }
 }

@@ -9,6 +9,13 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-all {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition {
       transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, -webkit-text-decoration-color, -webkit-transform, -webkit-filter, -webkit-backdrop-filter;
       transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -16,6 +23,13 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-colors {
       transition-property: color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;
       transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -23,16 +37,37 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-colors {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-opacity {
       transition-property: opacity;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-opacity {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-shadow {
       transition-property: box-shadow;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-shadow {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-transform {
       transition-property: -webkit-transform;
       transition-property: transform;
@@ -40,50 +75,118 @@
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-transform {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-width {
       transition-property: width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-width {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-height {
       transition-property: height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-height {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-size {
       transition-property: width, height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-size {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-max-width {
       transition-property: max-width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-max-width {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-max-height {
       transition-property: max-height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-max-height {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-max-size {
       transition-property: max-width, max-height;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-max-size {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-flex {
       transition-property: flex, flex-basis;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-flex {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-flex-basis {
       transition-property: flex-basis;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
     }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-flex-basis {
+      transition-duration: 0.01ms;
+    }
+  }
+  @media (min-width: 80rem) {
     .xxl\:transition-layout {
       transition-property: flex-grow, flex-shrink, flex-basis, width, min-width, max-width;
       transition-timing-function: var(--sf-ease-move);
       transition-duration: var(--sf-duration-normal);
+    }
+  }
+  @media (min-width: 80rem) and (prefers-reduced-motion: reduce) {
+    .xxl\:transition-layout {
+      transition-duration: 0.01ms;
     }
   }
 }

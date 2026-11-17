@@ -222,9 +222,17 @@
   .sf-slider-dots {
     --sf-slider-dots-dot--color: var(--sf-on-surface);
     --sf-slider-dots-dot--target-size: var(--sf-ui-1\/3--control-height);
-    /* The current dot is a pill as long as three dots (C143 (4)): 24 x 8. */
+    /* One dot size (C143 (4)): 8, the current one a pill as long as three dots,
+       24 x 8. It is the block's own, not a size modifier's: the places of C143
+       (--plate, --bare) write no size, and their dots drew 2 x 2 (RG-OT 5). */
+    --sf-slider-dots-dot--height: var(--sf-a8);
+    --sf-slider-dots-dot--width: var(--sf-a8);
     --sf-slider-dots-dot--active-width: var(--sf-c2);
-    gap: max(var(--sf-slider-dots--gap), var(--sf-slider-dots-dot--target-size) - var(--sf-slider-dots-dot--width) + var(--sf-space-1\/4));
+    /* Dots 8 apart, a step of 16 (owner decision C246): they read as one group.
+       A dot's press area is its step wide and a target high; narrower than 24
+       is allowed, the arrows beside do the same (WCAG 2.5.8). */
+    --sf-slider-dots--gap: var(--sf-space-1\/3);
+    gap: var(--sf-slider-dots--gap);
     -webkit-padding-start: max(0px, (var(--sf-slider-dots-dot--target-size) - var(--sf-slider-dots-dot--width)) / 2);
             padding-inline-start: max(0px, (var(--sf-slider-dots-dot--target-size) - var(--sf-slider-dots-dot--width)) / 2);
     -webkit-padding-start: max(var(--sf-slider-dots--padding-inline-start, 0px), (var(--sf-slider-dots-dot--target-size) - var(--sf-slider-dots-dot--width)) / 2);
@@ -370,7 +378,9 @@
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
-    width: max(100%, var(--sf-slider-dots-dot--target-size));
+    /* The step: the dot (its padding box and both strokes) and the gap (C246). */
+    width: calc(100% + 2 * var(--sf-px) + var(--sf-slider-dots--gap));
+    width: calc(100% + 2 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)) + var(--sf-slider-dots--gap));
     height: max(100%, var(--sf-slider-dots-dot--target-size));
   }
   .sf-slider-dots .sf-slider-dots-dot.active {
@@ -487,17 +497,8 @@
     --sf-slider-dots--padding-inline-start: var(--sf-ui-2--space-y);
     --sf-slider-dots--padding-top: var(--sf-ui-2--space-y);
   }
-  .sf-slider-dots--size-1 {
-    --sf-slider-dots--gap: var(--sf-space-1\/2);
-    --sf-slider-dots-dot--height: var(--sf-a8);
-    --sf-slider-dots-dot--width: var(--sf-a8);
-  }
-  .sf-slider-dots--size-2 {
-    --sf-slider-dots--gap: var(--sf-space-1);
-    /* One dot size (C143 (4)): 8 in both steps; the step keeps its plate. */
-    --sf-slider-dots-dot--height: var(--sf-a8);
-    --sf-slider-dots-dot--width: var(--sf-a8);
-  }
+  /* The size steps keep their plates (the paddings above); the dot and its
+     gap are the block's in both (C143 (4), C246). */
   .sf-slider-dots--framed {
     --sf-slider-dots--border-end-end-radius: var(--sf-radius-3);
     --sf-slider-dots--border-end-start-radius: var(--sf-radius-3);
@@ -593,8 +594,14 @@
 /* In the components layer, as every other component: outside it these rules
    outranked every utility, whatever its layer. */
 @layer sf.components {
-  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-slider-arrows {
+    /* The two arrows are buttons of one group (C105 H5): 8 apart wherever the
+       pair stands in a row of its own -- they touched (0) outside a slider, in
+       the class docs' examples. Over a picture each is placed at its edge, and
+       under cards the controls row says the same gap. */
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sf-space-1\/3);
     background-color: transparent;
     background-color: var(--sf-slider-arrows--background-color, transparent);
     box-shadow: var(--sf-slider-arrows--box-shadow);
@@ -1137,11 +1144,12 @@
   .sf-slider .sf-slider-arrows .sf-icon-button.swiper-button-disabled {
     pointer-events: none;
   }
-  /* A button arrow with nowhere to go is a disabled button (the script sets
-     `disabled`, SL-04) and draws the system's disabled look; an arrow drawn
-     with another element keeps the pale mark. */
+  /* A button arrow with nowhere to go is a disabled button (the engine sets
+     `disabled`, C245) and draws the system's disabled look, once: the engine's
+     fade is for an arrow drawn with another element (RG-OT 6), the system's
+     disabled opacity (C18). */
   .sf-slider .sf-slider-arrows .sf-icon-button.swiper-button-disabled:not(:disabled) {
-    opacity: 0.4;
+    opacity: var(--sf-opacity-disabled);
   }
   /* From eight slides a counter «2 / 12» stands in the dots' place (C143 (4)),
      on the same plate or at the same row start; the figures do not move as
@@ -1206,10 +1214,10 @@
     border-radius: var(--sf-slider-thumbnail--border-radius, var(--sf-slider-thumbnail-radius, var(--sf-radius--ui)));
   }
   .sf-slider .sf-slider-thumbnails .swiper-slide.focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-slider .sf-slider-thumbnails .swiper-slide:focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
+    outline-offset: var(--sf-focus--inset);
   }
   /* With thumbnails the controls over a picture stand on the slides only: the
      arrows centred on the picture, the place at its bottom, not over the

@@ -316,7 +316,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -336,7 +337,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -376,7 +378,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -401,7 +404,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -411,7 +415,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -531,7 +536,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -593,15 +601,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1758,9 +1769,10 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       }), 'tooltip') : '',
       entries: look === 'menu' || look === 'search' ? this.menuEntries(list, current, look === 'search' ? this._query : '') : [],
       search: look === 'search' ? this.searchOptions() : null,
-      // The field look (C142 (8)): sf-dropdown on its own ladder (1/2, 1, 2),
-      // its search from searchFrom languages.
-      fieldSize: size === '1/3' ? '1/2' : size === '3' ? '2' : size,
+      // The field look (C142 (8)): sf-dropdown of the same size -- it stands
+      // on the whole field ladder since sf-dropdown 1.18.0 (it drew 1/3 and 3
+      // at 1/2 and 2) -- its search from searchFrom languages.
+      fieldSize: size,
       fieldOptions: look === 'field' ? this.fieldOptions(list) : [],
       fieldSearch: look === 'field' && list.length >= (Number(this.searchFrom) || 8),
       rootClass: this.getRootClass()
@@ -2441,7 +2453,7 @@ function renderField(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown
       class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
       mode="select"
-      appearance="outlined"
+      appearance="bordered"
       size=${context.fieldSize}
       label=${context.label}
       .options=${context.fieldOptions}
@@ -2518,14 +2530,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.4.4","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.5.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
 /***/ "9937e6b314d1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native), in English (en) and in Russian (ru), the component\'s two languages. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with all three names.","names":{"ru":{"native":"русский","en":"Russian","ru":"русский"},"en":{"native":"English","en":"English","ru":"английский"},"de":{"native":"Deutsch","en":"German","ru":"немецкий"},"fr":{"native":"français","en":"French","ru":"французский"},"es":{"native":"español","en":"Spanish","ru":"испанский"},"it":{"native":"italiano","en":"Italian","ru":"итальянский"},"pt":{"native":"português","en":"Portuguese","ru":"португальский"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese","ru":"бразильский португальский"},"pt-PT":{"native":"português europeu","en":"European Portuguese","ru":"европейский португальский"},"tr":{"native":"Türkçe","en":"Turkish","ru":"турецкий"},"pl":{"native":"polski","en":"Polish","ru":"польский"},"uk":{"native":"українська","en":"Ukrainian","ru":"украинский"},"be":{"native":"беларуская","en":"Belarusian","ru":"белорусский"},"kk":{"native":"қазақ тілі","en":"Kazakh","ru":"казахский"},"uz":{"native":"o‘zbek","en":"Uzbek","ru":"узбекский"},"az":{"native":"azərbaycan","en":"Azerbaijani","ru":"азербайджанский"},"hy":{"native":"հայերեն","en":"Armenian","ru":"армянский"},"ka":{"native":"ქართული","en":"Georgian","ru":"грузинский"},"he":{"native":"עברית","en":"Hebrew","ru":"иврит"},"ar":{"native":"العربية","en":"Arabic","ru":"арабский"},"fa":{"native":"فارسی","en":"Persian","ru":"персидский"},"hi":{"native":"हिन्दी","en":"Hindi","ru":"хинди"},"bn":{"native":"বাংলা","en":"Bangla","ru":"бенгальский"},"ja":{"native":"日本語","en":"Japanese","ru":"японский"},"ko":{"native":"한국어","en":"Korean","ru":"корейский"},"zh":{"native":"中文","en":"Chinese","ru":"китайский"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese","ru":"китайский, упрощенное письмо"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese","ru":"китайский, традиционное письмо"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)","ru":"китайский (Тайвань)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese","ru":"вьетнамский"},"th":{"native":"ไทย","en":"Thai","ru":"тайский"},"id":{"native":"Indonesia","en":"Indonesian","ru":"индонезийский"},"ms":{"native":"Melayu","en":"Malay","ru":"малайский"},"nl":{"native":"Nederlands","en":"Dutch","ru":"нидерландский"},"sv":{"native":"svenska","en":"Swedish","ru":"шведский"},"no":{"native":"norsk","en":"Norwegian","ru":"норвежский"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål","ru":"норвежский букмол"},"da":{"native":"dansk","en":"Danish","ru":"датский"},"fi":{"native":"suomi","en":"Finnish","ru":"финский"},"cs":{"native":"čeština","en":"Czech","ru":"чешский"},"sk":{"native":"slovenčina","en":"Slovak","ru":"словацкий"},"hu":{"native":"magyar","en":"Hungarian","ru":"венгерский"},"ro":{"native":"română","en":"Romanian","ru":"румынский"},"bg":{"native":"български","en":"Bulgarian","ru":"болгарский"},"el":{"native":"Ελληνικά","en":"Greek","ru":"греческий"},"tt":{"native":"татар","en":"Tatar","ru":"татарский"},"ky":{"native":"кыргызча","en":"Kyrgyz","ru":"киргизский"},"tg":{"native":"тоҷикӣ","en":"Tajik","ru":"таджикский"},"ba":{"native":"башҡорт","en":"Bashkir","ru":"башкирский"},"sah":{"native":"саха тыла","en":"Yakut","ru":"саха"},"tk":{"native":"türkmen dili","en":"Turkmen","ru":"туркменский"},"mn":{"native":"монгол","en":"Mongolian","ru":"монгольский"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash","ru":"чувашский"},"ce":{"native":"нохчийн","en":"Chechen","ru":"чеченский"},"os":{"native":"ирон","en":"Ossetic","ru":"осетинский"},"lv":{"native":"latviešu","en":"Latvian","ru":"латышский"},"lt":{"native":"lietuvių","en":"Lithuanian","ru":"литовский"},"et":{"native":"eesti","en":"Estonian","ru":"эстонский"},"sr":{"native":"српски","en":"Serbian","ru":"сербский"},"hr":{"native":"hrvatski","en":"Croatian","ru":"хорватский"},"sl":{"native":"slovenščina","en":"Slovenian","ru":"словенский"},"mk":{"native":"македонски","en":"Macedonian","ru":"македонский"},"sq":{"native":"shqip","en":"Albanian","ru":"албанский"},"bs":{"native":"bosanski","en":"Bosnian","ru":"боснийский"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur","ru":"уйгурский"},"ur":{"native":"اردو","en":"Urdu","ru":"урду"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native), in English (en) and in Russian (ru), the component\'s two languages. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with all three names.","names":{"ru":{"native":"русский","en":"Russian","ru":"русский"},"en":{"native":"English","en":"English","ru":"английский"},"de":{"native":"Deutsch","en":"German","ru":"немецкий"},"fr":{"native":"français","en":"French","ru":"французский"},"es":{"native":"español","en":"Spanish","ru":"испанский"},"it":{"native":"italiano","en":"Italian","ru":"итальянский"},"pt":{"native":"português","en":"Portuguese","ru":"португальский"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese","ru":"бразильский португальский"},"pt-PT":{"native":"português europeu","en":"European Portuguese","ru":"европейский португальский"},"tr":{"native":"Türkçe","en":"Turkish","ru":"турецкий"},"pl":{"native":"polski","en":"Polish","ru":"польский"},"uk":{"native":"українська","en":"Ukrainian","ru":"украинский"},"be":{"native":"беларуская","en":"Belarusian","ru":"белорусский"},"uz":{"native":"o‘zbek","en":"Uzbek","ru":"узбекский"},"az":{"native":"azərbaycan","en":"Azerbaijani","ru":"азербайджанский"},"hy":{"native":"հայերեն","en":"Armenian","ru":"армянский"},"ka":{"native":"ქართული","en":"Georgian","ru":"грузинский"},"he":{"native":"עברית","en":"Hebrew","ru":"иврит"},"ar":{"native":"العربية","en":"Arabic","ru":"арабский"},"fa":{"native":"فارسی","en":"Persian","ru":"персидский"},"hi":{"native":"हिन्दी","en":"Hindi","ru":"хинди"},"bn":{"native":"বাংলা","en":"Bangla","ru":"бенгальский"},"ja":{"native":"日本語","en":"Japanese","ru":"японский"},"ko":{"native":"한국어","en":"Korean","ru":"корейский"},"zh":{"native":"中文","en":"Chinese","ru":"китайский"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese","ru":"китайский, упрощенное письмо"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese","ru":"китайский, традиционное письмо"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)","ru":"китайский (Тайвань)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese","ru":"вьетнамский"},"th":{"native":"ไทย","en":"Thai","ru":"тайский"},"id":{"native":"Indonesia","en":"Indonesian","ru":"индонезийский"},"ms":{"native":"Melayu","en":"Malay","ru":"малайский"},"nl":{"native":"Nederlands","en":"Dutch","ru":"нидерландский"},"sv":{"native":"svenska","en":"Swedish","ru":"шведский"},"no":{"native":"norsk","en":"Norwegian","ru":"норвежский"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål","ru":"норвежский букмол"},"da":{"native":"dansk","en":"Danish","ru":"датский"},"fi":{"native":"suomi","en":"Finnish","ru":"финский"},"cs":{"native":"čeština","en":"Czech","ru":"чешский"},"sk":{"native":"slovenčina","en":"Slovak","ru":"словацкий"},"hu":{"native":"magyar","en":"Hungarian","ru":"венгерский"},"ro":{"native":"română","en":"Romanian","ru":"румынский"},"bg":{"native":"български","en":"Bulgarian","ru":"болгарский"},"el":{"native":"Ελληνικά","en":"Greek","ru":"греческий"},"tt":{"native":"татар","en":"Tatar","ru":"татарский"},"ky":{"native":"кыргызча","en":"Kyrgyz","ru":"киргизский"},"tg":{"native":"тоҷикӣ","en":"Tajik","ru":"таджикский"},"ba":{"native":"башҡорт","en":"Bashkir","ru":"башкирский"},"sah":{"native":"саха тыла","en":"Yakut","ru":"саха"},"tk":{"native":"türkmen dili","en":"Turkmen","ru":"туркменский"},"mn":{"native":"монгол","en":"Mongolian","ru":"монгольский"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash","ru":"чувашский"},"ce":{"native":"нохчийн","en":"Chechen","ru":"чеченский"},"os":{"native":"ирон","en":"Ossetic","ru":"осетинский"},"lv":{"native":"latviešu","en":"Latvian","ru":"латышский"},"lt":{"native":"lietuvių","en":"Lithuanian","ru":"литовский"},"et":{"native":"eesti","en":"Estonian","ru":"эстонский"},"sr":{"native":"српски","en":"Serbian","ru":"сербский"},"hr":{"native":"hrvatski","en":"Croatian","ru":"хорватский"},"sl":{"native":"slovenščina","en":"Slovenian","ru":"словенский"},"mk":{"native":"македонски","en":"Macedonian","ru":"македонский"},"sq":{"native":"shqip","en":"Albanian","ru":"албанский"},"bs":{"native":"bosanski","en":"Bosnian","ru":"боснийский"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur","ru":"уйгурский"},"ur":{"native":"اردو","en":"Urdu","ru":"урду"}}}');
 
 /***/ },
 

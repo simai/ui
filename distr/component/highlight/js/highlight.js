@@ -11,7 +11,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   highlightAllLazy: () => (/* binding */ highlightAllLazy),
 /* harmony export */   highlightBlock: () => (/* binding */ highlightBlock),
 /* harmony export */   lineNumbersEnabled: () => (/* binding */ lineNumbersEnabled),
+/* harmony export */   lineRanges: () => (/* binding */ lineRanges),
 /* harmony export */   normalizeLanguage: () => (/* binding */ normalizeLanguage),
+/* harmony export */   readLineMarks: () => (/* binding */ readLineMarks),
 /* harmony export */   refresh: () => (/* binding */ refresh),
 /* harmony export */   requestedLanguage: () => (/* binding */ requestedLanguage)
 /* harmony export */ });
@@ -37,8 +39,13 @@ const HIGHLIGHT_TEXT = {
 const CODE_SELECTOR = 'pre code';
 const ROOT_SELECTOR = '.sf-highlight, .source';
 const CHROME_MODES = new Set(['auto', 'none', 'static']);
-const highlightedNodes = new WeakSet();
+const highlightedNodes = new WeakSet(); // The text a block was given (its markers included), for refresh, and the
+// text it shows, for telling an edit from its own drawing.
+
 const sourceText = new WeakMap();
+const drawnText = new WeakMap(); // Each line's marks (diff, marked, focus, terminal prompt and output).
+
+const lineMarks = new WeakMap();
 const plugins = [];
 const supportedLanguages = new Set(_languages__WEBPACK_IMPORTED_MODULE_1__.AVAILABLE_LANGUAGES);
 const languageAliases = { ..._languages__WEBPACK_IMPORTED_MODULE_1__.LANGUAGE_ALIASES
@@ -146,7 +153,111 @@ const hljs = {
 
 };
 (0,_line_numbers__WEBPACK_IMPORTED_MODULE_0__.initLineNumbers)(hljs);
-if (typeof window !== 'undefined') window.hljs = hljs;
+if (typeof window !== 'undefined') window.hljs = hljs; // ---- Line marks (owner decisions C255-C258) ----
+// An author marks lines two ways (C258): attributes of the block, for ranges
+// and for code that cannot be edited (data-mark, data-focus, data-add,
+// data-remove, each a list such as "2,4-5"; data-frame="terminal"), and
+// Shiki's markers at the end of a line, as Docara and VitePress write them:
+// a comment holding [!code ++], [!code --], [!code highlight] or
+// [!code focus], with an optional :N for N lines from this one
+// ([!code highlight:3]). The marker
+// and its comment leave the text before it is coloured, shown or copied;
+// [!!code ...] shows a marker as text.
+
+const LINE_MARKER = /[ \t]*(?:\/\/|\/\*|#|<!--|--|;|%|')[ \t]*\[!code[ \t]+(\+\+|--|highlight|hl|focus)(?::(\d+))?\][ \t]*(?:\*\/|-->)?[ \t]*$/u; // Languages whose text shows Markdown: a marker there is text to show.
+
+const LITERAL_LANGUAGES = new Set(['markdown', 'md']);
+
+function blockOption(block, name) {
+  const holders = [block, block.closest('pre'), block.closest(ROOT_SELECTOR)];
+
+  for (const holder of holders) {
+    const value = holder?.getAttribute(name);
+    if (value !== null && value !== undefined) return value;
+  }
+
+  return null;
+} // "2,4-6" (commas or spaces) as line indexes from 0; a part that is not a
+// number or a range, or a line the block does not have, is left out.
+
+
+function lineRanges(value, count) {
+  const indexes = new Set();
+  String(value || '').split(/[\s,]+/u).forEach(part => {
+    const match = /^(\d+)(?:-(\d+))?$/u.exec(part);
+    if (!match) return;
+    const from = Number(match[1]);
+    const to = match[2] ? Number(match[2]) : from;
+
+    for (let line = Math.max(1, from); line <= Math.min(to, count); line++) indexes.add(line - 1);
+  });
+  return indexes;
+}
+
+function terminalFrame(block) {
+  return blockOption(block, 'data-frame') === 'terminal';
+} // The text to colour and each line's marks.
+
+
+function readLineMarks(block, source, language) {
+  const texts = String(source).split(/\r?\n/u);
+  const lines = texts.map(() => ({
+    diff: '',
+    mark: false,
+    focus: false,
+    prompt: false,
+    output: false,
+    skip: false
+  }));
+
+  const apply = (index, kind, count = 1) => {
+    for (let line = index; line < Math.min(index + Math.max(1, count), lines.length); line++) {
+      if (kind === '++') lines[line].diff = 'add';else if (kind === '--') lines[line].diff = 'remove';else if (kind === 'focus') lines[line].focus = true;else lines[line].mark = true;
+    }
+  };
+
+  if (!LITERAL_LANGUAGES.has(language)) {
+    texts.forEach((text, index) => {
+      const match = LINE_MARKER.exec(text);
+
+      if (match) {
+        texts[index] = text.slice(0, match.index);
+        apply(index, match[1], match[2] ? Number(match[2]) : 1);
+      }
+
+      texts[index] = texts[index].replaceAll('[!!code ', '[!code ');
+    });
+  }
+
+  lineRanges(blockOption(block, 'data-mark'), lines.length).forEach(index => apply(index, 'highlight'));
+  lineRanges(blockOption(block, 'data-focus'), lines.length).forEach(index => apply(index, 'focus'));
+  lineRanges(blockOption(block, 'data-add'), lines.length).forEach(index => apply(index, '++'));
+  lineRanges(blockOption(block, 'data-remove'), lines.length).forEach(index => apply(index, '--')); // A terminal (C257): a line that starts with "$ " is a command, the prompt
+  // drawn by the stylesheet; the others are its output, which copy leaves
+  // behind. A terminal without a prompt is all commands.
+
+  const terminal = terminalFrame(block);
+
+  if (terminal && texts.some(text => /^\$(?: |$)/u.test(text))) {
+    texts.forEach((text, index) => {
+      if (/^\$(?: |$)/u.test(text)) {
+        lines[index].prompt = true;
+        texts[index] = text.slice(2);
+      } else lines[index].output = true;
+    });
+  }
+
+  lines.forEach(line => {
+    line.skip = line.diff === 'remove' || line.output;
+  });
+  const marked = lines.some(line => line.diff || line.mark || line.focus || line.prompt || line.output);
+  return {
+    text: texts.join('\n'),
+    lines,
+    marked,
+    terminal
+  };
+}
 
 function chromeMode(block, root) {
   const value = block.dataset.chrome || root?.dataset.chrome || root?.dataset.sfHighlightChrome || 'auto';
@@ -167,6 +278,33 @@ function ensureCodeId(block) {
   } while (block.ownerDocument.getElementById(block.id) !== block);
 
   return block.id;
+} // A head button's name, shown as the Framework tooltip on hover and keyboard
+// focus (C48, C217: an icon without words says what it does). The class
+// markup of the tooltip component, as the clipboard component writes it for
+// an icon-only copy; a button that already names a tooltip keeps it, and the
+// clipboard sees this one and adds none.
+
+
+function nameTooltip(button, text, base) {
+  if (!text || button.hasAttribute('data-tooltip')) return;
+  const doc = button.ownerDocument;
+  const surface = doc.createElement('span');
+  surface.className = 'sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-highlight__name';
+  surface.hidden = true;
+  let id = `${base}-${button.classList.contains('sf-highlight__copy') ? 'copy' : 'wrap'}-name`;
+
+  for (let index = 2; doc.getElementById(id); index++) id = id.replace(/(?:-\d+)?$/u, `-${index}`);
+
+  surface.id = id;
+  const content = doc.createElement('span');
+  content.className = 'sf-tooltip-content';
+  const words = doc.createElement('span');
+  words.className = 'sf-tooltip-text';
+  words.textContent = text;
+  content.append(words);
+  surface.append(content);
+  button.after(surface);
+  button.setAttribute('data-tooltip', id);
 }
 
 function localizedCopyStrings(block, root) {
@@ -211,6 +349,7 @@ function ensureCopyButton(block, root, head) {
   icon.setAttribute('aria-hidden', 'true');
   button.append(icon);
   head.append(button);
+  nameTooltip(button, strings.label, codeElementId);
   return button;
 } // Line wrapping, beside copy: a toggle that wraps long lines instead of
 // scrolling them sideways (owner request through the effects catalogue,
@@ -227,9 +366,13 @@ function ensureWrapButton(block, root, head) {
   const wrapped = root.dataset.wrap === 'true';
   root.classList.toggle('sf-highlight--wrap', wrapped);
   button = block.ownerDocument.createElement('button');
-  button.type = 'button';
-  button.className = 'sf-highlight__wrap-toggle sf-icon-button sf-icon-button--size-1/2 sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center';
-  button.setAttribute('aria-label', root.dataset.wrapLabel || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'wrap', block, 'sf-highlight'));
+  button.type = 'button'; // Plain as copy beside it (owner decision C232): no plate in any state;
+  // pressed, its glyph is primary and filled -- two cues, not colour alone
+  // (C12; the icon buttons fill a pressed toggle's glyph).
+
+  button.className = 'sf-highlight__wrap-toggle sf-icon-button sf-icon-button--size-1/2 sf-icon-button--icon sf-icon-button--plain sf-icon-button--on-surface flex items-cross-center';
+  const wrapLabel = root.dataset.wrapLabel || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'wrap', block, 'sf-highlight');
+  button.setAttribute('aria-label', wrapLabel);
   button.setAttribute('aria-pressed', String(wrapped));
   button.setAttribute('aria-controls', ensureCodeId(block));
   const icon = block.ownerDocument.createElement('span');
@@ -245,6 +388,7 @@ function ensureWrapButton(block, root, head) {
   });
   const copy = head.querySelector(':scope > .sf-highlight__copy');
   head.insertBefore(button, copy);
+  nameTooltip(button, wrapLabel, button.getAttribute('aria-controls'));
   return button;
 }
 
@@ -332,9 +476,22 @@ function updateChrome(block, result) {
     language = block.ownerDocument.createElement('span');
     language.className = 'sf-highlight__language sf-text-1/2 weight-5';
     head.prepend(language);
-  }
+  } // A terminal (C257) names itself in the head: its icon and the word, in
+  // the language of the block; the frame follows the site theme.
 
-  language.textContent = block.dataset.requestedLang || result.language || 'text';
+
+  const terminal = lineMarks.get(block)?.terminal === true;
+  root.classList.toggle('sf-highlight--terminal', terminal);
+
+  if (terminal) {
+    const icon = block.ownerDocument.createElement('span'); // Icon step 2: 20 on a desktop, 16 on a phone, the code's line height.
+
+    icon.className = 'sf-icon sf-icon--size-2';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = 'terminal';
+    language.replaceChildren(icon, block.ownerDocument.createTextNode((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'terminal', block, 'sf-highlight')));
+  } else language.textContent = block.dataset.requestedLang || result.language || 'text';
+
   ensureCopyButton(block, root, head);
   ensureWrapButton(block, root, head);
 }
@@ -348,7 +505,19 @@ hljs.addPlugin({
     result
   }) => {
     updateChrome(el, result);
-    if (lineNumbersEnabled(el)) hljs.lineNumbersBlock(el);
+    const marks = lineMarks.get(el);
+    const numbers = lineNumbersEnabled(el);
+
+    if (numbers || marks?.marked) {
+      hljs.lineNumbersBlock(el, {
+        numbers,
+        lines: marks?.lines,
+        words: {
+          add: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'added', el, 'sf-highlight'),
+          remove: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'removed', el, 'sf-highlight')
+        }
+      });
+    }
   }
 });
 
@@ -365,10 +534,14 @@ async function highlightBlock(block) {
   // when a page filled it later (ui-effects site, a code block in a tab).
 
   if (block.textContent.trim() === '') return false;
-  block.textContent = block.textContent.trim();
-  sourceText.set(block, block.textContent);
+  const source = block.textContent.trim();
+  sourceText.set(block, source);
   const requested = requestedLanguage(block);
   const language = normalizeLanguage(requested || 'plaintext');
+  const marks = readLineMarks(block, source, language);
+  lineMarks.set(block, marks);
+  drawnText.set(block, marks.text);
+  block.textContent = marks.text;
   block.dataset.requestedLang = requested;
   block.dataset.highlightState = hljs.getLanguage(language) ? 'ready' : 'unsupported';
   if (!hljs.getLanguage(language)) block.classList.add('language-plaintext');
@@ -410,7 +583,7 @@ if (typeof document !== 'undefined') {
 
   const textChanged = block => {
     if (!block) return;
-    if (!block.dataset.highlighted && !highlightedNodes.has(block)) highlightBlock(block);else if (block.textContent.trim() !== (sourceText.get(block) ?? '').trim()) refresh(block, block.textContent.trim());
+    if (!block.dataset.highlighted && !highlightedNodes.has(block)) highlightBlock(block);else if (block.textContent.trim() !== (drawnText.get(block) ?? sourceText.get(block) ?? '').trim()) refresh(block, block.textContent.trim());
   };
 
   const observer = new MutationObserver(mutations => mutations.forEach(mutation => {
@@ -472,29 +645,108 @@ const CUSTOM_LANGUAGE_LOADERS = Object.freeze({});
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   initLineNumbers: () => (/* binding */ initLineNumbers)
+/* harmony export */   initLineNumbers: () => (/* binding */ initLineNumbers),
+/* harmony export */   splitLines: () => (/* binding */ splitLines)
 /* harmony export */ });
+// The block's rows: one row per line, with the parts a line can carry --
+// its number (data-lines, C254), a diff sign (C255), a prompt in a terminal
+// (C257) -- and the marks the stylesheet draws (a marked or focused line,
+// C256). The highlighter's colours are written into each row's content.
+// The coloured HTML split at its line breaks. A token that spans lines (a
+// block comment, a template string) is one <span> across them: split as it
+// was, its first row lost the closing tag and the next its opening one, so
+// the rest of the token lost its colour. Each row closes what is still open
+// at its end and the next opens it again.
+function splitLines(html) {
+  const rows = [];
+  const open = [];
+  let row = '';
+  const tag = /<(\/?)span\b[^>]*>|\r?\n/g;
+  let cursor = 0;
+
+  for (const match of html.matchAll(tag)) {
+    row += html.slice(cursor, match.index);
+    cursor = match.index + match[0].length;
+
+    if (match[0].startsWith('<')) {
+      if (match[1]) open.pop();else open.push(match[0]);
+      row += match[0];
+    } else {
+      rows.push(row + '</span>'.repeat(open.length));
+      row = open.join('');
+    }
+  }
+
+  rows.push(row + html.slice(cursor));
+  return rows;
+}
+
 function initLineNumbers(engine) {
-  function lineNumbersBlock(element) {
+  // options.numbers: draw the number column; options.lines: one entry per
+  // line, {diff: 'add'|'remove'|'', mark, focus, prompt, output, skip};
+  // options.words: the words read aloud before a changed line.
+  function lineNumbersBlock(element, options = {}) {
     if (!element || element.querySelector(':scope > .sf-code-lines')) return;
-    const lines = element.innerHTML.split(/\r?\n/); // data-start: the number of the first line, for an excerpt of a longer file.
+    const doc = element.ownerDocument;
+    const lines = splitLines(element.innerHTML);
+    const numbers = options.numbers !== false;
+    const marks = Array.isArray(options.lines) ? options.lines : [];
+    const diff = marks.some(line => line?.diff); // data-start: the number of the first line, for an excerpt of a longer file.
 
     const start = Number.parseInt(element.dataset.start ?? element.closest?.('[data-start]')?.dataset.start ?? '1', 10);
     const first = Number.isFinite(start) ? start : 1;
-    const table = element.ownerDocument.createElement('span');
+    const table = doc.createElement('span');
     table.className = 'sf-code-lines';
     table.setAttribute('role', 'presentation');
+    if (diff) table.dataset.diff = 'true';
     lines.forEach((line, index) => {
-      const row = element.ownerDocument.createElement('span');
+      const mark = marks[index] || {};
+      const row = doc.createElement('span');
       row.className = 'sf-code-line';
-      const number = element.ownerDocument.createElement('span');
-      number.className = 'sf-code-line__number';
-      number.textContent = String(first + index);
-      number.setAttribute('aria-hidden', 'true');
-      const code = element.ownerDocument.createElement('span');
+      if (mark.diff) row.dataset.lineDiff = mark.diff;
+      if (mark.mark) row.dataset.lineMark = '';
+      if (mark.focus) row.dataset.lineFocus = '';
+      if (mark.prompt) row.dataset.linePrompt = '';
+      if (mark.output) row.dataset.lineOutput = ''; // What copy leaves behind (core readCopyText): a removed line, and the
+      // output of a terminal (C255, C257).
+
+      if (mark.skip) row.dataset.copy = 'false';
+
+      if (numbers) {
+        const number = doc.createElement('span');
+        number.className = 'sf-code-line__number';
+        number.textContent = String(first + index);
+        number.setAttribute('aria-hidden', 'true');
+        row.append(number);
+      }
+
+      if (diff) {
+        // The sign is the stylesheet's (::before), so it is neither copied
+        // nor selected; a screen reader hears the word instead.
+        const sign = doc.createElement('span');
+        sign.className = 'sf-code-line__sign';
+        sign.setAttribute('aria-hidden', 'true');
+        row.append(sign);
+
+        if (mark.diff) {
+          const state = doc.createElement('span');
+          state.className = 'sf-code-line__state';
+          state.textContent = `${options.words?.[mark.diff] || mark.diff}: `;
+          row.append(state);
+        }
+      }
+
+      if (mark.prompt) {
+        const prompt = doc.createElement('span');
+        prompt.className = 'sf-code-line__prompt';
+        prompt.setAttribute('aria-hidden', 'true');
+        row.append(prompt);
+      }
+
+      const code = doc.createElement('span');
       code.className = 'sf-code-line__content';
       code.innerHTML = line || ' ';
-      row.append(number, code);
+      row.append(code);
       table.append(row);
     });
     element.replaceChildren(table);
@@ -507,6 +759,7 @@ function initLineNumbers(engine) {
 
   return engine;
 }
+
 
 /***/ },
 
@@ -866,7 +1119,8 @@ function noteDeprecated({
   tag,
   since,
   remove_after: removeAfter,
-  expired
+  expired,
+  package: pkg
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
@@ -892,7 +1146,9 @@ function noteDeprecated({
 
   if (tag !== undefined) note.tag = tag;
   if (since !== undefined) note.since = since;
-  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (removeAfter !== undefined) note.remove_after = removeAfter; // The component package that ships the new name, for a package's element.
+
+  if (pkg) note.package = pkg;
   if (expired === true) note.expired = true;
 
   if (firstExpiry) {
@@ -945,7 +1201,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord),
-/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage)
+/* harmony export */   refreshLanguage: () => (/* binding */ refreshLanguage),
+/* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
@@ -1016,15 +1273,21 @@ const PACKS = STORE.packs ??= {
 };
 
 const isBuiltIn = code => code === 'ru' || code === 'en';
-/** Ask core for the pack of a language this page speaks (nothing for ru and en). */
+/**
+ * Ask core for the pack of a language this page speaks (nothing for ru and
+ * en), and for the part that holds `component`'s words: the Framework's pack
+ * comes in parts by family (core/js/language-packs.js). A core from before
+ * parts takes the language alone.
+ */
 
 
-function needPack(code) {
+function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
   if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
-  PACKS.request(base);
-  if (wanted !== base) PACKS.request(wanted);
+  const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+  PACKS.request(base, name);
+  if (wanted !== base) PACKS.request(wanted, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1226,7 +1489,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
-  needPack(order[0]);
+  needPack(order[0], component);
 
   for (const candidate of order) {
     const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
@@ -1331,7 +1594,7 @@ function pageWord(dictionary, key, node, {
   const sourceLanguage = normalise(source);
   if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
-  needPack(locale);
+  needPack(locale, owner);
 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
@@ -1372,6 +1635,25 @@ function pageWord(dictionary, key, node, {
 
   warnWord(owner, key, locale, 'key');
   return key;
+}
+/**
+ * The word a product registered (SF.language.register, or a product pack)
+ * under `key` for the node's language, its base language or English; the
+ * words a component ships are not read. Undefined when none is registered.
+ * A removed word key kept as a dated alias reads this: the old phrase is
+ * said only while a product still writes the old key.
+ */
+
+function registeredWord(component, key, node) {
+  const byLanguage = wordsOf(component ?? componentOf(node));
+  if (!byLanguage) return undefined;
+
+  for (const candidate of chain(pageLocale(node))) {
+    const word = byLanguage.get(candidate)?.[key];
+    if (word !== undefined && word !== null) return word;
+  }
+
+  return undefined;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -1470,8 +1752,10 @@ const language = {
       words,
       url
     };
-    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]);
-    announce();
+    PACKS.loaded.set(code, [...(PACKS.loaded.get(code) ?? []), info]); // Core registers the parts that arrived together and draws once
+    // (PACKS.quiet while it does).
+
+    if (!PACKS.quiet) announce();
     return info;
   },
 
@@ -1626,7 +1910,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-content-editor',
   to: 'sf-editor-content',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
@@ -1646,7 +1931,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-data-view',
   to: 'sf-view',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-datepicker',
   to: 'sf-input-date',
@@ -1686,7 +1972,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-property-view',
   to: 'sf-view-properties',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
@@ -1711,7 +1998,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-table',
   to: 'sf-view-table',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 }), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
@@ -1721,7 +2009,8 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-thread-list',
   to: 'sf-chat-threads',
   since: '2026-11-03',
-  remove_after: '2027-01-01'
+  remove_after: '2027-01-01',
+  package: 'pro'
 })]));
 
 /***/ },
@@ -1836,7 +2125,10 @@ function registerTagAliasRows(rows) {
       from: row.from,
       to: row.to,
       since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
+      remove_after: String(row.remove_after ?? ''),
+      ...(typeof row.package === 'string' && row.package ? {
+        package: row.package
+      } : {})
     });
     addRow(shared, clean);
     taken.push(clean);
@@ -1898,15 +2190,18 @@ function noteTagAlias(row) {
     tag: row.to,
     since: row.since,
     remove_after: row.remove_after,
-    expired
+    expired,
+    package: row.package
   });
   if (shared.noted.has(row.from)) return;
   shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
   // page opted in; the note here is for the rest.
 
   const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+  if (expired || optedIn) return; // A package's element says which package ships it now (C174 NM-3).
+
+  const where = row.package ? ` from the component package ${row.package}` : '';
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>${where}. See contracts/changes/journal.json.`);
 } // Defines each old tag of `tag` as a subclass of `Base` (the class that
 // defines `tag`), through `define(name, Class)`: the Smart base passes its
 // definition queue, so both names are defined in the same batch. Returns the
@@ -1990,14 +2285,14 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "c70908199f23"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Copy code","copied":"Code copied","wrap":"Wrap lines"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Copy code","copied":"Code copied","wrap":"Wrap lines","added":"added","removed":"removed","terminal":"Terminal"}}');
 
 /***/ },
 
 /***/ "4e396be5ffee"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Копировать код","copied":"Код скопирован","wrap":"Переносить строки"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Копировать код","copied":"Код скопирован","wrap":"Переносить строки","added":"добавлено","removed":"удалено","terminal":"Терминал"}}');
 
 /***/ }
 

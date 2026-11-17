@@ -4,7 +4,7 @@
     background-color: #2B74E1;
   }
   .bg-fb-messenger {
-    background-color: linear-gradient(to bottom, #e72c83 0%, #a742c6 100%);
+    background-color: #e72c83; background-image: linear-gradient(to bottom, #e72c83 0%, #a742c6 100%);
   }
   .bg-youtube {
     background-color: #F60D00;
