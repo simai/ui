@@ -8,6 +8,15 @@
 
 ### Добавлено
 
+- Pair next 11 (group build 9, ui-source integration/pair-next-11: 69 branches over ui-078a4b4c6f6e).
+- Languages: C278 the Kazakh interface pack is withdrawn (pages with lang=kk fall back to the default language); the language registry `language-registry.v1.json` lists Arabic as the 11th entry; dated aliases until 2027-01-01 for the four word keys fix/languages-g1 removed.
+- Utilities: C212 families (hide, layout, text, length, alignment, colour, gradient, focus), Tailwind conversion helpers, C210 scrollbars (the track declares its defaults from the scroll system), C57 patterns.
+- Buttons and content: C116 button families, icon button ink, button group icons, C14 close, C113 FAB; content glyphs, media (C229 avatars, C231 card header), structure (C228, C233), C254 highlight; C236 the sf-reference-link card holds the name and the route under it at every width.
+- Fields: C224-C227 field sizes and fills (C283: sf-input-quantity and sf-quantity stay bordered by default, `sf-quantity--filled` opt-in), datepicker, country code, range slider, file upload (one row height, C260), choice, verification.
+- Navigation and overlays: menus, crumbs, pages, steps, tabs, tree, toolbar, wizard, modal, tooltip, swiper, drawer title, scrim controls; C249 dependency graph, C259 table actions on a phone; feedback defects.
+- First paint: the icon keeps its baseline before the icon font arrives (no 3-4 px drop); the Loader's icon hold reads the text's middle (C151 point 5).
+- `core.runtime` 1.59.0, `core.styles` 1.16.0.
+
 - Pair next 10 (group build 8 with the urgent toast fix, ui-source integration/pair-next-10): C203 progress values spelled by one `percentText` (class and Smart scales, bar, ring, file upload and download) and the inline `meter` variant; R53 the Smart progress bar writes its text part through the template; DEV returns of GB6/GB7 closed (MR-2 class meter thresholds `data-warning-at` / `data-error-at`, TT-11 Framework tooltips in sf-language and the sf-settings value line).
 - Content and status: C185 one shared `.sf-dot` for badges, avatars and the progress ring; C201 plain icon buttons (help mark, checkbox and radio descriptions, list description); C204 list timeline; C183 time table; C167 «more» in pagination; RG-BD-1 the unsized badge with an icon is 24 with a 12 icon.
 - Fields and inputs: C165 choice groups and rows; RG-S2 small defects (input reveal and conceal words, lookup); C209 colour field; C202 range slider (container step g3 = 26rem, `tokens.breakpoint` 1.2.0); spacing gaps E with C53 quantity.
