@@ -8,6 +8,12 @@
 
 ### Добавлено
 
+- Pair next 13 (group builds 10 and 11, ui-source integration/pair-next-13: fourteen branches over ui-24d64b7f6eb7).
+- Languages: C282 Russian is a language file: Smart bundles carry English words only; Russian comes from `core/lang/ru.js` included before core, or from the family parts core fetches; the Loader holds a definition until its words arrive (at most 800 ms). The skip link is drawn after the language-pack fetcher and redrawn when words arrive.
+- Layers and utilities: C273 component paint lives in `sf.paint` under the utilities (a utility colour on sf-card or sf-button wins); C264/C266 utilities (scroll margin and padding sides), C268 `pointer-events-none`, C274 dated aliases for `.body-text*`, `.text*`, `.label*`, `.d1-6`; ring classes alone draw in the focus role.
+- Components: C178 findings (context menu, clipboard, inputs, kbd, pagination, file download, pager, tag); defects d11 (sf-empty-state 1/2 title on the text ladder 16/24, pagination one width rule); SF.Resizer 1.5.0 (an edge without an upper limit says its width, sf-button aria-label on the host); sf-menu-context 1.27.0 reaches areas inside a shadow root; sf-settings footer labels on one line; fields (C283 sf-input-quantity appearance bordered or filled, sf-slider-range and sf-dropdown hints, sf-input-date whole values, sf-radio and sf-switch position start or end); C285 highlight file name in the code head; SF.notify stays over windows opened after it; sf-spinner dots look retired (SM-SP-3); C279 sf-change before and after as attributes only; C280 a bare sf-tag is a plain tag; C281 sf-tile-metric inset; tabs counter text step; examples, Smart (sp1), small-fixes (sf1) and misc (m10) passes.
+- `core.runtime` 1.60.0, `core.styles` 1.17.0.
+
 - Pair next 11 (group build 9, ui-source integration/pair-next-11: 69 branches over ui-078a4b4c6f6e).
 - Languages: C278 the Kazakh interface pack is withdrawn (pages with lang=kk fall back to the default language); the language registry `language-registry.v1.json` lists Arabic as the 11th entry; dated aliases until 2027-01-01 for the four word keys fix/languages-g1 removed.
 - Utilities: C212 families (hide, layout, text, length, alignment, colour, gradient, focus), Tailwind conversion helpers, C210 scrollbars (the track declares its defaults from the scroll system), C57 patterns.
